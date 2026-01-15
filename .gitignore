@@ -1,0 +1,77 @@
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~.nib
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (for web apps)
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Compiled
+*.class
+*.war
+*.jar
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Build outputs (keep documentation)
+!*.md
+!*/steps/*.md
+!*/PRD_*.md
+!*/API_*.md
+!*/SPEC*.md
+!*SUMMARY*.md
+!*VISION*.md
+!*ARCHITECTURE*.md
+!*WIREFRAMES*.md
+!README*.md
+
+# Keep important files
+!PLATFORM_SUMMARY.md
+!DEVELOPER_STANDARDS.md

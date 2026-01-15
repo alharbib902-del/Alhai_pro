@@ -1,0 +1,40 @@
+name: alhai_design_system
+description: Production-grade design system for Alhai multi-app suite (POS/Consumer/Delivery/Merchant)
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # R2 Image Storage & Caching
+  cached_network_image: ^3.3.0
+  flutter_cache_manager: ^3.3.1
+  # Optional: google_fonts for dev/fallback only
+  # google_fonts: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  mocktail: ^1.0.4
+  golden_toolkit: ^0.15.0
+
+flutter:
+  fonts:
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Tajawal-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Tajawal-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Tajawal-Light.ttf
+          weight: 300
+
+# Download fonts from: https://fonts.google.com/specimen/Tajawal
+# Place files in: assets/fonts/

@@ -1,0 +1,216 @@
+{
+    "project_name": "Alhai",
+    "version": "1.0.0",
+    "description": "Smart Grocery Store Platform - Flutter packages for POS, Consumer, Delivery, and Merchant apps",
+    "overview": {
+        "purpose": "Provide core business logic and UI components for Alhai multi-app ecosystem",
+        "target_users": [
+            "Grocery store owners",
+            "POS cashiers",
+            "Delivery drivers",
+            "End consumers"
+        ],
+        "platforms": [
+            "iOS",
+            "Android",
+            "Web"
+        ]
+    },
+    "packages": [
+        {
+            "name": "alhai_core",
+            "type": "backend",
+            "description": "Core package with Clean Architecture - repositories, models, DTOs, datasources",
+            "features": [
+                {
+                    "id": "auth",
+                    "name": "Authentication",
+                    "description": "User login, registration, and token management",
+                    "testable_components": [
+                        "AuthRepository",
+                        "AuthResult",
+                        "AuthTokens"
+                    ]
+                },
+                {
+                    "id": "products",
+                    "name": "Products Management",
+                    "description": "CRUD operations for products with inventory tracking",
+                    "testable_components": [
+                        "ProductsRepository",
+                        "Product",
+                        "CreateProductParams",
+                        "UpdateProductParams"
+                    ]
+                },
+                {
+                    "id": "orders",
+                    "name": "Orders Management",
+                    "description": "Order creation, status updates, and order items",
+                    "testable_components": [
+                        "OrdersRepository",
+                        "Order",
+                        "OrderItem",
+                        "CreateOrderParams"
+                    ]
+                },
+                {
+                    "id": "categories",
+                    "name": "Categories",
+                    "description": "Product categorization",
+                    "testable_components": [
+                        "CategoriesRepository",
+                        "Category"
+                    ]
+                },
+                {
+                    "id": "stores",
+                    "name": "Stores Management",
+                    "description": "Multi-store support",
+                    "testable_components": [
+                        "StoresRepository",
+                        "Store"
+                    ]
+                },
+                {
+                    "id": "delivery",
+                    "name": "Delivery",
+                    "description": "Delivery tracking and status management",
+                    "testable_components": [
+                        "DeliveryRepository",
+                        "Delivery",
+                        "DeliveryStatus"
+                    ]
+                },
+                {
+                    "id": "inventory",
+                    "name": "Inventory",
+                    "description": "Stock adjustments and inventory tracking",
+                    "testable_components": [
+                        "InventoryRepository",
+                        "StockAdjustment"
+                    ]
+                },
+                {
+                    "id": "suppliers",
+                    "name": "Suppliers",
+                    "description": "Supplier management for procurement",
+                    "testable_components": [
+                        "SuppliersRepository",
+                        "Supplier"
+                    ]
+                },
+                {
+                    "id": "purchases",
+                    "name": "Purchase Orders",
+                    "description": "Purchase order management",
+                    "testable_components": [
+                        "PurchasesRepository",
+                        "PurchaseOrder"
+                    ]
+                },
+                {
+                    "id": "debts",
+                    "name": "Debts",
+                    "description": "Debt tracking for customers and suppliers",
+                    "testable_components": [
+                        "DebtsRepository",
+                        "Debt"
+                    ]
+                },
+                {
+                    "id": "reports",
+                    "name": "Reports",
+                    "description": "Sales and business reports",
+                    "testable_components": [
+                        "ReportsRepository",
+                        "SalesReport"
+                    ]
+                },
+                {
+                    "id": "analytics",
+                    "name": "AI Analytics",
+                    "description": "Smart alerts, forecasting, and insights",
+                    "testable_components": [
+                        "AnalyticsRepository",
+                        "Analytics",
+                        "SlowMovingProduct",
+                        "SalesForecast",
+                        "SmartAlert"
+                    ]
+                },
+                {
+                    "id": "pagination",
+                    "name": "Pagination",
+                    "description": "Generic pagination support",
+                    "testable_components": [
+                        "Paginated"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "alhai_design_system",
+            "type": "frontend",
+            "description": "UI components library with tokens and responsive utilities",
+            "features": [
+                {
+                    "id": "buttons",
+                    "name": "Buttons",
+                    "description": "Button components",
+                    "testable_components": [
+                        "AlhaiButton"
+                    ]
+                },
+                {
+                    "id": "inputs",
+                    "name": "Input Components",
+                    "description": "Text fields, radio groups, and form inputs",
+                    "testable_components": [
+                        "AlhaiTextField",
+                        "AlhaiRadioGroup"
+                    ]
+                },
+                {
+                    "id": "layout",
+                    "name": "Layout Components",
+                    "description": "Cards, sections, list tiles",
+                    "testable_components": [
+                        "AlhaiCard",
+                        "AlhaiSection",
+                        "AlhaiListTile"
+                    ]
+                },
+                {
+                    "id": "feedback",
+                    "name": "Feedback Components",
+                    "description": "Loading indicators, skeletons",
+                    "testable_components": [
+                        "AlhaiSkeleton",
+                        "AlhaiLoadingIndicator"
+                    ]
+                },
+                {
+                    "id": "tokens",
+                    "name": "Design Tokens",
+                    "description": "Colors, spacing, radius, typography",
+                    "testable_components": [
+                        "AlhaiColors",
+                        "AlhaiSpacing",
+                        "AlhaiRadius",
+                        "AlhaiTypography"
+                    ]
+                }
+            ]
+        }
+    ],
+    "test_requirements": {
+        "test_framework": "flutter_test",
+        "coverage_target": "80%",
+        "test_commands": {
+            "run_all": "flutter test",
+            "run_with_coverage": "flutter test --coverage",
+            "analyze": "flutter analyze"
+        }
+    }
+}
