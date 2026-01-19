@@ -145,6 +145,9 @@ REVOKE DELETE ON public.stock_adjustments FROM authenticated, anon;
 
 -- deliveries: توصيل واحد لكل طلب ✅
 ALTER TABLE public.deliveries ADD CONSTRAINT deliveries_order_unique UNIQUE(order_id);
+
+-- order_items: منتج واحد لكل سطر في الطلب ✅
+ALTER TABLE public.order_items ADD CONSTRAINT order_items_unique_product_per_order UNIQUE(order_id, product_id);
 ```
 
 ---
@@ -164,12 +167,13 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- 1) قفل كل المنتجات المطلوبة أولاً (بدون شرط النقص) ✅
+  -- 1) قفل كل المنتجات بترتيب ثابت (منع deadlock) ✅
   PERFORM 1
   FROM public.order_items oi
   JOIN public.products p ON p.id = oi.product_id
   WHERE oi.order_id = NEW.id
     AND p.track_inventory = true
+  ORDER BY p.id  -- ترتيب ثابت لمنع deadlock
   FOR UPDATE OF p;
 
   -- 2) بعد القفل: افحص النقص
@@ -605,4 +609,4 @@ CREATE POLICY "stock_adj_staff_insert" ON public.stock_adjustments FOR INSERT
 
 ---
 
-*Final Production Ready - v2.2.3*
+*Final Production Ready - v2.2.4*
