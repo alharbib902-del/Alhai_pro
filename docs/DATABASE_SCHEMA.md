@@ -1,6 +1,6 @@
 # Alhai Platform - Database Schema
 
-**Version:** 2.2.4 (Final)  
+**Version:** 2.2.5 (Final)  
 **Date:** 2026-01-19
 
 ---
@@ -112,7 +112,7 @@ BEGIN
   INSERT INTO public.users (id, phone, email, name, role)
   VALUES (
     NEW.id,
-    NEW.phone,
+    COALESCE(NEW.phone, NEW.raw_user_meta_data->>'phone'),  -- تحصين مصدر phone ✅
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'name', 'مستخدم جديد'),
     'customer'
@@ -148,6 +148,34 @@ ALTER TABLE public.deliveries ADD CONSTRAINT deliveries_order_unique UNIQUE(orde
 
 -- order_items: منتج واحد لكل سطر في الطلب ✅
 ALTER TABLE public.order_items ADD CONSTRAINT order_items_unique_product_per_order UNIQUE(order_id, product_id);
+```
+
+### Trigger: منع تغيير store_id (تحصين إضافي) ✅
+
+```sql
+CREATE OR REPLACE FUNCTION public.prevent_store_id_change()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF OLD.store_id IS DISTINCT FROM NEW.store_id THEN
+    RAISE EXCEPTION 'لا يمكن تغيير store_id بعد الإنشاء';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- تطبيق على الجداول الحساسة
+CREATE TRIGGER prevent_store_id_change_products BEFORE UPDATE ON public.products
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
+CREATE TRIGGER prevent_store_id_change_store_members BEFORE UPDATE ON public.store_members
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
+CREATE TRIGGER prevent_store_id_change_debts BEFORE UPDATE ON public.debts
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
+CREATE TRIGGER prevent_store_id_change_purchase_orders BEFORE UPDATE ON public.purchase_orders
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
+CREATE TRIGGER prevent_store_id_change_stock_adjustments BEFORE UPDATE ON public.stock_adjustments
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
 ```
 
 ---
@@ -579,14 +607,12 @@ CREATE POLICY "loyalty_points_customer_read" ON public.loyalty_points FOR SELECT
 CREATE POLICY "loyalty_points_staff_read" ON public.loyalty_points FOR SELECT
   USING (public.is_store_member(store_id));
 
--- stock_adjustments (سجلات ثابتة: قراءة + إضافة + حذف للسوبر أدمن فقط)
+-- stock_adjustments (سجلات ثابتة: قراءة + إضافة فقط - بدون UPDATE/DELETE)
 CREATE POLICY "stock_adj_superadmin_select" ON public.stock_adjustments FOR SELECT
   USING (public.is_super_admin());
 CREATE POLICY "stock_adj_superadmin_insert" ON public.stock_adjustments FOR INSERT
   WITH CHECK (public.is_super_admin());
-CREATE POLICY "stock_adj_superadmin_delete" ON public.stock_adjustments FOR DELETE
-  USING (public.is_super_admin());
--- لا UPDATE للسوبر أدمن (سجلات ثابتة)
+-- لا DELETE حتى للسوبر أدمن (سجلات ثابتة نهائياً) ✅
 
 CREATE POLICY "stock_adj_staff_read" ON public.stock_adjustments FOR SELECT
   USING (public.is_store_member(store_id));
