@@ -1,6 +1,6 @@
 # Alhai Platform Team Workflow
 
-**Version:** 2.1.0  
+**Version:** 2.2.0  
 **Date:** 2026-01-19
 
 ---
@@ -267,17 +267,18 @@ git config --global user.name "اسمك"
 git config --global user.email "email@example.com"
 
 # 3. استنساخ المشروع
-git clone https://github.com/alharbib902-del/alhai-platform-docs.git
-cd alhai-platform-docs
+# (استبدل <org> باسم المؤسسة الفعلي)
+git clone https://github.com/<org>/alhai-platform.git
+cd alhai-platform
 ```
 
 ### العمل اليومي (10 خطوات)
 
 ```bash
 # === بداية اليوم ===
-# 1. اسحب آخر التحديثات
-git checkout main
-git pull origin main
+# 1. اسحب آخر التحديثات (دائمًا من develop)
+git checkout develop
+git pull origin develop
 
 # 2. أنشئ فرع جديد لعملك
 git checkout -b pos/feat-my-feature    # Device A
@@ -316,6 +317,17 @@ git branch -d pos/feat-my-feature
 | `git diff` | عرض التغييرات |
 | `git stash` | حفظ مؤقت (بدون commit) |
 | `git stash pop` | استرجاع المحفوظ مؤقتًا |
+
+> [!WARNING]
+> **لا تعمل أبدًا `git push` على `main` أو `develop` مباشرة**  
+> كل العمل يتم عبر feature branches + Pull Request.
+
+---
+
+## 📦 ملاحظة للتوسع المستقبلي
+
+> نستخدم **Melos** لإدارة Flutter Monorepo (مرحلة لاحقة)  
+> التفاصيل: https://melos.invertase.dev
 
 ---
 
