@@ -1,7 +1,32 @@
 # Alhai Platform Team Workflow
 
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Date:** 2026-01-19
+
+---
+
+> [!CAUTION]
+> **ممنوع استخدام Google Drive أو Dropbox أو أي Sync Tool لمزامنة الكود.**  
+> **Git (GitHub) هو المصدر الوحيد للكود.**  
+> أي تعديل خارج Git = تضارب وفقدان عمل.
+
+---
+
+## هيكلة المشروع (Repo Structure)
+
+```
+alhai-platform/                 ← GitHub Repo (Private)
+├── apps/
+│   ├── pos_app/                ← Device A يملك
+│   └── customer_app/           ← Device B يملك
+├── packages/
+│   ├── alhai_core/             ← مشترك (تنسيق مطلوب)
+│   └── alhai_design_system/    ← مشترك (تنسيق مطلوب)
+└── docs/
+    ├── WORKFLOW.md             ← أنت هنا
+    ├── POS_FLOW_SPEC.md
+    └── ...
+```
 
 ---
 
@@ -227,4 +252,72 @@ Before each commit:
 
 ---
 
+## 🚀 Git Quick Start (للمبتدئين)
+
+> إذا هذه أول مرة تستخدم Git، اتبع هذه الخطوات:
+
+### الإعداد (مرة واحدة فقط)
+
+```bash
+# 1. تثبيت Git
+# حمّل من: https://git-scm.com/downloads
+
+# 2. إعداد الاسم والإيميل
+git config --global user.name "اسمك"
+git config --global user.email "email@example.com"
+
+# 3. استنساخ المشروع
+git clone https://github.com/alharbib902-del/alhai-platform-docs.git
+cd alhai-platform-docs
+```
+
+### العمل اليومي (10 خطوات)
+
+```bash
+# === بداية اليوم ===
+# 1. اسحب آخر التحديثات
+git checkout main
+git pull origin main
+
+# 2. أنشئ فرع جديد لعملك
+git checkout -b pos/feat-my-feature    # Device A
+# أو
+git checkout -b customer/feat-my-feature  # Device B
+
+# === أثناء العمل ===
+# 3. اعمل على الكود...
+
+# 4. شوف التغييرات
+git status
+
+# 5. أضف التغييرات
+git add .
+
+# 6. احفظ (commit)
+git commit -m "feat(pos): add my new feature"
+
+# === نهاية اليوم ===
+# 7. ارفع التغييرات
+git push origin pos/feat-my-feature
+
+# === عند الانتهاء من الميزة ===
+# 8. افتح Pull Request على GitHub
+# 9. راجع وادمج (Merge)
+# 10. احذف الفرع
+git branch -d pos/feat-my-feature
+```
+
+### أوامر مفيدة
+
+| الأمر | الوظيفة |
+|-------|---------|
+| `git status` | عرض الملفات المتغيرة |
+| `git log --oneline -5` | آخر 5 commits |
+| `git diff` | عرض التغييرات |
+| `git stash` | حفظ مؤقت (بدون commit) |
+| `git stash pop` | استرجاع المحفوظ مؤقتًا |
+
+---
+
 *Last Updated: 2026-01-19*
+
