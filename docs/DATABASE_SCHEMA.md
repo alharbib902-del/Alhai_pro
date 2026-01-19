@@ -1,6 +1,6 @@
 # Alhai Platform - Database Schema
 
-**Version:** 2.2.5 (Final)  
+**Version:** 2.2.6 (Final)  
 **Date:** 2026-01-19
 
 ---
@@ -137,7 +137,7 @@ REVOKE UPDATE (store_id) ON public.store_members FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.products FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.debts FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.purchase_orders FROM authenticated, anon;
-REVOKE UPDATE (store_id) ON public.stock_adjustments FROM authenticated, anon;
+-- stock_adjustments: لا حاجة لـ REVOKE (store_id) لأن REVOKE UPDATE الكامل أشمل
 
 -- stock_adjustments: سجلات ثابتة (منع UPDATE/DELETE كامل) ✅
 REVOKE UPDATE ON public.stock_adjustments FROM authenticated, anon;
@@ -165,7 +165,7 @@ BEGIN
 END;
 $$;
 
--- تطبيق على الجداول الحساسة
+-- تطبيق على الجداول الحساسة (4 جداول فقط - stock_adjustments ثابت أصلاً)
 CREATE TRIGGER prevent_store_id_change_products BEFORE UPDATE ON public.products
   FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
 CREATE TRIGGER prevent_store_id_change_store_members BEFORE UPDATE ON public.store_members
@@ -174,8 +174,7 @@ CREATE TRIGGER prevent_store_id_change_debts BEFORE UPDATE ON public.debts
   FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
 CREATE TRIGGER prevent_store_id_change_purchase_orders BEFORE UPDATE ON public.purchase_orders
   FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
-CREATE TRIGGER prevent_store_id_change_stock_adjustments BEFORE UPDATE ON public.stock_adjustments
-  FOR EACH ROW EXECUTE FUNCTION public.prevent_store_id_change();
+-- stock_adjustments لا يحتاج trigger لأنه immutable بالكامل (REVOKE UPDATE)
 ```
 
 ---
@@ -289,6 +288,7 @@ CREATE POLICY "users_self_update" ON public.users FOR UPDATE
   WITH CHECK (id = auth.uid());
 
 -- super_admin يدير المستخدمين (تفعيل/تعطيل/verify) ✅
+-- ملاحظة: role محمي بـ REVOKE، لكن السوبر أدمن يستطيع تعديل الحقول الأخرى
 CREATE POLICY "users_superadmin_update" ON public.users FOR UPDATE
   USING (public.is_super_admin())
   WITH CHECK (public.is_super_admin());
@@ -457,9 +457,43 @@ CREATE POLICY "order_items_customer_insert" ON public.order_items FOR INSERT
       AND p.is_active = true
   ));
 
-CREATE POLICY "order_items_staff_all" ON public.order_items FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)))
-  WITH CHECK (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)));
+-- حذف السياسة القديمة إن وجدت (للتحديثات) ✅
+DROP POLICY IF EXISTS "order_items_staff_all" ON public.order_items;
+
+-- الموظف يقرأ ويضيف فقط (UPDATE/DELETE ممنوع بعد confirm للصرامة المحاسبية) ✅
+CREATE POLICY "order_items_staff_read" ON public.order_items FOR SELECT
+  USING (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)));
+
+CREATE POLICY "order_items_staff_insert" ON public.order_items FOR INSERT
+  WITH CHECK (EXISTS (
+    SELECT 1 FROM public.orders o 
+    WHERE o.id = order_id 
+      AND public.is_store_member(o.store_id)
+      AND o.status = 'created'  -- فقط للطلبات الجديدة
+  ));
+
+-- UPDATE/DELETE فقط عندما الطلب status='created' (صرامة محاسبية)
+CREATE POLICY "order_items_staff_update_created" ON public.order_items FOR UPDATE
+  USING (EXISTS (
+    SELECT 1 FROM public.orders o 
+    WHERE o.id = order_id 
+      AND public.is_store_member(o.store_id)
+      AND o.status = 'created'
+  ))
+  WITH CHECK (EXISTS (
+    SELECT 1 FROM public.orders o 
+    WHERE o.id = order_id 
+      AND public.is_store_member(o.store_id)
+      AND o.status = 'created'
+  ));
+
+CREATE POLICY "order_items_staff_delete_created" ON public.order_items FOR DELETE
+  USING (EXISTS (
+    SELECT 1 FROM public.orders o 
+    WHERE o.id = order_id 
+      AND public.is_store_member(o.store_id)
+      AND o.status = 'created'
+  ));
 ```
 
 ---
@@ -635,4 +669,4 @@ CREATE POLICY "stock_adj_staff_insert" ON public.stock_adjustments FOR INSERT
 
 ---
 
-*Final Production Ready - v2.2.4*
+*Final Production Ready - v2.2.6*
