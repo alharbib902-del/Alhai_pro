@@ -1,6 +1,6 @@
 # Alhai Platform - Database Schema
 
-**Version:** 2.2.3 (Final)  
+**Version:** 2.2.4 (Final)  
 **Date:** 2026-01-19
 
 ---
@@ -138,6 +138,13 @@ REVOKE UPDATE (store_id) ON public.products FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.debts FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.purchase_orders FROM authenticated, anon;
 REVOKE UPDATE (store_id) ON public.stock_adjustments FROM authenticated, anon;
+
+-- stock_adjustments: سجلات ثابتة (منع UPDATE/DELETE كامل) ✅
+REVOKE UPDATE ON public.stock_adjustments FROM authenticated, anon;
+REVOKE DELETE ON public.stock_adjustments FROM authenticated, anon;
+
+-- deliveries: توصيل واحد لكل طلب ✅
+ALTER TABLE public.deliveries ADD CONSTRAINT deliveries_order_unique UNIQUE(order_id);
 ```
 
 ---
@@ -248,6 +255,11 @@ CREATE POLICY "users_self_select" ON public.users FOR SELECT
 CREATE POLICY "users_self_update" ON public.users FOR UPDATE
   USING (id = auth.uid())
   WITH CHECK (id = auth.uid());
+
+-- super_admin يدير المستخدمين (تفعيل/تعطيل/verify) ✅
+CREATE POLICY "users_superadmin_update" ON public.users FOR UPDATE
+  USING (public.is_super_admin())
+  WITH CHECK (public.is_super_admin());
 ```
 
 ---
@@ -520,6 +532,9 @@ CREATE POLICY "purchase_orders_staff_insert" ON public.purchase_orders FOR INSER
 CREATE POLICY "purchase_orders_staff_update" ON public.purchase_orders FOR UPDATE
   USING (public.is_store_member(store_id))
   WITH CHECK (public.is_store_member(store_id));
+
+CREATE POLICY "purchase_orders_staff_delete" ON public.purchase_orders FOR DELETE
+  USING (public.is_store_member(store_id));
 ```
 
 ---
