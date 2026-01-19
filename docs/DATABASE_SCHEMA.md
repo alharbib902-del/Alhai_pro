@@ -1,16 +1,17 @@
 # Alhai Platform - Database Schema
 
-**Version:** 2.2.2 (Final)  
+**Version:** 2.2.3 (Final)  
 **Date:** 2026-01-19
 
 ---
 
 > [!IMPORTANT]
 > **نسخة نهائية قابلة للتنفيذ مباشرة** ✅
-> - Trigger خصم مخزون نظيف (بدون EXCEPTION hacks)
+> - Trigger خصم مخزون مع **قفل كل المنتجات أولاً** (منع race condition)
 > - WITH CHECK لكل سياسات UPDATE
 > - REVOKE لـ authenticated + anon
-> - سياسات categories كاملة
+> - `handle_new_user` trigger مُضاف
+> - سياسات كاملة (categories, deliveries, debts)
 
 ---
 
@@ -98,10 +99,38 @@ REVOKE UPDATE (role) ON public.users FROM authenticated;
 REVOKE UPDATE (role) ON public.users FROM anon;
 ```
 
+#### Trigger: إنشاء profile تلقائيًا
+
+```sql
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+  INSERT INTO public.users (id, phone, email, name, role)
+  VALUES (
+    NEW.id,
+    NEW.phone,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'name', 'مستخدم جديد'),
+    'customer'
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
+
 ### stores, store_members, products, debts, purchase_orders
 
 ```sql
--- جميع الجداول تُنشأ كما في v2.2.1
+-- جميع الجداول تُنشأ كما في النسخ السابقة
 -- ثم:
 
 REVOKE UPDATE (store_id) ON public.store_members FROM authenticated, anon;
@@ -113,7 +142,7 @@ REVOKE UPDATE (store_id) ON public.stock_adjustments FROM authenticated, anon;
 
 ---
 
-## ⚡ Trigger خصم المخزون ✅ نظيف
+## ⚡ Trigger خصم المخزون ✅ محسَّن (قفل كل المنتجات أولاً)
 
 ```sql
 CREATE OR REPLACE FUNCTION public.deduct_stock_on_order_confirm()
@@ -128,19 +157,22 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- 1) قفل صفوف المنتجات المطلوبة + عد الناقصة
-  SELECT COUNT(*) INTO v_insufficient_count
-  FROM (
-    SELECT oi.product_id
-    FROM public.order_items oi
-    JOIN public.products p ON p.id = oi.product_id
-    WHERE oi.order_id = NEW.id
-      AND p.track_inventory = true
-      AND p.stock_qty < oi.qty
-    FOR UPDATE OF p  -- قفل
-  ) AS insufficient;
+  -- 1) قفل كل المنتجات المطلوبة أولاً (بدون شرط النقص) ✅
+  PERFORM 1
+  FROM public.order_items oi
+  JOIN public.products p ON p.id = oi.product_id
+  WHERE oi.order_id = NEW.id
+    AND p.track_inventory = true
+  FOR UPDATE OF p;
 
-  -- 2) رفع خطأ إذا وُجد نقص
+  -- 2) بعد القفل: افحص النقص
+  SELECT COUNT(*) INTO v_insufficient_count
+  FROM public.order_items oi
+  JOIN public.products p ON p.id = oi.product_id
+  WHERE oi.order_id = NEW.id
+    AND p.track_inventory = true
+    AND p.stock_qty < oi.qty;
+
   IF v_insufficient_count > 0 THEN
     RAISE EXCEPTION 'المخزون غير كافٍ لأحد المنتجات';
   END IF;
@@ -425,6 +457,9 @@ CREATE POLICY "debts_staff_insert" ON public.debts FOR INSERT
 CREATE POLICY "debts_staff_update" ON public.debts FOR UPDATE
   USING (public.is_store_member(store_id))
   WITH CHECK (public.is_store_member(store_id));
+
+CREATE POLICY "debts_staff_delete" ON public.debts FOR DELETE
+  USING (public.is_store_member(store_id));
 ```
 
 ---
@@ -459,6 +494,13 @@ CREATE POLICY "deliveries_driver_update" ON public.deliveries FOR UPDATE
 
 CREATE POLICY "deliveries_staff_read" ON public.deliveries FOR SELECT
   USING (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)));
+
+CREATE POLICY "deliveries_staff_update" ON public.deliveries FOR UPDATE
+  USING (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)))
+  WITH CHECK (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)));
+
+CREATE POLICY "deliveries_staff_insert" ON public.deliveries FOR INSERT
+  WITH CHECK (EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)));
 ```
 
 ---
@@ -518,13 +560,20 @@ CREATE POLICY "loyalty_points_customer_read" ON public.loyalty_points FOR SELECT
 CREATE POLICY "loyalty_points_staff_read" ON public.loyalty_points FOR SELECT
   USING (public.is_store_member(store_id));
 
--- stock_adjustments (قراءة + إضافة فقط)
-CREATE POLICY "stock_adj_superadmin_all" ON public.stock_adjustments FOR ALL
-  USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
+-- stock_adjustments (سجلات ثابتة: قراءة + إضافة + حذف للسوبر أدمن فقط)
+CREATE POLICY "stock_adj_superadmin_select" ON public.stock_adjustments FOR SELECT
+  USING (public.is_super_admin());
+CREATE POLICY "stock_adj_superadmin_insert" ON public.stock_adjustments FOR INSERT
+  WITH CHECK (public.is_super_admin());
+CREATE POLICY "stock_adj_superadmin_delete" ON public.stock_adjustments FOR DELETE
+  USING (public.is_super_admin());
+-- لا UPDATE للسوبر أدمن (سجلات ثابتة)
+
 CREATE POLICY "stock_adj_staff_read" ON public.stock_adjustments FOR SELECT
   USING (public.is_store_member(store_id));
 CREATE POLICY "stock_adj_staff_insert" ON public.stock_adjustments FOR INSERT
   WITH CHECK (public.is_store_member(store_id));
+-- لا UPDATE/DELETE للموظفين (سجلات ثابتة)
 ```
 
 ---
@@ -541,4 +590,4 @@ CREATE POLICY "stock_adj_staff_insert" ON public.stock_adjustments FOR INSERT
 
 ---
 
-*Final Production Ready - v2.2.2*
+*Final Production Ready - v2.2.3*
