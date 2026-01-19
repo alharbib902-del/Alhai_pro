@@ -1,37 +1,99 @@
-# Alhai POS Team Workflow
+# Alhai Platform Team Workflow
+
+**Version:** 2.0.0  
+**Date:** 2026-01-19
+
+---
+
+## تقسيم العمل (App-Based Split)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Alhai Platform                         │
+├─────────────────────────┬───────────────────────────────┤
+│       Device A          │          Device B             │
+│       POS App           │        Customer App           │
+├─────────────────────────┼───────────────────────────────┤
+│ • نظام نقطة البيع       │ • تطبيق طلبات العملاء          │
+│ • إدارة المخزون         │ • عرض المنتجات والعروض         │
+│ • التقارير اليومية       │ • سلة الشراء                  │
+│ • المبيعات والفواتير     │ • تتبع الطلبات                │
+│ • إدارة الموردين         │ • ملف العميل                  │
+└─────────────────────────┴───────────────────────────────┘
+                    ↓
+         ┌─────────────────────┐
+         │   Shared Libraries   │
+         │ • alhai_core         │
+         │ • alhai_design_system│
+         └─────────────────────┘
+```
+
+---
 
 ## Branch Naming Convention
 
 ```
 main                        # Production-ready code
 └── develop                 # Integration branch
-     ├── pos/sales           # Device A integration (Sales Slice)
+     ├── pos/*              # Device A (POS App)
      │    ├── feat-login
      │    ├── feat-cart
      │    └── fix-payment
-     ├── pos/operations      # Device B integration (Operations Slice)
-     │    ├── feat-inventory
-     │    └── feat-products
-     └── shared/xxx          # Shared features (يتطلب تنسيق A+B)
+     ├── customer/*         # Device B (Customer App)
+     │    ├── feat-catalog
+     │    └── feat-orders
+     └── shared/*           # Shared libraries (يتطلب تنسيق A+B)
 ```
 
 ### قواعد الفروع:
-- `pos/sales` و `pos/operations`: فروع integration لكل جهاز
-- الفروع اليومية تكون دائمًا تحت `pos/sales/*` أو `pos/operations/*` أو `shared/*`
-- `shared/xxx`: يتطلب تنسيق بين A+B قبل البدء
+- `pos/*`: فروع خاصة بتطبيق POS (Device A فقط)
+- `customer/*`: فروع خاصة بتطبيق العملاء (Device B فقط)
+- `shared/*`: يتطلب تنسيق بين A+B قبل البدء
 
 ### Examples:
-- `pos/sales/feat-login`
-- `pos/sales/fix-cart-calculation`
-- `pos/operations/feat-inventory-adjust`
-- `shared/app-session`
+- `pos/feat-login`
+- `pos/fix-cart-calculation`
+- `customer/feat-product-catalog`
+- `customer/feat-order-tracking`
+- `shared/core-auth-update`
+
+---
+
+## File Ownership
+
+### Device A Owns (POS App)
+```
+pos_app/                    ← A owns exclusively
+├── lib/
+├── test/
+├── pubspec.yaml
+└── ...
+```
+
+### Device B Owns (Customer App)
+```
+customer_app/               ← B owns exclusively
+├── lib/
+├── test/
+├── pubspec.yaml
+└── ...
+```
+
+### Shared (Coordinate Before Edit!)
+```
+alhai_core/                 ← تنسيق مطلوب
+alhai_design_system/        ← تنسيق مطلوب
+docs/                       ← تنسيق مطلوب
+```
+
+> ⚠️ **قاعدة ذهبية**: لا يعدل Device A على `customer_app/` ولا يعدل Device B على `pos_app/`
 
 ---
 
 ## Commit Message Convention
 
 ```
-<type>(<scope>): <description>
+<type>(<app>): <description>
 
 [optional body]
 ```
@@ -47,11 +109,20 @@ main                        # Production-ready code
 | `test` | Adding tests |
 | `chore` | Build/config changes |
 
+### App Scopes:
+| Scope | App |
+|-------|-----|
+| `pos` | POS App (Device A) |
+| `customer` | Customer App (Device B) |
+| `core` | alhai_core (Shared) |
+| `design` | alhai_design_system (Shared) |
+
 ### Examples:
 ```
-feat(sales): add barcode scanner to quick sale screen
-fix(cart): correct tax calculation for discount items
-refactor(auth): extract OTP validation to separate bloc
+feat(pos): add barcode scanner to quick sale screen
+fix(customer): correct cart total calculation
+feat(core): add new ProductStatus enum
+refactor(design): extract button styles to theme
 ```
 
 ---
@@ -63,8 +134,7 @@ A feature is **DONE** when:
 - [ ] Code compiles without errors
 - [ ] `flutter analyze` passes with no issues
 - [ ] Related tests pass
-- [ ] Code reviewed by peer (if pair working)
-- [ ] Screen matches expected flow in POS_FLOW_SPEC.md
+- [ ] Screen matches expected flow in specs
 - [ ] No hardcoded strings (use localization)
 - [ ] RTL layout verified
 
@@ -75,14 +145,16 @@ A feature is **DONE** when:
 ### Daily Workflow:
 1. Start day:
    ```bash
-   git checkout pos/sales && git pull origin pos/sales      # أو pos/operations
-   git checkout pos/sales/feat-xxx && git rebase pos/sales  # تحديث فرعك الشخصي
+   git checkout develop && git pull origin develop
+   git checkout pos/feat-xxx && git rebase develop  # Device A
+   # أو
+   git checkout customer/feat-xxx && git rebase develop  # Device B
    ```
 2. Work on your feature branch
 3. End day: commit + push to your branch
 
 ### Merge to Develop:
-- **When**: Feature/screen complete + DoD met
+- **When**: Feature complete + DoD met
 - **How**: Pull Request → Self-review → Merge
 - **After merge**: Delete feature branch
 
@@ -96,87 +168,50 @@ A feature is **DONE** when:
 ## Rebase vs Merge
 
 | Situation | Use | ملاحظة |
-|-----------|-----|------|
-| تحديث فرعك الشخصي من pos/sales | `git rebase pos/sales` | آمن |
-| تحديث فرعك الشخصي من develop | `git rebase develop` | آمن (إذا احتجت آخر تغييرات) |
-| تحديث pos/sales من develop | `git merge develop` | **لا rebase** |
-| تحديث pos/operations من develop | `git merge develop` | **لا rebase** |
-| دمج فرعك إلى pos/sales | **PR (self-review) + `merge --no-ff`** | |
-| دمج فرعك إلى pos/operations | **PR (self-review) + `merge --no-ff`** | |
-| دمج pos/sales إلى develop | **PR + `merge --no-ff`** | |
-| دمج pos/operations إلى develop | **PR + `merge --no-ff`** | |
+|-----------|-----|--------|
+| تحديث فرعك الشخصي من develop | `git rebase develop` | آمن |
+| دمج فرعك إلى develop | **PR + `merge --no-ff`** | |
+| دمج develop إلى main | **PR + `merge --no-ff`** | |
 
 > ⚠️ **لا تستخدم rebase على فروع مشتركة أو تم دفعها**
 
 ---
 
-## Slice Ownership (A/B Split)
+## Shared Libraries Protocol
 
-### Device A (Sales Slice) - لا يعدل ملفات B
-- `lib/features/auth/`
-- `lib/features/sales/`
-- `lib/features/cart/`
-- `lib/features/payment/`
+عند الحاجة لتعديل `alhai_core` أو `alhai_design_system`:
 
-### Device B (Operations Slice) - لا يعدل ملفات A
-- `lib/features/products/`
-- `lib/features/inventory/`
-- `lib/features/suppliers/`
-- `lib/features/reports/`
+### 1. إعلان النية
+```
+📢 "أحتاج إضافة X إلى alhai_core - هل عندك تعديلات قيد العمل؟"
+```
 
-### Shared (Both can read, coordinate before edit)
-- `lib/core/` (app-level configs)
-- `lib/shared/` (shared widgets)
+### 2. انتظار التأكيد
+```
+✅ "واضح، تفضل"
+```
+
+### 3. العمل على فرع shared
+```bash
+git checkout -b shared/core-add-feature
+# ... work ...
+git push origin shared/core-add-feature
+```
+
+### 4. إبلاغ الطرف الآخر بعد الدمج
+```
+📢 "تم دمج التحديث - يرجى عمل git pull قبل المتابعة"
+```
 
 ---
 
-## Conflict Prevention
+## Conflict Prevention Checklist
 
-1. **Before editing shared file**: Announce in chat
-2. **Daily sync**: 5-minute call to sync progress
-3. **End of day**: Push all changes
-
-> 📝 **تعريف "التنسيق"**: رسالة في قناة الفريق + انتظار رد OK قبل البدء
-
----
-
-## PR Path Validation (قواعد منع التعارض)
-
-> **لا PR يُدمج على develop إذا عدّل مسارات ليست ضمن slice**
-
-### Device A Allowed Paths
-```
-lib/features/auth/**
-lib/features/store_select/**
-lib/features/sales/**
-lib/features/cart/**
-lib/features/payment/**
-lib/features/splash/**
-lib/features/home/**     ← يُنشئ، وB يقرأ فقط
-```
-
-### Device B Allowed Paths
-```
-lib/features/products/**
-lib/features/inventory/**
-lib/features/suppliers/**
-lib/features/reports/**
-lib/features/settings/**
-```
-
-### Shared Paths (يتطلب تنسيق)
-```
-lib/core/**
-lib/shared/**
-pubspec.yaml
-analysis_options.yaml
-```
-
-### PR Checklist (مراجعة يدوية حتى نضيف CI)
-- [ ] All modified files are within my slice
-- [ ] If editing shared paths, I coordinated with the other device
-- [ ] `flutter analyze` passes
-- [ ] Related tests pass
+Before each commit:
+- [ ] Am I only editing files in my app folder?
+- [ ] If editing shared libraries, did I coordinate?
+- [ ] Does my code compile?
+- [ ] Are my tests passing?
 
 ---
 
@@ -184,11 +219,11 @@ analysis_options.yaml
 
 | Decision | Owner |
 |----------|-------|
-| API Contract changes | Requires both A+B agreement |
-| alhai_core changes | Requires both A+B agreement |
-| Design System changes | Requires both A+B agreement |
-| Feature implementation | Slice owner decides |
-| UI details | Slice owner decides |
+| POS App features & UI | Device A |
+| Customer App features & UI | Device B |
+| alhai_core changes | Requires A+B agreement |
+| alhai_design_system changes | Requires A+B agreement |
+| API Contract changes | Requires A+B agreement |
 
 ---
 
