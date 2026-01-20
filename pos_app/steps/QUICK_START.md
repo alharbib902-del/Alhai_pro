@@ -1,71 +1,94 @@
-# ✅ POS App - البدء السريع
+# 🚀 POS App - Quick Start Guide
 
-**التاريخ**: 2026-01-15
-
----
-
-## 🎯 الخطة مكتملة!
-
-### ما تم إنجازه:
-
-#### 1. **IMPLEMENTATION_PLAN.md** ✅
-خطة شاملة تغطي:
-- ✅ Sprint 1: Foundation + Sync Skeleton (10 أيام)
-- ✅ Sprint 2: POS Complete + API (14 يوم)
-- ✅ 7 Modules مفصلة
-- ✅ Acceptance Criteria لكل module
-- ✅ المخاطر والتبعيات
-- ✅ Definition of Done
-- ✅ أول 10 تذاكر جاهزة
-
-#### 2. **DEPENDENCIES.md** ✅
-- ✅ pubspec.yaml كامل
-- ✅ تعليمات التثبيت
-- ✅ Environment setup
+**Version:** 1.0.0  
+**Date:** 2026-01-20  
+**Source:** Synced with POS_BACKLOG.md v1.3.1
 
 ---
 
-## 📋 الملفات المُنشأة:
+## 📋 Source of Truth
 
-1. [`pos_app/steps/IMPLEMENTATION_PLAN.md`](file:///C:/Users/basem/OneDrive/Desktop/Alhai/pos_app/steps/IMPLEMENTATION_PLAN.md)
-2. [`pos_app/steps/DEPENDENCIES.md`](file:///C:/Users/basem/OneDrive/Desktop/Alhai/pos_app/steps/DEPENDENCIES.md)
+| Document | Purpose |
+|----------|---------|
+| [`POS_BACKLOG.md`](../POS_BACKLOG.md) | User Stories + Acceptance Criteria |
+| [`POS_SITEMAP.md`](../POS_SITEMAP.md) | Screen Map + Navigation |
+| [`POS_API_CONTRACT.md`](../POS_API_CONTRACT.md) | API Endpoints |
+| [`README.md`](../README.md) | Project Overview |
 
 ---
 
-## 🚀 البدء الآن:
+## 🎯 Sprint Overview
 
-### الخطوة 1: Setup Project
+| Sprint | Stories | Points | Focus |
+|--------|---------|--------|-------|
+| **A** | 18 | 92 | Authentication, Sales, Payment |
+| **B** | 16 | 85 | Offline, Sync, Refunds |
+| **Total** | 34 | 177 | - |
+
+---
+
+## 🛠️ Development Steps
+
+### 1. Setup
 ```bash
-cd C:\Users\basem\OneDrive\Desktop\Alhai\pos_app
-flutter create . --platforms=windows,macos,linux
-```
-
-### الخطوة 2: Install Dependencies
-```bash
+cd pos_app
 flutter pub get
+flutter pub run build_runner build
 ```
 
-### الخطوة 3: بدء Ticket #1
-انظر: [`IMPLEMENTATION_PLAN.md - Ticket #1`](file:///C:/Users/basem/OneDrive/Desktop/Alhai/pos_app/steps/IMPLEMENTATION_PLAN.md#ticket-1-project-setup)
+### 2. Run Dev Server
+```bash
+flutter run -d windows  # or macos, chrome
+```
+
+### 3. Run Tests
+```bash
+flutter analyze
+flutter test
+```
 
 ---
 
-## 📊 الإحصائيات:
+## 📱 Key Files
 
-- **المدة**: 24 يوم (Sprint 1-2)
-- **Modules**: 7 modules
-- **Screens**: 15+ شاشة (Phase 1-2)
-- **التوافق**: 100% مع alhai_core + alhai_design_system
+```
+pos_app/
+├── lib/
+│   ├── main.dart
+│   ├── app/
+│   ├── features/
+│   │   ├── auth/       ← US-1.1 to US-1.3
+│   │   ├── sales/      ← US-2.1 to US-2.8
+│   │   ├── payment/    ← US-3.1 to US-3.5
+│   │   ├── shift/      ← US-6.1 to US-6.3
+│   │   ├── offline/    ← US-4.1 to US-4.7
+│   │   ├── refunds/    ← US-5.1 to US-5.3
+│   │   └── settings/   ← US-7.1 to US-7.5
+│   └── core/
+└── test/
+```
 
 ---
 
-## 🎓 المراجع:
+## 🔑 Key Decisions
 
-- **POS_APP_SPEC.md**: المواصفات الكاملة
-- **DEVELOPER_STANDARDS.md**: المعايير المعتمدة
-- **alhai_core**: Models + Repositories
-- **alhai_design_system**: UI Components
+| Decision | Details |
+|----------|---------|
+| **Offline-First** | SQLite + Sync Queue |
+| **PIN Validation** | TOTP for offline |
+| **Payment (Sprint A)** | Cash only |
+| **Payment (Sprint B)** | Cash + Card (semi-integrated) |
+| **WhatsApp** | ZATCA-compliant receipts |
 
 ---
 
-**✅ جاهز للتطوير!** 🚀
+## 📚 Next Steps
+
+1. Read [`POS_BACKLOG.md`](../POS_BACKLOG.md) Pre-Sprint Checklist
+2. Review Sprint A User Stories
+3. Setup development environment
+4. Start with US-1.1 (Splash Screen)
+
+---
+
+**Last Updated:** 2026-01-20

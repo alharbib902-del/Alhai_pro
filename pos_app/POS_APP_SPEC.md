@@ -1,18 +1,24 @@
-# 🛒 POS App - Implementation Specification v2.0
+# 🛒 POS App - Implementation Specification v2.1.0
 ## مواصفات التنفيذ التفصيلية (معتمدة)
 
-> **Version:** 2.0.0 | **Date:** 2026-01-13 | **Status:** ✅ Approved with Critical Updates
+> **Version:** 2.1.0 | **Date:** 2026-01-20 | **Status:** ✅ Synced with Backlog v1.3.1
+
+> [!IMPORTANT]
+> **Source of Truth:** User Stories والـ Acceptance Criteria الرسمية موجودة في:
+> - [`POS_BACKLOG.md`](./POS_BACKLOG.md) - Sprint A+B Stories (34 stories, 177 points)
+> - [`POS_SITEMAP.md`](./POS_SITEMAP.md) - خريطة الشاشات (v1.5.0)
+> - [`POS_API_CONTRACT.md`](./POS_API_CONTRACT.md) - عقد الـ API (v2.1.0)
+>
+> هذا الملف يحتوي على Database Schema والقرارات المعتمدة.
 
 ---
 
 # 📋 جدول المحتويات
 
 1. [القرارات المعتمدة](#القرارات-المعتمدة)
-2. [قائمة الشاشات](#قائمة-الشاشات)
-3. [User Stories & Acceptance Criteria](#user-stories)
-4. [Sprint Planning](#sprint-planning)
-5. [Database Schema](#database-schema)
-6. [Roles & Permissions](#roles-permissions)
+2. [حالة التطوير](#حالة-التطوير)
+3. [Database Schema](#database-schema)
+4. [Roles & Permissions](#roles-permissions)
 
 ---
 

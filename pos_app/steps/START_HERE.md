@@ -1,91 +1,85 @@
-# ✅ POS App - الخطة جاهزة!
+# 📋 POS App - Start Here
 
-**التاريخ**: 2026-01-15
-
----
-
-## 📁 الملفات المُنشأة
-
-### 1. IMPLEMENTATION_PLAN.md ✅
-الخطة الاستراتيجية الكاملة
-
-### 2. DAILY_CODING_PLAN.md ✅
-**خطة برمجية يومية مفصلة**:
-- Day 1-5 بالتفصيل الممل
-- الكود بالضبط
-- أسماء الملفات
-- متى build_runner
-- متى flutter test
-
-### 3. DAILY_CHECKLIST.md ✅
-**TODO Lists + Checklists**:
-- TODO أول أسبوع (يومي)
-- Checklist صباح/مساء/نهاية يوم
-- Definition of Done عملي
-- متى تعمل build_runner
-- متى تعمل tests
-- Sprint 2 ملخص
-- أوامر سريعة
-
-### 4. DEPENDENCIES.md ✅
-pubspec.yaml + setup
-
-### 5. QUICK_START.md ✅
-ملخص سريع
+**Version:** 1.1.0  
+**Date:** 2026-01-20
 
 ---
 
-## 🎯 كيف تبدأ البرمجة الآن:
+## 🎯 Welcome to POS App Development
 
-### 1. افتح DAILY_CODING_PLAN.md
+هذا الدليل سيساعدك على البدء بتطوير تطبيق POS.
+
+---
+
+## 📚 Documentation Structure
+
 ```
-Day 1 → Task 1.1.1
+Alhai/
+├── docs/
+│   ├── WORKFLOW.md             ← ⭐ اتفاقية العمل (A/B Split)
+│   ├── POS_SLICES.md           ← ⭐ تقسيم الشاشات (A/B)
+│   ├── POS_FLOW_SPEC.md        ← تدفقات API
+│   └── DATABASE_SCHEMA.md      ← قاعدة البيانات
+└── pos_app/
+    ├── README.md               ← نظرة عامة
+    ├── POS_BACKLOG.md          ← ⭐ User Stories (SOURCE OF TRUTH)
+    ├── POS_SITEMAP.md          ← خريطة الشاشات (92 شاشة)
+    ├── POS_API_CONTRACT.md     ← عقد الـ API
+    └── steps/
+        ├── START_HERE.md       ← أنت هنا
+        ├── QUICK_START.md      ← بداية سريعة
+        └── DEPENDENCIES.md     ← الحزم المطلوبة
 ```
 
-### 2. افتح محرر الكود
+---
+
+## 🚀 Getting Started
+
+### Step 1: Read the A/B Split
+```
+📖 docs/WORKFLOW.md → تقسيم العمل بين الأجهزة
+📖 docs/POS_SLICES.md → تقسيم الشاشات (Sales vs Operations)
+```
+
+### Step 2: Read the Backlog
+```
+📖 POS_BACKLOG.md
+├── Pre-Sprint Checklist (APIs + Third-Party)
+├── Sprint A (18 stories, 92 points)
+└── Sprint B (16 stories, 85 points)
+```
+
+### Step 3: Setup Environment
 ```bash
-cd C:\Users\basem\OneDrive\Desktop\Alhai\pos_app
-code .
-```
-
-### 3. ابدأ Task 1.1.2
-```bash
-mkdir -p lib/di lib/core/router lib/core/constants
-```
-
-### 4. اتبع الخطوات واحدة واحدة
-كل خطوة فيها:
-- ✅ اسم الملف بالضبط
-- ✅ الكود الكامل
-- ✅ متى تعمل أمر
-
----
-
-## 📊 الملخص السريع:
-
-| Item | Status |
-|------|--------|
-| **Sprint 1** | 10 أيام محددة |
-| **Modules** | 5 modules |
-| **Files to create** | ~30 file |
-| **Tests** | بعد كل DAO |
-| **build_runner** | 3 مرات |
-
----
-
-## 🚀 البداية فوراً:
-
-```bash
-# 1. Open editor
+flutter doctor
 cd pos_app
-code .
-
-# 2. Start Day 1, Task 1.1.2
-mkdir -p lib/di lib/core/router
-
-# 3. Follow DAILY_CODING_PLAN.md step by step
+flutter pub get
 ```
+
+### Step 4: Start Development
+- **Device A**: Sales Slice (Login, Cart, Payment)
+- **Device B**: Operations Slice (Products, Inventory, Reports)
 
 ---
 
-**لا تفكر. اتبع الخطة.** ✅
+## 📊 Sprint Summary
+
+| Sprint | Focus | Points |
+|--------|-------|--------|
+| **A** | Auth, Sales, Payment, Shift | 92 |
+| **B** | Offline, Sync, Refunds | 85 |
+| **Total** | **34 stories** | **177** |
+
+---
+
+## 🔗 Quick Links
+
+- [WORKFLOW.md](../../docs/WORKFLOW.md) - اتفاقية العمل
+- [POS_SLICES.md](../../docs/POS_SLICES.md) - تقسيم الشاشات
+- [POS_BACKLOG.md](../POS_BACKLOG.md) - User Stories
+- [POS_API_CONTRACT.md](../POS_API_CONTRACT.md) - API Contract
+
+---
+
+**Happy Coding! 🎉**
+

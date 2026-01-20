@@ -1,7 +1,7 @@
-# 🔌 POS App - API Contract v2.0
+# 🔌 POS App - API Contract v2.1.0
 ## عقد الـ API بين التطبيق والسيرفر (معتمد)
 
-> **Version:** 2.0.0 | **Date:** 2026-01-13 | **Base URL:** `https://api.alhai.app/v1`
+> **Version:** 2.1.0 | **Date:** 2026-01-20 | **Base URL:** `https://api.alhai.app/v1`
 
 ---
 
@@ -158,6 +158,201 @@ X-Idempotency-Key: <uuid>
 ```
 
 **Response 204:** No Content
+
+---
+
+## POST `/auth/validate-pin` ★ v2.1.0
+التحقق من PIN المشرف (TOTP للـ Offline)
+
+**Request:**
+```json
+{
+  "userId": "uuid",
+  "pin": "1234",
+  "action": "REFUND|DISCOUNT|VOID|CASH_OUT"
+}
+```
+
+**Response 200:**
+```json
+{
+  "valid": true,
+  "userId": "uuid",
+  "role": "SUPERVISOR",
+  "permissions": ["REFUND", "DISCOUNT_20"],
+  "totpSecret": "BASE32_SECRET",
+  "emergencyCode": "123456",
+  "emergencyCodeExpiresAt": "2026-01-21T00:00:00Z"
+}
+```
+
+**Errors:**
+- `401 INVALID_PIN` - PIN غير صحيح
+- `429 TOO_MANY_ATTEMPTS` - محاولات كثيرة
+
+---
+
+## POST `/auth/send-otp` ★ v2.1.0
+إرسال رمز التحقق
+
+**Request:**
+```json
+{
+  "phone": "+966500000000"
+}
+```
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "expiresIn": 60,
+  "message": "تم إرسال رمز التحقق"
+}
+```
+
+---
+
+# 👥 1.5 Customers ★ v2.1.0
+
+## GET `/customers/search`
+بحث سريع عن العملاء
+
+**Query Params:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| q | string | Yes | رقم الجوال أو الاسم (min 4 chars) |
+| limit | int | No | Default: 10 |
+
+**Response 200:**
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "name": "أحمد محمد",
+      "phone": "+966500001234",
+      "phoneMasked": "05XX XXX 1234",
+      "totalPurchases": 15,
+      "totalSpent": 1250.00,
+      "loyaltyPoints": 125,
+      "hasDebt": true,
+      "lastVisit": "2026-01-15T10:00:00Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+---
+
+## POST `/customers`
+إنشاء عميل جديد
+
+**Request:**
+```json
+{
+  "name": "أحمد محمد",
+  "phone": "+966500001234",
+  "email": "ahmed@example.com",
+  "birthday": "1990-01-15",
+  "consentGiven": true
+}
+```
+
+---
+
+# 📦 1.6 Stock Check ★ v2.1.0
+
+## GET `/stock/check`
+فحص المخزون الحقيقي
+
+**Query Params:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| productIds | string | Yes | قائمة IDs مفصولة بفاصلة |
+
+**Response 200:**
+```json
+{
+  "items": [
+    {
+      "productId": "uuid",
+      "availableQty": 15,
+      "reservedQty": 3,
+      "totalQty": 18,
+      "status": "IN_STOCK|LOW_STOCK|OUT_OF_STOCK",
+      "threshold": 5
+    }
+  ],
+  "serverTime": "2026-01-20T10:00:00Z"
+}
+```
+
+---
+
+# 📱 1.7 WhatsApp Receipts ★ v2.1.0
+
+## POST `/receipts/whatsapp`
+إرسال إيصال عبر WhatsApp
+
+**Request:**
+```json
+{
+  "orderId": "uuid",
+  "phone": "+966500001234",
+  "customerName": "أحمد"
+}
+```
+
+**Response 200:**
+```json
+{
+  "messageId": "wamid.xxx",
+  "status": "QUEUED|SENT|DELIVERED|FAILED",
+  "receiptUrl": "https://receipts.alhai.sa/abc123"
+}
+```
+
+**Errors:**
+- `400 INVALID_PHONE` - رقم غير صحيح
+- `429 RATE_LIMITED` - تجاوز الحد اليومي
+
+---
+
+# 🔄 1.8 Sync Conflicts ★ v2.1.0
+
+## GET `/sync/conflicts`
+قائمة التعارضات المعلقة
+
+**Response 200:**
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "type": "STOCK|PRICE|ORDER",
+      "entityId": "uuid",
+      "localValue": {...},
+      "serverValue": {...},
+      "detectedAt": "2026-01-20T10:00:00Z",
+      "status": "PENDING|RESOLVED"
+    }
+  ],
+  "total": 3
+}
+```
+
+## POST `/sync/conflicts/:id/resolve`
+حل التعارض
+
+**Request:**
+```json
+{
+  "resolution": "ACCEPT_LOCAL|ACCEPT_SERVER|CREATE_ADJUSTMENT",
+  "notes": "ملاحظات اختيارية"
+}
+```
 
 ---
 

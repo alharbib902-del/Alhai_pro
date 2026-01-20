@@ -19,8 +19,8 @@ export 'exceptions/exceptions.dart';
 // DI
 export 'di/di.dart';
 
-// Services
-export 'services/image_service.dart';
+// Services (v2.5.0)
+export 'services/services.dart';
 
 // Networking (public types only)
 export 'networking/networking.dart';

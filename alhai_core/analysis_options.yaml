@@ -1,6 +1,10 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    # Ignore deprecation warnings in generated files
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
   errors:
     # Suppress JsonKey warnings on freezed constructor parameters
     invalid_annotation_target: ignore
@@ -8,6 +12,8 @@ analyzer:
     sort_constructors_first: ignore
     # Suppress dangling doc comments
     dangling_library_doc_comments: ignore
+    # Suppress deprecated member use in same package (for imageUrl migration)
+    deprecated_member_use_from_same_package: info
 
 linter:
   rules:

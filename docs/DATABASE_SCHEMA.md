@@ -1,6 +1,6 @@
     # Alhai Platform - Database Schema
 
-    **Version:** 2.3.3 (Final)  
+    **Version:** 2.4.0  
     **Date:** 2026-01-20
 
     ---
@@ -11,6 +11,7 @@
     > - RPC لتعديل role (بدلاً من REVOKE)
     > - WITH CHECK لكل سياسات UPDATE
     > - order_items immutable بعد confirm
+    > - جداول إضافية: notifications, promotions, order_payments, store_settings, activity_logs, shifts
 
     > [!WARNING]
     > **Trigger على auth.users** يحتاج تشغيله من SQL Editor بصلاحيات **مالك المشروع**
@@ -21,8 +22,8 @@
 
     | المكون | القيمة |
     |--------|-------|
-    | الجداول | 18 |
-    | ENUMs | 8 |
+    | الجداول | 24 |
+    | ENUMs | 10 |
     | Helper Functions | 4 |
     | RPC Functions | 1 |
     | Triggers | 7 |
@@ -43,6 +44,10 @@
     CREATE TYPE adjustment_type AS ENUM ('received', 'sold', 'adjustment', 'damaged', 'returned');
     CREATE TYPE debt_type AS ENUM ('customer_debt', 'supplier_debt');
     CREATE TYPE po_status AS ENUM ('draft', 'ordered', 'partial', 'received', 'cancelled');
+
+    -- جديد v2.4.0 ✅
+    CREATE TYPE promo_type AS ENUM ('percentage', 'fixed_amount', 'buy_x_get_y');
+    CREATE TYPE shift_status AS ENUM ('open', 'closed');
     ```
 
     ---
@@ -275,12 +280,408 @@
     -- ⚠️ هذا التريجر يحتاج تشغيله بصلاحيات مالك المشروع (Project Owner)
     ```
 
-    ### stores, store_members, products, debts, purchase_orders
+    ### stores
 
     ```sql
-    -- جميع الجداول تُنشأ كما في النسخ السابقة
-    -- ثم:
+    CREATE TABLE public.stores (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      owner_id UUID NOT NULL REFERENCES public.users(id),
+      name VARCHAR(255) NOT NULL,
+      name_ar VARCHAR(255),
+      description TEXT,
+      logo_url TEXT,
+      cover_url TEXT,
+      phone VARCHAR(20),
+      email VARCHAR(255),
+      address TEXT,
+      city VARCHAR(100),
+      latitude DECIMAL(10,8),
+      longitude DECIMAL(11,8),
+      is_active BOOLEAN DEFAULT true,
+      is_verified BOOLEAN DEFAULT false,
+      rating DECIMAL(2,1) DEFAULT 0,
+      rating_count INT DEFAULT 0,
+      opening_time TIME,
+      closing_time TIME,
+      delivery_fee DECIMAL(10,2) DEFAULT 0,
+      min_order_amount DECIMAL(10,2) DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
 
+    CREATE INDEX ON public.stores (owner_id);
+    CREATE INDEX ON public.stores (is_active, city);
+    ```
+
+    ---
+
+    ### store_members
+
+    ```sql
+    CREATE TABLE public.store_members (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+      role_in_store store_role NOT NULL DEFAULT 'cashier',
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ,
+      UNIQUE(store_id, user_id)
+    );
+
+    CREATE INDEX ON public.store_members (user_id, is_active);
+    ```
+
+    ---
+
+    ### categories
+
+    ```sql
+    CREATE TABLE public.categories (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      name VARCHAR(255) NOT NULL,
+      name_ar VARCHAR(255),
+      image_url TEXT,
+      sort_order INT DEFAULT 0,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.categories (store_id, is_active, sort_order);
+    ```
+
+    ---
+
+    ### products
+
+    ```sql
+    CREATE TABLE public.products (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
+      barcode VARCHAR(100),
+      name VARCHAR(255) NOT NULL,
+      name_ar VARCHAR(255),
+      description TEXT,
+      image_url TEXT,
+      price DECIMAL(10,2) NOT NULL,
+      cost_price DECIMAL(10,2),
+      compare_at_price DECIMAL(10,2),
+      stock_qty INT DEFAULT 0,
+      min_stock_qty INT DEFAULT 0,
+      track_inventory BOOLEAN DEFAULT true,
+      is_active BOOLEAN DEFAULT true,
+      is_featured BOOLEAN DEFAULT false,
+      unit VARCHAR(50) DEFAULT 'piece',
+      weight DECIMAL(10,3),
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.products (store_id, is_active);
+    CREATE INDEX ON public.products (store_id, category_id);
+    CREATE INDEX ON public.products (store_id, barcode);
+    ```
+
+    ---
+
+    ### addresses
+
+    ```sql
+    CREATE TABLE public.addresses (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+      label VARCHAR(100),
+      full_address TEXT NOT NULL,
+      city VARCHAR(100),
+      district VARCHAR(100),
+      street VARCHAR(255),
+      building VARCHAR(100),
+      floor VARCHAR(50),
+      apartment VARCHAR(50),
+      latitude DECIMAL(10,8),
+      longitude DECIMAL(11,8),
+      is_default BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.addresses (user_id, is_default);
+    ```
+
+    ---
+
+    ### orders
+
+    ```sql
+    CREATE TABLE public.orders (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id),
+      customer_id UUID REFERENCES public.users(id),
+      address_id UUID REFERENCES public.addresses(id),
+      order_number VARCHAR(50),
+      status order_status NOT NULL DEFAULT 'created',
+      subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+      tax_amount DECIMAL(10,2) DEFAULT 0,
+      discount_amount DECIMAL(10,2) DEFAULT 0,
+      delivery_fee DECIMAL(10,2) DEFAULT 0,
+      total DECIMAL(10,2) NOT NULL DEFAULT 0,
+      payment_method payment_method,
+      payment_status VARCHAR(20) DEFAULT 'pending',
+      notes TEXT,
+      customer_name VARCHAR(255),
+      customer_phone VARCHAR(20),
+      scheduled_at TIMESTAMPTZ,
+      confirmed_at TIMESTAMPTZ,
+      completed_at TIMESTAMPTZ,
+      cancelled_at TIMESTAMPTZ,
+      cancellation_reason TEXT,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.orders (store_id, status, created_at DESC);
+    CREATE INDEX ON public.orders (customer_id, created_at DESC);
+    CREATE INDEX ON public.orders (store_id, order_number);
+    ```
+
+    ---
+
+    ### order_items
+
+    ```sql
+    CREATE TABLE public.order_items (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+      product_id UUID NOT NULL REFERENCES public.products(id),
+      product_name VARCHAR(255) NOT NULL,
+      qty INT NOT NULL DEFAULT 1,
+      unit_price DECIMAL(10,2) NOT NULL,
+      total_price DECIMAL(10,2) NOT NULL,
+      notes TEXT
+    );
+
+    CREATE INDEX ON public.order_items (order_id);
+    CREATE INDEX ON public.order_items (product_id);
+    ```
+
+    ---
+
+    ### suppliers
+
+    ```sql
+    CREATE TABLE public.suppliers (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      name VARCHAR(255) NOT NULL,
+      contact_name VARCHAR(255),
+      phone VARCHAR(20),
+      email VARCHAR(255),
+      address TEXT,
+      notes TEXT,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.suppliers (store_id, is_active);
+    ```
+
+    ---
+
+    ### debts
+
+    ```sql
+    CREATE TABLE public.debts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      type debt_type NOT NULL,
+      customer_id UUID REFERENCES public.users(id),
+      supplier_id UUID REFERENCES public.suppliers(id),
+      customer_name VARCHAR(255),
+      customer_phone VARCHAR(20),
+      order_id UUID REFERENCES public.orders(id),
+      original_amount DECIMAL(10,2) NOT NULL,
+      remaining_amount DECIMAL(10,2) NOT NULL,
+      due_date DATE,
+      notes TEXT,
+      is_settled BOOLEAN DEFAULT false,
+      settled_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.debts (store_id, type, is_settled);
+    CREATE INDEX ON public.debts (customer_id);
+    CREATE INDEX ON public.debts (supplier_id);
+    ```
+
+    ---
+
+    ### debt_payments
+
+    ```sql
+    CREATE TABLE public.debt_payments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      debt_id UUID NOT NULL REFERENCES public.debts(id) ON DELETE CASCADE,
+      amount DECIMAL(10,2) NOT NULL,
+      payment_method payment_method,
+      notes TEXT,
+      created_by UUID REFERENCES public.users(id),
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.debt_payments (debt_id, created_at DESC);
+    ```
+
+    ---
+
+    ### deliveries
+
+    ```sql
+    CREATE TABLE public.deliveries (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+      driver_id UUID REFERENCES public.users(id),
+      status delivery_status NOT NULL DEFAULT 'assigned',
+      pickup_address TEXT,
+      delivery_address TEXT,
+      pickup_lat DECIMAL(10,8),
+      pickup_lng DECIMAL(11,8),
+      delivery_lat DECIMAL(10,8),
+      delivery_lng DECIMAL(11,8),
+      distance_km DECIMAL(10,2),
+      estimated_time_minutes INT,
+      picked_up_at TIMESTAMPTZ,
+      delivered_at TIMESTAMPTZ,
+      notes TEXT,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.deliveries (driver_id, status);
+    CREATE INDEX ON public.deliveries (order_id);
+    ```
+
+    ---
+
+    ### customer_accounts
+
+    ```sql
+    CREATE TABLE public.customer_accounts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      customer_id UUID NOT NULL REFERENCES public.users(id),
+      total_orders INT DEFAULT 0,
+      total_spent DECIMAL(12,2) DEFAULT 0,
+      last_order_at TIMESTAMPTZ,
+      notes TEXT,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ,
+      UNIQUE(store_id, customer_id)
+    );
+
+    CREATE INDEX ON public.customer_accounts (customer_id);
+    ```
+
+    ---
+
+    ### loyalty_points
+
+    ```sql
+    CREATE TABLE public.loyalty_points (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      customer_id UUID NOT NULL REFERENCES public.users(id),
+      points INT NOT NULL DEFAULT 0,
+      points_earned INT NOT NULL DEFAULT 0,
+      points_redeemed INT NOT NULL DEFAULT 0,
+      last_earned_at TIMESTAMPTZ,
+      last_redeemed_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ,
+      UNIQUE(store_id, customer_id)
+    );
+
+    CREATE INDEX ON public.loyalty_points (customer_id);
+    ```
+
+    ---
+
+    ### stock_adjustments
+
+    ```sql
+    CREATE TABLE public.stock_adjustments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      product_id UUID NOT NULL REFERENCES public.products(id),
+      type adjustment_type NOT NULL,
+      quantity INT NOT NULL,
+      previous_qty INT NOT NULL,
+      new_qty INT NOT NULL,
+      reference_id UUID,
+      reference_type VARCHAR(50),
+      reason TEXT,
+      created_by UUID REFERENCES public.users(id),
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.stock_adjustments (store_id, created_at DESC);
+    CREATE INDEX ON public.stock_adjustments (product_id, created_at DESC);
+    ```
+
+    ---
+
+    ### purchase_orders
+
+    ```sql
+    CREATE TABLE public.purchase_orders (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      supplier_id UUID REFERENCES public.suppliers(id),
+      po_number VARCHAR(50),
+      status po_status NOT NULL DEFAULT 'draft',
+      subtotal DECIMAL(12,2) DEFAULT 0,
+      tax_amount DECIMAL(10,2) DEFAULT 0,
+      total DECIMAL(12,2) DEFAULT 0,
+      notes TEXT,
+      ordered_at TIMESTAMPTZ,
+      received_at TIMESTAMPTZ,
+      created_by UUID REFERENCES public.users(id),
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.purchase_orders (store_id, status, created_at DESC);
+    CREATE INDEX ON public.purchase_orders (supplier_id);
+    ```
+
+    ---
+
+    ### purchase_order_items
+
+    ```sql
+    CREATE TABLE public.purchase_order_items (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      purchase_order_id UUID NOT NULL REFERENCES public.purchase_orders(id) ON DELETE CASCADE,
+      product_id UUID NOT NULL REFERENCES public.products(id),
+      product_name VARCHAR(255) NOT NULL,
+      qty_ordered INT NOT NULL,
+      qty_received INT DEFAULT 0,
+      unit_cost DECIMAL(10,2) NOT NULL,
+      total_cost DECIMAL(10,2) NOT NULL
+    );
+
+    CREATE INDEX ON public.purchase_order_items (purchase_order_id);
+    CREATE INDEX ON public.purchase_order_items (product_id);
+    ```
+
+    ---
+
+    ### REVOKE + Constraints
+
+    ```sql
     REVOKE UPDATE (store_id) ON public.store_members FROM authenticated, anon;
     REVOKE UPDATE (store_id) ON public.products FROM authenticated, anon;
     REVOKE UPDATE (store_id) ON public.debts FROM authenticated, anon;
@@ -422,6 +823,14 @@
     ALTER TABLE public.stock_adjustments ENABLE ROW LEVEL SECURITY;
     ALTER TABLE public.purchase_orders ENABLE ROW LEVEL SECURITY;
     ALTER TABLE public.purchase_order_items ENABLE ROW LEVEL SECURITY;
+
+    -- الجداول الإضافية (v2.4.0) ✅
+    ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.promotions ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.order_payments ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.store_settings ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.shifts ENABLE ROW LEVEL SECURITY;
     ```
 
     ---
@@ -810,17 +1219,258 @@
 
     ---
 
+    ## 🆕 الجداول الإضافية (v2.4.0)
+
+    ### notifications
+
+    ```sql
+    CREATE TABLE public.notifications (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+      title VARCHAR(255) NOT NULL,
+      body TEXT,
+      type VARCHAR(50), -- 'order_update', 'promotion', 'system', 'low_stock', etc.
+      data JSONB,
+      is_read BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.notifications (user_id, is_read, created_at DESC);
+
+    ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+
+    CREATE POLICY "notifications_user_read" ON public.notifications FOR SELECT
+      USING (user_id = auth.uid());
+
+    CREATE POLICY "notifications_user_update" ON public.notifications FOR UPDATE
+      USING (user_id = auth.uid())
+      WITH CHECK (user_id = auth.uid());
+
+    CREATE POLICY "notifications_superadmin_all" ON public.notifications FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
+    ### promotions
+
+    ```sql
+    CREATE TABLE public.promotions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      name VARCHAR(255) NOT NULL,
+      code VARCHAR(50),
+      type promo_type NOT NULL,
+      value DECIMAL(10,2) NOT NULL,
+      min_order_amount DECIMAL(10,2),
+      max_discount DECIMAL(10,2),
+      usage_limit INT,
+      usage_count INT DEFAULT 0,
+      start_date TIMESTAMPTZ NOT NULL,
+      end_date TIMESTAMPTZ NOT NULL,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ
+    );
+
+    CREATE INDEX ON public.promotions (store_id, is_active);
+    CREATE UNIQUE INDEX ON public.promotions (store_id, code) WHERE code IS NOT NULL;
+
+    ALTER TABLE public.promotions ENABLE ROW LEVEL SECURITY;
+
+    CREATE POLICY "promotions_public_read_active" ON public.promotions FOR SELECT
+      USING (
+        is_active = true 
+        AND now() BETWEEN start_date AND end_date
+        AND EXISTS (SELECT 1 FROM public.stores WHERE id = store_id AND is_active = true)
+      );
+
+    CREATE POLICY "promotions_staff_all" ON public.promotions FOR ALL
+      USING (public.is_store_member(store_id))
+      WITH CHECK (public.is_store_member(store_id));
+
+    CREATE POLICY "promotions_superadmin_all" ON public.promotions FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
+    ### order_payments
+
+    ```sql
+    CREATE TABLE public.order_payments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+      method payment_method NOT NULL,
+      amount DECIMAL(10,2) NOT NULL,
+      reference_no VARCHAR(100),
+      status VARCHAR(20) DEFAULT 'completed',
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.order_payments (order_id);
+
+    ALTER TABLE public.order_payments ENABLE ROW LEVEL SECURITY;
+
+    -- سجلات ثابتة (منع UPDATE/DELETE للصرامة المحاسبية) ✅
+    REVOKE UPDATE ON public.order_payments FROM authenticated, anon;
+    REVOKE DELETE ON public.order_payments FROM authenticated, anon;
+
+    CREATE POLICY "order_payments_read_via_order" ON public.order_payments FOR SELECT
+      USING (EXISTS (
+        SELECT 1 FROM public.orders o WHERE o.id = order_id 
+        AND (o.customer_id = auth.uid() OR public.is_store_member(o.store_id))
+      ));
+
+    CREATE POLICY "order_payments_staff_insert" ON public.order_payments FOR INSERT
+      WITH CHECK (EXISTS (
+        SELECT 1 FROM public.orders o WHERE o.id = order_id AND public.is_store_member(o.store_id)
+      ));
+
+    CREATE POLICY "order_payments_superadmin_all" ON public.order_payments FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
+    ### store_settings
+
+    ```sql
+    CREATE TABLE public.store_settings (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID UNIQUE NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      receipt_header TEXT,
+      receipt_footer TEXT,
+      tax_rate DECIMAL(5,2) DEFAULT 15.00,
+      low_stock_threshold INT DEFAULT 10,
+      enable_loyalty BOOLEAN DEFAULT true,
+      loyalty_points_per_rial INT DEFAULT 1,
+      auto_print_receipt BOOLEAN DEFAULT true,
+      currency VARCHAR(10) DEFAULT 'SAR',
+      updated_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    ALTER TABLE public.store_settings ENABLE ROW LEVEL SECURITY;
+
+    CREATE POLICY "store_settings_staff_read" ON public.store_settings FOR SELECT
+      USING (public.is_store_member(store_id));
+
+    CREATE POLICY "store_settings_admin_update" ON public.store_settings FOR UPDATE
+      USING (public.is_store_admin(store_id))
+      WITH CHECK (public.is_store_admin(store_id));
+
+    CREATE POLICY "store_settings_admin_insert" ON public.store_settings FOR INSERT
+      WITH CHECK (public.is_store_admin(store_id));
+
+    CREATE POLICY "store_settings_superadmin_all" ON public.store_settings FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
+    ### activity_logs
+
+    ```sql
+    CREATE TABLE public.activity_logs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID REFERENCES public.stores(id) ON DELETE SET NULL,
+      user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+      action VARCHAR(100) NOT NULL,
+      entity_type VARCHAR(50),
+      entity_id UUID,
+      details JSONB,
+      ip_address INET,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+    CREATE INDEX ON public.activity_logs (store_id, created_at DESC);
+    CREATE INDEX ON public.activity_logs (user_id, created_at DESC);
+
+    ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
+
+    -- سجلات ثابتة (منع UPDATE/DELETE) ✅
+    REVOKE UPDATE ON public.activity_logs FROM authenticated, anon;
+    REVOKE DELETE ON public.activity_logs FROM authenticated, anon;
+
+    CREATE POLICY "activity_logs_staff_read" ON public.activity_logs FOR SELECT
+      USING (public.is_store_admin(store_id));
+
+    CREATE POLICY "activity_logs_staff_insert" ON public.activity_logs FOR INSERT
+      WITH CHECK (public.is_store_member(store_id));
+
+    CREATE POLICY "activity_logs_superadmin_all" ON public.activity_logs FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
+    ### shifts
+
+    ```sql
+    CREATE TABLE public.shifts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+      cashier_id UUID NOT NULL REFERENCES public.users(id),
+      opening_cash DECIMAL(10,2) NOT NULL,
+      closing_cash DECIMAL(10,2),
+      expected_cash DECIMAL(10,2),
+      cash_difference DECIMAL(10,2),
+      status shift_status DEFAULT 'open',
+      opened_at TIMESTAMPTZ DEFAULT now(),
+      closed_at TIMESTAMPTZ,
+      notes TEXT
+    );
+
+    CREATE INDEX ON public.shifts (store_id, status, opened_at DESC);
+    CREATE INDEX ON public.shifts (cashier_id, opened_at DESC);
+
+    -- ضمان وردية واحدة مفتوحة لكل كاشير ✅
+    CREATE UNIQUE INDEX ON public.shifts (cashier_id) WHERE status = 'open';
+
+    ALTER TABLE public.shifts ENABLE ROW LEVEL SECURITY;
+
+    CREATE POLICY "shifts_cashier_read_own" ON public.shifts FOR SELECT
+      USING (cashier_id = auth.uid());
+
+    CREATE POLICY "shifts_cashier_update_own_open" ON public.shifts FOR UPDATE
+      USING (cashier_id = auth.uid() AND status = 'open')
+      WITH CHECK (cashier_id = auth.uid());
+
+    CREATE POLICY "shifts_staff_read" ON public.shifts FOR SELECT
+      USING (public.is_store_member(store_id));
+
+    CREATE POLICY "shifts_staff_insert" ON public.shifts FOR INSERT
+      WITH CHECK (public.is_store_member(store_id) AND cashier_id = auth.uid());
+
+    CREATE POLICY "shifts_admin_all" ON public.shifts FOR ALL
+      USING (public.is_store_admin(store_id))
+      WITH CHECK (public.is_store_admin(store_id));
+
+    CREATE POLICY "shifts_superadmin_all" ON public.shifts FOR ALL
+      USING (public.is_super_admin())
+      WITH CHECK (public.is_super_admin());
+    ```
+
+    ---
+
     ## ✅ Checklist النهائي
 
-    - [ ] إنشاء ENUMs (8)
+    - [ ] إنشاء ENUMs (10)
     - [ ] إنشاء Helper Functions (4)
     - [ ] إنشاء RPC Functions (1)
-    - [ ] إنشاء الجداول (18) — يشمل role_audit_log
-    - [ ] تطبيق REVOKE (store_id × 4 + stock_adjustments)
+    - [ ] إنشاء الجداول الأساسية (18) — يشمل role_audit_log
+    - [ ] إنشاء الجداول الإضافية (6) — notifications, promotions, order_payments, store_settings, activity_logs, shifts
+    - [ ] تطبيق REVOKE (store_id × 4 + stock_adjustments + order_payments + activity_logs)
     - [ ] إنشاء Triggers (7) — يشمل prevent_direct_role_update
-    - [ ] تفعيل RLS (18 جدول)
+    - [ ] تفعيل RLS (24 جدول)
     - [ ] إنشاء السياسات
 
     ---
 
-    *Final Production Ready - v2.3.3*
+    *Production Ready - v2.4.0*
+

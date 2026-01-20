@@ -60,10 +60,10 @@ class ImageService {
         interpolation: img.Interpolation.linear,
       );
 
-      // 4. Convert to WebP
-      final thumbBytes = img.encodeWebP(thumb, quality: 75);
-      final mediumBytes = img.encodeWebP(medium, quality: 80);
-      final largeBytes = img.encodeWebP(large, quality: 85);
+      // 4. Convert to PNG (WebP not available in this version of image package)
+      final thumbBytes = img.encodePng(thumb);
+      final mediumBytes = img.encodePng(medium);
+      final largeBytes = img.encodePng(large);
 
       // 5. Upload to R2 via Edge Function
       final response = await _supabase.functions.invoke(

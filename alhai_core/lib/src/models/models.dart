@@ -38,3 +38,21 @@ export 'update_product_params.dart';
 
 // Pagination (v3.2)
 export 'paginated.dart';
+
+// v2.4.0 - Additional Tables
+export 'notification.dart';
+export 'promotion.dart';
+export 'order_payment.dart';
+export 'store_settings.dart';
+export 'activity_log.dart';
+export 'shift.dart';
+
+// v2.5.0 - POS_BACKLOG Compatibility
+export 'cash_movement.dart';
+export 'refund.dart';
+
+// v2.6.0 - Distributor Portal Compatibility
+export 'distributor.dart';
+export 'wholesale_order.dart';
+export 'pricing_tier.dart';
+

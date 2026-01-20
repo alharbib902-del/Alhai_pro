@@ -4,6 +4,28 @@ import 'package:flutter/material.dart';
 /// Material 3 compliant easing curves
 abstract final class AlhaiMotion {
   // ============================================
+  // Duration Constants (Material 3)
+  // ============================================
+
+  /// Extra short duration (50ms) - For micro-interactions
+  static const Duration durationExtraShort = Duration(milliseconds: 50);
+
+  /// Short duration (100ms) - For simple state changes
+  static const Duration durationShort = Duration(milliseconds: 100);
+
+  /// Fast duration (150ms) - For fade in/out
+  static const Duration durationFast = Duration(milliseconds: 150);
+
+  /// Medium duration (250ms) - For most transitions
+  static const Duration durationMedium = Duration(milliseconds: 250);
+
+  /// Long duration (400ms) - For complex animations
+  static const Duration durationLong = Duration(milliseconds: 400);
+
+  /// Extra long duration (600ms) - For dramatic transitions
+  static const Duration durationExtraLong = Duration(milliseconds: 600);
+
+  // ============================================
   // Standard Curves (Material 3)
   // ============================================
 

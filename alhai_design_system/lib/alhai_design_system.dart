@@ -103,3 +103,9 @@ export 'src/components/images/product_image.dart';
 
 export 'src/utils/input_formatters.dart';
 export 'src/utils/validators.dart';
+
+// ============================================
+// Components - Dashboard (v1.1.0)
+// ============================================
+
+export 'src/components/dashboard/dashboard.dart';

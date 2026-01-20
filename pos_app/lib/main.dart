@@ -23,8 +23,8 @@ class PosApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'POS App - Alhai',
       debugShowCheckedModeBanner: false,
-      theme: AlhaiTheme.light(),
-      darkTheme: AlhaiTheme.dark(),
+      theme: AlhaiTheme.light,
+      darkTheme: AlhaiTheme.dark,
       themeMode: ThemeMode.system,
       routerConfig: AppRouter.router,
     );

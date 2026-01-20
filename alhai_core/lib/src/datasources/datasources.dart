@@ -11,6 +11,12 @@ export 'remote/categories_remote_datasource.dart';
 export 'remote/stores_remote_datasource.dart';
 export 'remote/addresses_remote_datasource.dart';
 export 'remote/delivery_remote_datasource.dart';
+export 'remote/inventory_remote_datasource.dart';
+export 'remote/suppliers_remote_datasource.dart';
+export 'remote/purchases_remote_datasource.dart';
+export 'remote/debts_remote_datasource.dart';
+export 'remote/reports_remote_datasource.dart';
+export 'remote/analytics_remote_datasource.dart';
 
 // Local contracts + entities (no impl exports)
 export 'local/auth_local_datasource.dart';

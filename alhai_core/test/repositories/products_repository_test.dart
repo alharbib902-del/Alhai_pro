@@ -37,7 +37,7 @@ void main() {
     minQty: 10,
     unit: 'piece',
     description: 'Test description',
-    imageUrl: 'https://example.com/image.jpg',
+    imageThumbnail: 'https://example.com/image-thumb.jpg',
     categoryId: 'cat-1',
     isActive: true,
     trackInventory: true,

@@ -53,6 +53,7 @@ class ProductResponse with _$ProductResponse {
       minQty: minQty,
       unit: unit,
       description: description,
+      // ignore: deprecated_member_use_from_same_package
       imageUrl: imageUrl,
       imageThumbnail: imageThumbnail,
       imageMedium: imageMedium,

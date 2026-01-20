@@ -1,5 +1,6 @@
 name: pos_app
 description: Point of Sale application for Alhai grocery stores
+publish_to: 'none'  # Private package, not published to pub.dev
 version: 1.0.0+1
 
 environment:

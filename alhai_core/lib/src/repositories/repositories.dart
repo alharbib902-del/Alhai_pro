@@ -15,3 +15,20 @@ export 'purchases_repository.dart';
 export 'debts_repository.dart';
 export 'reports_repository.dart';
 export 'analytics_repository.dart';
+
+// v2.4.0 - Additional Repositories
+export 'notifications_repository.dart';
+export 'promotions_repository.dart';
+export 'order_payments_repository.dart';
+export 'store_settings_repository.dart';
+export 'activity_logs_repository.dart';
+export 'shifts_repository.dart';
+
+// v2.5.0 - POS_BACKLOG Compatibility
+export 'cash_movements_repository.dart';
+export 'refunds_repository.dart';
+
+// v2.6.0 - Distributor Portal Compatibility
+export 'distributors_repository.dart';
+export 'wholesale_orders_repository.dart';
+
