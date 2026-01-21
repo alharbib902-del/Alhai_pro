@@ -1,3 +1,5 @@
+🇸🇦 [النسخة العربية](README_AR.md) | 🇬🇧 English
+
 # Alhai Platform - Complete Documentation
 
 [![Platform](https://img.shields.io/badge/Platform-Multi--Tenant-blue)](https://github.com)
