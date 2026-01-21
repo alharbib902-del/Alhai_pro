@@ -1,0 +1,7 @@
+// This folder contains app-wide shared widgets
+// 
+// Examples:
+// - loading_indicator.dart
+// - error_widget.dart
+// - empty_state.dart
+// - custom_app_bar.dart

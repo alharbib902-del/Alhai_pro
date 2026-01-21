@@ -1,0 +1,19 @@
+// This folder contains feature-specific code
+// 
+// Structure for each feature:
+// features/
+// ├── [feature_name]/
+// │   ├── presentation/
+// │   │   ├── screens/
+// │   │   ├── widgets/
+// │   │   └── view_models/
+// │   └── data/ (if needed)
+//
+// Example features for Customer App:
+// - auth/
+// - catalog/
+// - cart/
+// - checkout/
+// - orders/
+// - profile/
+// - store/
