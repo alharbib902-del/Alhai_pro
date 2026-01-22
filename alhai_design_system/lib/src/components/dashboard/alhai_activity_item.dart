@@ -39,7 +39,7 @@ class AlhaiActivityItem extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: type.color.withOpacity(0.1),
+                    color: type.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(

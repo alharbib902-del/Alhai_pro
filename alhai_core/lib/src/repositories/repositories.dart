@@ -32,3 +32,9 @@ export 'refunds_repository.dart';
 export 'distributors_repository.dart';
 export 'wholesale_orders_repository.dart';
 
+// v2.7.0 - Additional Services
+export 'transfers_repository.dart';
+export 'loyalty_repository.dart';
+export 'store_members_repository.dart';
+export 'ratings_repository.dart';
+export 'chats_repository.dart';

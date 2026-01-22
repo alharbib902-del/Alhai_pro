@@ -9,10 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # ⭐ الحزم المشتركة (Priority)
   alhai_core:
     path: ../alhai_core
+  alhai_services:
+    path: ../alhai_services
   alhai_design_system:
     path: ../alhai_design_system
 
@@ -38,7 +42,7 @@ dependencies:
   image_picker: ^1.0.7
 
   # Utils
-  intl: ^0.19.0
+  intl: ^0.20.2
   uuid: ^4.3.3
   connectivity_plus: ^5.0.2
   permission_handler: ^11.2.0

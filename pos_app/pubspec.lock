@@ -39,6 +39,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  alhai_services:
+    dependency: "direct main"
+    description:
+      path: "../alhai_services"
+      relative: true
+    source: path
+    version: "1.0.0"
   analyzer:
     dependency: transitive
     description:

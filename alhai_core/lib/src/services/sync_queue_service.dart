@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'sync_queue.freezed.dart';
-part 'sync_queue.g.dart';
+part 'sync_queue_service.freezed.dart';
+part 'sync_queue_service.g.dart';
 
 /// Sync operation type enum (v2.5.0)
 enum SyncOperationType {

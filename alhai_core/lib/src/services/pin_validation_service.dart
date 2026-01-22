@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'pin_validation.freezed.dart';
-part 'pin_validation.g.dart';
+part 'pin_validation_service.freezed.dart';
+part 'pin_validation_service.g.dart';
 
 /// PIN action type enum (v2.5.0)
 enum PinActionType {

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'whatsapp_receipt.freezed.dart';
-part 'whatsapp_receipt.g.dart';
+part 'whatsapp_service.freezed.dart';
+part 'whatsapp_service.g.dart';
 
 /// WhatsApp message status enum (v2.5.0)
 enum WhatsAppMessageStatus {

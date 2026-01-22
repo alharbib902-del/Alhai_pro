@@ -105,7 +105,7 @@ class AlhaiDataTable<T> extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+            bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
         ),
         child: Row(

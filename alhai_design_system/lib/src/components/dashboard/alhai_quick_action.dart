@@ -30,9 +30,9 @@ class AlhaiQuickAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: actionColor.withOpacity(0.1),
+          color: actionColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: actionColor.withOpacity(0.2)),
+          border: Border.all(color: actionColor.withValues(alpha: 0.2)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

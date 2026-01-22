@@ -9,10 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # ⭐ الحزم المشتركة
   alhai_core:
     path: ../alhai_core
+  alhai_services:
+    path: ../alhai_services
   alhai_design_system:
     path: ../alhai_design_system
 
@@ -37,7 +41,7 @@ dependencies:
   cached_network_image: ^3.3.1
 
   # Utils
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # UI helpers
   shimmer: ^3.0.0

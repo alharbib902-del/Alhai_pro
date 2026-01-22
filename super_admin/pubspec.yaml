@@ -9,9 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   alhai_core:
     path: ../alhai_core
+  alhai_services:
+    path: ../alhai_services
   alhai_design_system:
     path: ../alhai_design_system
 
@@ -23,12 +27,12 @@ dependencies:
   supabase_flutter: ^2.3.4
   dio: ^5.4.0
   shared_preferences: ^2.2.2
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # Charts & Tables for multi-tenant dashboard
   fl_chart: ^0.65.0
   data_table_2: ^2.5.10
-  syncfusion_flutter_charts: ^24.2.0
+  syncfusion_flutter_charts: ^31.1.19
 
 dev_dependencies:
   flutter_test:
