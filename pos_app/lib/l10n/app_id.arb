@@ -1,0 +1,361 @@
+{
+  "@@locale": "id",
+  "@@last_modified": "2026-02-07",
+
+  "appTitle": "Sistem POS",
+  "login": "Masuk",
+  "logout": "Keluar",
+  "welcome": "Selamat Datang",
+  "welcomeBack": "Selamat Datang Kembali",
+
+  "phone": "Nomor Telepon",
+  "phoneHint": "08xxxxxxxxxx",
+  "phoneRequired": "Nomor telepon wajib diisi",
+  "phoneInvalid": "Nomor telepon tidak valid",
+
+  "otp": "Kode Verifikasi",
+  "otpHint": "Masukkan kode verifikasi",
+  "otpSent": "Kode verifikasi terkirim",
+  "otpResend": "Kirim ulang kode",
+  "otpExpired": "Kode verifikasi kedaluwarsa",
+  "otpInvalid": "Kode verifikasi tidak valid",
+  "otpResendIn": "Kirim ulang dalam {seconds} detik",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "pin": "Kode PIN",
+  "pinHint": "Masukkan kode PIN",
+  "pinRequired": "Kode PIN wajib diisi",
+  "pinInvalid": "Kode PIN tidak valid",
+  "pinAttemptsRemaining": "Sisa percobaan: {count}",
+  "@pinAttemptsRemaining": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pinLocked": "Akun terkunci. Coba lagi setelah {minutes} menit",
+  "@pinLocked": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+
+  "home": "Beranda",
+  "dashboard": "Dasbor",
+  "pos": "Titik Penjualan",
+  "products": "Produk",
+  "categories": "Kategori",
+  "inventory": "Inventaris",
+  "customers": "Pelanggan",
+  "orders": "Pesanan",
+  "invoices": "Faktur",
+  "reports": "Laporan",
+  "settings": "Pengaturan",
+
+  "sales": "Penjualan",
+  "salesAnalytics": "Analisis Penjualan",
+  "refund": "Pengembalian",
+  "todaySales": "Penjualan Hari Ini",
+  "totalSales": "Total Penjualan",
+  "averageSale": "Rata-rata Penjualan",
+
+  "cart": "Keranjang",
+  "cartEmpty": "Keranjang kosong",
+  "addToCart": "Tambah ke Keranjang",
+  "removeFromCart": "Hapus dari Keranjang",
+  "clearCart": "Kosongkan Keranjang",
+  "checkout": "Checkout",
+
+  "payment": "Pembayaran",
+  "paymentMethod": "Metode Pembayaran",
+  "cash": "Tunai",
+  "card": "Kartu",
+  "credit": "Kredit",
+  "transfer": "Transfer",
+  "paymentSuccess": "Pembayaran berhasil",
+  "paymentFailed": "Pembayaran gagal",
+
+  "price": "Harga",
+  "quantity": "Jumlah",
+  "total": "Total",
+  "subtotal": "Subtotal",
+  "discount": "Diskon",
+  "tax": "Pajak",
+  "vat": "PPN",
+  "grandTotal": "Total Keseluruhan",
+
+  "product": "Produk",
+  "productName": "Nama Produk",
+  "productCode": "Kode Produk",
+  "barcode": "Barcode",
+  "sku": "SKU",
+  "stock": "Stok",
+  "lowStock": "Stok Rendah",
+  "outOfStock": "Stok Habis",
+  "inStock": "Tersedia",
+
+  "customer": "Pelanggan",
+  "customerName": "Nama Pelanggan",
+  "customerPhone": "Telepon Pelanggan",
+  "debt": "Hutang",
+  "balance": "Saldo",
+
+  "search": "Cari",
+  "searchHint": "Cari di sini...",
+  "filter": "Filter",
+  "sort": "Urutkan",
+  "all": "Semua",
+
+  "add": "Tambah",
+  "edit": "Edit",
+  "delete": "Hapus",
+  "save": "Simpan",
+  "cancel": "Batal",
+  "confirm": "Konfirmasi",
+  "close": "Tutup",
+  "back": "Kembali",
+  "next": "Selanjutnya",
+  "done": "Selesai",
+  "submit": "Kirim",
+  "retry": "Coba Lagi",
+
+  "loading": "Memuat...",
+  "noData": "Tidak ada data",
+  "noResults": "Tidak ada hasil",
+  "error": "Error",
+  "errorOccurred": "Terjadi kesalahan",
+  "tryAgain": "Coba lagi",
+  "connectionError": "Kesalahan koneksi",
+  "noInternet": "Tidak ada koneksi internet",
+  "offline": "Offline",
+  "online": "Online",
+
+  "success": "Berhasil",
+  "warning": "Peringatan",
+  "info": "Info",
+
+  "yes": "Ya",
+  "no": "Tidak",
+
+  "today": "Hari Ini",
+  "yesterday": "Kemarin",
+  "thisWeek": "Minggu Ini",
+  "thisMonth": "Bulan Ini",
+
+  "shift": "Shift",
+  "openShift": "Buka Shift",
+  "closeShift": "Tutup Shift",
+  "shiftSummary": "Ringkasan Shift",
+  "cashDrawer": "Laci Uang",
+
+  "receipt": "Struk",
+  "printReceipt": "Cetak Struk",
+  "shareReceipt": "Bagikan Struk",
+
+  "sync": "Sinkronisasi",
+  "syncing": "Menyinkronkan...",
+  "syncComplete": "Sinkronisasi selesai",
+  "syncFailed": "Sinkronisasi gagal",
+  "lastSync": "Sinkronisasi terakhir",
+
+  "language": "Bahasa",
+  "arabic": "العربية",
+  "english": "English",
+  "urdu": "اردو",
+  "hindi": "हिन्दी",
+  "filipino": "Filipino",
+  "bengali": "বাংলা",
+  "indonesian": "Bahasa Indonesia",
+
+  "theme": "Tema",
+  "darkMode": "Mode Gelap",
+  "lightMode": "Mode Terang",
+  "systemMode": "Mode Sistem",
+
+  "notifications": "Notifikasi",
+  "security": "Keamanan",
+  "printer": "Printer",
+  "backup": "Cadangan",
+  "help": "Bantuan",
+  "about": "Tentang",
+
+  "version": "Versi",
+  "copyright": "Hak cipta dilindungi",
+
+  "deleteConfirmTitle": "Konfirmasi Hapus",
+  "deleteConfirmMessage": "Apakah Anda yakin ingin menghapus?",
+  "logoutConfirmTitle": "Konfirmasi Keluar",
+  "logoutConfirmMessage": "Apakah Anda yakin ingin keluar?",
+
+  "requiredField": "Bidang ini wajib diisi",
+  "invalidFormat": "Format tidak valid",
+  "minLength": "Minimal {min} karakter",
+  "@minLength": {
+    "placeholders": {
+      "min": {"type": "int"}
+    }
+  },
+  "maxLength": "Maksimal {max} karakter",
+  "@maxLength": {
+    "placeholders": {
+      "max": {"type": "int"}
+    }
+  },
+
+  "welcomeTitle": "Selamat Datang Kembali! 👋",
+  "welcomeSubtitle": "Masuk untuk mengelola toko Anda dengan mudah dan cepat",
+  "welcomeSubtitleShort": "Masuk untuk mengelola toko Anda",
+  "brandName": "Al-Hal POS",
+  "brandTagline": "Sistem Point of Sale Cerdas",
+  "enterPhoneToContinue": "Masukkan nomor telepon untuk melanjutkan",
+  "pleaseEnterValidPhone": "Masukkan nomor telepon yang valid",
+  "otpSentViaWhatsApp": "Kode verifikasi dikirim via WhatsApp",
+  "otpResent": "Kode verifikasi dikirim ulang",
+  "enterOtpFully": "Masukkan kode verifikasi lengkap",
+  "maxAttemptsReached": "Batas percobaan tercapai. Minta kode baru",
+  "waitMinutes": "Batas percobaan tercapai. Tunggu {minutes} menit",
+  "@waitMinutes": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "waitSeconds": "Harap tunggu {seconds} detik",
+  "@waitSeconds": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "resendIn": "Kirim ulang ({time})",
+  "@resendIn": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "resendCode": "Kirim ulang kode",
+  "changeNumber": "Ubah nomor",
+  "verificationCode": "Kode Verifikasi",
+  "remainingAttempts": "Sisa percobaan: {count}",
+  "@remainingAttempts": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "technicalSupport": "Dukungan Teknis",
+  "privacyPolicy": "Kebijakan Privasi",
+  "termsAndConditions": "Syarat dan Ketentuan",
+  "allRightsReserved": "© 2026 Al-Hal System. Hak cipta dilindungi.",
+  "dayMode": "Mode Siang",
+  "nightMode": "Mode Malam",
+
+  "selectBranch": "Pilih Cabang",
+  "selectBranchDesc": "Pilih cabang yang ingin Anda kelola",
+  "availableBranches": "Cabang Tersedia",
+  "branchCount": "{count} cabang",
+  "@branchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "branchSelected": "Dipilih {name}",
+  "@branchSelected": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "addBranch": "Tambah Cabang Baru",
+  "comingSoon": "Fitur ini segera hadir",
+  "tryDifferentSearch": "Coba kata pencarian lain",
+
+  "selectLanguage": "Pilih Bahasa",
+  "languageChangeInfo": "Pilih bahasa tampilan pilihan Anda. Perubahan akan diterapkan segera.",
+
+  "centralManagement": "Manajemen Terpusat",
+  "centralManagementDesc": "Kontrol semua cabang dan gudang Anda dari satu tempat. Dapatkan laporan instan dan sinkronisasi inventaris di semua titik POS.",
+  
+  "selectBranchToContinue": "Pilih Cabang untuk Melanjutkan",
+  "youHaveAccessToBranches": "Anda memiliki akses ke cabang-cabang berikut. Pilih salah satu untuk memulai.",
+  "searchForBranch": "Cari cabang...",
+  "openNow": "Buka Sekarang",
+  "closedOpensAt": "Tutup (Buka {time})",
+  "@closedOpensAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "loggedInAs": "Masuk sebagai",
+  "support247": "Dukungan 24/7",
+  "analyticsTools": "Alat Analitik",
+  "uptime": "Uptime",
+  "technicalSupport": "Dukungan Teknis",
+  "privacyPolicy": "Kebijakan Privasi",
+
+  "dashboardTitle": "Dasbor",
+  "searchPlaceholder": "Pencarian umum...",
+  "mainBranch": "Cabang Utama (Riyadh)",
+  "todaySalesLabel": "Penjualan Hari Ini",
+  "ordersCountLabel": "Jumlah Pesanan",
+  "newCustomersLabel": "Pelanggan Baru",
+  "stockAlertsLabel": "Peringatan Stok",
+  "productsUnit": "produk",
+  "salesAnalysis": "Analisis Penjualan",
+  "storePerformance": "Kinerja toko minggu ini",
+  "weekly": "Mingguan",
+  "monthly": "Bulanan",
+  "yearly": "Tahunan",
+  "quickAction": "Aksi Cepat",
+  "newSale": "Penjualan Baru",
+  "addProduct": "Tambah Produk",
+  "returnItem": "Pengembalian",
+  "dailyReport": "Laporan Harian",
+  "closeDay": "Tutup Hari",
+  "topSelling": "Terlaris",
+  "ordersToday": "{count} pesanan hari ini",
+  "@ordersToday": {"placeholders": {"count": {"type": "int"}}},
+  "recentTransactions": "Transaksi Terbaru",
+  "viewAll": "Lihat Semua",
+  "orderNumber": "Pesanan #",
+  "customer": "Pelanggan",
+  "time": "Waktu",
+  "status": "Status",
+  "amount": "Jumlah",
+  "action": "Aksi",
+  "completed": "Selesai",
+  "returned": "Dikembalikan",
+  "pending": "Tertunda",
+  "cancelled": "Dibatalkan",
+  "guestCustomer": "Pelanggan Tamu",
+  "minutesAgo": "{count} menit yang lalu",
+  "@minutesAgo": {"placeholders": {"count": {"type": "int"}}},
+  "posSystem": "Sistem Point of Sale",
+  "branchManager": "Manajer Cabang",
+  "settingsSection": "Pengaturan",
+  "systemSettings": "Pengaturan Sistem",
+  "notifications": "Notifikasi",
+  "sar": "SAR",
+  "daily": "Harian",
+  "goodMorning": "Selamat Pagi",
+  "goodEvening": "Selamat Malam",
+  "cashCustomer": "Pelanggan Tunai",
+  "noTransactionsToday": "Tidak ada transaksi hari ini",
+  "comparedToYesterday": "Dibandingkan kemarin",
+  "ordersText": "pesanan hari ini",
+  "storeManagement": "Manajemen Toko",
+  "finance": "Keuangan",
+  "teamSection": "Tim",
+  "fullscreen": "Layar Penuh",
+  "goodMorningName": "Selamat Pagi, {name}!",
+  "@goodMorningName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "goodEveningName": "Selamat Malam, {name}!",
+  "@goodEveningName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

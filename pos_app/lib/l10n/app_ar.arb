@@ -1,0 +1,380 @@
+{
+  "@@locale": "ar",
+  "@@last_modified": "2026-02-04",
+
+  "appTitle": "نظام نقاط البيع",
+  "@appTitle": {
+    "description": "اسم التطبيق"
+  },
+
+  "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
+  "welcome": "مرحباً",
+  "welcomeBack": "مرحباً بعودتك",
+
+  "phone": "رقم الجوال",
+  "phoneHint": "05xxxxxxxx",
+  "phoneRequired": "رقم الجوال مطلوب",
+  "phoneInvalid": "رقم الجوال غير صحيح",
+
+  "otp": "رمز التحقق",
+  "otpHint": "أدخل رمز التحقق",
+  "otpSent": "تم إرسال رمز التحقق",
+  "otpResend": "إعادة إرسال الرمز",
+  "otpExpired": "انتهت صلاحية رمز التحقق",
+  "otpInvalid": "رمز التحقق غير صحيح",
+  "otpResendIn": "إعادة الإرسال خلال {seconds} ثانية",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "pin": "رمز PIN",
+  "pinHint": "أدخل رمز PIN",
+  "pinRequired": "رمز PIN مطلوب",
+  "pinInvalid": "رمز PIN غير صحيح",
+  "pinAttemptsRemaining": "المحاولات المتبقية: {count}",
+  "@pinAttemptsRemaining": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pinLocked": "تم قفل الحساب. حاول بعد {minutes} دقيقة",
+  "@pinLocked": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+
+  "home": "الرئيسية",
+  "dashboard": "لوحة التحكم",
+  "pos": "نقطة البيع",
+  "products": "المنتجات",
+  "categories": "الفئات",
+  "inventory": "المخزون",
+  "customers": "العملاء",
+  "orders": "الطلبات",
+  "invoices": "الفواتير",
+  "reports": "التقارير",
+  "settings": "الإعدادات",
+
+  "sales": "المبيعات",
+  "salesAnalytics": "تحليل المبيعات",
+  "refund": "استرجاع",
+  "todaySales": "مبيعات اليوم",
+  "totalSales": "إجمالي المبيعات",
+  "averageSale": "متوسط البيع",
+
+  "cart": "السلة",
+  "cartEmpty": "السلة فارغة",
+  "addToCart": "إضافة للسلة",
+  "removeFromCart": "إزالة من السلة",
+  "clearCart": "إفراغ السلة",
+  "checkout": "إتمام الشراء",
+
+  "payment": "الدفع",
+  "paymentMethod": "طريقة الدفع",
+  "cash": "نقداً",
+  "card": "بطاقة",
+  "credit": "آجل",
+  "transfer": "تحويل",
+  "paymentSuccess": "تمت العملية بنجاح",
+  "paymentFailed": "فشلت العملية",
+
+  "price": "السعر",
+  "quantity": "الكمية",
+  "total": "الإجمالي",
+  "subtotal": "المجموع الفرعي",
+  "discount": "الخصم",
+  "tax": "الضريبة",
+  "vat": "ضريبة القيمة المضافة",
+  "grandTotal": "الإجمالي الكلي",
+
+  "product": "منتج",
+  "productName": "اسم المنتج",
+  "productCode": "كود المنتج",
+  "barcode": "الباركود",
+  "sku": "رمز SKU",
+  "stock": "المخزون",
+  "lowStock": "مخزون منخفض",
+  "outOfStock": "نفذ المخزون",
+  "inStock": "متوفر",
+
+  "customer": "عميل",
+  "customerName": "اسم العميل",
+  "customerPhone": "هاتف العميل",
+  "debt": "دين",
+  "balance": "الرصيد",
+
+  "search": "بحث",
+  "searchHint": "ابحث هنا...",
+  "filter": "تصفية",
+  "sort": "ترتيب",
+  "all": "الكل",
+
+  "add": "إضافة",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "close": "إغلاق",
+  "back": "رجوع",
+  "next": "التالي",
+  "done": "تم",
+  "submit": "إرسال",
+  "retry": "إعادة المحاولة",
+
+  "loading": "جاري التحميل...",
+  "noData": "لا توجد بيانات",
+  "noResults": "لا توجد نتائج",
+  "error": "خطأ",
+  "errorOccurred": "حدث خطأ",
+  "tryAgain": "حاول مرة أخرى",
+  "connectionError": "خطأ في الاتصال",
+  "noInternet": "لا يوجد اتصال بالإنترنت",
+  "offline": "غير متصل",
+  "online": "متصل",
+
+  "success": "نجاح",
+  "warning": "تحذير",
+  "info": "معلومة",
+
+  "yes": "نعم",
+  "no": "لا",
+
+  "today": "اليوم",
+  "yesterday": "أمس",
+  "thisWeek": "هذا الأسبوع",
+  "thisMonth": "هذا الشهر",
+
+  "shift": "الوردية",
+  "openShift": "فتح وردية",
+  "closeShift": "إغلاق وردية",
+  "shiftSummary": "ملخص الوردية",
+  "cashDrawer": "درج النقد",
+
+  "receipt": "الإيصال",
+  "printReceipt": "طباعة الإيصال",
+  "shareReceipt": "مشاركة الإيصال",
+
+  "sync": "مزامنة",
+  "syncing": "جاري المزامنة...",
+  "syncComplete": "اكتملت المزامنة",
+  "syncFailed": "فشلت المزامنة",
+  "lastSync": "آخر مزامنة",
+
+  "language": "اللغة",
+  "arabic": "العربية",
+  "english": "English",
+  "urdu": "اردو",
+  "hindi": "हिन्दी",
+  "filipino": "Filipino",
+  "bengali": "বাংলা",
+  "indonesian": "Bahasa Indonesia",
+
+  "theme": "المظهر",
+  "darkMode": "الوضع المظلم",
+  "lightMode": "الوضع الفاتح",
+  "systemMode": "وضع النظام",
+
+  "notifications": "الإشعارات",
+  "security": "الأمان",
+  "printer": "الطابعة",
+  "backup": "النسخ الاحتياطي",
+  "help": "المساعدة",
+  "about": "حول التطبيق",
+
+  "version": "الإصدار",
+  "copyright": "جميع الحقوق محفوظة",
+
+  "deleteConfirmTitle": "تأكيد الحذف",
+  "deleteConfirmMessage": "هل أنت متأكد من الحذف؟",
+  "logoutConfirmTitle": "تأكيد الخروج",
+  "logoutConfirmMessage": "هل أنت متأكد من تسجيل الخروج؟",
+
+  "requiredField": "هذا الحقل مطلوب",
+  "invalidFormat": "صيغة غير صحيحة",
+  "minLength": "يجب أن يكون {min} أحرف على الأقل",
+  "@minLength": {
+    "placeholders": {
+      "min": {"type": "int"}
+    }
+  },
+  "maxLength": "يجب أن يكون أقل من {max} حرف",
+  "@maxLength": {
+    "placeholders": {
+      "max": {"type": "int"}
+    }
+  },
+
+  "welcomeTitle": "مرحباً بك مجدداً! 👋",
+  "welcomeSubtitle": "سجّل دخولك لإدارة متجرك بسهولة وسرعة",
+  "welcomeSubtitleShort": "سجّل دخولك لإدارة متجرك",
+  "brandName": "Al-Hal POS",
+  "brandTagline": "نظام نقاط البيع الذكي",
+  "enterPhoneToContinue": "أدخل رقم جوالك للمتابعة",
+  "pleaseEnterValidPhone": "يرجى إدخال رقم جوال صحيح",
+  "otpSentViaWhatsApp": "تم إرسال رمز التحقق عبر WhatsApp",
+  "otpResent": "تم إعادة إرسال رمز التحقق",
+  "enterOtpFully": "يرجى إدخال رمز التحقق كاملاً",
+  "maxAttemptsReached": "تم تجاوز الحد الأقصى. يرجى طلب رمز جديد",
+  "waitMinutes": "تم تجاوز الحد الأقصى. انتظر {minutes} دقيقة",
+  "@waitMinutes": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "waitSeconds": "يرجى الانتظار {seconds} ثانية",
+  "@waitSeconds": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "resendIn": "إعادة الإرسال ({time})",
+  "@resendIn": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "resendCode": "إعادة إرسال الرمز",
+  "changeNumber": "تغيير الرقم",
+  "verificationCode": "رمز التحقق",
+  "remainingAttempts": "المحاولات المتبقية: {count}",
+  "@remainingAttempts": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "technicalSupport": "الدعم الفني",
+  "privacyPolicy": "سياسة الخصوصية",
+  "termsAndConditions": "الشروط والأحكام",
+  "allRightsReserved": "© 2026 نظام الحل. جميع الحقوق محفوظة.",
+  "dayMode": "الوضع النهاري",
+  "nightMode": "الوضع الليلي",
+
+  "selectBranch": "اختر فرعك",
+  "selectBranchDesc": "حدد الفرع الذي تريد العمل عليه",
+  "availableBranches": "الفروع المتاحة",
+  "branchCount": "{count} فرع",
+  "@branchCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "branchSelected": "تم اختيار {name}",
+  "@branchSelected": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "addBranch": "إضافة فرع جديد",
+  "comingSoon": "سيتم إضافة هذه الميزة قريباً",
+  "tryDifferentSearch": "جرب البحث بكلمات مختلفة",
+
+  "selectLanguage": "اختر اللغة",
+  "languageChangeInfo": "اختر لغة العرض المفضلة لديك. سيتم تطبيق التغيير فوراً.",
+
+  "centralManagement": "إدارة مركزية شاملة",
+  "centralManagementDesc": "تحكم في جميع فروعك ومستودعاتك من مكان واحد. احصل على تقارير فورية ومزامنة للمخزون بين جميع نقاط البيع.",
+  
+  "selectBranchToContinue": "اختر الفرع للمتابعة",
+  "youHaveAccessToBranches": "لديك صلاحية الوصول إلى الفروع التالية. اختر فرعاً للبدء.",
+  "searchForBranch": "بحث عن فرع...",
+  "openNow": "مفتوح الآن",
+  "closedOpensAt": "مغلق (يفتح {time})",
+  "@closedOpensAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "loggedInAs": "مسجل الدخول كـ",
+  "technicalSupport": "الدعم الفني",
+  "privacyPolicy": "سياسة الخصوصية",
+  "support247": "دعم فني",
+  "analyticsTools": "أدوات تحليل",
+  "uptime": "وقت التشغيل",
+
+  "dashboardTitle": "لوحة التحكم",
+  "searchPlaceholder": "بحث عام...",
+  "mainBranch": "الفرع الرئيسي (الرياض)",
+  
+  "todaySalesLabel": "مبيعات اليوم",
+  "ordersCountLabel": "عدد الطلبات",
+  "newCustomersLabel": "عملاء جدد",
+  "stockAlertsLabel": "تنبيهات المخزون",
+  "productsUnit": "منتجات",
+  
+  "salesAnalysis": "تحليل المبيعات",
+  "storePerformance": "أداء المتجر خلال الأسبوع الحالي",
+  "weekly": "أسبوعي",
+  "monthly": "شهري",
+  "yearly": "سنوي",
+  
+  "quickAction": "إجراء سريع",
+  "newSale": "بيع جديد",
+  "addProduct": "إضافة منتج",
+  "returnItem": "استرجاع",
+  "dailyReport": "تقرير يومي",
+  "closeDay": "إغلاق اليوم",
+  
+  "topSelling": "الأكثر مبيعاً",
+  "ordersToday": "{count} طلب اليوم",
+  "@ordersToday": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  
+  "recentTransactions": "أحدث العمليات",
+  "viewAll": "عرض الكل",
+  "orderNumber": "رقم الطلب",
+  "customer": "العميل",
+  "time": "الوقت",
+  "status": "الحالة",
+  "amount": "المبلغ",
+  "action": "إجراء",
+  
+  "completed": "مكتمل",
+  "returned": "مرتجع",
+  "pending": "قيد الانتظار",
+  "cancelled": "ملغي",
+  "guestCustomer": "عميل زائر",
+  "minutesAgo": "منذ {count} دقائق",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  
+  "posSystem": "نظام نقاط البيع",
+  "branchManager": "مدير الفرع",
+  "settingsSection": "الإعدادات",
+  "systemSettings": "إعدادات النظام",
+  "notifications": "الإشعارات",
+  "sar": "ر.س",
+  "daily": "يومي",
+  "goodMorning": "صباح الخير",
+  "goodEvening": "مساء الخير",
+  "cashCustomer": "عميل نقدي",
+  "noTransactionsToday": "لا توجد معاملات اليوم",
+  "comparedToYesterday": "مقارنة بالأمس",
+  "ordersText": "طلب اليوم",
+  "storeManagement": "إدارة المتجر",
+  "finance": "المالية",
+  "teamSection": "الفريق",
+  "fullscreen": "ملء الشاشة",
+  "goodMorningName": "صباح الخير، {name}!",
+  "@goodMorningName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "goodEveningName": "مساء الخير، {name}!",
+  "@goodEveningName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}
