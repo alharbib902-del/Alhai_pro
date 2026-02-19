@@ -34,3 +34,7 @@ export 'whatsapp_templates_dao.dart';
 export 'organizations_dao.dart';
 export 'org_members_dao.dart';
 export 'pos_terminals_dao.dart';
+
+// DAOs المزامنة
+export 'sync_metadata_dao.dart';
+export 'stock_deltas_dao.dart';

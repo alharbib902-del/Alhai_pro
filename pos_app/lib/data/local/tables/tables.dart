@@ -48,3 +48,7 @@ export 'whatsapp_templates_table.dart';
 export 'organizations_table.dart';
 export 'org_members_table.dart';
 export 'pos_terminals_table.dart';
+
+// جداول المزامنة
+export 'sync_metadata_table.dart';
+export 'stock_deltas_table.dart';

@@ -1,6 +1,7 @@
 /// مزودات المزامنة والاتصال
 ///
 /// توفر حالة المزامنة والاتصال بالإنترنت
+/// تشمل: محرك المزامنة، المستمع الفوري، متتبع الحالة
 library;
 
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,14 @@ import '../services/sync/sync_service.dart';
 import '../services/sync/sync_manager.dart';
 import '../services/sync/sync_api_service.dart';
 import '../services/sync/org_sync_service.dart';
+import '../services/sync/sync_engine.dart';
+import '../services/sync/realtime_listener.dart';
+import '../services/sync/sync_status_tracker.dart';
+import '../services/sync/initial_sync.dart';
+import '../services/sync/strategies/pull_strategy.dart';
+import '../services/sync/strategies/push_strategy.dart';
+import '../services/sync/strategies/bidirectional_strategy.dart';
+import '../services/sync/strategies/stock_delta_sync.dart';
 
 /// مزود قاعدة البيانات - يستخدم singleton من getIt
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
@@ -67,7 +76,7 @@ final orgSyncServiceProvider = Provider<OrgSyncService?>((ref) {
   }
 });
 
-/// مزود مدير المزامنة
+/// مزود مدير المزامنة (القديم - للتوافق)
 final syncManagerProvider = Provider<SyncManager>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   final connectivity = ref.watch(connectivityServiceProvider);
@@ -94,13 +103,125 @@ final syncManagerProvider = Provider<SyncManager>((ref) {
   return manager;
 });
 
+// ─── مزودات محرك المزامنة الجديد ───
+
+/// مزود متتبع حالة المزامنة
+final syncStatusTrackerProvider = Provider<SyncStatusTracker>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final tracker = SyncStatusTracker(
+    db: db,
+    metadataDao: db.syncMetadataDao,
+    deltasDao: db.stockDeltasDao,
+  );
+  tracker.startTracking();
+  ref.onDispose(() => tracker.dispose());
+  return tracker;
+});
+
+/// مزود محرك المزامنة
+final syncEngineProvider = Provider<SyncEngine?>((ref) {
+  try {
+    final client = getIt<SupabaseClient>();
+    final db = ref.watch(appDatabaseProvider);
+    final connectivity = ref.watch(connectivityServiceProvider);
+    final statusTracker = ref.watch(syncStatusTrackerProvider);
+
+    final engine = SyncEngine(
+      pullStrategy: PullStrategy(
+        client: client,
+        db: db,
+        metadataDao: db.syncMetadataDao,
+      ),
+      pushStrategy: PushStrategy(
+        client: client,
+        db: db,
+        metadataDao: db.syncMetadataDao,
+      ),
+      bidirectionalStrategy: BidirectionalStrategy(
+        client: client,
+        db: db,
+        metadataDao: db.syncMetadataDao,
+      ),
+      stockDeltaSync: StockDeltaSync(
+        client: client,
+        db: db,
+        deltasDao: db.stockDeltasDao,
+        metadataDao: db.syncMetadataDao,
+      ),
+      connectivity: connectivity,
+      statusTracker: statusTracker,
+    );
+
+    ref.onDispose(() => engine.dispose());
+    return engine;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('SyncEngine unavailable: $e');
+    }
+    return null;
+  }
+});
+
+/// مزود المستمع الفوري (Realtime)
+final realtimeListenerProvider = Provider<RealtimeListener?>((ref) {
+  try {
+    final client = getIt<SupabaseClient>();
+    final db = ref.watch(appDatabaseProvider);
+
+    final listener = RealtimeListener(client: client, db: db);
+    ref.onDispose(() => listener.dispose());
+    return listener;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('RealtimeListener unavailable: $e');
+    }
+    return null;
+  }
+});
+
+/// مزود المزامنة الأولية
+final initialSyncProvider = Provider<InitialSync?>((ref) {
+  try {
+    final client = getIt<SupabaseClient>();
+    final db = ref.watch(appDatabaseProvider);
+
+    final initialSync = InitialSync(
+      client: client,
+      db: db,
+      metadataDao: db.syncMetadataDao,
+    );
+    ref.onDispose(() => initialSync.dispose());
+    return initialSync;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('InitialSync unavailable: $e');
+    }
+    return null;
+  }
+});
+
+/// مزود حالة تقدم محرك المزامنة (Stream)
+final syncEngineProgressProvider = StreamProvider<SyncProgress>((ref) {
+  final engine = ref.watch(syncEngineProvider);
+  if (engine == null) {
+    return Stream.value(const SyncProgress());
+  }
+  return engine.progressStream;
+});
+
+/// مزود حالة المزامنة الشاملة (Stream)
+final syncOverviewProvider = StreamProvider<SyncOverview>((ref) {
+  final tracker = ref.watch(syncStatusTrackerProvider);
+  return tracker.overviewStream;
+});
+
 /// مزود عدد العناصر المعلقة
 final pendingSyncCountProvider = StreamProvider<int>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchPendingCount();
 });
 
-/// مزود حالة المزامنة
+/// مزود حالة المزامنة (القديم - للتوافق)
 final syncStatusProvider = StreamProvider<SyncStatus>((ref) {
   final manager = ref.watch(syncManagerProvider);
   return manager.statusStream;

@@ -65,6 +65,9 @@ part 'app_database.g.dart';
     OrgMembersTable,
     UserStoresTable,
     PosTerminalsTable,
+    // جداول المزامنة
+    SyncMetadataTable,
+    StockDeltasTable,
   ],
   daos: [
     // DAOs الأساسية
@@ -97,6 +100,9 @@ part 'app_database.g.dart';
     OrganizationsDao,
     OrgMembersDao,
     PosTerminalsDao,
+    // DAOs المزامنة
+    SyncMetadataDao,
+    StockDeltasDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -110,7 +116,7 @@ class AppDatabase extends _$AppDatabase {
   late final ProductsFtsService ftsService = ProductsFtsService(this);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -186,7 +192,7 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(whatsAppMessagesTable);
         await m.createTable(whatsAppTemplatesTable);
       }
-      // Migration v9 -> v10: إضافة جداول متعددة المستأجرين + أعمدة org_id
+      // Migration v9 → v10: إضافة جداول متعددة المستأجرين + أعمدة org_id
       if (from < 10) {
         // إنشاء الجداول الجديدة
         await m.createTable(organizationsTable);
@@ -223,6 +229,11 @@ class AppDatabase extends _$AppDatabase {
         await customStatement(
           'ALTER TABLE shifts ADD COLUMN terminal_id TEXT',
         );
+      }
+      // Migration v10 → v11: إضافة جداول المزامنة المتقدمة
+      if (from < 11) {
+        await m.createTable(syncMetadataTable);
+        await m.createTable(stockDeltasTable);
       }
     },
   );

@@ -33285,6 +33285,1060 @@ class PosTerminalsTableCompanion
   }
 }
 
+class $SyncMetadataTableTable extends SyncMetadataTable
+    with TableInfo<$SyncMetadataTableTable, SyncMetadataTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncMetadataTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _tableName_Meta =
+      const VerificationMeta('tableName_');
+  @override
+  late final GeneratedColumn<String> tableName_ = GeneratedColumn<String>(
+      'table_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _lastPullAtMeta =
+      const VerificationMeta('lastPullAt');
+  @override
+  late final GeneratedColumn<DateTime> lastPullAt = GeneratedColumn<DateTime>(
+      'last_pull_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _lastPushAtMeta =
+      const VerificationMeta('lastPushAt');
+  @override
+  late final GeneratedColumn<DateTime> lastPushAt = GeneratedColumn<DateTime>(
+      'last_push_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _pendingCountMeta =
+      const VerificationMeta('pendingCount');
+  @override
+  late final GeneratedColumn<int> pendingCount = GeneratedColumn<int>(
+      'pending_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _failedCountMeta =
+      const VerificationMeta('failedCount');
+  @override
+  late final GeneratedColumn<int> failedCount = GeneratedColumn<int>(
+      'failed_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _isInitialSyncedMeta =
+      const VerificationMeta('isInitialSynced');
+  @override
+  late final GeneratedColumn<bool> isInitialSynced = GeneratedColumn<bool>(
+      'is_initial_synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_initial_synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _lastSyncCountMeta =
+      const VerificationMeta('lastSyncCount');
+  @override
+  late final GeneratedColumn<int> lastSyncCount = GeneratedColumn<int>(
+      'last_sync_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _lastErrorMeta =
+      const VerificationMeta('lastError');
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+      'last_error', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        tableName_,
+        lastPullAt,
+        lastPushAt,
+        pendingCount,
+        failedCount,
+        isInitialSynced,
+        lastSyncCount,
+        lastError
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_metadata';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<SyncMetadataTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('table_name')) {
+      context.handle(
+          _tableName_Meta,
+          tableName_.isAcceptableOrUnknown(
+              data['table_name']!, _tableName_Meta));
+    } else if (isInserting) {
+      context.missing(_tableName_Meta);
+    }
+    if (data.containsKey('last_pull_at')) {
+      context.handle(
+          _lastPullAtMeta,
+          lastPullAt.isAcceptableOrUnknown(
+              data['last_pull_at']!, _lastPullAtMeta));
+    }
+    if (data.containsKey('last_push_at')) {
+      context.handle(
+          _lastPushAtMeta,
+          lastPushAt.isAcceptableOrUnknown(
+              data['last_push_at']!, _lastPushAtMeta));
+    }
+    if (data.containsKey('pending_count')) {
+      context.handle(
+          _pendingCountMeta,
+          pendingCount.isAcceptableOrUnknown(
+              data['pending_count']!, _pendingCountMeta));
+    }
+    if (data.containsKey('failed_count')) {
+      context.handle(
+          _failedCountMeta,
+          failedCount.isAcceptableOrUnknown(
+              data['failed_count']!, _failedCountMeta));
+    }
+    if (data.containsKey('is_initial_synced')) {
+      context.handle(
+          _isInitialSyncedMeta,
+          isInitialSynced.isAcceptableOrUnknown(
+              data['is_initial_synced']!, _isInitialSyncedMeta));
+    }
+    if (data.containsKey('last_sync_count')) {
+      context.handle(
+          _lastSyncCountMeta,
+          lastSyncCount.isAcceptableOrUnknown(
+              data['last_sync_count']!, _lastSyncCountMeta));
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(_lastErrorMeta,
+          lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tableName_};
+  @override
+  SyncMetadataTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncMetadataTableData(
+      tableName_: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}table_name'])!,
+      lastPullAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}last_pull_at']),
+      lastPushAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}last_push_at']),
+      pendingCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}pending_count'])!,
+      failedCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}failed_count'])!,
+      isInitialSynced: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}is_initial_synced'])!,
+      lastSyncCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}last_sync_count'])!,
+      lastError: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}last_error']),
+    );
+  }
+
+  @override
+  $SyncMetadataTableTable createAlias(String alias) {
+    return $SyncMetadataTableTable(attachedDatabase, alias);
+  }
+}
+
+class SyncMetadataTableData extends DataClass
+    implements Insertable<SyncMetadataTableData> {
+  /// اسم الجدول المتتبع (products, sales, etc.)
+  final String tableName_;
+
+  /// آخر وقت سحب ناجح من السيرفر
+  final DateTime? lastPullAt;
+
+  /// آخر وقت دفع ناجح للسيرفر
+  final DateTime? lastPushAt;
+
+  /// عدد السجلات المعلقة للدفع
+  final int pendingCount;
+
+  /// عدد السجلات التي فشل دفعها
+  final int failedCount;
+
+  /// هل تمت المزامنة الأولية؟
+  final bool isInitialSynced;
+
+  /// عدد السجلات التي تمت مزامنتها في آخر عملية
+  final int lastSyncCount;
+
+  /// آخر خطأ حدث أثناء المزامنة
+  final String? lastError;
+  const SyncMetadataTableData(
+      {required this.tableName_,
+      this.lastPullAt,
+      this.lastPushAt,
+      required this.pendingCount,
+      required this.failedCount,
+      required this.isInitialSynced,
+      required this.lastSyncCount,
+      this.lastError});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['table_name'] = Variable<String>(tableName_);
+    if (!nullToAbsent || lastPullAt != null) {
+      map['last_pull_at'] = Variable<DateTime>(lastPullAt);
+    }
+    if (!nullToAbsent || lastPushAt != null) {
+      map['last_push_at'] = Variable<DateTime>(lastPushAt);
+    }
+    map['pending_count'] = Variable<int>(pendingCount);
+    map['failed_count'] = Variable<int>(failedCount);
+    map['is_initial_synced'] = Variable<bool>(isInitialSynced);
+    map['last_sync_count'] = Variable<int>(lastSyncCount);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    return map;
+  }
+
+  SyncMetadataTableCompanion toCompanion(bool nullToAbsent) {
+    return SyncMetadataTableCompanion(
+      tableName_: Value(tableName_),
+      lastPullAt: lastPullAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastPullAt),
+      lastPushAt: lastPushAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastPushAt),
+      pendingCount: Value(pendingCount),
+      failedCount: Value(failedCount),
+      isInitialSynced: Value(isInitialSynced),
+      lastSyncCount: Value(lastSyncCount),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+    );
+  }
+
+  factory SyncMetadataTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncMetadataTableData(
+      tableName_: serializer.fromJson<String>(json['tableName_']),
+      lastPullAt: serializer.fromJson<DateTime?>(json['lastPullAt']),
+      lastPushAt: serializer.fromJson<DateTime?>(json['lastPushAt']),
+      pendingCount: serializer.fromJson<int>(json['pendingCount']),
+      failedCount: serializer.fromJson<int>(json['failedCount']),
+      isInitialSynced: serializer.fromJson<bool>(json['isInitialSynced']),
+      lastSyncCount: serializer.fromJson<int>(json['lastSyncCount']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tableName_': serializer.toJson<String>(tableName_),
+      'lastPullAt': serializer.toJson<DateTime?>(lastPullAt),
+      'lastPushAt': serializer.toJson<DateTime?>(lastPushAt),
+      'pendingCount': serializer.toJson<int>(pendingCount),
+      'failedCount': serializer.toJson<int>(failedCount),
+      'isInitialSynced': serializer.toJson<bool>(isInitialSynced),
+      'lastSyncCount': serializer.toJson<int>(lastSyncCount),
+      'lastError': serializer.toJson<String?>(lastError),
+    };
+  }
+
+  SyncMetadataTableData copyWith(
+          {String? tableName_,
+          Value<DateTime?> lastPullAt = const Value.absent(),
+          Value<DateTime?> lastPushAt = const Value.absent(),
+          int? pendingCount,
+          int? failedCount,
+          bool? isInitialSynced,
+          int? lastSyncCount,
+          Value<String?> lastError = const Value.absent()}) =>
+      SyncMetadataTableData(
+        tableName_: tableName_ ?? this.tableName_,
+        lastPullAt: lastPullAt.present ? lastPullAt.value : this.lastPullAt,
+        lastPushAt: lastPushAt.present ? lastPushAt.value : this.lastPushAt,
+        pendingCount: pendingCount ?? this.pendingCount,
+        failedCount: failedCount ?? this.failedCount,
+        isInitialSynced: isInitialSynced ?? this.isInitialSynced,
+        lastSyncCount: lastSyncCount ?? this.lastSyncCount,
+        lastError: lastError.present ? lastError.value : this.lastError,
+      );
+  SyncMetadataTableData copyWithCompanion(SyncMetadataTableCompanion data) {
+    return SyncMetadataTableData(
+      tableName_:
+          data.tableName_.present ? data.tableName_.value : this.tableName_,
+      lastPullAt:
+          data.lastPullAt.present ? data.lastPullAt.value : this.lastPullAt,
+      lastPushAt:
+          data.lastPushAt.present ? data.lastPushAt.value : this.lastPushAt,
+      pendingCount: data.pendingCount.present
+          ? data.pendingCount.value
+          : this.pendingCount,
+      failedCount:
+          data.failedCount.present ? data.failedCount.value : this.failedCount,
+      isInitialSynced: data.isInitialSynced.present
+          ? data.isInitialSynced.value
+          : this.isInitialSynced,
+      lastSyncCount: data.lastSyncCount.present
+          ? data.lastSyncCount.value
+          : this.lastSyncCount,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncMetadataTableData(')
+          ..write('tableName_: $tableName_, ')
+          ..write('lastPullAt: $lastPullAt, ')
+          ..write('lastPushAt: $lastPushAt, ')
+          ..write('pendingCount: $pendingCount, ')
+          ..write('failedCount: $failedCount, ')
+          ..write('isInitialSynced: $isInitialSynced, ')
+          ..write('lastSyncCount: $lastSyncCount, ')
+          ..write('lastError: $lastError')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(tableName_, lastPullAt, lastPushAt,
+      pendingCount, failedCount, isInitialSynced, lastSyncCount, lastError);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncMetadataTableData &&
+          other.tableName_ == this.tableName_ &&
+          other.lastPullAt == this.lastPullAt &&
+          other.lastPushAt == this.lastPushAt &&
+          other.pendingCount == this.pendingCount &&
+          other.failedCount == this.failedCount &&
+          other.isInitialSynced == this.isInitialSynced &&
+          other.lastSyncCount == this.lastSyncCount &&
+          other.lastError == this.lastError);
+}
+
+class SyncMetadataTableCompanion
+    extends UpdateCompanion<SyncMetadataTableData> {
+  final Value<String> tableName_;
+  final Value<DateTime?> lastPullAt;
+  final Value<DateTime?> lastPushAt;
+  final Value<int> pendingCount;
+  final Value<int> failedCount;
+  final Value<bool> isInitialSynced;
+  final Value<int> lastSyncCount;
+  final Value<String?> lastError;
+  final Value<int> rowid;
+  const SyncMetadataTableCompanion({
+    this.tableName_ = const Value.absent(),
+    this.lastPullAt = const Value.absent(),
+    this.lastPushAt = const Value.absent(),
+    this.pendingCount = const Value.absent(),
+    this.failedCount = const Value.absent(),
+    this.isInitialSynced = const Value.absent(),
+    this.lastSyncCount = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncMetadataTableCompanion.insert({
+    required String tableName_,
+    this.lastPullAt = const Value.absent(),
+    this.lastPushAt = const Value.absent(),
+    this.pendingCount = const Value.absent(),
+    this.failedCount = const Value.absent(),
+    this.isInitialSynced = const Value.absent(),
+    this.lastSyncCount = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : tableName_ = Value(tableName_);
+  static Insertable<SyncMetadataTableData> custom({
+    Expression<String>? tableName_,
+    Expression<DateTime>? lastPullAt,
+    Expression<DateTime>? lastPushAt,
+    Expression<int>? pendingCount,
+    Expression<int>? failedCount,
+    Expression<bool>? isInitialSynced,
+    Expression<int>? lastSyncCount,
+    Expression<String>? lastError,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (tableName_ != null) 'table_name': tableName_,
+      if (lastPullAt != null) 'last_pull_at': lastPullAt,
+      if (lastPushAt != null) 'last_push_at': lastPushAt,
+      if (pendingCount != null) 'pending_count': pendingCount,
+      if (failedCount != null) 'failed_count': failedCount,
+      if (isInitialSynced != null) 'is_initial_synced': isInitialSynced,
+      if (lastSyncCount != null) 'last_sync_count': lastSyncCount,
+      if (lastError != null) 'last_error': lastError,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncMetadataTableCompanion copyWith(
+      {Value<String>? tableName_,
+      Value<DateTime?>? lastPullAt,
+      Value<DateTime?>? lastPushAt,
+      Value<int>? pendingCount,
+      Value<int>? failedCount,
+      Value<bool>? isInitialSynced,
+      Value<int>? lastSyncCount,
+      Value<String?>? lastError,
+      Value<int>? rowid}) {
+    return SyncMetadataTableCompanion(
+      tableName_: tableName_ ?? this.tableName_,
+      lastPullAt: lastPullAt ?? this.lastPullAt,
+      lastPushAt: lastPushAt ?? this.lastPushAt,
+      pendingCount: pendingCount ?? this.pendingCount,
+      failedCount: failedCount ?? this.failedCount,
+      isInitialSynced: isInitialSynced ?? this.isInitialSynced,
+      lastSyncCount: lastSyncCount ?? this.lastSyncCount,
+      lastError: lastError ?? this.lastError,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tableName_.present) {
+      map['table_name'] = Variable<String>(tableName_.value);
+    }
+    if (lastPullAt.present) {
+      map['last_pull_at'] = Variable<DateTime>(lastPullAt.value);
+    }
+    if (lastPushAt.present) {
+      map['last_push_at'] = Variable<DateTime>(lastPushAt.value);
+    }
+    if (pendingCount.present) {
+      map['pending_count'] = Variable<int>(pendingCount.value);
+    }
+    if (failedCount.present) {
+      map['failed_count'] = Variable<int>(failedCount.value);
+    }
+    if (isInitialSynced.present) {
+      map['is_initial_synced'] = Variable<bool>(isInitialSynced.value);
+    }
+    if (lastSyncCount.present) {
+      map['last_sync_count'] = Variable<int>(lastSyncCount.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncMetadataTableCompanion(')
+          ..write('tableName_: $tableName_, ')
+          ..write('lastPullAt: $lastPullAt, ')
+          ..write('lastPushAt: $lastPushAt, ')
+          ..write('pendingCount: $pendingCount, ')
+          ..write('failedCount: $failedCount, ')
+          ..write('isInitialSynced: $isInitialSynced, ')
+          ..write('lastSyncCount: $lastSyncCount, ')
+          ..write('lastError: $lastError, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $StockDeltasTableTable extends StockDeltasTable
+    with TableInfo<$StockDeltasTableTable, StockDeltasTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StockDeltasTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _productIdMeta =
+      const VerificationMeta('productId');
+  @override
+  late final GeneratedColumn<String> productId = GeneratedColumn<String>(
+      'product_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _storeIdMeta =
+      const VerificationMeta('storeId');
+  @override
+  late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
+      'store_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _orgIdMeta = const VerificationMeta('orgId');
+  @override
+  late final GeneratedColumn<String> orgId = GeneratedColumn<String>(
+      'org_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _quantityChangeMeta =
+      const VerificationMeta('quantityChange');
+  @override
+  late final GeneratedColumn<int> quantityChange = GeneratedColumn<int>(
+      'quantity_change', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _deviceIdMeta =
+      const VerificationMeta('deviceId');
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+      'device_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _operationTypeMeta =
+      const VerificationMeta('operationType');
+  @override
+  late final GeneratedColumn<String> operationType = GeneratedColumn<String>(
+      'operation_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _referenceIdMeta =
+      const VerificationMeta('referenceId');
+  @override
+  late final GeneratedColumn<String> referenceId = GeneratedColumn<String>(
+      'reference_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _syncStatusMeta =
+      const VerificationMeta('syncStatus');
+  @override
+  late final GeneratedColumn<String> syncStatus = GeneratedColumn<String>(
+      'sync_status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('pending'));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _syncedAtMeta =
+      const VerificationMeta('syncedAt');
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+      'synced_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        productId,
+        storeId,
+        orgId,
+        quantityChange,
+        deviceId,
+        operationType,
+        referenceId,
+        syncStatus,
+        createdAt,
+        syncedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'stock_deltas';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<StockDeltasTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(_productIdMeta,
+          productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta));
+    } else if (isInserting) {
+      context.missing(_productIdMeta);
+    }
+    if (data.containsKey('store_id')) {
+      context.handle(_storeIdMeta,
+          storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
+    } else if (isInserting) {
+      context.missing(_storeIdMeta);
+    }
+    if (data.containsKey('org_id')) {
+      context.handle(
+          _orgIdMeta, orgId.isAcceptableOrUnknown(data['org_id']!, _orgIdMeta));
+    }
+    if (data.containsKey('quantity_change')) {
+      context.handle(
+          _quantityChangeMeta,
+          quantityChange.isAcceptableOrUnknown(
+              data['quantity_change']!, _quantityChangeMeta));
+    } else if (isInserting) {
+      context.missing(_quantityChangeMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(_deviceIdMeta,
+          deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta));
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('operation_type')) {
+      context.handle(
+          _operationTypeMeta,
+          operationType.isAcceptableOrUnknown(
+              data['operation_type']!, _operationTypeMeta));
+    } else if (isInserting) {
+      context.missing(_operationTypeMeta);
+    }
+    if (data.containsKey('reference_id')) {
+      context.handle(
+          _referenceIdMeta,
+          referenceId.isAcceptableOrUnknown(
+              data['reference_id']!, _referenceIdMeta));
+    }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+          _syncStatusMeta,
+          syncStatus.isAcceptableOrUnknown(
+              data['sync_status']!, _syncStatusMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(_syncedAtMeta,
+          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StockDeltasTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StockDeltasTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      productId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}product_id'])!,
+      storeId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
+      orgId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}org_id']),
+      quantityChange: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}quantity_change'])!,
+      deviceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}device_id'])!,
+      operationType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}operation_type'])!,
+      referenceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}reference_id']),
+      syncStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sync_status'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      syncedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+    );
+  }
+
+  @override
+  $StockDeltasTableTable createAlias(String alias) {
+    return $StockDeltasTableTable(attachedDatabase, alias);
+  }
+}
+
+class StockDeltasTableData extends DataClass
+    implements Insertable<StockDeltasTableData> {
+  /// معرف فريد للتغيير
+  final String id;
+
+  /// معرف المنتج
+  final String productId;
+
+  /// معرف المتجر
+  final String storeId;
+
+  /// معرف المؤسسة
+  final String? orgId;
+
+  /// التغيير في الكمية (موجب للإضافة، سالب للنقصان)
+  final int quantityChange;
+
+  /// معرف الجهاز (POS terminal) الذي أجرى التغيير
+  final String deviceId;
+
+  /// نوع العملية التي سببت التغيير
+  final String operationType;
+
+  /// معرف العملية المرجعية (sale_id, return_id, etc.)
+  final String? referenceId;
+
+  /// حالة المزامنة
+  final String syncStatus;
+
+  /// وقت إنشاء التغيير
+  final DateTime createdAt;
+
+  /// وقت المزامنة
+  final DateTime? syncedAt;
+  const StockDeltasTableData(
+      {required this.id,
+      required this.productId,
+      required this.storeId,
+      this.orgId,
+      required this.quantityChange,
+      required this.deviceId,
+      required this.operationType,
+      this.referenceId,
+      required this.syncStatus,
+      required this.createdAt,
+      this.syncedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['product_id'] = Variable<String>(productId);
+    map['store_id'] = Variable<String>(storeId);
+    if (!nullToAbsent || orgId != null) {
+      map['org_id'] = Variable<String>(orgId);
+    }
+    map['quantity_change'] = Variable<int>(quantityChange);
+    map['device_id'] = Variable<String>(deviceId);
+    map['operation_type'] = Variable<String>(operationType);
+    if (!nullToAbsent || referenceId != null) {
+      map['reference_id'] = Variable<String>(referenceId);
+    }
+    map['sync_status'] = Variable<String>(syncStatus);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  StockDeltasTableCompanion toCompanion(bool nullToAbsent) {
+    return StockDeltasTableCompanion(
+      id: Value(id),
+      productId: Value(productId),
+      storeId: Value(storeId),
+      orgId:
+          orgId == null && nullToAbsent ? const Value.absent() : Value(orgId),
+      quantityChange: Value(quantityChange),
+      deviceId: Value(deviceId),
+      operationType: Value(operationType),
+      referenceId: referenceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceId),
+      syncStatus: Value(syncStatus),
+      createdAt: Value(createdAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory StockDeltasTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StockDeltasTableData(
+      id: serializer.fromJson<String>(json['id']),
+      productId: serializer.fromJson<String>(json['productId']),
+      storeId: serializer.fromJson<String>(json['storeId']),
+      orgId: serializer.fromJson<String?>(json['orgId']),
+      quantityChange: serializer.fromJson<int>(json['quantityChange']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      operationType: serializer.fromJson<String>(json['operationType']),
+      referenceId: serializer.fromJson<String?>(json['referenceId']),
+      syncStatus: serializer.fromJson<String>(json['syncStatus']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'productId': serializer.toJson<String>(productId),
+      'storeId': serializer.toJson<String>(storeId),
+      'orgId': serializer.toJson<String?>(orgId),
+      'quantityChange': serializer.toJson<int>(quantityChange),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'operationType': serializer.toJson<String>(operationType),
+      'referenceId': serializer.toJson<String?>(referenceId),
+      'syncStatus': serializer.toJson<String>(syncStatus),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  StockDeltasTableData copyWith(
+          {String? id,
+          String? productId,
+          String? storeId,
+          Value<String?> orgId = const Value.absent(),
+          int? quantityChange,
+          String? deviceId,
+          String? operationType,
+          Value<String?> referenceId = const Value.absent(),
+          String? syncStatus,
+          DateTime? createdAt,
+          Value<DateTime?> syncedAt = const Value.absent()}) =>
+      StockDeltasTableData(
+        id: id ?? this.id,
+        productId: productId ?? this.productId,
+        storeId: storeId ?? this.storeId,
+        orgId: orgId.present ? orgId.value : this.orgId,
+        quantityChange: quantityChange ?? this.quantityChange,
+        deviceId: deviceId ?? this.deviceId,
+        operationType: operationType ?? this.operationType,
+        referenceId: referenceId.present ? referenceId.value : this.referenceId,
+        syncStatus: syncStatus ?? this.syncStatus,
+        createdAt: createdAt ?? this.createdAt,
+        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+      );
+  StockDeltasTableData copyWithCompanion(StockDeltasTableCompanion data) {
+    return StockDeltasTableData(
+      id: data.id.present ? data.id.value : this.id,
+      productId: data.productId.present ? data.productId.value : this.productId,
+      storeId: data.storeId.present ? data.storeId.value : this.storeId,
+      orgId: data.orgId.present ? data.orgId.value : this.orgId,
+      quantityChange: data.quantityChange.present
+          ? data.quantityChange.value
+          : this.quantityChange,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      operationType: data.operationType.present
+          ? data.operationType.value
+          : this.operationType,
+      referenceId:
+          data.referenceId.present ? data.referenceId.value : this.referenceId,
+      syncStatus:
+          data.syncStatus.present ? data.syncStatus.value : this.syncStatus,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StockDeltasTableData(')
+          ..write('id: $id, ')
+          ..write('productId: $productId, ')
+          ..write('storeId: $storeId, ')
+          ..write('orgId: $orgId, ')
+          ..write('quantityChange: $quantityChange, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('operationType: $operationType, ')
+          ..write('referenceId: $referenceId, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, productId, storeId, orgId, quantityChange,
+      deviceId, operationType, referenceId, syncStatus, createdAt, syncedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StockDeltasTableData &&
+          other.id == this.id &&
+          other.productId == this.productId &&
+          other.storeId == this.storeId &&
+          other.orgId == this.orgId &&
+          other.quantityChange == this.quantityChange &&
+          other.deviceId == this.deviceId &&
+          other.operationType == this.operationType &&
+          other.referenceId == this.referenceId &&
+          other.syncStatus == this.syncStatus &&
+          other.createdAt == this.createdAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class StockDeltasTableCompanion extends UpdateCompanion<StockDeltasTableData> {
+  final Value<String> id;
+  final Value<String> productId;
+  final Value<String> storeId;
+  final Value<String?> orgId;
+  final Value<int> quantityChange;
+  final Value<String> deviceId;
+  final Value<String> operationType;
+  final Value<String?> referenceId;
+  final Value<String> syncStatus;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const StockDeltasTableCompanion({
+    this.id = const Value.absent(),
+    this.productId = const Value.absent(),
+    this.storeId = const Value.absent(),
+    this.orgId = const Value.absent(),
+    this.quantityChange = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.operationType = const Value.absent(),
+    this.referenceId = const Value.absent(),
+    this.syncStatus = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  StockDeltasTableCompanion.insert({
+    required String id,
+    required String productId,
+    required String storeId,
+    this.orgId = const Value.absent(),
+    required int quantityChange,
+    required String deviceId,
+    required String operationType,
+    this.referenceId = const Value.absent(),
+    this.syncStatus = const Value.absent(),
+    required DateTime createdAt,
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        productId = Value(productId),
+        storeId = Value(storeId),
+        quantityChange = Value(quantityChange),
+        deviceId = Value(deviceId),
+        operationType = Value(operationType),
+        createdAt = Value(createdAt);
+  static Insertable<StockDeltasTableData> custom({
+    Expression<String>? id,
+    Expression<String>? productId,
+    Expression<String>? storeId,
+    Expression<String>? orgId,
+    Expression<int>? quantityChange,
+    Expression<String>? deviceId,
+    Expression<String>? operationType,
+    Expression<String>? referenceId,
+    Expression<String>? syncStatus,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (productId != null) 'product_id': productId,
+      if (storeId != null) 'store_id': storeId,
+      if (orgId != null) 'org_id': orgId,
+      if (quantityChange != null) 'quantity_change': quantityChange,
+      if (deviceId != null) 'device_id': deviceId,
+      if (operationType != null) 'operation_type': operationType,
+      if (referenceId != null) 'reference_id': referenceId,
+      if (syncStatus != null) 'sync_status': syncStatus,
+      if (createdAt != null) 'created_at': createdAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  StockDeltasTableCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? productId,
+      Value<String>? storeId,
+      Value<String?>? orgId,
+      Value<int>? quantityChange,
+      Value<String>? deviceId,
+      Value<String>? operationType,
+      Value<String?>? referenceId,
+      Value<String>? syncStatus,
+      Value<DateTime>? createdAt,
+      Value<DateTime?>? syncedAt,
+      Value<int>? rowid}) {
+    return StockDeltasTableCompanion(
+      id: id ?? this.id,
+      productId: productId ?? this.productId,
+      storeId: storeId ?? this.storeId,
+      orgId: orgId ?? this.orgId,
+      quantityChange: quantityChange ?? this.quantityChange,
+      deviceId: deviceId ?? this.deviceId,
+      operationType: operationType ?? this.operationType,
+      referenceId: referenceId ?? this.referenceId,
+      syncStatus: syncStatus ?? this.syncStatus,
+      createdAt: createdAt ?? this.createdAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<String>(productId.value);
+    }
+    if (storeId.present) {
+      map['store_id'] = Variable<String>(storeId.value);
+    }
+    if (orgId.present) {
+      map['org_id'] = Variable<String>(orgId.value);
+    }
+    if (quantityChange.present) {
+      map['quantity_change'] = Variable<int>(quantityChange.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (operationType.present) {
+      map['operation_type'] = Variable<String>(operationType.value);
+    }
+    if (referenceId.present) {
+      map['reference_id'] = Variable<String>(referenceId.value);
+    }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<String>(syncStatus.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StockDeltasTableCompanion(')
+          ..write('id: $id, ')
+          ..write('productId: $productId, ')
+          ..write('storeId: $storeId, ')
+          ..write('orgId: $orgId, ')
+          ..write('quantityChange: $quantityChange, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('operationType: $operationType, ')
+          ..write('referenceId: $referenceId, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -33363,6 +34417,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $UserStoresTableTable(this);
   late final $PosTerminalsTableTable posTerminalsTable =
       $PosTerminalsTableTable(this);
+  late final $SyncMetadataTableTable syncMetadataTable =
+      $SyncMetadataTableTable(this);
+  late final $StockDeltasTableTable stockDeltasTable =
+      $StockDeltasTableTable(this);
   late final Index idxProductsStoreId = Index('idx_products_store_id',
       'CREATE INDEX idx_products_store_id ON products (store_id)');
   late final Index idxProductsBarcode = Index('idx_products_barcode',
@@ -33688,6 +34746,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index idxPosTerminalsIsActive = Index(
       'idx_pos_terminals_is_active',
       'CREATE INDEX idx_pos_terminals_is_active ON pos_terminals (is_active)');
+  late final Index idxStockDeltasProduct = Index('idx_stock_deltas_product',
+      'CREATE INDEX idx_stock_deltas_product ON stock_deltas (product_id)');
+  late final Index idxStockDeltasSyncStatus = Index(
+      'idx_stock_deltas_sync_status',
+      'CREATE INDEX idx_stock_deltas_sync_status ON stock_deltas (sync_status)');
+  late final Index idxStockDeltasDevice = Index('idx_stock_deltas_device',
+      'CREATE INDEX idx_stock_deltas_device ON stock_deltas (device_id)');
+  late final Index idxStockDeltasProductSync = Index(
+      'idx_stock_deltas_product_sync',
+      'CREATE INDEX idx_stock_deltas_product_sync ON stock_deltas (product_id, sync_status)');
   late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
   late final SalesDao salesDao = SalesDao(this as AppDatabase);
   late final SaleItemsDao saleItemsDao = SaleItemsDao(this as AppDatabase);
@@ -33720,6 +34788,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final OrgMembersDao orgMembersDao = OrgMembersDao(this as AppDatabase);
   late final PosTerminalsDao posTerminalsDao =
       PosTerminalsDao(this as AppDatabase);
+  late final SyncMetadataDao syncMetadataDao =
+      SyncMetadataDao(this as AppDatabase);
+  late final StockDeltasDao stockDeltasDao =
+      StockDeltasDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -33773,6 +34845,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         orgMembersTable,
         userStoresTable,
         posTerminalsTable,
+        syncMetadataTable,
+        stockDeltasTable,
         idxProductsStoreId,
         idxProductsBarcode,
         idxProductsSku,
@@ -33922,7 +34996,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxPosTerminalsStoreId,
         idxPosTerminalsOrgId,
         idxPosTerminalsStatus,
-        idxPosTerminalsIsActive
+        idxPosTerminalsIsActive,
+        idxStockDeltasProduct,
+        idxStockDeltasSyncStatus,
+        idxStockDeltasDevice,
+        idxStockDeltasProductSync
       ];
 }
 
@@ -49118,6 +50196,501 @@ typedef $$PosTerminalsTableTableProcessedTableManager = ProcessedTableManager<
     ),
     PosTerminalsTableData,
     PrefetchHooks Function()>;
+typedef $$SyncMetadataTableTableCreateCompanionBuilder
+    = SyncMetadataTableCompanion Function({
+  required String tableName_,
+  Value<DateTime?> lastPullAt,
+  Value<DateTime?> lastPushAt,
+  Value<int> pendingCount,
+  Value<int> failedCount,
+  Value<bool> isInitialSynced,
+  Value<int> lastSyncCount,
+  Value<String?> lastError,
+  Value<int> rowid,
+});
+typedef $$SyncMetadataTableTableUpdateCompanionBuilder
+    = SyncMetadataTableCompanion Function({
+  Value<String> tableName_,
+  Value<DateTime?> lastPullAt,
+  Value<DateTime?> lastPushAt,
+  Value<int> pendingCount,
+  Value<int> failedCount,
+  Value<bool> isInitialSynced,
+  Value<int> lastSyncCount,
+  Value<String?> lastError,
+  Value<int> rowid,
+});
+
+class $$SyncMetadataTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get tableName_ => $composableBuilder(
+      column: $table.tableName_, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastPullAt => $composableBuilder(
+      column: $table.lastPullAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastPushAt => $composableBuilder(
+      column: $table.lastPushAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get pendingCount => $composableBuilder(
+      column: $table.pendingCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get failedCount => $composableBuilder(
+      column: $table.failedCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isInitialSynced => $composableBuilder(
+      column: $table.isInitialSynced,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get lastSyncCount => $composableBuilder(
+      column: $table.lastSyncCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+      column: $table.lastError, builder: (column) => ColumnFilters(column));
+}
+
+class $$SyncMetadataTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get tableName_ => $composableBuilder(
+      column: $table.tableName_, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastPullAt => $composableBuilder(
+      column: $table.lastPullAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastPushAt => $composableBuilder(
+      column: $table.lastPushAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get pendingCount => $composableBuilder(
+      column: $table.pendingCount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get failedCount => $composableBuilder(
+      column: $table.failedCount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isInitialSynced => $composableBuilder(
+      column: $table.isInitialSynced,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get lastSyncCount => $composableBuilder(
+      column: $table.lastSyncCount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+      column: $table.lastError, builder: (column) => ColumnOrderings(column));
+}
+
+class $$SyncMetadataTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get tableName_ => $composableBuilder(
+      column: $table.tableName_, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastPullAt => $composableBuilder(
+      column: $table.lastPullAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastPushAt => $composableBuilder(
+      column: $table.lastPushAt, builder: (column) => column);
+
+  GeneratedColumn<int> get pendingCount => $composableBuilder(
+      column: $table.pendingCount, builder: (column) => column);
+
+  GeneratedColumn<int> get failedCount => $composableBuilder(
+      column: $table.failedCount, builder: (column) => column);
+
+  GeneratedColumn<bool> get isInitialSynced => $composableBuilder(
+      column: $table.isInitialSynced, builder: (column) => column);
+
+  GeneratedColumn<int> get lastSyncCount => $composableBuilder(
+      column: $table.lastSyncCount, builder: (column) => column);
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+}
+
+class $$SyncMetadataTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SyncMetadataTableTable,
+    SyncMetadataTableData,
+    $$SyncMetadataTableTableFilterComposer,
+    $$SyncMetadataTableTableOrderingComposer,
+    $$SyncMetadataTableTableAnnotationComposer,
+    $$SyncMetadataTableTableCreateCompanionBuilder,
+    $$SyncMetadataTableTableUpdateCompanionBuilder,
+    (
+      SyncMetadataTableData,
+      BaseReferences<_$AppDatabase, $SyncMetadataTableTable,
+          SyncMetadataTableData>
+    ),
+    SyncMetadataTableData,
+    PrefetchHooks Function()> {
+  $$SyncMetadataTableTableTableManager(
+      _$AppDatabase db, $SyncMetadataTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncMetadataTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncMetadataTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncMetadataTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> tableName_ = const Value.absent(),
+            Value<DateTime?> lastPullAt = const Value.absent(),
+            Value<DateTime?> lastPushAt = const Value.absent(),
+            Value<int> pendingCount = const Value.absent(),
+            Value<int> failedCount = const Value.absent(),
+            Value<bool> isInitialSynced = const Value.absent(),
+            Value<int> lastSyncCount = const Value.absent(),
+            Value<String?> lastError = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SyncMetadataTableCompanion(
+            tableName_: tableName_,
+            lastPullAt: lastPullAt,
+            lastPushAt: lastPushAt,
+            pendingCount: pendingCount,
+            failedCount: failedCount,
+            isInitialSynced: isInitialSynced,
+            lastSyncCount: lastSyncCount,
+            lastError: lastError,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String tableName_,
+            Value<DateTime?> lastPullAt = const Value.absent(),
+            Value<DateTime?> lastPushAt = const Value.absent(),
+            Value<int> pendingCount = const Value.absent(),
+            Value<int> failedCount = const Value.absent(),
+            Value<bool> isInitialSynced = const Value.absent(),
+            Value<int> lastSyncCount = const Value.absent(),
+            Value<String?> lastError = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SyncMetadataTableCompanion.insert(
+            tableName_: tableName_,
+            lastPullAt: lastPullAt,
+            lastPushAt: lastPushAt,
+            pendingCount: pendingCount,
+            failedCount: failedCount,
+            isInitialSynced: isInitialSynced,
+            lastSyncCount: lastSyncCount,
+            lastError: lastError,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$SyncMetadataTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SyncMetadataTableTable,
+    SyncMetadataTableData,
+    $$SyncMetadataTableTableFilterComposer,
+    $$SyncMetadataTableTableOrderingComposer,
+    $$SyncMetadataTableTableAnnotationComposer,
+    $$SyncMetadataTableTableCreateCompanionBuilder,
+    $$SyncMetadataTableTableUpdateCompanionBuilder,
+    (
+      SyncMetadataTableData,
+      BaseReferences<_$AppDatabase, $SyncMetadataTableTable,
+          SyncMetadataTableData>
+    ),
+    SyncMetadataTableData,
+    PrefetchHooks Function()>;
+typedef $$StockDeltasTableTableCreateCompanionBuilder
+    = StockDeltasTableCompanion Function({
+  required String id,
+  required String productId,
+  required String storeId,
+  Value<String?> orgId,
+  required int quantityChange,
+  required String deviceId,
+  required String operationType,
+  Value<String?> referenceId,
+  Value<String> syncStatus,
+  required DateTime createdAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+typedef $$StockDeltasTableTableUpdateCompanionBuilder
+    = StockDeltasTableCompanion Function({
+  Value<String> id,
+  Value<String> productId,
+  Value<String> storeId,
+  Value<String?> orgId,
+  Value<int> quantityChange,
+  Value<String> deviceId,
+  Value<String> operationType,
+  Value<String?> referenceId,
+  Value<String> syncStatus,
+  Value<DateTime> createdAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+
+class $$StockDeltasTableTableFilterComposer
+    extends Composer<_$AppDatabase, $StockDeltasTableTable> {
+  $$StockDeltasTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get productId => $composableBuilder(
+      column: $table.productId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get orgId => $composableBuilder(
+      column: $table.orgId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get quantityChange => $composableBuilder(
+      column: $table.quantityChange,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+      column: $table.deviceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get operationType => $composableBuilder(
+      column: $table.operationType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+      column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$StockDeltasTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $StockDeltasTableTable> {
+  $$StockDeltasTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get productId => $composableBuilder(
+      column: $table.productId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get orgId => $composableBuilder(
+      column: $table.orgId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get quantityChange => $composableBuilder(
+      column: $table.quantityChange,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+      column: $table.deviceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get operationType => $composableBuilder(
+      column: $table.operationType,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+      column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$StockDeltasTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $StockDeltasTableTable> {
+  $$StockDeltasTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get productId =>
+      $composableBuilder(column: $table.productId, builder: (column) => column);
+
+  GeneratedColumn<String> get storeId =>
+      $composableBuilder(column: $table.storeId, builder: (column) => column);
+
+  GeneratedColumn<String> get orgId =>
+      $composableBuilder(column: $table.orgId, builder: (column) => column);
+
+  GeneratedColumn<int> get quantityChange => $composableBuilder(
+      column: $table.quantityChange, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<String> get operationType => $composableBuilder(
+      column: $table.operationType, builder: (column) => column);
+
+  GeneratedColumn<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => column);
+
+  GeneratedColumn<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$StockDeltasTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $StockDeltasTableTable,
+    StockDeltasTableData,
+    $$StockDeltasTableTableFilterComposer,
+    $$StockDeltasTableTableOrderingComposer,
+    $$StockDeltasTableTableAnnotationComposer,
+    $$StockDeltasTableTableCreateCompanionBuilder,
+    $$StockDeltasTableTableUpdateCompanionBuilder,
+    (
+      StockDeltasTableData,
+      BaseReferences<_$AppDatabase, $StockDeltasTableTable,
+          StockDeltasTableData>
+    ),
+    StockDeltasTableData,
+    PrefetchHooks Function()> {
+  $$StockDeltasTableTableTableManager(
+      _$AppDatabase db, $StockDeltasTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$StockDeltasTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$StockDeltasTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$StockDeltasTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> productId = const Value.absent(),
+            Value<String> storeId = const Value.absent(),
+            Value<String?> orgId = const Value.absent(),
+            Value<int> quantityChange = const Value.absent(),
+            Value<String> deviceId = const Value.absent(),
+            Value<String> operationType = const Value.absent(),
+            Value<String?> referenceId = const Value.absent(),
+            Value<String> syncStatus = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              StockDeltasTableCompanion(
+            id: id,
+            productId: productId,
+            storeId: storeId,
+            orgId: orgId,
+            quantityChange: quantityChange,
+            deviceId: deviceId,
+            operationType: operationType,
+            referenceId: referenceId,
+            syncStatus: syncStatus,
+            createdAt: createdAt,
+            syncedAt: syncedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String productId,
+            required String storeId,
+            Value<String?> orgId = const Value.absent(),
+            required int quantityChange,
+            required String deviceId,
+            required String operationType,
+            Value<String?> referenceId = const Value.absent(),
+            Value<String> syncStatus = const Value.absent(),
+            required DateTime createdAt,
+            Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              StockDeltasTableCompanion.insert(
+            id: id,
+            productId: productId,
+            storeId: storeId,
+            orgId: orgId,
+            quantityChange: quantityChange,
+            deviceId: deviceId,
+            operationType: operationType,
+            referenceId: referenceId,
+            syncStatus: syncStatus,
+            createdAt: createdAt,
+            syncedAt: syncedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$StockDeltasTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $StockDeltasTableTable,
+    StockDeltasTableData,
+    $$StockDeltasTableTableFilterComposer,
+    $$StockDeltasTableTableOrderingComposer,
+    $$StockDeltasTableTableAnnotationComposer,
+    $$StockDeltasTableTableCreateCompanionBuilder,
+    $$StockDeltasTableTableUpdateCompanionBuilder,
+    (
+      StockDeltasTableData,
+      BaseReferences<_$AppDatabase, $StockDeltasTableTable,
+          StockDeltasTableData>
+    ),
+    StockDeltasTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -49224,4 +50797,8 @@ class $AppDatabaseManager {
       $$UserStoresTableTableTableManager(_db, _db.userStoresTable);
   $$PosTerminalsTableTableTableManager get posTerminalsTable =>
       $$PosTerminalsTableTableTableManager(_db, _db.posTerminalsTable);
+  $$SyncMetadataTableTableTableManager get syncMetadataTable =>
+      $$SyncMetadataTableTableTableManager(_db, _db.syncMetadataTable);
+  $$StockDeltasTableTableTableManager get stockDeltasTable =>
+      $$StockDeltasTableTableTableManager(_db, _db.stockDeltasTable);
 }
