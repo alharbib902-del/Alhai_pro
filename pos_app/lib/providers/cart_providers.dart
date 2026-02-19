@@ -484,6 +484,12 @@ class CartNotifier extends StateNotifier<CartState> {
     await _persistence.deleteHeldInvoice(invoice.id);
     _saveCart();
   }
+
+  /// استعادة حالة سلة مباشرة (تُستخدم من DB-backed held invoices)
+  void restoreFromCart(CartState cart) {
+    state = cart;
+    _saveCart();
+  }
 }
 
 // ============================================================================

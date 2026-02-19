@@ -5,6 +5,8 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../providers/shifts_providers.dart';
+import '../../data/local/app_database.dart';
 
 /// شاشة ملخص الوردية (بعد الإغلاق)
 class ShiftSummaryScreen extends ConsumerStatefulWidget {
@@ -15,6 +17,35 @@ class ShiftSummaryScreen extends ConsumerStatefulWidget {
 }
 
 class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
+  /// الحصول على آخر وردية مغلقة من قائمة ورديات اليوم
+  ShiftsTableData? _getLastClosedShift(List<ShiftsTableData> shifts) {
+    try {
+      return shifts.firstWhere((s) => s.status == 'closed');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// حساب مدة الوردية بصيغة نصية
+  String _formatDuration(DateTime openedAt, DateTime? closedAt) {
+    final end = closedAt ?? DateTime.now();
+    final duration = end.difference(openedAt);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    if (hours > 0 && minutes > 0) {
+      return '$hours ساعات $minutes دقيقة';
+    } else if (hours > 0) {
+      return '$hours ساعات';
+    } else {
+      return '$minutes دقيقة';
+    }
+  }
+
+  /// تنسيق المبلغ المالي
+  String _formatAmount(double amount) {
+    return amount.toStringAsFixed(0);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -22,6 +53,12 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    // مراقبة ورديات اليوم للحصول على آخر وردية مغلقة
+    final todayShiftsAsync = ref.watch(todayShiftsProvider);
+    final shift = todayShiftsAsync.whenOrNull(
+      data: (shifts) => _getLastClosedShift(shifts),
+    );
 
     return Column(
               children: [
@@ -42,7 +79,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, shift),
                   ),
                 ),
               ],
@@ -54,7 +91,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,9 +100,9 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             flex: 3,
             child: Column(
               children: [
-                _buildSuccessCard(isDark, l10n),
+                _buildSuccessCard(isDark, l10n, shift),
                 const SizedBox(height: 24),
-                _buildStatsCard(isDark, l10n),
+                _buildStatsCard(isDark, l10n, shift),
               ],
             ),
           ),
@@ -74,7 +111,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             flex: 2,
             child: Column(
               children: [
-                _buildCashStatusCard(isDark, l10n),
+                _buildCashStatusCard(isDark, l10n, shift),
                 const SizedBox(height: 24),
                 _buildActionButtons(isDark, l10n),
               ],
@@ -86,18 +123,20 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
 
     return Column(
       children: [
-        _buildSuccessCard(isDark, l10n),
+        _buildSuccessCard(isDark, l10n, shift),
         SizedBox(height: isMediumScreen ? 24 : 16),
-        _buildStatsCard(isDark, l10n),
+        _buildStatsCard(isDark, l10n, shift),
         SizedBox(height: isMediumScreen ? 24 : 16),
-        _buildCashStatusCard(isDark, l10n),
+        _buildCashStatusCard(isDark, l10n, shift),
         const SizedBox(height: 24),
         _buildActionButtons(isDark, l10n),
       ],
     );
   }
 
-  Widget _buildSuccessCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildSuccessCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+    // عرض وقت الإغلاق الفعلي من بيانات الوردية أو الوقت الحالي
+    final closedTime = shift?.closedAt ?? DateTime.now();
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -130,7 +169,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            DateTime.now().toString().substring(0, 16),
+            closedTime.toString().substring(0, 16),
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.75),
               fontSize: 14,
@@ -141,7 +180,19 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
   }
 
-  Widget _buildStatsCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildStatsCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+    // حساب القيم من بيانات الوردية الفعلية
+    final duration = shift != null
+        ? _formatDuration(shift.openedAt, shift.closedAt)
+        : '--';
+    final invoiceCount = shift?.totalSales ?? 0;
+    final totalSales = shift?.totalSalesAmount ?? 0.0;
+    final refunds = shift?.totalRefundsAmount ?? 0.0;
+    // مبيعات البطاقة والنقدية غير متوفرة مباشرة - نعرض إجمالي المبيعات ناقص المرتجعات كصافي
+    // TODO: إضافة حقول مبيعات البطاقة والنقدية في جدول الورديات مستقبلاً
+    final cashSales = shift != null ? (shift.closingCash ?? 0) - shift.openingCash : 0.0;
+    final cardSales = shift != null ? totalSales - cashSales.clamp(0, totalSales) : 0.0;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -177,7 +228,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.timer_rounded,
             label: 'مدة الوردية',
-            value: '8 ساعات 30 دقيقة',
+            value: duration,
             color: AppColors.info,
             isDark: isDark,
           ),
@@ -185,7 +236,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.receipt_long_rounded,
             label: 'عدد الفواتير',
-            value: '45 فاتورة',
+            value: '$invoiceCount فاتورة',
             color: AppColors.primary,
             isDark: isDark,
           ),
@@ -193,7 +244,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.trending_up_rounded,
             label: 'إجمالي المبيعات',
-            value: '4,200 ${l10n.sar}',
+            value: '${_formatAmount(totalSales)} ${l10n.sar}',
             color: AppColors.success,
             isDark: isDark,
           ),
@@ -201,7 +252,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.credit_card_rounded,
             label: 'مبيعات بطاقة',
-            value: '1,850 ${l10n.sar}',
+            value: '${_formatAmount(cardSales)} ${l10n.sar}',
             color: AppColors.card,
             isDark: isDark,
           ),
@@ -209,7 +260,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.money_rounded,
             label: 'مبيعات نقدية',
-            value: '2,350 ${l10n.sar}',
+            value: '${_formatAmount(cashSales.clamp(0, double.infinity))} ${l10n.sar}',
             color: AppColors.cash,
             isDark: isDark,
           ),
@@ -217,7 +268,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           _StatRow(
             icon: Icons.assignment_return_rounded,
             label: 'المرتجعات',
-            value: '150 ${l10n.sar}',
+            value: '${_formatAmount(refunds)} ${l10n.sar}',
             color: AppColors.error,
             isDark: isDark,
           ),
@@ -226,7 +277,18 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     );
   }
 
-  Widget _buildCashStatusCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildCashStatusCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
+    // حساب قيم الصندوق من بيانات الوردية الفعلية
+    final expectedCash = shift?.expectedCash ?? 0.0;
+    final actualCash = shift?.closingCash ?? 0.0;
+    final difference = shift?.difference ?? 0.0;
+
+    // تحديد لون ورمز الفرق بناءً على القيمة
+    final isBalanced = difference == 0;
+    final isPositive = difference >= 0;
+    final diffColor = isBalanced ? AppColors.success : (isPositive ? AppColors.info : AppColors.error);
+    final diffIcon = isBalanced ? Icons.check_circle_rounded : (isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -261,13 +323,13 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           const SizedBox(height: 16),
           _CashRow(
             label: 'المتوقع في الصندوق',
-            value: '2,800 ${l10n.sar}',
+            value: '${_formatAmount(expectedCash)} ${l10n.sar}',
             isDark: isDark,
           ),
           const SizedBox(height: 10),
           _CashRow(
             label: 'الفعلي في الصندوق',
-            value: '2,800 ${l10n.sar}',
+            value: '${_formatAmount(actualCash)} ${l10n.sar}',
             isDark: isDark,
           ),
           Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
@@ -285,19 +347,19 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.1),
+                  color: diffColor.withValues(alpha: isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                  border: Border.all(color: diffColor.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 16),
+                    Icon(diffIcon, color: diffColor, size: 16),
                     const SizedBox(width: 6),
                     Text(
-                      '0 ${l10n.sar}',
-                      style: const TextStyle(
-                        color: AppColors.success,
+                      '${_formatAmount(difference)} ${l10n.sar}',
+                      style: TextStyle(
+                        color: diffColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

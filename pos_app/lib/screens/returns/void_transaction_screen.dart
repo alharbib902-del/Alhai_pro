@@ -13,12 +13,16 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
 import '../../services/manager_approval_service.dart';
 
 // ============================================================================
-// DEMO DATA MODELS
+// VIEW DATA MODELS - نماذج عرض بيانات الفاتورة
 // ============================================================================
 
 class _InvoiceItem {
@@ -83,22 +87,6 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   final _pinController = TextEditingController();
   bool _confirmed = false;
 
-  // Demo data
-  static final _demoInvoice = _InvoiceData(
-    id: '#INV-2024-8892',
-    customer: 'أحمد محمد العلي',
-    customerInitial: 'أ',
-    date: DateTime(2024, 8, 15, 14, 30),
-    total: 450.00,
-    paymentMethod: 'cash',
-    items: const [
-      _InvoiceItem(name: 'حليب كامل الدسم 1ل', sku: '882910', icon: Icons.local_drink, qty: 2, price: 6.00),
-      _InvoiceItem(name: 'خبز أبيض 500غ', sku: '771202', icon: Icons.bakery_dining, qty: 1, price: 5.00),
-      _InvoiceItem(name: 'جبن شيدر 200غ', sku: '662045', icon: Icons.breakfast_dining, qty: 3, price: 12.00),
-      _InvoiceItem(name: 'عصير برتقال 1ل', sku: '553011', icon: Icons.local_cafe, qty: 5, price: 79.40),
-    ],
-  );
-
   final List<String> _reasonKeys = [
     'customer_request',
     'wrong_items',
@@ -120,7 +108,8 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   // ============================================================================
 
   Future<void> _searchInvoice() async {
-    if (_invoiceController.text.trim().isEmpty) return;
+    final searchText = _invoiceController.text.trim();
+    if (searchText.isEmpty) return;
 
     setState(() {
       _isSearching = true;
@@ -128,17 +117,69 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
       _invoiceData = null;
     });
 
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
 
-    setState(() {
-      _isSearching = false;
-      // Demo: always find the invoice
-      _invoiceData = _demoInvoice;
-      _selectedReason = null;
-      _notesController.clear();
-      _pinController.clear();
-      _confirmed = false;
-    });
+      // البحث عن الفاتورة بالمعرف أو رقم الإيصال
+      SalesTableData? sale;
+
+      // محاولة البحث بالمعرف أولاً
+      sale = await db.salesDao.getSaleById(searchText);
+
+      // إذا لم يُعثر عليها، نبحث برقم الإيصال
+      if (sale == null && storeId != null) {
+        sale = await db.salesDao.getSaleByReceiptNo(searchText, storeId);
+      }
+
+      if (sale == null || sale.status == 'voided') {
+        // الفاتورة غير موجودة أو ملغاة مسبقاً
+        setState(() {
+          _isSearching = false;
+          _showNotFound = true;
+        });
+        return;
+      }
+
+      // تحميل عناصر الفاتورة
+      final saleItems = await db.saleItemsDao.getItemsBySaleId(sale.id);
+
+      // تحويل البيانات إلى نماذج العرض
+      final items = saleItems.map((item) => _InvoiceItem(
+        name: item.productName,
+        sku: item.productSku ?? item.productBarcode ?? '',
+        icon: Icons.shopping_bag_outlined,
+        qty: item.qty,
+        price: item.unitPrice,
+      )).toList();
+
+      final invoiceData = _InvoiceData(
+        id: sale.receiptNo,
+        customer: sale.customerName ?? '',
+        customerInitial: (sale.customerName ?? '').isNotEmpty
+            ? sale.customerName![0]
+            : '؟',
+        date: sale.createdAt,
+        total: sale.total,
+        paymentMethod: sale.paymentMethod,
+        items: items,
+      );
+
+      setState(() {
+        _isSearching = false;
+        _invoiceData = invoiceData;
+        _selectedReason = null;
+        _notesController.clear();
+        _pinController.clear();
+        _confirmed = false;
+      });
+    } catch (e) {
+      // خطأ في البحث
+      setState(() {
+        _isSearching = false;
+        _showNotFound = true;
+      });
+    }
   }
 
   void _resetForm() {
@@ -158,7 +199,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   }
 
   Future<void> _confirmVoid() async {
-    if (!_isFormValid) return;
+    if (!_isFormValid || _invoiceData == null) return;
     final l10n = AppLocalizations.of(context)!;
 
     // طلب موافقة المشرف عبر PIN قبل تنفيذ الإلغاء
@@ -169,23 +210,79 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
     if (!approved || !mounted) return;
 
-    // Show success
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white, size: 20),
-            const SizedBox(width: 8),
-            Text(l10n.voidSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
+    try {
+      final db = getIt<AppDatabase>();
+      final searchText = _invoiceController.text.trim();
+      final storeId = ref.read(currentStoreIdProvider);
+
+      // البحث عن الفاتورة لتحديد المعرف الحقيقي
+      SalesTableData? sale;
+      sale = await db.salesDao.getSaleById(searchText);
+      if (sale == null && storeId != null) {
+        sale = await db.salesDao.getSaleByReceiptNo(searchText, storeId);
+      }
+
+      if (sale == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.invoiceNotFound),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+
+      // إلغاء الفاتورة في قاعدة البيانات
+      await db.salesDao.voidSale(sale.id);
+
+      // إضافة للطابور المزامنة
+      final syncId = const Uuid().v4();
+      await db.syncQueueDao.enqueue(
+        id: syncId,
+        tableName: 'sales',
+        recordId: sale.id,
+        operation: 'UPDATE',
+        payload: '{"id":"${sale.id}","status":"voided","reason":"${_selectedReason ?? ''}","notes":"${_notesController.text}"}',
+        idempotencyKey: 'void_sale_${sale.id}',
+      );
+
+      if (!mounted) return;
+
+      // عرض رسالة النجاح
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(l10n.voidSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 3),
         ),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-    _resetForm();
+      );
+      _resetForm();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Expanded(child: Text('$e')),
+            ],
+          ),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 
   void _copyToClipboard(String text) {

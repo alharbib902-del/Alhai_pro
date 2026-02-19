@@ -76,6 +76,16 @@ final openShiftActionProvider = Provider<
       openedAt: Value(DateTime.now()),
     ));
 
+    // إضافة لطابور المزامنة
+    await db.syncQueueDao.enqueue(
+      id: _uuid.v4(),
+      tableName: 'shifts',
+      recordId: id,
+      operation: 'CREATE',
+      payload: '{"id":"$id","store_id":"$storeId","cashier_id":"$cashierId","status":"open","opening_cash":$openingCash}',
+      idempotencyKey: 'shift_open_$id',
+    );
+
     ref.invalidate(openShiftProvider);
     ref.invalidate(todayShiftsProvider);
     return id;
@@ -118,6 +128,17 @@ final closeShiftActionProvider = Provider<
       totalRefundsAmount: totalRefundsAmount,
       notes: notes,
     );
+
+    // إضافة لطابور المزامنة - تحديث حالة الوردية إلى مغلقة
+    await db.syncQueueDao.enqueue(
+      id: _uuid.v4(),
+      tableName: 'shifts',
+      recordId: shiftId,
+      operation: 'UPDATE',
+      payload: '{"id":"$shiftId","status":"closed","closing_cash":$closingCash,"expected_cash":$expectedCash,"difference":$difference,"total_sales":$totalSales,"total_sales_amount":$totalSalesAmount,"total_refunds":$totalRefunds,"total_refunds_amount":$totalRefundsAmount}',
+      idempotencyKey: 'shift_close_$shiftId',
+    );
+
     ref.invalidate(openShiftProvider);
     ref.invalidate(todayShiftsProvider);
   };
@@ -143,8 +164,9 @@ final addCashMovementProvider = Provider<
     if (storeId == null) throw Exception('لا يوجد متجر محدد');
 
     final db = getIt<AppDatabase>();
+    final movementId = _uuid.v4();
     await db.shiftsDao.insertCashMovement(CashMovementsTableCompanion(
-      id: Value(_uuid.v4()),
+      id: Value(movementId),
       shiftId: Value(shiftId),
       storeId: Value(storeId),
       type: Value(type),
@@ -153,6 +175,17 @@ final addCashMovementProvider = Provider<
       createdBy: Value(createdBy),
       createdAt: Value(DateTime.now()),
     ));
+
+    // إضافة لطابور المزامنة - حركة نقدية جديدة
+    await db.syncQueueDao.enqueue(
+      id: _uuid.v4(),
+      tableName: 'cash_movements',
+      recordId: movementId,
+      operation: 'CREATE',
+      payload: '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amount}',
+      idempotencyKey: 'cash_movement_$movementId',
+    );
+
     ref.invalidate(shiftMovementsProvider(shiftId));
   };
 });

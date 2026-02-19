@@ -53,7 +53,7 @@ class ExpensesScreen extends ConsumerWidget {
               ),
               data: (expenses) => SingleChildScrollView(
                 padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                child: _buildContent(context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
+                child: _buildContent(context, ref, isWideScreen, isMediumScreen, isDark, l10n, expenses),
               ),
             ),
           ),
@@ -62,7 +62,7 @@ class ExpensesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
+  Widget _buildContent(BuildContext context, WidgetRef ref, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,8 +70,8 @@ class ExpensesScreen extends ConsumerWidget {
         _buildStatsSection(isWideScreen, isMediumScreen, isDark, l10n, expenses),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
-        // Categories row
-        _buildCategoriesRow(isDark, isMediumScreen, l10n),
+        // Categories row - تحميل التصنيفات من قاعدة البيانات
+        _buildCategoriesRow(isDark, isMediumScreen, l10n, ref, expenses),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Expenses list
@@ -215,59 +215,98 @@ class ExpensesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen, AppLocalizations l10n) {
-    final categories = [
-      _CategorySummary(icon: Icons.home_rounded, label: l10n.rent, amount: 5000, color: AppColors.info),
-      _CategorySummary(icon: Icons.bolt_rounded, label: l10n.electricity, amount: 850, color: AppColors.warning),
-      _CategorySummary(icon: Icons.people_rounded, label: l10n.salaries, amount: 12000, color: AppColors.primary),
-      _CategorySummary(icon: Icons.build_rounded, label: l10n.maintenance, amount: 500, color: AppColors.secondary),
-    ];
+  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen, AppLocalizations l10n, WidgetRef ref, List<ExpensesTableData> expenses) {
+    final categoriesAsync = ref.watch(expenseCategoriesProvider);
 
-    return SizedBox(
-      height: 100,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final cat = categories[index];
-          return Container(
-            width: isMediumScreen ? 120 : 100,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: cat.color.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(cat.icon, color: cat.color, size: 24),
-                const SizedBox(height: 4),
-                Text(
-                  cat.label,
-                  style: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  '${cat.amount.toInt()}',
-                  style: TextStyle(
-                    color: cat.color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+    return categoriesAsync.when(
+      loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (dbCategories) {
+        // حساب المبالغ لكل تصنيف من المصروفات الفعلية
+        final categoryTotals = <String, double>{};
+        for (final expense in expenses) {
+          final catId = expense.categoryId ?? 'other';
+          categoryTotals[catId] = (categoryTotals[catId] ?? 0) + expense.amount;
+        }
+
+        // بناء قائمة التصنيفات من قاعدة البيانات
+        final categories = dbCategories.map((cat) {
+          return _CategorySummary(
+            icon: _getCategoryIcon(cat.id),
+            label: cat.name,
+            amount: categoryTotals[cat.id] ?? 0,
+            color: _parseCategoryColor(cat.color),
           );
-        },
-      ),
+        }).toList();
+
+        // إذا لم توجد تصنيفات في قاعدة البيانات، نعرض تصنيفات افتراضية فارغة
+        if (categories.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return SizedBox(
+          height: 100,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final cat = categories[index];
+              return Container(
+                width: isMediumScreen ? 120 : 100,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: cat.color.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(cat.icon, color: cat.color, size: 24),
+                    const SizedBox(height: 4),
+                    Text(
+                      cat.label,
+                      style: TextStyle(
+                        color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${cat.amount.toInt()}',
+                      style: TextStyle(
+                        color: cat.color,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
+  }
+
+  /// تحويل لون التصنيف من نص إلى Color
+  Color _parseCategoryColor(String? colorStr) {
+    if (colorStr == null || colorStr.isEmpty) return AppColors.textSecondary;
+    try {
+      // دعم الألوان بصيغة hex مثل "#FF5722" أو "FF5722"
+      final hex = colorStr.replaceFirst('#', '');
+      if (hex.length == 6) {
+        return Color(int.parse('FF$hex', radix: 16));
+      } else if (hex.length == 8) {
+        return Color(int.parse(hex, radix: 16));
+      }
+    } catch (_) {}
+    return AppColors.textSecondary;
   }
 
   Widget _buildExpensesList(BuildContext context, bool isDark, AppLocalizations l10n, [List<ExpensesTableData>? expensesData]) {

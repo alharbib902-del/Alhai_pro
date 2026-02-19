@@ -25,6 +25,7 @@ import '../../widgets/pos/payment_success_dialog.dart';
 import '../../widgets/pos/sale_note_dialog.dart';
 import '../../providers/sale_providers.dart';
 import '../../providers/sync_providers.dart';
+import '../../providers/held_invoices_providers.dart';
 import 'hold_invoices_screen.dart';
 import '../../widgets/orders/orders_widgets.dart';
 import '../../widgets/layout/app_header.dart';
@@ -473,11 +474,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     // إذا ضغط المستخدم إلغاء
     if (note == null) return;
 
-    await ref.read(cartStateProvider.notifier).holdInvoice(
-          name: note.isEmpty ? null : note,
-        );
-    // تحديث قائمة الفواتير المعلقة
-    ref.read(heldInvoicesProvider.notifier).refresh();
+    // حفظ الفاتورة في قاعدة البيانات
+    await holdCurrentInvoice(
+      ref,
+      name: note.isEmpty ? null : note,
+    );
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -491,15 +492,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   /// عرض شاشة الفواتير المعلقة
   Future<void> _showHeldInvoices() async {
-    final result = await Navigator.push<bool>(
+    await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => const HoldInvoicesScreen()),
     );
-
-    // إذا تم استعادة فاتورة، نحدث القائمة
-    if (result == true) {
-      ref.read(heldInvoicesProvider.notifier).refresh();
-    }
+    // القائمة تتحدث تلقائياً عبر invalidate في held_invoices_providers
   }
 
   void _onCategorySelected(String? categoryId) {
@@ -2289,7 +2286,7 @@ class _DraftButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final heldCount = ref.watch(heldInvoicesCountProvider);
+    final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return GestureDetector(
       onLongPress: onLongPress,
@@ -2379,7 +2376,7 @@ class _ShortcutsBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    final heldCount = ref.watch(heldInvoicesCountProvider);
+    final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),

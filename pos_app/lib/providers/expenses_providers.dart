@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
 import 'products_providers.dart';
+import 'sync_providers.dart';
 
 const _uuid = Uuid();
 
@@ -88,17 +89,43 @@ Future<void> addExpense(
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null) return;
   final db = getIt<AppDatabase>();
+  final id = _uuid.v4();
+  final now = DateTime.now();
+  final date = expenseDate ?? now;
   await db.expensesDao.insertExpense(ExpensesTableCompanion(
-    id: Value(_uuid.v4()),
+    id: Value(id),
     storeId: Value(storeId),
     categoryId: Value(categoryId),
     amount: Value(amount),
     description: Value(description),
     paymentMethod: Value(paymentMethod),
     createdBy: Value(createdBy),
-    expenseDate: Value(expenseDate ?? DateTime.now()),
-    createdAt: Value(DateTime.now()),
+    expenseDate: Value(date),
+    createdAt: Value(now),
   ));
+
+  // إضافة للطابور المزامنة
+  try {
+    final syncService = ref.read(syncServiceProvider);
+    await syncService.enqueueCreate(
+      tableName: 'expenses',
+      recordId: id,
+      data: {
+        'id': id,
+        'store_id': storeId,
+        'category_id': categoryId,
+        'amount': amount,
+        'description': description,
+        'payment_method': paymentMethod,
+        'created_by': createdBy,
+        'expense_date': date.toIso8601String(),
+        'created_at': now.toIso8601String(),
+      },
+    );
+  } catch (_) {
+    // المزامنة اختيارية - لا تمنع العملية المحلية
+  }
+
   ref.invalidate(expensesListProvider);
   ref.invalidate(todayExpensesTotalProvider);
 }
@@ -107,6 +134,18 @@ Future<void> addExpense(
 Future<void> deleteExpense(WidgetRef ref, String id) async {
   final db = getIt<AppDatabase>();
   await db.expensesDao.deleteExpense(id);
+
+  // إضافة للطابور المزامنة
+  try {
+    final syncService = ref.read(syncServiceProvider);
+    await syncService.enqueueDelete(
+      tableName: 'expenses',
+      recordId: id,
+    );
+  } catch (_) {
+    // المزامنة اختيارية - لا تمنع العملية المحلية
+  }
+
   ref.invalidate(expensesListProvider);
   ref.invalidate(todayExpensesTotalProvider);
 }

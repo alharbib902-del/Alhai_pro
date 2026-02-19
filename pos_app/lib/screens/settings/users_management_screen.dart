@@ -1,11 +1,14 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إدارة المستخدمين
@@ -279,26 +282,73 @@ class _UsersManagementScreenState
     }
   }
 
-  void _handleUserAction(_User user, String action) {
+  Future<void> _handleUserAction(_User user, String action) async {
     switch (action) {
       case 'edit':
         _editUser(user);
         break;
       case 'enable':
       case 'disable':
-        setState(() {
-          final index = _users.indexOf(user);
-          _users[index] = _User(
-            id: user.id,
-            name: user.name,
-            role: user.role,
-            phone: user.phone,
-            active: !user.active,
-          );
-        });
+        // تحديث حالة المستخدم في قاعدة البيانات
+        try {
+          final db = getIt<AppDatabase>();
+          final dbUser = await db.usersDao.getUserById(user.id);
+          if (dbUser != null) {
+            final updatedUser = UsersTableData(
+              id: dbUser.id,
+              orgId: dbUser.orgId,
+              storeId: dbUser.storeId,
+              name: dbUser.name,
+              phone: dbUser.phone,
+              email: dbUser.email,
+              pin: dbUser.pin,
+              authUid: dbUser.authUid,
+              role: dbUser.role,
+              roleId: dbUser.roleId,
+              avatar: dbUser.avatar,
+              isActive: !user.active,
+              lastLoginAt: dbUser.lastLoginAt,
+              createdAt: dbUser.createdAt,
+              updatedAt: DateTime.now(),
+              syncedAt: dbUser.syncedAt,
+            );
+            await db.usersDao.updateUser(updatedUser);
+
+            // إضافة للطابور المزامنة
+            final syncService = ref.read(syncServiceProvider);
+            await syncService.enqueueUpdate(
+              tableName: 'users',
+              recordId: user.id,
+              changes: {
+                'id': user.id,
+                'is_active': !user.active,
+                'updated_at': DateTime.now().toIso8601String(),
+              },
+            );
+          }
+        } catch (e) {
+          debugPrint('خطأ في تحديث حالة المستخدم: $e');
+        }
+        // إعادة تحميل المستخدمين من قاعدة البيانات
+        await _loadUsers();
         break;
       case 'delete':
-        setState(() => _users.remove(user));
+        // حذف المستخدم من قاعدة البيانات
+        try {
+          final db = getIt<AppDatabase>();
+          await db.usersDao.deleteUser(user.id);
+
+          // إضافة للطابور المزامنة
+          final syncService = ref.read(syncServiceProvider);
+          await syncService.enqueueDelete(
+            tableName: 'users',
+            recordId: user.id,
+          );
+        } catch (e) {
+          debugPrint('خطأ في حذف المستخدم: $e');
+        }
+        // إعادة تحميل المستخدمين من قاعدة البيانات
+        await _loadUsers();
         break;
     }
   }
@@ -360,19 +410,48 @@ class _UsersManagementScreenState
                 child: Text(l10n.cancel),
               ),
               FilledButton(
-                onPressed: () {
+                onPressed: () async {
                   if (nameController.text.isNotEmpty) {
-                    setState(() {
-                      _users.add(_User(
-                        id: 'new_${_users.length}',
-                        name: nameController.text,
-                        role: role,
-                        phone: phoneController.text,
-                        active: true,
-                      ));
-                    });
+                    final storeId = ref.read(currentStoreIdProvider);
+                    if (storeId != null) {
+                      try {
+                        final db = getIt<AppDatabase>();
+                        final id = const Uuid().v4();
+                        final now = DateTime.now();
+                        // إدراج المستخدم في قاعدة البيانات
+                        await db.usersDao.insertUser(UsersTableCompanion(
+                          id: Value(id),
+                          storeId: Value(storeId),
+                          name: Value(nameController.text),
+                          role: Value(role),
+                          phone: Value(phoneController.text),
+                          isActive: const Value(true),
+                          createdAt: Value(now),
+                        ));
+
+                        // إضافة للطابور المزامنة
+                        final syncService = ref.read(syncServiceProvider);
+                        await syncService.enqueueCreate(
+                          tableName: 'users',
+                          recordId: id,
+                          data: {
+                            'id': id,
+                            'store_id': storeId,
+                            'name': nameController.text,
+                            'role': role,
+                            'phone': phoneController.text,
+                            'is_active': true,
+                            'created_at': now.toIso8601String(),
+                          },
+                        );
+                      } catch (e) {
+                        debugPrint('خطأ في إضافة المستخدم: $e');
+                      }
+                    }
+                    // إعادة تحميل المستخدمين من قاعدة البيانات
+                    _loadUsers();
                   }
-                  Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                 },
                 child: Text(l10n.addAction),
               ),
@@ -441,18 +520,53 @@ class _UsersManagementScreenState
                 child: Text(l10n.cancel),
               ),
               FilledButton(
-                onPressed: () {
-                  setState(() {
-                    final index = _users.indexOf(user);
-                    _users[index] = _User(
-                      id: user.id,
-                      name: nameController.text,
-                      role: user.role == 'owner' ? 'owner' : role,
-                      phone: phoneController.text,
-                      active: user.active,
-                    );
-                  });
-                  Navigator.pop(context);
+                onPressed: () async {
+                  final finalRole = user.role == 'owner' ? 'owner' : role;
+                  // تحديث المستخدم في قاعدة البيانات
+                  try {
+                    final db = getIt<AppDatabase>();
+                    final dbUser = await db.usersDao.getUserById(user.id);
+                    if (dbUser != null) {
+                      final updatedUser = UsersTableData(
+                        id: dbUser.id,
+                        orgId: dbUser.orgId,
+                        storeId: dbUser.storeId,
+                        name: nameController.text,
+                        phone: phoneController.text,
+                        email: dbUser.email,
+                        pin: dbUser.pin,
+                        authUid: dbUser.authUid,
+                        role: finalRole,
+                        roleId: dbUser.roleId,
+                        avatar: dbUser.avatar,
+                        isActive: dbUser.isActive,
+                        lastLoginAt: dbUser.lastLoginAt,
+                        createdAt: dbUser.createdAt,
+                        updatedAt: DateTime.now(),
+                        syncedAt: dbUser.syncedAt,
+                      );
+                      await db.usersDao.updateUser(updatedUser);
+
+                      // إضافة للطابور المزامنة
+                      final syncService = ref.read(syncServiceProvider);
+                      await syncService.enqueueUpdate(
+                        tableName: 'users',
+                        recordId: user.id,
+                        changes: {
+                          'id': user.id,
+                          'name': nameController.text,
+                          'phone': phoneController.text,
+                          'role': finalRole,
+                          'updated_at': DateTime.now().toIso8601String(),
+                        },
+                      );
+                    }
+                  } catch (e) {
+                    debugPrint('خطأ في تحديث المستخدم: $e');
+                  }
+                  // إعادة تحميل المستخدمين من قاعدة البيانات
+                  _loadUsers();
+                  if (context.mounted) Navigator.pop(context);
                 },
                 child: Text(l10n.save),
               ),

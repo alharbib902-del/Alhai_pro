@@ -1,9 +1,10 @@
 /// Hold Invoices Screen
 ///
-/// Shows list of actual held invoices from [heldInvoicesProvider] with ability to:
-/// - Resume invoice (restore to cart)
-/// - Delete held invoice
-/// - View invoice details (item count, total, time)
+/// يعرض قائمة الفواتير المعلقة المحفوظة في قاعدة البيانات (DB-backed)
+/// بدلاً من الذاكرة المؤقتة، مع دعم:
+/// - استعادة الفاتورة إلى السلة
+/// - حذف فاتورة معلقة
+/// - عرض تفاصيل الفاتورة (عدد العناصر، الإجمالي، الوقت)
 library;
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/cart_providers.dart';
+import '../../providers/held_invoices_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 
 /// Hold Invoices Screen
@@ -22,80 +24,133 @@ class HoldInvoicesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final heldInvoices = ref.watch(heldInvoicesProvider);
+    final heldInvoicesAsync = ref.watch(dbHeldInvoicesListProvider);
     final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(l10n.holdInvoices),
-            if (heldInvoices.isNotEmpty) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${heldInvoices.length}',
-                  style: const TextStyle(
-                    color: AppColors.warning,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+            // عرض عدد الفواتير عند التحميل الناجح
+            heldInvoicesAsync.maybeWhen(
+              data: (invoices) => invoices.isNotEmpty
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${invoices.length}',
+                            style: const TextStyle(
+                              color: AppColors.warning,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+              orElse: () => const SizedBox.shrink(),
+            ),
           ],
         ),
         centerTitle: true,
         actions: [
-          if (heldInvoices.isNotEmpty)
-            TextButton.icon(
-              onPressed: () => _showClearAllDialog(context, ref, l10n),
-              icon: const Icon(Icons.delete_sweep, size: 20),
-              label: Text(l10n.clearAll),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.error,
-              ),
-            ),
+          heldInvoicesAsync.maybeWhen(
+            data: (invoices) => invoices.isNotEmpty
+                ? TextButton.icon(
+                    onPressed: () =>
+                        _showClearAllDialog(context, ref, l10n, invoices.length),
+                    icon: const Icon(Icons.delete_sweep, size: 20),
+                    label: Text(l10n.clearAll),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            orElse: () => const SizedBox.shrink(),
+          ),
         ],
       ),
-      body: heldInvoices.isEmpty
-          ? AppEmptyState(
-              icon: Icons.pause_circle_outline,
-              title: l10n.noHoldInvoices,
-              description: l10n.holdInvoicesDesc,
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(AppSizes.md),
-              itemCount: heldInvoices.length,
-              itemBuilder: (context, index) {
-                final invoice = heldInvoices[index];
-                return _HoldInvoiceCard(
-                  invoice: invoice,
-                  onResume: () => _resumeInvoice(context, ref, invoice, l10n),
-                  onDelete: () => _deleteInvoice(context, ref, invoice, l10n),
-                );
-              },
-            ),
+      body: heldInvoicesAsync.when(
+        // حالة التحميل
+        loading: () => const Center(child: CircularProgressIndicator()),
+        // حالة الخطأ
+        error: (error, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const SizedBox(height: AppSizes.md),
+              const Text(
+                'خطأ في تحميل الفواتير المعلقة',
+                style: AppTypography.titleMedium,
+              ),
+              const SizedBox(height: AppSizes.sm),
+              Text(
+                error.toString(),
+                style: AppTypography.bodySmall
+                    .copyWith(color: AppColors.textMuted),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSizes.lg),
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(dbHeldInvoicesListProvider),
+                icon: const Icon(Icons.refresh),
+                label: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+        // حالة البيانات
+        data: (heldInvoices) => heldInvoices.isEmpty
+            ? AppEmptyState(
+                icon: Icons.pause_circle_outline,
+                title: l10n.noHoldInvoices,
+                description: l10n.holdInvoicesDesc,
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(AppSizes.md),
+                itemCount: heldInvoices.length,
+                itemBuilder: (context, index) {
+                  final invoice = heldInvoices[index];
+                  return _HoldInvoiceCard(
+                    invoice: invoice,
+                    onResume: () =>
+                        _resumeInvoice(context, ref, invoice, l10n),
+                    onDelete: () =>
+                        _deleteInvoice(context, ref, invoice, l10n),
+                  );
+                },
+              ),
+      ),
     );
   }
 
-  void _resumeInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice, AppLocalizations l10n) {
+  void _resumeInvoice(BuildContext context, WidgetRef ref,
+      HeldInvoice invoice, AppLocalizations l10n) async {
     HapticFeedback.mediumImpact();
-    // Restore held invoice to cart
-    ref.read(cartStateProvider.notifier).restoreInvoice(invoice);
-    // Refresh held invoices list
-    ref.read(heldInvoicesProvider.notifier).refresh();
+
+    // استعادة الفاتورة من قاعدة البيانات إلى السلة
+    await resumeHeldInvoice(ref, invoice);
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+            const Icon(Icons.play_arrow_rounded,
+                color: Colors.white, size: 20),
             const SizedBox(width: 8),
             Text(l10n.resumedInvoice(invoice.description)),
           ],
@@ -104,10 +159,11 @@ class HoldInvoicesScreen extends ConsumerWidget {
         backgroundColor: AppColors.success,
       ),
     );
-    Navigator.pop(context, true); // true = invoice was restored
+    Navigator.pop(context, true); // true = تم استعادة الفاتورة
   }
 
-  void _deleteInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice, AppLocalizations l10n) {
+  void _deleteInvoice(BuildContext context, WidgetRef ref,
+      HeldInvoice invoice, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -119,15 +175,18 @@ class HoldInvoicesScreen extends ConsumerWidget {
             child: Text(l10n.cancel),
           ),
           ElevatedButton(
-            onPressed: () {
-              ref.read(heldInvoicesProvider.notifier).delete(invoice.id);
-              Navigator.pop(dialogCtx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.invoiceDeletedMsg),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+            onPressed: () async {
+              // حذف من قاعدة البيانات
+              await deleteHeldInvoice(ref, invoice.id);
+              if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.invoiceDeletedMsg),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,
@@ -140,8 +199,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
     );
   }
 
-  void _showClearAllDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
-    final count = ref.read(heldInvoicesProvider).length;
+  void _showClearAllDialog(
+      BuildContext context, WidgetRef ref, AppLocalizations l10n, int count) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -154,10 +213,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final invoices = ref.read(heldInvoicesProvider);
-              for (final inv in invoices) {
-                await ref.read(heldInvoicesProvider.notifier).delete(inv.id);
-              }
+              // حذف جميع الفواتير من قاعدة البيانات
+              await deleteAllHeldInvoices(ref);
               if (dialogCtx.mounted) Navigator.pop(dialogCtx);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -248,7 +305,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                         Text(
                           timeText,
                           style: AppTypography.labelSmall.copyWith(
-                            color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                            color: isDark
+                                ? AppColors.textMutedDark
+                                : AppColors.textMuted,
                           ),
                         ),
                       ],
@@ -258,7 +317,8 @@ class _HoldInvoiceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        l10n.debtAmountWithCurrency(cart.total.toStringAsFixed(2)),
+                        l10n.debtAmountWithCurrency(
+                            cart.total.toStringAsFixed(2)),
                         style: AppTypography.titleMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -268,7 +328,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                       Text(
                         l10n.itemLabel(cart.itemCount),
                         style: AppTypography.labelSmall.copyWith(
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textMuted,
                         ),
                       ),
                     ],
@@ -287,7 +349,8 @@ class _HoldInvoiceCard extends StatelessWidget {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: isDark ? AppColors.grey600 : AppColors.grey400,
+                              color:
+                                  isDark ? AppColors.grey600 : AppColors.grey400,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -297,7 +360,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                               item.product.name,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -308,7 +373,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                              color: isDark
+                                  ? AppColors.textMutedDark
+                                  : AppColors.textMuted,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -316,7 +383,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                             item.total.toStringAsFixed(2),
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -329,7 +398,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                       l10n.moreItems(cart.items.length - 3),
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMuted,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -342,7 +413,9 @@ class _HoldInvoiceCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppSizes.sm),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceVariantDark : AppColors.grey100,
+                    color: isDark
+                        ? AppColors.surfaceVariantDark
+                        : AppColors.grey100,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                   ),
                   child: Row(
@@ -350,14 +423,18 @@ class _HoldInvoiceCard extends StatelessWidget {
                       Icon(
                         Icons.note_outlined,
                         size: 16,
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMuted,
                       ),
                       const SizedBox(width: AppSizes.xs),
                       Expanded(
                         child: Text(
                           invoice.name!,
                           style: AppTypography.bodySmall.copyWith(
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ),
@@ -373,13 +450,17 @@ class _HoldInvoiceCard extends StatelessWidget {
                   children: [
                     Icon(Icons.person_outline,
                         size: 16,
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMuted),
                     const SizedBox(width: 4),
                     Text(
                       cart.customerName!,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ],

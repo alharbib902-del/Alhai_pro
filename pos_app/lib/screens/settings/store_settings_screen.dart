@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/validators/validators.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات المتجر - بتصميم Sidebar + Header
@@ -19,16 +23,51 @@ class StoreSettingsScreen extends ConsumerStatefulWidget {
 class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController(text: 'متجر الإيمان');
-  final _addressController = TextEditingController(text: 'الرياض - حي النزهة');
-  final _phoneController = TextEditingController(text: '0501234567');
-  final _vatController = TextEditingController(text: '310123456700003');
-  final _crController = TextEditingController(text: '1010123456');
+  final _nameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _vatController = TextEditingController();
+  final _crController = TextEditingController();
 
   String _currency = 'SAR';
   String _language = 'ar';
   bool _enableVat = true;
   double _vatRate = 15.0;
+  bool _isLoading = true;
+
+  /// معرّف المتجر الحالي لتحديث البيانات لاحقاً
+  String? _currentStoreId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStoreData();
+  }
+
+  /// تحميل بيانات المتجر من قاعدة البيانات
+  Future<void> _loadStoreData() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
+    _currentStoreId = storeId;
+    final db = getIt<AppDatabase>();
+    final store = await db.storesDao.getStoreById(storeId);
+    if (store != null && mounted) {
+      setState(() {
+        _nameController.text = store.name;
+        _addressController.text = store.address ?? '';
+        _phoneController.text = store.phone ?? '';
+        _vatController.text = store.taxNumber ?? '';
+        _crController.text = store.commercialReg ?? '';
+        _currency = store.currency;
+        _isLoading = false;
+      });
+    } else if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -60,14 +99,16 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: Form(
-                      key: _formKey,
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: Form(
+                            key: _formKey,
+                            child: _buildContent(
+                                isWideScreen, isMediumScreen, isDark, l10n),
+                          ),
+                        ),
                 ),
               ],
             );
@@ -373,17 +414,17 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     );
   }
 
-  void _saveSettings() {
+  Future<void> _saveSettings() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Sanitize values before saving
+    // تنظيف القيم قبل الحفظ
     final name = _nameController.text.sanitized;
     final address = _addressController.text.sanitized;
     final phone = _phoneController.text.sanitizedPhone;
     final vat = _vatController.text.sanitized;
     final cr = _crController.text.sanitized;
 
-    // Update controllers with sanitized values
+    // تحديث الحقول بالقيم النظيفة
     _nameController.text = name;
     _addressController.text = address;
     _phoneController.text = phone;
@@ -391,12 +432,73 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     _crController.text = cr;
 
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.storeSettingsSaved),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+
+    // حفظ البيانات في قاعدة البيانات
+    if (_currentStoreId != null) {
+      try {
+        final db = getIt<AppDatabase>();
+        final currentStore = await db.storesDao.getStoreById(_currentStoreId!);
+        if (currentStore != null) {
+          final updatedStore = StoresTableData(
+            id: currentStore.id,
+            orgId: currentStore.orgId,
+            name: name,
+            nameEn: currentStore.nameEn,
+            phone: phone,
+            email: currentStore.email,
+            address: address,
+            city: currentStore.city,
+            logo: currentStore.logo,
+            taxNumber: vat,
+            commercialReg: cr,
+            currency: _currency,
+            timezone: currentStore.timezone,
+            isActive: currentStore.isActive,
+            createdAt: currentStore.createdAt,
+            updatedAt: DateTime.now(),
+            syncedAt: currentStore.syncedAt,
+          );
+          await db.storesDao.updateStore(updatedStore);
+
+          // إضافة للطابور المزامنة
+          final syncService = ref.read(syncServiceProvider);
+          await syncService.enqueueUpdate(
+            tableName: 'stores',
+            recordId: _currentStoreId!,
+            changes: {
+              'id': _currentStoreId,
+              'name': name,
+              'phone': phone,
+              'address': address,
+              'tax_number': vat,
+              'commercial_reg': cr,
+              'currency': _currency,
+              'updated_at': DateTime.now().toIso8601String(),
+            },
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${l10n.error}: $e'),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+        return;
+      }
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.storeSettingsSaved),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }

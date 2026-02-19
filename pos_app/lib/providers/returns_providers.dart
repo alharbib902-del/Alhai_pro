@@ -99,6 +99,16 @@ Future<String> createReturn(
     await db.returnsDao.insertReturnItems(items);
   }
 
+  // إضافة للطابور المزامنة
+  await db.syncQueueDao.enqueue(
+    id: _uuid.v4(),
+    tableName: 'returns',
+    recordId: id,
+    operation: 'CREATE',
+    payload: '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$totalRefund,"reason":"$reason","refund_method":"$refundMethod"}',
+    idempotencyKey: 'return_create_$id',
+  );
+
   ref.invalidate(returnsListProvider);
   return id;
 }
