@@ -995,7 +995,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showFilters => 'Show Filters';
 
   @override
-  String get sortByName => 'By Name';
+  String get sortByName => 'By name';
 
   @override
   String get sortByPrice => 'Price';
@@ -1266,7 +1266,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printInvoice => 'Print';
 
   @override
-  String get exportPdf => 'PDF';
+  String get exportPdf => 'Export PDF';
 
   @override
   String get sendWhatsapp => 'WhatsApp';
@@ -1640,7 +1640,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerRequest => 'Customer Request';
 
   @override
-  String get otherReason => 'Other';
+  String get otherReason => 'Other reason';
 
   @override
   String get quickSearch => 'Quick search...';
@@ -2286,11 +2286,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get outstandingDebts => 'Outstanding Debts';
-
-  @override
-  String customerCount(String count) {
-    return '$count customer(s)';
-  }
 
   @override
   String get creditBalance => 'Customer Credit';
@@ -3827,7 +3822,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sortLabel => 'Sort';
 
   @override
-  String get sortByAmount => 'By Amount';
+  String get sortByAmount => 'By amount';
 
   @override
   String get sortByDate => 'By Date';
@@ -7269,7 +7264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productNameLabel => 'Product Name *';
 
   @override
-  String get quantityLabel => 'Quantity';
+  String get quantityLabel => 'Qty';
 
   @override
   String get purchasePriceLabel => 'Purchase Price';
@@ -7873,4 +7868,1541 @@ class AppLocalizationsEn extends AppLocalizations {
   String whatsappGreeting(String name) {
     return 'Hello $name\nHow can we help you?';
   }
+
+  @override
+  String get segmentVip => 'VIP';
+
+  @override
+  String get segmentRegular => 'Regular';
+
+  @override
+  String get segmentAtRisk => 'At Risk';
+
+  @override
+  String get segmentLost => 'Lost';
+
+  @override
+  String get segmentNewCustomer => 'New';
+
+  @override
+  String customerCount(int count) {
+    return '$count customer';
+  }
+
+  @override
+  String revenueK(String amount) {
+    return '${amount}K SAR';
+  }
+
+  @override
+  String get tabRecommendations => 'Recommendations';
+
+  @override
+  String get tabRepurchase => 'Repurchase';
+
+  @override
+  String get tabSegments => 'Segments';
+
+  @override
+  String lastVisitLabel(String time) {
+    return 'Last visit: $time';
+  }
+
+  @override
+  String visitCountLabel(int count) {
+    return '$count visits';
+  }
+
+  @override
+  String avgSpendLabel(String amount) {
+    return 'Avg: $amount SAR';
+  }
+
+  @override
+  String totalSpentLabel(String amount) {
+    return 'Total: ${amount}K SAR';
+  }
+
+  @override
+  String get recommendedProducts => 'Recommended Products';
+
+  @override
+  String get sendWhatsAppOffer => 'Send WhatsApp Offer';
+
+  @override
+  String get totalRevenueLabel => 'Total Revenue';
+
+  @override
+  String get avgSpendStat => 'Average Spend';
+
+  @override
+  String amountSar(String amount) {
+    return '$amount SAR';
+  }
+
+  @override
+  String get specialOfferMissYou => 'Special offer for you! We miss your visit';
+
+  @override
+  String friendlyReminderPurchase(String product) {
+    return 'Friendly reminder to purchase $product';
+  }
+
+  @override
+  String get timeAgoToday => 'Today';
+
+  @override
+  String get timeAgoYesterday => 'Yesterday';
+
+  @override
+  String timeAgoDays(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get riskAnalysisTab => 'Risk Analysis';
+
+  @override
+  String get preventiveActionsTab => 'Preventive Actions';
+
+  @override
+  String errorOccurredDetail(String error) {
+    return 'Error occurred: $error';
+  }
+
+  @override
+  String get returnRateTitle => 'Return Rate';
+
+  @override
+  String get avgLast6Months => 'Average last 6 months';
+
+  @override
+  String get amountAtRiskTitle => 'Amount at Risk';
+
+  @override
+  String get highRiskOperations => 'High Risk Operations';
+
+  @override
+  String get needsImmediateAction => 'Needs immediate action';
+
+  @override
+  String get returnTrendTitle => 'Return Trend';
+
+  @override
+  String operationsAtRiskCount(int count) {
+    return 'Operations at risk ($count)';
+  }
+
+  @override
+  String get riskFilterAll => 'All';
+
+  @override
+  String get riskFilterVeryHigh => 'Very High';
+
+  @override
+  String get riskFilterHigh => 'High';
+
+  @override
+  String get riskFilterMedium => 'Medium';
+
+  @override
+  String get riskFilterLow => 'Low';
+
+  @override
+  String get totalExpectedSavings => 'Total Expected Savings';
+
+  @override
+  String fromPreventiveActions(int count) {
+    return 'From $count preventive actions';
+  }
+
+  @override
+  String get suggestedPreventiveActions => 'Suggested Preventive Actions';
+
+  @override
+  String get applyPreventiveHint =>
+      'Apply these actions to reduce returns and increase customer satisfaction';
+
+  @override
+  String actionApplied(String action) {
+    return 'Applied: $action';
+  }
+
+  @override
+  String actionDismissed(String action) {
+    return 'Dismissed: $action';
+  }
+
+  @override
+  String get veryPositiveSentiment => 'Very Positive';
+
+  @override
+  String get positiveSentiment => 'Positive';
+
+  @override
+  String get neutralSentiment => 'Neutral';
+
+  @override
+  String get negativeSentiment => 'Negative';
+
+  @override
+  String get veryNegativeSentiment => 'Very Negative';
+
+  @override
+  String get ratingsDistribution => 'Ratings Distribution';
+
+  @override
+  String get sentimentTrendTitle => 'Sentiment Trend';
+
+  @override
+  String get sentimentIndicator => 'Sentiment Indicator';
+
+  @override
+  String minutesAgoSentiment(int count) {
+    return '$count minutes ago';
+  }
+
+  @override
+  String hoursAgoSentiment(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String daysAgoSentiment(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get totalProductsTitle => 'Total Products';
+
+  @override
+  String get categoryATitle => 'Category A';
+
+  @override
+  String get mostImportant => 'Most Important';
+
+  @override
+  String get withinDays => 'Within 7 days';
+
+  @override
+  String get needReorder => 'Need Reorder';
+
+  @override
+  String estimatedLossSar(String amount) {
+    return '$amount SAR estimated loss';
+  }
+
+  @override
+  String get tabAbcAnalysis => 'ABC Analysis';
+
+  @override
+  String get tabWastePrediction => 'Waste Prediction';
+
+  @override
+  String get tabReorder => 'Reorder';
+
+  @override
+  String get filterAllLabel => 'All';
+
+  @override
+  String get categoryALabel => 'Category A';
+
+  @override
+  String get categoryBLabel => 'Category B';
+
+  @override
+  String get categoryCLabel => 'Category C';
+
+  @override
+  String orderUnitsSnack(int qty, String name) {
+    return 'Order $qty units of $name';
+  }
+
+  @override
+  String get urgencyCritical => 'Critical';
+
+  @override
+  String get urgencyHigh => 'High';
+
+  @override
+  String get urgencyMedium => 'Medium';
+
+  @override
+  String get urgencyLow => 'Low';
+
+  @override
+  String get currentStockLabel => 'Current Stock';
+
+  @override
+  String get reorderPointLabel => 'Reorder Point';
+
+  @override
+  String get suggestedQtyLabel => 'Suggested Qty';
+
+  @override
+  String get daysOfStockLabel => 'Days of Stock';
+
+  @override
+  String estimatedCostLabel(String amount) {
+    return 'Estimated cost: $amount SAR';
+  }
+
+  @override
+  String purchaseOrderCreatedFor(String name) {
+    return 'Purchase order created: $name';
+  }
+
+  @override
+  String orderUnitsButton(int qty) {
+    return 'Order $qty units';
+  }
+
+  @override
+  String get actionDiscount => 'Discount';
+
+  @override
+  String get actionTransfer => 'Transfer';
+
+  @override
+  String get actionDonate => 'Donate';
+
+  @override
+  String actionOnProduct(String name) {
+    return 'Action on: $name';
+  }
+
+  @override
+  String get totalSuggestionsLabel => 'Total Suggestions';
+
+  @override
+  String get canIncreaseLabel => 'Can Increase';
+
+  @override
+  String get shouldDecreaseLabel => 'Should Decrease';
+
+  @override
+  String get expectedMonthlyImpact => 'Expected Monthly Impact';
+
+  @override
+  String get noSuggestionsInFilter => 'No suggestions in this filter';
+
+  @override
+  String get selectProductForDetails => 'Select a product to view details';
+
+  @override
+  String get selectProductHint =>
+      'Click on a product from the list to view impact calculator and demand elasticity';
+
+  @override
+  String priceApplied(String price, String product) {
+    return 'Price $price SAR applied to $product';
+  }
+
+  @override
+  String errorOccurredShort(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get readyTemplates => 'Ready Templates';
+
+  @override
+  String get hideTemplates => 'Hide Templates';
+
+  @override
+  String get showTemplates => 'Show Templates';
+
+  @override
+  String get askAboutStore => 'Ask any question about your store';
+
+  @override
+  String get writeQuestionHint =>
+      'Write your question and we will generate the appropriate report automatically';
+
+  @override
+  String get quickActionTodaySales => 'How much sales today?';
+
+  @override
+  String get quickActionTop10 => 'Top 10 products';
+
+  @override
+  String get quickActionMonthlyCompare => 'Monthly comparison';
+
+  @override
+  String get analyzingData => 'Analyzing data and generating report...';
+
+  @override
+  String get profileScreenTitle => 'Profile';
+
+  @override
+  String get unknownUserName => 'Unknown';
+
+  @override
+  String get defaultEmployeeRole => 'Employee';
+
+  @override
+  String get transactionUnit => 'transaction';
+
+  @override
+  String get dayUnit => 'day';
+
+  @override
+  String get emailFieldLabel => 'Email';
+
+  @override
+  String get phoneFieldLabel => 'Phone';
+
+  @override
+  String get branchFieldLabel => 'Branch';
+
+  @override
+  String get mainBranchName => 'Main Branch';
+
+  @override
+  String get employeeNumberLabel => 'Employee Number';
+
+  @override
+  String get changePasswordLabel => 'Change Password';
+
+  @override
+  String get activityLogLabel => 'Activity Log';
+
+  @override
+  String get logoutDialogTitle => 'Logout';
+
+  @override
+  String get logoutDialogBody => 'Do you want to logout from the system?';
+
+  @override
+  String get cancelButton => 'Cancel';
+
+  @override
+  String get exitButton => 'Exit';
+
+  @override
+  String get editProfileSnack => 'Edit Profile';
+
+  @override
+  String get changePasswordSnack => 'Change Password';
+
+  @override
+  String get roleAdmin => 'System Admin';
+
+  @override
+  String get roleManager => 'Manager';
+
+  @override
+  String get roleCashier => 'Cashier';
+
+  @override
+  String get roleEmployee => 'Employee';
+
+  @override
+  String get onboardingTitle1 => 'Fast Point of Sale';
+
+  @override
+  String get onboardingDesc1 =>
+      'Complete sales quickly and easily with a simple and comfortable interface';
+
+  @override
+  String get onboardingTitle2 => 'Work Offline';
+
+  @override
+  String get onboardingDesc2 =>
+      'Keep working even without connection, and sync will happen automatically';
+
+  @override
+  String get onboardingTitle3 => 'Inventory Management';
+
+  @override
+  String get onboardingDesc3 =>
+      'Track your inventory accurately with shortage and expiry alerts';
+
+  @override
+  String get onboardingTitle4 => 'Smart Reports';
+
+  @override
+  String get onboardingDesc4 =>
+      'Get detailed reports and analytics for your store performance';
+
+  @override
+  String get startNow => 'Start Now';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get editMode => 'Edit';
+
+  @override
+  String get doneMode => 'Done';
+
+  @override
+  String get errorLoadingFavorites => 'Error loading favorites';
+
+  @override
+  String get noFavoriteProducts => 'No favorite products';
+
+  @override
+  String get addFavoritesFromProducts =>
+      'Add products to favorites from the products screen';
+
+  @override
+  String get tapProductToAddToCart => 'Tap a product to add it to cart';
+
+  @override
+  String addedProductToCart(String name) {
+    return '$name added to cart';
+  }
+
+  @override
+  String get addToCartAction => 'Add to cart';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String removedProductFromFavorites(String name) {
+    return '$name removed from favorites';
+  }
+
+  @override
+  String get paymentMethodTitle => 'Payment Method';
+
+  @override
+  String get backEsc => 'Back (Esc)';
+
+  @override
+  String get completePayment => 'Complete Payment';
+
+  @override
+  String get enterToConfirm => 'Enter to confirm';
+
+  @override
+  String get cashOnlyOffline => 'Cash only in offline mode';
+
+  @override
+  String get cardsDisabledInSettings => 'Cards disabled in settings';
+
+  @override
+  String get creditPayment => 'Credit';
+
+  @override
+  String get unavailableOffline => 'Unavailable offline';
+
+  @override
+  String get disabledInSettings => 'Disabled in settings';
+
+  @override
+  String get amountReceived => 'Amount Received';
+
+  @override
+  String get quickAmounts => 'Quick Amounts';
+
+  @override
+  String get requiredAmount => 'Required Amount';
+
+  @override
+  String get changeLabel => 'Change:';
+
+  @override
+  String get insufficientAmount => 'Insufficient amount';
+
+  @override
+  String get rrnLabel => 'Reference Number (RRN)';
+
+  @override
+  String get enterRrnFromDevice => 'Enter transaction number from device';
+
+  @override
+  String get cardPaymentInstructions =>
+      'Ask the customer to pay via card terminal, then enter the transaction number (RRN) from the receipt';
+
+  @override
+  String get creditSale => 'Credit Sale';
+
+  @override
+  String get creditSaleWarning =>
+      'This amount will be recorded as a debt for the customer. Make sure to select the customer before completing the transaction.';
+
+  @override
+  String get orderSummary => 'Order Summary';
+
+  @override
+  String get taxLabel => 'Tax (15%)';
+
+  @override
+  String get discountLabel => 'Discount';
+
+  @override
+  String get payCash => 'Pay Cash';
+
+  @override
+  String get payCard => 'Pay by Card';
+
+  @override
+  String get payCreditSale => 'Credit Sale';
+
+  @override
+  String get confirmPayment => 'Confirm Payment';
+
+  @override
+  String get processingPayment => 'Processing payment...';
+
+  @override
+  String get pleaseWait => 'Please wait';
+
+  @override
+  String get paymentSuccessful => 'Payment successful!';
+
+  @override
+  String get printingReceipt => 'Printing receipt...';
+
+  @override
+  String get whatsappReceipt => 'WhatsApp receipt';
+
+  @override
+  String get storeOrUserNotSet => 'Store or user not set';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get receiptTitle => 'Receipt';
+
+  @override
+  String get invoiceNotSpecified => 'Invoice number not specified';
+
+  @override
+  String get pendingSync => 'Pending sync';
+
+  @override
+  String get notSynced => 'Not synced';
+
+  @override
+  String receiptNumberLabel(String number) {
+    return 'No: $number';
+  }
+
+  @override
+  String get itemColumnHeader => 'Item';
+
+  @override
+  String get totalAmount => 'Total';
+
+  @override
+  String get paymentMethodField => 'Payment Method';
+
+  @override
+  String get zatcaQrCode => 'ZATCA Tax QR Code';
+
+  @override
+  String get whatsappSentLabel => 'Sent ✓';
+
+  @override
+  String get whatsappLabel => 'WhatsApp';
+
+  @override
+  String get whatsappReceiptSent => 'Receipt sent via WhatsApp ✓';
+
+  @override
+  String whatsappSendFailed(String error) {
+    return 'Send failed: $error';
+  }
+
+  @override
+  String get cannotPrintNoInvoice =>
+      'Cannot print - invoice number not available';
+
+  @override
+  String get invoiceAddedToPrintQueue => 'Invoice added to print queue';
+
+  @override
+  String get mixedMethod => 'Mixed';
+
+  @override
+  String get creditMethod => 'Credit';
+
+  @override
+  String get walletMethod => 'Wallet';
+
+  @override
+  String get bankTransferMethod => 'Bank Transfer';
+
+  @override
+  String get scanBarcodeHint => 'Scan barcode or enter it (F1)';
+
+  @override
+  String get openCamera => 'Open camera';
+
+  @override
+  String get searchProductHint => 'Search product (F2)';
+
+  @override
+  String get hideCart => 'Hide cart';
+
+  @override
+  String get showCart => 'Show cart';
+
+  @override
+  String get cartTitle => 'Cart';
+
+  @override
+  String get clearAction => 'Clear';
+
+  @override
+  String get allCategories => 'All';
+
+  @override
+  String get otherCategory => 'Other';
+
+  @override
+  String get storeNotSet => 'Store not set';
+
+  @override
+  String get retryAction => 'Retry';
+
+  @override
+  String get vatTax15 => 'VAT (15%)';
+
+  @override
+  String get totalGrand => 'Total';
+
+  @override
+  String get holdOrder => 'Hold';
+
+  @override
+  String get payActionLabel => 'Pay';
+
+  @override
+  String get f12QuickPay => 'F12 for quick pay';
+
+  @override
+  String productNotFoundBarcode(String barcode) {
+    return 'Product not found for barcode: $barcode';
+  }
+
+  @override
+  String get clearCartTitle => 'Clear Cart';
+
+  @override
+  String get clearCartMessage =>
+      'Do you want to remove all products from the cart?';
+
+  @override
+  String get orderOnHold => 'Order on hold';
+
+  @override
+  String get deleteItem => 'Delete';
+
+  @override
+  String itemsCountPrice(int count, String price) {
+    return '$count items - $price SAR';
+  }
+
+  @override
+  String get taxReportTitle => 'Tax Report';
+
+  @override
+  String get exportReportAction => 'Export Report';
+
+  @override
+  String get printReportAction => 'Print Report';
+
+  @override
+  String get quarterly => 'Quarterly';
+
+  @override
+  String get netTaxDue => 'Net Tax Due';
+
+  @override
+  String get salesTaxCollected => 'Sales Tax';
+
+  @override
+  String get salesTaxSubtitle => 'Collected';
+
+  @override
+  String get purchasesTaxPaid => 'Purchases Tax';
+
+  @override
+  String get purchasesTaxSubtitle => 'Paid';
+
+  @override
+  String get taxByPaymentMethod => 'Tax by Payment Method';
+
+  @override
+  String invoiceCount(int count) {
+    return '$count invoices';
+  }
+
+  @override
+  String get taxDetailsTitle => 'Tax Details';
+
+  @override
+  String get taxableSales => 'Taxable Sales';
+
+  @override
+  String get salesTax15 => 'Sales Tax (15%)';
+
+  @override
+  String get taxablePurchases => 'Taxable Purchases';
+
+  @override
+  String get purchasesTax15 => 'Purchases Tax (15%)';
+
+  @override
+  String get netTax => 'Net Tax';
+
+  @override
+  String get zatcaReminder => 'ZATCA Reminder';
+
+  @override
+  String get zatcaDeadline => 'Filing deadline: end of next month';
+
+  @override
+  String get historyAction => 'History';
+
+  @override
+  String get sendToAuthority => 'Send to Authority';
+
+  @override
+  String get cashPaymentMethod => 'Cash';
+
+  @override
+  String get cardPaymentMethod => 'Card';
+
+  @override
+  String get mixedPaymentMethod => 'Mixed';
+
+  @override
+  String get creditPaymentMethod => 'Credit';
+
+  @override
+  String get vatReportTitle => 'VAT Report';
+
+  @override
+  String get selectPeriod => 'Select period';
+
+  @override
+  String get salesVat => 'Sales VAT';
+
+  @override
+  String get totalSalesIncVat => 'Total Sales (incl. VAT)';
+
+  @override
+  String get vatCollected => 'VAT Collected';
+
+  @override
+  String get purchasesVat => 'Purchases VAT';
+
+  @override
+  String get totalPurchasesIncVat => 'Total Purchases (incl. VAT)';
+
+  @override
+  String get vatPaid => 'VAT Paid';
+
+  @override
+  String get netVatDue => 'Net VAT Due';
+
+  @override
+  String get dueToAuthority => 'Due to authority';
+
+  @override
+  String get dueFromAuthority => 'Due from authority';
+
+  @override
+  String get exportingPdfReport => 'Exporting report...';
+
+  @override
+  String get debtsReportTitle => 'Debts Report';
+
+  @override
+  String get sortByLastPayment => 'By last payment';
+
+  @override
+  String get customersCount => 'Customers';
+
+  @override
+  String get noOutstandingDebts => 'No outstanding debts';
+
+  @override
+  String lastUpdate(String date) {
+    return 'Last update: $date';
+  }
+
+  @override
+  String get paymentAmountField => 'Payment Amount';
+
+  @override
+  String get recordAction => 'Record';
+
+  @override
+  String get paymentRecordedMsg => 'Payment recorded';
+
+  @override
+  String showDetails(String name) {
+    return 'View details: $name';
+  }
+
+  @override
+  String get debtsReportPdf => 'Debts Report';
+
+  @override
+  String dateFieldLabel(String date) {
+    return 'Date: $date';
+  }
+
+  @override
+  String get debtsDetails => 'Debt Details:';
+
+  @override
+  String get customerCol => 'Customer';
+
+  @override
+  String get phoneCol => 'Phone';
+
+  @override
+  String get refundReceiptTitle => 'Refund Receipt';
+
+  @override
+  String get noRefundId => 'No refund ID';
+
+  @override
+  String get refundNotFound => 'Refund data not found';
+
+  @override
+  String get refundSuccessful => 'Refund successful';
+
+  @override
+  String refundNumberLabel(String number) {
+    return 'Refund No: $number';
+  }
+
+  @override
+  String get refundReceipt => 'Refund Receipt';
+
+  @override
+  String get originalInvoiceNumber => 'Original Invoice Number';
+
+  @override
+  String get refundDate => 'Refund Date';
+
+  @override
+  String get refundMethodField => 'Refund Method';
+
+  @override
+  String get returnedProducts => 'Returned Products';
+
+  @override
+  String get totalRefund => 'Total Refund';
+
+  @override
+  String get reasonLabel => 'Reason';
+
+  @override
+  String get homeAction => 'Home';
+
+  @override
+  String printError(String error) {
+    return 'Print error: $error';
+  }
+
+  @override
+  String get damagedProduct => 'Damaged product';
+
+  @override
+  String get wrongOrder => 'Wrong order';
+
+  @override
+  String get customerChangedMind => 'Customer changed mind';
+
+  @override
+  String get expiredProduct => 'Expired product';
+
+  @override
+  String get unsatisfactoryQuality => 'Unsatisfactory quality';
+
+  @override
+  String get cashRefundMethod => 'Cash';
+
+  @override
+  String get cardRefundMethod => 'Card';
+
+  @override
+  String get walletRefundMethod => 'Wallet';
+
+  @override
+  String get refundReasonTitle => 'Refund Reason';
+
+  @override
+  String get noRefundData =>
+      'No refund data. Please go back and select products.';
+
+  @override
+  String invoiceFieldLabel(String receiptNo) {
+    return 'Invoice: $receiptNo';
+  }
+
+  @override
+  String productsCountAmount(int count, String amount) {
+    return '$count products - $amount SAR';
+  }
+
+  @override
+  String get selectRefundReason => 'Select refund reason';
+
+  @override
+  String get additionalNotesOptional => 'Additional notes (optional)';
+
+  @override
+  String get addNotesHint => 'Add any additional notes...';
+
+  @override
+  String get processingAction => 'Processing...';
+
+  @override
+  String get nextSupervisorApproval => 'Next - Supervisor Approval';
+
+  @override
+  String refundCreationError(String error) {
+    return 'Error creating refund: $error';
+  }
+
+  @override
+  String get refundRequestTitle => 'Refund Request';
+
+  @override
+  String get invoiceNumberHint => 'Invoice number';
+
+  @override
+  String get searchAction => 'Search';
+
+  @override
+  String get selectProductsForRefund => 'Select products to return';
+
+  @override
+  String get selectAll => 'Select all';
+
+  @override
+  String quantityTimesPrice(int qty, String price) {
+    return 'Qty: $qty × $price SAR';
+  }
+
+  @override
+  String productsSelected(int count) {
+    return '$count products selected';
+  }
+
+  @override
+  String refundAmountValue(String amount) {
+    return 'Amount: $amount SAR';
+  }
+
+  @override
+  String get nextAction => 'Next';
+
+  @override
+  String get enterInvoiceToSearch => 'Enter invoice number to search';
+
+  @override
+  String get invoiceNotFoundMsg => 'Invoice not found';
+
+  @override
+  String get shippingGatewaysTitle => 'Shipping Gateways';
+
+  @override
+  String get availableShippingGateways => 'Available Shipping Gateways';
+
+  @override
+  String get activateShippingGateways =>
+      'Activate and configure shipping gateways for order delivery';
+
+  @override
+  String get aramexName => 'Aramex';
+
+  @override
+  String get aramexDesc => 'Global shipping company with multiple services';
+
+  @override
+  String get smsaDesc => 'Fast domestic shipping';
+
+  @override
+  String get fastloName => 'Fastlo';
+
+  @override
+  String get fastloDesc => 'Same day fast delivery';
+
+  @override
+  String get dhlDesc => 'Fast and reliable international shipping';
+
+  @override
+  String get jtDesc => 'Economy shipping';
+
+  @override
+  String get customDeliveryName => 'Custom Delivery';
+
+  @override
+  String get customDeliveryDesc => 'Manage delivery with your own drivers';
+
+  @override
+  String get settingsAction => 'Settings';
+
+  @override
+  String get hourlyView => 'Hourly';
+
+  @override
+  String get dailyView => 'Daily';
+
+  @override
+  String get peakHourLabel => 'Peak Hour';
+
+  @override
+  String transactionsWithCount(int count) {
+    return '$count transactions';
+  }
+
+  @override
+  String get peakDayLabel => 'Peak Day';
+
+  @override
+  String get avgPerHour => 'Avg/Hour';
+
+  @override
+  String get transactionWord => 'transactions';
+
+  @override
+  String get transactionsByHour => 'Transactions by Hour';
+
+  @override
+  String get transactionsByDay => 'Transactions by Day';
+
+  @override
+  String get activityHeatmap => 'Activity Heatmap';
+
+  @override
+  String get lowLabel => 'Low';
+
+  @override
+  String get highLabel => 'High';
+
+  @override
+  String get analysisRecommendations => 'Recommendations Based on Analysis';
+
+  @override
+  String get staffRecommendation => 'Staff';
+
+  @override
+  String get staffRecommendationDesc =>
+      'Increase cashiers during 12:00-13:00 and 17:00-19:00 (peak sales)';
+
+  @override
+  String get offersRecommendation => 'Offers';
+
+  @override
+  String get offersRecommendationDesc =>
+      'Offer special deals during 14:00-16:00 to boost sales in quiet period';
+
+  @override
+  String get inventoryRecommendation => 'Inventory';
+
+  @override
+  String get inventoryRecommendationDesc =>
+      'Prepare inventory before Thursday and Friday (highest sales days)';
+
+  @override
+  String get shiftsRecommendation => 'Shifts';
+
+  @override
+  String get shiftsRecommendationDesc =>
+      'Distribute shifts: morning 8-15, evening 15-22 with overlap at peak';
+
+  @override
+  String get topProductsTab => 'Top Products';
+
+  @override
+  String get byCategoryTab => 'By Category';
+
+  @override
+  String get performanceAnalysisTab => 'Performance Analysis';
+
+  @override
+  String get noSalesDataForPeriod => 'No sales data for the selected period';
+
+  @override
+  String get categoryFilter => 'Category';
+
+  @override
+  String get allCategoriesFilter => 'All Categories';
+
+  @override
+  String get sortByField => 'Sort by';
+
+  @override
+  String get revenueSort => 'Revenue';
+
+  @override
+  String get unitsSort => 'Units';
+
+  @override
+  String get profitSort => 'Profit';
+
+  @override
+  String get revenueLabel => 'Revenue';
+
+  @override
+  String get unitsLabel => 'Units';
+
+  @override
+  String get profitLabel => 'Profit';
+
+  @override
+  String get stockLabel => 'Stock';
+
+  @override
+  String get revenueByCategoryTitle => 'Revenue Distribution by Category';
+
+  @override
+  String get noRevenueForPeriod => 'No revenue for this period';
+
+  @override
+  String get unclassified => 'Unclassified';
+
+  @override
+  String get productUnit => 'product';
+
+  @override
+  String get unitsSoldUnit => 'units';
+
+  @override
+  String get totalRevenueKpi => 'Total Revenue';
+
+  @override
+  String get unitsSoldKpi => 'Units Sold';
+
+  @override
+  String get totalProfitKpi => 'Total Profit';
+
+  @override
+  String get profitMarginKpi => 'Profit Margin';
+
+  @override
+  String get performanceOverview => 'Performance Overview';
+
+  @override
+  String get trendingUpProducts => 'Trending Up';
+
+  @override
+  String get stableProducts => 'Stable';
+
+  @override
+  String get trendingDownProducts => 'Trending Down';
+
+  @override
+  String noSalesProducts(int count) {
+    return 'No sales products ($count)';
+  }
+
+  @override
+  String inStockCount(int count) {
+    return '$count in stock';
+  }
+
+  @override
+  String get slowMovingLabel => 'Slow';
+
+  @override
+  String needsReorder(int count) {
+    return 'Needs reorder ($count)';
+  }
+
+  @override
+  String soldUnitsStock(int sold, int stock) {
+    return 'Sold: $sold units | Stock: $stock';
+  }
+
+  @override
+  String get reorderLabel => 'Reorder';
+
+  @override
+  String get totalComplaintsLabel => 'Total Complaints';
+
+  @override
+  String get openComplaints => 'Open';
+
+  @override
+  String get closedComplaints => 'Closed';
+
+  @override
+  String get avgResolutionTime => 'Avg Resolution Time';
+
+  @override
+  String daysUnit(String count) {
+    return '$count days';
+  }
+
+  @override
+  String get fromDate => 'From date';
+
+  @override
+  String get toDate => 'To date';
+
+  @override
+  String get statusFilter => 'Status';
+
+  @override
+  String get departmentFilter => 'Department';
+
+  @override
+  String get paymentDepartment => 'Payment';
+
+  @override
+  String get technicalDepartment => 'Technical';
+
+  @override
+  String get otherDepartment => 'Other';
+
+  @override
+  String get noComplaintsRecorded => 'No complaints recorded yet';
+
+  @override
+  String get overviewTab => 'Overview';
+
+  @override
+  String get topCustomersTab => 'Top Customers';
+
+  @override
+  String get growthAnalysisTab => 'Growth Analysis';
+
+  @override
+  String get loyaltyTab => 'Loyalty';
+
+  @override
+  String get totalCustomersLabel => 'Total Customers';
+
+  @override
+  String get activeCustomersLabel => 'Active Customers';
+
+  @override
+  String get avgOrderValueLabel => 'Avg Order Value';
+
+  @override
+  String get tierDistribution => 'Customer Distribution by Tier';
+
+  @override
+  String get activitySummary => 'Activity Summary';
+
+  @override
+  String get totalRevenueFromCustomers =>
+      'Total revenue from registered customers';
+
+  @override
+  String get avgOrderPerCustomer => 'Average order value per customer';
+
+  @override
+  String get activeCustomersLast30 => 'Active customers (last 30 days)';
+
+  @override
+  String get newCustomersLast30 => 'New customers (last 30 days)';
+
+  @override
+  String topCustomersTitle(int count) {
+    return 'Top $count Customers';
+  }
+
+  @override
+  String get bySpending => 'By Spending';
+
+  @override
+  String get byOrders => 'By Orders';
+
+  @override
+  String get byPoints => 'By Points';
+
+  @override
+  String ordersCount(int count) {
+    return '$count orders';
+  }
+
+  @override
+  String get avgOrderStat => 'Avg Order';
+
+  @override
+  String get loyaltyPointsStat => 'Loyalty Points';
+
+  @override
+  String get lastOrderStat => 'Last Order';
+
+  @override
+  String get newCustomerGrowth => 'New Customer Growth';
+
+  @override
+  String get customerRetentionRate => 'Customer Retention Rate';
+
+  @override
+  String get monthlyPeriod => 'Monthly';
+
+  @override
+  String get totalCustomersPeriod => 'Total Customers';
+
+  @override
+  String get activePeriod => 'Active';
+
+  @override
+  String get activeCustomersInfo =>
+      'Active customers: purchased within the last 30 days';
+
+  @override
+  String get cohortAnalysis => 'Cohort Analysis';
+
+  @override
+  String get cohortDescription => 'Return rate after first purchase';
+
+  @override
+  String get cohortGroup => 'Group';
+
+  @override
+  String get month1 => 'Month 1';
+
+  @override
+  String get month2 => 'Month 2';
+
+  @override
+  String get month3 => 'Month 3';
+
+  @override
+  String get loyaltyProgramStats => 'Loyalty Program Stats';
+
+  @override
+  String get totalPointsGranted => 'Total Points Granted';
+
+  @override
+  String get remainingPoints => 'Remaining Points';
+
+  @override
+  String get pointsValue => 'Points Value';
+
+  @override
+  String get pointsByTier => 'Points by Tier';
+
+  @override
+  String get pointsUnit => 'points';
+
+  @override
+  String get redemptionPatterns => 'Redemption Patterns';
+
+  @override
+  String get purchaseDiscount => 'Purchase Discount';
+
+  @override
+  String get freeProducts => 'Free Products';
+
+  @override
+  String get couponsLabel => 'Coupons';
+
+  @override
+  String get diamondTier => 'Diamond';
+
+  @override
+  String get goldTier => 'Gold';
+
+  @override
+  String get silverTier => 'Silver';
+
+  @override
+  String get bronzeTier => 'Bronze';
+
+  @override
+  String get todayDate => 'Today';
+
+  @override
+  String get yesterdayDate => 'Yesterday';
+
+  @override
+  String daysCountLabel(int count) {
+    return '$count days';
+  }
+
+  @override
+  String ofTotalLabel(String active, String total) {
+    return '$active of $total';
+  }
+
+  @override
+  String get exportingReportMsg => 'Exporting report...';
+
+  @override
+  String get januaryMonth => 'January';
+
+  @override
+  String get februaryMonth => 'February';
+
+  @override
+  String get marchMonth => 'March';
+
+  @override
+  String get aprilMonth => 'April';
+
+  @override
+  String get mayMonth => 'May';
+
+  @override
+  String get juneMonth => 'June';
+
+  @override
+  String errorLabel(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get saturdayDay => 'Saturday';
+
+  @override
+  String get sundayDay => 'Sunday';
+
+  @override
+  String get mondayDay => 'Monday';
+
+  @override
+  String get tuesdayDay => 'Tuesday';
+
+  @override
+  String get wednesdayDay => 'Wednesday';
+
+  @override
+  String get thursdayDay => 'Thursday';
+
+  @override
+  String get fridayDay => 'Friday';
+
+  @override
+  String get satShort => 'Sat';
+
+  @override
+  String get sunShort => 'Sun';
+
+  @override
+  String get monShort => 'Mon';
+
+  @override
+  String get tueShort => 'Tue';
+
+  @override
+  String get wedShort => 'Wed';
+
+  @override
+  String get thuShort => 'Thu';
+
+  @override
+  String get friShort => 'Fri';
+
+  @override
+  String get errorLoadingVatReport => 'Error loading VAT report';
+
+  @override
+  String get errorLoadingComplaints => 'Error loading complaints';
+
+  @override
+  String get errorLoadingCustomerReport => 'Error loading customer report';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -18,6 +19,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
   String _selectedCategory = 'all';
   List<ProductsTableData> _products = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -26,15 +28,28 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
   }
 
   Future<void> _loadProducts() async {
-    final storeId = ref.read(currentStoreIdProvider);
-    if (storeId == null) return;
-    final db = getIt<AppDatabase>();
-    final products = await db.productsDao.getAllProducts(storeId);
-    if (mounted) {
-      setState(() {
-        _products = products;
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final db = getIt<AppDatabase>();
+      final products = await db.productsDao.getAllProducts(storeId);
+      if (mounted) {
+        setState(() {
+          _products = products;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
     }
   }
 
@@ -46,6 +61,62 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.inventoryReport)),
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.inventoryReport)),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline_rounded, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                const SizedBox(height: 16),
+                Text(
+                  '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
+                  style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: _loadProducts,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l10n.retry),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_products.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.inventoryReport)),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.inventory_2_outlined, size: 80, color: Theme.of(context).dividerColor),
+                const SizedBox(height: 16),
+                Text(
+                  '\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0646\u062A\u062C\u0627\u062A \u0641\u064A \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
+                  style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '\u0623\u0636\u0641 \u0645\u0646\u062A\u062C\u0627\u062A \u0644\u0639\u0631\u0636 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
+                  style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
@@ -83,13 +154,13 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    _StatCard(icon: Icons.inventory_2, label: l10n.products, value: '${inventory.length}', color: Colors.blue),
+                    _StatCard(icon: Icons.inventory_2, label: l10n.products, value: '${inventory.length}', color: AppColors.info),
                     const SizedBox(width: 12),
-                    _StatCard(icon: Icons.shopping_bag, label: l10n.inventory, value: '$totalItems', color: Colors.green),
+                    _StatCard(icon: Icons.shopping_bag, label: l10n.inventory, value: '$totalItems', color: AppColors.success),
                     const SizedBox(width: 12),
-                    _StatCard(icon: Icons.warning, label: l10n.lowStock, value: '$lowStock', color: Colors.orange),
+                    _StatCard(icon: Icons.warning, label: l10n.lowStock, value: '$lowStock', color: AppColors.warning),
                     const SizedBox(width: 12),
-                    _StatCard(icon: Icons.remove_shopping_cart, label: l10n.outOfStock, value: '$outOfStock', color: Colors.red),
+                    _StatCard(icon: Icons.remove_shopping_cart, label: l10n.outOfStock, value: '$outOfStock', color: AppColors.error),
                   ],
                 ),
               ),
@@ -99,16 +170,16 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.green.shade600, Colors.green.shade400]),
+                  gradient: const LinearGradient(colors: [Color(0xFF16A34A), Color(0xFF4ADE80)]),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.attach_money, color: Colors.white, size: 32),
+                    Icon(Icons.attach_money, color: Theme.of(context).colorScheme.surface, size: 32),
                     const SizedBox(width: 12),
-                    Text(l10n.inventoryReport, style: const TextStyle(color: Colors.white)),
+                    Text(l10n.inventoryReport, style: TextStyle(color: Theme.of(context).colorScheme.surface)),
                     const Spacer(),
-                    Text('${totalValue.toStringAsFixed(0)} ${l10n.sar}', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text('${totalValue.toStringAsFixed(0)} ${l10n.sar}', style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 24, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -144,7 +215,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                     rows: filtered.map((item) {
                       final isLow = item.stock < item.minStock;
                       return DataRow(
-                        color: WidgetStateProperty.resolveWith((states) => isLow ? Colors.red.withValues(alpha: 0.05) : null),
+                        color: WidgetStateProperty.resolveWith((states) => isLow ? AppColors.error.withValues(alpha: 0.05) : null),
                         cells: [
                           DataCell(Text(item.name)),
                           DataCell(Text(item.sku, style: const TextStyle(fontFamily: 'monospace'))),
@@ -153,7 +224,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                           DataCell(Text(item.cost.toStringAsFixed(2))),
                           DataCell(Text(item.price.toStringAsFixed(2))),
                           DataCell(Text((item.cost * item.stock).toStringAsFixed(0))),
-                          DataCell(isLow ? Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)), child: const Text('منخفض', style: TextStyle(color: Colors.white, fontSize: 10))) : const Icon(Icons.check, color: Colors.green, size: 16)),
+                          DataCell(isLow ? Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(4)), child: Text('منخفض', style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 10))) : const Icon(Icons.check, color: AppColors.success, size: 16)),
                         ],
                       );
                     }).toList(),

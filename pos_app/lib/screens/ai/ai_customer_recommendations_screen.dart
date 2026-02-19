@@ -55,17 +55,18 @@ class _AiCustomerRecommendationsScreenState
   }
 
   String _getSegmentLabel(CustomerSegment segment) {
+    final l10n = AppLocalizations.of(context)!;
     switch (segment) {
       case CustomerSegment.vip:
-        return 'VIP';
+        return l10n.segmentVip;
       case CustomerSegment.regular:
-        return 'منتظم'; // Regular
+        return l10n.segmentRegular;
       case CustomerSegment.atRisk:
-        return 'معرض للخسارة'; // At Risk
+        return l10n.segmentAtRisk;
       case CustomerSegment.lost:
-        return 'مفقود'; // Lost
+        return l10n.segmentLost;
       case CustomerSegment.newCustomer:
-        return 'جديد'; // New
+        return l10n.segmentNewCustomer;
     }
   }
 
@@ -139,10 +140,10 @@ class _AiCustomerRecommendationsScreenState
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
-              tabs: const [
-                Tab(text: 'التوصيات'), // Recommendations
-                Tab(text: 'إعادة الشراء'), // Repurchase
-                Tab(text: 'الشرائح'), // Segments
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.tabRecommendations),
+                Tab(text: AppLocalizations.of(context)!.tabRepurchase),
+                Tab(text: AppLocalizations.of(context)!.tabSegments),
               ],
             ),
           ),
@@ -214,7 +215,7 @@ class _AiCustomerRecommendationsScreenState
                         ),
                       ),
                       Text(
-                        '${seg.count} عميل', // X customers
+                        AppLocalizations.of(context)!.customerCount(seg.count),
                         style: TextStyle(
                           color: isDark ? Colors.white : AppColors.textPrimary,
                           fontSize: 18,
@@ -222,7 +223,7 @@ class _AiCustomerRecommendationsScreenState
                         ),
                       ),
                       Text(
-                        '${(seg.totalRevenue / 1000).toStringAsFixed(1)}K ر.س', // XK SAR
+                        AppLocalizations.of(context)!.revenueK((seg.totalRevenue / 1000).toStringAsFixed(1)),
                         style: TextStyle(
                           color: color,
                           fontSize: 11,
@@ -252,7 +253,7 @@ class _AiCustomerRecommendationsScreenState
             padding: const EdgeInsetsDirectional.only(start: 8),
             child: FilterChip(
               selected: currentFilter == null,
-              label: const Text('الكل'), // All
+              label: Text(AppLocalizations.of(context)!.filterAllLabel),
               onSelected: (_) => ref.read(segmentFilterProvider.notifier).state = null,
               selectedColor: AppColors.primary.withValues(alpha: 0.15),
               checkmarkColor: AppColors.primary,
@@ -336,8 +337,8 @@ class _AiCustomerRecommendationsScreenState
               productName: reminder.productName,
               initialPhone: reminder.phone,
               offerMessage: reminder.isOverdue
-                  ? 'عرض خاص لك! اشتقنا لزيارتك 💛' // Special offer! We miss your visit
-                  : 'تذكير ودي بموعد شراء ${reminder.productName}', // Friendly reminder
+                  ? AppLocalizations.of(context)!.specialOfferMissYou
+                  : AppLocalizations.of(context)!.friendlyReminderPurchase(reminder.productName),
             );
           },
         ),
@@ -390,7 +391,7 @@ class _AiCustomerRecommendationsScreenState
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          '${seg.count} عميل', // X customers
+                          AppLocalizations.of(context)!.customerCount(seg.count),
                           style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -400,14 +401,14 @@ class _AiCustomerRecommendationsScreenState
                   Row(
                     children: [
                       _SegmentStat(
-                        label: 'إجمالي الإيراد', // Total Revenue
-                        value: '${(seg.totalRevenue / 1000).toStringAsFixed(1)}K ر.س',
+                        label: AppLocalizations.of(context)!.totalRevenueLabel,
+                        value: AppLocalizations.of(context)!.revenueK((seg.totalRevenue / 1000).toStringAsFixed(1)),
                         isDark: isDark,
                       ),
                       const SizedBox(width: 24),
                       _SegmentStat(
-                        label: 'متوسط الإنفاق', // Avg Spend
-                        value: '${seg.avgSpend.toStringAsFixed(0)} ر.س',
+                        label: AppLocalizations.of(context)!.avgSpendStat,
+                        value: AppLocalizations.of(context)!.amountSar(seg.avgSpend.toStringAsFixed(0)),
                         isDark: isDark,
                       ),
                     ],
@@ -459,15 +460,16 @@ class _CustomerRecommendationCard extends StatelessWidget {
     this.onWhatsApp,
   });
 
-  String _formatTimeAgo(DateTime date) {
+  String _formatTimeAgo(DateTime date, AppLocalizations l10n) {
     final diff = DateTime.now().difference(date);
-    if (diff.inDays == 0) return 'اليوم'; // Today
-    if (diff.inDays == 1) return 'أمس'; // Yesterday
-    return 'منذ ${diff.inDays} يوم'; // X days ago
+    if (diff.inDays == 0) return l10n.timeAgoToday;
+    if (diff.inDays == 1) return l10n.timeAgoYesterday;
+    return l10n.timeAgoDays(diff.inDays);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -520,7 +522,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'آخر زيارة: ${_formatTimeAgo(recommendation.lastVisit)}', // Last visit
+                          l10n.lastVisitLabel(_formatTimeAgo(recommendation.lastVisit, l10n)),
                           style: TextStyle(
                             color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                             fontSize: 11,
@@ -528,7 +530,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${recommendation.visitCount} زيارة', // X visits
+                          l10n.visitCountLabel(recommendation.visitCount),
                           style: TextStyle(
                             color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
                             fontSize: 11,
@@ -567,7 +569,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'متوسط: ${recommendation.avgSpend.toStringAsFixed(0)} ر.س', // Avg: X SAR
+                l10n.avgSpendLabel(recommendation.avgSpend.toStringAsFixed(0)),
                 style: TextStyle(
                   color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                   fontSize: 12,
@@ -575,7 +577,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                'إجمالي: ${(recommendation.totalSpent / 1000).toStringAsFixed(1)}K ر.س', // Total: XK SAR
+                l10n.totalSpentLabel((recommendation.totalSpent / 1000).toStringAsFixed(1)),
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 12,
@@ -588,7 +590,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
           if (recommendation.products.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
-              'المنتجات الموصى بها', // Recommended Products
+              l10n.recommendedProducts,
               style: TextStyle(
                 color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
                 fontSize: 12,
@@ -610,7 +612,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onWhatsApp,
                 icon: const Icon(Icons.message_rounded, size: 16),
-                label: const Text('إرسال عرض واتساب'), // Send WhatsApp offer
+                label: Text(l10n.sendWhatsAppOffer),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF25D366),
                   side: const BorderSide(color: Color(0xFF25D366)),

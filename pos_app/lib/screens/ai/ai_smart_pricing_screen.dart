@@ -141,28 +141,29 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     final totalImpact = suggestions.fold<double>(
         0, (sum, s) => sum + s.expectedImpact.monthlyRevenueDelta);
 
+    final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryData(
-        label: 'إجمالي الاقتراحات', // Total suggestions
+        label: l10n.totalSuggestionsLabel,
         value: '${suggestions.length}',
         icon: Icons.lightbulb_rounded,
         color: AppColors.info,
       ),
       _SummaryData(
-        label: 'يمكن زيادتها', // Can increase
+        label: l10n.canIncreaseLabel,
         value: '$canIncrease',
         icon: Icons.arrow_upward_rounded,
         color: AppColors.primary,
       ),
       _SummaryData(
-        label: 'يُنصح بخفضها', // Should decrease
+        label: l10n.shouldDecreaseLabel,
         value: '$shouldDecrease',
         icon: Icons.arrow_downward_rounded,
         color: AppColors.secondary,
       ),
       _SummaryData(
-        label: 'التأثير الشهري المتوقع', // Expected monthly impact
-        value: '${totalImpact >= 0 ? '+' : ''}${totalImpact.toStringAsFixed(0)} ر.س',
+        label: l10n.expectedMonthlyImpact,
+        value: '${totalImpact >= 0 ? '+' : ''}${l10n.amountSar(totalImpact.toStringAsFixed(0))}',
         icon: Icons.monetization_on_rounded,
         color: totalImpact >= 0 ? AppColors.primary : AppColors.error,
       ),
@@ -269,13 +270,12 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
 
   /// فلتر الأسعار
   Widget _buildFilterChips(PriceFilterType current, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final filters = [
-      (PriceFilterType.all, 'الكل', Icons.list_rounded), // All
-      (PriceFilterType.canIncrease, 'يمكن زيادتها', Icons.trending_up_rounded),
-      // Can increase
-      (PriceFilterType.shouldDecrease, 'يُنصح بخفضها',
+      (PriceFilterType.all, l10n.filterAllLabel, Icons.list_rounded),
+      (PriceFilterType.canIncrease, l10n.canIncreaseLabel, Icons.trending_up_rounded),
+      (PriceFilterType.shouldDecrease, l10n.shouldDecreaseLabel,
           Icons.trending_down_rounded),
-      // Should decrease
     ];
 
     return Wrap(
@@ -351,8 +351,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'لا توجد اقتراحات في هذا الفلتر',
-              // No suggestions in this filter
+              AppLocalizations.of(context)!.noSuggestionsInFilter,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.white54 : AppColors.textSecondary,
@@ -404,8 +403,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'تم تطبيق السعر ${sliderPrice.toStringAsFixed(2)} ر.س على ${selected.name}',
-                  // Price X SAR applied to product
+                  AppLocalizations.of(context)!.priceApplied(sliderPrice.toStringAsFixed(2), selected.name),
                 ),
                 backgroundColor: AppColors.primary,
                 behavior: SnackBarBehavior.floating,
@@ -462,8 +460,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'اختر منتجاً لعرض التفاصيل',
-            // Select a product to view details
+            AppLocalizations.of(context)!.selectProductForDetails,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -472,8 +469,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'انقر على أحد المنتجات من القائمة لعرض حاسبة التأثير ومرونة الطلب',
-            // Click on a product to view impact calculator and elasticity
+            AppLocalizations.of(context)!.selectProductHint,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
@@ -514,7 +510,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'حدث خطأ: $error', // Error occurred
+              AppLocalizations.of(context)!.errorOccurredShort(error),
               style: const TextStyle(color: AppColors.error, fontSize: 13),
             ),
           ),

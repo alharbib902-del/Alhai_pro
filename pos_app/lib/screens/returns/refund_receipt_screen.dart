@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../providers/returns_providers.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/receipt_printer_service.dart';
 
 /// شاشة إيصال الإرجاع
@@ -14,9 +16,10 @@ class RefundReceiptScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (refundId == null || refundId!.isEmpty) {
+      final l10n = AppLocalizations.of(context)!;
       return Scaffold(
         appBar: AppBar(
-          title: const Text('إيصال الإرجاع'),
+          title: Text(l10n.refundReceiptTitle),
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
@@ -25,15 +28,16 @@ class RefundReceiptScreen extends ConsumerWidget {
             ),
           ],
         ),
-        body: const Center(child: Text('لا يوجد معرّف إرجاع')),
+        body: Center(child: Text(l10n.noRefundId)),
       );
     }
 
     final returnDetailAsync = ref.watch(returnDetailProvider(refundId!));
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إيصال الإرجاع'),
+        title: Text(l10n.refundReceiptTitle),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -44,10 +48,10 @@ class RefundReceiptScreen extends ConsumerWidget {
       ),
       body: returnDetailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => Center(child: Text(l10n.errorLabel(e.toString()))),
         data: (detail) {
           if (detail == null) {
-            return const Center(child: Text('لم يتم العثور على بيانات الإرجاع'));
+            return Center(child: Text(l10n.refundNotFound));
           }
           return _buildReceiptContent(context, detail.returnData, detail.items);
         },
@@ -72,17 +76,17 @@ class RefundReceiptScreen extends ConsumerWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.green.shade100,
+                color: AppColors.success.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.check_circle, size: 48, color: Colors.green.shade600),
+              child: const Icon(Icons.check_circle, size: 48, color: AppColors.success),
             ),
             const SizedBox(height: 16),
-            const Text('تم الإرجاع بنجاح', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.refundSuccessful, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
-              'رقم الإرجاع: ${returnData.returnNumber}',
-              style: TextStyle(color: Colors.grey.shade600),
+              AppLocalizations.of(context)!.refundNumberLabel(returnData.returnNumber),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 32),
 
@@ -93,16 +97,16 @@ class RefundReceiptScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const Text('إيصال إرجاع', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(AppLocalizations.of(context)!.refundReceipt, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const Divider(height: 24),
-                    _ReceiptRow(label: 'رقم الفاتورة الأصلية', value: returnData.saleId),
-                    _ReceiptRow(label: 'تاريخ الإرجاع', value: _formatDate(returnData.createdAt)),
+                    _ReceiptRow(label: AppLocalizations.of(context)!.originalInvoiceNumber, value: returnData.saleId),
+                    _ReceiptRow(label: AppLocalizations.of(context)!.refundDate, value: _formatDate(returnData.createdAt)),
                     if (returnData.createdBy != null && returnData.createdBy!.isNotEmpty)
-                      _ReceiptRow(label: 'الكاشير', value: returnData.createdBy!),
+                      _ReceiptRow(label: AppLocalizations.of(context)!.cashierLabel, value: returnData.createdBy!),
                     if (returnData.refundMethod.isNotEmpty)
-                      _ReceiptRow(label: 'طريقة الاسترداد', value: _getRefundMethodLabel(returnData.refundMethod)),
+                      _ReceiptRow(label: AppLocalizations.of(context)!.refundMethodField, value: _getRefundMethodLabel(context, returnData.refundMethod)),
                     const Divider(height: 24),
-                    const Text('المنتجات المرتجعة', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(AppLocalizations.of(context)!.returnedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
 
                     // Items list
@@ -116,10 +120,10 @@ class RefundReceiptScreen extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('إجمالي الإرجاع', style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(AppLocalizations.of(context)!.totalRefund, style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                          '${totalRefund.toStringAsFixed(2)} ر.س',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red.shade600, fontSize: 18),
+                          '${totalRefund.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error, fontSize: 18),
                         ),
                       ],
                     ),
@@ -128,8 +132,8 @@ class RefundReceiptScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('السبب', style: TextStyle(color: Colors.grey.shade600)),
-                          Text(_getReasonLabel(returnData.reason!)),
+                          Text(AppLocalizations.of(context)!.reasonLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                          Text(_getReasonLabel(context, returnData.reason!)),
                         ],
                       ),
                     if (returnData.notes != null && returnData.notes!.isNotEmpty) ...[
@@ -137,7 +141,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('ملاحظات', style: TextStyle(color: Colors.grey.shade600)),
+                          Text(AppLocalizations.of(context)!.notesLabel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           Flexible(child: Text(returnData.notes!, textAlign: TextAlign.end)),
                         ],
                       ),
@@ -155,14 +159,14 @@ class RefundReceiptScreen extends ConsumerWidget {
                 OutlinedButton.icon(
                   onPressed: () => _printReceipt(context, returnData.saleId),
                   icon: const Icon(Icons.print),
-                  label: const Text('طباعة'),
+                  label: Text(AppLocalizations.of(context)!.printAction),
                   style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
                 ),
                 const SizedBox(width: 12),
                 FilledButton.icon(
                   onPressed: () => context.go('/returns'),
                   icon: const Icon(Icons.home),
-                  label: const Text('الرئيسية'),
+                  label: Text(AppLocalizations.of(context)!.homeAction),
                   style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
                 ),
               ],
@@ -180,8 +184,8 @@ class RefundReceiptScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الطباعة: $e'),
-            backgroundColor: Colors.red,
+            content: Text(AppLocalizations.of(context)!.printError(e.toString())),
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -192,33 +196,35 @@ class RefundReceiptScreen extends ConsumerWidget {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-  String _getReasonLabel(String reason) {
+  String _getReasonLabel(BuildContext context, String reason) {
+    final l10n = AppLocalizations.of(context)!;
     switch (reason) {
       case 'damaged':
-        return 'منتج تالف';
+        return l10n.damagedProduct;
       case 'wrong':
-        return 'خطأ في الطلب';
+        return l10n.wrongOrder;
       case 'changed_mind':
-        return 'تغيير رأي العميل';
+        return l10n.customerChangedMind;
       case 'expired':
-        return 'منتج منتهي الصلاحية';
+        return l10n.expiredProduct;
       case 'quality':
-        return 'جودة غير مرضية';
+        return l10n.unsatisfactoryQuality;
       case 'other':
-        return 'سبب آخر';
+        return l10n.otherReason;
       default:
         return reason;
     }
   }
 
-  String _getRefundMethodLabel(String method) {
+  String _getRefundMethodLabel(BuildContext context, String method) {
+    final l10n = AppLocalizations.of(context)!;
     switch (method) {
       case 'cash':
-        return 'نقدي';
+        return l10n.cashRefundMethod;
       case 'card':
-        return 'بطاقة';
+        return l10n.cardRefundMethod;
       case 'wallet':
-        return 'محفظة';
+        return l10n.walletRefundMethod;
       default:
         return method;
     }
@@ -237,7 +243,7 @@ class _ReceiptRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+          Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
           Flexible(child: Text(value, style: const TextStyle(fontSize: 13), textAlign: TextAlign.end)),
         ],
       ),
@@ -258,7 +264,7 @@ class _ProductRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: Text(name)),
-          Text('$qty × ${price.toStringAsFixed(2)}', style: TextStyle(color: Colors.grey.shade600)),
+          Text('$qty × ${price.toStringAsFixed(2)}', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );

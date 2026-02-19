@@ -226,7 +226,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   child: _SummaryCard(
                     icon: Icons.warning,
                     title: l10n.overdueDebts,
-                    value: l10n.customerCount('$_overdueCount'),
+                    value: l10n.customerCount(_overdueCount),
                     color: colorScheme.tertiary,
                   ),
                 ),
@@ -264,7 +264,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     child: _SummaryCard(
                       icon: Icons.warning,
                       title: l10n.overdueDebts,
-                      value: l10n.customerCount('$_overdueCount'),
+                      value: l10n.customerCount(_overdueCount),
                       color: colorScheme.tertiary,
                     ),
                   ),

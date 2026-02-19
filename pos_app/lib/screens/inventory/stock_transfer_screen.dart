@@ -82,38 +82,49 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
           tabs: [Tab(text: l10n.newTransfer), Tab(text: l10n.history)],
         ),
       ),
-      body: _isLoadingStores
-          ? const Center(child: CircularProgressIndicator())
-          : _loadError != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 64, color: colorScheme.error),
-                      const SizedBox(height: 16),
-                      Text(l10n.errorOccurred, style: TextStyle(color: colorScheme.error)),
-                      const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: () {
-                          setState(() { _isLoadingStores = true; _loadError = null; });
-                          _loadStoresAndProducts();
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: Text(l10n.retry),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return _isLoadingStores
+              ? const Center(child: CircularProgressIndicator())
+              : _loadError != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+                          const SizedBox(height: 16),
+                          Text(l10n.errorOccurred, style: TextStyle(color: colorScheme.error)),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() { _isLoadingStores = true; _loadError = null; });
+                              _loadStoresAndProducts();
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: Text(l10n.retry),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
-              : TabBarView(
-                  controller: _tabController,
-                  children: [_buildNewTransfer(l10n, colorScheme), _buildHistory(l10n, colorScheme)],
-                ),
+                    )
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [_buildNewTransfer(l10n, colorScheme, constraints.maxWidth), _buildHistory(l10n, colorScheme, constraints.maxWidth)],
+                    );
+        },
+      ),
     );
   }
 
-  Widget _buildNewTransfer(AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildNewTransfer(AppLocalizations l10n, ColorScheme colorScheme, double screenWidth) {
+    final isMobile = screenWidth < 600;
+    final isDesktop = screenWidth >= 1200;
+    final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(padding),
+      child: Center(
+      child: ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: isDesktop ? 800 : double.infinity),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -208,10 +219,15 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
           ),
         ],
       ),
+      ),
+      ),
     );
   }
 
-  Widget _buildHistory(AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildHistory(AppLocalizations l10n, ColorScheme colorScheme, double screenWidth) {
+    final isMobile = screenWidth < 600;
+    final isDesktop = screenWidth >= 1200;
+    final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
     final transfersAsync = ref.watch(stockTransfersListProvider);
 
     return transfersAsync.when(
@@ -248,7 +264,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
         return RefreshIndicator(
           onRefresh: () async => ref.invalidate(stockTransfersListProvider),
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(padding),
             itemCount: transfers.length,
             itemBuilder: (context, index) {
               final t = transfers[index];

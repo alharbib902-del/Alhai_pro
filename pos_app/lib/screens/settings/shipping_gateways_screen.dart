@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/settings_db_providers.dart';
 
 // مفاتيح إعدادات بوابات الشحن
@@ -104,7 +105,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                   if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
                   const Icon(Icons.local_shipping, color: AppColors.primary, size: 28),
                   const SizedBox(width: 12),
-                  Text('بوابات الشحن', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+                  Text(AppLocalizations.of(context)!.shippingGatewaysTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
                 ],
               ),
             ),
@@ -140,41 +141,41 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('بوابات الشحن المتاحة', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black54)),
+                  Text(AppLocalizations.of(context)!.availableShippingGateways, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black54)),
                   const SizedBox(height: 4),
-                  Text('قم بتفعيل وإعداد بوابات الشحن لتوصيل الطلبات', style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey)),
+                  Text(AppLocalizations.of(context)!.activateShippingGateways, style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey)),
                   const SizedBox(height: 20),
-                  _buildGatewayCard('أرامكس', 'Aramex', 'شركة شحن عالمية بخدمات متعددة', Icons.flight, _aramexActive, const Color(0xFFE44D26), isDark,
+                  _buildGatewayCard(AppLocalizations.of(context)!.aramexName, 'Aramex', AppLocalizations.of(context)!.aramexDesc, Icons.flight, _aramexActive, const Color(0xFFE44D26), isDark,
                     onToggle: (v) {
                       setState(() => _aramexActive = v);
                       _saveSingleSetting(_kShippingAramex, v.toString());
                     }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('SMSA Express', 'SMSA', 'شحن سريع داخل المملكة', Icons.speed, _smsaActive, const Color(0xFF00539F), isDark,
+                  _buildGatewayCard('SMSA Express', 'SMSA', AppLocalizations.of(context)!.smsaDesc, Icons.speed, _smsaActive, const Color(0xFF00539F), isDark,
                     onToggle: (v) {
                       setState(() => _smsaActive = v);
                       _saveSingleSetting(_kShippingSmsa, v.toString());
                     }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('فاستلو', 'Fastlo', 'توصيل سريع في نفس اليوم', Icons.electric_moped, _fastloActive, const Color(0xFF6C63FF), isDark,
+                  _buildGatewayCard(AppLocalizations.of(context)!.fastloName, 'Fastlo', AppLocalizations.of(context)!.fastloDesc, Icons.electric_moped, _fastloActive, const Color(0xFF6C63FF), isDark,
                     onToggle: (v) {
                       setState(() => _fastloActive = v);
                       _saveSingleSetting(_kShippingFastlo, v.toString());
                     }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('DHL', 'DHL Express', 'شحن دولي سريع وموثوق', Icons.public, _dhlActive, const Color(0xFFFFCC00), isDark,
+                  _buildGatewayCard('DHL', 'DHL Express', AppLocalizations.of(context)!.dhlDesc, Icons.public, _dhlActive, const Color(0xFFFFCC00), isDark,
                     onToggle: (v) {
                       setState(() => _dhlActive = v);
                       _saveSingleSetting(_kShippingDhl, v.toString());
                     }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('سمسا', 'J&T Express', 'شحن اقتصادي', Icons.local_shipping, _jtActive, const Color(0xFFE60012), isDark,
+                  _buildGatewayCard('J&T Express', 'J&T Express', AppLocalizations.of(context)!.jtDesc, Icons.local_shipping, _jtActive, const Color(0xFFE60012), isDark,
                     onToggle: (v) {
                       setState(() => _jtActive = v);
                       _saveSingleSetting(_kShippingJt, v.toString());
                     }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('توصيل خاص', 'Custom Delivery', 'إدارة التوصيل بسائقيك الخاصين', Icons.person_pin_circle, _customActive, Colors.teal, isDark,
+                  _buildGatewayCard(AppLocalizations.of(context)!.customDeliveryName, 'Custom Delivery', AppLocalizations.of(context)!.customDeliveryDesc, Icons.person_pin_circle, _customActive, Colors.teal, isDark,
                     onToggle: (v) {
                       setState(() => _customActive = v);
                       _saveSingleSetting(_kShippingCustom, v.toString());
@@ -226,7 +227,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
               Switch(value: isActive, onChanged: onToggle, activeTrackColor: AppColors.primary.withValues(alpha: 0.5), thumbColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? AppColors.primary : null)),
               if (isActive) TextButton(
                 onPressed: () {},
-                child: const Text('إعدادات', style: TextStyle(fontSize: 12)),
+                child: Text(AppLocalizations.of(context)!.settingsAction, style: const TextStyle(fontSize: 12)),
               ),
             ],
           ),

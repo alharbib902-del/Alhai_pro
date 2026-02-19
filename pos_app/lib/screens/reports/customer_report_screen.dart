@@ -29,6 +29,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     end: DateTime.now(),
   );
   bool _isLoading = true;
+  String? _error;
 
   // إحصائيات عامة
   int _totalCustomers = 0;
@@ -48,6 +49,10 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Future<void> _loadCustomerData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
@@ -78,13 +83,13 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       _topCustomers = sorted.take(20).map((a) {
         String tier;
         if (a.balance >= 10000) {
-          tier = '\u0645\u0627\u0633\u064a';
+          tier = 'diamond';
         } else if (a.balance >= 5000) {
-          tier = '\u0630\u0647\u0628\u064a';
+          tier = 'gold';
         } else if (a.balance >= 2000) {
-          tier = '\u0641\u0636\u064a';
+          tier = 'silver';
         } else {
-          tier = '\u0628\u0631\u0648\u0646\u0632\u064a';
+          tier = 'bronze';
         }
 
         return CustomerData(
@@ -100,9 +105,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
         );
       }).toList();
 
-      setState(() => _isLoading = false);
-    } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
     }
   }
 
@@ -132,17 +142,41 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: const [
-            Tab(text: 'نظرة عامة'),
-            Tab(text: 'أفضل العملاء'),
-            Tab(text: 'تحليل النمو'),
-            Tab(text: 'الولاء'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.overviewTab),
+            Tab(text: AppLocalizations.of(context)!.topCustomersTab),
+            Tab(text: AppLocalizations.of(context)!.growthAnalysisTab),
+            Tab(text: AppLocalizations.of(context)!.loyaltyTab),
           ],
         ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
+          : _error != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline_rounded, size: 64, color: AppColors.textMuted),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(context)!.errorLoadingCustomerReport,
+                          style: AppTypography.bodyLarge.copyWith(color: AppColors.textMuted),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: _loadCustomerData,
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(AppLocalizations.of(context)!.retry),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
         children: [
           // شريط الفترة الزمنية
           _buildDateRangeBanner(),
@@ -182,7 +216,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           ),
           const SizedBox(width: AppSizes.sm),
           Text(
-            '(${_dateRange.duration.inDays} يوم)',
+            '(${AppLocalizations.of(context)!.daysCountLabel(_dateRange.duration.inDays)})',
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMuted,
             ),
@@ -211,13 +245,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildStatsRow() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _buildStatCard(
-                'إجمالي العملاء',
+                l10n.totalCustomersLabel,
                 _totalCustomers.toString(),
                 Icons.people,
                 AppColors.primary,
@@ -226,7 +261,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(width: AppSizes.md),
             Expanded(
               child: _buildStatCard(
-                'عملاء جدد',
+                l10n.newCustomersLabel,
                 '+$_newCustomers',
                 Icons.person_add,
                 AppColors.success,
@@ -239,7 +274,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           children: [
             Expanded(
               child: _buildStatCard(
-                'عملاء نشطين',
+                l10n.activeCustomersLabel,
                 _activeCustomers.toString(),
                 Icons.trending_up,
                 AppColors.info,
@@ -248,8 +283,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(width: AppSizes.md),
             Expanded(
               child: _buildStatCard(
-                'متوسط قيمة الطلب',
-                '${_avgOrderValue.toStringAsFixed(0)} ر.س',
+                l10n.avgOrderValueLabel,
+                '${_avgOrderValue.toStringAsFixed(0)} ${l10n.sar}',
                 Icons.shopping_cart,
                 AppColors.warning,
               ),
@@ -306,21 +341,23 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildTierDistribution() {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     // حساب التوزيع الحقيقي من بيانات العملاء المحملة
     int diamond = 0, gold = 0, silver = 0, bronze = 0;
     for (final c in _topCustomers) {
       switch (c.tier) {
-        case '\u0645\u0627\u0633\u064a': diamond++; break;
-        case '\u0630\u0647\u0628\u064a': gold++; break;
-        case '\u0641\u0636\u064a': silver++; break;
+        case 'diamond': diamond++; break;
+        case 'gold': gold++; break;
+        case 'silver': silver++; break;
         default: bronze++; break;
       }
     }
     final tiers = [
-      {'name': '\u0645\u0627\u0633\u064a', 'count': diamond, 'color': Colors.purple},
-      {'name': '\u0630\u0647\u0628\u064a', 'count': gold, 'color': AppColors.warning},
-      {'name': '\u0641\u0636\u064a', 'count': silver, 'color': AppColors.grey500},
-      {'name': '\u0628\u0631\u0648\u0646\u0632\u064a', 'count': bronze, 'color': Colors.brown},
+      {'name': l10n.diamondTier, 'count': diamond, 'color': const Color(0xFF9C27B0)},
+      {'name': l10n.goldTier, 'count': gold, 'color': AppColors.warning},
+      {'name': l10n.silverTier, 'count': silver, 'color': AppColors.grey500},
+      {'name': l10n.bronzeTier, 'count': bronze, 'color': const Color(0xFF795548)},
     ];
 
     return Card(
@@ -330,7 +367,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'توزيع العملاء حسب المستوى',
+              l10n.tierDistribution,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -359,7 +396,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                           Container(
                             height: 24,
                             decoration: BoxDecoration(
-                              color: AppColors.grey200,
+                              color: theme.colorScheme.surfaceContainerHighest,
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSm),
                             ),
@@ -380,7 +417,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                               child: Text(
                                 '${tier['count']}',
                                 style: AppTypography.labelSmall.copyWith(
-                                  color: Colors.white,
+                                  color: theme.colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -410,6 +447,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildActivitySummary() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -417,7 +455,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ملخص النشاط',
+              l10n.activitySummary,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -425,25 +463,25 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(height: AppSizes.md),
             const Divider(),
             _buildActivityRow(
-              'إجمالي الإيرادات من العملاء المسجلين',
-              '${_totalRevenue.toStringAsFixed(0)} ر.س',
+              l10n.totalRevenueFromCustomers,
+              '${_totalRevenue.toStringAsFixed(0)} ${l10n.sar}',
               Icons.attach_money,
               AppColors.success,
             ),
             _buildActivityRow(
-              'متوسط قيمة الطلب لكل عميل',
-              '${_avgOrderValue.toStringAsFixed(0)} ر.س',
+              l10n.avgOrderPerCustomer,
+              '${_avgOrderValue.toStringAsFixed(0)} ${l10n.sar}',
               Icons.shopping_bag,
               AppColors.primary,
             ),
             _buildActivityRow(
-              'عملاء نشطين (آخر 30 يوم)',
-              '$_activeCustomers من $_totalCustomers',
+              l10n.activeCustomersLast30,
+              l10n.ofTotalLabel('$_activeCustomers', '$_totalCustomers'),
               Icons.replay,
               AppColors.info,
             ),
             _buildActivityRow(
-              'عملاء جدد (آخر 30 يوم)',
+              l10n.newCustomersLast30,
               '$_newCustomers',
               Icons.person_add,
               AppColors.warning,
@@ -491,6 +529,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildTopCustomersTab() {
+    final l10n = AppLocalizations.of(context)!;
     return ListView.builder(
       padding: const EdgeInsets.all(AppSizes.lg),
       itemCount: _topCustomers.length + 1,
@@ -501,7 +540,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             child: Row(
               children: [
                 Text(
-                  'أفضل ${_topCustomers.length} عملاء',
+                  l10n.topCustomersTitle(_topCustomers.length),
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -510,18 +549,18 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 DropdownButton<String>(
                   value: 'spent',
                   underline: const SizedBox(),
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: 'spent',
-                      child: Text('حسب الإنفاق'),
+                      child: Text(l10n.bySpending),
                     ),
                     DropdownMenuItem(
                       value: 'orders',
-                      child: Text('حسب الطلبات'),
+                      child: Text(l10n.byOrders),
                     ),
                     DropdownMenuItem(
                       value: 'points',
-                      child: Text('حسب النقاط'),
+                      child: Text(l10n.byPoints),
                     ),
                   ],
                   onChanged: (value) {},
@@ -556,15 +595,15 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                             ? AppColors.warning
                             : rank == 2
                                 ? AppColors.grey400
-                                : Colors.brown)
-                        : AppColors.grey200,
+                                : const Color(0xFF795548))
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '$rank',
                     style: AppTypography.titleSmall.copyWith(
-                      color: rank <= 3 ? Colors.white : AppColors.textPrimary,
+                      color: rank <= 3 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -609,9 +648,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                                   BorderRadius.circular(AppSizes.radiusSm),
                             ),
                             child: Text(
-                              customer.tier,
+                              _getTierName(context, customer.tier),
                               style: AppTypography.labelSmall.copyWith(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                                 fontSize: 10,
                               ),
                             ),
@@ -633,14 +672,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${customer.totalSpent.toStringAsFixed(0)} ر.س',
+                      '${customer.totalSpent.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                       style: AppTypography.titleMedium.copyWith(
                         color: AppColors.success,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '${customer.totalOrders} طلب',
+                      AppLocalizations.of(context)!.ordersCount(customer.totalOrders),
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                       ),
@@ -654,16 +693,16 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildCustomerStat(
-                  'متوسط الطلب',
-                  '${customer.avgOrderValue.toStringAsFixed(0)} ر.س',
+                  AppLocalizations.of(context)!.avgOrderStat,
+                  '${customer.avgOrderValue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                 ),
                 _buildCustomerStat(
-                  'نقاط الولاء',
+                  AppLocalizations.of(context)!.loyaltyPointsStat,
                   '${customer.loyaltyPoints}',
                 ),
                 _buildCustomerStat(
-                  'آخر طلب',
-                  _formatRelativeDate(customer.lastOrderDate),
+                  AppLocalizations.of(context)!.lastOrderStat,
+                  _formatRelativeDate(context, customer.lastOrderDate),
                 ),
               ],
             ),
@@ -693,19 +732,20 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildGrowthTab() {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(AppSizes.lg),
       children: [
         // نمو العملاء الجدد
         _buildGrowthCard(
-          'نمو العملاء الجدد',
+          l10n.newCustomerGrowth,
           [
-            {'month': 'يناير', 'value': 45},
-            {'month': 'فبراير', 'value': 52},
-            {'month': 'مارس', 'value': 48},
-            {'month': 'أبريل', 'value': 65},
-            {'month': 'مايو', 'value': 72},
-            {'month': 'يونيو', 'value': 85},
+            {'month': l10n.januaryMonth, 'value': 45},
+            {'month': l10n.februaryMonth, 'value': 52},
+            {'month': l10n.marchMonth, 'value': 48},
+            {'month': l10n.aprilMonth, 'value': 65},
+            {'month': l10n.mayMonth, 'value': 72},
+            {'month': l10n.juneMonth, 'value': 85},
           ],
           AppColors.primary,
         ),
@@ -794,6 +834,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildRetentionCard() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -801,7 +842,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'معدل الاحتفاظ بالعملاء',
+              l10n.customerRetentionRate,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -811,21 +852,21 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               children: [
                 Expanded(
                   child: _buildRetentionStat(
-                    'شهري',
+                    l10n.monthlyPeriod,
                     _totalCustomers > 0 ? '${(_activeCustomers / _totalCustomers * 100).toStringAsFixed(0)}%' : '0%',
                     AppColors.success,
                   ),
                 ),
                 Expanded(
                   child: _buildRetentionStat(
-                    'إجمالي العملاء',
+                    l10n.totalCustomersPeriod,
                     '$_totalCustomers',
                     AppColors.info,
                   ),
                 ),
                 Expanded(
                   child: _buildRetentionStat(
-                    'نشطين',
+                    l10n.activePeriod,
                     '$_activeCustomers',
                     AppColors.warning,
                   ),
@@ -841,7 +882,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 const SizedBox(width: AppSizes.sm),
                 Expanded(
                   child: Text(
-                    'العملاء النشطين: من اشترى خلال آخر 30 يوم',
+                    l10n.activeCustomersInfo,
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.textMuted,
                     ),
@@ -891,6 +932,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildCohortAnalysis() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -898,14 +940,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'تحليل Cohort (مجموعات العملاء)',
+              l10n.cohortAnalysis,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: AppSizes.md),
             Text(
-              'نسبة العودة للشراء بعد الشراء الأول',
+              l10n.cohortDescription,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -913,20 +955,20 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(height: AppSizes.lg),
             // Cohort table simplified
             Table(
-              border: TableBorder.all(color: AppColors.grey300),
+              border: TableBorder.all(color: Theme.of(context).dividerColor),
               children: [
                 TableRow(
-                  decoration: const BoxDecoration(color: AppColors.grey100),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                   children: [
-                    _buildTableCell('المجموعة', isHeader: true),
-                    _buildTableCell('شهر 1', isHeader: true),
-                    _buildTableCell('شهر 2', isHeader: true),
-                    _buildTableCell('شهر 3', isHeader: true),
+                    _buildTableCell(l10n.cohortGroup, isHeader: true),
+                    _buildTableCell(l10n.month1, isHeader: true),
+                    _buildTableCell(l10n.month2, isHeader: true),
+                    _buildTableCell(l10n.month3, isHeader: true),
                   ],
                 ),
                 TableRow(
                   children: [
-                    _buildTableCell('يناير'),
+                    _buildTableCell(l10n.januaryMonth),
                     _buildTableCell('100%', color: AppColors.success),
                     _buildTableCell('45%', color: AppColors.info),
                     _buildTableCell('32%', color: AppColors.warning),
@@ -934,7 +976,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 ),
                 TableRow(
                   children: [
-                    _buildTableCell('فبراير'),
+                    _buildTableCell(l10n.februaryMonth),
                     _buildTableCell('100%', color: AppColors.success),
                     _buildTableCell('48%', color: AppColors.info),
                     _buildTableCell('35%', color: AppColors.warning),
@@ -942,7 +984,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 ),
                 TableRow(
                   children: [
-                    _buildTableCell('مارس'),
+                    _buildTableCell(l10n.marchMonth),
                     _buildTableCell('100%', color: AppColors.success),
                     _buildTableCell('52%', color: AppColors.info),
                     _buildTableCell('-'),
@@ -988,6 +1030,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildLoyaltyStats() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -999,7 +1042,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 const Icon(Icons.stars, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'إحصائيات برنامج الولاء',
+                  l10n.loyaltyProgramStats,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -1011,7 +1054,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               children: [
                 Expanded(
                   child: _buildLoyaltyStat(
-                    'إجمالي النقاط الممنوحة',
+                    l10n.totalPointsGranted,
                     '125,400',
                     Icons.card_giftcard,
                     AppColors.success,
@@ -1019,7 +1062,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 ),
                 Expanded(
                   child: _buildLoyaltyStat(
-                    'النقاط المستبدلة',
+                    l10n.pointsRedeemed,
                     '45,800',
                     Icons.redeem,
                     AppColors.info,
@@ -1032,7 +1075,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               children: [
                 Expanded(
                   child: _buildLoyaltyStat(
-                    'النقاط المتبقية',
+                    l10n.remainingPoints,
                     '79,600',
                     Icons.account_balance_wallet,
                     AppColors.warning,
@@ -1040,8 +1083,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 ),
                 Expanded(
                   child: _buildLoyaltyStat(
-                    'قيمة النقاط',
-                    '7,960 ر.س',
+                    l10n.pointsValue,
+                    '7,960 ${l10n.sar}',
                     Icons.monetization_on,
                     AppColors.primary,
                   ),
@@ -1092,6 +1135,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildPointsDistribution() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1099,16 +1143,16 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'توزيع النقاط حسب المستوى',
+              l10n.pointsByTier,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: AppSizes.lg),
-            _buildPointsRow('ماسي', 35000, 28, Colors.purple),
-            _buildPointsRow('ذهبي', 45000, 35, AppColors.warning),
-            _buildPointsRow('فضي', 28000, 22, AppColors.grey500),
-            _buildPointsRow('برونزي', 17600, 15, Colors.brown),
+            _buildPointsRow(l10n.diamondTier, 35000, 28, const Color(0xFF9C27B0)),
+            _buildPointsRow(l10n.goldTier, 45000, 35, AppColors.warning),
+            _buildPointsRow(l10n.silverTier, 28000, 22, AppColors.grey500),
+            _buildPointsRow(l10n.bronzeTier, 17600, 15, const Color(0xFF795548)),
           ],
         ),
       ),
@@ -1144,7 +1188,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           SizedBox(
             width: 80,
             child: Text(
-              '$points نقطة',
+              '$points ${AppLocalizations.of(context)!.pointsUnit}',
               style: AppTypography.bodySmall,
               textAlign: TextAlign.end,
             ),
@@ -1155,6 +1199,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildRedemptionStats() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -1162,24 +1207,24 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'أنماط استبدال النقاط',
+              l10n.redemptionPatterns,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: AppSizes.lg),
             _buildRedemptionRow(
-              'خصم على المشتريات',
+              l10n.purchaseDiscount,
               '65%',
               Icons.local_offer,
             ),
             _buildRedemptionRow(
-              'منتجات مجانية',
+              l10n.freeProducts,
               '25%',
               Icons.card_giftcard,
             ),
             _buildRedemptionRow(
-              'كوبونات',
+              l10n.couponsLabel,
               '10%',
               Icons.confirmation_number,
             ),
@@ -1211,16 +1256,32 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
   Color _getTierColor(String tier) {
     switch (tier) {
-      case 'ماسي':
-        return Colors.purple;
-      case 'ذهبي':
+      case 'diamond':
+        return const Color(0xFF9C27B0);
+      case 'gold':
         return AppColors.warning;
-      case 'فضي':
+      case 'silver':
         return AppColors.grey500;
-      case 'برونزي':
-        return Colors.brown;
+      case 'bronze':
+        return const Color(0xFF795548);
       default:
         return AppColors.grey400;
+    }
+  }
+
+  String _getTierName(BuildContext context, String tier) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (tier) {
+      case 'diamond':
+        return l10n.diamondTier;
+      case 'gold':
+        return l10n.goldTier;
+      case 'silver':
+        return l10n.silverTier;
+      case 'bronze':
+        return l10n.bronzeTier;
+      default:
+        return tier;
     }
   }
 
@@ -1228,14 +1289,15 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  String _formatRelativeDate(DateTime date) {
+  String _formatRelativeDate(BuildContext context, DateTime date) {
+    final l10n = AppLocalizations.of(context)!;
     final difference = DateTime.now().difference(date);
     if (difference.inDays == 0) {
-      return 'اليوم';
+      return l10n.todayDate;
     } else if (difference.inDays == 1) {
-      return 'أمس';
+      return l10n.yesterdayDate;
     } else if (difference.inDays < 7) {
-      return 'منذ ${difference.inDays} أيام';
+      return l10n.daysAgo(difference.inDays);
     } else {
       return _formatDate(date);
     }
@@ -1260,8 +1322,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('جاري تصدير التقرير...'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.exportingReportMsg),
       ),
     );
   }

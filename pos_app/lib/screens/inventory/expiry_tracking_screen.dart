@@ -140,13 +140,20 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
               ),
             ],
           ),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildExpiryList(within7, colorScheme.error, l10n.noProductsExpiringIn7Days, l10n),
-              _buildExpiryList(within30, Colors.orange, l10n.noProductsExpiringInMonth, l10n),
-              _buildExpiryList(expired, colorScheme.onSurfaceVariant, l10n.noExpiredProducts, l10n),
-            ],
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final isMobile = constraints.maxWidth < 600;
+              final isDesktop = constraints.maxWidth >= 1200;
+              final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+              return TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildExpiryList(within7, colorScheme.error, l10n.noProductsExpiringIn7Days, l10n, padding),
+                  _buildExpiryList(within30, Colors.orange, l10n.noProductsExpiringInMonth, l10n, padding),
+                  _buildExpiryList(expired, colorScheme.onSurfaceVariant, l10n.noExpiredProducts, l10n, padding),
+                ],
+              );
+            },
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _showAddExpiryDialog(l10n),
@@ -159,7 +166,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   }
 
   Widget _buildExpiryList(
-      List<ExpiryItemData> items, Color statusColor, String emptyMessage, AppLocalizations l10n) {
+      List<ExpiryItemData> items, Color statusColor, String emptyMessage, AppLocalizations l10n, double padding) {
     if (items.isEmpty) {
       return _buildEmptyState(emptyMessage, l10n);
     }
@@ -167,7 +174,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     return RefreshIndicator(
       onRefresh: () async => ref.invalidate(expiryTrackingProvider),
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(padding),
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];

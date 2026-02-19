@@ -46,8 +46,9 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     final templates = ref.watch(reportTemplatesProvider);
     final categoryFilter = ref.watch(templateCategoryFilterProvider);
 
-    final categories = ['الكل', ...templates.map((t) => t.category).toSet()];
-    final filteredTemplates = categoryFilter == 'الكل'
+    final l10n = AppLocalizations.of(context)!;
+    final categories = [kAllCategoryFilter, ...templates.map((t) => t.category).toSet()];
+    final filteredTemplates = categoryFilter == kAllCategoryFilter
         ? templates
         : templates.where((t) => t.category == categoryFilter).toList();
 
@@ -100,7 +101,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                               _showTemplates ? Icons.close_rounded : Icons.dashboard_customize_rounded,
                               size: 18,
                             ),
-                            label: Text(_showTemplates ? 'إخفاء القوالب' : 'عرض القوالب'),
+                            label: Text(_showTemplates ? l10n.hideTemplates : l10n.showTemplates),
                             style: TextButton.styleFrom(
                               foregroundColor: const Color(0xFF8B5CF6),
                             ),
@@ -167,7 +168,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'اسأل أي سؤال عن متجرك',
+              AppLocalizations.of(context)!.askAboutStore,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -176,7 +177,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'اكتب سؤالك بالعربية وسنولد لك التقرير المناسب تلقائياً',
+              AppLocalizations.of(context)!.writeQuestionHint,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
@@ -188,9 +189,9 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               runSpacing: 8,
               alignment: WrapAlignment.center,
               children: [
-                _buildQuickAction('كم مبيعات اليوم؟', Icons.receipt_long_rounded, isDark),
-                _buildQuickAction('أفضل 10 منتجات', Icons.star_rounded, isDark),
-                _buildQuickAction('مقارنة شهرية', Icons.compare_arrows_rounded, isDark),
+                _buildQuickAction(AppLocalizations.of(context)!.quickActionTodaySales, Icons.receipt_long_rounded, isDark),
+                _buildQuickAction(AppLocalizations.of(context)!.quickActionTop10, Icons.star_rounded, isDark),
+                _buildQuickAction(AppLocalizations.of(context)!.quickActionMonthlyCompare, Icons.compare_arrows_rounded, isDark),
               ],
             ),
           ],
@@ -259,7 +260,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'جاري تحليل البيانات وتوليد التقرير...',
+              AppLocalizations.of(context)!.analyzingData,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
@@ -284,7 +285,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
           children: [
             const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.error),
             const SizedBox(height: 12),
-            Text('حدث خطأ: $error',
+            Text(AppLocalizations.of(context)!.errorOccurredShort(error),
               style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary)),
           ],
         ),
@@ -313,7 +314,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                 const Icon(Icons.dashboard_customize_rounded, size: 18, color: Color(0xFF8B5CF6)),
                 const SizedBox(width: 8),
                 Text(
-                  'القوالب الجاهزة',
+                  AppLocalizations.of(context)!.readyTemplates,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -337,7 +338,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                   padding: const EdgeInsetsDirectional.only(start: 6),
                   child: FilterChip(
                     selected: isSelected,
-                    label: Text(cat),
+                    label: Text(cat == kAllCategoryFilter ? AppLocalizations.of(context)!.filterAllLabel : cat),
                     labelStyle: TextStyle(
                       color: isSelected ? Colors.white : (isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
                       fontSize: 11,

@@ -90,11 +90,11 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
               isScrollable: !isWideScreen,
-              tabs: const [
-                Tab(text: 'EOQ'),
-                Tab(text: 'تحليل ABC'), // ABC Analysis
-                Tab(text: 'توقع الهدر'), // Waste Prediction
-                Tab(text: 'إعادة الطلب'), // Reorder
+              tabs: [
+                const Tab(text: 'EOQ'),
+                Tab(text: AppLocalizations.of(context)!.tabAbcAnalysis),
+                Tab(text: AppLocalizations.of(context)!.tabWastePrediction),
+                Tab(text: AppLocalizations.of(context)!.tabReorder),
               ],
             ),
           ),
@@ -120,31 +120,32 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
   }
 
   Widget _buildSummaryCards(bool isDark, SmartInventorySummary summary, bool isWideScreen) {
+    final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryData(
-        title: 'إجمالي المنتجات', // Total Products
+        title: l10n.totalProductsTitle,
         value: '${summary.totalProducts}',
         icon: Icons.inventory_2_rounded,
         color: AppColors.primary,
       ),
       _SummaryData(
-        title: 'فئة أ', // Category A
+        title: l10n.categoryATitle,
         value: '${summary.abcACount}',
-        subtitle: 'الأكثر أهمية', // Most important
+        subtitle: l10n.mostImportant,
         icon: Icons.star_rounded,
         color: const Color(0xFF10B981),
       ),
       _SummaryData(
-        title: 'قرب الانتهاء', // Near Expiry
+        title: l10n.nearExpiry,
         value: '${summary.expiringCount}',
-        subtitle: 'خلال 7 أيام', // Within 7 days
+        subtitle: l10n.withinDays,
         icon: Icons.timer_rounded,
         color: AppColors.error,
       ),
       _SummaryData(
-        title: 'بحاجة لطلب', // Need Reorder
+        title: l10n.needReorder,
         value: '${summary.reorderCount}',
-        subtitle: '${summary.totalEstimatedLoss.toInt()} ر.س خسائر متوقعة', // SAR estimated loss
+        subtitle: l10n.estimatedLossSar(summary.totalEstimatedLoss.toInt().toString()),
         icon: Icons.shopping_cart_rounded,
         color: AppColors.warning,
       ),
@@ -243,7 +244,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 onOrderNow: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('طلب ${results[index].eoq} وحدة من ${results[index].name}'), // Order X units
+                      content: Text(AppLocalizations.of(context)!.orderUnitsSnack(results[index].eoq, results[index].name)),
                       backgroundColor: AppColors.primary,
                     ),
                   );
@@ -262,7 +263,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onOrderNow: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('طلب ${results[index].eoq} وحدة من ${results[index].name}'),
+                    content: Text(AppLocalizations.of(context)!.orderUnitsSnack(results[index].eoq, results[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
                 );
@@ -289,10 +290,10 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _buildAbcFilterChip(null, 'الكل', isDark), // All
-                    _buildAbcFilterChip(AbcCategory.a, 'فئة أ', isDark), // Category A
-                    _buildAbcFilterChip(AbcCategory.b, 'فئة ب', isDark), // Category B
-                    _buildAbcFilterChip(AbcCategory.c, 'فئة ج', isDark), // Category C
+                    _buildAbcFilterChip(null, AppLocalizations.of(context)!.filterAllLabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.a, AppLocalizations.of(context)!.categoryALabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.b, AppLocalizations.of(context)!.categoryBLabel, isDark),
+                    _buildAbcFilterChip(AbcCategory.c, AppLocalizations.of(context)!.categoryCLabel, isDark),
                   ],
                 ),
               ),
@@ -363,11 +364,12 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               return WastePredictionCard(
                 prediction: sorted[index],
                 onActionTap: () {
+                  final l10n = AppLocalizations.of(context)!;
                   final action = sorted[index].suggestedAction == WasteSuggestedAction.discount
-                      ? 'تخفيض' // Discount
+                      ? l10n.actionDiscount
                       : sorted[index].suggestedAction == WasteSuggestedAction.transfer
-                          ? 'نقل' // Transfer
-                          : 'تبرع'; // Donate
+                          ? l10n.actionTransfer
+                          : l10n.actionDonate;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('$action: ${sorted[index].name}'),
@@ -389,7 +391,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
               onActionTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('إجراء على: ${sorted[index].name}'), // Action on
+                    content: Text(AppLocalizations.of(context)!.actionOnProduct(sorted[index].name)),
                     backgroundColor: AppColors.primary,
                   ),
                 );
@@ -463,21 +465,22 @@ class _ReorderCard extends StatelessWidget {
     }
   }
 
-  String _getUrgencyLabel() {
+  String _getUrgencyLabel(AppLocalizations l10n) {
     switch (suggestion.urgency) {
       case UrgencyLevel.critical:
-        return 'حرج'; // Critical
+        return l10n.urgencyCritical;
       case UrgencyLevel.high:
-        return 'عالي'; // High
+        return l10n.urgencyHigh;
       case UrgencyLevel.medium:
-        return 'متوسط'; // Medium
+        return l10n.urgencyMedium;
       case UrgencyLevel.low:
-        return 'منخفض'; // Low
+        return l10n.urgencyLow;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final urgencyColor = _getUrgencyColor();
 
     return Container(
@@ -544,7 +547,7 @@ class _ReorderCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  _getUrgencyLabel(),
+                  _getUrgencyLabel(l10n),
                   style: TextStyle(
                     color: urgencyColor,
                     fontSize: 11,
@@ -561,26 +564,26 @@ class _ReorderCard extends StatelessWidget {
           Row(
             children: [
               _StockDetail(
-                label: 'المخزون الحالي', // Current Stock
+                label: l10n.currentStockLabel,
                 value: '${suggestion.currentStock}',
                 isDark: isDark,
               ),
               const SizedBox(width: 16),
               _StockDetail(
-                label: 'نقطة الطلب', // Reorder Point
+                label: l10n.reorderPointLabel,
                 value: '${suggestion.reorderPoint}',
                 isDark: isDark,
               ),
               const SizedBox(width: 16),
               _StockDetail(
-                label: 'الكمية المقترحة', // Suggested Qty
+                label: l10n.suggestedQtyLabel,
                 value: '${suggestion.suggestedQty}',
                 isDark: isDark,
                 highlight: true,
               ),
               const SizedBox(width: 16),
               _StockDetail(
-                label: 'أيام المخزون', // Days of Stock
+                label: l10n.daysOfStockLabel,
                 value: '${suggestion.daysOfStock}',
                 isDark: isDark,
                 color: suggestion.daysOfStock <= 3 ? AppColors.error : null,
@@ -594,7 +597,7 @@ class _ReorderCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'التكلفة التقديرية: ${suggestion.estimatedCost.toStringAsFixed(0)} ر.س', // Estimated cost
+                l10n.estimatedCostLabel(suggestion.estimatedCost.toStringAsFixed(0)),
                 style: TextStyle(
                   color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                   fontSize: 12,
@@ -605,14 +608,14 @@ class _ReorderCard extends StatelessWidget {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('تم إنشاء طلب شراء: ${suggestion.name}'), // Purchase order created
+                      content: Text(l10n.purchaseOrderCreatedFor(suggestion.name)),
                       backgroundColor: AppColors.primary,
                     ),
                   );
                 },
                 icon: const Icon(Icons.shopping_cart_rounded, size: 16),
                 label: Text(
-                  'طلب ${suggestion.suggestedQty} وحدة', // Order X units
+                  l10n.orderUnitsButton(suggestion.suggestedQty),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(

@@ -878,7 +878,7 @@
   "@customerCount": {
     "placeholders": {
       "count": {
-        "type": "String"
+        "type": "int"
       }
     }
   },

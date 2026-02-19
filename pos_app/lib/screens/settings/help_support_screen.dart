@@ -18,10 +18,10 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= 1200;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(
       children: [
@@ -35,8 +35,13 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
+            padding: EdgeInsets.all(padding),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: isWideScreen ? 800 : double.infinity),
+                child: _buildContent(isDark, l10n),
+              ),
+            ),
           ),
         ),
       ],
@@ -55,10 +60,42 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Contact support
       _buildGroup(l10n.contactSupport, [
-        _tile(Icons.headset_mic_rounded, l10n.liveChat, l10n.contactSupportDesc, isDark, onTap: () {}),
-        _tile(Icons.email_rounded, l10n.emailSupport, 'support@alhai.sa', isDark, onTap: () {}),
-        _tile(Icons.phone_rounded, l10n.phoneSupport, '+966 12 345 6789', isDark, onTap: () {}),
-        _tile(Icons.chat_rounded, l10n.whatsappSupport, '+966 55 123 4567', isDark, onTap: () {}),
+        _tile(Icons.headset_mic_rounded, l10n.liveChat, l10n.contactSupportDesc, isDark, onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('\u062C\u0627\u0631\u064A \u0641\u062A\u062D \u0627\u0644\u0645\u062D\u0627\u062F\u062B\u0629 \u0627\u0644\u0645\u0628\u0627\u0634\u0631\u0629...'),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }),
+        _tile(Icons.email_rounded, l10n.emailSupport, 'support@alhai.sa', isDark, onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('\u062C\u0627\u0631\u064A \u0641\u062A\u062D \u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A...'),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }),
+        _tile(Icons.phone_rounded, l10n.phoneSupport, '+966 12 345 6789', isDark, onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('\u062C\u0627\u0631\u064A \u0627\u0644\u0627\u062A\u0635\u0627\u0644...'),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }),
+        _tile(Icons.chat_rounded, l10n.whatsappSupport, '+966 55 123 4567', isDark, onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('\u062C\u0627\u0631\u064A \u0641\u062A\u062D \u0648\u0627\u062A\u0633\u0627\u0628...'),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }),
       ], isDark),
 
       // FAQ

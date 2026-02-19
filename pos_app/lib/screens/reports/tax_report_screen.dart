@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الضرائب
@@ -124,7 +125,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
         }
 
         return _TaxByPaymentMethod(
-          method: _translatePaymentMethod(method),
+          method: method,
           total: total,
           tax: tax,
           count: count,
@@ -148,16 +149,17 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
   }
 
   /// ترجمة أسماء طرق الدفع
-  String _translatePaymentMethod(String method) {
+  String _translatePaymentMethod(BuildContext context, String method) {
+    final l10n = AppLocalizations.of(context)!;
     switch (method.toLowerCase()) {
       case 'cash':
-        return 'نقدي';
+        return l10n.cashPaymentMethod;
       case 'card':
-        return 'بطاقة';
+        return l10n.cardPaymentMethod;
       case 'mixed':
-        return 'مختلط';
+        return l10n.mixedPaymentMethod;
       case 'credit':
-        return 'آجل';
+        return l10n.creditPaymentMethod;
       default:
         return method;
     }
@@ -166,15 +168,17 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
+      final l10n = AppLocalizations.of(context)!;
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير الضرائب')),
+        appBar: AppBar(title: Text(l10n.taxReportTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null) {
+      final l10n = AppLocalizations.of(context)!;
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير الضرائب')),
+        appBar: AppBar(title: Text(l10n.taxReportTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -185,7 +189,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _loadTaxData,
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retryAction),
               ),
             ],
           ),
@@ -193,12 +197,13 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
       );
     }
 
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير الضرائب'),
+        title: Text(l10n.taxReportTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.file_download), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تصدير التقرير')))),
-          IconButton(icon: const Icon(Icons.print), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('طباعة التقرير')))),
+          IconButton(icon: const Icon(Icons.file_download), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.exportReportAction)))),
+          IconButton(icon: const Icon(Icons.print), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.printReportAction)))),
         ],
       ),
       body: SingleChildScrollView(
@@ -208,10 +213,10 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
           children: [
             // الفترة
             SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'month', label: Text('شهري')),
-                ButtonSegment(value: 'quarter', label: Text('ربع سنوي')),
-                ButtonSegment(value: 'year', label: Text('سنوي')),
+              segments: [
+                ButtonSegment(value: 'month', label: Text(l10n.monthly)),
+                ButtonSegment(value: 'quarter', label: Text(l10n.quarterly)),
+                ButtonSegment(value: 'year', label: Text(l10n.yearly)),
               ],
               selected: {_period},
               onSelectionChanged: (v) {
@@ -236,9 +241,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('صافي الضريبة المستحقة', style: TextStyle(color: Colors.white70)),
+                    Text(l10n.netTaxDue, style: const TextStyle(color: Colors.white70)),
                     const SizedBox(height: 8),
-                    Text('${_netTax.toStringAsFixed(2)} ر.س', style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                    Text('${_netTax.toStringAsFixed(2)} ${l10n.sar}', style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text('${DateTime.now().month}/${DateTime.now().year}', style: const TextStyle(color: Colors.white70)),
                   ],
@@ -251,9 +256,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             // تفاصيل
             Row(
               children: [
-                Expanded(child: _DetailCard(title: 'ضريبة المبيعات', subtitle: 'المحصلة', value: _salesTax.toStringAsFixed(2), color: Colors.blue)),
+                Expanded(child: _DetailCard(title: l10n.salesTaxCollected, subtitle: l10n.salesTaxSubtitle, value: _salesTax.toStringAsFixed(2), color: Colors.blue)),
                 const SizedBox(width: 12),
-                Expanded(child: _DetailCard(title: 'ضريبة المشتريات', subtitle: 'المدفوعة', value: _purchasesTax.toStringAsFixed(2), color: Colors.orange)),
+                Expanded(child: _DetailCard(title: l10n.purchasesTaxPaid, subtitle: l10n.purchasesTaxSubtitle, value: _purchasesTax.toStringAsFixed(2), color: Colors.orange)),
               ],
             ),
 
@@ -261,12 +266,12 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
             // تفاصيل الضريبة حسب طريقة الدفع
             if (_taxByPayment.isNotEmpty) ...[
-              Text('الضريبة حسب طريقة الدفع', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.taxByPaymentMethod, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               Card(
                 child: Column(
                   children: _taxByPayment.map((item) => _TaxRow(
-                    label: '${item.method} (${item.count} فاتورة)',
+                    label: '${_translatePaymentMethod(context, item.method)} (${l10n.invoiceCount(item.count)})',
                     value: item.tax.toStringAsFixed(2),
                   )).toList(),
                 ),
@@ -275,20 +280,20 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             ],
 
             // جدول التفاصيل
-            Text('تفاصيل الضريبة', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.taxDetailsTitle, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             Card(
               child: Column(
                 children: [
-                  _TaxRow(label: 'إجمالي المبيعات', value: _totalSales.toStringAsFixed(2)),
-                  _TaxRow(label: 'المبيعات الخاضعة للضريبة', value: _totalSales.toStringAsFixed(2)),
-                  _TaxRow(label: 'ضريبة المبيعات (15%)', value: _salesTax.toStringAsFixed(2), highlight: true),
+                  _TaxRow(label: l10n.totalSales, value: _totalSales.toStringAsFixed(2)),
+                  _TaxRow(label: l10n.taxableSales, value: _totalSales.toStringAsFixed(2)),
+                  _TaxRow(label: l10n.salesTax15, value: _salesTax.toStringAsFixed(2), highlight: true),
                   const Divider(height: 1),
-                  _TaxRow(label: 'إجمالي المشتريات', value: _totalPurchases.toStringAsFixed(2)),
-                  _TaxRow(label: 'المشتريات الخاضعة للضريبة', value: _totalPurchases.toStringAsFixed(2)),
-                  _TaxRow(label: 'ضريبة المشتريات (15%)', value: _purchasesTax.toStringAsFixed(2), highlight: true),
+                  _TaxRow(label: l10n.totalPurchases, value: _totalPurchases.toStringAsFixed(2)),
+                  _TaxRow(label: l10n.taxablePurchases, value: _totalPurchases.toStringAsFixed(2)),
+                  _TaxRow(label: l10n.purchasesTax15, value: _purchasesTax.toStringAsFixed(2), highlight: true),
                   const Divider(height: 1),
-                  _TaxRow(label: 'صافي الضريبة', value: _netTax.toStringAsFixed(2), highlight: true, isTotal: true),
+                  _TaxRow(label: l10n.netTax, value: _netTax.toStringAsFixed(2), highlight: true, isTotal: true),
                 ],
               ),
             ),
@@ -298,18 +303,18 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             // معلومات ZATCA
             Card(
               color: Colors.blue.withValues(alpha: 0.1),
-              child: const Padding(
-                padding: EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue),
-                    SizedBox(width: 12),
+                    const Icon(Icons.info_outline, color: Colors.blue),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('تذكير ZATCA', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-                          Text('الموعد النهائي للإقرار: نهاية الشهر التالي', style: TextStyle(fontSize: 12)),
+                          Text(l10n.zatcaReminder, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                          Text(l10n.zatcaDeadline, style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -323,9 +328,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             // أزرار الإجراءات
             Row(
               children: [
-                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.history), label: const Text('السجل'))),
+                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.history), label: Text(l10n.historyAction))),
                 const SizedBox(width: 12),
-                Expanded(child: FilledButton.icon(onPressed: () {}, icon: const AdaptiveIcon(Icons.send), label: const Text('إرسال للهيئة'))),
+                Expanded(child: FilledButton.icon(onPressed: () {}, icon: const AdaptiveIcon(Icons.send), label: Text(l10n.sendToAuthority))),
               ],
             ),
           ],
@@ -366,7 +371,7 @@ class _DetailCard extends StatelessWidget {
             Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
             Text(subtitle, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: 8),
-            Text('$value ر.س', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('$value ${AppLocalizations.of(context)!.sar}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -387,7 +392,7 @@ class _TaxRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: TextStyle(fontWeight: isTotal ? FontWeight.bold : FontWeight.normal, fontSize: isTotal ? 16 : 14)),
-          Text('$value ر.س', style: TextStyle(fontWeight: highlight ? FontWeight.bold : FontWeight.normal, color: isTotal ? Colors.green : (highlight ? Colors.blue : null), fontSize: isTotal ? 18 : 14)),
+          Text('$value ${AppLocalizations.of(context)!.sar}', style: TextStyle(fontWeight: highlight ? FontWeight.bold : FontWeight.normal, color: isTotal ? Colors.green : (highlight ? Colors.blue : null), fontSize: isTotal ? 18 : 14)),
         ],
       ),
     );

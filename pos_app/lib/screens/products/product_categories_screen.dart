@@ -50,7 +50,13 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
         icon: const Icon(Icons.add),
         label: Text(l10n.newCategory),
       ),
-      body: categoriesAsync.when(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final isDesktop = constraints.maxWidth >= 1200;
+          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+
+          return categoriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
           child: Column(
@@ -90,7 +96,7 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
           _loadProductCounts(categories);
 
           return ReorderableListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(padding),
             itemCount: categories.length,
             onReorder: (oldIndex, newIndex) {
               if (newIndex > oldIndex) newIndex--;
@@ -135,6 +141,8 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
               );
             },
           );
+        },
+      );
         },
       ),
     );

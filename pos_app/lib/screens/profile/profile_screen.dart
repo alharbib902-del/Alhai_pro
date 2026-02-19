@@ -108,19 +108,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= 1200;
+    final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
     final user = ref.watch(currentUserProvider);
-    final userName = user?.name ?? 'غير معروف'; // TODO: localize
+    final userName = user?.name ?? l10n.unknownUserName;
     final userEmail = user?.email ?? '';
-    final userRole = (user?.role ?? 'موظف').toString(); // TODO: localize
+    final userRole = (user?.role ?? l10n.defaultEmployeeRole).toString();
 
     return Column(
               children: [
                 AppHeader(
-                  title: 'الملف الشخصي', // TODO: localize
+                  title: l10n.profileScreenTitle,
                   onMenuTap: isWideScreen
                       ? null
                       : () => Scaffold.of(context).openDrawer(),
@@ -137,8 +138,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, userName, userEmail, userRole, user),
+                    padding: EdgeInsets.all(padding),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: isWideScreen ? 800 : double.infinity),
+                        child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, userName, userEmail, userRole, user),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -179,15 +185,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(height: 16),
               Text(
                 userName,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 _translateRole(userRole),
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.white.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 16),
               _isLoading
@@ -195,9 +201,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _StatBadge(icon: Icons.receipt_long, value: _salesCount.toString(), label: 'عملية'), // TODO: localize
+                        _StatBadge(icon: Icons.receipt_long, value: _salesCount.toString(), label: l10n.transactionUnit),
                         const SizedBox(width: 24),
-                        _StatBadge(icon: Icons.calendar_today, value: _daysActive.toString(), label: 'يوم'), // TODO: localize
+                        _StatBadge(icon: Icons.calendar_today, value: _daysActive.toString(), label: l10n.dayUnit),
                       ],
                     ),
             ],
@@ -207,7 +213,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
         // Personal info section
         Text(
-          'المعلومات الشخصية', // TODO: localize
+          l10n.personalInfoSection,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : AppColors.textPrimary,
@@ -224,29 +230,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               _InfoTile(
                 icon: Icons.email,
-                label: 'البريد الإلكتروني', // TODO: localize
-                value: userEmail.isNotEmpty ? userEmail : 'غير محدد', // TODO: localize
+                label: l10n.emailFieldLabel,
+                value: userEmail.isNotEmpty ? userEmail : l10n.notSpecified,
                 isDark: isDark,
               ),
               Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               _InfoTile(
                 icon: Icons.phone,
-                label: 'الهاتف', // TODO: localize
-                value: user?.phone ?? 'غير محدد', // TODO: localize
+                label: l10n.phoneFieldLabel,
+                value: user?.phone ?? l10n.notSpecified,
                 isDark: isDark,
               ),
               Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               _InfoTile(
                 icon: Icons.store,
-                label: 'الفرع', // TODO: localize
-                value: 'الفرع الرئيسي', // TODO: localize
+                label: l10n.branchFieldLabel,
+                value: l10n.mainBranchName,
                 isDark: isDark,
               ),
               Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               _InfoTile(
                 icon: Icons.badge,
-                label: 'الرقم الوظيفي', // TODO: localize
-                value: user?.id.substring(0, 8) ?? 'غير محدد', // TODO: localize
+                label: l10n.employeeNumberLabel,
+                value: user?.id.substring(0, 8) ?? l10n.notSpecified,
                 isDark: isDark,
               ),
             ],
@@ -257,7 +263,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
         // Security section
         Text(
-          'الأمان', // TODO: localize
+          l10n.securitySection,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : AppColors.textPrimary,
@@ -275,7 +281,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ListTile(
                 leading: Icon(Icons.lock, color: isDark ? Colors.white54 : AppColors.textSecondary),
                 title: Text(
-                  'تغيير كلمة المرور', // TODO: localize
+                  l10n.changePasswordLabel,
                   style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
                 trailing: AdaptiveIcon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
@@ -285,7 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ListTile(
                 leading: Icon(Icons.history, color: isDark ? Colors.white54 : AppColors.textSecondary),
                 title: Text(
-                  'سجل النشاط', // TODO: localize
+                  l10n.activityLogLabel,
                   style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
                 trailing: AdaptiveIcon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
@@ -303,7 +309,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: OutlinedButton.icon(
             onPressed: _logout,
             icon: const Icon(Icons.logout, color: AppColors.error),
-            label: const Text('تسجيل الخروج', style: TextStyle(color: AppColors.error)), // TODO: localize
+            label: Text(l10n.logoutButton, style: const TextStyle(color: AppColors.error)),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -314,34 +320,36 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
   String _translateRole(String role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role) {
-      case 'admin': return 'مدير النظام'; // TODO: localize
-      case 'manager': return 'مدير'; // TODO: localize
-      case 'cashier': return 'كاشير'; // TODO: localize
-      default: return 'موظف'; // TODO: localize
+      case 'admin': return l10n.roleAdmin;
+      case 'manager': return l10n.roleManager;
+      case 'cashier': return l10n.roleCashier;
+      default: return l10n.roleEmployee;
     }
   }
 
   void _editProfile() => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعديل الملف الشخصي')), // TODO: localize
+        SnackBar(content: Text(AppLocalizations.of(context)!.editProfileSnack)),
       );
 
   void _changePassword() => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تغيير كلمة المرور')), // TODO: localize
+        SnackBar(content: Text(AppLocalizations.of(context)!.changePasswordSnack)),
       );
 
   Future<void> _logout() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تسجيل الخروج'), // TODO: localize
-        content: const Text('هل تريد تسجيل الخروج من النظام؟'), // TODO: localize
+        title: Text(l10n.logoutDialogTitle),
+        content: Text(l10n.logoutDialogBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.cancelButton)),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('خروج'), // TODO: localize
+            child: Text(l10n.exitButton),
           ),
         ],
       ),
@@ -378,7 +386,7 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        leading: Icon(icon, color: isDark ? AppColors.info : AppColors.info),
+        leading: Icon(icon, color: AppColors.info),
         title: Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary)),
         subtitle: Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: isDark ? Colors.white : AppColors.textPrimary)),
       );

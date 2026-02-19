@@ -191,10 +191,10 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'أفضل المنتجات'),
-            Tab(text: 'حسب الفئة'),
-            Tab(text: 'تحليل الأداء'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.topProductsTab),
+            Tab(text: AppLocalizations.of(context)!.byCategoryTab),
+            Tab(text: AppLocalizations.of(context)!.performanceAnalysisTab),
           ],
         ),
       ),
@@ -251,7 +251,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         // القائمة
         Expanded(
           child: _filteredProducts.isEmpty
-              ? const Center(child: Text('لا توجد بيانات مبيعات للفترة المحددة'))
+              ? Center(child: Text(AppLocalizations.of(context)!.noSalesDataForPeriod))
               : ListView.builder(
             padding: const EdgeInsets.all(AppSizes.md),
             itemCount: _filteredProducts.length,
@@ -280,7 +280,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
             child: DropdownButtonFormField<String>(
               initialValue: _selectedCategory,
               decoration: InputDecoration(
-                labelText: 'الفئة',
+                labelText: AppLocalizations.of(context)!.categoryFilter,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.md,
                   vertical: AppSizes.sm,
@@ -292,7 +292,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               items: _categories.map((cat) {
                 return DropdownMenuItem(
                   value: cat,
-                  child: Text(cat == 'all' ? 'جميع الفئات' : cat),
+                  child: Text(cat == 'all' ? AppLocalizations.of(context)!.allCategoriesFilter : cat),
                 );
               }).toList(),
               onChanged: (value) {
@@ -311,7 +311,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
             child: DropdownButtonFormField<String>(
               initialValue: _sortBy,
               decoration: InputDecoration(
-                labelText: 'ترتيب حسب',
+                labelText: AppLocalizations.of(context)!.sortByField,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.md,
                   vertical: AppSizes.sm,
@@ -320,18 +320,18 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 ),
               ),
-              items: const [
+              items: [
                 DropdownMenuItem(
                   value: 'revenue',
-                  child: Text('الإيرادات'),
+                  child: Text(AppLocalizations.of(context)!.revenueSort),
                 ),
                 DropdownMenuItem(
                   value: 'units',
-                  child: Text('الوحدات'),
+                  child: Text(AppLocalizations.of(context)!.unitsSort),
                 ),
                 DropdownMenuItem(
                   value: 'profit',
-                  child: Text('الأرباح'),
+                  child: Text(AppLocalizations.of(context)!.profitSort),
                 ),
               ],
               onChanged: (value) {
@@ -367,15 +367,15 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                             ? AppColors.warning
                             : rank == 2
                                 ? AppColors.grey400
-                                : Colors.brown)
-                        : AppColors.grey200,
+                                : const Color(0xFF795548))
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '#$rank',
                     style: AppTypography.labelMedium.copyWith(
-                      color: rank <= 3 ? Colors.white : AppColors.textPrimary,
+                      color: rank <= 3 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -411,7 +411,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.grey100,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                                 borderRadius:
                                     BorderRadius.circular(AppSizes.radiusSm),
                               ),
@@ -452,28 +452,28 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               children: [
                 Expanded(
                   child: _buildProductStat(
-                    'الإيرادات',
-                    '${product.revenue.toStringAsFixed(0)} ر.س',
+                    AppLocalizations.of(context)!.revenueLabel,
+                    '${product.revenue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                     AppColors.primary,
                   ),
                 ),
                 Expanded(
                   child: _buildProductStat(
-                    'الوحدات',
+                    AppLocalizations.of(context)!.unitsLabel,
                     '${product.unitsSold}',
                     AppColors.info,
                   ),
                 ),
                 Expanded(
                   child: _buildProductStat(
-                    'الربح',
-                    '${product.profit.toStringAsFixed(0)} ر.س',
+                    AppLocalizations.of(context)!.profitLabel,
+                    '${product.profit.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                     AppColors.success,
                   ),
                 ),
                 Expanded(
                   child: _buildProductStat(
-                    'المخزون',
+                    AppLocalizations.of(context)!.stockLabel,
                     '${product.stockLevel}',
                     product.stockLevel < 50
                         ? AppColors.error
@@ -512,7 +512,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
-      final catName = product.category.isEmpty ? 'غير مصنف' : product.category;
+      final catName = product.category.isEmpty ? AppLocalizations.of(context)!.unclassified : product.category;
       if (!categoryStats.containsKey(catName)) {
         categoryStats[catName] = CategoryStats(
           name: catName,
@@ -551,7 +551,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'توزيع الإيرادات حسب الفئة',
+                  AppLocalizations.of(context)!.revenueByCategoryTitle,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -559,9 +559,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 const SizedBox(height: AppSizes.lg),
 
                 if (totalRevenue == 0)
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(child: Text('لا توجد إيرادات في هذه الفترة')),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Center(child: Text(AppLocalizations.of(context)!.noRevenueForPeriod)),
                   )
                 else
                 // Chart simulation
@@ -580,7 +580,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                               style: AppTypography.bodyMedium,
                             ),
                             Text(
-                              '${cat.totalRevenue.toStringAsFixed(0)} ر.س (${percentage.toStringAsFixed(0)}%)',
+                              '${cat.totalRevenue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar} (${percentage.toStringAsFixed(0)}%)',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textMuted,
                               ),
@@ -590,7 +590,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                         const SizedBox(height: 4),
                         LinearProgressIndicator(
                           value: percentage / 100,
-                          backgroundColor: AppColors.grey200,
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                           valueColor: AlwaysStoppedAnimation(
                             _getCategoryColor(cat.name),
                           ),
@@ -613,7 +613,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
   Widget _buildCategoryCard(CategoryStats category) {
     final categoryProducts =
-        _products.where((p) => (p.category.isEmpty ? 'غير مصنف' : p.category) == category.name).toList()
+        _products.where((p) => (p.category.isEmpty ? AppLocalizations.of(context)!.unclassified : p.category) == category.name).toList()
           ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
     return Card(
@@ -638,7 +638,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           ),
         ),
         subtitle: Text(
-          '${category.productCount} منتج | ${category.totalUnits} وحدة | ${category.totalRevenue.toStringAsFixed(0)} ر.س',
+          '${category.productCount} ${AppLocalizations.of(context)!.productUnit} | ${category.totalUnits} ${AppLocalizations.of(context)!.unitsSoldUnit} | ${category.totalRevenue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
           style: AppTypography.bodySmall.copyWith(
             color: AppColors.textMuted,
           ),
@@ -646,9 +646,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         children: categoryProducts.take(10)
             .map((p) => ListTile(
                   title: Text(p.name),
-                  subtitle: Text('${p.unitsSold} وحدة'),
+                  subtitle: Text('${p.unitsSold} ${AppLocalizations.of(context)!.unitsSoldUnit}'),
                   trailing: Text(
-                    '${p.revenue.toStringAsFixed(0)} ر.س',
+                    '${p.revenue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                     style: AppTypography.titleSmall.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.bold,
@@ -694,8 +694,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           children: [
             Expanded(
               child: _buildKPICard(
-                'إجمالي الإيرادات',
-                '${totalRevenue.toStringAsFixed(0)} ر.س',
+                AppLocalizations.of(context)!.totalRevenueKpi,
+                '${totalRevenue.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                 Icons.attach_money,
                 AppColors.success,
               ),
@@ -703,7 +703,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
             const SizedBox(width: AppSizes.md),
             Expanded(
               child: _buildKPICard(
-                'الوحدات المباعة',
+                AppLocalizations.of(context)!.unitsSoldKpi,
                 totalUnits.toString(),
                 Icons.inventory,
                 AppColors.primary,
@@ -716,8 +716,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           children: [
             Expanded(
               child: _buildKPICard(
-                'إجمالي الربح',
-                '${totalProfit.toStringAsFixed(0)} ر.س',
+                AppLocalizations.of(context)!.totalProfitKpi,
+                '${totalProfit.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                 Icons.trending_up,
                 AppColors.info,
               ),
@@ -725,7 +725,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
             const SizedBox(width: AppSizes.md),
             Expanded(
               child: _buildKPICard(
-                'هامش الربح',
+                AppLocalizations.of(context)!.profitMarginKpi,
                 '${avgMargin.toStringAsFixed(1)}%',
                 Icons.percent,
                 AppColors.warning,
@@ -788,7 +788,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'نظرة عامة على الأداء',
+              AppLocalizations.of(context)!.performanceOverview,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -798,7 +798,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               children: [
                 Expanded(
                   child: _buildPerformanceIndicator(
-                    'منتجات متصاعدة',
+                    AppLocalizations.of(context)!.trendingUpProducts,
                     '$upCount',
                     Icons.trending_up,
                     AppColors.success,
@@ -806,7 +806,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 ),
                 Expanded(
                   child: _buildPerformanceIndicator(
-                    'منتجات مستقرة',
+                    AppLocalizations.of(context)!.stableProducts,
                     '$stableCount',
                     Icons.trending_flat,
                     AppColors.warning,
@@ -814,7 +814,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 ),
                 Expanded(
                   child: _buildPerformanceIndicator(
-                    'منتجات متراجعة',
+                    AppLocalizations.of(context)!.trendingDownProducts,
                     '$downCount',
                     Icons.trending_down,
                     AppColors.error,
@@ -882,7 +882,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 const Icon(Icons.warning_amber, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'منتجات بدون مبيعات (${slowMoving.length})',
+                  AppLocalizations.of(context)!.noSalesProducts(slowMoving.length),
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -894,7 +894,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      '${product.stockLevel} في المخزون',
+                      AppLocalizations.of(context)!.inStockCount(product.stockLevel),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -907,7 +907,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                             BorderRadius.circular(AppSizes.radiusSm),
                       ),
                       child: Text(
-                        'بطيء',
+                        AppLocalizations.of(context)!.slowMovingLabel,
                         style: AppTypography.labelSmall.copyWith(
                           color: AppColors.warning,
                         ),
@@ -941,7 +941,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 const Icon(Icons.inventory_2, color: AppColors.error),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'تحتاج إعادة طلب (${needsReorder.length})',
+                  AppLocalizations.of(context)!.needsReorder(needsReorder.length),
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -953,7 +953,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      'بيع: ${product.unitsSold} وحدة | مخزون: ${product.stockLevel}',
+                      AppLocalizations.of(context)!.soldUnitsStock(product.unitsSold, product.stockLevel),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -966,7 +966,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                             BorderRadius.circular(AppSizes.radiusSm),
                       ),
                       child: Text(
-                        'أعد الطلب',
+                        AppLocalizations.of(context)!.reorderLabel,
                         style: AppTypography.labelSmall.copyWith(
                           color: AppColors.error,
                         ),
@@ -983,17 +983,17 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'ألبان ومشتقاتها':
-        return Colors.blue;
+        return AppColors.info;
       case 'أرز ومكرونة':
-        return Colors.orange;
+        return AppColors.secondary;
       case 'زيوت وسمن':
-        return Colors.amber;
+        return AppColors.warning;
       case 'سكر وحلويات':
-        return Colors.pink;
+        return const Color(0xFFE91E63);
       case 'مشروبات':
-        return Colors.teal;
+        return const Color(0xFF009688);
       case 'معلبات':
-        return Colors.red;
+        return AppColors.error;
       default:
         return AppColors.primary;
     }

@@ -67,9 +67,9 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                     labelColor: AppColors.primary,
                     unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
                     indicatorColor: AppColors.primary,
-                    tabs: const [
-                      Tab(icon: Icon(Icons.warning_amber_rounded), text: 'تحليل المخاطر'),
-                      Tab(icon: Icon(Icons.shield_outlined), text: 'إجراءات وقائية'),
+                    tabs: [
+                      Tab(icon: const Icon(Icons.warning_amber_rounded), text: l10n.riskAnalysisTab),
+                      Tab(icon: const Icon(Icons.shield_outlined), text: l10n.preventiveActionsTab),
                     ],
                   ),
                 ),
@@ -100,7 +100,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
     return probabilities.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('حدث خطأ: $e')),
+      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
       data: (probs) {
         return SingleChildScrollView(
           padding: EdgeInsets.all(isWideScreen ? 24 : 16),
@@ -125,7 +125,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
               // قائمة العمليات
               Text(
-                'العمليات المعرضة للإرجاع (${probs.length})',
+                AppLocalizations.of(context)!.operationsAtRiskCount(probs.length),
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 18,
@@ -151,9 +151,10 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
     AsyncValue<double> atRisk,
     AsyncValue<int> highRisk,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final cards = [
       _SummaryCardData(
-        title: 'معدل الإرجاع',
+        title: l10n.returnRateTitle,
         value: avgRate.when(
           data: (v) => '${v.toStringAsFixed(1)}%',
           loading: () => '...',
@@ -161,21 +162,21 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         ),
         icon: Icons.trending_down,
         color: const Color(0xFF3B82F6),
-        subtitle: 'متوسط آخر 6 أشهر',
+        subtitle: l10n.avgLast6Months,
       ),
       _SummaryCardData(
-        title: 'مبلغ معرض للخطر',
+        title: l10n.amountAtRiskTitle,
         value: atRisk.when(
-          data: (v) => '${v.toStringAsFixed(0)} ر.س',
+          data: (v) => l10n.amountSar(v.toStringAsFixed(0)),
           loading: () => '...',
           error: (_, __) => '--',
         ),
         icon: Icons.warning_amber_rounded,
         color: const Color(0xFFEF4444),
-        subtitle: 'عمليات عالية الخطر',
+        subtitle: l10n.highRiskOperations,
       ),
       _SummaryCardData(
-        title: 'عمليات عالية الخطر',
+        title: l10n.highRiskOperations,
         value: highRisk.when(
           data: (v) => '$v',
           loading: () => '...',
@@ -183,7 +184,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         ),
         icon: Icons.flag_rounded,
         color: const Color(0xFFF59E0B),
-        subtitle: 'تحتاج تدخل فوري',
+        subtitle: l10n.needsImmediateAction,
       ),
     ];
 
@@ -300,7 +301,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
               const Icon(Icons.show_chart, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(
-                'اتجاه المرتجعات',
+                AppLocalizations.of(context)!.returnTrendTitle,
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 16,
@@ -371,12 +372,13 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
   }
 
   Widget _buildRiskFilter(bool isDark, ReturnRiskLevel? selected) {
+    final l10n = AppLocalizations.of(context)!;
     final filters = [
-      const _FilterOption(label: 'الكل', value: null),
-      const _FilterOption(label: 'عالي جداً', value: ReturnRiskLevel.veryHigh),
-      const _FilterOption(label: 'عالي', value: ReturnRiskLevel.high),
-      const _FilterOption(label: 'متوسط', value: ReturnRiskLevel.medium),
-      const _FilterOption(label: 'منخفض', value: ReturnRiskLevel.low),
+      _FilterOption(label: l10n.riskFilterAll, value: null),
+      _FilterOption(label: l10n.riskFilterVeryHigh, value: ReturnRiskLevel.veryHigh),
+      _FilterOption(label: l10n.riskFilterHigh, value: ReturnRiskLevel.high),
+      _FilterOption(label: l10n.riskFilterMedium, value: ReturnRiskLevel.medium),
+      _FilterOption(label: l10n.riskFilterLow, value: ReturnRiskLevel.low),
     ];
 
     return SingleChildScrollView(
@@ -433,7 +435,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
     return actions.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('حدث خطأ: $e')),
+      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
       data: (actionsList) {
         final totalSavings = actionsList.fold<double>(
           0,
@@ -487,7 +489,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'إجمالي التوفير المتوقع',
+                            AppLocalizations.of(context)!.totalExpectedSavings,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.85),
                               fontSize: 14,
@@ -495,7 +497,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${totalSavings.toStringAsFixed(2)} ر.س',
+                            AppLocalizations.of(context)!.amountSar(totalSavings.toStringAsFixed(2)),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
@@ -503,7 +505,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                             ),
                           ),
                           Text(
-                            'من ${actionsList.length} إجراء وقائي',
+                            AppLocalizations.of(context)!.fromPreventiveActions(actionsList.length),
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 12,
@@ -542,7 +544,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
               // عنوان القائمة
               Text(
-                'الإجراءات الوقائية المقترحة',
+                AppLocalizations.of(context)!.suggestedPreventiveActions,
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 18,
@@ -551,7 +553,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
               ),
               const SizedBox(height: 4),
               Text(
-                'طبّق هذه الإجراءات لتقليل المرتجعات وزيادة رضا العملاء',
+                AppLocalizations.of(context)!.applyPreventiveHint,
                 style: TextStyle(
                   color: isDark ? Colors.white54 : AppColors.textSecondary,
                   fontSize: 13,
@@ -568,7 +570,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       onApply: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('تم تطبيق: ${action.title}'),
+                            content: Text(AppLocalizations.of(context)!.actionApplied(action.title)),
                             backgroundColor: AppColors.success,
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
@@ -580,7 +582,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       onDismiss: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('تم تجاهل: ${action.title}'),
+                            content: Text(AppLocalizations.of(context)!.actionDismissed(action.title)),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -622,7 +624,7 @@ class _FilterOption {
   final String label;
   final ReturnRiskLevel? value;
 
-  const _FilterOption({required this.label, required this.value});
+  _FilterOption({required this.label, required this.value});
 }
 
 // ============================================================================

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الضريبة VAT
@@ -16,6 +17,7 @@ class VatReportScreen extends ConsumerStatefulWidget {
 class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   DateTimeRange? _dateRange;
   bool _isLoading = true;
+  String? _error;
 
   double _totalSales = 0;
   double _vatCollected = 0;
@@ -31,6 +33,10 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   }
 
   Future<void> _loadVatData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
@@ -47,9 +53,14 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
       _totalPurchases = 0;
       _vatPaid = _totalPurchases * 0.15;
 
-      setState(() => _isLoading = false);
-    } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
     }
   }
 
@@ -57,26 +68,59 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير الضريبة (VAT)'),
+        title: Text(AppLocalizations.of(context)!.vatReportTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
-            tooltip: 'تصدير PDF',
+            tooltip: AppLocalizations.of(context)!.exportPdf,
             onPressed: _exportPdf,
           ),
         ],
       ),
-      body: _isLoading
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final isDesktop = constraints.maxWidth >= 1200;
+          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+
+          return _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
+          : _error != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline_rounded, size: 64, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(context)!.errorLoadingVatReport,
+                          style: const TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: _loadVatData,
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(AppLocalizations.of(context)!.retryAction),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: isDesktop ? 800 : double.infinity),
+              child: ListView(
+              padding: EdgeInsets.all(padding),
               children: [
                 // Date Range Selector
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.date_range),
-                    title: Text(_dateRange == null 
-                      ? 'اختر الفترة'
+                    title: Text(_dateRange == null
+                      ? AppLocalizations.of(context)!.selectPeriod
                       : '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'),
                     trailing: const AdaptiveIcon(Icons.chevron_right),
                     onTap: _selectDateRange,
@@ -86,24 +130,24 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                 
                 // Sales VAT
                 _VatCard(
-                  title: 'ضريبة المبيعات',
+                  title: AppLocalizations.of(context)!.salesVat,
                   icon: Icons.trending_up,
                   color: Colors.green,
                   items: [
-                    _VatItem('إجمالي المبيعات (شامل الضريبة)', _totalSales),
-                    _VatItem('ضريبة القيمة المضافة المحصلة', _vatCollected, isVat: true),
+                    _VatItem(AppLocalizations.of(context)!.totalSalesIncVat, _totalSales),
+                    _VatItem(AppLocalizations.of(context)!.vatCollected, _vatCollected, isVat: true),
                   ],
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Purchases VAT
                 _VatCard(
-                  title: 'ضريبة المشتريات',
+                  title: AppLocalizations.of(context)!.purchasesVat,
                   icon: Icons.trending_down,
                   color: Colors.orange,
                   items: [
-                    _VatItem('إجمالي المشتريات (شامل الضريبة)', _totalPurchases),
-                    _VatItem('ضريبة القيمة المضافة المدفوعة', _vatPaid, isVat: true),
+                    _VatItem(AppLocalizations.of(context)!.totalPurchasesIncVat, _totalPurchases),
+                    _VatItem(AppLocalizations.of(context)!.vatPaid, _vatPaid, isVat: true),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -116,12 +160,12 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'صافي الضريبة المستحقة',
+                          AppLocalizations.of(context)!.netVatDue,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${_netVat.toStringAsFixed(2)} ر.س',
+                          '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -130,7 +174,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _netVat >= 0 ? 'مستحق للهيئة' : 'مستحق من الهيئة',
+                          _netVat >= 0 ? AppLocalizations.of(context)!.dueToAuthority : AppLocalizations.of(context)!.dueFromAuthority,
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ],
@@ -146,7 +190,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                       child: OutlinedButton.icon(
                         onPressed: () {},
                         icon: const Icon(Icons.print),
-                        label: const Text('طباعة'),
+                        label: Text(AppLocalizations.of(context)!.printAction),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -154,13 +198,17 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                       child: FilledButton.icon(
                         onPressed: () {},
                         icon: const AdaptiveIcon(Icons.send),
-                        label: const Text('إرسال للهيئة'),
+                        label: Text(AppLocalizations.of(context)!.sendToAuthority),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
+            ),
+          );
+        },
+      ),
     );
   }
   
@@ -186,7 +234,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   
   void _exportPdf() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري تصدير التقرير...')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.exportingPdfReport)),
     );
   }
 }
@@ -227,7 +275,7 @@ class _VatCard extends StatelessWidget {
                 children: [
                   Text(item.label),
                   Text(
-                    '${item.amount.toStringAsFixed(2)} ر.س',
+                    '${item.amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                     style: TextStyle(
                       fontWeight: item.isVat ? FontWeight.bold : FontWeight.normal,
                       color: item.isVat ? color : null,

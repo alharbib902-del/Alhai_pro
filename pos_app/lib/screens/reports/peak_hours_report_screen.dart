@@ -56,7 +56,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       )).toList();
 
       // Load daily data by iterating last 7 days
-      final dayNames = ['\u0627\u0644\u0633\u0628\u062a', '\u0627\u0644\u0623\u062d\u062f', '\u0627\u0644\u0627\u062b\u0646\u064a\u0646', '\u0627\u0644\u062b\u0644\u0627\u062b\u0627\u0621', '\u0627\u0644\u0623\u0631\u0628\u0639\u0627\u0621', '\u0627\u0644\u062e\u0645\u064a\u0633', '\u0627\u0644\u062c\u0645\u0639\u0629'];
+      // Day indices: 0=Saturday, 1=Sunday, ..., 6=Friday
+      // Names will be resolved with l10n at display time
+      final dayNames = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
       final dailyList = <DailyData>[];
       for (int i = 6; i >= 0; i--) {
         final date = DateTime.now().subtract(Duration(days: i));
@@ -166,16 +168,16 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
         // نوع العرض
         SegmentedButton<String>(
-          segments: const [
+          segments: [
             ButtonSegment(
               value: 'hourly',
-              label: Text('ساعي'),
-              icon: Icon(Icons.access_time, size: 16),
+              label: Text(AppLocalizations.of(context)!.hourlyView),
+              icon: const Icon(Icons.access_time, size: 16),
             ),
             ButtonSegment(
               value: 'daily',
-              label: Text('يومي'),
-              icon: Icon(Icons.today, size: 16),
+              label: Text(AppLocalizations.of(context)!.dailyView),
+              icon: const Icon(Icons.today, size: 16),
             ),
           ],
           selected: {_viewMode},
@@ -203,9 +205,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       children: [
         Expanded(
           child: _buildSummaryCard(
-            'ساعة الذروة',
+            AppLocalizations.of(context)!.peakHourLabel,
             '${peakHour.hour}:00',
-            '${peakHour.transactions} معاملة',
+            AppLocalizations.of(context)!.transactionsWithCount(peakHour.transactions),
             Icons.schedule,
             AppColors.error,
           ),
@@ -213,9 +215,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         const SizedBox(width: AppSizes.md),
         Expanded(
           child: _buildSummaryCard(
-            'يوم الذروة',
+            AppLocalizations.of(context)!.peakDayLabel,
             peakDay.day,
-            '${peakDay.transactions} معاملة',
+            AppLocalizations.of(context)!.transactionsWithCount(peakDay.transactions),
             Icons.event,
             AppColors.primary,
           ),
@@ -223,9 +225,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         const SizedBox(width: AppSizes.md),
         Expanded(
           child: _buildSummaryCard(
-            'متوسط/ساعة',
+            AppLocalizations.of(context)!.avgPerHour,
             avgTransactions.toString(),
-            'معاملة',
+            AppLocalizations.of(context)!.transactionWord,
             Icons.bar_chart,
             AppColors.success,
           ),
@@ -290,8 +292,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           children: [
             Text(
               _viewMode == 'hourly'
-                  ? 'المعاملات حسب الساعة'
-                  : 'المعاملات حسب اليوم',
+                  ? AppLocalizations.of(context)!.transactionsByHour
+                  : AppLocalizations.of(context)!.transactionsByDay,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -406,7 +408,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    data.day.substring(0, 3),
+                    _getDayShort(context, data.day),
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textMuted,
                       fontSize: 11,
@@ -442,7 +444,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     ];
 
     final hours = List.generate(15, (i) => '${8 + i}:00');
-    final days = ['سبت', 'أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع'];
+    final l10n = AppLocalizations.of(context)!;
+    final days = [l10n.satShort, l10n.sunShort, l10n.monShort, l10n.tueShort, l10n.wedShort, l10n.thuShort, l10n.friShort];
 
     return Card(
       child: Padding(
@@ -453,7 +456,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             Row(
               children: [
                 Text(
-                  'خريطة النشاط الحراري',
+                  AppLocalizations.of(context)!.activityHeatmap,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -525,7 +528,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     return Row(
       children: [
         Text(
-          'منخفض',
+          AppLocalizations.of(context)!.lowLabel,
           style: AppTypography.labelSmall.copyWith(
             color: AppColors.textMuted,
             fontSize: 10,
@@ -549,7 +552,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         ),
         const SizedBox(width: 4),
         Text(
-          'عالي',
+          AppLocalizations.of(context)!.highLabel,
           style: AppTypography.labelSmall.copyWith(
             color: AppColors.textMuted,
             fontSize: 10,
@@ -583,7 +586,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                 const Icon(Icons.lightbulb, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'توصيات بناءً على التحليل',
+                  AppLocalizations.of(context)!.analysisRecommendations,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -594,26 +597,26 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             const Divider(),
 
             _buildRecommendationItem(
-              'الموظفين',
-              'زيادة عدد الكاشير في الفترة 12:00-13:00 و 17:00-19:00 (ذروة المبيعات)',
+              AppLocalizations.of(context)!.staffRecommendation,
+              AppLocalizations.of(context)!.staffRecommendationDesc,
               Icons.people,
               AppColors.primary,
             ),
             _buildRecommendationItem(
-              'العروض',
-              'تقديم عروض خاصة في الفترة 14:00-16:00 لزيادة المبيعات في الفترة الهادئة',
+              AppLocalizations.of(context)!.offersRecommendation,
+              AppLocalizations.of(context)!.offersRecommendationDesc,
               Icons.local_offer,
               AppColors.success,
             ),
             _buildRecommendationItem(
-              'المخزون',
-              'تجهيز المخزون قبل يومي الخميس والجمعة (أعلى أيام المبيعات)',
+              AppLocalizations.of(context)!.inventoryRecommendation,
+              AppLocalizations.of(context)!.inventoryRecommendationDesc,
               Icons.inventory,
               AppColors.info,
             ),
             _buildRecommendationItem(
-              'الورديات',
-              'توزيع الورديات: صباحية 8-15، مسائية 15-22 مع تداخل في الذروة',
+              AppLocalizations.of(context)!.shiftsRecommendation,
+              AppLocalizations.of(context)!.shiftsRecommendationDesc,
               Icons.schedule,
               AppColors.warning,
             ),
@@ -665,6 +668,35 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         ],
       ),
     );
+  }
+
+  // ignore: unused_element
+  String _getDayName(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (key) {
+      case 'sat': return l10n.saturdayDay;
+      case 'sun': return l10n.sundayDay;
+      case 'mon': return l10n.mondayDay;
+      case 'tue': return l10n.tuesdayDay;
+      case 'wed': return l10n.wednesdayDay;
+      case 'thu': return l10n.thursdayDay;
+      case 'fri': return l10n.fridayDay;
+      default: return key;
+    }
+  }
+
+  String _getDayShort(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (key) {
+      case 'sat': return l10n.satShort;
+      case 'sun': return l10n.sunShort;
+      case 'mon': return l10n.monShort;
+      case 'tue': return l10n.tueShort;
+      case 'wed': return l10n.wedShort;
+      case 'thu': return l10n.thuShort;
+      case 'fri': return l10n.friShort;
+      default: return key;
+    }
   }
 
   String _formatDate(DateTime date) {

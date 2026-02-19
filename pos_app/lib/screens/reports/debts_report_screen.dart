@@ -5,6 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الديون
@@ -73,11 +74,11 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير الديون'),
+        title: Text(AppLocalizations.of(context)!.debtsReportTitle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort),
-            tooltip: 'ترتيب',
+            tooltip: AppLocalizations.of(context)!.sortLabel,
             onSelected: (value) {
               setState(() {
                 _sortBy = value;
@@ -85,19 +86,19 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
               });
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'amount', child: Text('حسب المبلغ')),
-              const PopupMenuItem(value: 'name', child: Text('حسب الاسم')),
-              const PopupMenuItem(value: 'date', child: Text('حسب آخر دفعة')),
+              PopupMenuItem(value: 'amount', child: Text(AppLocalizations.of(context)!.sortByAmount)),
+              PopupMenuItem(value: 'name', child: Text(AppLocalizations.of(context)!.sortByName)),
+              PopupMenuItem(value: 'date', child: Text(AppLocalizations.of(context)!.sortByLastPayment)),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: 'مشاركة',
+            tooltip: AppLocalizations.of(context)!.shareAction,
             onPressed: _shareReport,
           ),
           IconButton(
             icon: const Icon(Icons.print),
-            tooltip: 'طباعة',
+            tooltip: AppLocalizations.of(context)!.printAction,
             onPressed: _printReport,
           ),
         ],
@@ -122,10 +123,10 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('إجمالي الديون', style: TextStyle(color: Colors.white70)),
+                          Text(AppLocalizations.of(context)!.totalDebts, style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: 4),
                           Text(
-                            '${_totalDebts.toStringAsFixed(0)} ر.س',
+                            '${_totalDebts.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -133,7 +134,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const Text('عدد العملاء', style: TextStyle(color: Colors.white70)),
+                          Text(AppLocalizations.of(context)!.customersCount, style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: 4),
                           Text(
                             '${_debts.length}',
@@ -154,7 +155,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                             children: [
                               Icon(Icons.check_circle, size: 64, color: Colors.green.shade400),
                               const SizedBox(height: 16),
-                              Text('لا توجد ديون مستحقة', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              Text(AppLocalizations.of(context)!.noOutstandingDebts, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         )
@@ -180,7 +181,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                     if (debt['phone'] != null)
                                       Text(debt['phone'] as String, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                                     Text(
-                                      'آخر تحديث: ${_formatDate(debt['lastPayment'] as DateTime)}',
+                                      AppLocalizations.of(context)!.lastUpdate(_formatDate(debt['lastPayment'] as DateTime)),
                                       style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
                                     ),
                                   ],
@@ -190,13 +191,13 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${(debt['balance'] as double).toStringAsFixed(0)} ر.س',
+                                      '${(debt['balance'] as double).toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                                       style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                                     ),
                                     TextButton(
                                       onPressed: () => _recordPayment(debt),
                                       style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
-                                      child: const Text('تسجيل دفعة', style: TextStyle(fontSize: 12)),
+                                      child: Text(AppLocalizations.of(context)!.recordPayment, style: const TextStyle(fontSize: 12)),
                                     ),
                                   ],
                                 ),
@@ -220,29 +221,29 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
     
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('تسجيل دفعة - ${debt['name']}'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppLocalizations.of(dialogContext)!.recordPaymentFor(debt['name'] as String)),
         content: TextField(
           controller: amountController,
           keyboardType: TextInputType.number,
           autofocus: true,
           decoration: InputDecoration(
-            labelText: 'مبلغ الدفعة',
-            suffixText: 'ر.س',
-            helperText: 'الدين الحالي: ${(debt['balance'] as double).toStringAsFixed(0)} ر.س',
+            labelText: AppLocalizations.of(dialogContext)!.paymentAmountField,
+            suffixText: AppLocalizations.of(dialogContext)!.sar,
+            helperText: AppLocalizations.of(dialogContext)!.currentDebt((debt['balance'] as double).toStringAsFixed(0)),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(AppLocalizations.of(dialogContext)!.cancel)),
           FilledButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم تسجيل الدفعة'), backgroundColor: Colors.green),
+                SnackBar(content: Text(AppLocalizations.of(context)!.paymentRecordedMsg), backgroundColor: Colors.green),
               );
               _loadDebts();
             },
-            child: const Text('تسجيل'),
+            child: Text(AppLocalizations.of(dialogContext)!.recordAction),
           ),
         ],
       ),
@@ -382,7 +383,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
 
   void _showCustomerDetails(Map<String, dynamic> debt) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('عرض تفاصيل: ${debt['name']}')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.showDetails(debt['name'] as String))),
     );
   }
 }

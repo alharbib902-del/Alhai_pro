@@ -37,12 +37,18 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           IconButton(icon: const Icon(Icons.history), onPressed: () => _showHistory(l10n)),
         ],
       ),
-      body: Column(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final isDesktop = constraints.maxWidth >= 1200;
+          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+
+          return Column(
         children: [
           // منطقة المسح
           Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(24),
+            margin: EdgeInsets.all(padding),
+            padding: EdgeInsets.all(isDesktop ? 32 : 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.7)]),
               borderRadius: BorderRadius.circular(16),
@@ -65,7 +71,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 
           // الإدخال اليدوي
           Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
+            padding: EdgeInsetsDirectional.only(start: padding, end: padding),
             child: Row(
               children: [
                 Expanded(
@@ -105,7 +111,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
+                    padding: EdgeInsetsDirectional.only(start: padding, end: padding),
                     itemCount: _scannedProducts.length,
                     itemBuilder: (context, index) {
                       final product = _scannedProducts[_scannedProducts.length - 1 - index];
@@ -135,7 +141,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           // شريط الإجراءات
           if (_scannedProducts.isNotEmpty)
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(padding),
               decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, border: Border(top: BorderSide(color: colorScheme.outlineVariant))),
               child: Row(
                 children: [
@@ -148,6 +154,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               ),
             ),
         ],
+          );
+        },
       ),
     );
   }

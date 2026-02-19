@@ -31,10 +31,11 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= 1200;
+    final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     // Get real user data from auth state
     final authState = ref.watch(authStateProvider);
@@ -62,10 +63,40 @@ class SettingsScreen extends ConsumerWidget {
                   userRole: userRole,
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(
-                        context, isWideScreen, isMediumScreen, isDark, l10n),
+                  child: storeAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (error, _) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.error_outline_rounded, size: 64,
+                                color: isDark ? Colors.white38 : AppColors.textSecondary),
+                            const SizedBox(height: 16),
+                            Text(
+                              '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: isDark ? Colors.white70 : AppColors.textSecondary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            FilledButton.icon(
+                              onPressed: () => ref.invalidate(_storeInfoProvider),
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text(l10n.retry),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    data: (_) => SingleChildScrollView(
+                      padding: EdgeInsets.all(padding),
+                      child: _buildContent(
+                          context, isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
                   ),
                 ),
               ],

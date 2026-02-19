@@ -35,8 +35,11 @@ final reportHistoryProvider = StateNotifierProvider<ReportHistoryNotifier, List<
   return ReportHistoryNotifier();
 });
 
+/// قيمة "الكل" الافتراضية لفلتر القوالب
+const kAllCategoryFilter = '__all__';
+
 /// مزود فلتر فئة القالب
-final templateCategoryFilterProvider = StateProvider<String>((ref) => 'الكل');
+final templateCategoryFilterProvider = StateProvider<String>((ref) => kAllCategoryFilter);
 
 /// مزود حالة التحميل
 final reportLoadingProvider = StateProvider<bool>((ref) => false);

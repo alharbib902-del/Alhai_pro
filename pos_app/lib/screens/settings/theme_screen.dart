@@ -76,7 +76,19 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
               subtitle: '\u0645\u0638\u0647\u0631 \u0641\u0627\u062a\u062d \u0645\u0631\u064a\u062d \u0644\u0644\u0639\u064a\u0646',
               isSelected: themeState.themeMode == ThemeMode.light,
               isDark: isDark,
-              onTap: () => ref.read(themeProvider.notifier).enableLightMode(),
+              onTap: () {
+                ref.read(themeProvider.notifier).enableLightMode();
+                if (themeState.themeMode != ThemeMode.light) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.lightMode}'),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
             ),
             _buildThemeOptionTile(
               icon: Icons.dark_mode_rounded,
@@ -84,7 +96,19 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
               subtitle: '\u0645\u0638\u0647\u0631 \u0645\u0638\u0644\u0645 \u064a\u062d\u0645\u064a \u0627\u0644\u0639\u064a\u0646',
               isSelected: themeState.themeMode == ThemeMode.dark,
               isDark: isDark,
-              onTap: () => ref.read(themeProvider.notifier).enableDarkMode(),
+              onTap: () {
+                ref.read(themeProvider.notifier).enableDarkMode();
+                if (themeState.themeMode != ThemeMode.dark) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.darkMode}'),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
             ),
             _buildThemeOptionTile(
               icon: Icons.settings_suggest_rounded,
@@ -92,7 +116,19 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
               subtitle: '\u064a\u062a\u0628\u0639 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062c\u0647\u0627\u0632\u0643 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',
               isSelected: themeState.themeMode == ThemeMode.system,
               isDark: isDark,
-              onTap: () => ref.read(themeProvider.notifier).enableSystemMode(),
+              onTap: () {
+                ref.read(themeProvider.notifier).enableSystemMode();
+                if (themeState.themeMode != ThemeMode.system) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.systemMode}'),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
             ),
           ],
           isDark,

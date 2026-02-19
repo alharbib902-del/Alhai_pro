@@ -15,6 +15,7 @@ import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/favorites_providers.dart';
 import '../../providers/sync_providers.dart';
@@ -34,10 +35,11 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     final favoritesAsync = ref.watch(favoritesListProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المفضلة'), // TODO: i18n
+        title: Text(l10n.favorites),
         centerTitle: true,
         actions: [
           favoritesAsync.maybeWhen(
@@ -50,7 +52,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                     },
                     icon:
                         Icon(_isEditMode ? Icons.check : Icons.edit_outlined),
-                    tooltip: _isEditMode ? 'تم' : 'تعديل', // TODO: i18n
+                    tooltip: _isEditMode ? l10n.doneMode : l10n.editMode,
                   )
                 : const SizedBox.shrink(),
             orElse: () => const SizedBox.shrink(),
@@ -67,8 +69,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             children: [
               Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
               const SizedBox(height: AppSizes.md),
-              const Text(
-                'خطأ في تحميل المفضلة', // TODO: i18n
+              Text(
+                l10n.errorLoadingFavorites,
                 style: AppTypography.titleMedium,
               ),
               const SizedBox(height: AppSizes.sm),
@@ -82,17 +84,17 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               ElevatedButton.icon(
                 onPressed: () => ref.invalidate(favoritesListProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'), // TODO: i18n
+                label: Text(l10n.retryAction),
               ),
             ],
           ),
         ),
         // حالة البيانات
         data: (favorites) => favorites.isEmpty
-            ? const AppEmptyState(
+            ? AppEmptyState(
                 icon: Icons.favorite_border,
-                title: 'لا توجد منتجات مفضلة', // TODO: i18n
-                description: 'أضف منتجات للمفضلة من شاشة المنتجات', // TODO: i18n
+                title: l10n.noFavoriteProducts,
+                description: l10n.addFavoritesFromProducts,
               )
             : Column(
                 children: [
@@ -109,7 +111,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                         ),
                         const SizedBox(width: AppSizes.sm),
                         Text(
-                          'اضغط على المنتج لإضافته للسلة', // TODO: i18n
+                          l10n.tapProductToAddToCart,
                           style: AppTypography.bodySmall.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -221,7 +223,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${favoriteData.price.toStringAsFixed(2)} ر.س',
+                          '${favoriteData.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                           style: AppTypography.labelMedium.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
@@ -287,6 +289,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
   void _addToCart(FavoriteProductData favoriteData) {
     HapticFeedback.lightImpact();
+    final l10n = AppLocalizations.of(context)!;
 
     // إضافة المنتج للسلة
     final product = _toProduct(favoriteData);
@@ -294,7 +297,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تمت إضافة ${favoriteData.name} للسلة'), // TODO: i18n
+        content: Text(l10n.addedProductToCart(favoriteData.name)),
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
@@ -303,6 +306,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
   void _showProductOptions(FavoriteProductData favoriteData, int index) {
     HapticFeedback.mediumImpact();
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -332,7 +336,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             const SizedBox(height: AppSizes.lg),
             ListTile(
               leading: const Icon(Icons.add_shopping_cart),
-              title: const Text('إضافة للسلة'), // TODO: i18n
+              title: Text(l10n.addToCartAction),
               onTap: () {
                 Navigator.pop(context);
                 _addToCart(favoriteData);
@@ -342,7 +346,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               leading:
                   Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
               title: Text(
-                'إزالة من المفضلة', // TODO: i18n
+                l10n.removeFromFavorites,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onTap: () {
@@ -358,6 +362,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   }
 
   void _removeFromFavorites(FavoriteProductData favoriteData, int index) async {
+    final l10n = AppLocalizations.of(context)!;
+
     // حذف من قاعدة البيانات
     await removeFavoriteById(ref, favoriteData.id);
 
@@ -371,9 +377,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تمت إزالة ${favoriteData.name} من المفضلة'), // TODO: i18n
+        content: Text(l10n.removedProductFromFavorites(favoriteData.name)),
         action: SnackBarAction(
-          label: 'تراجع', // TODO: i18n
+          label: l10n.undo,
           onPressed: () async {
             // إعادة الإضافة عند التراجع
             await reAddFavorite(ref, favoriteData);

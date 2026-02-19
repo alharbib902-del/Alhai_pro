@@ -23,6 +23,7 @@ import '../../providers/settings_providers.dart';
 import '../../providers/sync_providers.dart';
 import '../../services/sale_service.dart';
 import '../../widgets/common/app_button.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/common/offline_banner.dart';
 import '../../providers/whatsapp_queue_providers.dart';
 
@@ -189,7 +190,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'طريقة الدفع', // TODO: i18n
+                    AppLocalizations.of(context)!.paymentMethodTitle,
                     style: AppTypography.titleLarge.copyWith(
                       color: theme.colorScheme.onSurface,
                     ),
@@ -227,7 +228,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     children: [
                       // Payment Methods
                       Text(
-                        'طريقة الدفع', // TODO: i18n
+                        AppLocalizations.of(context)!.paymentMethodTitle,
                         style: AppTypography.titleLarge.copyWith(
                           color: theme.colorScheme.onSurface,
                         ),
@@ -280,14 +281,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           AppIconButton(
             icon: Icons.arrow_forward,
             onPressed: () => context.pop(),
-            tooltip: 'رجوع (Esc)', // TODO: i18n
+            tooltip: AppLocalizations.of(context)!.backEsc,
           ),
 
           const SizedBox(width: AppSpacing.md),
 
           // Title
           Text(
-            'إتمام الدفع', // TODO: i18n
+            AppLocalizations.of(context)!.completePayment,
             style: AppTypography.titleLarge.copyWith(
               color: theme.colorScheme.onSurface,
             ),
@@ -310,7 +311,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 Icon(Icons.keyboard, size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
-                  'Enter للتأكيد', // TODO: i18n
+                  AppLocalizations.of(context)!.enterToConfirm,
                   style: AppTypography.labelSmall.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -352,7 +353,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'نقد فقط في وضع عدم الاتصال',
+                    AppLocalizations.of(context)!.cashOnlyOffline,
                     style: AppTypography.bodyMedium.copyWith(
                       color: Colors.orange.shade800,
                       fontWeight: FontWeight.w600,
@@ -383,7 +384,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'البطاقات معطلة من الاعدادات',
+                    AppLocalizations.of(context)!.cardsDisabledInSettings,
                     style: AppTypography.bodyMedium.copyWith(
                       color: Colors.blue.shade800,
                       fontWeight: FontWeight.w600,
@@ -399,7 +400,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             Expanded(
               child: _PaymentMethodCard(
                 icon: Icons.payments_outlined,
-                label: 'نقدا',
+                label: AppLocalizations.of(context)!.cashPayment,
                 shortcut: '1',
                 color: AppColors.cash,
                 selected: _selectedMethod == PaymentMethod.cash,
@@ -410,7 +411,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             Expanded(
               child: _PaymentMethodCard(
                 icon: Icons.credit_card,
-                label: 'بطاقة',
+                label: AppLocalizations.of(context)!.cardPayment,
                 shortcut: '2',
                 color: AppColors.card,
                 selected: _selectedMethod == PaymentMethod.card,
@@ -419,9 +420,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     : () => setState(() => _selectedMethod = PaymentMethod.card),
                 disabled: cardDisabled,
                 disabledLabel: isOffline
-                    ? 'غير متاح بدون اتصال'
+                    ? AppLocalizations.of(context)!.unavailableOffline
                     : !settings.hasCardPayment
-                        ? 'معطل من الاعدادات'
+                        ? AppLocalizations.of(context)!.disabledInSettings
                         : null,
               ),
             ),
@@ -429,7 +430,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             Expanded(
               child: _PaymentMethodCard(
                 icon: Icons.access_time,
-                label: 'آجل',
+                label: AppLocalizations.of(context)!.creditPayment,
                 shortcut: '3',
                 color: AppColors.debt,
                 selected: _selectedMethod == PaymentMethod.wallet,
@@ -437,7 +438,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     ? null
                     : () => setState(() => _selectedMethod = PaymentMethod.wallet),
                 disabled: isOffline,
-                disabledLabel: isOffline ? 'غير متاح بدون اتصال' : null,
+                disabledLabel: isOffline ? AppLocalizations.of(context)!.unavailableOffline : null,
               ),
             ),
           ],
@@ -463,7 +464,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'المبلغ المستلم',
+          AppLocalizations.of(context)!.amountReceived,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -496,7 +497,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               hintStyle: AppTypography.displayMedium.copyWith(
                 color: AppColors.textMuted,
               ),
-              suffixText: 'ر.س',
+              suffixText: AppLocalizations.of(context)!.sar,
               suffixStyle: AppTypography.titleLarge.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -514,7 +515,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
         // Quick Amount Buttons
         Text(
-          'مبالغ سريعة',
+          AppLocalizations.of(context)!.quickAmounts,
           style: AppTypography.labelLarge.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -526,7 +527,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           runSpacing: AppSpacing.sm,
           children: [
             _QuickAmountChip(
-              label: 'المبلغ المطلوب',
+              label: AppLocalizations.of(context)!.requiredAmount,
               amount: total,
               color: AppColors.primary,
               onTap: () => _setAmount(total),
@@ -564,7 +565,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Text(
-                    'الباقي:',
+                    AppLocalizations.of(context)!.changeLabel,
                     style: AppTypography.titleLarge.copyWith(
                       color: change >= 0 ? AppColors.success : AppColors.error,
                     ),
@@ -573,8 +574,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               ),
               Text(
                 change >= 0
-                    ? '${change.toStringAsFixed(2)} ر.س'
-                    : 'المبلغ غير كافي',
+                    ? '${change.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'
+                    : AppLocalizations.of(context)!.insufficientAmount,
                 style: AppTypography.displaySmall.copyWith(
                   color: change >= 0 ? AppColors.success : AppColors.error,
                   fontWeight: FontWeight.w700,
@@ -592,7 +593,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'رقم مرجع العملية (RRN)',
+          AppLocalizations.of(context)!.rrnLabel,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -616,7 +617,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: 'أدخل رقم العملية من الجهاز',
+              hintText: AppLocalizations.of(context)!.enterRrnFromDevice,
               hintStyle: AppTypography.bodyLarge.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -642,7 +643,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
-                  'اطلب من العميل الدفع عبر جهاز البطاقة، ثم أدخل رقم العملية (RRN) من الإيصال',
+                  AppLocalizations.of(context)!.cardPaymentInstructions,
                   style: AppTypography.bodyMedium.copyWith(
                     color: AppColors.info,
                   ),
@@ -660,7 +661,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'البيع الآجل',
+          AppLocalizations.of(context)!.creditSale,
           style: AppTypography.titleMedium.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -681,7 +682,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
-                  'سيتم تسجيل هذا المبلغ كدين على العميل. تأكد من تحديد العميل قبل إتمام العملية.',
+                  AppLocalizations.of(context)!.creditSaleWarning,
                   style: AppTypography.bodyMedium.copyWith(
                     color: AppColors.warning,
                   ),
@@ -714,7 +715,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               const Icon(Icons.receipt_long, color: AppColors.primary),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'ملخص الطلب',
+                AppLocalizations.of(context)!.orderSummary,
                 style: AppTypography.titleMedium.copyWith(
                   color: AppColors.primary,
                 ),
@@ -729,13 +730,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
-                _SummaryRow(label: 'المجموع الفرعي', value: subtotal),
+                _SummaryRow(label: AppLocalizations.of(context)!.subtotalLabel, value: subtotal),
                 const SizedBox(height: AppSpacing.md),
-                _SummaryRow(label: 'الضريبة (15%)', value: tax),
+                _SummaryRow(label: AppLocalizations.of(context)!.taxLabel, value: tax),
                 if (discount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   _SummaryRow(
-                    label: 'الخصم',
+                    label: AppLocalizations.of(context)!.discountLabel,
                     value: -discount,
                     valueColor: AppColors.success,
                   ),
@@ -748,13 +749,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'المبلغ المطلوب',
+                      AppLocalizations.of(context)!.requiredAmount,
                       style: AppTypography.titleMedium.copyWith(
                         color: AppColors.textPrimary,
                       ),
                     ),
                     Text(
-                      '${total.toStringAsFixed(2)} ر.س',
+                      '${total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                       style: AppTypography.displaySmall.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w700,
@@ -799,7 +800,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 SizedBox(
                   width: double.infinity,
                   child: AppButton.primary(
-                    label: 'تأكيد الدفع',
+                    label: AppLocalizations.of(context)!.confirmPayment,
                     icon: Icons.check_circle,
                     size: ButtonSize.large,
                     onPressed: _canConfirm(total) ? () => _confirmPayment(total) : null,
@@ -813,7 +814,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 SizedBox(
                   width: double.infinity,
                   child: AppButton.ghost(
-                    label: 'إلغاء',
+                    label: AppLocalizations.of(context)!.cancelAction,
                     onPressed: () => context.pop(),
                   ),
                 ),
@@ -841,14 +842,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
-            'جاري معالجة الدفع...', // TODO: i18n
+            AppLocalizations.of(context)!.processingPayment,
             style: AppTypography.titleLarge.copyWith(
               color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'يرجى الانتظار', // TODO: i18n
+            AppLocalizations.of(context)!.pleaseWait,
             style: AppTypography.bodyMedium.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -880,7 +881,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
             const SizedBox(height: AppSpacing.xl),
             Text(
-              'تمت العملية بنجاح!',
+              AppLocalizations.of(context)!.paymentSuccessful,
               style: AppTypography.displaySmall.copyWith(
                 color: AppColors.success,
                 fontWeight: FontWeight.w700,
@@ -888,7 +889,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'جاري طباعة الإيصال...',
+              AppLocalizations.of(context)!.printingReceipt,
               style: AppTypography.bodyLarge.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -924,7 +925,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                Text('إيصال واتساب', // TODO: i18n
+                Text(AppLocalizations.of(context)!.whatsappReceipt,
                     style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface)),
                 const SizedBox(width: 4),
                 Icon(Icons.chat, size: 16, color: whatsAppColor),
@@ -995,12 +996,12 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   String _getMethodLabel() {
     switch (_selectedMethod) {
       case PaymentMethod.cash:
-        return 'الدفع نقداً';
+        return AppLocalizations.of(context)!.payCash;
       case PaymentMethod.card:
-        return 'الدفع بالبطاقة';
+        return AppLocalizations.of(context)!.payCard;
       case PaymentMethod.wallet:
       case PaymentMethod.bankTransfer:
-        return 'البيع الآجل';
+        return AppLocalizations.of(context)!.payCreditSale;
     }
   }
 
@@ -1025,7 +1026,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       final userId = ref.read(currentUserProvider)?.id;
 
       if (storeId == null || userId == null) {
-        throw Exception('لم يتم تحديد المتجر أو المستخدم');
+        throw Exception(AppLocalizations.of(context)!.storeOrUserNotSet);
       }
 
       final saleService = getIt<SaleService>();
@@ -1075,7 +1076,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ: ${e.toString()}'),
+            content: Text(AppLocalizations.of(context)!.errorWithMessage(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );
@@ -1206,7 +1207,7 @@ class _PaymentMethodCardState extends State<_PaymentMethodCard> {
                       ),
                       child: Text(
                         isDisabled
-                            ? (widget.disabledLabel ?? 'غير متاح')
+                            ? (widget.disabledLabel ?? '')
                             : widget.shortcut,
                         style: AppTypography.labelSmall.copyWith(
                           color: isDisabled ? Colors.orange.shade700 : AppColors.textMuted,
@@ -1308,7 +1309,7 @@ class _SummaryRow extends StatelessWidget {
           ),
         ),
         Text(
-          '${value < 0 ? '-' : ''}${value.abs().toStringAsFixed(2)} ر.س',
+          '${value < 0 ? '-' : ''}${value.abs().toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           style: AppTypography.bodyMedium.copyWith(
             color: valueColor ?? AppColors.textPrimary,
             fontWeight: FontWeight.w500,

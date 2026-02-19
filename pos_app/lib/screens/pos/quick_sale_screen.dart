@@ -20,6 +20,7 @@ import '../../widgets/common/app_input.dart';
 import '../../widgets/common/app_badge.dart';
 import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/common/app_dialog.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// شاشة البيع السريع
 class QuickSaleScreen extends ConsumerStatefulWidget {
@@ -35,11 +36,11 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   final _focusNode = FocusNode();
   final List<CartItem> _cartItems = [];
   bool _showCart = true;
-  String _selectedCategory = 'الكل';
+  String _selectedCategory = 'all';
 
   // Data loaded from DB
   List<ProductsTableData> _products = [];
-  List<String> _categories = ['الكل'];
+  List<String> _categories = ['all'];
   bool _isLoading = true;
   String? _error;
 
@@ -50,7 +51,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     var products = _products;
 
     // Filter by category
-    if (_selectedCategory != 'الكل') {
+    if (_selectedCategory != 'all') {
       // Find the categoryId(s) for the selected category name
       final selectedCatIds = _categoryMap.entries
           .where((e) => e.value == _selectedCategory)
@@ -92,7 +93,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       if (storeId == null) {
         if (mounted) {
           setState(() {
-            _error = 'لم يتم تحديد المتجر';
+            _error = 'storeNotSet';
             _isLoading = false;
           });
         }
@@ -104,7 +105,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
       // Load categories from DB
       final dbCategories = await db.categoriesDao.getAllCategories(storeId);
-      final categoryNames = <String>['الكل'];
+      final categoryNames = <String>['all'];
       final categoryMap = <String, String>{};
       for (final cat in dbCategories) {
         categoryNames.add(cat.name);
@@ -144,8 +145,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   /// Get display name for a product's category
   String _getCategoryDisplayName(ProductsTableData product) {
-    if (product.categoryId == null) return 'أخرى';
-    return _categoryMap[product.categoryId] ?? product.categoryId ?? 'أخرى';
+    if (product.categoryId == null) return AppLocalizations.of(context)!.otherCategory;
+    return _categoryMap[product.categoryId] ?? product.categoryId ?? AppLocalizations.of(context)!.otherCategory;
   }
 
   @override
@@ -174,14 +175,14 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: 16),
-              Text(_error!, style: AppTypography.bodyLarge),
+              Text(_error == 'storeNotSet' ? AppLocalizations.of(context)!.storeNotSet : _error!, style: AppTypography.bodyLarge),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   setState(() { _isLoading = true; _error = null; });
                   _loadData();
                 },
-                child: const Text('إعادة المحاولة'),
+                child: Text(AppLocalizations.of(context)!.retryAction),
               ),
             ],
           ),
@@ -214,7 +215,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
                   onPressed: () => setState(() => _showCart = true),
                   backgroundColor: AppColors.primary,
                   icon: const Icon(Icons.shopping_cart),
-                  label: Text('$_itemCount عنصر - ${_total.toStringAsFixed(2)} ر.س'),
+                  label: Text(AppLocalizations.of(context)!.itemsCountPrice(_itemCount, _total.toStringAsFixed(2))),
                 )
               : null,
         ),
@@ -271,7 +272,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
                       controller: _barcodeController,
                       focusNode: _focusNode,
                       decoration: InputDecoration(
-                        hintText: 'امسح الباركود أو أدخله (F1)', // TODO: i18n
+                        hintText: AppLocalizations.of(context)!.scanBarcodeHint,
                         hintStyle: AppTypography.bodyMedium.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -288,7 +289,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
                     onPressed: () => context.push('/inventory/scanner'),
                     icon: const Icon(Icons.camera_alt_outlined),
                     color: AppColors.primary,
-                    tooltip: 'فتح الكاميرا',
+                    tooltip: AppLocalizations.of(context)!.openCamera,
                   ),
                 ],
               ),
@@ -301,7 +302,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           Expanded(
             flex: 2,
             child: AppSearchField(
-              hint: 'بحث عن منتج (F2)',
+              hint: AppLocalizations.of(context)!.searchProductHint,
               controller: _searchController,
               maxLength: 100,
               onChanged: (v) {
@@ -326,7 +327,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
               icon: _showCart ? Icons.shopping_cart : Icons.shopping_cart_outlined,
               onPressed: () => setState(() => _showCart = !_showCart),
               color: AppColors.primary,
-              tooltip: _showCart ? 'إخفاء السلة' : 'إظهار السلة',
+              tooltip: _showCart ? AppLocalizations.of(context)!.hideCart : AppLocalizations.of(context)!.showCart,
               variant: AppButtonVariant.soft,
               size: 48,
             ),
@@ -358,7 +359,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             category: category,
             isSelected: isSelected,
             onTap: () => setState(() => _selectedCategory = category),
-            color: category == 'الكل'
+            color: category == 'all'
                 ? AppColors.grey500
                 : AppColors.getCategoryColor(category),
           );
@@ -375,7 +376,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         onClear: () {
           setState(() {
             _searchController.clear();
-            _selectedCategory = 'الكل';
+            _selectedCategory = 'all';
           });
         },
       );
@@ -426,7 +427,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   Widget _buildCartHeader() {
     return SplitPanelHeader(
-      title: 'السلة',
+      title: AppLocalizations.of(context)!.cartTitle,
       icon: Icons.shopping_cart,
       onClose: AppBreakpoints.isMobile(context)
           ? () => setState(() => _showCart = false)
@@ -436,7 +437,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           TextButton.icon(
             onPressed: _clearCart,
             icon: const Icon(Icons.delete_outline, size: 18),
-            label: const Text('مسح'),
+            label: Text(AppLocalizations.of(context)!.clearAction),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
@@ -474,9 +475,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       child: Column(
         children: [
           // Summary Lines
-          _buildSummaryLine('المجموع الفرعي', _subtotal), // TODO: i18n
+          _buildSummaryLine(AppLocalizations.of(context)!.subtotalLabel, _subtotal),
           const SizedBox(height: AppSpacing.xs),
-          _buildSummaryLine('ضريبة القيمة المضافة (15%)', _vat), // TODO: i18n
+          _buildSummaryLine(AppLocalizations.of(context)!.vatTax15, _vat),
 
           const Divider(height: AppSpacing.xl),
 
@@ -485,13 +486,13 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'الإجمالي', // TODO: i18n
+                AppLocalizations.of(context)!.totalGrand,
                 style: AppTypography.titleMedium.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Text(
-                '${_total.toStringAsFixed(2)} ر.س',
+                '${_total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                 style: AppTypography.priceLarge.copyWith(
                   color: AppColors.primary,
                 ),
@@ -507,7 +508,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
               // Hold Button
               Expanded(
                 child: AppButton(
-                  label: 'تعليق',
+                  label: AppLocalizations.of(context)!.holdOrder,
                   icon: Icons.pause_circle_outline,
                   variant: AppButtonVariant.outlined,
                   onPressed: _holdOrder,
@@ -520,7 +521,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
               Expanded(
                 flex: 2,
                 child: AppButton.success(
-                  label: 'الدفع',
+                  label: AppLocalizations.of(context)!.payActionLabel,
                   icon: Icons.payment,
                   onPressed: _checkout,
                   size: ButtonSize.large,
@@ -533,7 +534,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
           // Shortcut hint
           Text(
-            'F12 للدفع السريع', // TODO: i18n
+            AppLocalizations.of(context)!.f12QuickPay,
             style: AppTypography.labelSmall.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -554,7 +555,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           ),
         ),
         Text(
-          '${amount.toStringAsFixed(2)} ر.س', // TODO: i18n
+          '${amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           style: AppTypography.bodyMedium.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -596,7 +597,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             final messenger = ScaffoldMessenger.of(context);
             messenger.showSnackBar(
               SnackBar(
-                content: Text('لم يتم العثور على منتج بالباركود: $barcode'), // TODO: i18n
+                content: Text(AppLocalizations.of(context)!.productNotFoundBarcode(barcode)),
                 backgroundColor: AppColors.warning,
               ),
             );
@@ -645,9 +646,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
     final confirmed = await AppDialog.confirm(
       context,
-      title: 'مسح السلة',
-      message: 'هل تريد مسح جميع المنتجات من السلة؟',
-      confirmText: 'مسح',
+      title: AppLocalizations.of(context)!.clearCartTitle,
+      message: AppLocalizations.of(context)!.clearCartMessage,
+      confirmText: AppLocalizations.of(context)!.clearAction,
       isDangerous: true,
     );
 
@@ -659,8 +660,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   void _holdOrder() {
     // TODO: Implement hold order
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم تعليق الطلب'), // TODO: i18n
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.orderOnHold),
         backgroundColor: AppColors.warning,
       ),
     );
@@ -810,7 +811,7 @@ class _ProductTileState extends State<_ProductTile> {
 
                   // Price
                   Text(
-                    '${widget.product.price.toStringAsFixed(2)} ر.س',
+                    '${widget.product.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                     style: AppTypography.priceMedium.copyWith(
                       color: AppColors.primary,
                     ),
@@ -881,7 +882,7 @@ class _CartItemTile extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  '${item.product.price.toStringAsFixed(2)} ر.س', // TODO: i18n
+                  '${item.product.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                   style: AppTypography.bodySmall.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -911,7 +912,7 @@ class _CartItemTile extends StatelessWidget {
                 ),
               ),
               Text(
-                'ر.س', // TODO: i18n
+                AppLocalizations.of(context)!.sar,
                 style: AppTypography.labelSmall.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -925,7 +926,7 @@ class _CartItemTile extends StatelessWidget {
             icon: const Icon(Icons.close),
             iconSize: 18,
             color: Theme.of(context).colorScheme.error,
-            tooltip: 'حذف', // TODO: i18n
+            tooltip: AppLocalizations.of(context)!.deleteItem,
           ),
         ],
       ),

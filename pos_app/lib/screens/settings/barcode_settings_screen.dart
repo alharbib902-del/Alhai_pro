@@ -94,6 +94,18 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         },
         ref: ref,
       );
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.settingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      }
     } catch (e) {
       // الحفظ في الخلفية - لا نعرض خطأ
     }

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/responsive/responsive_utils.dart';
 import '../../core/security/pin_service.dart';
 import '../../data/local/app_database.dart';
 import '../../data/local/daos/audit_log_dao.dart';
@@ -96,10 +95,13 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
 
   /// غلاف الحوار (Dialog) مع حجم مناسب وتصميم موحد
   Widget _buildDialogWrapper({required Widget child}) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogWidth = screenWidth < 600 ? screenWidth * 0.9 : 420.0;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 420,
+        width: dialogWidth,
         constraints: const BoxConstraints(maxHeight: 640),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
@@ -188,11 +190,20 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         title: Text(l10n.managerPinSetup),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: _buildSetupContent(),
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final padding = isMobile ? 16.0 : 32.0;
+          return Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(padding),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: _buildSetupContent(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -261,11 +272,20 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         title: Text(l10n.managerPinSetup),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: _buildVerifyContent(),
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final padding = isMobile ? 16.0 : 32.0;
+          return Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(padding),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: _buildVerifyContent(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -305,8 +325,8 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
           childAspectRatio: 1.2,

@@ -10,6 +10,7 @@ import '../../di/injection.dart';
 import '../../services/zatca_service.dart';
 import '../../services/receipt_printer_service.dart';
 import '../../services/whatsapp_receipt_service.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/print_providers.dart';
 import '../../providers/whatsapp_queue_providers.dart';
 
@@ -49,7 +50,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     if (widget.saleId == null) {
       setState(() {
         _isLoading = false;
-        _error = 'لم يتم تحديد رقم الفاتورة';
+        _error = 'invoiceNotSpecified';
       });
       return;
     }
@@ -61,7 +62,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       if (sale == null) {
         setState(() {
           _isLoading = false;
-          _error = 'الفاتورة غير موجودة';
+          _error = 'invoiceNotFound';
         });
         return;
       }
@@ -95,7 +96,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('الإيصال'),
+        title: Text(AppLocalizations.of(context)!.receiptTitle),
         automaticallyImplyLeading: false,
       ),
       body: _buildBody(context),
@@ -115,12 +116,17 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
           children: [
             Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
-            Text(_error!, style: TextStyle(color: theme.colorScheme.error)), // TODO: i18n
+            Text(
+              _error == 'invoiceNotSpecified' ? AppLocalizations.of(context)!.invoiceNotSpecified
+                : _error == 'invoiceNotFound' ? AppLocalizations.of(context)!.invoiceNotFound
+                : _error!,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: () => context.go(AppRoutes.pos),
               icon: const Icon(Icons.point_of_sale),
-              label: const Text('بيع جديد'), // TODO: i18n
+              label: Text(AppLocalizations.of(context)!.newSale),
             ),
           ],
         ),
@@ -154,7 +160,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'تمت العملية بنجاح!',
+              AppLocalizations.of(context)!.paymentSuccessful,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -177,7 +183,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         size: 18, color: AppColors.warning),
                     const SizedBox(width: 8),
                     Text(
-                      'في انتظار المزامنة', // TODO: i18n
+                      AppLocalizations.of(context)!.pendingSync,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -204,8 +210,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                     child: Column(
                       children: [
                         // Receipt header
-                        const Text(
-                          'فاتورة ضريبية مبسطة',
+                        Text(
+                          AppLocalizations.of(context)!.simplifiedTaxInvoice,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -218,8 +224,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             child: Chip(
                               avatar: const Icon(Icons.sync,
                                   size: 16, color: AppColors.warning),
-                              label: const Text(
-                                'غير مزامنة', // TODO: i18n
+                              label: Text(
+                                AppLocalizations.of(context)!.notSynced,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: AppColors.warning,
@@ -233,7 +239,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           ),
                         const SizedBox(height: 4),
                         Text(
-                          'رقم: ${sale.receiptNo}',
+                          AppLocalizations.of(context)!.receiptNumberLabel(sale.receiptNo),
                           style: TextStyle(
                             fontSize: 13,
                             color: isDark
@@ -259,7 +265,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             children: [
                               Expanded(
                                 flex: 3,
-                                child: Text('الصنف',
+                                child: Text(AppLocalizations.of(context)!.itemColumnHeader,
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -270,7 +276,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               ),
                               SizedBox(
                                 width: 40,
-                                child: Text('الكمية',
+                                child: Text(AppLocalizations.of(context)!.quantityLabel,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
@@ -282,7 +288,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               ),
                               SizedBox(
                                 width: 60,
-                                child: Text('المجموع',
+                                child: Text(AppLocalizations.of(context)!.totalLabel,
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       fontSize: 12,
@@ -335,18 +341,18 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         ],
 
                         // Totals
-                        _totalRow('المجموع الفرعي',
-                            '${sale.subtotal.toStringAsFixed(2)} ر.س', isDark),
+                        _totalRow(AppLocalizations.of(context)!.subtotalLabel,
+                            '${sale.subtotal.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}', isDark),
                         const SizedBox(height: 4),
                         _totalRow(
-                            'ضريبة القيمة المضافة (15%)',
-                            '${sale.tax.toStringAsFixed(2)} ر.س',
+                            AppLocalizations.of(context)!.vatLabel,
+                            '${sale.tax.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                             isDark),
                         if (sale.discount > 0) ...[
                           const SizedBox(height: 4),
                           _totalRow(
-                              'الخصم',
-                              '-${sale.discount.toStringAsFixed(2)} ر.س',
+                              AppLocalizations.of(context)!.discountLabel,
+                              '-${sale.discount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                               isDark,
                               color: AppColors.success),
                         ],
@@ -361,15 +367,15 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'الإجمالي',
+                              Text(
+                                AppLocalizations.of(context)!.totalAmount,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                '${sale.total.toStringAsFixed(2)} ر.س',
+                                '${sale.total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -382,7 +388,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         const SizedBox(height: 8),
 
                         // Payment method
-                        _totalRow('طريقة الدفع',
+                        _totalRow(AppLocalizations.of(context)!.paymentMethodField,
                             _getPaymentMethodLabel(sale.paymentMethod), isDark),
                         const Divider(height: 24),
 
@@ -404,7 +410,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'رمز ZATCA الضريبي',
+                            AppLocalizations.of(context)!.zatcaQrCode,
                             style: TextStyle(
                               fontSize: 11,
                               color: isDark
@@ -414,7 +420,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'يشمل ضريبة القيمة المضافة 15%',
+                            AppLocalizations.of(context)!.includesVat15,
                             style: TextStyle(
                               fontSize: 10,
                               color: isDark
@@ -440,7 +446,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _printReceipt,
                     icon: const Icon(Icons.print_outlined),
-                    label: const Text('طباعة'),
+                    label: Text(AppLocalizations.of(context)!.printAction),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -462,7 +468,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2))
                           : const Icon(Icons.chat, color: AppColors.success),
-                      label: Text(_whatsAppSent ? 'تم الإرسال \u2713' : 'واتساب'), // TODO: i18n
+                      label: Text(_whatsAppSent ? AppLocalizations.of(context)!.whatsappSentLabel : AppLocalizations.of(context)!.whatsappLabel),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         side: const BorderSide(color: AppColors.success),
@@ -483,7 +489,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                       context.go(AppRoutes.pos);
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('بيع جديد'),
+                    label: Text(AppLocalizations.of(context)!.newSale),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -528,17 +534,17 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   String _getPaymentMethodLabel(String method) {
     switch (method.toLowerCase()) {
       case 'cash':
-        return 'نقداً';
+        return AppLocalizations.of(context)!.cashMethod;
       case 'card':
-        return 'بطاقة';
+        return AppLocalizations.of(context)!.cardMethod;
       case 'mixed':
-        return 'مختلط';
+        return AppLocalizations.of(context)!.mixedMethod;
       case 'credit':
-        return 'آجل';
+        return AppLocalizations.of(context)!.creditMethod;
       case 'wallet':
-        return 'محفظة';
+        return AppLocalizations.of(context)!.walletMethod;
       case 'banktransfer':
-        return 'تحويل بنكي';
+        return AppLocalizations.of(context)!.bankTransferMethod;
       default:
         return method;
     }
@@ -582,8 +588,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
           _isSendingWhatsApp = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إرسال الإيصال عبر واتساب \u2713'), // TODO: i18n
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.whatsappReceiptSent),
             backgroundColor: AppColors.success,
           ),
         );
@@ -593,7 +599,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         setState(() => _isSendingWhatsApp = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل الإرسال: $e'), // TODO: i18n
+            content: Text(AppLocalizations.of(context)!.whatsappSendFailed(e.toString())),
             backgroundColor: AppColors.warning,
           ),
         );
@@ -604,8 +610,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   Future<void> _printReceipt() async {
     if (widget.saleId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('لا يمكن الطباعة - رقم الفاتورة غير متوفر'), // TODO: i18n
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotPrintNoInvoice),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -628,8 +634,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تمت إضافة الفاتورة لقائمة الطباعة'), // TODO: i18n
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.invoiceAddedToPrintQueue),
           backgroundColor: AppColors.warning,
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -160,7 +161,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.emoji_events, color: Colors.amber),
+                      const Icon(Icons.emoji_events, color: AppColors.warning),
                       const SizedBox(width: 8),
                       Text('المتصدرون', style: Theme.of(context).textTheme.titleMedium),
                     ],
@@ -168,7 +169,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                   const SizedBox(height: 16),
                   ...List.generate(_staff.length.clamp(0, 3), (index) {
                     final staff = _staff[index];
-                    final colors = [Colors.amber, Colors.grey, Colors.brown];
+                    final colors = [AppColors.warning, AppColors.grey400, const Color(0xFF795548)];
                     return _LeaderItem(
                       rank: index + 1,
                       name: staff.name,
@@ -206,21 +207,21 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                           icon: Icons.receipt_long,
                           label: 'عدد الفواتير',
                           value: '${staff.transactions}',
-                          color: Colors.blue,
+                          color: AppColors.info,
                         ),
                         const SizedBox(height: 12),
                         _StatRow(
                           icon: Icons.trending_up,
                           label: 'متوسط الفاتورة',
                           value: '${staff.avgTicket} ر.س',
-                          color: Colors.green,
+                          color: AppColors.success,
                         ),
                         const SizedBox(height: 12),
                         _StatRow(
                           icon: Icons.speed,
                           label: 'المبيعات/ساعة (تقديري)',
                           value: '${(staff.sales / 8).toStringAsFixed(0)} ر.س',
-                          color: Colors.purple,
+                          color: const Color(0xFF9C27B0),
                         ),
                       ],
                     ),

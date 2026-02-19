@@ -34,6 +34,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   bool _enableVat = true;
   double _vatRate = 15.0;
   bool _isLoading = true;
+  bool _isSaving = false;
 
   /// معرّف المتجر الحالي لتحديث البيانات لاحقاً
   String? _currentStoreId;
@@ -81,10 +82,11 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= 1200;
+    final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(
               children: [
@@ -102,11 +104,16 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: Form(
-                            key: _formKey,
-                            child: _buildContent(
-                                isWideScreen, isMediumScreen, isDark, l10n),
+                          padding: EdgeInsets.all(padding),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: isWideScreen ? 800 : double.infinity),
+                              child: Form(
+                                key: _formKey,
+                                child: _buildContent(
+                                    isWideScreen, isMediumScreen, isDark, l10n),
+                              ),
+                            ),
                           ),
                         ),
                 ),
@@ -317,8 +324,14 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: _saveSettings,
-            icon: const Icon(Icons.save_rounded),
+            onPressed: _isSaving ? null : _saveSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -417,6 +430,8 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   Future<void> _saveSettings() async {
     if (!_formKey.currentState!.validate()) return;
 
+    setState(() => _isSaving = true);
+
     // تنظيف القيم قبل الحفظ
     final name = _nameController.text.sanitized;
     final address = _addressController.text.sanitized;
@@ -479,6 +494,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         }
       } catch (e) {
         if (mounted) {
+          setState(() => _isSaving = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${l10n.error}: $e'),
@@ -492,6 +508,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     }
 
     if (mounted) {
+      setState(() => _isSaving = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.storeSettingsSaved),

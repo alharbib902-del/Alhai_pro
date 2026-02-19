@@ -112,12 +112,13 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
   }
 
   Widget _buildDistribution(SentimentResult result, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final entries = [
-      _DistEntry('إيجابي جداً', result.distribution[SentimentScore.veryPositive] ?? 0, AppColors.success),
-      _DistEntry('إيجابي', result.distribution[SentimentScore.positive] ?? 0, AppColors.primaryLight),
-      _DistEntry('محايد', result.distribution[SentimentScore.neutral] ?? 0, AppColors.warning),
-      _DistEntry('سلبي', result.distribution[SentimentScore.negative] ?? 0, const Color(0xFFF97316)),
-      _DistEntry('سلبي جداً', result.distribution[SentimentScore.veryNegative] ?? 0, AppColors.error),
+      _DistEntry(l10n.veryPositiveSentiment, result.distribution[SentimentScore.veryPositive] ?? 0, AppColors.success),
+      _DistEntry(l10n.positiveSentiment, result.distribution[SentimentScore.positive] ?? 0, AppColors.primaryLight),
+      _DistEntry(l10n.neutralSentiment, result.distribution[SentimentScore.neutral] ?? 0, AppColors.warning),
+      _DistEntry(l10n.negativeSentiment, result.distribution[SentimentScore.negative] ?? 0, const Color(0xFFF97316)),
+      _DistEntry(l10n.veryNegativeSentiment, result.distribution[SentimentScore.veryNegative] ?? 0, AppColors.error),
     ];
     final total = result.totalReviews;
 
@@ -139,7 +140,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'توزيع التقييمات',
+            l10n.ratingsDistribution,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 15,
@@ -230,7 +231,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
               ),
               const SizedBox(width: 12),
               Text(
-                'اتجاه المشاعر',
+                AppLocalizations.of(context)!.sentimentTrendTitle,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -252,13 +253,14 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
   }
 
   Widget _buildFeedbackFilter(SentimentScore? current, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final filters = [
-      const _FilterOption(null, 'الكل', AppColors.textSecondary),
-      const _FilterOption(SentimentScore.veryPositive, 'إيجابي جداً', AppColors.success),
-      const _FilterOption(SentimentScore.positive, 'إيجابي', AppColors.primaryLight),
-      const _FilterOption(SentimentScore.neutral, 'محايد', AppColors.warning),
-      const _FilterOption(SentimentScore.negative, 'سلبي', Color(0xFFF97316)),
-      const _FilterOption(SentimentScore.veryNegative, 'سلبي جداً', AppColors.error),
+      _FilterOption(null, l10n.filterAllLabel, AppColors.textSecondary),
+      _FilterOption(SentimentScore.veryPositive, l10n.veryPositiveSentiment, AppColors.success),
+      _FilterOption(SentimentScore.positive, l10n.positiveSentiment, AppColors.primaryLight),
+      _FilterOption(SentimentScore.neutral, l10n.neutralSentiment, AppColors.warning),
+      _FilterOption(SentimentScore.negative, l10n.negativeSentiment, const Color(0xFFF97316)),
+      _FilterOption(SentimentScore.veryNegative, l10n.veryNegativeSentiment, AppColors.error),
     ];
 
     return SingleChildScrollView(
@@ -462,7 +464,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
           Row(
             children: [
               Text(
-                'مؤشر المشاعر',
+                AppLocalizations.of(context)!.sentimentIndicator,
                 style: TextStyle(
                   fontSize: 10,
                   color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
@@ -497,10 +499,11 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
   }
 
   String _formatTimeAgo(DateTime time) {
+    final l10n = AppLocalizations.of(context)!;
     final diff = DateTime.now().difference(time);
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 60) return l10n.minutesAgoSentiment(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.hoursAgoSentiment(diff.inHours);
+    return l10n.daysAgoSentiment(diff.inDays);
   }
 }
 
@@ -515,7 +518,7 @@ class _FilterOption {
   final SentimentScore? score;
   final String label;
   final Color color;
-  const _FilterOption(this.score, this.label, this.color);
+  _FilterOption(this.score, this.label, this.color);
 }
 
 /// رسام اتجاه المشاعر

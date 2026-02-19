@@ -379,7 +379,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               label: l10n.outstandingDebts,
               value: '${_totalDebt.toStringAsFixed(0)} ${l10n.currency}',
               color: AppColors.error,
-              subtitle: l10n.customerCount('$_debtorsCount'),
+              subtitle: l10n.customerCount(_debtorsCount),
               isDark: isDark,
             ),
           ),

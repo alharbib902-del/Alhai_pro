@@ -56,10 +56,11 @@ class _UsersManagementScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= 1200;
+    final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(
               children: [
@@ -77,9 +78,14 @@ class _UsersManagementScreenState
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(
-                              isWideScreen, isMediumScreen, isDark, l10n),
+                          padding: EdgeInsets.all(padding),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: isWideScreen ? 800 : double.infinity),
+                              child: _buildContent(
+                                  isWideScreen, isMediumScreen, isDark, l10n),
+                            ),
+                          ),
                         ),
                 ),
               ],

@@ -2,8 +2,10 @@ import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 // ============================================================================
@@ -64,7 +66,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('طلب إرجاع'),
+        title: Text(AppLocalizations.of(context)!.refundRequestTitle),
       ),
       body: Column(
         children: [
@@ -77,7 +79,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                   child: TextField(
                     controller: _orderIdController,
                     decoration: InputDecoration(
-                      hintText: 'رقم الفاتورة',
+                      hintText: AppLocalizations.of(context)!.invoiceNumberHint,
                       prefixIcon: const Icon(Icons.receipt),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
@@ -87,9 +89,9 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                 FilledButton.icon(
                   onPressed: _isSearching ? null : _searchOrder,
                   icon: _isSearching
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface))
                       : const Icon(Icons.search),
-                  label: const Text('بحث'),
+                  label: Text(AppLocalizations.of(context)!.searchAction),
                 ),
               ],
             ),
@@ -101,19 +103,19 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: AppColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade700),
+                  const Icon(Icons.info_outline, color: AppColors.info),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('\u0641\u0627\u062a\u0648\u0631\u0629: ${_saleData!.receiptNo}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text('${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} \u0631.\u0633'),
+                        Text(AppLocalizations.of(context)!.invoiceFieldLabel(_saleData!.receiptNo), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('${_saleData!.createdAt.toString().split('.').first} - ${_saleData!.total.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}'),
                       ],
                     ),
                   ),
@@ -128,10 +130,10 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0644\u0644\u0625\u0631\u062c\u0627\u0639', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.selectProductsForRefund, style: const TextStyle(fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: _selectAll,
-                    child: const Text('\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0643\u0644'),
+                    child: Text(AppLocalizations.of(context)!.selectAll),
                   ),
                 ],
               ),
@@ -152,12 +154,12 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                       value: isSelected,
                       onChanged: (v) => _toggleItem(item, v ?? false),
                       title: Text(item.productName),
-                      subtitle: Text('\u0627\u0644\u0643\u0645\u064a\u0629: ${item.qty} \u00d7 ${item.unitPrice.toStringAsFixed(2)} \u0631.\u0633'),
+                      subtitle: Text(AppLocalizations.of(context)!.quantityTimesPrice(item.qty, item.unitPrice.toStringAsFixed(2))),
                       secondary: CircleAvatar(
-                        backgroundColor: isSelected ? Colors.green.shade100 : Colors.grey.shade200,
+                        backgroundColor: isSelected ? AppColors.success.withValues(alpha: 0.15) : Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: Icon(
                           isSelected ? Icons.check : Icons.inventory_2,
-                          color: isSelected ? Colors.green : Colors.grey,
+                          color: isSelected ? AppColors.success : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -172,7 +174,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
+                  boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, -2))],
                 ),
                 child: Row(
                   children: [
@@ -180,9 +182,9 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${_selectedItems.length} \u0645\u0646\u062a\u062c \u0645\u062d\u062f\u062f'),
+                          Text(AppLocalizations.of(context)!.productsSelected(_selectedItems.length)),
                           Text(
-                            '\u0627\u0644\u0645\u0628\u0644\u063a: ${_calculateRefundAmount().toStringAsFixed(0)} \u0631.\u0633',
+                            AppLocalizations.of(context)!.refundAmountValue(_calculateRefundAmount().toStringAsFixed(0)),
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
@@ -191,7 +193,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                     FilledButton.icon(
                       onPressed: _proceedToReason,
                       icon: const AdaptiveIcon(Icons.arrow_forward),
-                      label: const Text('\u0627\u0644\u062a\u0627\u0644\u064a'),
+                      label: Text(AppLocalizations.of(context)!.nextAction),
                     ),
                   ],
                 ),
@@ -202,9 +204,9 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade400),
+                    Icon(Icons.receipt_long, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: 16),
-                    Text('أدخل رقم الفاتورة للبحث', style: TextStyle(color: Colors.grey.shade600)),
+                    Text(AppLocalizations.of(context)!.enterInvoiceToSearch, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -241,7 +243,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             _saleItems = [];
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0641\u0627\u062a\u0648\u0631\u0629')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.invoiceNotFoundMsg)),
           );
         }
         return;

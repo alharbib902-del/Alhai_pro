@@ -63,30 +63,30 @@ class OnboardingPage {
   });
 }
 
-/// صفحات Onboarding
-const List<OnboardingPage> _pages = [
+/// صفحات Onboarding - تُبنى ديناميكياً باستخدام l10n
+List<OnboardingPage> _buildPages(AppLocalizations l10n) => [
   OnboardingPage(
     icon: Icons.point_of_sale_rounded,
-    title: 'نقطة بيع سريعة',
-    description: 'أتمم عمليات البيع بسرعة وسهولة مع واجهة بسيطة ومريحة',
+    title: l10n.onboardingTitle1,
+    description: l10n.onboardingDesc1,
     color: AppColors.primary,
   ),
   OnboardingPage(
     icon: Icons.wifi_off_rounded,
-    title: 'العمل بدون إنترنت',
-    description: 'استمر في العمل حتى بدون اتصال، وستتم المزامنة تلقائياً',
+    title: l10n.onboardingTitle2,
+    description: l10n.onboardingDesc2,
     color: AppColors.info,
   ),
   OnboardingPage(
     icon: Icons.inventory_2_rounded,
-    title: 'إدارة المخزون',
-    description: 'تتبع مخزونك بدقة مع تنبيهات النقص والصلاحية',
+    title: l10n.onboardingTitle3,
+    description: l10n.onboardingDesc3,
     color: AppColors.warning,
   ),
   OnboardingPage(
     icon: Icons.analytics_rounded,
-    title: 'تقارير ذكية',
-    description: 'احصل على تقارير مفصلة وتحليلات لأداء متجرك',
+    title: l10n.onboardingTitle4,
+    description: l10n.onboardingDesc4,
     color: AppColors.success,
   ),
 ];
@@ -137,8 +137,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     });
   }
 
-  void _nextPage() {
-    if (_currentPage < _pages.length - 1) {
+  bool _isCompleting = false;
+
+  void _nextPage(int pageCount) {
+    if (_currentPage < pageCount - 1) {
       _pageController.nextPage(
         duration: AppDurations.normal,
         curve: AppCurves.defaultCurve,
@@ -153,6 +155,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    if (_isCompleting) return;
+    setState(() => _isCompleting = true);
+
     // حفظ في SharedPreferences (احتياطي)
     await setOnboardingSeen();
 
@@ -169,19 +174,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       );
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('خطأ في حفظ حالة Onboarding في DB: $e');
+        debugPrint('\u062E\u0637\u0623 \u0641\u064A \u062D\u0641\u0638 \u062D\u0627\u0644\u0629 Onboarding \u0641\u064A DB: $e');
       }
     }
 
     if (mounted) {
+      setState(() => _isCompleting = false);
       context.go('/login');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLastPage = _currentPage == _pages.length - 1;
     final l10n = AppLocalizations.of(context)!;
+    final pages = _buildPages(l10n);
+    final isLastPage = _currentPage == pages.length - 1;
 
     return Scaffold(
       body: SafeArea(
@@ -209,9 +216,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
-                itemCount: _pages.length,
+                itemCount: pages.length,
                 itemBuilder: (context, index) {
-                  return _OnboardingPageWidget(page: _pages[index]);
+                  return _OnboardingPageWidget(page: pages[index]);
                 },
               ),
             ),
@@ -222,10 +229,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _pages.length,
+                  pages.length,
                   (index) => _PageIndicator(
                     isActive: index == _currentPage,
-                    color: _pages[index].color,
+                    color: pages[index].color,
                   ),
                 ),
               ),
@@ -263,19 +270,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Expanded(
                     flex: 2,
                     child: FilledButton(
-                      onPressed: _nextPage,
+                      onPressed: _isCompleting ? null : () => _nextPage(pages.length),
                       style: FilledButton.styleFrom(
-                        backgroundColor: _pages[_currentPage].color,
+                        backgroundColor: pages[_currentPage].color,
                         padding: const EdgeInsets.symmetric(
                           vertical: AppSizes.md,
                         ),
                       ),
-                      child: Text(
-                        isLastPage ? '\u0627\u0628\u062F\u0623 \u0627\u0644\u0622\u0646' : l10n.next,
-                        style: AppTypography.buttonMedium.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: _isCompleting
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            )
+                          : Text(
+                              isLastPage ? l10n.startNow : l10n.next,
+                              style: AppTypography.buttonMedium.copyWith(
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            ),
                     ),
                   ),
                 ],

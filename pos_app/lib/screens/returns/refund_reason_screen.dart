@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:pos_app/widgets/common/adaptive_icon.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/returns_providers.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/manager_approval_service.dart';
 import 'refund_request_screen.dart';
 
@@ -28,14 +30,17 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
   final _notesController = TextEditingController();
   bool _isProcessing = false;
 
-  final List<Map<String, dynamic>> _reasons = [
-    {'id': 'damaged', 'label': 'منتج تالف', 'icon': Icons.broken_image},
-    {'id': 'wrong', 'label': 'خطأ في الطلب', 'icon': Icons.error_outline},
-    {'id': 'changed_mind', 'label': 'تغيير رأي العميل', 'icon': Icons.sentiment_dissatisfied},
-    {'id': 'expired', 'label': 'منتج منتهي الصلاحية', 'icon': Icons.schedule},
-    {'id': 'quality', 'label': 'جودة غير مرضية', 'icon': Icons.thumb_down},
-    {'id': 'other', 'label': 'سبب آخر', 'icon': Icons.more_horiz},
-  ];
+  List<Map<String, dynamic>> _getReasons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      {'id': 'damaged', 'label': l10n.damagedProduct, 'icon': Icons.broken_image},
+      {'id': 'wrong', 'label': l10n.wrongOrder, 'icon': Icons.error_outline},
+      {'id': 'changed_mind', 'label': l10n.customerChangedMind, 'icon': Icons.sentiment_dissatisfied},
+      {'id': 'expired', 'label': l10n.expiredProduct, 'icon': Icons.schedule},
+      {'id': 'quality', 'label': l10n.unsatisfactoryQuality, 'icon': Icons.thumb_down},
+      {'id': 'other', 'label': l10n.otherReason, 'icon': Icons.more_horiz},
+    ];
+  }
 
   @override
   void dispose() {
@@ -49,43 +54,49 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
     if (pendingRefund == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('سبب الإرجاع')),
-        body: const Center(
-          child: Text('لا توجد بيانات إرجاع. يرجى العودة واختيار المنتجات.'),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.refundReasonTitle)),
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.noRefundData),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('سبب الإرجاع'),
+        title: Text(AppLocalizations.of(context)!.refundReasonTitle),
       ),
-      body: Column(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final isDesktop = constraints.maxWidth >= 1200;
+          final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+
+          return Column(
         children: [
           // Refund summary banner
           Container(
-            margin: const EdgeInsets.all(16),
+            margin: EdgeInsets.all(padding),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange.shade50,
+              color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.shade200),
+              border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                Icon(Icons.receipt_long, color: Colors.orange.shade700),
+                const Icon(Icons.receipt_long, color: AppColors.warning),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'فاتورة: ${pendingRefund.receiptNo}',
+                        AppLocalizations.of(context)!.invoiceFieldLabel(pendingRefund.receiptNo),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '${pendingRefund.items.length} منتج - ${pendingRefund.amount.toStringAsFixed(2)} ر.س',
-                        style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                        AppLocalizations.of(context)!.productsCountAmount(pendingRefund.items.length, pendingRefund.amount.toStringAsFixed(2)),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
                   ),
@@ -96,36 +107,36 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: padding),
               children: [
-                const Text(
-                  'اختر سبب الإرجاع',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.selectRefundReason,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
 
                 // Reason options
-                ...List.generate(_reasons.length, (index) {
-                  final reason = _reasons[index];
+                ...List.generate(_getReasons(context).length, (index) {
+                  final reason = _getReasons(context)[index];
                   final isSelected = _selectedReason == reason['id'];
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
-                    color: isSelected ? Colors.blue.shade50 : null,
+                    color: isSelected ? AppColors.info.withValues(alpha: 0.1) : null,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: isSelected ? Colors.blue : Colors.transparent,
+                        color: isSelected ? AppColors.info : Colors.transparent,
                         width: 2,
                       ),
                     ),
                     child: ListTile(
                       onTap: () => setState(() => _selectedReason = reason['id'] as String),
                       leading: CircleAvatar(
-                        backgroundColor: isSelected ? Colors.blue : Colors.grey.shade200,
+                        backgroundColor: isSelected ? AppColors.info : Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: Icon(
                           reason['icon'] as IconData,
-                          color: isSelected ? Colors.white : Colors.grey,
+                          color: isSelected ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       title: Text(
@@ -135,8 +146,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                         ),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: Colors.blue)
-                          : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
+                          ? const Icon(Icons.check_circle, color: AppColors.info)
+                          : Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   );
                 }),
@@ -144,16 +155,16 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                 const SizedBox(height: 24),
 
                 // Notes
-                const Text(
-                  'ملاحظات إضافية (اختياري)',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.additionalNotesOptional,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'أضف أي ملاحظات إضافية...',
+                    hintText: AppLocalizations.of(context)!.addNotesHint,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
@@ -163,23 +174,23 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
           // Bottom action
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(padding),
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
+              boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, -2))],
             ),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: (_selectedReason == null || _isProcessing) ? null : _proceedToApproval,
                 icon: _isProcessing
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface),
                       )
                     : const AdaptiveIcon(Icons.arrow_forward),
-                label: Text(_isProcessing ? 'جاري المعالجة...' : 'التالي - موافقة المشرف'),
+                label: Text(_isProcessing ? AppLocalizations.of(context)!.processingAction : AppLocalizations.of(context)!.nextSupervisorApproval),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -187,6 +198,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             ),
           ),
         ],
+          );
+        },
       ),
     );
   }
@@ -277,8 +290,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في إنشاء الإرجاع: $e'),
-            backgroundColor: Colors.red,
+            content: Text(AppLocalizations.of(context)!.refundCreationError(e.toString())),
+            backgroundColor: AppColors.error,
           ),
         );
       }

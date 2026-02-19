@@ -116,6 +116,16 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
               isDark: isDark,
               onTap: () {
                 ref.read(localeProvider.notifier).setLocale(locale);
+                if (!isSelected) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName'),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
             );
           }).toList(),
@@ -276,6 +286,15 @@ class LanguagePickerDialog extends ConsumerWidget {
               onTap: () {
                 ref.read(localeProvider.notifier).setLocale(locale);
                 Navigator.of(context).pop();
+                if (!isSelected) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName'),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
               },
             );
           },

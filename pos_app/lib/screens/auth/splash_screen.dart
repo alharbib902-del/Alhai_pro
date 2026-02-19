@@ -131,70 +131,80 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     const darkGreen = Color(0xFF059669);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [primaryGreen, darkGreen],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // صورة الروبوت 3D
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      blurRadius: 30,
-                      offset: Offset(0, 15),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final isDesktop = constraints.maxWidth >= 1200;
+          final logoSize = isMobile ? 120.0 : isDesktop ? 200.0 : 150.0;
+          final logoBorderRadius = isMobile ? 24.0 : isDesktop ? 40.0 : 30.0;
+
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [primaryGreen, darkGreen],
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // صورة الروبوت 3D
+                  Container(
+                    width: logoSize,
+                    height: logoSize,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(logoBorderRadius),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.25),
+                          blurRadius: 30,
+                          offset: Offset(0, 15),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Image.asset(
-                  'assets/images/mascot_robot.png',
-                  fit: BoxFit.contain,
-                ),
+                    padding: const EdgeInsets.all(16),
+                    child: Image.asset(
+                      'assets/images/mascot_robot.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.pointOfSale,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.surface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isMobile ? 22 : isDesktop ? 32 : 26,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Al-HAI POS',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.surface),
+                  ),
+                  const SizedBox(height: 16),
+                  // نص الحالة
+                  Text(
+                    _getStatusText(_status, l10n),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              Text(
-                l10n.pointOfSale,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Al-HAI POS',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white70,
-                ),
-              ),
-              const SizedBox(height: 48),
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-              const SizedBox(height: 16),
-              // نص الحالة
-              Text(
-                _getStatusText(_status, l10n),
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
