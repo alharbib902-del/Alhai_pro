@@ -12,6 +12,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير أفضل المنتجات
@@ -175,17 +176,17 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير المنتجات'),
+        title: Text(AppLocalizations.of(context)!.products),
         actions: [
           IconButton(
             onPressed: _selectDateRange,
             icon: const Icon(Icons.date_range),
-            tooltip: 'تحديد الفترة',
+            tooltip: AppLocalizations.of(context)!.date,
           ),
           IconButton(
             onPressed: _exportReport,
             icon: const Icon(Icons.download),
-            tooltip: 'تصدير',
+            tooltip: AppLocalizations.of(context)!.exportAction,
           ),
         ],
         bottom: TabBar(
@@ -268,8 +269,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        border: const Border(
-          bottom: BorderSide(color: AppColors.grey200),
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Row(
@@ -1040,8 +1041,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('جاري تصدير التقرير...'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.exportingReport),
       ),
     );
   }

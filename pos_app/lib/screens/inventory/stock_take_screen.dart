@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/inventory_advanced_providers.dart';
 
@@ -19,6 +20,7 @@ class StockTakeScreen extends ConsumerStatefulWidget {
 class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   bool _inProgress = false;
   bool _isLoading = true;
+  String? _loadError;
   List<_StockItem> _items = [];
 
   // معرّف الجرد الحالي (عند البدء يتم حفظه في قاعدة البيانات)
@@ -52,16 +54,47 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() {
+        _isLoading = false;
+        _loadError = e.toString();
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('الجرد')),
+        appBar: AppBar(title: Text(l10n.stockTake)),
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_loadError != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.stockTake)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+              const SizedBox(height: 16),
+              Text(l10n.errorOccurred, style: TextStyle(color: colorScheme.onSurface)),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () {
+                  setState(() { _isLoading = true; _loadError = null; });
+                  _loadData();
+                },
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -70,14 +103,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('الجرد'),
+        title: Text(l10n.stockTake),
         actions: [
           if (_inProgress) IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _scanBarcode),
           IconButton(icon: const Icon(Icons.history), onPressed: _showHistory),
         ],
       ),
       floatingActionButton: !_inProgress
-          ? FloatingActionButton.extended(onPressed: _startStockTake, icon: const Icon(Icons.play_arrow), label: const Text('بدء الجرد'))
+          ? FloatingActionButton.extended(onPressed: () => _startStockTake(l10n), icon: const Icon(Icons.play_arrow), label: Text(l10n.startStockTake))
           : null,
       body: Column(
         children: [
@@ -86,11 +119,11 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _StatCard(icon: Icons.inventory_2, label: 'إجمالي', value: '${_items.length}', color: Colors.blue),
+                _StatCard(icon: Icons.inventory_2, label: l10n.total, value: '${_items.length}', color: colorScheme.primary),
                 const SizedBox(width: 12),
-                _StatCard(icon: Icons.check_circle, label: 'تم عدها', value: '$counted', color: Colors.green),
+                _StatCard(icon: Icons.check_circle, label: l10n.counted, value: '$counted', color: Colors.green),
                 const SizedBox(width: 12),
-                _StatCard(icon: Icons.warning, label: 'فروقات', value: hasDiscrepancy ? 'نعم' : 'لا', color: hasDiscrepancy ? Colors.red : Colors.grey),
+                _StatCard(icon: Icons.warning, label: l10n.variances, value: hasDiscrepancy ? l10n.yes : l10n.no, color: hasDiscrepancy ? colorScheme.error : colorScheme.onSurfaceVariant),
               ],
             ),
           ),
@@ -102,7 +135,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
               children: [
                 LinearProgressIndicator(value: counted / _items.length),
                 const SizedBox(height: 8),
-                Text('$counted من ${_items.length} منتج', style: TextStyle(color: Colors.grey.shade600)),
+                Text('$counted ${l10n.of_} ${_items.length} ${l10n.product}', style: TextStyle(color: colorScheme.onSurfaceVariant)),
               ],
             ),
           ),
@@ -114,14 +147,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.inventory, size: 80, color: Colors.blue),
+                        Icon(Icons.inventory, size: 80, color: colorScheme.primary),
                         const SizedBox(height: 16),
-                        const Text('جرد المخزون', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(l10n.stockTake, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
-                        Text('قم بعد منتجات المخزون ومقارنتها بالنظام', style: TextStyle(color: Colors.grey.shade600)),
+                        Text(l10n.stockTakeDescription, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                         if (_items.isEmpty) ...[
                           const SizedBox(height: 16),
-                          Text('لا توجد منتجات في المخزون', style: TextStyle(color: Colors.orange.shade700)),
+                          Text(l10n.noProductsInStock, style: TextStyle(color: Colors.orange.shade700)),
                         ],
                       ],
                     ),
@@ -134,7 +167,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                       final hasDiff = item.countedQty != null && item.countedQty != item.systemQty;
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
-                        color: hasDiff ? Colors.red.shade50 : (item.countedQty != null ? Colors.green.shade50 : null),
+                        color: hasDiff ? colorScheme.errorContainer : (item.countedQty != null ? Colors.green.withValues(alpha: 0.1) : null),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(
@@ -144,16 +177,16 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                    Text(item.sku, style: TextStyle(fontSize: 12, fontFamily: 'monospace', color: Colors.grey.shade600)),
+                                    Text(item.sku, style: TextStyle(fontSize: 12, fontFamily: 'monospace', color: colorScheme.onSurfaceVariant)),
                                     const SizedBox(height: 8),
                                     Row(
                                       children: [
-                                        const Text('النظام: '),
+                                        Text('${l10n.system}: '),
                                         Text('${item.systemQty}', style: const TextStyle(fontWeight: FontWeight.bold)),
                                         if (item.countedQty != null) ...[
-                                          const Text('  |  العد: '),
-                                          Text('${item.countedQty}', style: TextStyle(fontWeight: FontWeight.bold, color: hasDiff ? Colors.red : Colors.green)),
-                                          if (hasDiff) Text('  (${item.countedQty! - item.systemQty > 0 ? '+' : ''}${item.countedQty! - item.systemQty})', style: const TextStyle(color: Colors.red)),
+                                          Text('  |  ${l10n.counted}: '),
+                                          Text('${item.countedQty}', style: TextStyle(fontWeight: FontWeight.bold, color: hasDiff ? colorScheme.error : Colors.green)),
+                                          if (hasDiff) Text('  (${item.countedQty! - item.systemQty > 0 ? '+' : ''}${item.countedQty! - item.systemQty})', style: TextStyle(color: colorScheme.error)),
                                         ],
                                       ],
                                     ),
@@ -165,7 +198,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                                 child: TextField(
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
-                                  decoration: const InputDecoration(hintText: 'العدد', border: OutlineInputBorder()),
+                                  decoration: InputDecoration(hintText: l10n.count, border: const OutlineInputBorder()),
                                   onChanged: (v) => setState(() => item.countedQty = int.tryParse(v)),
                                 ),
                               ),
@@ -180,19 +213,19 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           // أزرار الإنهاء
           if (_inProgress) Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Colors.grey.shade100, border: Border(top: BorderSide(color: Colors.grey.shade300))),
+            decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, border: Border(top: BorderSide(color: colorScheme.outlineVariant))),
             child: Row(
               children: [
-                Expanded(child: OutlinedButton(onPressed: _isSaving ? null : () => setState(() { _inProgress = false; _currentStockTakeId = null; }), child: const Text('إلغاء'))),
+                Expanded(child: OutlinedButton(onPressed: _isSaving ? null : () => setState(() { _inProgress = false; _currentStockTakeId = null; }), child: Text(l10n.cancel))),
                 const SizedBox(width: 12),
                 Expanded(
                   flex: 2,
                   child: FilledButton.icon(
-                    onPressed: (counted == _items.length && !_isSaving) ? _completeStockTake : null,
+                    onPressed: (counted == _items.length && !_isSaving) ? () => _completeStockTake(l10n) : null,
                     icon: _isSaving
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.surface))
                         : const Icon(Icons.check),
-                    label: Text(_isSaving ? 'جاري الحفظ...' : 'إنهاء الجرد'),
+                    label: Text(_isSaving ? l10n.saving : l10n.finishStockTake),
                   ),
                 ),
               ],
@@ -203,16 +236,16 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     );
   }
 
-  void _startStockTake() async {
+  void _startStockTake(AppLocalizations l10n) async {
     if (_items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('لا توجد منتجات لبدء الجرد')),
+        SnackBar(content: Text(l10n.noProductsToCount)),
       );
       return;
     }
 
     // إنشاء عملية جرد في قاعدة البيانات
-    final name = 'جرد ${DateFormat('yyyy/MM/dd HH:mm').format(DateTime.now())}';
+    final name = '${l10n.stockTake} ${DateFormat('yyyy/MM/dd HH:mm').format(DateTime.now())}';
     final id = await createStockTake(ref, name);
 
     if (id != null && mounted) {
@@ -222,12 +255,12 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
       });
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('خطأ في إنشاء عملية الجرد'), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.errorCreatingStockTake), backgroundColor: Theme.of(context).colorScheme.error),
       );
     }
   }
 
-  void _scanBarcode() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('مسح الباركود')));
+  void _scanBarcode() => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.scanBarcode)));
 
   void _showHistory() {
     showModalBottomSheet(
@@ -243,14 +276,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     );
   }
 
-  void _completeStockTake() {
+  void _completeStockTake(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('إنهاء الجرد'),
-        content: const Text('هل تريد حفظ نتائج الجرد وتحديث المخزون؟'),
+        title: Text(l10n.finishStockTake),
+        content: Text(l10n.saveStockTakeConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
@@ -258,7 +291,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
               if (_currentStockTakeId == null) {
                 // الطريقة القديمة - حفظ مباشرة بدون stock_take record
-                await _saveLegacyStockTake(messenger);
+                await _saveLegacyStockTake(messenger, l10n);
                 return;
               }
 
@@ -296,13 +329,13 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
                   if (success) {
                     messenger.showSnackBar(
-                      const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح'), backgroundColor: Colors.green),
+                      SnackBar(content: Text(l10n.stockTakeSavedSuccess), backgroundColor: Colors.green),
                     );
                     // إعادة تحميل البيانات لعرض المخزون المحدّث
                     _loadData();
                   } else {
                     messenger.showSnackBar(
-                      const SnackBar(content: Text('خطأ في إكمال الجرد'), backgroundColor: Colors.red),
+                      SnackBar(content: Text(l10n.errorCompletingStockTake), backgroundColor: Theme.of(context).colorScheme.error),
                     );
                   }
                 }
@@ -310,12 +343,12 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 if (mounted) {
                   setState(() => _isSaving = false);
                   messenger.showSnackBar(
-                    SnackBar(content: Text('خطأ في حفظ الجرد: $e'), backgroundColor: Colors.red),
+                    SnackBar(content: Text('${l10n.errorSaving}: $e'), backgroundColor: Theme.of(context).colorScheme.error),
                   );
                 }
               }
             },
-            child: const Text('حفظ'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -323,7 +356,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   }
 
   /// الطريقة القديمة - حفظ مباشر بدون سجل جرد (للتوافقية)
-  Future<void> _saveLegacyStockTake(ScaffoldMessengerState messenger) async {
+  Future<void> _saveLegacyStockTake(ScaffoldMessengerState messenger, AppLocalizations l10n) async {
     setState(() => _isSaving = true);
     try {
       final db = getIt<AppDatabase>();
@@ -342,7 +375,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           _isSaving = false;
         });
         messenger.showSnackBar(
-          const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح'), backgroundColor: Colors.green),
+          SnackBar(content: Text(l10n.stockTakeSavedSuccess), backgroundColor: Colors.green),
         );
         _loadData();
       }
@@ -350,7 +383,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
       if (mounted) {
         setState(() => _isSaving = false);
         messenger.showSnackBar(
-          SnackBar(content: Text('خطأ في حفظ الجرد: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${l10n.errorSaving}: $e'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -382,6 +415,8 @@ class _StockTakeHistorySheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stockTakesAsync = ref.watch(stockTakesListProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
@@ -389,7 +424,7 @@ class _StockTakeHistorySheet extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Text('سجل الجرد', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(l10n.stockTakeHistory, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const Spacer(),
               IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
             ],
@@ -403,10 +438,10 @@ class _StockTakeHistorySheet extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
+                  Icon(Icons.error_outline, size: 48, color: colorScheme.error),
                   const SizedBox(height: 8),
-                  Text('خطأ في تحميل السجل', style: TextStyle(color: Colors.red.shade600)),
-                  TextButton(onPressed: () => ref.invalidate(stockTakesListProvider), child: const Text('إعادة المحاولة')),
+                  Text(l10n.errorLoadingHistory, style: TextStyle(color: colorScheme.error)),
+                  TextButton(onPressed: () => ref.invalidate(stockTakesListProvider), child: Text(l10n.retry)),
                 ],
               ),
             ),
@@ -416,9 +451,9 @@ class _StockTakeHistorySheet extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.history, size: 48, color: Colors.grey.shade400),
+                      Icon(Icons.history, size: 48, color: colorScheme.onSurfaceVariant),
                       const SizedBox(height: 8),
-                      Text('لا يوجد سجل جرد سابق', style: TextStyle(color: Colors.grey.shade600)),
+                      Text(l10n.noStockTakeHistory, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 );
@@ -453,7 +488,7 @@ class _StockTakeHistorySheet extends ConsumerWidget {
                         children: [
                           Text(dateFormat.format(st.startedAt), style: const TextStyle(fontSize: 12)),
                           Text(
-                            'إجمالي: ${st.totalItems} | معدود: ${st.countedItems} | فروقات: ${st.varianceItems}',
+                            '${l10n.total}: ${st.totalItems} | ${l10n.counted}: ${st.countedItems} | ${l10n.variances}: ${st.varianceItems}',
                             style: const TextStyle(fontSize: 11),
                           ),
                         ],
@@ -465,7 +500,7 @@ class _StockTakeHistorySheet extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          isCompleted ? 'مكتمل' : 'قيد التنفيذ',
+                          isCompleted ? l10n.completed : l10n.inProgress,
                           style: TextStyle(fontSize: 10, color: isCompleted ? Colors.green : Colors.orange),
                         ),
                       ),

@@ -20,10 +20,10 @@ class CashDrawerScreen extends ConsumerStatefulWidget {
 
 class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
   /// Format time from DateTime
-  String _formatTime(DateTime dt) {
+  String _formatTime(DateTime dt, AppLocalizations l10n) {
     final hour = dt.hour;
     final minute = dt.minute.toString().padLeft(2, '0');
-    final period = hour >= 12 ? 'م' : 'ص';
+    final period = hour >= 12 ? l10n.pmPeriod : l10n.amPeriod;
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '$displayHour:$minute $period';
   }
@@ -220,7 +220,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  l10n.shiftOpenSince(_formatTime(shift.openedAt)),
+                  l10n.shiftOpenSince(_formatTime(shift.openedAt, l10n)),
                   style: TextStyle(
                     color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                     fontSize: 13,
@@ -389,7 +389,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             ...recentMovements.map((m) => _TransactionTile(
               title: m.reason ?? (m.type == 'cash_in' ? l10n.cashIn : l10n.cashOut),
               amount: m.amount,
-              time: _formatTime(m.createdAt),
+              time: _formatTime(m.createdAt, l10n),
               isIncome: m.type == 'cash_in',
               isDark: isDark,
               currency: l10n.sar,
@@ -449,8 +449,8 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 if (!approved) {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('تم رفض العملية - لم تتم الموافقة'),
+                    SnackBar(
+                      content: Text(l10n.rejectedNotApproved),
                       backgroundColor: AppColors.warning,
                     ),
                   );
@@ -476,7 +476,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               } catch (e) {
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
+                  SnackBar(content: Text(l10n.errorWithDetails('$e')), backgroundColor: AppColors.error),
                 );
               }
             },

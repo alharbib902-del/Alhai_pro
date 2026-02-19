@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير أداء الموظفين
@@ -112,15 +113,16 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('أداء الموظفين')),
+        appBar: AppBar(title: Text(l10n.reports)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('أداء الموظفين'),
+        title: Text(l10n.reports),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
@@ -128,9 +130,9 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
               _loadStaff();
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'today', child: Text('اليوم')),
-              const PopupMenuItem(value: 'week', child: Text('الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('الشهر')),
+              PopupMenuItem(value: 'today', child: Text(l10n.today)),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -253,7 +255,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                                   borderRadius: BorderRadius.circular(4),
                                   child: LinearProgressIndicator(
                                     value: staff.sales / maxSales,
-                                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                                    backgroundColor: Theme.of(context).dividerColor.withValues(alpha: 0.2),
                                     minHeight: 20,
                                   ),
                                 ),

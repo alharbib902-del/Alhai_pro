@@ -94,9 +94,10 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الحفظ: $e'),
+            content: Text('${l10n.errorSaving}: $e'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -281,7 +282,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     ),
                   )
                 : const Icon(Icons.save_rounded),
-            label: Text(_isSaving ? 'جاري الحفظ...' : l10n.saveSettings),
+            label: Text(_isSaving ? l10n.saving : l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(

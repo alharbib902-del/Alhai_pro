@@ -28,25 +28,25 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   }
 
   /// Format shift open time from DateTime
-  String _formatTime(DateTime dt) {
+  String _formatTime(DateTime dt, AppLocalizations l10n) {
     final hour = dt.hour;
     final minute = dt.minute.toString().padLeft(2, '0');
-    final period = hour >= 12 ? 'م' : 'ص';
+    final period = hour >= 12 ? l10n.pmPeriod : l10n.amPeriod;
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '$displayHour:$minute $period';
   }
 
   /// Compute shift duration string
-  String _formatDuration(DateTime openedAt) {
+  String _formatDuration(DateTime openedAt, AppLocalizations l10n) {
     final duration = DateTime.now().difference(openedAt);
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
     if (hours > 0 && minutes > 0) {
-      return '$hours ساعات $minutes دقيقة';
+      return l10n.hoursAndMinutes(hours, minutes);
     } else if (hours > 0) {
-      return '$hours ساعات';
+      return l10n.hoursOnly(hours);
     } else {
-      return '$minutes دقيقة';
+      return l10n.minutesOnly(minutes);
     }
   }
 
@@ -114,7 +114,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'لا توجد وردية مفتوحة',
+            l10n.noOpenShift,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -125,7 +125,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           FilledButton.icon(
             onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_rounded),
-            label: const Text('العودة'),
+            label: Text(l10n.goBack),
           ),
         ],
       ),
@@ -234,7 +234,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'معلومات الوردية', // TODO: l10n.shiftInfo
+                l10n.shiftInfoLabel,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -245,22 +245,22 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           ),
           const SizedBox(height: 16),
           _InfoRow(
-            label: 'الكاشير',
+            label: l10n.cashierLabel,
             value: shift.cashierName,
             icon: Icons.person_rounded,
             isDark: isDark,
           ),
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _InfoRow(
-            label: 'وقت الفتح',
-            value: _formatTime(shift.openedAt),
+            label: l10n.openTime,
+            value: _formatTime(shift.openedAt, l10n),
             icon: Icons.login_rounded,
             isDark: isDark,
           ),
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _InfoRow(
-            label: 'المدة',
-            value: _formatDuration(shift.openedAt),
+            label: l10n.duration,
+            value: _formatDuration(shift.openedAt, l10n),
             icon: Icons.timer_rounded,
             isDark: isDark,
           ),
@@ -301,7 +301,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'ملخص المبيعات', // TODO: l10n.salesSummary
+                l10n.salesSummaryLabel,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -311,11 +311,11 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          _SummaryRow(label: l10n.openingBalance, value: openingCash, color: AppColors.info, isDark: isDark),
-          _SummaryRow(label: 'إجمالي المبيعات', value: totalSalesAmount, color: AppColors.success, prefix: '+', isDark: isDark),
-          _SummaryRow(label: 'مرتجعات نقدية', value: totalRefundsAmount, color: AppColors.error, prefix: '-', isDark: isDark),
-          _SummaryRow(label: 'إدخال نقدي', value: cashIn, color: AppColors.success, prefix: '+', isDark: isDark),
-          _SummaryRow(label: 'سحب نقدي', value: cashOut, color: AppColors.secondary, prefix: '-', isDark: isDark),
+          _SummaryRow(label: l10n.openingBalance, value: openingCash, color: AppColors.info, isDark: isDark, currency: l10n.sar),
+          _SummaryRow(label: l10n.totalSales, value: totalSalesAmount, color: AppColors.success, prefix: '+', isDark: isDark, currency: l10n.sar),
+          _SummaryRow(label: l10n.cashRefundsLabel, value: totalRefundsAmount, color: AppColors.error, prefix: '-', isDark: isDark, currency: l10n.sar),
+          _SummaryRow(label: l10n.cashDepositLabel, value: cashIn, color: AppColors.success, prefix: '+', isDark: isDark, currency: l10n.sar),
+          _SummaryRow(label: l10n.cashWithdrawalLabel, value: cashOut, color: AppColors.secondary, prefix: '-', isDark: isDark, currency: l10n.sar),
           Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -334,7 +334,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      'المتوقع في الصندوق', // TODO: l10n.expectedInDrawer
+                      l10n.expectedInDrawer,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -378,7 +378,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'النقدية الفعلية في الصندوق', // TODO: l10n.actualCashInDrawer
+                l10n.actualCashInDrawer,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -465,8 +465,8 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                       const SizedBox(width: 8),
                       Text(
                         difference == 0
-                            ? 'متطابق'
-                            : (difference > 0 ? 'فائض' : 'عجز'),
+                            ? l10n.drawerMatched
+                            : (difference > 0 ? l10n.surplusStatus : l10n.deficitStatus),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: difference == 0
@@ -534,15 +534,15 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('المتوقع: ${expectedCash.toStringAsFixed(0)} ${l10n.sar}'),
-            Text('الفعلي: ${actualCash.toStringAsFixed(0)} ${l10n.sar}'),
+            Text(l10n.expectedAmountCurrency(expectedCash.toStringAsFixed(0), l10n.sar)),
+            Text(l10n.actualAmountCurrency(actualCash.toStringAsFixed(0), l10n.sar)),
             const SizedBox(height: 8),
             Text(
               difference == 0
-                  ? 'الصندوق متطابق'
+                  ? l10n.drawerMatchedMessage
                   : difference > 0
-                      ? 'فائض: +${difference.toStringAsFixed(0)} ${l10n.sar}'
-                      : 'عجز: ${difference.toStringAsFixed(0)} ${l10n.sar}',
+                      ? l10n.surplusAmount(difference.toStringAsFixed(0), l10n.sar)
+                      : l10n.deficitAmount(difference.toStringAsFixed(0), l10n.sar),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: difference == 0
@@ -551,7 +551,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text('هل تريد إغلاق الوردية؟'),
+            Text(l10n.confirmCloseShift),
           ],
         ),
         actions: [
@@ -593,7 +593,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('خطأ في إغلاق الوردية'),
+          title: Text(l10n.errorClosingShift),
           content: Text('$e'),
           actions: [
             TextButton(
@@ -649,6 +649,7 @@ class _SummaryRow extends StatelessWidget {
   final Color color;
   final String prefix;
   final bool isDark;
+  final String currency;
 
   const _SummaryRow({
     required this.label,
@@ -656,6 +657,7 @@ class _SummaryRow extends StatelessWidget {
     required this.color,
     this.prefix = '',
     required this.isDark,
+    required this.currency,
   });
 
   @override
@@ -677,7 +679,7 @@ class _SummaryRow extends StatelessWidget {
             ),
           ),
           Text(
-            '$prefix${value.toStringAsFixed(0)} ر.س',
+            '$prefix${value.toStringAsFixed(0)} $currency',
             style: TextStyle(color: color, fontWeight: FontWeight.w600),
           ),
         ],

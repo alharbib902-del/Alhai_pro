@@ -131,9 +131,10 @@ class _PaymentDevicesSettingsScreenState
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الحفظ: $e'),
+            content: Text('${l10n.errorSaving}: $e'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),

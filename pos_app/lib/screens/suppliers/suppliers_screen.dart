@@ -80,7 +80,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               Expanded(
                 child: _StatCard(
                   icon: Icons.check_circle_rounded,
-                  label: 'موردين نشطين',
+                  label: l10n.activeSuppliers,
                   value: '$activeCount',
                   color: AppColors.info,
                   isDark: isDark,
@@ -90,7 +90,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               Expanded(
                 child: _StatCard(
                   icon: Icons.account_balance_wallet_rounded,
-                  label: 'المستحقات',
+                  label: l10n.duePayments,
                   value: '${totalBalance.toStringAsFixed(0)} ${l10n.sar}',
                   color: AppColors.error,
                   isDark: isDark,
@@ -116,7 +116,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   Expanded(
                     child: _StatCard(
                       icon: Icons.check_circle_rounded,
-                      label: 'نشطين',
+                      label: l10n.activeSuppliers,
                       value: '$activeCount',
                       color: AppColors.info,
                       isDark: isDark,
@@ -163,7 +163,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '\u0643\u062A\u0627\u0644\u0648\u062C \u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A',
+                      l10n.productCatalog,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -172,7 +172,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '\u0642\u0631\u064A\u0628\u0627\u064B - \u062A\u0635\u0641\u062D \u0645\u0646\u062A\u062C\u0627\u062A \u0627\u0644\u0645\u0648\u0631\u062F\u064A\u0646',
+                      l10n.comingSoonBrowseSuppliers,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark
@@ -190,9 +190,9 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  '\u0642\u0631\u064A\u0628\u0627\u064B',
-                  style: TextStyle(
+                child: Text(
+                  l10n.comingSoonTag,
+                  style: const TextStyle(
                     color: AppColors.warning,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -336,7 +336,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                           ),
                           const SizedBox(width: 8),
                           Icon(
-                            Icons.chevron_left,
+                            Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right : Icons.chevron_left,
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.3)
                                 : AppColors.textTertiary,
@@ -504,7 +504,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               );
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم إضافة المورد')),
+                SnackBar(content: Text(l10n.supplierUpdatedMsg)),
               );
             },
             child: Text(l10n.add),

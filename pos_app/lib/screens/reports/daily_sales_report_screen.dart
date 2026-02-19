@@ -6,7 +6,11 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../widgets/responsive/responsive_builder.dart';
+import '../../core/responsive/responsive_utils.dart';
+import '../../core/constants/breakpoints.dart';
 
 /// شاشة تقرير المبيعات اليومي - بيانات حقيقية
 class DailySalesReportScreen extends ConsumerStatefulWidget {
@@ -19,7 +23,7 @@ class DailySalesReportScreen extends ConsumerStatefulWidget {
 class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen> {
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = true;
-  
+
   // البيانات الفعلية
   double _totalSales = 0;
   int _totalTransactions = 0;
@@ -45,7 +49,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
       if (storeId != null) {
         // جلب مبيعات اليوم المحدد
         final sales = await db.salesDao.getSalesByDate(storeId, _selectedDate);
-        
+
         double total = 0;
         double cash = 0;
         double card = 0;
@@ -58,7 +62,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
           total += sale.total;
           discount += sale.discount;
           tax += sale.tax;
-          
+
           switch (sale.paymentMethod) {
             case 'cash':
               cash += sale.total;
@@ -72,7 +76,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
               credit += sale.total;
               break;
           }
-          
+
           // جلب عدد الـ items لكل فاتورة
           final saleItems = await db.saleItemsDao.getItemsBySaleId(sale.id);
           for (final item in saleItems) {
@@ -101,9 +105,13 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير المبيعات اليومي'),
+        title: Text(l10n.todaySales),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -111,240 +119,262 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
           ),
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: 'مشاركة',
+            tooltip: l10n.shareAction,
             onPressed: _shareReport,
           ),
           IconButton(
             icon: const Icon(Icons.print),
-            tooltip: 'طباعة',
+            tooltip: l10n.printAction,
             onPressed: _printReport,
           ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // Date selector
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.calendar_today, color: Colors.blue),
-                    title: const Text('التاريخ'),
-                    subtitle: Text(_formatDate(_selectedDate)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const AdaptiveIcon(Icons.chevron_left),
-                          onPressed: () {
-                            setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1)));
-                            _loadReportData();
-                          },
-                        ),
-                        IconButton(
-                          icon: const AdaptiveIcon(Icons.chevron_right),
-                          onPressed: _selectedDate.isBefore(DateTime.now()) 
-                              ? () {
-                                  setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1)));
-                                  _loadReportData();
-                                }
-                              : null,
-                        ),
-                      ],
-                    ),
-                    onTap: _selectDate,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // حالة عدم وجود بيانات
-                if (_totalTransactions == 0)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
-                        children: [
-                          Icon(Icons.hourglass_empty, size: 64, color: Colors.grey.shade400),
-                          const SizedBox(height: 16),
-                          const Text('لا توجد مبيعات لهذا اليوم', style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  )
-                else ...[
-                  // Summary cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryCard(
-                          title: 'إجمالي المبيعات',
-                          value: '${_totalSales.toStringAsFixed(0)} ر.س',
-                          icon: Icons.attach_money,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _SummaryCard(
-                          title: 'عدد الفواتير',
-                          value: '$_totalTransactions',
-                          icon: Icons.receipt_long,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryCard(
-                          title: 'المنتجات المباعة',
-                          value: '$_totalItems',
-                          icon: Icons.shopping_bag,
-                          color: Colors.orange,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _SummaryCard(
-                          title: 'متوسط الفاتورة',
-                          value: _totalTransactions > 0 
-                              ? '${(_totalSales / _totalTransactions).toStringAsFixed(0)} ر.س'
-                              : '0 ر.س',
-                          icon: Icons.analytics,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Payment methods
-                  if (_totalSales > 0)
+          : ResponsiveBuilder(
+              builder: (context, deviceType, width) {
+                final padding = getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+                return ListView(
+                  padding: EdgeInsets.all(padding),
+                  children: [
+                    // Date selector
                     Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      child: ListTile(
+                        leading: Icon(Icons.calendar_today, color: colorScheme.primary),
+                        title: Text(l10n.date),
+                        subtitle: Text(_formatDate(_selectedDate)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('طرق الدفع', style: Theme.of(context).textTheme.titleMedium),
-                            const Divider(),
-                            _PaymentRow(
-                              icon: Icons.money,
-                              label: 'نقدي',
-                              amount: _cashSales,
-                              color: Colors.green,
-                              percentage: _cashSales / _totalSales,
+                            IconButton(
+                              icon: const AdaptiveIcon(Icons.chevron_left),
+                              onPressed: () {
+                                setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1)));
+                                _loadReportData();
+                              },
                             ),
-                            const SizedBox(height: 12),
-                            _PaymentRow(
-                              icon: Icons.credit_card,
-                              label: 'بطاقة',
-                              amount: _cardSales,
-                              color: Colors.blue,
-                              percentage: _cardSales / _totalSales,
-                            ),
-                            const SizedBox(height: 12),
-                            _PaymentRow(
-                              icon: Icons.account_balance_wallet,
-                              label: 'آجل',
-                              amount: _creditSales,
-                              color: Colors.orange,
-                              percentage: _creditSales / _totalSales,
+                            IconButton(
+                              icon: const AdaptiveIcon(Icons.chevron_right),
+                              onPressed: _selectedDate.isBefore(DateTime.now())
+                                  ? () {
+                                      setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1)));
+                                      _loadReportData();
+                                    }
+                                  : null,
                             ),
                           ],
                         ),
+                        onTap: _selectDate,
                       ),
                     ),
-                  const SizedBox(height: 16),
-                  
-                  // Deductions
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('الخصومات والضريبة', style: Theme.of(context).textTheme.titleMedium),
-                          const Divider(),
-                          ListTile(
-                            leading: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.local_offer, color: Colors.orange),
-                            ),
-                            title: const Text('الخصومات'),
-                            trailing: Text(
-                              '-${_discounts.toStringAsFixed(0)} ر.س',
-                              style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          ListTile(
-                            leading: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.purple.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.receipt, color: Colors.purple),
-                            ),
-                            title: const Text('ضريبة القيمة المضافة 15%'),
-                            trailing: Text(
-                              '${_vat.toStringAsFixed(2)} ر.س',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Net total
-                  Card(
-                    color: Colors.green.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 16),
+
+                    // حالة عدم وجود بيانات
+                    if (_totalTransactions == 0)
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
                             children: [
-                              Text('صافي المبيعات', style: TextStyle(fontSize: 16)),
-                              Text('بعد الخصومات', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                              Icon(Icons.hourglass_empty, size: 64, color: theme.disabledColor),
+                              const SizedBox(height: 16),
+                              Text(l10n.noData, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                             ],
                           ),
-                          Text(
-                            '${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade700,
+                        ),
+                      )
+                    else ...[
+                      // Summary cards - responsive grid
+                      _buildSummaryGrid(context, l10n, deviceType),
+                      const SizedBox(height: 16),
+
+                      // Payment methods
+                      if (_totalSales > 0)
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(l10n.paymentMethod, style: theme.textTheme.titleMedium),
+                                const Divider(),
+                                _PaymentRow(
+                                  icon: Icons.money,
+                                  label: l10n.cash,
+                                  amount: _cashSales,
+                                  color: Colors.green,
+                                  percentage: _cashSales / _totalSales,
+                                ),
+                                const SizedBox(height: 12),
+                                _PaymentRow(
+                                  icon: Icons.credit_card,
+                                  label: l10n.card,
+                                  amount: _cardSales,
+                                  color: Colors.blue,
+                                  percentage: _cardSales / _totalSales,
+                                ),
+                                const SizedBox(height: 12),
+                                _PaymentRow(
+                                  icon: Icons.account_balance_wallet,
+                                  label: l10n.credit,
+                                  amount: _creditSales,
+                                  color: Colors.orange,
+                                  percentage: _creditSales / _totalSales,
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
+                      const SizedBox(height: 16),
+
+                      // Deductions
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${l10n.discount} & ${l10n.vat}', style: theme.textTheme.titleMedium),
+                              const Divider(),
+                              ListTile(
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.local_offer, color: Colors.orange),
+                                ),
+                                title: Text(l10n.discount),
+                                trailing: Text(
+                                  '-${_discounts.toStringAsFixed(0)} ${l10n.sar}',
+                                  style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              ListTile(
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.receipt, color: Colors.purple),
+                                ),
+                                title: Text(l10n.vat),
+                                trailing: Text(
+                                  '${_vat.toStringAsFixed(2)} ${l10n.sar}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ],
+                      const SizedBox(height: 16),
+
+                      // Net total
+                      Card(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(l10n.netProfit, style: const TextStyle(fontSize: 16)),
+                                  Text(l10n.discount, style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
+                                ],
+                              ),
+                              Text(
+                                '${(_totalSales - _discounts).toStringAsFixed(0)} ${l10n.sar}',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
     );
   }
-  
+
+  Widget _buildSummaryGrid(BuildContext context, AppLocalizations l10n, DeviceType deviceType) {
+    final columns = deviceType == DeviceType.mobile ? 2 : 4;
+    final cards = [
+      _SummaryCard(
+        title: l10n.totalSales,
+        value: '${_totalSales.toStringAsFixed(0)} ${l10n.sar}',
+        icon: Icons.attach_money,
+        color: Colors.green,
+      ),
+      _SummaryCard(
+        title: l10n.invoices,
+        value: '$_totalTransactions',
+        icon: Icons.receipt_long,
+        color: Colors.blue,
+      ),
+      _SummaryCard(
+        title: l10n.products,
+        value: '$_totalItems',
+        icon: Icons.shopping_bag,
+        color: Colors.orange,
+      ),
+      _SummaryCard(
+        title: l10n.averageSale,
+        value: _totalTransactions > 0
+            ? '${(_totalSales / _totalTransactions).toStringAsFixed(0)} ${l10n.sar}'
+            : '0 ${l10n.sar}',
+        icon: Icons.analytics,
+        color: Colors.purple,
+      ),
+    ];
+
+    if (columns == 4) {
+      return Row(
+        children: cards.map((card) => Expanded(child: Padding(
+          padding: const EdgeInsetsDirectional.only(end: 12),
+          child: card,
+        ))).toList(),
+      );
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: cards[0]),
+            const SizedBox(width: 12),
+            Expanded(child: cards[1]),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: cards[2]),
+            const SizedBox(width: 12),
+            Expanded(child: cards[3]),
+          ],
+        ),
+      ],
+    );
+  }
+
   String _formatDate(DateTime date) {
     final days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
     return '${days[date.weekday % 7]} ${date.day}/${date.month}/${date.year}';
   }
-  
+
   void _selectDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -357,7 +387,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
       _loadReportData();
     }
   }
-  
+
   pw.Document _buildReportPdf() {
     final pdf = pw.Document();
     pdf.addPage(pw.Page(
@@ -467,7 +497,7 @@ class _SummaryCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
-  
+
   const _SummaryCard({
     required this.title,
     required this.value,
@@ -477,6 +507,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -485,7 +516,7 @@ class _SummaryCard extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(height: 8),
-            Text(title, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text(title, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
             const SizedBox(height: 4),
             Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
@@ -501,7 +532,7 @@ class _PaymentRow extends StatelessWidget {
   final double amount;
   final Color color;
   final double percentage;
-  
+
   const _PaymentRow({
     required this.icon,
     required this.label,
@@ -512,6 +543,8 @@ class _PaymentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Column(
       children: [
         Row(
@@ -520,9 +553,9 @@ class _PaymentRow extends StatelessWidget {
             const SizedBox(width: 8),
             Text(label),
             const Spacer(),
-            Text('${amount.toStringAsFixed(0)} ر.س', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('${amount.toStringAsFixed(0)} ${l10n.sar}', style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(width: 8),
-            Text('(${(percentage * 100).toStringAsFixed(0)}%)', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text('(${(percentage * 100).toStringAsFixed(0)}%)', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
           ],
         ),
         const SizedBox(height: 4),

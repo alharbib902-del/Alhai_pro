@@ -1,12 +1,15 @@
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/sync_providers.dart';
+import '../../widgets/layout/app_header.dart';
 
 class MediaLibraryScreen extends ConsumerStatefulWidget {
   const MediaLibraryScreen({super.key});
@@ -159,46 +162,48 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showUploadDialog(context, isDark),
-        icon: const Icon(Icons.cloud_upload),
-        label: const Text('رفع صور'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-              border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.mediaLibrary,
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 0,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            FilledButton.icon(
+              onPressed: () => _showUploadDialog(context, isDark, l10n),
+              icon: const Icon(Icons.cloud_upload, size: 18),
+              label: Text(l10n.add),
             ),
-            child: Row(
-              children: [
-                if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
-                const Icon(Icons.photo_library, color: AppColors.primary, size: 28),
-                const SizedBox(width: 12),
-                Text('مكتبة الصور', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-                const Spacer(),
-                SegmentedButton<String>(
+          ],
+        ),
+        // Filter row
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: Row(
+            children: [
+              Expanded(
+                child: SegmentedButton<String>(
                   segments: [
                     ButtonSegment(
                       value: 'all',
                       icon: const Icon(Icons.grid_view, size: 18),
-                      label: Text('الكل (${_productsWithImages.length + _productsWithoutImages.length})'),
+                      label: Text('${l10n.all} (${_productsWithImages.length + _productsWithoutImages.length})'),
                     ),
                     ButtonSegment(
                       value: 'images',
                       icon: const Icon(Icons.image, size: 18),
-                      label: Text('بصور (${_productsWithImages.length})'),
+                      label: Text('(${_productsWithImages.length})'),
                     ),
                     ButtonSegment(
                       value: 'no_images',
                       icon: const Icon(Icons.image_not_supported, size: 18),
-                      label: Text('بدون (${_productsWithoutImages.length})'),
+                      label: Text('(${_productsWithoutImages.length})'),
                     ),
                   ],
                   selected: {_filter},
@@ -206,18 +211,18 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                     setState(() => _filter = val.first);
                   },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: _buildBody(isDark),
-          ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: _buildBody(isDark, l10n),
+        ),
+      ],
     );
   }
 
-  Widget _buildBody(bool isDark) {
+  Widget _buildBody(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -227,18 +232,18 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Colors.grey),
+              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
-              label: const Text('إعادة المحاولة'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -255,24 +260,20 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
             Container(
               width: 120, height: 120,
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.border.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Icon(Icons.cloud_upload_outlined, size: 60, color: isDark ? Colors.white24 : Colors.grey.shade300),
+              child: Icon(Icons.cloud_upload_outlined, size: 60, color: isDark ? Colors.white24 : AppColors.textTertiary),
             ),
             const SizedBox(height: 20),
             Text(
-              _filter == 'images'
-                  ? 'لا توجد منتجات بصور'
-                  : _filter == 'no_images'
-                      ? 'جميع المنتجات لديها صور'
-                      : 'لا توجد منتجات',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black54),
+              l10n.noData,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : AppColors.textSecondary),
             ),
             const SizedBox(height: 8),
             Text(
-              'أضف منتجات أولاً ثم ارفع صوراً لها',
-              style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey),
+              l10n.addProductsToStart,
+              style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : AppColors.textTertiary),
             ),
           ],
         ),
@@ -304,9 +305,9 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
     final hasImage = product.imageThumbnail != null && product.imageThumbnail!.isNotEmpty;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -323,13 +324,13 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                           product.imageThumbnail!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
-                            child: Icon(Icons.broken_image, size: 40, color: isDark ? Colors.white24 : Colors.grey.shade300),
+                            color: isDark ? Colors.white.withValues(alpha:0.05) : AppColors.border.withValues(alpha: 0.3),
+                            child: Icon(Icons.broken_image, size: 40, color: isDark ? Colors.white24 : AppColors.textTertiary),
                           ),
                         ),
-                        Positioned(
+                        PositionedDirectional(
                           top: 4,
-                          left: 4,
+                          start: 4,
                           child: Material(
                             color: Colors.black54,
                             borderRadius: BorderRadius.circular(16),
@@ -348,15 +349,15 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   : InkWell(
                       onTap: () => _pickImageForProduct(product),
                       child: Container(
-                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                        color: isDark ? Colors.white.withValues(alpha:0.05) : AppColors.border.withValues(alpha: 0.3),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_photo_alternate_outlined, size: 36, color: isDark ? Colors.white24 : Colors.grey.shade300),
+                            Icon(Icons.add_photo_alternate_outlined, size: 36, color: isDark ? Colors.white24 : AppColors.textTertiary),
                             const SizedBox(height: 4),
                             Text(
                               'إضافة صورة',
-                              style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey),
+                              style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
                             ),
                           ],
                         ),
@@ -375,7 +376,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -393,7 +394,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
     );
   }
 
-  void _showUploadDialog(BuildContext context, bool isDark) {
+  void _showUploadDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
     // Show a dialog to pick a product then pick an image for it
     final displayProducts = _productsWithoutImages;
     showDialog(

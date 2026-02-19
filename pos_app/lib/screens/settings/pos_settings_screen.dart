@@ -687,9 +687,10 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10nErr = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الحفظ: $e'),
+            content: Text('${l10nErr.errorSaving}: $e'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),

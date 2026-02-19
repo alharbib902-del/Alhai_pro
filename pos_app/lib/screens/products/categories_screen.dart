@@ -1281,8 +1281,8 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                           : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: widget.isSelected
-                      ? const Border(
-                          right: BorderSide(
+                      ? const BorderDirectional(
+                          end: BorderSide(
                             color: AppColors.primary,
                             width: 3,
                           ),

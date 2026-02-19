@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../widgets/responsive/responsive_builder.dart';
+import '../../core/responsive/responsive_utils.dart';
 
 /// شاشة تقرير الأرباح
 class ProfitReportScreen extends ConsumerStatefulWidget {
@@ -37,7 +40,6 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
     _loadData();
   }
 
-  /// Calculate the date range based on the selected period
   ({DateTime start, DateTime end}) _getDateRange() {
     final now = DateTime.now();
     switch (_period) {
@@ -68,14 +70,12 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
 
       final dateRange = _getDateRange();
 
-      // Get sales stats for the period
       final salesStats = await db.salesDao.getSalesStats(
         storeId,
         startDate: dateRange.start,
         endDate: dateRange.end,
       );
 
-      // Get expenses for the period
       final expensesList = await db.expensesDao.getExpensesByDateRange(
         storeId,
         dateRange.start,
@@ -83,10 +83,8 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
       );
       final totalExpenses = expensesList.fold<double>(0.0, (sum, e) => sum + e.amount);
 
-      // Revenue from sales stats
       final totalRevenue = salesStats.total;
 
-      // تكلفة البضاعة المباعة: حساب من sale_items مع cost_price من المنتجات
       final cogsResult = await db.customSelect(
         '''SELECT COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as total_cost
            FROM sale_items si
@@ -105,12 +103,10 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
       var costOfGoods = (cogsResult.data['total_cost'] is int)
           ? (cogsResult.data['total_cost'] as int).toDouble()
           : cogsResult.data['total_cost'] as double? ?? 0.0;
-      // إذا لم تتوفر بيانات التكلفة، استخدم تقدير 68%
       if (costOfGoods == 0 && totalRevenue > 0) {
         costOfGoods = totalRevenue * 0.68;
       }
 
-      // الضرائب: مجموع الضريبة الفعلية من جدول المبيعات
       final taxResult = await db.customSelect(
         '''SELECT COALESCE(SUM(tax), 0) as total_tax
            FROM sales
@@ -128,7 +124,6 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
           ? (taxResult.data['total_tax'] as int).toDouble()
           : taxResult.data['total_tax'] as double? ?? 0.0;
 
-      // أكثر المنتجات ربحية: من sale_items مع products
       final topProductResults = await db.customSelect(
         '''SELECT
              p.name,
@@ -184,16 +179,20 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير الأرباح')),
+        appBar: AppBar(title: Text(l10n.profitReport)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير الأرباح')),
+        appBar: AppBar(title: Text(l10n.profitReport)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -204,7 +203,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () { setState(() { _isLoading = true; _error = null; }); _loadData(); },
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -214,21 +213,21 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير الأرباح'),
+        title: Text(l10n.profitReport),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) { setState(() => _period = v); _loadData(); },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
-              PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
-              PopupMenuItem(value: 'quarter', child: Text('ربع سنوي')),
-              PopupMenuItem(value: 'year', child: Text('سنوي')),
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
+              const PopupMenuItem(value: 'quarter', child: Text('ربع سنوي')),
+              const PopupMenuItem(value: 'year', child: Text('سنوي')),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  Text(_getPeriodName()),
+                  Text(_getPeriodName(l10n)),
                   const Icon(Icons.arrow_drop_down),
                 ],
               ),
@@ -236,213 +235,214 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.file_download),
-            tooltip: 'تصدير',
+            tooltip: l10n.exportAction,
             onPressed: () {},
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Net profit highlight
-          Card(
-            color: _netProfit >= 0 ? Colors.green.shade50 : Colors.red.shade50,
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  const Text('صافي الربح'),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${_netProfit.toStringAsFixed(0)} ر.س',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: _netProfit >= 0 ? Colors.green.shade700 : Colors.red.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      'هامش الربح ${_profitMargin.toStringAsFixed(1)}%',
-                      style: TextStyle(
-                        color: _netProfit >= 0 ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Income statement
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('قائمة الدخل', style: Theme.of(context).textTheme.titleMedium),
-                  const Divider(),
-                  
-                  // Revenue
-                  _StatementRow(
-                    label: 'إجمالي الإيرادات',
-                    value: _totalRevenue,
-                    isHeader: true,
-                    color: Colors.green,
-                  ),
-                  
-                  // COGS
-                  _StatementRow(
-                    label: 'تكلفة البضاعة المباعة',
-                    value: -_costOfGoods,
-                    color: Colors.red,
-                  ),
-                  
-                  const Divider(),
-                  
-                  // Gross profit
-                  _StatementRow(
-                    label: 'مجمل الربح',
-                    value: _grossProfit,
-                    isHeader: true,
-                    color: Colors.blue,
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Operating expenses
-                  _StatementRow(
-                    label: 'المصروفات التشغيلية',
-                    value: -_expenses,
-                    color: Colors.orange,
-                  ),
-                  
-                  // Taxes
-                  _StatementRow(
-                    label: 'الضرائب',
-                    value: -_taxes,
-                    color: Colors.purple,
-                  ),
-                  
-                  const Divider(thickness: 2),
-                  
-                  // Net profit
-                  _StatementRow(
-                    label: 'صافي الربح',
-                    value: _netProfit,
-                    isHeader: true,
-                    color: _netProfit >= 0 ? Colors.green : Colors.red,
-                    isBold: true,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Breakdown chart
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('توزيع الإيرادات', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 16),
-                  if (_totalRevenue > 0) ...[
-                    SizedBox(
-                      height: 24,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: (_costOfGoods / _totalRevenue * 100).toInt().clamp(1, 100),
-                              child: Container(color: Colors.red.shade300),
-                            ),
-                            Expanded(
-                              flex: (_expenses / _totalRevenue * 100).toInt().clamp(1, 100),
-                              child: Container(color: Colors.orange.shade300),
-                            ),
-                            Expanded(
-                              flex: (_taxes / _totalRevenue * 100).toInt().clamp(1, 100),
-                              child: Container(color: Colors.purple.shade300),
-                            ),
-                            Expanded(
-                              flex: (_netProfit / _totalRevenue * 100).toInt().clamp(1, 100),
-                              child: Container(color: Colors.green.shade400),
-                            ),
-                          ],
+      body: ResponsiveBuilder(
+        builder: (context, deviceType, width) {
+          final padding = getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+          return ListView(
+            padding: EdgeInsets.all(padding),
+            children: [
+              // Net profit highlight
+              Card(
+                color: _netProfit >= 0
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.red.withValues(alpha: 0.1),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(l10n.netProfit),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${_netProfit.toStringAsFixed(0)} ${l10n.sar}',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: _netProfit >= 0 ? Colors.green.shade700 : Colors.red.shade700,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 8,
-                      children: [
-                        _LegendItem(color: Colors.red.shade300, label: 'تكلفة البضاعة', percent: _costOfGoods / _totalRevenue * 100),
-                        _LegendItem(color: Colors.orange.shade300, label: 'المصروفات', percent: _expenses / _totalRevenue * 100),
-                        _LegendItem(color: Colors.purple.shade300, label: 'الضرائب', percent: _taxes / _totalRevenue * 100),
-                        _LegendItem(color: Colors.green.shade400, label: 'صافي الربح', percent: _netProfit / _totalRevenue * 100),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          '${_profitMargin.toStringAsFixed(1)}%',
+                          style: TextStyle(
+                            color: _netProfit >= 0 ? Colors.green : Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Income statement
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.profitReport, style: theme.textTheme.titleMedium),
+                      const Divider(),
+
+                      _StatementRow(
+                        label: l10n.revenue,
+                        value: _totalRevenue,
+                        isHeader: true,
+                        color: Colors.green,
+                      ),
+
+                      _StatementRow(
+                        label: l10n.costs,
+                        value: -_costOfGoods,
+                        color: Colors.red,
+                      ),
+
+                      const Divider(),
+
+                      _StatementRow(
+                        label: l10n.profitReport,
+                        value: _grossProfit,
+                        isHeader: true,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(height: 8),
+
+                      _StatementRow(
+                        label: l10n.expenses,
+                        value: -_expenses,
+                        color: Colors.orange,
+                      ),
+
+                      _StatementRow(
+                        label: l10n.vat,
+                        value: -_taxes,
+                        color: Colors.purple,
+                      ),
+
+                      const Divider(thickness: 2),
+
+                      _StatementRow(
+                        label: l10n.netProfit,
+                        value: _netProfit,
+                        isHeader: true,
+                        color: _netProfit >= 0 ? Colors.green : Colors.red,
+                        isBold: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Breakdown chart
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.revenue, style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 16),
+                      if (_totalRevenue > 0) ...[
+                        SizedBox(
+                          height: 24,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: (_costOfGoods / _totalRevenue * 100).toInt().clamp(1, 100),
+                                  child: Container(color: Colors.red.shade300),
+                                ),
+                                Expanded(
+                                  flex: (_expenses / _totalRevenue * 100).toInt().clamp(1, 100),
+                                  child: Container(color: Colors.orange.shade300),
+                                ),
+                                Expanded(
+                                  flex: (_taxes / _totalRevenue * 100).toInt().clamp(1, 100),
+                                  child: Container(color: Colors.purple.shade300),
+                                ),
+                                Expanded(
+                                  flex: (_netProfit / _totalRevenue * 100).toInt().clamp(1, 100),
+                                  child: Container(color: Colors.green.shade400),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 16,
+                          runSpacing: 8,
+                          children: [
+                            _LegendItem(color: Colors.red.shade300, label: l10n.costs, percent: _costOfGoods / _totalRevenue * 100),
+                            _LegendItem(color: Colors.orange.shade300, label: l10n.expenses, percent: _expenses / _totalRevenue * 100),
+                            _LegendItem(color: Colors.purple.shade300, label: l10n.vat, percent: _taxes / _totalRevenue * 100),
+                            _LegendItem(color: Colors.green.shade400, label: l10n.netProfit, percent: _netProfit / _totalRevenue * 100),
+                          ],
+                        ),
+                      ] else ...[
+                        SizedBox(
+                          height: 24,
+                          child: Center(child: Text(l10n.noData)),
+                        ),
                       ],
-                    ),
-                  ] else ...[
-                    const SizedBox(
-                      height: 24,
-                      child: Center(child: Text('لا توجد إيرادات في هذه الفترة')),
-                    ),
-                  ],
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Top products by profit
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('أكثر المنتجات ربحية', style: Theme.of(context).textTheme.titleMedium),
-                  const Divider(),
-                  if (_topProducts.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: Text('لا توجد بيانات كافية')),
-                    )
-                  else
-                    ..._topProducts.map((p) => _ProductProfitRow(
-                      name: p.name,
-                      revenue: p.revenue,
-                      cost: p.cost,
-                    )),
-                ],
+              const SizedBox(height: 16),
+
+              // Top products by profit
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.products, style: theme.textTheme.titleMedium),
+                      const Divider(),
+                      if (_topProducts.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Center(child: Text(l10n.noData)),
+                        )
+                      else
+                        ..._topProducts.map((p) => _ProductProfitRow(
+                          name: p.name,
+                          revenue: p.revenue,
+                          cost: p.cost,
+                        )),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
-  
-  String _getPeriodName() {
+
+  String _getPeriodName(AppLocalizations l10n) {
     switch (_period) {
-      case 'week': return 'هذا الأسبوع';
-      case 'month': return 'هذا الشهر';
+      case 'week': return l10n.thisWeek;
+      case 'month': return l10n.thisMonth;
       case 'quarter': return 'ربع سنوي';
       case 'year': return 'سنوي';
-      default: return 'هذا الشهر';
+      default: return l10n.thisMonth;
     }
   }
 }
@@ -453,7 +453,7 @@ class _StatementRow extends StatelessWidget {
   final bool isHeader;
   final Color color;
   final bool isBold;
-  
+
   const _StatementRow({
     required this.label,
     required this.value,
@@ -464,6 +464,7 @@ class _StatementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isHeader ? 8 : 4),
       child: Row(
@@ -477,7 +478,7 @@ class _StatementRow extends StatelessWidget {
             ),
           ),
           Text(
-            '${value >= 0 ? '' : ''}${value.toStringAsFixed(0)} ر.س',
+            '${value >= 0 ? '' : ''}${value.toStringAsFixed(0)} ${l10n.sar}',
             style: TextStyle(
               fontWeight: isHeader || isBold ? FontWeight.bold : FontWeight.normal,
               color: color,
@@ -494,7 +495,7 @@ class _LegendItem extends StatelessWidget {
   final Color color;
   final String label;
   final double percent;
-  
+
   const _LegendItem({
     required this.color,
     required this.label,
@@ -514,7 +515,6 @@ class _LegendItem extends StatelessWidget {
   }
 }
 
-/// Internal helper for top product data
 class _TopProductData {
   final String name;
   final double revenue;
@@ -535,24 +535,26 @@ class _ProductProfitRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final profit = revenue - cost;
-    final margin = (profit / revenue) * 100;
-    
+    final margin = revenue > 0 ? (profit / revenue) * 100 : 0.0;
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(name),
-      subtitle: Text('هامش الربح: ${margin.toStringAsFixed(0)}%'),
+      subtitle: Text('${margin.toStringAsFixed(0)}%'),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            '+${profit.toStringAsFixed(0)} ر.س',
+            '+${profit.toStringAsFixed(0)} ${l10n.sar}',
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
           ),
           Text(
-            'إيراد: ${revenue.toStringAsFixed(0)}',
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            '${l10n.revenue}: ${revenue.toStringAsFixed(0)}',
+            style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
           ),
         ],
       ),

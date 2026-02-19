@@ -212,14 +212,14 @@ class SettingsScreen extends ConsumerWidget {
     return [
       _SettingsCategory(
         icon: Icons.store_rounded,
-        title: '\u0627\u0644\u0645\u062A\u062C\u0631',
-        subtitle: '\u0627\u0644\u0627\u0633\u0645\u060C \u0627\u0644\u0639\u0646\u0648\u0627\u0646',
+        title: l10n.storeSettings,
+        subtitle: l10n.storeInfo,
         color: AppColors.primary,
         onTap: () => context.push(AppRoutes.settingsStore),
       ),
       _SettingsCategory(
         icon: Icons.point_of_sale_rounded,
-        title: '\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064A\u0639',
+        title: l10n.posSettings,
         subtitle: 'POS',
         color: AppColors.info,
         onTap: () => context.push(AppRoutes.settingsPos),
@@ -268,8 +268,8 @@ class SettingsScreen extends ConsumerWidget {
       ),
       _SettingsCategory(
         icon: Icons.trending_up_rounded,
-        title: '\u0627\u0644\u0641\u0648\u0627\u0626\u062F',
-        subtitle: '\u0627\u0644\u062F\u064A\u0648\u0646 \u0627\u0644\u0622\u062C\u0644\u0629',
+        title: l10n.interestSettings,
+        subtitle: l10n.interestSettingsSubtitle,
         color: const Color(0xFFF97316),
         onTap: () => context.push(AppRoutes.settingsInterest),
       ),
@@ -293,19 +293,19 @@ class SettingsScreen extends ConsumerWidget {
       ),
       _SettingsCategory(
         icon: Icons.people_rounded,
-        title: '\u0627\u0644\u0645\u0633\u062A\u062E\u062F\u0645\u064A\u0646',
+        title: l10n.usersManagement,
         color: AppColors.info,
         onTap: () => context.push(AppRoutes.settingsUsers),
       ),
       _SettingsCategory(
         icon: Icons.admin_panel_settings_rounded,
-        title: '\u0627\u0644\u0635\u0644\u0627\u062D\u064A\u0627\u062A',
+        title: l10n.rolesPermissions,
         color: const Color(0xFF7C3AED),
         onTap: () => context.push(AppRoutes.settingsRoles),
       ),
       _SettingsCategory(
         icon: Icons.history_rounded,
-        title: '\u0633\u062C\u0644 \u0627\u0644\u0646\u0634\u0627\u0637',
+        title: l10n.activityLog,
         color: AppColors.textSecondary,
         onTap: () => context.push(AppRoutes.settingsActivityLog),
       ),

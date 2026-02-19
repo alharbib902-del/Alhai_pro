@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../providers/ai_smart_pricing_providers.dart';
 import '../../services/ai_smart_pricing_service.dart';
@@ -34,8 +35,8 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     return Column(
               children: [
                 AppHeader(
-                  title: 'التسعير الذكي', // Smart Pricing
-                  subtitle: 'اقتراحات أسعار مبنية على الذكاء الاصطناعي',
+                  title: AppLocalizations.of(context)!.aiSmartPricingTitle,
+                  subtitle: AppLocalizations.of(context)!.aiSmartPricingSubtitle,
                   // AI-based price suggestions
                   onMenuTap: isWideScreen
                       ? null

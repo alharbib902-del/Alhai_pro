@@ -68,7 +68,7 @@ class InvoiceModel {
 
     return InvoiceModel(
       id: sale.receiptNo,
-      customer: sale.customerName ?? 'عميل نقدي',
+      customer: sale.customerName ?? '', // cashCustomer set in UI with l10n
       date: sale.createdAt,
       amount: sale.total,
       status: status,
@@ -310,7 +310,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       InvoiceStatData(title: l10n.totalInvoices, value: '$totalCount', icon: Icons.receipt_long, iconBgColor: AppColors.info.withValues(alpha: 0.1), iconColor: AppColors.info, gradientColor: AppColors.info, changeValue: '', isPositive: true, subtitle: l10n.comparedToLastMonth),
       InvoiceStatData(title: l10n.totalPaid, value: '$formattedTotal ${l10n.sar}', icon: Icons.check_circle, iconBgColor: AppColors.success.withValues(alpha: 0.1), iconColor: AppColors.success, gradientColor: AppColors.success, subtitle: l10n.sar),
       InvoiceStatData(title: l10n.totalPending, value: '$pendingCount', icon: Icons.access_time, iconBgColor: AppColors.warning.withValues(alpha: 0.1), iconColor: AppColors.warning, gradientColor: AppColors.warning, subtitle: l10n.invoicesWaitingPayment(pendingCount)),
-      InvoiceStatData(title: l10n.totalOverdue, value: '${statsData?.average.toStringAsFixed(0) ?? 0} ${l10n.sar}', icon: Icons.trending_up, iconBgColor: AppColors.error.withValues(alpha: 0.1), iconColor: AppColors.error, gradientColor: AppColors.error, subtitle: 'متوسط الفاتورة'),
+      InvoiceStatData(title: l10n.totalOverdue, value: '${statsData?.average.toStringAsFixed(0) ?? 0} ${l10n.sar}', icon: Icons.trending_up, iconBgColor: AppColors.error.withValues(alpha: 0.1), iconColor: AppColors.error, gradientColor: AppColors.error, subtitle: l10n.averageInvoice),
     ];
 
     if (isWideScreen) {

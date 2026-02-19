@@ -110,7 +110,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                 
                 // Net VAT
                 Card(
-                  color: _netVat >= 0 ? Colors.green.shade50 : Colors.red.shade50,
+                  color: _netVat >= 0 ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -131,7 +131,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _netVat >= 0 ? 'مستحق للهيئة' : 'مستحق من الهيئة',
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),

@@ -43,7 +43,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             IconButton(
               icon: Icon(Icons.settings,
                   color: isDark ? Colors.white70 : AppColors.textSecondary),
-              tooltip: 'إعدادات الطابعة',
+              tooltip: l10n.printerSettings,
               onPressed: () => context.push(AppRoutes.settingsPrinter),
             ),
           ],
@@ -58,14 +58,14 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                           size: 64,
                           color: isDark
                               ? Colors.white24
-                              : Colors.grey.shade400),
+                              : AppColors.textTertiary),
                       const SizedBox(height: 16),
                       Text(
-                        'لا توجد مهام طباعة معلقة',
+                        l10n.noPrintJobsPending,
                         style: TextStyle(
                           color: isDark
                               ? Colors.white54
-                              : Colors.grey.shade600,
+                              : AppColors.textSecondary,
                           fontSize: 16,
                         ),
                       ),
@@ -109,7 +109,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'الطابعة متصلة',
+                  l10n.printerConnected,
                   style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary,
                     fontWeight: FontWeight.w500,
@@ -133,7 +133,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             Expanded(
               child: _buildStatCard(
                 icon: Icons.print,
-                label: 'إجمالي',
+                label: l10n.total,
                 value: '${jobs.length}',
                 color: AppColors.info,
                 isDark: isDark,
@@ -143,7 +143,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             Expanded(
               child: _buildStatCard(
                 icon: Icons.hourglass_empty,
-                label: 'في الانتظار',
+                label: l10n.pending,
                 value: '$pendingCount',
                 color: AppColors.warning,
                 isDark: isDark,
@@ -153,7 +153,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             Expanded(
               child: _buildStatCard(
                 icon: Icons.error_outline,
-                label: 'فشلت',
+                label: l10n.failedPrintLabel,
                 value: '$failedCount',
                 color: AppColors.error,
                 isDark: isDark,
@@ -178,8 +178,8 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
               children: [
                 TextButton(
                   onPressed: _clearAll,
-                  child: const Text('مسح الكل',
-                      style: TextStyle(color: AppColors.error)),
+                  child: Text(l10n.clearAll,
+                      style: const TextStyle(color: AppColors.error)),
                 ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
@@ -192,7 +192,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                               strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.print, size: 18),
                   label: Text(
-                      _isPrinting ? 'جاري الطباعة...' : 'طباعة الكل'),
+                      _isPrinting ? l10n.printingInProgress : l10n.printAll),
                 ),
               ],
             ),
@@ -252,7 +252,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                         ? 'فشل - حاول مرة أخرى${job.errorMessage != null ? " (${job.errorMessage})" : ""}'
                         : job.status == 'printing'
                             ? 'جاري الطباعة...'
-                            : 'في الانتظار',
+                            : l10n.waitingStatus,
                     style: TextStyle(
                       color: job.status == 'failed'
                           ? AppColors.error
@@ -337,7 +337,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
         SnackBar(
           content: Text(
               'تمت طباعة ${job.receiptNo.isNotEmpty ? job.receiptNo : job.saleId}'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
     } catch (e) {
@@ -346,7 +346,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('فشلت الطباعة: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -379,31 +379,33 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
     if (!mounted) return;
     setState(() => _isPrinting = false);
 
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم طباعة جميع المهام'),
-        backgroundColor: Colors.green,
+      SnackBar(
+        content: Text(l10n.allJobsPrinted),
+        backgroundColor: AppColors.success,
       ),
     );
   }
 
   void _clearAll() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('مسح قائمة الطباعة'),
-        content: const Text('هل تريد مسح جميع مهام الطباعة المعلقة؟'),
+        title: Text(l10n.clearPrintQueueTitle),
+        content: Text(l10n.clearPrintQueueConfirm),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء')),
+              child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
               ref.read(printQueueProvider.notifier).clearAll();
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('مسح'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

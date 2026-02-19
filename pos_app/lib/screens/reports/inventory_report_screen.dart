@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../widgets/responsive/responsive_builder.dart';
 
 /// شاشة تقرير المخزون
 class InventoryReportScreen extends ConsumerStatefulWidget {
@@ -38,16 +40,18 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير المخزون')),
+        appBar: AppBar(title: Text(l10n.inventoryReport)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     final inventory = _products.map((p) => _InventoryItem(
       name: p.name,
-      category: p.categoryId ?? 'غير مصنف',
+      category: p.categoryId ?? l10n.categories,
       sku: p.sku ?? p.barcode ?? '',
       stock: p.stockQty,
       minStock: p.minQty,
@@ -64,97 +68,101 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير المخزون'),
+        title: Text(l10n.inventoryReport),
         actions: [
-          IconButton(icon: const Icon(Icons.file_download), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تصدير التقرير')))),
-          IconButton(icon: const Icon(Icons.print), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('طباعة التقرير')))),
+          IconButton(icon: const Icon(Icons.file_download), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.exportAction)))),
+          IconButton(icon: const Icon(Icons.print), onPressed: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.printAction)))),
         ],
       ),
-      body: Column(
-        children: [
-          // الإحصائيات
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _StatCard(icon: Icons.inventory_2, label: 'إجمالي الأصناف', value: '${inventory.length}', color: Colors.blue),
-                const SizedBox(width: 12),
-                _StatCard(icon: Icons.shopping_bag, label: 'إجمالي الوحدات', value: '$totalItems', color: Colors.green),
-                const SizedBox(width: 12),
-                _StatCard(icon: Icons.warning, label: 'منخفض', value: '$lowStock', color: Colors.orange),
-                const SizedBox(width: 12),
-                _StatCard(icon: Icons.remove_shopping_cart, label: 'نافد', value: '$outOfStock', color: Colors.red),
-              ],
-            ),
-          ),
-
-          // قيمة المخزون
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.green.shade600, Colors.green.shade400]),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.attach_money, color: Colors.white, size: 32),
-                const SizedBox(width: 12),
-                const Text('قيمة المخزون الإجمالية', style: TextStyle(color: Colors.white)),
-                const Spacer(),
-                Text('${totalValue.toStringAsFixed(0)} ر.س', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-
-          // التصفية
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _FilterChip(label: 'الكل', selected: _selectedCategory == 'all', onTap: () => setState(() => _selectedCategory = 'all')),
-                ...inventory.map((i) => i.category).toSet().map((cat) => _FilterChip(label: cat, selected: _selectedCategory == cat, onTap: () => setState(() => _selectedCategory = cat))),
-              ],
-            ),
-          ),
-
-          // جدول المخزون
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columnSpacing: 16,
-                columns: const [
-                  DataColumn(label: Text('المنتج')),
-                  DataColumn(label: Text('SKU')),
-                  DataColumn(label: Text('المخزون'), numeric: true),
-                  DataColumn(label: Text('الحد الأدنى'), numeric: true),
-                  DataColumn(label: Text('التكلفة'), numeric: true),
-                  DataColumn(label: Text('السعر'), numeric: true),
-                  DataColumn(label: Text('القيمة'), numeric: true),
-                  DataColumn(label: Text('الحالة')),
-                ],
-                rows: filtered.map((item) {
-                  final isLow = item.stock < item.minStock;
-                  return DataRow(
-                    color: WidgetStateProperty.resolveWith((states) => isLow ? Colors.red.shade50 : null),
-                    cells: [
-                      DataCell(Text(item.name)),
-                      DataCell(Text(item.sku, style: const TextStyle(fontFamily: 'monospace'))),
-                      DataCell(Text(item.stock.toString())),
-                      DataCell(Text(item.minStock.toString())),
-                      DataCell(Text(item.cost.toStringAsFixed(2))),
-                      DataCell(Text(item.price.toStringAsFixed(2))),
-                      DataCell(Text((item.cost * item.stock).toStringAsFixed(0))),
-                      DataCell(isLow ? Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)), child: const Text('منخفض', style: TextStyle(color: Colors.white, fontSize: 10))) : const Icon(Icons.check, color: Colors.green, size: 16)),
-                    ],
-                  );
-                }).toList(),
+      body: ResponsiveBuilder(
+        builder: (context, deviceType, width) {
+          return Column(
+            children: [
+              // الإحصائيات
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    _StatCard(icon: Icons.inventory_2, label: l10n.products, value: '${inventory.length}', color: Colors.blue),
+                    const SizedBox(width: 12),
+                    _StatCard(icon: Icons.shopping_bag, label: l10n.inventory, value: '$totalItems', color: Colors.green),
+                    const SizedBox(width: 12),
+                    _StatCard(icon: Icons.warning, label: l10n.lowStock, value: '$lowStock', color: Colors.orange),
+                    const SizedBox(width: 12),
+                    _StatCard(icon: Icons.remove_shopping_cart, label: l10n.outOfStock, value: '$outOfStock', color: Colors.red),
+                  ],
+                ),
               ),
-            ),
-          ),
-        ],
+
+              // قيمة المخزون
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Colors.green.shade600, Colors.green.shade400]),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.attach_money, color: Colors.white, size: 32),
+                    const SizedBox(width: 12),
+                    Text(l10n.inventoryReport, style: const TextStyle(color: Colors.white)),
+                    const Spacer(),
+                    Text('${totalValue.toStringAsFixed(0)} ${l10n.sar}', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+
+              // التصفية
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    _FilterChip(label: l10n.all, selected: _selectedCategory == 'all', onTap: () => setState(() => _selectedCategory = 'all')),
+                    ...inventory.map((i) => i.category).toSet().map((cat) => _FilterChip(label: cat, selected: _selectedCategory == cat, onTap: () => setState(() => _selectedCategory = cat))),
+                  ],
+                ),
+              ),
+
+              // جدول المخزون
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columnSpacing: 16,
+                    columns: [
+                      DataColumn(label: Text(l10n.products)),
+                      const DataColumn(label: Text('SKU')),
+                      DataColumn(label: Text(l10n.inventory), numeric: true),
+                      DataColumn(label: Text(l10n.lowStock), numeric: true),
+                      DataColumn(label: Text(l10n.costs), numeric: true),
+                      DataColumn(label: Text(l10n.price), numeric: true),
+                      DataColumn(label: Text(l10n.totalSales), numeric: true),
+                      DataColumn(label: Text(l10n.status)),
+                    ],
+                    rows: filtered.map((item) {
+                      final isLow = item.stock < item.minStock;
+                      return DataRow(
+                        color: WidgetStateProperty.resolveWith((states) => isLow ? Colors.red.withValues(alpha: 0.05) : null),
+                        cells: [
+                          DataCell(Text(item.name)),
+                          DataCell(Text(item.sku, style: const TextStyle(fontFamily: 'monospace'))),
+                          DataCell(Text(item.stock.toString())),
+                          DataCell(Text(item.minStock.toString())),
+                          DataCell(Text(item.cost.toStringAsFixed(2))),
+                          DataCell(Text(item.price.toStringAsFixed(2))),
+                          DataCell(Text((item.cost * item.stock).toStringAsFixed(0))),
+                          DataCell(isLow ? Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)), child: const Text('منخفض', style: TextStyle(color: Colors.white, fontSize: 10))) : const Icon(Icons.check, color: Colors.green, size: 16)),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة ماسح الباركود
@@ -14,16 +15,26 @@ class BarcodeScannerScreen extends ConsumerStatefulWidget {
 
 class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   bool _isScanning = false;
+  bool _isSearching = false;
   final List<_ScannedProduct> _scannedProducts = [];
   final _barcodeController = TextEditingController();
 
   @override
+  void dispose() {
+    _barcodeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ماسح الباركود'),
+        title: Text(l10n.barcodeScanner),
         actions: [
-          IconButton(icon: const Icon(Icons.history), onPressed: _showHistory),
+          IconButton(icon: const Icon(Icons.history), onPressed: () => _showHistory(l10n)),
         ],
       ),
       body: Column(
@@ -33,20 +44,20 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.blue.shade600, Colors.blue.shade400]),
+              gradient: LinearGradient(colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.7)]),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
-                Icon(_isScanning ? Icons.qr_code_scanner : Icons.qr_code, size: 80, color: Colors.white),
+                Icon(_isScanning ? Icons.qr_code_scanner : Icons.qr_code, size: 80, color: colorScheme.surface),
                 const SizedBox(height: 16),
-                Text(_isScanning ? 'جاري المسح...' : 'اضغط للبدء', style: const TextStyle(color: Colors.white, fontSize: 18)),
+                Text(_isScanning ? l10n.scanning : l10n.pressToStart, style: TextStyle(color: colorScheme.surface, fontSize: 18)),
                 const SizedBox(height: 16),
                 FilledButton.icon(
                   onPressed: _toggleScanning,
                   icon: Icon(_isScanning ? Icons.stop : Icons.play_arrow),
-                  label: Text(_isScanning ? 'إيقاف' : 'بدء المسح'),
-                  style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.blue),
+                  label: Text(_isScanning ? l10n.stop : l10n.startScanning),
+                  style: FilledButton.styleFrom(backgroundColor: colorScheme.surface, foregroundColor: colorScheme.primary),
                 ),
               ],
             ),
@@ -54,18 +65,24 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 
           // الإدخال اليدوي
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _barcodeController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'أدخل الباركود يدوياً', prefixIcon: Icon(Icons.keyboard)),
+                    decoration: InputDecoration(labelText: l10n.enterBarcodeManually, prefixIcon: const Icon(Icons.keyboard)),
+                    onSubmitted: (_) => _manualSearch(l10n),
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton.filled(icon: const Icon(Icons.search), onPressed: _manualSearch),
+                IconButton.filled(
+                  icon: _isSearching
+                      ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.surface))
+                      : const Icon(Icons.search),
+                  onPressed: _isSearching ? null : () => _manualSearch(l10n),
+                ),
               ],
             ),
           ),
@@ -79,16 +96,16 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.qr_code_2, size: 64, color: Colors.grey.shade400),
+                        Icon(Icons.qr_code_2, size: 64, color: colorScheme.onSurfaceVariant),
                         const SizedBox(height: 16),
-                        Text('لم يتم مسح أي منتج', style: TextStyle(color: Colors.grey.shade600)),
+                        Text(l10n.noScannedProducts, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                         const SizedBox(height: 8),
-                        const Text('أدخل باركود للبحث في قاعدة البيانات', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        Text(l10n.enterBarcodeToSearch, style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
                       ],
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
                     itemCount: _scannedProducts.length,
                     itemBuilder: (context, index) {
                       final product = _scannedProducts[_scannedProducts.length - 1 - index];
@@ -96,17 +113,17 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                         child: ListTile(
                           leading: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.inventory_2, color: Colors.blue),
+                            decoration: BoxDecoration(color: colorScheme.primaryContainer, borderRadius: BorderRadius.circular(8)),
+                            child: Icon(Icons.inventory_2, color: colorScheme.primary),
                           ),
                           title: Text(product.name),
-                          subtitle: Text('الباركود: ${product.barcode}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+                          subtitle: Text('${l10n.barcode}: ${product.barcode}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
                           trailing: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text('${product.price.toStringAsFixed(2)} ر.س', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                              Text('المخزون: ${product.stock}', style: TextStyle(fontSize: 11, color: product.stock < 10 ? Colors.red : Colors.grey)),
+                              Text('${product.price.toStringAsFixed(2)} ${l10n.sar}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Text('${l10n.stock}: ${product.stock}', style: TextStyle(fontSize: 11, color: product.stock < 10 ? colorScheme.error : colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         ),
@@ -119,14 +136,14 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           if (_scannedProducts.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Colors.grey.shade100, border: Border(top: BorderSide(color: Colors.grey.shade300))),
+              decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, border: Border(top: BorderSide(color: colorScheme.outlineVariant))),
               child: Row(
                 children: [
-                  Text('${_scannedProducts.length} منتج', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text('${_scannedProducts.length} ${l10n.product}', style: const TextStyle(fontWeight: FontWeight.bold)),
                   const Spacer(),
-                  OutlinedButton(onPressed: () => setState(() => _scannedProducts.clear()), child: const Text('مسح الكل')),
+                  OutlinedButton(onPressed: () => setState(() => _scannedProducts.clear()), child: Text(l10n.clearAll)),
                   const SizedBox(width: 8),
-                  FilledButton.icon(onPressed: _addToCart, icon: const Icon(Icons.add_shopping_cart), label: const Text('إضافة للسلة')),
+                  FilledButton.icon(onPressed: () => _addToCart(l10n), icon: const Icon(Icons.add_shopping_cart), label: Text(l10n.addToCart)),
                 ],
               ),
             ),
@@ -136,83 +153,86 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   }
 
   void _toggleScanning() {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isScanning = !_isScanning);
     if (_isScanning) {
       // في بيئة حقيقية سيتم استخدام كاميرا الجهاز
-      // حالياً نعرض رسالة للمستخدم
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('استخدم الإدخال اليدوي للبحث عن المنتجات')),
+        SnackBar(content: Text(l10n.useManualInputToSearch)),
       );
       setState(() => _isScanning = false);
     }
   }
 
-  void _manualSearch() {
+  void _manualSearch(AppLocalizations l10n) {
     if (_barcodeController.text.isNotEmpty) {
-      _handleBarcode(_barcodeController.text.trim());
+      _handleBarcode(_barcodeController.text.trim(), l10n);
       _barcodeController.clear();
     }
   }
 
   /// البحث عن المنتج في قاعدة البيانات بالباركود
-  Future<void> _handleBarcode(String barcode) async {
+  Future<void> _handleBarcode(String barcode, AppLocalizations l10n) async {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('لم يتم تحديد المتجر')),
+        SnackBar(content: Text(l10n.storeNotSelected)),
       );
       return;
     }
 
-    final db = getIt<AppDatabase>();
-    final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+    setState(() => _isSearching = true);
 
-    if (product != null) {
-      setState(() => _scannedProducts.add(_ScannedProduct(
-        id: product.id,
-        barcode: product.barcode ?? barcode,
-        name: product.name,
-        price: product.price,
-        stock: product.stockQty,
-      )));
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تم العثور على: ${product.name}')),
-        );
+    try {
+      final db = getIt<AppDatabase>();
+      final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+
+      if (product != null) {
+        setState(() => _scannedProducts.add(_ScannedProduct(
+          id: product.id,
+          barcode: product.barcode ?? barcode,
+          name: product.name,
+          price: product.price,
+          stock: product.stockQty,
+        )));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${l10n.found}: ${product.name}')),
+          );
+        }
+      } else {
+        if (mounted) _showNotFoundDialog(barcode, l10n);
       }
-
-      // إرجاع المنتج للشاشة المستدعية إذا لزم الأمر
-      // Navigator.pop(context, product);
-    } else {
-      if (mounted) _showNotFoundDialog(barcode);
+    } finally {
+      if (mounted) setState(() => _isSearching = false);
     }
   }
 
-  void _showNotFoundDialog(String barcode) {
+  void _showNotFoundDialog(String barcode, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        icon: const Icon(Icons.error_outline, color: Colors.orange, size: 48),
-        title: const Text('منتج غير موجود'),
-        content: Text('لم يتم العثور على المنتج\nالباركود: $barcode'),
+        icon: Icon(Icons.error_outline, color: Colors.orange, size: 48),
+        title: Text(l10n.productNotFound),
+        content: Text('${l10n.productNotFoundForBarcode}\n${l10n.barcode}: $barcode'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق')),
-          FilledButton(onPressed: () { Navigator.pop(context); _addNewProduct(barcode); }, child: const Text('إضافة منتج جديد')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
+          FilledButton(onPressed: () { Navigator.pop(context); _addNewProduct(barcode, l10n); }, child: Text(l10n.addNewProduct)),
         ],
       ),
     );
   }
 
-  void _addNewProduct(String barcode) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سيتم فتح شاشة إضافة منتج جديد')));
+  void _addNewProduct(String barcode, AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.willOpenAddProductScreen)));
   }
 
-  void _showHistory() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سجل المسح')));
+  void _showHistory(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.scanHistory)));
   }
 
-  void _addToCart() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تمت إضافة ${_scannedProducts.length} منتجات للسلة')));
+  void _addToCart(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${l10n.addedToCart} ${_scannedProducts.length} ${l10n.products}')));
   }
 }
 

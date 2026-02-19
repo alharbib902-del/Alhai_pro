@@ -5148,6 +5148,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get orderHistory => 'سجل الطلبات';
 
   @override
+  String get history => 'السجل';
+
+  @override
   String get selectDateRange => 'تحديد فترة';
 
   @override
@@ -7030,4 +7033,834 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get systemSection => 'System';
+
+  @override
+  String get averageInvoice => 'متوسط الفاتورة';
+
+  @override
+  String errorPrefix(Object error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String get vipMember => 'عضو VIP';
+
+  @override
+  String get activeSuppliers => 'موردين نشطين';
+
+  @override
+  String get duePayments => 'المستحقات';
+
+  @override
+  String get productCatalog => 'كتالوج المنتجات';
+
+  @override
+  String get comingSoonBrowseSuppliers => 'قريباً - تصفح منتجات الموردين';
+
+  @override
+  String get comingSoonTag => 'قريباً';
+
+  @override
+  String get supplierNotFound => 'لم يتم العثور على المورد';
+
+  @override
+  String get viewAllPurchases => 'عرض جميع المشتريات';
+
+  @override
+  String get completedLabel => 'مكتمل';
+
+  @override
+  String get pendingStatusLabel => 'معلق';
+
+  @override
+  String get registerPayment => 'تسجيل دفعة للمورد';
+
+  @override
+  String errorLoadingSuppliers(Object error) {
+    return 'خطأ في تحميل الموردين: $error';
+  }
+
+  @override
+  String get cancelLabel => 'إلغاء';
+
+  @override
+  String get addLabel => 'إضافة';
+
+  @override
+  String get saveLabel => 'حفظ';
+
+  @override
+  String purchaseInvoiceSaved(Object total) {
+    return 'تم حفظ فاتورة الشراء - الإجمالي: $total ر.س';
+  }
+
+  @override
+  String errorSavingPurchase(Object error) {
+    return 'خطأ في حفظ المشتريات: $error';
+  }
+
+  @override
+  String get smartReorderTitle => 'الطلب الذكي';
+
+  @override
+  String get smartReorderAiTitle => 'الطلب الذكي بالـ AI';
+
+  @override
+  String get budgetDescription =>
+      'حدد الميزانية وسيقوم النظام بتوزيعها على المنتجات حسب معدل الدوران';
+
+  @override
+  String get enterValidBudget => 'الرجاء إدخال ميزانية صحيحة';
+
+  @override
+  String get confirmSendTitle => 'تأكيد الإرسال';
+
+  @override
+  String sendOrderToMsg(Object supplier) {
+    return 'إرسال الطلب إلى $supplier؟';
+  }
+
+  @override
+  String get orderSentSuccessMsg => 'تم إرسال الطلب بنجاح';
+
+  @override
+  String sendingOrderVia(Object method) {
+    return 'جاري إرسال الطلب عبر $method...';
+  }
+
+  @override
+  String stockQuantity(Object qty) {
+    return 'المخزون: $qty';
+  }
+
+  @override
+  String turnoverLabel(Object rate) {
+    return 'الدوران: $rate%';
+  }
+
+  @override
+  String failedCapture(Object error) {
+    return 'فشل في التقاط الصورة: $error';
+  }
+
+  @override
+  String failedPickImage(Object error) {
+    return 'فشل في اختيار الصورة: $error';
+  }
+
+  @override
+  String failedProcessInvoice(Object error) {
+    return 'فشل في معالجة الفاتورة: $error';
+  }
+
+  @override
+  String matchLabel(Object name) {
+    return 'مطابقة: $name';
+  }
+
+  @override
+  String suggestedProduct(Object index) {
+    return 'منتج مقترح $index';
+  }
+
+  @override
+  String get barcodeLabel => 'باركود: 123456789';
+
+  @override
+  String get purchaseInvoiceSavedSuccess => 'تم حفظ فاتورة الشراء بنجاح';
+
+  @override
+  String get aiImportedInvoice => 'فاتورة مستوردة بالذكاء الاصطناعي';
+
+  @override
+  String aiInvoiceNote(Object number) {
+    return 'فاتورة AI: $number';
+  }
+
+  @override
+  String get supplierCanCreateOrders => 'يمكن إنشاء طلبات شراء من هذا المورد';
+
+  @override
+  String get notesFieldHint => 'أي ملاحظات إضافية عن المورد...';
+
+  @override
+  String get deleteConfirmCancel => 'إلغاء';
+
+  @override
+  String get deleteConfirmBtn => 'حذف';
+
+  @override
+  String get supplierUpdatedMsg => 'تم تحديث بيانات المورد';
+
+  @override
+  String errorOccurredMsg(Object error) {
+    return 'حدث خطأ: $error';
+  }
+
+  @override
+  String errorDuringDeleteMsg(Object error) {
+    return 'حدث خطأ أثناء الحذف: $error';
+  }
+
+  @override
+  String get fortyFiveDays => '45 يوم';
+
+  @override
+  String get expenseCategoriesTitle => 'فئات المصروفات';
+
+  @override
+  String get noCategoriesFound => 'لا توجد فئات مصروفات';
+
+  @override
+  String get monthlyBudget => 'الميزانية الشهرية';
+
+  @override
+  String get spentAmount => 'المصروف';
+
+  @override
+  String get remainingAmount => 'المتبقي';
+
+  @override
+  String get overBudget => 'تجاوز';
+
+  @override
+  String expenseCount(Object count) {
+    return '$count مصروف';
+  }
+
+  @override
+  String spentLabel(Object amount) {
+    return 'المصروف: $amount ر.س';
+  }
+
+  @override
+  String remainingLabel2(Object amount) {
+    return 'المتبقي: $amount ر.س';
+  }
+
+  @override
+  String expensesThisMonth(Object count) {
+    return '$count مصروف هذا الشهر';
+  }
+
+  @override
+  String get recentExpenses => 'آخر المصروفات';
+
+  @override
+  String expenseNumber(Object id) {
+    return 'مصروف #$id';
+  }
+
+  @override
+  String get budgetLabel => 'الميزانية';
+
+  @override
+  String get monthlyBudgetLabel => 'الميزانية الشهرية';
+
+  @override
+  String get categoryNameHint => 'مثال: رواتب الموظفين';
+
+  @override
+  String get productNameLabel => 'اسم المنتج *';
+
+  @override
+  String get quantityLabel => 'الكمية';
+
+  @override
+  String get purchasePriceLabel => 'سعر الشراء';
+
+  @override
+  String get saveInvoiceBtn => 'حفظ الفاتورة';
+
+  @override
+  String get ibanLabel => 'رقم الحساب IBAN';
+
+  @override
+  String get supplierActiveLabel => 'المورد نشط';
+
+  @override
+  String get notesLabel => 'ملاحظات';
+
+  @override
+  String get deleteSupplierConfirm =>
+      'هل أنت متأكد من حذف هذا المورد؟ سيتم حذف جميع البيانات المرتبطة به.';
+
+  @override
+  String get supplierDeletedMsg => 'تم حذف المورد';
+
+  @override
+  String get savingLabel => 'جاري الحفظ...';
+
+  @override
+  String get supplierDetailTitle => 'تفاصيل المورد';
+
+  @override
+  String get supplierNotFoundMsg => 'لم يتم العثور على المورد';
+
+  @override
+  String get lastPurchaseLabel => 'آخر عملية شراء';
+
+  @override
+  String get recentPurchasesLabel => 'آخر المشتريات';
+
+  @override
+  String get noPurchasesLabel => 'لا توجد مشتريات بعد';
+
+  @override
+  String get supplierAddedMsg => 'تم إضافة المورد';
+
+  @override
+  String get openingCashLabel => 'النقدية الافتتاحية';
+
+  @override
+  String get importantNotes => 'ملاحظات مهمة';
+
+  @override
+  String get countCashBeforeShift =>
+      'تأكد من عد النقدية في الصندوق قبل فتح الوردية';
+
+  @override
+  String get shiftTimeAutoRecorded => 'سيتم تسجيل وقت فتح الوردية تلقائياً';
+
+  @override
+  String get oneShiftAtATime => 'لا يمكن فتح أكثر من وردية في نفس الوقت';
+
+  @override
+  String get pleaseEnterOpeningCash =>
+      'يرجى إدخال مبلغ النقدية الافتتاحية (أكبر من صفر)';
+
+  @override
+  String shiftOpenedWithAmount(String amount, String currency) {
+    return 'تم فتح الوردية بمبلغ $amount $currency';
+  }
+
+  @override
+  String get errorOpeningShift => 'خطأ في فتح الوردية';
+
+  @override
+  String get noOpenShift => 'لا توجد وردية مفتوحة';
+
+  @override
+  String get shiftInfoLabel => 'معلومات الوردية';
+
+  @override
+  String get salesSummaryLabel => 'ملخص المبيعات';
+
+  @override
+  String get cashRefundsLabel => 'مرتجعات نقدية';
+
+  @override
+  String get cashDepositLabel => 'إدخال نقدي';
+
+  @override
+  String get cashWithdrawalLabel => 'سحب نقدي';
+
+  @override
+  String get expectedInDrawer => 'المتوقع في الصندوق';
+
+  @override
+  String get actualCashInDrawer => 'النقدية الفعلية في الصندوق';
+
+  @override
+  String get drawerMatched => 'متطابق';
+
+  @override
+  String get surplusStatus => 'فائض';
+
+  @override
+  String get deficitStatus => 'عجز';
+
+  @override
+  String expectedAmountCurrency(String amount, String currency) {
+    return 'المتوقع: $amount $currency';
+  }
+
+  @override
+  String actualAmountCurrency(String amount, String currency) {
+    return 'الفعلي: $amount $currency';
+  }
+
+  @override
+  String get drawerMatchedMessage => 'الصندوق متطابق';
+
+  @override
+  String surplusAmount(String amount, String currency) {
+    return 'فائض: +$amount $currency';
+  }
+
+  @override
+  String deficitAmount(String amount, String currency) {
+    return 'عجز: $amount $currency';
+  }
+
+  @override
+  String get confirmCloseShift => 'هل تريد إغلاق الوردية؟';
+
+  @override
+  String get errorClosingShift => 'خطأ في إغلاق الوردية';
+
+  @override
+  String get shiftClosedSuccessfully => 'تم إغلاق الوردية بنجاح';
+
+  @override
+  String get shiftStatsLabel => 'إحصائيات الوردية';
+
+  @override
+  String get shiftDurationLabel => 'مدة الوردية';
+
+  @override
+  String get invoiceCountLabel => 'عدد الفواتير';
+
+  @override
+  String get invoiceUnit => 'فاتورة';
+
+  @override
+  String get cardSalesLabel => 'مبيعات بطاقة';
+
+  @override
+  String get cashSalesLabel => 'مبيعات نقدية';
+
+  @override
+  String get refundsLabel => 'المرتجعات';
+
+  @override
+  String get expectedInDrawerLabel => 'المتوقع في الصندوق';
+
+  @override
+  String get actualInDrawerLabel => 'الفعلي في الصندوق';
+
+  @override
+  String get differenceLabel => 'الفرق';
+
+  @override
+  String get printingReport => 'جاري طباعة التقرير...';
+
+  @override
+  String get sharingInProgress => 'جاري المشاركة...';
+
+  @override
+  String get openNewShift => 'فتح وردية جديدة';
+
+  @override
+  String hoursAndMinutes(int hours, int minutes) {
+    return '$hours ساعات $minutes دقيقة';
+  }
+
+  @override
+  String hoursOnly(int hours) {
+    return '$hours ساعات';
+  }
+
+  @override
+  String minutesOnly(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get rejectedNotApproved => 'تم رفض العملية - لم تتم الموافقة';
+
+  @override
+  String errorWithDetails(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String get inventoryManagement => 'إدارة ومتابعة المخزون';
+
+  @override
+  String get bulkEdit => 'تعديل جماعي';
+
+  @override
+  String get totalProducts => 'إجمالي المنتجات';
+
+  @override
+  String get inventoryValue => 'قيمة المخزون';
+
+  @override
+  String get exportInventoryReport => 'تصدير تقرير المخزون';
+
+  @override
+  String get printOrderList => 'طباعة قائمة الطلب';
+
+  @override
+  String get inventoryMovementLog => 'سجل حركة المخزون';
+
+  @override
+  String get editSelected => 'تعديل المحدد';
+
+  @override
+  String get clearSelection => 'إلغاء التحديد';
+
+  @override
+  String get noOutOfStockProducts => 'لا يوجد منتجات نفذت';
+
+  @override
+  String get allProductsAvailable => 'جميع المنتجات متوفرة في المخزون';
+
+  @override
+  String get editStock => 'تعديل المخزون';
+
+  @override
+  String get newQuantity => 'الكمية الجديدة';
+
+  @override
+  String get receiveGoods => 'استلام بضاعة';
+
+  @override
+  String get damaged => 'تالف';
+
+  @override
+  String get correction => 'تصحيح';
+
+  @override
+  String get stockUpdatedTo => 'تم تعديل مخزون';
+
+  @override
+  String get featureUnderDevelopment => 'هذه الميزة قيد التطوير...';
+
+  @override
+  String get newest => 'الأحدث';
+
+  @override
+  String get adjustStock => 'تعديل المخزون';
+
+  @override
+  String get adjustmentHistory => 'سجل التعديلات';
+
+  @override
+  String get errorLoadingProducts => 'حدث خطأ أثناء تحميل المنتجات';
+
+  @override
+  String get selectProduct => 'اختيار المنتج';
+
+  @override
+  String get subtract => 'خصم';
+
+  @override
+  String get setQuantity => 'تعيين';
+
+  @override
+  String get enterQuantity => 'أدخل الكمية';
+
+  @override
+  String get enterValidQuantity => 'أدخل كمية صحيحة';
+
+  @override
+  String get notesOptional => 'ملاحظات (اختياري)';
+
+  @override
+  String get enterAdditionalNotes => 'أدخل أي ملاحظات إضافية...';
+
+  @override
+  String get adjustmentSummary => 'ملخص التعديل';
+
+  @override
+  String get newStock => 'المخزون الجديد';
+
+  @override
+  String get warningNegativeStock => 'تحذير: المخزون سيصبح سالباً!';
+
+  @override
+  String get saving => 'جاري الحفظ...';
+
+  @override
+  String get storeNotSelected => 'لم يتم تحديد المتجر';
+
+  @override
+  String get noInventoryMovements => 'لا توجد حركات مخزون';
+
+  @override
+  String get adjustmentSavedSuccess => 'تم حفظ التعديل بنجاح';
+
+  @override
+  String get errorSaving => 'حدث خطأ أثناء الحفظ';
+
+  @override
+  String get enterBarcode => 'أدخل الباركود';
+
+  @override
+  String get theft => 'سرقة';
+
+  @override
+  String get noMatchingProducts => 'لا توجد منتجات مطابقة';
+
+  @override
+  String get stockTransfer => 'تحويل المخزون';
+
+  @override
+  String get newTransfer => 'تحويل جديد';
+
+  @override
+  String get fromBranch => 'من فرع';
+
+  @override
+  String get toBranch => 'إلى فرع';
+
+  @override
+  String get selectSourceBranch => 'اختر الفرع المصدر';
+
+  @override
+  String get selectTargetBranch => 'اختر الفرع الهدف';
+
+  @override
+  String get selectProductsForTransfer => 'اختر منتجات للتحويل';
+
+  @override
+  String get creating => 'جاري الإنشاء...';
+
+  @override
+  String get createTransferRequest => 'إنشاء طلب التحويل';
+
+  @override
+  String get errorLoadingTransfers => 'خطأ في تحميل التحويلات';
+
+  @override
+  String get noPreviousTransfers => 'لا توجد تحويلات سابقة';
+
+  @override
+  String get approved => 'موافق عليه';
+
+  @override
+  String get inTransit => 'قيد النقل';
+
+  @override
+  String get complete => 'إكمال';
+
+  @override
+  String get completeTransfer => 'إكمال التحويل';
+
+  @override
+  String get completeTransferConfirm =>
+      'هل تريد إكمال هذا التحويل؟ سيتم خصم الكميات من الفرع المصدر وإضافتها للفرع الهدف.';
+
+  @override
+  String get transferCompletedSuccess => 'تم إكمال التحويل وتحديث المخزون';
+
+  @override
+  String get errorCompletingTransfer => 'خطأ في إكمال التحويل';
+
+  @override
+  String get transferCreatedSuccess => 'تم إنشاء طلب التحويل بنجاح';
+
+  @override
+  String get errorCreatingTransfer => 'خطأ في إنشاء التحويل';
+
+  @override
+  String get stockTake => 'الجرد';
+
+  @override
+  String get startStockTake => 'بدء الجرد';
+
+  @override
+  String get counted => 'تم عدها';
+
+  @override
+  String get variances => 'فروقات';
+
+  @override
+  String get of_ => 'من';
+
+  @override
+  String get system => 'النظام';
+
+  @override
+  String get count => 'العدد';
+
+  @override
+  String get finishStockTake => 'إنهاء الجرد';
+
+  @override
+  String get stockTakeDescription => 'قم بعد منتجات المخزون ومقارنتها بالنظام';
+
+  @override
+  String get noProductsInStock => 'لا توجد منتجات في المخزون';
+
+  @override
+  String get noProductsToCount => 'لا توجد منتجات لبدء الجرد';
+
+  @override
+  String get errorCreatingStockTake => 'خطأ في إنشاء عملية الجرد';
+
+  @override
+  String get saveStockTakeConfirm => 'هل تريد حفظ نتائج الجرد وتحديث المخزون؟';
+
+  @override
+  String get stockTakeSavedSuccess => 'تم حفظ الجرد وتحديث المخزون بنجاح';
+
+  @override
+  String get errorCompletingStockTake => 'خطأ في إكمال الجرد';
+
+  @override
+  String get stockTakeHistory => 'سجل الجرد';
+
+  @override
+  String get errorLoadingHistory => 'خطأ في تحميل السجل';
+
+  @override
+  String get noStockTakeHistory => 'لا يوجد سجل جرد سابق';
+
+  @override
+  String get inProgress => 'قيد التنفيذ';
+
+  @override
+  String get expiryTracking => 'تتبع الصلاحية';
+
+  @override
+  String get errorLoadingExpiryData => 'خطأ في تحميل بيانات الصلاحية';
+
+  @override
+  String get withinMonth => 'خلال شهر';
+
+  @override
+  String get noProductsExpiringIn7Days => 'لا توجد منتجات تنتهي خلال 7 أيام';
+
+  @override
+  String get noProductsExpiringInMonth => 'لا توجد منتجات تنتهي خلال شهر';
+
+  @override
+  String get noExpiredProducts => 'لا توجد منتجات منتهية الصلاحية';
+
+  @override
+  String get batch => 'باتش';
+
+  @override
+  String expiredSinceDays(int days) {
+    return 'منتهي منذ $days يوم';
+  }
+
+  @override
+  String get remove => 'إزالة';
+
+  @override
+  String get pressToAddExpiryTracking => 'اضغط + لإضافة تتبع صلاحية جديد';
+
+  @override
+  String get applyDiscountTo => 'تطبيق خصم على';
+
+  @override
+  String get confirmRemoval => 'تأكيد الإزالة';
+
+  @override
+  String get removeExpiryTrackingFor => 'هل تريد إزالة تتبع صلاحية';
+
+  @override
+  String get expiryTrackingRemoved => 'تم إزالة تتبع الصلاحية';
+
+  @override
+  String get errorRemovingExpiryTracking => 'خطأ في إزالة تتبع الصلاحية';
+
+  @override
+  String get addExpiryDate => 'إضافة تاريخ صلاحية';
+
+  @override
+  String get barcodeOrProductName => 'الباركود أو اسم المنتج';
+
+  @override
+  String get selectDate => 'اختر التاريخ';
+
+  @override
+  String get batchNumberOptional => 'رقم الباتش (اختياري)';
+
+  @override
+  String get expiryTrackingAdded => 'تم إضافة تتبع الصلاحية بنجاح';
+
+  @override
+  String get errorAddingExpiryTracking => 'خطأ في إضافة تتبع الصلاحية';
+
+  @override
+  String get barcodeScanner2 => 'ماسح الباركود';
+
+  @override
+  String get scanning => 'جاري المسح...';
+
+  @override
+  String get pressToStart => 'اضغط للبدء';
+
+  @override
+  String get stop => 'إيقاف';
+
+  @override
+  String get startScanning => 'بدء المسح';
+
+  @override
+  String get enterBarcodeManually => 'أدخل الباركود يدوياً';
+
+  @override
+  String get noScannedProducts => 'لم يتم مسح أي منتج';
+
+  @override
+  String get enterBarcodeToSearch => 'أدخل باركود للبحث في قاعدة البيانات';
+
+  @override
+  String get useManualInputToSearch =>
+      'استخدم الإدخال اليدوي للبحث عن المنتجات';
+
+  @override
+  String get found => 'تم العثور على';
+
+  @override
+  String get productNotFoundForBarcode => 'لم يتم العثور على المنتج';
+
+  @override
+  String get addNewProduct => 'إضافة منتج جديد';
+
+  @override
+  String get willOpenAddProductScreen => 'سيتم فتح شاشة إضافة منتج جديد';
+
+  @override
+  String get scanHistory => 'سجل المسح';
+
+  @override
+  String get addedToCart => 'تمت إضافة';
+
+  @override
+  String get barcodePrint => 'طباعة الباركود';
+
+  @override
+  String get noProductsWithBarcode => 'لا توجد منتجات بباركود';
+
+  @override
+  String get addBarcodeFirst => 'أضف باركود للمنتجات أولاً';
+
+  @override
+  String get searchProduct => 'بحث عن منتج...';
+
+  @override
+  String get totalLabels => 'إجمالي الملصقات';
+
+  @override
+  String get printLabels => 'طباعة الملصقات';
+
+  @override
+  String get printList => 'قائمة الطباعة';
+
+  @override
+  String get selectProductsToPrint => 'اختر منتجات للطباعة';
+
+  @override
+  String get willPrint => 'سيتم طباعة';
+
+  @override
+  String get label => 'ملصق';
+
+  @override
+  String get printing => 'جاري الطباعة...';
+
+  @override
+  String get messageAddedToQueue => 'تم إضافة الرسالة لطابور الإرسال';
+
+  @override
+  String get messageSendFailed => 'تعذر إرسال الرسالة';
+
+  @override
+  String get noPhoneForCustomer => 'لا يوجد رقم هاتف للعميل';
+
+  @override
+  String get inputContainsDangerousContent =>
+      'المدخل يحتوي على محتوى غير مسموح';
+
+  @override
+  String whatsappGreeting(String name) {
+    return 'مرحباً $name\nكيف يمكننا مساعدتك؟';
+  }
 }

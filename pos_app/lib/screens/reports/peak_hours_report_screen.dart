@@ -10,6 +10,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير ساعات الذروة
@@ -88,17 +89,17 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير ساعات الذروة'),
+        title: Text(AppLocalizations.of(context)!.reports),
         actions: [
           IconButton(
             onPressed: _selectDateRange,
             icon: const Icon(Icons.date_range),
-            tooltip: 'تحديد الفترة',
+            tooltip: AppLocalizations.of(context)!.date,
           ),
           IconButton(
             onPressed: _exportReport,
             icon: const Icon(Icons.download),
-            tooltip: 'تصدير',
+            tooltip: AppLocalizations.of(context)!.exportAction,
           ),
         ],
       ),
@@ -689,8 +690,8 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('جاري تصدير التقرير...'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.exportingReport),
       ),
     );
   }

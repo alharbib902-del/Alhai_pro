@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/settings_providers.dart';
+import '../../widgets/responsive/responsive_builder.dart';
+import '../../core/responsive/responsive_utils.dart';
+import '../../core/constants/breakpoints.dart';
 
 /// شاشة تحليلات المبيعات - بيانات حقيقية من قاعدة البيانات
 class SalesAnalyticsScreen extends ConsumerStatefulWidget {
@@ -30,92 +34,100 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final statsAsync = ref.watch(salesAnalyticsProvider(_dateRange));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تحليلات المبيعات'),
+        title: Text(l10n.salesAnalytics),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.date_range),
             onSelected: (v) => setState(() => _selectedPeriod = v),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'today', child: Text('اليوم')),
-              const PopupMenuItem(value: 'week', child: Text('الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('الشهر')),
+              PopupMenuItem(value: 'today', child: Text(l10n.today)),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
             ],
           ),
         ],
       ),
       body: statsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
-        data: (stats) => SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _selectedPeriod == 'today' ? 'اليوم' : _selectedPeriod == 'week' ? 'الأسبوع' : 'الشهر',
-                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
+        error: (e, _) => Center(child: Text('${l10n.errorOccurred}: $e')),
+        data: (stats) => ResponsiveBuilder(
+          builder: (context, deviceType, width) {
+            final padding = getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _MetricCard(
-                    icon: Icons.attach_money, title: 'إجمالي المبيعات',
-                    value: '${stats.total.toStringAsFixed(0)} ر.س', color: Colors.green,
-                  )),
-                  const SizedBox(width: 12),
-                  Expanded(child: _MetricCard(
-                    icon: Icons.receipt_long, title: 'عدد الفواتير',
-                    value: '${stats.count}', color: Colors.blue,
-                  )),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(child: _MetricCard(
-                    icon: Icons.shopping_cart, title: 'متوسط الفاتورة',
-                    value: '${stats.average.toStringAsFixed(0)} ر.س', color: Colors.orange,
-                  )),
-                  const SizedBox(width: 12),
-                  Expanded(child: _MetricCard(
-                    icon: Icons.trending_up, title: 'أعلى فاتورة',
-                    value: '${stats.maxSale.toStringAsFixed(0)} ر.س', color: Colors.purple,
-                  )),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ملخص', style: Theme.of(context).textTheme.titleMedium),
-                      const Divider(),
-                      _SummaryRow(label: 'إجمالي المبيعات', value: '${stats.total.toStringAsFixed(2)} ر.س'),
-                      _SummaryRow(label: 'عدد الفواتير', value: '${stats.count}'),
-                      _SummaryRow(label: 'متوسط الفاتورة', value: '${stats.average.toStringAsFixed(2)} ر.س'),
-                      _SummaryRow(label: 'أعلى فاتورة', value: '${stats.maxSale.toStringAsFixed(2)} ر.س'),
-                      _SummaryRow(label: 'أقل فاتورة', value: '${stats.minSale.toStringAsFixed(2)} ر.س'),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _selectedPeriod == 'today' ? l10n.today : _selectedPeriod == 'week' ? l10n.thisWeek : l10n.thisMonth,
+                      style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w500),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  _buildMetricGrid(context, l10n, stats, deviceType),
+                  const SizedBox(height: 24),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.salesAnalytics, style: theme.textTheme.titleMedium),
+                          const Divider(),
+                          _SummaryRow(label: l10n.totalSales, value: '${stats.total.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(label: l10n.invoices, value: '${stats.count}'),
+                          _SummaryRow(label: l10n.averageSale, value: '${stats.average.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(label: l10n.totalSales, value: '${stats.maxSale.toStringAsFixed(2)} ${l10n.sar}'),
+                          _SummaryRow(label: l10n.averageSale, value: '${stats.minSale.toStringAsFixed(2)} ${l10n.sar}'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildMetricGrid(BuildContext context, AppLocalizations l10n, dynamic stats, DeviceType deviceType) {
+    final cards = [
+      _MetricCard(icon: Icons.attach_money, title: l10n.totalSales, value: '${stats.total.toStringAsFixed(0)} ${l10n.sar}', color: Colors.green),
+      _MetricCard(icon: Icons.receipt_long, title: l10n.invoices, value: '${stats.count}', color: Colors.blue),
+      _MetricCard(icon: Icons.shopping_cart, title: l10n.averageSale, value: '${stats.average.toStringAsFixed(0)} ${l10n.sar}', color: Colors.orange),
+      _MetricCard(icon: Icons.trending_up, title: l10n.totalSales, value: '${stats.maxSale.toStringAsFixed(0)} ${l10n.sar}', color: Colors.purple),
+    ];
+
+    if (deviceType == DeviceType.desktop) {
+      return Row(
+        children: cards.map((c) => Expanded(child: Padding(
+          padding: const EdgeInsetsDirectional.only(end: 12),
+          child: c,
+        ))).toList(),
+      );
+    }
+
+    return Column(
+      children: [
+        Row(children: [Expanded(child: cards[0]), const SizedBox(width: 12), Expanded(child: cards[1])]),
+        const SizedBox(height: 12),
+        Row(children: [Expanded(child: cards[2]), const SizedBox(width: 12), Expanded(child: cards[3])]),
+      ],
     );
   }
 }
@@ -130,6 +142,7 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -139,7 +152,7 @@ class _MetricCard extends StatelessWidget {
             Row(children: [
               Icon(icon, size: 20, color: color),
               const SizedBox(width: 8),
-              Text(title, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+              Expanded(child: Text(title, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))),
             ]),
             const SizedBox(height: 8),
             Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
@@ -158,12 +171,13 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          Text(label, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
       ),

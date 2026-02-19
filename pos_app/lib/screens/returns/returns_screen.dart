@@ -51,7 +51,7 @@ class ReturnModel {
     return ReturnModel(
       id: data.returnNumber,
       invoiceNo: data.saleId,
-      customer: data.customerName ?? 'عميل',
+      customer: data.customerName ?? '',
       date: data.createdAt,
       amount: data.totalRefund,
       status: data.status,
@@ -226,7 +226,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 Expanded(
                   child: ref.watch(returnsListProvider).when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text('خطأ: $e')),
+                    error: (e, _) => Center(child: Text(l10n.errorPrefix(e))),
                     data: (returnsData) {
                       final allReturns = returnsData.map((r) => ReturnModel.fromData(r)).toList();
                       final filteredReturns = _filterReturns(allReturns);

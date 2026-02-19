@@ -625,23 +625,23 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             final service = ref.read(whatsappServiceProvider);
             await service.sendMessage(
               phoneNumber: _customerPhone,
-              message: 'مرحباً $_customerName 👋\nكيف يمكننا مساعدتك؟',
+              message: AppLocalizations.of(context)!.whatsappGreeting(_customerName),
             );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم إضافة الرسالة لطابور الإرسال')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.messageAddedToQueue)),
               );
             }
           } catch (_) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تعذر إرسال الرسالة')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.messageSendFailed)),
               );
             }
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('لا يوجد رقم هاتف للعميل')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.noPhoneForCustomer)),
           );
         }
         break;
@@ -2317,8 +2317,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     final text = InputSanitizer.sanitize(raw);
     if (InputSanitizer.containsDangerousContent(text)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('المدخل يحتوي على محتوى غير مسموح'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.inputContainsDangerousContent),
           backgroundColor: Colors.red,
         ),
       );

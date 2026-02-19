@@ -103,6 +103,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
+    final theme = Theme.of(context);
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -112,14 +113,14 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
-            Text(_error!, style: const TextStyle(color: Colors.red)),
+            Text(_error!, style: TextStyle(color: theme.colorScheme.error)), // TODO: i18n
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: () => context.go(AppRoutes.pos),
               icon: const Icon(Icons.point_of_sale),
-              label: const Text('بيع جديد'),
+              label: const Text('بيع جديد'), // TODO: i18n
             ),
           ],
         ),
@@ -129,11 +130,13 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     final sale = _sale!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateFormat = DateFormat('yyyy/MM/dd HH:mm', 'ar');
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxWidth = screenWidth > 600 ? 480.0 : 400.0;
 
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 400),
-        margin: const EdgeInsets.all(24),
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        margin: EdgeInsets.all(screenWidth > 600 ? 32 : 16),
         child: Column(
           children: [
             // Success icon
@@ -163,22 +166,22 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
+                  color: AppColors.warningSurface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.orange.shade300),
+                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.cloud_upload_outlined,
-                        size: 18, color: Colors.orange.shade700),
+                        size: 18, color: AppColors.warning),
                     const SizedBox(width: 8),
                     Text(
-                      'في انتظار المزامنة',
+                      'في انتظار المزامنة', // TODO: i18n
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Colors.orange.shade700,
+                        color: AppColors.warning,
                       ),
                     ),
                   ],
@@ -213,17 +216,17 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 6),
                             child: Chip(
-                              avatar: Icon(Icons.sync,
-                                  size: 16, color: Colors.orange.shade700),
-                              label: Text(
-                                'غير مزامنة',
+                              avatar: const Icon(Icons.sync,
+                                  size: 16, color: AppColors.warning),
+                              label: const Text(
+                                'غير مزامنة', // TODO: i18n
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.orange.shade700,
+                                  color: AppColors.warning,
                                 ),
                               ),
-                              backgroundColor: Colors.orange.shade50,
-                              side: BorderSide(color: Colors.orange.shade200),
+                              backgroundColor: AppColors.warningSurface,
+                              side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                             ),
@@ -458,11 +461,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               width: 18,
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2))
-                          : Icon(Icons.chat, color: Colors.green.shade600),
-                      label: Text(_whatsAppSent ? 'تم الإرسال \u2713' : 'واتساب'),
+                          : const Icon(Icons.chat, color: AppColors.success),
+                      label: Text(_whatsAppSent ? 'تم الإرسال \u2713' : 'واتساب'), // TODO: i18n
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: BorderSide(color: Colors.green.shade600),
+                        side: const BorderSide(color: AppColors.success),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -580,8 +583,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('تم إرسال الإيصال عبر واتساب \u2713'),
-            backgroundColor: Colors.green,
+            content: Text('تم إرسال الإيصال عبر واتساب \u2713'), // TODO: i18n
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -590,8 +593,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         setState(() => _isSendingWhatsApp = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل الإرسال: $e'),
-            backgroundColor: Colors.orange,
+            content: Text('فشل الإرسال: $e'), // TODO: i18n
+            backgroundColor: AppColors.warning,
           ),
         );
       }
@@ -602,8 +605,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     if (widget.saleId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('لا يمكن الطباعة - رقم الفاتورة غير متوفر'),
-          backgroundColor: Colors.orange,
+          content: Text('لا يمكن الطباعة - رقم الفاتورة غير متوفر'), // TODO: i18n
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -626,8 +629,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('تمت إضافة الفاتورة لقائمة الطباعة'),
-          backgroundColor: Colors.orange,
+          content: Text('تمت إضافة الفاتورة لقائمة الطباعة'), // TODO: i18n
+          backgroundColor: AppColors.warning,
         ),
       );
     }

@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../providers/ai_sentiment_analysis_providers.dart';
 import '../../services/ai_sentiment_analysis_service.dart';
@@ -30,7 +31,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
     return Column(
               children: [
                 AppHeader(
-                  title: 'تحليل مشاعر العملاء',
+                  title: AppLocalizations.of(context)!.aiSentimentAnalysisTitle,
                   onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
                 ),
                 Expanded(child: _buildContent(isDark, isWideScreen)),

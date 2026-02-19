@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/settings_db_providers.dart';
+import '../../widgets/layout/app_header.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -84,34 +87,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-              border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
-            ),
-            child: Row(
-              children: [
-                if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
-                const Icon(Icons.card_membership, color: AppColors.primary, size: 28),
-                const SizedBox(width: 12),
-                Text('إدارة الاشتراكات', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _buildBody(isDark),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.subscription,
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 0,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: _buildBody(isDark, l10n),
+        ),
+      ],
     );
   }
 
-  Widget _buildBody(bool isDark) {
+  Widget _buildBody(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -121,18 +116,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Colors.grey),
+              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
-              label: const Text('إعادة المحاولة'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -155,7 +150,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             _buildFeaturesSection(isDark),
             const SizedBox(height: 24),
           ],
-          Text('الخطط المتاحة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+          Text('الخطط المتاحة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
           const SizedBox(height: 16),
           // Plans grid
           LayoutBuilder(
@@ -200,7 +195,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha:0.2), borderRadius: BorderRadius.circular(20)),
                   child: const Text('غير مشترك', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                 ),
               ],
@@ -256,7 +251,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha:0.2), borderRadius: BorderRadius.circular(20)),
                 child: Text(
                   isActive ? 'نشط' : status,
                   style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
@@ -318,7 +313,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('إحصائيات الاستخدام', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+        Text('إحصائيات الاستخدام', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -353,9 +348,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,7 +362,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(limit, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w500)),
@@ -375,9 +370,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+          Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
           const SizedBox(height: 4),
-          Text(title, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.grey)),
+          Text(title, style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : AppColors.textSecondary)),
         ],
       ),
     );
@@ -408,15 +403,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('ميزات الاشتراك', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+        Text('ميزات الاشتراك', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+            color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           ),
           child: Column(
             children: features.map((f) => Padding(
@@ -441,7 +436,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPopular ? AppColors.primary : (isCurrentPlan ? Colors.green : (isDark ? Colors.white12 : Colors.grey.shade200)),
@@ -463,14 +458,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(8)),
             child: const Text('خطتك الحالية', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
           ),
-          Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+          Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(price, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primary)),
               const SizedBox(width: 4),
-              Text('ر.س/شهر', style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.grey)),
+              Text('ر.س/شهر', style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary)),
             ],
           ),
           const SizedBox(height: 12),

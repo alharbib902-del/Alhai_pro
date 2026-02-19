@@ -1,13 +1,16 @@
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/settings_db_providers.dart';
 import '../../providers/sync_providers.dart';
+import '../../widgets/layout/app_header.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -172,34 +175,30 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showDepositDialog(context, isDark),
-        icon: const Icon(Icons.add),
-        label: const Text('إيداع'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-              border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.wallet,
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 0,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            FilledButton.icon(
+              onPressed: () => _showDepositDialog(context, isDark),
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(l10n.walletTopup),
             ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
-                    const Icon(Icons.account_balance_wallet, color: AppColors.primary, size: 28),
-                    const SizedBox(width: 12),
-                    Text('المحفظة الإلكترونية', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-                  ],
-                ),
-                const SizedBox(height: 16),
+          ],
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: Column(
+            children: [
                 // Balance card
                 Container(
                   width: double.infinity,
@@ -236,12 +235,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
                 TabBar(
                   controller: _tabController,
                   labelColor: AppColors.primary,
-                  unselectedLabelColor: isDark ? Colors.white54 : Colors.grey,
+                  unselectedLabelColor: isDark ? Colors.white54 : AppColors.textSecondary,
                   indicatorColor: AppColors.primary,
-                  tabs: const [
-                    Tab(text: 'المعاملات'),
-                    Tab(text: 'الإيداعات'),
-                    Tab(text: 'التحويلات'),
+                  tabs: [
+                    Tab(text: l10n.all),
+                    Tab(text: l10n.walletTopup),
+                    Tab(text: l10n.walletPayment),
                   ],
                 ),
               ],
@@ -255,18 +254,18 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+                            Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.7)),
                             const SizedBox(height: 16),
                             Text(
                               _error!,
-                              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Colors.grey),
+                              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 16),
-                            ElevatedButton.icon(
+                            FilledButton.icon(
                               onPressed: _loadData,
                               icon: const Icon(Icons.refresh),
-                              label: const Text('إعادة المحاولة'),
+                              label: Text(l10n.retry),
                             ),
                           ],
                         ),
@@ -281,7 +280,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
                       ),
           ),
         ],
-      ),
     );
   }
 
@@ -307,12 +305,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(emptyIcon, size: 80, color: isDark ? Colors.white24 : Colors.grey.shade300),
+            Icon(emptyIcon, size: 80, color: isDark ? Colors.white24 : AppColors.textTertiary),
             const SizedBox(height: 16),
-            Text(emptyMessage, style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Colors.grey)),
+            Text(emptyMessage, style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary)),
             if (emptySubMessage.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text(emptySubMessage, style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey.shade400)),
+              Text(emptySubMessage, style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : AppColors.textTertiary)),
             ],
           ],
         ),
@@ -339,16 +337,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 22),
@@ -362,14 +360,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
                   typeLabel,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
                 if (transaction.description != null && transaction.description!.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
                     transaction.description!,
-                    style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.grey),
+                    style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -377,7 +375,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
                 const SizedBox(height: 4),
                 Text(
                   _formatDateTime(transaction.createdAt),
-                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
                 ),
               ],
             ),
@@ -397,7 +395,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> with SingleTickerPr
               if (transaction.paymentMethod != null)
                 Text(
                   _getPaymentMethodLabel(transaction.paymentMethod!),
-                  style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                  style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : AppColors.textTertiary),
                 ),
             ],
           ),

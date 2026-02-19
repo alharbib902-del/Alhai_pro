@@ -123,7 +123,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.md, vertical: AppSizes.sm),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
             color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
@@ -167,7 +167,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 // View Toggle
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
                   child: Row(
@@ -196,7 +196,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     vertical: AppSizes.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                     border: Border.all(
                       color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
@@ -215,7 +215,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         value: _sortBy,
                         underline: const SizedBox(),
                         isDense: true,
-                        dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                        dropdownColor: Theme.of(context).colorScheme.surface,
                         style: TextStyle(
                           color: isDark ? Colors.white : AppColors.textPrimary,
                           fontSize: 14,
@@ -293,9 +293,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     return Container(
       width: 260,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        border: Border(
-          left: BorderSide(
+        color: Theme.of(context).colorScheme.surface,
+        border: BorderDirectional(
+          start: BorderSide(
             color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
           ),
         ),
@@ -484,7 +484,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                   ),
                   child: Text(
@@ -621,7 +621,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => _onCategorySelected(categoryId),
-        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         selectedColor: AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
         checkmarkColor: AppColors.primary,
         labelStyle: TextStyle(
@@ -817,7 +817,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
             color: _isHovered
@@ -854,7 +854,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(AppSizes.radiusLg),
                         ),
@@ -885,7 +885,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                         start: AppSizes.xs,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                             boxShadow: [
                               BoxShadow(
@@ -1014,7 +1014,7 @@ class _ProductListCardState extends State<_ProductListCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           border: Border.all(
             color: _isHovered
@@ -1041,7 +1041,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
                   child: widget.product.imageThumbnail != null

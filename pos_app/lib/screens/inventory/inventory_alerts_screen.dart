@@ -20,6 +20,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
   bool _notifyLowStock = true;
   bool _notifyExpiry = true;
   bool _isLoading = true;
+  String? _loadError;
 
   List<_AlertItem> _alerts = [];
 
@@ -54,7 +55,10 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
       )).toList();
       if (mounted) setState(() { _alerts = alerts; _isLoading = false; });
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() {
+        _isLoading = false;
+        _loadError = e.toString();
+      });
     }
   }
 
@@ -67,10 +71,37 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.inventoryAlerts)),
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_loadError != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.inventoryAlerts)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+              const SizedBox(height: 16),
+              Text(l10n.errorOccurred),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () {
+                  setState(() { _isLoading = true; _loadError = null; });
+                  _loadData();
+                },
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -110,7 +141,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     icon: Icons.warning,
                     label: l10n.urgentAlerts,
                     value: '${_alerts.where((a) => a.priority == "high" || a.priority == "critical").length}',
-                    color: Colors.red,
+                    color: colorScheme.error,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -153,12 +184,13 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
 
   Widget _buildAlertList(List<_AlertItem> alerts) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     if (alerts.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, size: 64, color: Colors.green.shade300),
+            const Icon(Icons.check_circle, size: 64, color: Colors.green),
             const SizedBox(height: 16),
             Text(l10n.noAlerts, style: const TextStyle(fontSize: 18)),
           ],
@@ -185,7 +217,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
             alignment: AlignmentDirectional.centerStart,
             padding: const EdgeInsetsDirectional.only(start: 16),
             color: Colors.green,
-            child: const Icon(Icons.check, color: Colors.white),
+            child: Icon(Icons.check, color: colorScheme.surface),
           ),
           onDismissed: (_) {
             setState(() => _alerts.remove(alert));
@@ -202,7 +234,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
           child: Card(
             margin: const EdgeInsets.only(bottom: 12),
             color: (alert.priority == 'high' || alert.priority == 'critical')
-                ? Colors.red.shade50
+                ? colorScheme.errorContainer
                 : null,
             child: InkWell(
               onTap: () => _showAlertDetails(alert),
@@ -239,12 +271,12 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Colors.red,
+                                    color: colorScheme.error,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     alert.priority == 'critical' ? l10n.criticalPriority : l10n.highPriority,
-                                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                                    style: TextStyle(color: colorScheme.surface, fontSize: 10),
                                   ),
                                 ),
                             ],
@@ -252,18 +284,18 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                           const SizedBox(height: 4),
                           Text(
                             _getAlertMessage(alert),
-                            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             _formatTimeAgo(alert.createdAt),
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade400),
+                            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.shopping_cart, color: Colors.blue),
+                      icon: Icon(Icons.shopping_cart, color: colorScheme.primary),
                       tooltip: l10n.createPurchaseOrder,
                       onPressed: () => _createPurchaseOrder(alert),
                     ),
@@ -316,6 +348,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
 
   void _showAlertDetails(_AlertItem alert) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
@@ -340,7 +373,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(alert.productName, style: Theme.of(context).textTheme.titleLarge),
-                      Text(alert.barcode, style: TextStyle(color: Colors.grey.shade600)),
+                      Text(alert.barcode, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ),
@@ -568,12 +601,13 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          Text(label, style: TextStyle(color: colorScheme.onSurfaceVariant)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),

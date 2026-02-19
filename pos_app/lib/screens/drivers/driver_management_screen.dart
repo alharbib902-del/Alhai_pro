@@ -283,14 +283,14 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
           height: 300,
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade200,
+              color: isDark ? const Color(0xFF1E293B) : AppColors.border,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.map, size: 64, color: isDark ? Colors.white24 : Colors.grey),
+                  Icon(Icons.map, size: 64, color: isDark ? Colors.white24 : AppColors.textTertiary),
                   const SizedBox(height: 16),
                   Text(l10n.driversTrackingMap, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)),
                   Text(l10n.gpsSubscriptionRequired, style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary)),
@@ -386,7 +386,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                   width: 40, height: 4,
                   margin: const EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white24 : Colors.grey.shade300,
+                    color: isDark ? Colors.white24 : AppColors.textTertiary,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

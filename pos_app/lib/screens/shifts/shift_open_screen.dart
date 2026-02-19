@@ -144,7 +144,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user?.name ?? 'غير معروف',
+                  user?.name ?? l10n.unknownUser,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -206,7 +206,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'النقدية الافتتاحية', // TODO: l10n.openingCash
+                l10n.openingCashLabel,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -327,7 +327,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'ملاحظات مهمة', // TODO: l10n.importantNotes
+                l10n.importantNotes,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -338,17 +338,17 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           ),
           const SizedBox(height: 14),
           _InfoItem(
-            text: 'تأكد من عد النقدية في الصندوق قبل فتح الوردية', // TODO: l10n
+            text: l10n.countCashBeforeShift,
             isDark: isDark,
           ),
           const SizedBox(height: 8),
           _InfoItem(
-            text: 'سيتم تسجيل وقت فتح الوردية تلقائياً', // TODO: l10n
+            text: l10n.shiftTimeAutoRecorded,
             isDark: isDark,
           ),
           const SizedBox(height: 8),
           _InfoItem(
-            text: 'لا يمكن فتح أكثر من وردية في نفس الوقت', // TODO: l10n
+            text: l10n.oneShiftAtATime,
             isDark: isDark,
           ),
         ],
@@ -386,8 +386,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     // Validate: opening cash is required and must be numeric > 0
     if (openingCash == null || openingCash <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إدخال مبلغ النقدية الافتتاحية (أكبر من صفر)'),
+        SnackBar(
+          content: Text(l10n.pleaseEnterOpeningCash),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -403,14 +403,14 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       await openShift(
         openingCash: openingCash,
         cashierId: user?.id ?? 'unknown',
-        cashierName: user?.name ?? 'غير معروف',
+        cashierName: user?.name ?? l10n.unknownUser,
       );
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تم فتح الوردية بمبلغ ${openingCash.toStringAsFixed(0)} ${l10n.sar}'),
+          content: Text(l10n.shiftOpenedWithAmount(openingCash.toStringAsFixed(0), l10n.sar)),
           backgroundColor: AppColors.success,
         ),
       );
@@ -421,7 +421,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('خطأ في فتح الوردية'),
+          title: Text(l10n.errorOpeningShift),
           content: Text('$e'),
           actions: [
             TextButton(

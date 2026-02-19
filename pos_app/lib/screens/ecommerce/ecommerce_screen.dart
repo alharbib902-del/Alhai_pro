@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/settings_db_providers.dart';
+import '../../widgets/layout/app_header.dart';
 
 class EcommerceScreen extends ConsumerStatefulWidget {
   const EcommerceScreen({super.key});
@@ -133,97 +136,67 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  color: isDark ? Colors.white12 : Colors.grey.shade200,
-                ),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    if (!isWide)
-                      IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                      ),
-                    const Icon(Icons.store, color: AppColors.primary, size: 28),
-                    const SizedBox(width: 12),
-                    Text(
-                      'المتجر الإلكتروني',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const Spacer(),
-                    _buildStatusChip(isDark),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TabBar(
-                  controller: _tabController,
-                  labelColor: AppColors.primary,
-                  unselectedLabelColor: isDark ? Colors.white54 : Colors.grey,
-                  indicatorColor: AppColors.primary,
-                  tabs: const [
-                    Tab(icon: Icon(Icons.shopping_bag_outlined), text: 'المنتجات'),
-                    Tab(icon: Icon(Icons.article_outlined), text: 'المحتوى'),
-                    Tab(
-                      icon: Icon(Icons.settings_outlined),
-                      text: 'الإعدادات',
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.ecommerce,
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 0,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [_buildStatusChip(isDark, l10n)],
+        ),
+        Container(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: isDark ? Colors.white54 : AppColors.textSecondary,
+            indicatorColor: AppColors.primary,
+            tabs: [
+              Tab(icon: const Icon(Icons.shopping_bag_outlined), text: l10n.products),
+              Tab(icon: const Icon(Icons.article_outlined), text: l10n.ecommerceSection),
+              Tab(icon: const Icon(Icons.settings_outlined), text: l10n.settings),
+            ],
           ),
-          // Body
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildProductsCatalogTab(isDark),
-                _buildContentTab(isDark),
-                _buildSettingsTab(isDark),
-              ],
-            ),
+        ),
+        // Body
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProductsCatalogTab(isDark, l10n),
+              _buildContentTab(isDark, l10n),
+              _buildSettingsTab(isDark, l10n),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildStatusChip(bool isDark) {
+  Widget _buildStatusChip(bool isDark, AppLocalizations l10n) {
     final isEnabled = _ecomSettings['ecom_store_enabled'] == 'true';
+    final chipColor = isEnabled ? AppColors.success : AppColors.textSecondary;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: (isEnabled ? Colors.green : Colors.grey).withOpacity(0.1),
+        color: chipColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isEnabled ? Colors.green : Colors.grey).withOpacity(0.3)),
+        border: Border.all(color: chipColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.circle, color: isEnabled ? Colors.green : Colors.grey, size: 8),
+          Icon(Icons.circle, color: chipColor, size: 8),
           const SizedBox(width: 6),
           Text(
-            isEnabled ? 'مفعّل' : 'معطّل',
+            isEnabled ? l10n.active : l10n.inactive,
             style: TextStyle(
-              color: isEnabled ? Colors.green : Colors.grey,
+              color: chipColor,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -233,7 +206,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     );
   }
 
-  Widget _buildProductsCatalogTab(bool isDark) {
+  Widget _buildProductsCatalogTab(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -242,18 +215,18 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : Colors.grey),
+              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
-              label: const Text('إعادة المحاولة'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -270,22 +243,22 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               Icon(
                 Icons.inventory_2_outlined,
                 size: 80,
-                color: isDark ? Colors.white24 : Colors.grey.shade300,
+                color: isDark ? Colors.white24 : AppColors.textTertiary,
               ),
               const SizedBox(height: 16),
               Text(
-                'لا توجد منتجات حالياً',
+                l10n.noData,
                 style: TextStyle(
                   fontSize: 16,
-                  color: isDark ? Colors.white54 : Colors.grey,
+                  color: isDark ? Colors.white54 : AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'أضف منتجات من شاشة المنتجات لعرضها في المتجر الإلكتروني',
+                l10n.addProductsToStart,
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDark ? Colors.white38 : Colors.grey.shade400,
+                  color: isDark ? Colors.white38 : AppColors.textTertiary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -345,7 +318,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -369,10 +342,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade200,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
       ),
       child: Row(
@@ -382,7 +355,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+              color: isDark ? Colors.white.withValues(alpha:0.05) : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
             child: product.imageThumbnail != null
@@ -393,13 +366,13 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Icon(
                         Icons.image_not_supported_outlined,
-                        color: isDark ? Colors.white24 : Colors.grey.shade400,
+                        color: isDark ? Colors.white24 : AppColors.textTertiary,
                       ),
                     ),
                   )
                 : Icon(
                     Icons.inventory_2_outlined,
-                    color: isDark ? Colors.white24 : Colors.grey.shade400,
+                    color: isDark ? Colors.white24 : AppColors.textTertiary,
                   ),
           ),
           const SizedBox(width: 12),
@@ -412,7 +385,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                   product.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -431,8 +404,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: product.stockQty > 0
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.red.withOpacity(0.1),
+                            ? Colors.green.withValues(alpha:0.1)
+                            : Colors.red.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -449,7 +422,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
+                          color: Colors.orange.withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
@@ -473,7 +446,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 'أونلاين',
                 style: TextStyle(
                   fontSize: 11,
-                  color: isDark ? Colors.white54 : Colors.grey,
+                  color: isDark ? Colors.white54 : AppColors.textSecondary,
                 ),
               ),
               Switch(
@@ -488,7 +461,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     );
   }
 
-  Widget _buildContentTab(bool isDark) {
+  Widget _buildContentTab(bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -499,7 +472,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -543,7 +516,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     );
   }
 
-  Widget _buildSettingsTab(bool isDark) {
+  Widget _buildSettingsTab(bool isDark, AppLocalizations l10n) {
     final storeEnabled = _ecomSettings['ecom_store_enabled'] == 'true';
     final notificationsEnabled = _ecomSettings['ecom_notifications_enabled'] == 'true';
     final codEnabled = _ecomSettings['ecom_cod_enabled'] == 'true';
@@ -569,7 +542,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -611,7 +584,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -657,10 +630,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       width: 180,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade200,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
       ),
       child: Column(
@@ -673,7 +646,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -681,7 +654,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             title,
             style: TextStyle(
               fontSize: 13,
-              color: isDark ? Colors.white54 : Colors.grey,
+              color: isDark ? Colors.white54 : AppColors.textSecondary,
             ),
           ),
         ],
@@ -698,10 +671,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade200,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
       ),
       child: ListTile(
@@ -709,7 +682,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: AppColors.primary),
@@ -718,20 +691,20 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
             fontSize: 12,
-            color: isDark ? Colors.white54 : Colors.grey,
+            color: isDark ? Colors.white54 : AppColors.textSecondary,
           ),
         ),
         trailing: Icon(
-          Icons.arrow_forward_ios,
+          Icons.chevron_left_rounded,
           size: 16,
-          color: isDark ? Colors.white38 : Colors.grey,
+          color: isDark ? Colors.white38 : AppColors.textTertiary,
         ),
       ),
     );
@@ -749,10 +722,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade200,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
         ),
       ),
       child: ListTile(
@@ -762,14 +735,14 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           title,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
             fontSize: 12,
-            color: isDark ? Colors.white54 : Colors.grey,
+            color: isDark ? Colors.white54 : AppColors.textSecondary,
           ),
         ),
         trailing: Switch(
@@ -796,7 +769,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         ),
         filled: true,
         fillColor:
-            isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
+            isDark ? Colors.white.withValues(alpha:0.05) : AppColors.border.withValues(alpha: 0.2),
       ),
       controller: controller,
       keyboardType: TextInputType.number,

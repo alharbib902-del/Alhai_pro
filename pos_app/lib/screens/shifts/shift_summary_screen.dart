@@ -27,17 +27,17 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
   }
 
   /// حساب مدة الوردية بصيغة نصية
-  String _formatDuration(DateTime openedAt, DateTime? closedAt) {
+  String _formatDuration(DateTime openedAt, DateTime? closedAt, AppLocalizations l10n) {
     final end = closedAt ?? DateTime.now();
     final duration = end.difference(openedAt);
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     if (hours > 0 && minutes > 0) {
-      return '$hours ساعات $minutes دقيقة';
+      return l10n.hoursAndMinutes(hours, minutes);
     } else if (hours > 0) {
-      return '$hours ساعات';
+      return l10n.hoursOnly(hours);
     } else {
-      return '$minutes دقيقة';
+      return l10n.minutesOnly(minutes);
     }
   }
 
@@ -160,7 +160,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'تم إغلاق الوردية بنجاح', // TODO: l10n.shiftClosedSuccessfully
+            l10n.shiftClosedSuccessfully,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
   Widget _buildStatsCard(bool isDark, AppLocalizations l10n, ShiftsTableData? shift) {
     // حساب القيم من بيانات الوردية الفعلية
     final duration = shift != null
-        ? _formatDuration(shift.openedAt, shift.closedAt)
+        ? _formatDuration(shift.openedAt, shift.closedAt, l10n)
         : '--';
     final invoiceCount = shift?.totalSales ?? 0;
     final totalSales = shift?.totalSalesAmount ?? 0.0;
@@ -215,7 +215,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'إحصائيات الوردية', // TODO: l10n.shiftStats
+                l10n.shiftStatsLabel,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -227,7 +227,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           const SizedBox(height: 16),
           _StatRow(
             icon: Icons.timer_rounded,
-            label: 'مدة الوردية',
+            label: l10n.shiftDurationLabel,
             value: duration,
             color: AppColors.info,
             isDark: isDark,
@@ -235,15 +235,15 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _StatRow(
             icon: Icons.receipt_long_rounded,
-            label: 'عدد الفواتير',
-            value: '$invoiceCount فاتورة',
+            label: l10n.invoiceCountLabel,
+            value: '$invoiceCount ${l10n.invoiceUnit}',
             color: AppColors.primary,
             isDark: isDark,
           ),
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _StatRow(
             icon: Icons.trending_up_rounded,
-            label: 'إجمالي المبيعات',
+            label: l10n.totalSales,
             value: '${_formatAmount(totalSales)} ${l10n.sar}',
             color: AppColors.success,
             isDark: isDark,
@@ -251,7 +251,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _StatRow(
             icon: Icons.credit_card_rounded,
-            label: 'مبيعات بطاقة',
+            label: l10n.cardSalesLabel,
             value: '${_formatAmount(cardSales)} ${l10n.sar}',
             color: AppColors.card,
             isDark: isDark,
@@ -259,7 +259,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _StatRow(
             icon: Icons.money_rounded,
-            label: 'مبيعات نقدية',
+            label: l10n.cashSalesLabel,
             value: '${_formatAmount(cashSales.clamp(0, double.infinity))} ${l10n.sar}',
             color: AppColors.cash,
             isDark: isDark,
@@ -267,7 +267,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _StatRow(
             icon: Icons.assignment_return_rounded,
-            label: 'المرتجعات',
+            label: l10n.refundsLabel,
             value: '${_formatAmount(refunds)} ${l10n.sar}',
             color: AppColors.error,
             isDark: isDark,
@@ -311,7 +311,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'حالة الصندوق', // TODO: l10n.drawerStatus
+                l10n.drawerStatus,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -322,13 +322,13 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           ),
           const SizedBox(height: 16),
           _CashRow(
-            label: 'المتوقع في الصندوق',
+            label: l10n.expectedInDrawerLabel,
             value: '${_formatAmount(expectedCash)} ${l10n.sar}',
             isDark: isDark,
           ),
           const SizedBox(height: 10),
           _CashRow(
-            label: 'الفعلي في الصندوق',
+            label: l10n.actualInDrawerLabel,
             value: '${_formatAmount(actualCash)} ${l10n.sar}',
             isDark: isDark,
           ),
@@ -337,7 +337,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'الفرق',
+                l10n.differenceLabel,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -386,7 +386,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 isDark: isDark,
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('جاري طباعة التقرير...')),
+                    SnackBar(content: Text(l10n.printingReport)),
                   );
                 },
               ),
@@ -395,12 +395,12 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             Expanded(
               child: _ActionButton(
                 icon: Icons.share_rounded,
-                label: 'مشاركة', // TODO: l10n.share
+                label: l10n.shareAction,
                 color: AppColors.secondary,
                 isDark: isDark,
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('جاري المشاركة...')),
+                    SnackBar(content: Text(l10n.sharingInProgress)),
                   );
                 },
               ),
@@ -413,7 +413,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           child: FilledButton.icon(
             onPressed: () => context.go(AppRoutes.home),
             icon: const Icon(Icons.add_rounded, size: 20),
-            label: const Text('فتح وردية جديدة', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(l10n.openNewShift, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -429,7 +429,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             onPressed: () => context.go('/login'),
             icon: Icon(Icons.logout_rounded, size: 20, color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary),
             label: Text(
-              'تسجيل الخروج', // TODO: l10n.logout
+              l10n.logout,
               style: TextStyle(
                 fontSize: 15,
                 color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,

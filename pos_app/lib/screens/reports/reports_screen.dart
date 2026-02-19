@@ -155,7 +155,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Column(
           children: [
             // Header
@@ -177,9 +177,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Row(
         children: [
@@ -293,7 +293,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.error),
             const SizedBox(height: 16),
-            Text('حدث خطأ في تحميل التقارير',
+            Text(l10n.errorOccurred,
                 style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 8),
             TextButton(
@@ -302,7 +302,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 ref.invalidate(_reportsWeekStatsProvider);
                 ref.invalidate(_reportsMonthStatsProvider);
               },
-              child: const Text('إعادة المحاولة'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -442,9 +442,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(AppSizes.radiusXl),
           ),
         ),
@@ -680,8 +680,9 @@ class _PeriodChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Material(
-      color: isSelected ? AppColors.primary : Colors.white,
+      color: isSelected ? AppColors.primary : theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       child: InkWell(
         onTap: onTap,
@@ -774,10 +775,10 @@ class _ReportCardState extends State<_ReportCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
-            color: _isHovered ? widget.report.color : AppColors.border,
+            color: _isHovered ? widget.report.color : Theme.of(context).dividerColor,
           ),
           boxShadow: _isHovered ? AppSizes.shadowMd : AppSizes.shadowSm,
         ),

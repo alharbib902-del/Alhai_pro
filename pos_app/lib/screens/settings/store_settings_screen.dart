@@ -294,9 +294,9 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             leading: CircleAvatar(
               backgroundColor: isDark
                   ? Colors.white.withValues(alpha: 0.1)
-                  : Colors.grey.shade200,
+                  : AppColors.border,
               child: Icon(Icons.image,
-                  color: isDark ? Colors.white54 : Colors.grey),
+                  color: isDark ? Colors.white54 : AppColors.textSecondary),
             ),
             title: Text(l10n.storeLogoSection,
                 style: TextStyle(

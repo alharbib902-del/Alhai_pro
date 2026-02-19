@@ -166,9 +166,9 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
       ], isDark),
 
       _buildGroup(l10n.backupHistoryLabel, [
-        _historyItem('\u0646\u0633\u062e\u0629 \u062a\u0644\u0642\u0627\u0626\u064a\u0629', '\u0627\u0644\u064a\u0648\u0645 10:00 \u0635', '2.4 MB', true, isDark),
-        _historyItem('\u0646\u0633\u062e\u0629 \u064a\u062f\u0648\u064a\u0629', '\u0623\u0645\u0633 14:30', '2.3 MB', true, isDark),
-        _historyItem('\u0646\u0633\u062e\u0629 \u062a\u0644\u0642\u0627\u0626\u064a\u0629', '\u0623\u0645\u0633 10:00 \u0635', '2.3 MB', true, isDark),
+        _historyItem(l10n.autoBackup, '${l10n.today} 10:00', '2.4 MB', true, isDark),
+        _historyItem(l10n.manualBackup, '${l10n.yesterday} 14:30', '2.3 MB', true, isDark),
+        _historyItem(l10n.autoBackup, '${l10n.yesterday} 10:00', '2.3 MB', true, isDark),
       ], isDark),
     ]);
   }

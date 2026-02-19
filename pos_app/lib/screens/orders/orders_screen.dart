@@ -49,7 +49,7 @@ class OrderModel {
   factory OrderModel.fromData(OrdersTableData data) {
     return OrderModel(
       id: data.orderNumber,
-      customer: data.customerId ?? 'عميل',
+      customer: data.customerId ?? '',
       customerPhone: null,
       date: data.createdAt,
       amount: data.total,
@@ -1103,7 +1103,7 @@ Expanded(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
-                            Text('VIP Member',
+                            Text(l10n.vipMember,
                                 style: TextStyle(
                                     fontSize: 11, color: mutedColor)),
                           ],
@@ -1517,11 +1517,7 @@ Expanded(
   }
 
   String _formatDate(DateTime dt) {
-    final months = [
-      '', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-    ];
-    return '${dt.day.toString().padLeft(2, '0')} ${months[dt.month]}';
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}';
   }
 
   String _formatTime(DateTime dt) {

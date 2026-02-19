@@ -198,7 +198,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get grandTotal => 'Grand Total';
 
   @override
-  String get product => 'Product';
+  String get product => 'product';
 
   @override
   String get productName => 'Product Name';
@@ -579,7 +579,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBranch => 'Add New Branch';
 
   @override
-  String get comingSoon => 'This feature coming soon';
+  String get comingSoon => 'Coming soon';
 
   @override
   String get tryDifferentSearch => 'Try different search terms';
@@ -917,7 +917,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentStock => 'Current Stock';
 
   @override
-  String get unit => 'unit';
+  String get unit => 'Unit';
 
   @override
   String get units => 'units';
@@ -5149,6 +5149,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderHistory => 'Order History';
 
   @override
+  String get history => 'History';
+
+  @override
   String get selectDateRange => 'Select Period';
 
   @override
@@ -7032,4 +7035,842 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemSection => 'System';
+
+  @override
+  String get averageInvoice => 'Average Invoice';
+
+  @override
+  String errorPrefix(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get vipMember => 'VIP Member';
+
+  @override
+  String get activeSuppliers => 'Active Suppliers';
+
+  @override
+  String get duePayments => 'Due Payments';
+
+  @override
+  String get productCatalog => 'Product Catalog';
+
+  @override
+  String get comingSoonBrowseSuppliers =>
+      'Coming Soon - Browse supplier products';
+
+  @override
+  String get comingSoonTag => 'Coming Soon';
+
+  @override
+  String get supplierNotFound => 'Supplier not found';
+
+  @override
+  String get viewAllPurchases => 'View All Purchases';
+
+  @override
+  String get completedLabel => 'Completed';
+
+  @override
+  String get pendingStatusLabel => 'Pending';
+
+  @override
+  String get registerPayment => 'Register Payment';
+
+  @override
+  String errorLoadingSuppliers(Object error) {
+    return 'Error loading suppliers: $error';
+  }
+
+  @override
+  String get cancelLabel => 'Cancel';
+
+  @override
+  String get addLabel => 'Add';
+
+  @override
+  String get saveLabel => 'Save';
+
+  @override
+  String purchaseInvoiceSaved(Object total) {
+    return 'Purchase invoice saved - Total: $total SAR';
+  }
+
+  @override
+  String errorSavingPurchase(Object error) {
+    return 'Error saving purchase: $error';
+  }
+
+  @override
+  String get smartReorderTitle => 'Smart Reorder';
+
+  @override
+  String get smartReorderAiTitle => 'AI Smart Reorder';
+
+  @override
+  String get budgetDescription =>
+      'Set the budget and the system will distribute it based on turnover rate';
+
+  @override
+  String get enterValidBudget => 'Please enter a valid budget';
+
+  @override
+  String get confirmSendTitle => 'Confirm Send';
+
+  @override
+  String sendOrderToMsg(Object supplier) {
+    return 'Send order to $supplier?';
+  }
+
+  @override
+  String get orderSentSuccessMsg => 'Order sent successfully';
+
+  @override
+  String sendingOrderVia(Object method) {
+    return 'Sending order via $method...';
+  }
+
+  @override
+  String stockQuantity(Object qty) {
+    return 'Stock: $qty';
+  }
+
+  @override
+  String turnoverLabel(Object rate) {
+    return 'Turnover: $rate%';
+  }
+
+  @override
+  String failedCapture(Object error) {
+    return 'Failed to capture image: $error';
+  }
+
+  @override
+  String failedPickImage(Object error) {
+    return 'Failed to pick image: $error';
+  }
+
+  @override
+  String failedProcessInvoice(Object error) {
+    return 'Failed to process invoice: $error';
+  }
+
+  @override
+  String matchLabel(Object name) {
+    return 'Match: $name';
+  }
+
+  @override
+  String suggestedProduct(Object index) {
+    return 'Suggested Product $index';
+  }
+
+  @override
+  String get barcodeLabel => 'Barcode: 123456789';
+
+  @override
+  String get purchaseInvoiceSavedSuccess =>
+      'Purchase invoice saved successfully';
+
+  @override
+  String get aiImportedInvoice => 'AI imported invoice';
+
+  @override
+  String aiInvoiceNote(Object number) {
+    return 'AI Invoice: $number';
+  }
+
+  @override
+  String get supplierCanCreateOrders =>
+      'Can create purchase orders from this supplier';
+
+  @override
+  String get notesFieldHint => 'Any additional notes about the supplier...';
+
+  @override
+  String get deleteConfirmCancel => 'Cancel';
+
+  @override
+  String get deleteConfirmBtn => 'Delete';
+
+  @override
+  String get supplierUpdatedMsg => 'Supplier data updated';
+
+  @override
+  String errorOccurredMsg(Object error) {
+    return 'Error occurred: $error';
+  }
+
+  @override
+  String errorDuringDeleteMsg(Object error) {
+    return 'Error during delete: $error';
+  }
+
+  @override
+  String get fortyFiveDays => '45 Days';
+
+  @override
+  String get expenseCategoriesTitle => 'Expense Categories';
+
+  @override
+  String get noCategoriesFound => 'No expense categories found';
+
+  @override
+  String get monthlyBudget => 'Monthly Budget';
+
+  @override
+  String get spentAmount => 'Spent';
+
+  @override
+  String get remainingAmount => 'Remaining';
+
+  @override
+  String get overBudget => 'Over Budget';
+
+  @override
+  String expenseCount(Object count) {
+    return '$count expenses';
+  }
+
+  @override
+  String spentLabel(Object amount) {
+    return 'Spent: $amount SAR';
+  }
+
+  @override
+  String remainingLabel2(Object amount) {
+    return 'Remaining: $amount SAR';
+  }
+
+  @override
+  String expensesThisMonth(Object count) {
+    return '$count expenses this month';
+  }
+
+  @override
+  String get recentExpenses => 'Recent Expenses';
+
+  @override
+  String expenseNumber(Object id) {
+    return 'Expense #$id';
+  }
+
+  @override
+  String get budgetLabel => 'Budget';
+
+  @override
+  String get monthlyBudgetLabel => 'Monthly Budget';
+
+  @override
+  String get categoryNameHint => 'Example: Employee Salaries';
+
+  @override
+  String get productNameLabel => 'Product Name *';
+
+  @override
+  String get quantityLabel => 'Quantity';
+
+  @override
+  String get purchasePriceLabel => 'Purchase Price';
+
+  @override
+  String get saveInvoiceBtn => 'Save Invoice';
+
+  @override
+  String get ibanLabel => 'IBAN Account Number';
+
+  @override
+  String get supplierActiveLabel => 'Supplier Active';
+
+  @override
+  String get notesLabel => 'Notes';
+
+  @override
+  String get deleteSupplierConfirm =>
+      'Are you sure you want to delete this supplier? All associated data will be deleted.';
+
+  @override
+  String get supplierDeletedMsg => 'Supplier deleted';
+
+  @override
+  String get savingLabel => 'Saving...';
+
+  @override
+  String get supplierDetailTitle => 'Supplier Details';
+
+  @override
+  String get supplierNotFoundMsg => 'Supplier not found';
+
+  @override
+  String get lastPurchaseLabel => 'Last Purchase';
+
+  @override
+  String get recentPurchasesLabel => 'Recent Purchases';
+
+  @override
+  String get noPurchasesLabel => 'No purchases yet';
+
+  @override
+  String get supplierAddedMsg => 'Supplier added';
+
+  @override
+  String get openingCashLabel => 'Opening Cash';
+
+  @override
+  String get importantNotes => 'Important Notes';
+
+  @override
+  String get countCashBeforeShift =>
+      'Make sure to count the cash in the drawer before opening the shift';
+
+  @override
+  String get shiftTimeAutoRecorded =>
+      'Shift open time will be recorded automatically';
+
+  @override
+  String get oneShiftAtATime =>
+      'Cannot open more than one shift at the same time';
+
+  @override
+  String get pleaseEnterOpeningCash =>
+      'Please enter opening cash amount (greater than zero)';
+
+  @override
+  String shiftOpenedWithAmount(String amount, String currency) {
+    return 'Shift opened with $amount $currency';
+  }
+
+  @override
+  String get errorOpeningShift => 'Error opening shift';
+
+  @override
+  String get noOpenShift => 'No open shift';
+
+  @override
+  String get shiftInfoLabel => 'Shift Information';
+
+  @override
+  String get salesSummaryLabel => 'Sales Summary';
+
+  @override
+  String get cashRefundsLabel => 'Cash Refunds';
+
+  @override
+  String get cashDepositLabel => 'Cash Deposit';
+
+  @override
+  String get cashWithdrawalLabel => 'Cash Withdrawal';
+
+  @override
+  String get expectedInDrawer => 'Expected in Drawer';
+
+  @override
+  String get actualCashInDrawer => 'Actual Cash in Drawer';
+
+  @override
+  String get drawerMatched => 'Matched';
+
+  @override
+  String get surplusStatus => 'Surplus';
+
+  @override
+  String get deficitStatus => 'Deficit';
+
+  @override
+  String expectedAmountCurrency(String amount, String currency) {
+    return 'Expected: $amount $currency';
+  }
+
+  @override
+  String actualAmountCurrency(String amount, String currency) {
+    return 'Actual: $amount $currency';
+  }
+
+  @override
+  String get drawerMatchedMessage => 'Drawer is matched';
+
+  @override
+  String surplusAmount(String amount, String currency) {
+    return 'Surplus: +$amount $currency';
+  }
+
+  @override
+  String deficitAmount(String amount, String currency) {
+    return 'Deficit: $amount $currency';
+  }
+
+  @override
+  String get confirmCloseShift => 'Do you want to close the shift?';
+
+  @override
+  String get errorClosingShift => 'Error closing shift';
+
+  @override
+  String get shiftClosedSuccessfully => 'Shift closed successfully';
+
+  @override
+  String get shiftStatsLabel => 'Shift Statistics';
+
+  @override
+  String get shiftDurationLabel => 'Shift Duration';
+
+  @override
+  String get invoiceCountLabel => 'Invoice Count';
+
+  @override
+  String get invoiceUnit => 'invoice';
+
+  @override
+  String get cardSalesLabel => 'Card Sales';
+
+  @override
+  String get cashSalesLabel => 'Cash Sales';
+
+  @override
+  String get refundsLabel => 'Refunds';
+
+  @override
+  String get expectedInDrawerLabel => 'Expected in Drawer';
+
+  @override
+  String get actualInDrawerLabel => 'Actual in Drawer';
+
+  @override
+  String get differenceLabel => 'Difference';
+
+  @override
+  String get printingReport => 'Printing report...';
+
+  @override
+  String get sharingInProgress => 'Sharing...';
+
+  @override
+  String get openNewShift => 'Open New Shift';
+
+  @override
+  String hoursAndMinutes(int hours, int minutes) {
+    return '$hours hours $minutes minutes';
+  }
+
+  @override
+  String hoursOnly(int hours) {
+    return '$hours hours';
+  }
+
+  @override
+  String minutesOnly(int minutes) {
+    return '$minutes minutes';
+  }
+
+  @override
+  String get rejectedNotApproved => 'Operation rejected - not approved';
+
+  @override
+  String errorWithDetails(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get inventoryManagement => 'Manage & track inventory';
+
+  @override
+  String get bulkEdit => 'Bulk Edit';
+
+  @override
+  String get totalProducts => 'Total Products';
+
+  @override
+  String get inventoryValue => 'Inventory Value';
+
+  @override
+  String get exportInventoryReport => 'Export Inventory Report';
+
+  @override
+  String get printOrderList => 'Print Order List';
+
+  @override
+  String get inventoryMovementLog => 'Inventory Movement Log';
+
+  @override
+  String get editSelected => 'Edit Selected';
+
+  @override
+  String get clearSelection => 'Clear Selection';
+
+  @override
+  String get noOutOfStockProducts => 'No out of stock products';
+
+  @override
+  String get allProductsAvailable => 'All products are available in stock';
+
+  @override
+  String get editStock => 'Edit Stock';
+
+  @override
+  String get newQuantity => 'New Quantity';
+
+  @override
+  String get receiveGoods => 'Receive Goods';
+
+  @override
+  String get damaged => 'Damaged';
+
+  @override
+  String get correction => 'Correction';
+
+  @override
+  String get stockUpdatedTo => 'Stock updated for';
+
+  @override
+  String get featureUnderDevelopment => 'This feature is under development...';
+
+  @override
+  String get newest => 'Newest';
+
+  @override
+  String get adjustStock => 'Adjust Stock';
+
+  @override
+  String get adjustmentHistory => 'Adjustment History';
+
+  @override
+  String get errorLoadingProducts => 'Error loading products';
+
+  @override
+  String get selectProduct => 'Select Product';
+
+  @override
+  String get subtract => 'Subtract';
+
+  @override
+  String get setQuantity => 'Set';
+
+  @override
+  String get enterQuantity => 'Enter quantity';
+
+  @override
+  String get enterValidQuantity => 'Enter valid quantity';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get enterAdditionalNotes => 'Enter any additional notes...';
+
+  @override
+  String get adjustmentSummary => 'Adjustment Summary';
+
+  @override
+  String get newStock => 'New Stock';
+
+  @override
+  String get warningNegativeStock => 'Warning: Stock will become negative!';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get storeNotSelected => 'Store not selected';
+
+  @override
+  String get noInventoryMovements => 'No inventory movements';
+
+  @override
+  String get adjustmentSavedSuccess => 'Adjustment saved successfully';
+
+  @override
+  String get errorSaving => 'Error saving';
+
+  @override
+  String get enterBarcode => 'Enter barcode';
+
+  @override
+  String get theft => 'Theft';
+
+  @override
+  String get noMatchingProducts => 'No matching products';
+
+  @override
+  String get stockTransfer => 'Stock Transfer';
+
+  @override
+  String get newTransfer => 'New Transfer';
+
+  @override
+  String get fromBranch => 'From Branch';
+
+  @override
+  String get toBranch => 'To Branch';
+
+  @override
+  String get selectSourceBranch => 'Select source branch';
+
+  @override
+  String get selectTargetBranch => 'Select target branch';
+
+  @override
+  String get selectProductsForTransfer => 'Select products for transfer';
+
+  @override
+  String get creating => 'Creating...';
+
+  @override
+  String get createTransferRequest => 'Create Transfer Request';
+
+  @override
+  String get errorLoadingTransfers => 'Error loading transfers';
+
+  @override
+  String get noPreviousTransfers => 'No previous transfers';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get inTransit => 'In Transit';
+
+  @override
+  String get complete => 'Complete';
+
+  @override
+  String get completeTransfer => 'Complete Transfer';
+
+  @override
+  String get completeTransferConfirm =>
+      'Do you want to complete this transfer? Quantities will be deducted from source and added to target branch.';
+
+  @override
+  String get transferCompletedSuccess => 'Transfer completed and stock updated';
+
+  @override
+  String get errorCompletingTransfer => 'Error completing transfer';
+
+  @override
+  String get transferCreatedSuccess => 'Transfer request created successfully';
+
+  @override
+  String get errorCreatingTransfer => 'Error creating transfer';
+
+  @override
+  String get stockTake => 'Stock Take';
+
+  @override
+  String get startStockTake => 'Start Stock Take';
+
+  @override
+  String get counted => 'Counted';
+
+  @override
+  String get variances => 'Variances';
+
+  @override
+  String get of_ => 'of';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get count => 'Count';
+
+  @override
+  String get finishStockTake => 'Finish Stock Take';
+
+  @override
+  String get stockTakeDescription =>
+      'Count stock products and compare with system';
+
+  @override
+  String get noProductsInStock => 'No products in stock';
+
+  @override
+  String get noProductsToCount => 'No products to start counting';
+
+  @override
+  String get errorCreatingStockTake => 'Error creating stock take';
+
+  @override
+  String get saveStockTakeConfirm =>
+      'Save stock take results and update inventory?';
+
+  @override
+  String get stockTakeSavedSuccess =>
+      'Stock take saved and inventory updated successfully';
+
+  @override
+  String get errorCompletingStockTake => 'Error completing stock take';
+
+  @override
+  String get stockTakeHistory => 'Stock Take History';
+
+  @override
+  String get errorLoadingHistory => 'Error loading history';
+
+  @override
+  String get noStockTakeHistory => 'No previous stock take history';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get expiryTracking => 'Expiry Tracking';
+
+  @override
+  String get errorLoadingExpiryData => 'Error loading expiry data';
+
+  @override
+  String get withinMonth => 'Within Month';
+
+  @override
+  String get noProductsExpiringIn7Days => 'No products expiring in 7 days';
+
+  @override
+  String get noProductsExpiringInMonth => 'No products expiring in a month';
+
+  @override
+  String get noExpiredProducts => 'No expired products';
+
+  @override
+  String get batch => 'Batch';
+
+  @override
+  String expiredSinceDays(int days) {
+    return 'Expired $days days ago';
+  }
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get pressToAddExpiryTracking => 'Press + to add new expiry tracking';
+
+  @override
+  String get applyDiscountTo => 'Apply discount to';
+
+  @override
+  String get confirmRemoval => 'Confirm Removal';
+
+  @override
+  String get removeExpiryTrackingFor => 'Remove expiry tracking for';
+
+  @override
+  String get expiryTrackingRemoved => 'Expiry tracking removed';
+
+  @override
+  String get errorRemovingExpiryTracking => 'Error removing expiry tracking';
+
+  @override
+  String get addExpiryDate => 'Add Expiry Date';
+
+  @override
+  String get barcodeOrProductName => 'Barcode or product name';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get batchNumberOptional => 'Batch number (optional)';
+
+  @override
+  String get expiryTrackingAdded => 'Expiry tracking added successfully';
+
+  @override
+  String get errorAddingExpiryTracking => 'Error adding expiry tracking';
+
+  @override
+  String get barcodeScanner2 => 'Barcode Scanner';
+
+  @override
+  String get scanning => 'Scanning...';
+
+  @override
+  String get pressToStart => 'Press to start';
+
+  @override
+  String get stop => 'Stop';
+
+  @override
+  String get startScanning => 'Start Scanning';
+
+  @override
+  String get enterBarcodeManually => 'Enter barcode manually';
+
+  @override
+  String get noScannedProducts => 'No scanned products';
+
+  @override
+  String get enterBarcodeToSearch => 'Enter barcode to search database';
+
+  @override
+  String get useManualInputToSearch =>
+      'Use manual input to search for products';
+
+  @override
+  String get found => 'Found';
+
+  @override
+  String get productNotFoundForBarcode => 'Product not found';
+
+  @override
+  String get addNewProduct => 'Add New Product';
+
+  @override
+  String get willOpenAddProductScreen => 'Will open add product screen';
+
+  @override
+  String get scanHistory => 'Scan History';
+
+  @override
+  String get addedToCart => 'Added';
+
+  @override
+  String get barcodePrint => 'Barcode Print';
+
+  @override
+  String get noProductsWithBarcode => 'No products with barcode';
+
+  @override
+  String get addBarcodeFirst => 'Add barcode to products first';
+
+  @override
+  String get searchProduct => 'Search product...';
+
+  @override
+  String get totalLabels => 'Total Labels';
+
+  @override
+  String get printLabels => 'Print Labels';
+
+  @override
+  String get printList => 'Print List';
+
+  @override
+  String get selectProductsToPrint => 'Select products to print';
+
+  @override
+  String get willPrint => 'Will print';
+
+  @override
+  String get label => 'label';
+
+  @override
+  String get printing => 'Printing...';
+
+  @override
+  String get messageAddedToQueue => 'Message added to send queue';
+
+  @override
+  String get messageSendFailed => 'Failed to send message';
+
+  @override
+  String get noPhoneForCustomer => 'No phone number for customer';
+
+  @override
+  String get inputContainsDangerousContent =>
+      'Input contains prohibited content';
+
+  @override
+  String whatsappGreeting(String name) {
+    return 'Hello $name\nHow can we help you?';
+  }
 }

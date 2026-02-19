@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -95,6 +96,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.orderHistory)),
@@ -110,9 +112,9 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              Icon(Icons.error_outline, size: 64, color: isDark ? AppColors.error.withValues(alpha: 0.7) : AppColors.error.withValues(alpha: 0.5)),
               const SizedBox(height: 16),
-              Text(l10n.errorOccurred, style: const TextStyle(fontSize: 18)),
+              Text(l10n.errorOccurred, style: TextStyle(fontSize: 18, color: isDark ? Colors.white : AppColors.textPrimary)),
               const SizedBox(height: 8),
               TextButton.icon(
                 onPressed: _loadData,
@@ -147,121 +149,147 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: l10n.orderSearchHint,
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              onChanged: (_) => setState(() {}),
-            ),
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 900;
+          final isMedium = constraints.maxWidth > 600;
+          final horizontalPadding = isWide ? 32.0 : (isMedium ? 24.0 : 16.0);
 
-          // Filter chips - عرض الفلاتر النشطة
-          if (_filterStatus != 'all' || _filterChannel != 'all' || _dateRange != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  if (_filterStatus != 'all')
-                    Chip(
-                      label: Text(_getStatusName(_filterStatus, l10n)),
-                      onDeleted: () {
-                        setState(() => _filterStatus = 'all');
-                        _loadData();
-                      },
-                      deleteIconColor: Colors.grey,
+          return Column(
+            children: [
+              // Search bar
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: l10n.orderSearchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  if (_filterChannel != 'all')
-                    Chip(
-                      label: Text(_getChannelName(_filterChannel, l10n)),
-                      onDeleted: () => setState(() => _filterChannel = 'all'),
-                      deleteIconColor: Colors.grey,
-                    ),
-                  if (_dateRange != null)
-                    Chip(
-                      label: Text('${_dateRange!.start.day}/${_dateRange!.start.month} - ${_dateRange!.end.day}/${_dateRange!.end.month}'),
-                      onDeleted: () {
-                        setState(() => _dateRange = null);
-                        _loadData();
-                      },
-                      deleteIconColor: Colors.grey,
-                    ),
-                ],
-              ),
-            ),
-
-          // Stats row
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _StatBadge(
-                  label: l10n.today,
-                  value: '${_orders.where((o) => o.orderDate.day == now.day && o.orderDate.month == now.month && o.orderDate.year == now.year).length}',
-                  color: Colors.blue,
-                ),
-                const SizedBox(width: 8),
-                _StatBadge(
-                  label: l10n.completed,
-                  value: '${_orders.where((o) => o.status == "delivered").length}',
-                  color: Colors.green,
-                ),
-                const SizedBox(width: 8),
-                _StatBadge(
-                  label: l10n.pending,
-                  value: '${_orders.where((o) => o.status == "pending").length}',
-                  color: Colors.orange,
-                ),
-                const SizedBox(width: 8),
-                _StatBadge(
-                  label: l10n.cancelled,
-                  value: '${_orders.where((o) => o.status == "cancelled").length}',
-                  color: Colors.red,
-                ),
-              ],
-            ),
-          ),
-
-          // Orders list
-          Expanded(
-            child: _filteredOrders.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade300),
-                        const SizedBox(height: 16),
-                        Text(l10n.noOrders, style: const TextStyle(fontSize: 18)),
-                      ],
-                    ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _loadData,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _filteredOrders.length,
-                      itemBuilder: (context, index) {
-                        final order = _filteredOrders[index];
-                        return _OrderCard(
-                          order: order,
-                          onTap: () => _showOrderDetails(order),
-                        );
-                      },
-                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
-          ),
-        ],
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+
+              // Filter chips - عرض الفلاتر النشطة
+              if (_filterStatus != 'all' || _filterChannel != 'all' || _dateRange != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      if (_filterStatus != 'all')
+                        Chip(
+                          label: Text(_getStatusName(_filterStatus, l10n)),
+                          onDeleted: () {
+                            setState(() => _filterStatus = 'all');
+                            _loadData();
+                          },
+                          deleteIconColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                        ),
+                      if (_filterChannel != 'all')
+                        Chip(
+                          label: Text(_getChannelName(_filterChannel, l10n)),
+                          onDeleted: () => setState(() => _filterChannel = 'all'),
+                          deleteIconColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                        ),
+                      if (_dateRange != null)
+                        Chip(
+                          label: Text('${_dateRange!.start.day}/${_dateRange!.start.month} - ${_dateRange!.end.day}/${_dateRange!.end.month}'),
+                          onDeleted: () {
+                            setState(() => _dateRange = null);
+                            _loadData();
+                          },
+                          deleteIconColor: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                        ),
+                    ],
+                  ),
+                ),
+
+              // Stats row
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+                child: Row(
+                  children: [
+                    _StatBadge(
+                      label: l10n.today,
+                      value: '${_orders.where((o) => o.orderDate.day == now.day && o.orderDate.month == now.month && o.orderDate.year == now.year).length}',
+                      color: Colors.blue,
+                    ),
+                    const SizedBox(width: 8),
+                    _StatBadge(
+                      label: l10n.completed,
+                      value: '${_orders.where((o) => o.status == "delivered").length}',
+                      color: Colors.green,
+                    ),
+                    const SizedBox(width: 8),
+                    _StatBadge(
+                      label: l10n.pending,
+                      value: '${_orders.where((o) => o.status == "pending").length}',
+                      color: Colors.orange,
+                    ),
+                    const SizedBox(width: 8),
+                    _StatBadge(
+                      label: l10n.cancelled,
+                      value: '${_orders.where((o) => o.status == "cancelled").length}',
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Orders list
+              Expanded(
+                child: _filteredOrders.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.receipt_long, size: 64, color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
+                            const SizedBox(height: 16),
+                            Text(l10n.noOrders, style: TextStyle(fontSize: 18, color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary)),
+                          ],
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: _loadData,
+                        child: isWide
+                            ? GridView.builder(
+                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 0,
+                                  childAspectRatio: 2.8,
+                                ),
+                                itemCount: _filteredOrders.length,
+                                itemBuilder: (context, index) {
+                                  final order = _filteredOrders[index];
+                                  return _OrderCard(
+                                    order: order,
+                                    onTap: () => _showOrderDetails(order),
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                                itemCount: _filteredOrders.length,
+                                itemBuilder: (context, index) {
+                                  final order = _filteredOrders[index];
+                                  return _OrderCard(
+                                    order: order,
+                                    onTap: () => _showOrderDetails(order),
+                                  );
+                                },
+                              ),
+                      ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -450,6 +478,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
 
   void _showOrderDetails(OrdersTableData order) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -472,7 +501,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 24),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.grey300,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -511,7 +540,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                     child: Row(
                       children: [
                         Expanded(child: Text(item.productName, style: const TextStyle(fontSize: 14))),
-                        Text('x${item.quantity.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+                        Text('x${item.quantity.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary)),
                         const SizedBox(width: 12),
                         Text(l10n.priceWithCurrency(item.total.toStringAsFixed(0)), style: const TextStyle(fontWeight: FontWeight.w500)),
                       ],
@@ -730,8 +759,11 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtleColor = isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      color: isDark ? const Color(0xFF1E293B) : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -758,10 +790,10 @@ class _OrderCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(order.orderNumber, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(order.orderNumber, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
                         Text(
                           order.customerId ?? l10n.guestCustomer,
-                          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                          style: TextStyle(fontSize: 13, color: subtleColor),
                         ),
                       ],
                     ),
@@ -771,11 +803,11 @@ class _OrderCard extends StatelessWidget {
                     children: [
                       Text(
                         l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : AppColors.textPrimary),
                       ),
                       Text(
                         _getChannelName(order.channel, l10n),
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: TextStyle(fontSize: 12, color: subtleColor),
                       ),
                     ],
                   ),
@@ -784,18 +816,18 @@ class _OrderCard extends StatelessWidget {
               const Divider(height: 24),
               Row(
                 children: [
-                  Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                  Icon(Icons.access_time, size: 14, color: subtleColor),
                   const SizedBox(width: 4),
                   Text(
                     _formatTime(order.orderDate, l10n),
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 12, color: subtleColor),
                   ),
                   const SizedBox(width: 16),
-                  Icon(Icons.payment, size: 14, color: Colors.grey.shade600),
+                  Icon(Icons.payment, size: 14, color: subtleColor),
                   const SizedBox(width: 4),
                   Text(
                     _getPaymentName(order.paymentMethod ?? 'cash', l10n),
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 12, color: subtleColor),
                   ),
                   const Spacer(),
                   Container(
@@ -920,20 +952,22 @@ class _DetailRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  
+
   const _DetailRow({required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtleColor = isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey.shade600),
+          Icon(icon, size: 20, color: subtleColor),
           const SizedBox(width: 12),
-          Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          Text(label, style: TextStyle(color: subtleColor)),
           const Spacer(),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: isDark ? Colors.white : AppColors.textPrimary)),
         ],
       ),
     );

@@ -297,7 +297,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
             // معلومات ZATCA
             Card(
-              color: Colors.blue.shade50,
+              color: Colors.blue.withValues(alpha: 0.1),
               child: const Padding(
                 padding: EdgeInsets.all(16),
                 child: Row(
@@ -364,7 +364,7 @@ class _DetailCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-            Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+            Text(subtitle, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: 8),
             Text('$value ر.س', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],

@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../providers/ai_smart_reports_providers.dart';
 import '../../widgets/ai/report_query_input.dart';
@@ -31,7 +32,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
     return Column(
               children: [
                 AppHeader(
-                  title: 'التقارير الذكية',
+                  title: AppLocalizations.of(context)!.aiSmartReportsTitle,
                   onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
                 ),
                 Expanded(child: _buildContent(isDark, isWideScreen)),

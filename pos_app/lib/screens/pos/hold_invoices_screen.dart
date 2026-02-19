@@ -10,6 +10,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/breakpoints.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
@@ -17,6 +18,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/held_invoices_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
+import '../../widgets/responsive/responsive_builder.dart';
 
 /// Hold Invoices Screen
 class HoldInvoicesScreen extends ConsumerWidget {
@@ -118,17 +120,44 @@ class HoldInvoicesScreen extends ConsumerWidget {
                 title: l10n.noHoldInvoices,
                 description: l10n.holdInvoicesDesc,
               )
-            : ListView.builder(
-                padding: const EdgeInsets.all(AppSizes.md),
-                itemCount: heldInvoices.length,
-                itemBuilder: (context, index) {
-                  final invoice = heldInvoices[index];
-                  return _HoldInvoiceCard(
-                    invoice: invoice,
-                    onResume: () =>
-                        _resumeInvoice(context, ref, invoice, l10n),
-                    onDelete: () =>
-                        _deleteInvoice(context, ref, invoice, l10n),
+            : ResponsiveBuilder(
+                builder: (context, deviceType, width) {
+                  if (deviceType.isMobile) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(AppSizes.md),
+                      itemCount: heldInvoices.length,
+                      itemBuilder: (context, index) {
+                        final invoice = heldInvoices[index];
+                        return _HoldInvoiceCard(
+                          invoice: invoice,
+                          onResume: () =>
+                              _resumeInvoice(context, ref, invoice, l10n),
+                          onDelete: () =>
+                              _deleteInvoice(context, ref, invoice, l10n),
+                        );
+                      },
+                    );
+                  }
+                  // Tablet/Desktop: 2-column grid
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(AppSizes.md),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: deviceType.isTablet ? 2 : 3,
+                      crossAxisSpacing: AppSizes.md,
+                      mainAxisSpacing: AppSizes.md,
+                      childAspectRatio: 1.4,
+                    ),
+                    itemCount: heldInvoices.length,
+                    itemBuilder: (context, index) {
+                      final invoice = heldInvoices[index];
+                      return _HoldInvoiceCard(
+                        invoice: invoice,
+                        onResume: () =>
+                            _resumeInvoice(context, ref, invoice, l10n),
+                        onDelete: () =>
+                            _deleteInvoice(context, ref, invoice, l10n),
+                      );
+                    },
                   );
                 },
               ),

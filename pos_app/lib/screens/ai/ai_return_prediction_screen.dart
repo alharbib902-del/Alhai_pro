@@ -50,7 +50,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
     return Column(
               children: [
                 AppHeader(
-                  title: 'التنبؤ بالمرتجعات - AI',
+                  title: l10n.aiReturnPredictionTitle,
                   onMenuTap: isWideScreen
                       ? null
                       : () => Scaffold.of(context).openDrawer(),

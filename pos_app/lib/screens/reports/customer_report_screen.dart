@@ -10,6 +10,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 
 /// شاشة تقرير العملاء
@@ -115,17 +116,17 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير العملاء'),
+        title: Text(AppLocalizations.of(context)!.customerReport),
         actions: [
           IconButton(
             onPressed: _selectDateRange,
             icon: const Icon(Icons.date_range),
-            tooltip: 'تحديد الفترة',
+            tooltip: AppLocalizations.of(context)!.date,
           ),
           IconButton(
             onPressed: _exportReport,
             icon: const Icon(Icons.download),
-            tooltip: 'تصدير',
+            tooltip: AppLocalizations.of(context)!.exportAction,
           ),
         ],
         bottom: TabBar(

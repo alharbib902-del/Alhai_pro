@@ -441,7 +441,7 @@ abstract class AppLocalizations {
   /// No description provided for @total.
   ///
   /// In ar, this message translates to:
-  /// **'الإجمالي'**
+  /// **'إجمالي'**
   String get total;
 
   /// No description provided for @subtotal.
@@ -453,7 +453,7 @@ abstract class AppLocalizations {
   /// No description provided for @discount.
   ///
   /// In ar, this message translates to:
-  /// **'الخصم'**
+  /// **'خصم'**
   String get discount;
 
   /// No description provided for @tax.
@@ -1203,7 +1203,7 @@ abstract class AppLocalizations {
   /// No description provided for @comingSoon.
   ///
   /// In ar, this message translates to:
-  /// **'سيتم إضافة هذه الميزة قريباً'**
+  /// **'قريباً'**
   String get comingSoon;
 
   /// No description provided for @tryDifferentSearch.
@@ -1473,7 +1473,7 @@ abstract class AppLocalizations {
   /// No description provided for @pending.
   ///
   /// In ar, this message translates to:
-  /// **'قيد الانتظار'**
+  /// **'معلق'**
   String get pending;
 
   /// No description provided for @cancelled.
@@ -1827,7 +1827,7 @@ abstract class AppLocalizations {
   /// No description provided for @productNotFound.
   ///
   /// In ar, this message translates to:
-  /// **'المنتج غير موجود'**
+  /// **'لم يتم العثور على المنتج'**
   String get productNotFound;
 
   /// No description provided for @stockStatus.
@@ -3981,7 +3981,7 @@ abstract class AppLocalizations {
   /// No description provided for @adjustmentType.
   ///
   /// In ar, this message translates to:
-  /// **'نوع التسوية'**
+  /// **'نوع التعديل'**
   String get adjustmentType;
 
   /// No description provided for @debitAdjustment.
@@ -4005,7 +4005,7 @@ abstract class AppLocalizations {
   /// No description provided for @adjustmentReason.
   ///
   /// In ar, this message translates to:
-  /// **'سبب التسوية'**
+  /// **'سبب التعديل'**
   String get adjustmentReason;
 
   /// No description provided for @adjustmentDate.
@@ -4017,7 +4017,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveAdjustment.
   ///
   /// In ar, this message translates to:
-  /// **'حفظ التسوية'**
+  /// **'حفظ التعديل'**
   String get saveAdjustment;
 
   /// No description provided for @adjustmentSaved.
@@ -4221,7 +4221,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerLabel.
   ///
   /// In ar, this message translates to:
-  /// **'العميل'**
+  /// **'عميل'**
   String get customerLabel;
 
   /// No description provided for @dateAndTimeLabel.
@@ -6783,7 +6783,7 @@ abstract class AppLocalizations {
   /// No description provided for @totalLabel.
   ///
   /// In ar, this message translates to:
-  /// **'إجمالي'**
+  /// **'الإجمالي'**
   String get totalLabel;
 
   /// No description provided for @stopped.
@@ -6855,7 +6855,7 @@ abstract class AppLocalizations {
   /// No description provided for @expired.
   ///
   /// In ar, this message translates to:
-  /// **'منتهي'**
+  /// **'منتهي الصلاحية'**
   String get expired;
 
   /// No description provided for @deactivated.
@@ -9869,6 +9869,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'سجل الطلبات'**
   String get orderHistory;
+
+  /// No description provided for @history.
+  ///
+  /// In ar, this message translates to:
+  /// **'السجل'**
+  String get history;
 
   /// No description provided for @selectDateRange.
   ///
@@ -13392,6 +13398,1524 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'النظام'**
   String get systemSection;
+
+  /// No description provided for @averageInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط الفاتورة'**
+  String get averageInvoice;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ: {error}'**
+  String errorPrefix(Object error);
+
+  /// No description provided for @vipMember.
+  ///
+  /// In ar, this message translates to:
+  /// **'عضو VIP'**
+  String get vipMember;
+
+  /// No description provided for @activeSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'موردين نشطين'**
+  String get activeSuppliers;
+
+  /// No description provided for @duePayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستحقات'**
+  String get duePayments;
+
+  /// No description provided for @productCatalog.
+  ///
+  /// In ar, this message translates to:
+  /// **'كتالوج المنتجات'**
+  String get productCatalog;
+
+  /// No description provided for @comingSoonBrowseSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'قريباً - تصفح منتجات الموردين'**
+  String get comingSoonBrowseSuppliers;
+
+  /// No description provided for @comingSoonTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'قريباً'**
+  String get comingSoonTag;
+
+  /// No description provided for @supplierNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على المورد'**
+  String get supplierNotFound;
+
+  /// No description provided for @viewAllPurchases.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض جميع المشتريات'**
+  String get viewAllPurchases;
+
+  /// No description provided for @completedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل'**
+  String get completedLabel;
+
+  /// No description provided for @pendingStatusLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلق'**
+  String get pendingStatusLabel;
+
+  /// No description provided for @registerPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل دفعة للمورد'**
+  String get registerPayment;
+
+  /// No description provided for @errorLoadingSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل الموردين: {error}'**
+  String errorLoadingSuppliers(Object error);
+
+  /// No description provided for @cancelLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء'**
+  String get cancelLabel;
+
+  /// No description provided for @addLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة'**
+  String get addLabel;
+
+  /// No description provided for @saveLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get saveLabel;
+
+  /// No description provided for @purchaseInvoiceSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ فاتورة الشراء - الإجمالي: {total} ر.س'**
+  String purchaseInvoiceSaved(Object total);
+
+  /// No description provided for @errorSavingPurchase.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في حفظ المشتريات: {error}'**
+  String errorSavingPurchase(Object error);
+
+  /// No description provided for @smartReorderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب الذكي'**
+  String get smartReorderTitle;
+
+  /// No description provided for @smartReorderAiTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب الذكي بالـ AI'**
+  String get smartReorderAiTitle;
+
+  /// No description provided for @budgetDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد الميزانية وسيقوم النظام بتوزيعها على المنتجات حسب معدل الدوران'**
+  String get budgetDescription;
+
+  /// No description provided for @enterValidBudget.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال ميزانية صحيحة'**
+  String get enterValidBudget;
+
+  /// No description provided for @confirmSendTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الإرسال'**
+  String get confirmSendTitle;
+
+  /// No description provided for @sendOrderToMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الطلب إلى {supplier}؟'**
+  String sendOrderToMsg(Object supplier);
+
+  /// No description provided for @orderSentSuccessMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال الطلب بنجاح'**
+  String get orderSentSuccessMsg;
+
+  /// No description provided for @sendingOrderVia.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري إرسال الطلب عبر {method}...'**
+  String sendingOrderVia(Object method);
+
+  /// No description provided for @stockQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون: {qty}'**
+  String stockQuantity(Object qty);
+
+  /// No description provided for @turnoverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدوران: {rate}%'**
+  String turnoverLabel(Object rate);
+
+  /// No description provided for @failedCapture.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في التقاط الصورة: {error}'**
+  String failedCapture(Object error);
+
+  /// No description provided for @failedPickImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في اختيار الصورة: {error}'**
+  String failedPickImage(Object error);
+
+  /// No description provided for @failedProcessInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في معالجة الفاتورة: {error}'**
+  String failedProcessInvoice(Object error);
+
+  /// No description provided for @matchLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطابقة: {name}'**
+  String matchLabel(Object name);
+
+  /// No description provided for @suggestedProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتج مقترح {index}'**
+  String suggestedProduct(Object index);
+
+  /// No description provided for @barcodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'باركود: 123456789'**
+  String get barcodeLabel;
+
+  /// No description provided for @purchaseInvoiceSavedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ فاتورة الشراء بنجاح'**
+  String get purchaseInvoiceSavedSuccess;
+
+  /// No description provided for @aiImportedInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة مستوردة بالذكاء الاصطناعي'**
+  String get aiImportedInvoice;
+
+  /// No description provided for @aiInvoiceNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة AI: {number}'**
+  String aiInvoiceNote(Object number);
+
+  /// No description provided for @supplierCanCreateOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمكن إنشاء طلبات شراء من هذا المورد'**
+  String get supplierCanCreateOrders;
+
+  /// No description provided for @notesFieldHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي ملاحظات إضافية عن المورد...'**
+  String get notesFieldHint;
+
+  /// No description provided for @deleteConfirmCancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء'**
+  String get deleteConfirmCancel;
+
+  /// No description provided for @deleteConfirmBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get deleteConfirmBtn;
+
+  /// No description provided for @supplierUpdatedMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث بيانات المورد'**
+  String get supplierUpdatedMsg;
+
+  /// No description provided for @errorOccurredMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ: {error}'**
+  String errorOccurredMsg(Object error);
+
+  /// No description provided for @errorDuringDeleteMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء الحذف: {error}'**
+  String errorDuringDeleteMsg(Object error);
+
+  /// No description provided for @fortyFiveDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'45 يوم'**
+  String get fortyFiveDays;
+
+  /// No description provided for @expenseCategoriesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فئات المصروفات'**
+  String get expenseCategoriesTitle;
+
+  /// No description provided for @noCategoriesFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد فئات مصروفات'**
+  String get noCategoriesFound;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In ar, this message translates to:
+  /// **'الميزانية الشهرية'**
+  String get monthlyBudget;
+
+  /// No description provided for @spentAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصروف'**
+  String get spentAmount;
+
+  /// No description provided for @remainingAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتبقي'**
+  String get remainingAmount;
+
+  /// No description provided for @overBudget.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاوز'**
+  String get overBudget;
+
+  /// No description provided for @expenseCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مصروف'**
+  String expenseCount(Object count);
+
+  /// No description provided for @spentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصروف: {amount} ر.س'**
+  String spentLabel(Object amount);
+
+  /// No description provided for @remainingLabel2.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتبقي: {amount} ر.س'**
+  String remainingLabel2(Object amount);
+
+  /// No description provided for @expensesThisMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مصروف هذا الشهر'**
+  String expensesThisMonth(Object count);
+
+  /// No description provided for @recentExpenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر المصروفات'**
+  String get recentExpenses;
+
+  /// No description provided for @expenseNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصروف #{id}'**
+  String expenseNumber(Object id);
+
+  /// No description provided for @budgetLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الميزانية'**
+  String get budgetLabel;
+
+  /// No description provided for @monthlyBudgetLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الميزانية الشهرية'**
+  String get monthlyBudgetLabel;
+
+  /// No description provided for @categoryNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: رواتب الموظفين'**
+  String get categoryNameHint;
+
+  /// No description provided for @productNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المنتج *'**
+  String get productNameLabel;
+
+  /// No description provided for @quantityLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية'**
+  String get quantityLabel;
+
+  /// No description provided for @purchasePriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر الشراء'**
+  String get purchasePriceLabel;
+
+  /// No description provided for @saveInvoiceBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ الفاتورة'**
+  String get saveInvoiceBtn;
+
+  /// No description provided for @ibanLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الحساب IBAN'**
+  String get ibanLabel;
+
+  /// No description provided for @supplierActiveLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المورد نشط'**
+  String get supplierActiveLabel;
+
+  /// No description provided for @notesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get notesLabel;
+
+  /// No description provided for @deleteSupplierConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من حذف هذا المورد؟ سيتم حذف جميع البيانات المرتبطة به.'**
+  String get deleteSupplierConfirm;
+
+  /// No description provided for @supplierDeletedMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المورد'**
+  String get supplierDeletedMsg;
+
+  /// No description provided for @savingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الحفظ...'**
+  String get savingLabel;
+
+  /// No description provided for @supplierDetailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المورد'**
+  String get supplierDetailTitle;
+
+  /// No description provided for @supplierNotFoundMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على المورد'**
+  String get supplierNotFoundMsg;
+
+  /// No description provided for @lastPurchaseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر عملية شراء'**
+  String get lastPurchaseLabel;
+
+  /// No description provided for @recentPurchasesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر المشتريات'**
+  String get recentPurchasesLabel;
+
+  /// No description provided for @noPurchasesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مشتريات بعد'**
+  String get noPurchasesLabel;
+
+  /// No description provided for @supplierAddedMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إضافة المورد'**
+  String get supplierAddedMsg;
+
+  /// No description provided for @openingCashLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقدية الافتتاحية'**
+  String get openingCashLabel;
+
+  /// No description provided for @importantNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات مهمة'**
+  String get importantNotes;
+
+  /// No description provided for @countCashBeforeShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكد من عد النقدية في الصندوق قبل فتح الوردية'**
+  String get countCashBeforeShift;
+
+  /// No description provided for @shiftTimeAutoRecorded.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم تسجيل وقت فتح الوردية تلقائياً'**
+  String get shiftTimeAutoRecorded;
+
+  /// No description provided for @oneShiftAtATime.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن فتح أكثر من وردية في نفس الوقت'**
+  String get oneShiftAtATime;
+
+  /// No description provided for @pleaseEnterOpeningCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال مبلغ النقدية الافتتاحية (أكبر من صفر)'**
+  String get pleaseEnterOpeningCash;
+
+  /// No description provided for @shiftOpenedWithAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم فتح الوردية بمبلغ {amount} {currency}'**
+  String shiftOpenedWithAmount(String amount, String currency);
+
+  /// No description provided for @errorOpeningShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في فتح الوردية'**
+  String get errorOpeningShift;
+
+  /// No description provided for @noOpenShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد وردية مفتوحة'**
+  String get noOpenShift;
+
+  /// No description provided for @shiftInfoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات الوردية'**
+  String get shiftInfoLabel;
+
+  /// No description provided for @salesSummaryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص المبيعات'**
+  String get salesSummaryLabel;
+
+  /// No description provided for @cashRefundsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجعات نقدية'**
+  String get cashRefundsLabel;
+
+  /// No description provided for @cashDepositLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدخال نقدي'**
+  String get cashDepositLabel;
+
+  /// No description provided for @cashWithdrawalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب نقدي'**
+  String get cashWithdrawalLabel;
+
+  /// No description provided for @expectedInDrawer.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتوقع في الصندوق'**
+  String get expectedInDrawer;
+
+  /// No description provided for @actualCashInDrawer.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقدية الفعلية في الصندوق'**
+  String get actualCashInDrawer;
+
+  /// No description provided for @drawerMatched.
+  ///
+  /// In ar, this message translates to:
+  /// **'متطابق'**
+  String get drawerMatched;
+
+  /// No description provided for @surplusStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'فائض'**
+  String get surplusStatus;
+
+  /// No description provided for @deficitStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'عجز'**
+  String get deficitStatus;
+
+  /// No description provided for @expectedAmountCurrency.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتوقع: {amount} {currency}'**
+  String expectedAmountCurrency(String amount, String currency);
+
+  /// No description provided for @actualAmountCurrency.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفعلي: {amount} {currency}'**
+  String actualAmountCurrency(String amount, String currency);
+
+  /// No description provided for @drawerMatchedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق متطابق'**
+  String get drawerMatchedMessage;
+
+  /// No description provided for @surplusAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'فائض: +{amount} {currency}'**
+  String surplusAmount(String amount, String currency);
+
+  /// No description provided for @deficitAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عجز: {amount} {currency}'**
+  String deficitAmount(String amount, String currency);
+
+  /// No description provided for @confirmCloseShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد إغلاق الوردية؟'**
+  String get confirmCloseShift;
+
+  /// No description provided for @errorClosingShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إغلاق الوردية'**
+  String get errorClosingShift;
+
+  /// No description provided for @shiftClosedSuccessfully.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إغلاق الوردية بنجاح'**
+  String get shiftClosedSuccessfully;
+
+  /// No description provided for @shiftStatsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحصائيات الوردية'**
+  String get shiftStatsLabel;
+
+  /// No description provided for @shiftDurationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدة الوردية'**
+  String get shiftDurationLabel;
+
+  /// No description provided for @invoiceCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الفواتير'**
+  String get invoiceCountLabel;
+
+  /// No description provided for @invoiceUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة'**
+  String get invoiceUnit;
+
+  /// No description provided for @cardSalesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبيعات بطاقة'**
+  String get cardSalesLabel;
+
+  /// No description provided for @cashSalesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبيعات نقدية'**
+  String get cashSalesLabel;
+
+  /// No description provided for @refundsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المرتجعات'**
+  String get refundsLabel;
+
+  /// No description provided for @expectedInDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتوقع في الصندوق'**
+  String get expectedInDrawerLabel;
+
+  /// No description provided for @actualInDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفعلي في الصندوق'**
+  String get actualInDrawerLabel;
+
+  /// No description provided for @differenceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get differenceLabel;
+
+  /// No description provided for @printingReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري طباعة التقرير...'**
+  String get printingReport;
+
+  /// No description provided for @sharingInProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري المشاركة...'**
+  String get sharingInProgress;
+
+  /// No description provided for @openNewShift.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح وردية جديدة'**
+  String get openNewShift;
+
+  /// No description provided for @hoursAndMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{hours} ساعات {minutes} دقيقة'**
+  String hoursAndMinutes(int hours, int minutes);
+
+  /// No description provided for @hoursOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'{hours} ساعات'**
+  String hoursOnly(int hours);
+
+  /// No description provided for @minutesOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} دقيقة'**
+  String minutesOnly(int minutes);
+
+  /// No description provided for @rejectedNotApproved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض العملية - لم تتم الموافقة'**
+  String get rejectedNotApproved;
+
+  /// No description provided for @errorWithDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ: {error}'**
+  String errorWithDetails(String error);
+
+  /// No description provided for @inventoryManagement.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة ومتابعة المخزون'**
+  String get inventoryManagement;
+
+  /// No description provided for @bulkEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل جماعي'**
+  String get bulkEdit;
+
+  /// No description provided for @totalProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المنتجات'**
+  String get totalProducts;
+
+  /// No description provided for @inventoryValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة المخزون'**
+  String get inventoryValue;
+
+  /// No description provided for @exportInventoryReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير تقرير المخزون'**
+  String get exportInventoryReport;
+
+  /// No description provided for @printOrderList.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة قائمة الطلب'**
+  String get printOrderList;
+
+  /// No description provided for @inventoryMovementLog.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل حركة المخزون'**
+  String get inventoryMovementLog;
+
+  /// No description provided for @editSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المحدد'**
+  String get editSelected;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التحديد'**
+  String get clearSelection;
+
+  /// No description provided for @noOutOfStockProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد منتجات نفذت'**
+  String get noOutOfStockProducts;
+
+  /// No description provided for @allProductsAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'جميع المنتجات متوفرة في المخزون'**
+  String get allProductsAvailable;
+
+  /// No description provided for @editStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المخزون'**
+  String get editStock;
+
+  /// No description provided for @newQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية الجديدة'**
+  String get newQuantity;
+
+  /// No description provided for @receiveGoods.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلام بضاعة'**
+  String get receiveGoods;
+
+  /// No description provided for @damaged.
+  ///
+  /// In ar, this message translates to:
+  /// **'تالف'**
+  String get damaged;
+
+  /// No description provided for @correction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصحيح'**
+  String get correction;
+
+  /// No description provided for @stockUpdatedTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تعديل مخزون'**
+  String get stockUpdatedTo;
+
+  /// No description provided for @featureUnderDevelopment.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه الميزة قيد التطوير...'**
+  String get featureUnderDevelopment;
+
+  /// No description provided for @newest.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحدث'**
+  String get newest;
+
+  /// No description provided for @adjustStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المخزون'**
+  String get adjustStock;
+
+  /// No description provided for @adjustmentHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التعديلات'**
+  String get adjustmentHistory;
+
+  /// No description provided for @errorLoadingProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تحميل المنتجات'**
+  String get errorLoadingProducts;
+
+  /// No description provided for @selectProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار المنتج'**
+  String get selectProduct;
+
+  /// No description provided for @subtract.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم'**
+  String get subtract;
+
+  /// No description provided for @setQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين'**
+  String get setQuantity;
+
+  /// No description provided for @enterQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الكمية'**
+  String get enterQuantity;
+
+  /// No description provided for @enterValidQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل كمية صحيحة'**
+  String get enterValidQuantity;
+
+  /// No description provided for @notesOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات (اختياري)'**
+  String get notesOptional;
+
+  /// No description provided for @enterAdditionalNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل أي ملاحظات إضافية...'**
+  String get enterAdditionalNotes;
+
+  /// No description provided for @adjustmentSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص التعديل'**
+  String get adjustmentSummary;
+
+  /// No description provided for @newStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون الجديد'**
+  String get newStock;
+
+  /// No description provided for @warningNegativeStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذير: المخزون سيصبح سالباً!'**
+  String get warningNegativeStock;
+
+  /// No description provided for @saving.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الحفظ...'**
+  String get saving;
+
+  /// No description provided for @storeNotSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم تحديد المتجر'**
+  String get storeNotSelected;
+
+  /// No description provided for @noInventoryMovements.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد حركات مخزون'**
+  String get noInventoryMovements;
+
+  /// No description provided for @adjustmentSavedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ التعديل بنجاح'**
+  String get adjustmentSavedSuccess;
+
+  /// No description provided for @errorSaving.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء الحفظ'**
+  String get errorSaving;
+
+  /// No description provided for @enterBarcode.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الباركود'**
+  String get enterBarcode;
+
+  /// No description provided for @theft.
+  ///
+  /// In ar, this message translates to:
+  /// **'سرقة'**
+  String get theft;
+
+  /// No description provided for @noMatchingProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات مطابقة'**
+  String get noMatchingProducts;
+
+  /// No description provided for @stockTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويل المخزون'**
+  String get stockTransfer;
+
+  /// No description provided for @newTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويل جديد'**
+  String get newTransfer;
+
+  /// No description provided for @fromBranch.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فرع'**
+  String get fromBranch;
+
+  /// No description provided for @toBranch.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى فرع'**
+  String get toBranch;
+
+  /// No description provided for @selectSourceBranch.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الفرع المصدر'**
+  String get selectSourceBranch;
+
+  /// No description provided for @selectTargetBranch.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الفرع الهدف'**
+  String get selectTargetBranch;
+
+  /// No description provided for @selectProductsForTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر منتجات للتحويل'**
+  String get selectProductsForTransfer;
+
+  /// No description provided for @creating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الإنشاء...'**
+  String get creating;
+
+  /// No description provided for @createTransferRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء طلب التحويل'**
+  String get createTransferRequest;
+
+  /// No description provided for @errorLoadingTransfers.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل التحويلات'**
+  String get errorLoadingTransfers;
+
+  /// No description provided for @noPreviousTransfers.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تحويلات سابقة'**
+  String get noPreviousTransfers;
+
+  /// No description provided for @approved.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق عليه'**
+  String get approved;
+
+  /// No description provided for @inTransit.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد النقل'**
+  String get inTransit;
+
+  /// No description provided for @complete.
+  ///
+  /// In ar, this message translates to:
+  /// **'إكمال'**
+  String get complete;
+
+  /// No description provided for @completeTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'إكمال التحويل'**
+  String get completeTransfer;
+
+  /// No description provided for @completeTransferConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد إكمال هذا التحويل؟ سيتم خصم الكميات من الفرع المصدر وإضافتها للفرع الهدف.'**
+  String get completeTransferConfirm;
+
+  /// No description provided for @transferCompletedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إكمال التحويل وتحديث المخزون'**
+  String get transferCompletedSuccess;
+
+  /// No description provided for @errorCompletingTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إكمال التحويل'**
+  String get errorCompletingTransfer;
+
+  /// No description provided for @transferCreatedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إنشاء طلب التحويل بنجاح'**
+  String get transferCreatedSuccess;
+
+  /// No description provided for @errorCreatingTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إنشاء التحويل'**
+  String get errorCreatingTransfer;
+
+  /// No description provided for @stockTake.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجرد'**
+  String get stockTake;
+
+  /// No description provided for @startStockTake.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدء الجرد'**
+  String get startStockTake;
+
+  /// No description provided for @counted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم عدها'**
+  String get counted;
+
+  /// No description provided for @variances.
+  ///
+  /// In ar, this message translates to:
+  /// **'فروقات'**
+  String get variances;
+
+  /// No description provided for @of_.
+  ///
+  /// In ar, this message translates to:
+  /// **'من'**
+  String get of_;
+
+  /// No description provided for @system.
+  ///
+  /// In ar, this message translates to:
+  /// **'النظام'**
+  String get system;
+
+  /// No description provided for @count.
+  ///
+  /// In ar, this message translates to:
+  /// **'العدد'**
+  String get count;
+
+  /// No description provided for @finishStockTake.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنهاء الجرد'**
+  String get finishStockTake;
+
+  /// No description provided for @stockTakeDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'قم بعد منتجات المخزون ومقارنتها بالنظام'**
+  String get stockTakeDescription;
+
+  /// No description provided for @noProductsInStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات في المخزون'**
+  String get noProductsInStock;
+
+  /// No description provided for @noProductsToCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات لبدء الجرد'**
+  String get noProductsToCount;
+
+  /// No description provided for @errorCreatingStockTake.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إنشاء عملية الجرد'**
+  String get errorCreatingStockTake;
+
+  /// No description provided for @saveStockTakeConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد حفظ نتائج الجرد وتحديث المخزون؟'**
+  String get saveStockTakeConfirm;
+
+  /// No description provided for @stockTakeSavedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ الجرد وتحديث المخزون بنجاح'**
+  String get stockTakeSavedSuccess;
+
+  /// No description provided for @errorCompletingStockTake.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إكمال الجرد'**
+  String get errorCompletingStockTake;
+
+  /// No description provided for @stockTakeHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل الجرد'**
+  String get stockTakeHistory;
+
+  /// No description provided for @errorLoadingHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل السجل'**
+  String get errorLoadingHistory;
+
+  /// No description provided for @noStockTakeHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد سجل جرد سابق'**
+  String get noStockTakeHistory;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد التنفيذ'**
+  String get inProgress;
+
+  /// No description provided for @expiryTracking.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبع الصلاحية'**
+  String get expiryTracking;
+
+  /// No description provided for @errorLoadingExpiryData.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل بيانات الصلاحية'**
+  String get errorLoadingExpiryData;
+
+  /// No description provided for @withinMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلال شهر'**
+  String get withinMonth;
+
+  /// No description provided for @noProductsExpiringIn7Days.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات تنتهي خلال 7 أيام'**
+  String get noProductsExpiringIn7Days;
+
+  /// No description provided for @noProductsExpiringInMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات تنتهي خلال شهر'**
+  String get noProductsExpiringInMonth;
+
+  /// No description provided for @noExpiredProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات منتهية الصلاحية'**
+  String get noExpiredProducts;
+
+  /// No description provided for @batch.
+  ///
+  /// In ar, this message translates to:
+  /// **'باتش'**
+  String get batch;
+
+  /// No description provided for @expiredSinceDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهي منذ {days} يوم'**
+  String expiredSinceDays(int days);
+
+  /// No description provided for @remove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get remove;
+
+  /// No description provided for @pressToAddExpiryTracking.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط + لإضافة تتبع صلاحية جديد'**
+  String get pressToAddExpiryTracking;
+
+  /// No description provided for @applyDiscountTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق خصم على'**
+  String get applyDiscountTo;
+
+  /// No description provided for @confirmRemoval.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الإزالة'**
+  String get confirmRemoval;
+
+  /// No description provided for @removeExpiryTrackingFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد إزالة تتبع صلاحية'**
+  String get removeExpiryTrackingFor;
+
+  /// No description provided for @expiryTrackingRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إزالة تتبع الصلاحية'**
+  String get expiryTrackingRemoved;
+
+  /// No description provided for @errorRemovingExpiryTracking.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إزالة تتبع الصلاحية'**
+  String get errorRemovingExpiryTracking;
+
+  /// No description provided for @addExpiryDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة تاريخ صلاحية'**
+  String get addExpiryDate;
+
+  /// No description provided for @barcodeOrProductName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباركود أو اسم المنتج'**
+  String get barcodeOrProductName;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر التاريخ'**
+  String get selectDate;
+
+  /// No description provided for @batchNumberOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الباتش (اختياري)'**
+  String get batchNumberOptional;
+
+  /// No description provided for @expiryTrackingAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إضافة تتبع الصلاحية بنجاح'**
+  String get expiryTrackingAdded;
+
+  /// No description provided for @errorAddingExpiryTracking.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في إضافة تتبع الصلاحية'**
+  String get errorAddingExpiryTracking;
+
+  /// No description provided for @barcodeScanner2.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماسح الباركود'**
+  String get barcodeScanner2;
+
+  /// No description provided for @scanning.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري المسح...'**
+  String get scanning;
+
+  /// No description provided for @pressToStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط للبدء'**
+  String get pressToStart;
+
+  /// No description provided for @stop.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف'**
+  String get stop;
+
+  /// No description provided for @startScanning.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدء المسح'**
+  String get startScanning;
+
+  /// No description provided for @enterBarcodeManually.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الباركود يدوياً'**
+  String get enterBarcodeManually;
+
+  /// No description provided for @noScannedProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم مسح أي منتج'**
+  String get noScannedProducts;
+
+  /// No description provided for @enterBarcodeToSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل باركود للبحث في قاعدة البيانات'**
+  String get enterBarcodeToSearch;
+
+  /// No description provided for @useManualInputToSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدم الإدخال اليدوي للبحث عن المنتجات'**
+  String get useManualInputToSearch;
+
+  /// No description provided for @found.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم العثور على'**
+  String get found;
+
+  /// No description provided for @productNotFoundForBarcode.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على المنتج'**
+  String get productNotFoundForBarcode;
+
+  /// No description provided for @addNewProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة منتج جديد'**
+  String get addNewProduct;
+
+  /// No description provided for @willOpenAddProductScreen.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم فتح شاشة إضافة منتج جديد'**
+  String get willOpenAddProductScreen;
+
+  /// No description provided for @scanHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل المسح'**
+  String get scanHistory;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إضافة'**
+  String get addedToCart;
+
+  /// No description provided for @barcodePrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة الباركود'**
+  String get barcodePrint;
+
+  /// No description provided for @noProductsWithBarcode.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات بباركود'**
+  String get noProductsWithBarcode;
+
+  /// No description provided for @addBarcodeFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف باركود للمنتجات أولاً'**
+  String get addBarcodeFirst;
+
+  /// No description provided for @searchProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث عن منتج...'**
+  String get searchProduct;
+
+  /// No description provided for @totalLabels.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الملصقات'**
+  String get totalLabels;
+
+  /// No description provided for @printLabels.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة الملصقات'**
+  String get printLabels;
+
+  /// No description provided for @printList.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة الطباعة'**
+  String get printList;
+
+  /// No description provided for @selectProductsToPrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر منتجات للطباعة'**
+  String get selectProductsToPrint;
+
+  /// No description provided for @willPrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم طباعة'**
+  String get willPrint;
+
+  /// No description provided for @label.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملصق'**
+  String get label;
+
+  /// No description provided for @printing.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الطباعة...'**
+  String get printing;
+
+  /// No description provided for @messageAddedToQueue.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إضافة الرسالة لطابور الإرسال'**
+  String get messageAddedToQueue;
+
+  /// No description provided for @messageSendFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر إرسال الرسالة'**
+  String get messageSendFailed;
+
+  /// No description provided for @noPhoneForCustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد رقم هاتف للعميل'**
+  String get noPhoneForCustomer;
+
+  /// No description provided for @inputContainsDangerousContent.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدخل يحتوي على محتوى غير مسموح'**
+  String get inputContainsDangerousContent;
+
+  /// No description provided for @whatsappGreeting.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً {name}\nكيف يمكننا مساعدتك؟'**
+  String whatsappGreeting(String name);
 }
 
 class _AppLocalizationsDelegate

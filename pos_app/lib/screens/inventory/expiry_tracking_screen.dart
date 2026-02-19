@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/inventory_advanced_providers.dart';
 
@@ -49,29 +50,31 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   @override
   Widget build(BuildContext context) {
     final expiryAsync = ref.watch(expiryTrackingProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return expiryAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('تتبع الصلاحية')),
+        appBar: AppBar(title: Text(l10n.expiryTracking)),
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, _) => Scaffold(
-        appBar: AppBar(title: const Text('تتبع الصلاحية')),
+        appBar: AppBar(title: Text(l10n.expiryTracking)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              Icon(Icons.error_outline, size: 64, color: colorScheme.error),
               const SizedBox(height: 16),
-              Text('خطأ في تحميل بيانات الصلاحية',
-                  style: TextStyle(color: Colors.red.shade600, fontSize: 16)),
+              Text(l10n.errorLoadingExpiryData,
+                  style: TextStyle(color: colorScheme.error, fontSize: 16)),
               const SizedBox(height: 8),
-              Text('$error', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+              Text('$error', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
               const SizedBox(height: 16),
               TextButton.icon(
                 onPressed: () => ref.invalidate(expiryTrackingProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -99,17 +102,17 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('تتبع الصلاحية'),
+            title: Text(l10n.expiryTracking),
             bottom: TabBar(
               controller: _tabController,
               tabs: [
                 Tab(
                   icon: Badge(
                     label: Text('${within7.length}'),
-                    backgroundColor: Colors.red,
+                    backgroundColor: colorScheme.error,
                     child: const Icon(Icons.warning_amber),
                   ),
-                  text: 'قريب الانتهاء',
+                  text: l10n.nearExpiry,
                 ),
                 Tab(
                   icon: Badge(
@@ -117,15 +120,15 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     backgroundColor: Colors.orange,
                     child: const Icon(Icons.schedule),
                   ),
-                  text: 'خلال شهر',
+                  text: l10n.withinMonth,
                 ),
                 Tab(
                   icon: Badge(
                     label: Text('${expired.length}'),
-                    backgroundColor: Colors.grey,
+                    backgroundColor: colorScheme.onSurfaceVariant,
                     child: const Icon(Icons.dangerous),
                   ),
-                  text: 'منتهية',
+                  text: l10n.expired,
                 ),
               ],
             ),
@@ -133,22 +136,22 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: () => ref.invalidate(expiryTrackingProvider),
-                tooltip: 'تحديث',
+                tooltip: l10n.refresh,
               ),
             ],
           ),
           body: TabBarView(
             controller: _tabController,
             children: [
-              _buildExpiryList(within7, Colors.red, 'لا توجد منتجات تنتهي خلال 7 أيام'),
-              _buildExpiryList(within30, Colors.orange, 'لا توجد منتجات تنتهي خلال شهر'),
-              _buildExpiryList(expired, Colors.grey, 'لا توجد منتجات منتهية الصلاحية'),
+              _buildExpiryList(within7, colorScheme.error, l10n.noProductsExpiringIn7Days, l10n),
+              _buildExpiryList(within30, Colors.orange, l10n.noProductsExpiringInMonth, l10n),
+              _buildExpiryList(expired, colorScheme.onSurfaceVariant, l10n.noExpiredProducts, l10n),
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: _showAddExpiryDialog,
+            onPressed: () => _showAddExpiryDialog(l10n),
             icon: const Icon(Icons.add),
-            label: const Text('إضافة منتج'),
+            label: Text(l10n.addProduct),
           ),
         );
       },
@@ -156,9 +159,9 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   }
 
   Widget _buildExpiryList(
-      List<ExpiryItemData> items, Color statusColor, String emptyMessage) {
+      List<ExpiryItemData> items, Color statusColor, String emptyMessage, AppLocalizations l10n) {
     if (items.isEmpty) {
-      return _buildEmptyState(emptyMessage);
+      return _buildEmptyState(emptyMessage, l10n);
     }
 
     return RefreshIndicator(
@@ -168,16 +171,17 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-          return _buildExpiryCard(item, statusColor);
+          return _buildExpiryCard(item, statusColor, l10n);
         },
       ),
     );
   }
 
-  Widget _buildExpiryCard(ExpiryItemData item, Color statusColor) {
+  Widget _buildExpiryCard(ExpiryItemData item, Color statusColor, AppLocalizations l10n) {
     final daysLeft = item.expiry.expiryDate.difference(DateTime.now()).inDays;
     final dateFormatter = DateFormat('yyyy/MM/dd');
     final isExpired = daysLeft < 0;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -224,25 +228,25 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                         children: [
                           if (item.expiry.batchNumber != null) ...[
                             Icon(Icons.inventory,
-                                size: 14, color: Colors.grey.shade600),
+                                size: 14, color: colorScheme.onSurfaceVariant),
                             const SizedBox(width: 4),
                             Text(
-                              'باتش: ${item.expiry.batchNumber}',
+                              '${l10n.batch}: ${item.expiry.batchNumber}',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(width: 16),
                           ],
                           Icon(Icons.inventory_2,
-                              size: 14, color: Colors.grey.shade600),
+                              size: 14, color: colorScheme.onSurfaceVariant),
                           const SizedBox(width: 4),
                           Text(
-                            'الكمية: ${item.expiry.quantity}',
+                            '${l10n.quantity}: ${item.expiry.quantity}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -259,8 +263,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   ),
                   child: Text(
                     isExpired
-                        ? 'منتهي منذ ${-daysLeft} يوم'
-                        : 'باقي $daysLeft يوم',
+                        ? l10n.expiredSinceDays(-daysLeft)
+                        : l10n.remainingDays(daysLeft),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -274,34 +278,34 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
             Row(
               children: [
                 Icon(Icons.calendar_today,
-                    size: 14, color: Colors.grey.shade600),
+                    size: 14, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 4),
                 Text(
-                  'تاريخ الانتهاء: ${dateFormatter.format(item.expiry.expiryDate)}',
+                  '${l10n.expiryDate}: ${dateFormatter.format(item.expiry.expiryDate)}',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.grey.shade600,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const Spacer(),
                 // Action buttons
                 TextButton.icon(
-                  onPressed: () => _showDiscountDialog(item),
+                  onPressed: () => _showDiscountDialog(item, l10n),
                   icon: const Icon(Icons.local_offer, size: 16),
-                  label: const Text('خصم', style: TextStyle(fontSize: 12)),
+                  label: Text(l10n.discount, style: const TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
+                    foregroundColor: colorScheme.primary,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   ),
                 ),
                 const SizedBox(width: 4),
                 TextButton.icon(
-                  onPressed: () => _confirmRemove(item),
+                  onPressed: () => _confirmRemove(item, l10n),
                   icon: const Icon(Icons.delete_outline, size: 16),
-                  label: const Text('إزالة', style: TextStyle(fontSize: 12)),
+                  label: Text(l10n.remove, style: const TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
+                    foregroundColor: colorScheme.error,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   ),
@@ -314,7 +318,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  Widget _buildEmptyState(String message) {
+  Widget _buildEmptyState(String message, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -325,16 +330,16 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
             message,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey.shade600,
+              color: colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'اضغط + لإضافة تتبع صلاحية جديد',
+            l10n.pressToAddExpiryTracking,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.grey.shade500,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -342,57 +347,58 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  void _showDiscountDialog(ExpiryItemData item) {
+  void _showDiscountDialog(ExpiryItemData item, AppLocalizations l10n) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تطبيق خصم على "${item.productName}" - قريباً'),
-        backgroundColor: Colors.blue,
+        content: Text('${l10n.applyDiscountTo} "${item.productName}" - ${l10n.comingSoon}'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
 
-  void _confirmRemove(ExpiryItemData item) {
+  void _confirmRemove(ExpiryItemData item, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تأكيد الإزالة'),
+        title: Text(l10n.confirmRemoval),
         content: Text(
-            'هل تريد إزالة تتبع صلاحية "${item.productName}"?\n'
-            'باتش: ${item.expiry.batchNumber ?? "-"}\n'
-            'الكمية: ${item.expiry.quantity}'),
+            '${l10n.removeExpiryTrackingFor} "${item.productName}"?\n'
+            '${l10n.batch}: ${item.expiry.batchNumber ?? "-"}\n'
+            '${l10n.quantity}: ${item.expiry.quantity}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              await _removeExpiry(item);
+              await _removeExpiry(item, l10n);
             },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('إزالة'),
+            style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
+            child: Text(l10n.remove),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _removeExpiry(ExpiryItemData item) async {
+  Future<void> _removeExpiry(ExpiryItemData item, AppLocalizations l10n) async {
     // استخدام المزود مع SyncQueue
     final success = await deleteExpiryRecord(ref, item.expiry.id);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'تم إزالة تتبع الصلاحية' : 'خطأ في إزالة تتبع الصلاحية'),
-          backgroundColor: success ? Colors.green : Colors.red,
+          content: Text(success ? l10n.expiryTrackingRemoved : l10n.errorRemovingExpiryTracking),
+          backgroundColor: success ? Colors.green : Theme.of(context).colorScheme.error,
         ),
       );
     }
   }
 
-  void _showAddExpiryDialog() {
+  void _showAddExpiryDialog(AppLocalizations l10n) {
     _barcodeController.clear();
     _batchController.clear();
     _quantityController.text = '1';
@@ -401,11 +407,13 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     _selectedProductId = null;
     _selectedProductName = null;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('إضافة تاريخ صلاحية'),
+          title: Text(l10n.addExpiryDate),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -415,7 +423,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                 TextField(
                   controller: _barcodeController,
                   decoration: InputDecoration(
-                    labelText: 'الباركود أو اسم المنتج',
+                    labelText: l10n.barcodeOrProductName,
                     prefixIcon: const Icon(Icons.qr_code_scanner),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.search),
@@ -434,20 +442,19 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.shade200),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.check_circle,
-                            size: 16, color: Colors.green.shade700),
+                        const Icon(Icons.check_circle, size: 16, color: Colors.green),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _selectedProductName!,
-                            style: TextStyle(
-                              color: Colors.green.shade700,
+                            style: const TextStyle(
+                              color: Colors.green,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -473,20 +480,20 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     }
                   },
                   child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'تاريخ الانتهاء',
-                      prefixIcon: Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.expiryDate,
+                      prefixIcon: const Icon(Icons.calendar_today),
+                      border: const OutlineInputBorder(),
                     ),
                     child: Text(
                       _selectedExpiryDate != null
                           ? DateFormat('yyyy/MM/dd')
                               .format(_selectedExpiryDate!)
-                          : 'اختر التاريخ',
+                          : l10n.selectDate,
                       style: TextStyle(
                         color: _selectedExpiryDate != null
                             ? null
-                            : Colors.grey,
+                            : colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -494,30 +501,30 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                 const SizedBox(height: 16),
                 TextField(
                   controller: _batchController,
-                  decoration: const InputDecoration(
-                    labelText: 'رقم الباتش (اختياري)',
-                    prefixIcon: Icon(Icons.inventory),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.batchNumberOptional,
+                    prefixIcon: const Icon(Icons.inventory),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _quantityController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'الكمية',
-                    prefixIcon: Icon(Icons.format_list_numbered),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.quantity,
+                    prefixIcon: const Icon(Icons.format_list_numbered),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _notesController,
                   maxLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: 'ملاحظات (اختياري)',
-                    prefixIcon: Icon(Icons.notes),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.notesOptional,
+                    prefixIcon: const Icon(Icons.notes),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ],
@@ -526,17 +533,17 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: (_selectedProductId != null &&
                       _selectedExpiryDate != null)
                   ? () async {
                       Navigator.pop(ctx);
-                      await _addExpiry();
+                      await _addExpiry(l10n);
                     }
                   : null,
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         ),
@@ -547,6 +554,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   Future<void> _searchProduct(
       String query, void Function(void Function()) setDialogState) async {
     if (query.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
 
     final db = getIt<AppDatabase>();
     final storeId = ref.read(currentStoreIdProvider);
@@ -581,8 +589,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('لم يتم العثور على المنتج'),
+          SnackBar(
+            content: Text(l10n.productNotFound),
             backgroundColor: Colors.orange,
           ),
         );
@@ -590,7 +598,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     }
   }
 
-  Future<void> _addExpiry() async {
+  Future<void> _addExpiry(AppLocalizations l10n) async {
     if (_selectedProductId == null || _selectedExpiryDate == null) return;
 
     final quantity = int.tryParse(_quantityController.text) ?? 1;
@@ -608,8 +616,8 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result != null ? 'تم إضافة تتبع الصلاحية بنجاح' : 'خطأ في إضافة تتبع الصلاحية'),
-          backgroundColor: result != null ? Colors.green : Colors.red,
+          content: Text(result != null ? l10n.expiryTrackingAdded : l10n.errorAddingExpiryTracking),
+          backgroundColor: result != null ? Colors.green : Theme.of(context).colorScheme.error,
         ),
       );
     }

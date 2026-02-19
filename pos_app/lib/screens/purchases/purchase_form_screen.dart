@@ -103,7 +103,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                       ),
                     )
                   : const Icon(Icons.save),
-              label: Text(_isSaving ? 'جاري الحفظ...' : 'حفظ'),
+              label: Text(_isSaving ? l10n.savingLabel : l10n.saveLabel),
             ),
           ],
         ),
@@ -196,7 +196,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           const SizedBox(height: 16),
           suppliersAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Text('خطأ في تحميل الموردين: $e'),
+            error: (e, _) => Text(l10n.errorLoadingSuppliers(e)),
             data: (suppliers) => DropdownButtonFormField<String>(
               decoration: InputDecoration(
                 labelText: l10n.selectSupplierRequired,
@@ -263,7 +263,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    '\u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A', // TODO: localize
+                    l10n.productsLabel,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               FilledButton.tonalIcon(
                 onPressed: _addProduct,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('\u0625\u0636\u0627\u0641\u0629 \u0645\u0646\u062A\u062C'), // TODO: localize
+                label: Text(l10n.addProduct),
               ),
             ],
           ),
@@ -424,6 +424,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildTotalCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -448,7 +449,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A', // TODO: localize
+            l10n.totalLabel,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -469,6 +470,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   void _addProduct() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
@@ -477,13 +479,13 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         final costController = TextEditingController();
 
         return AlertDialog(
-          title: const Text('\u0625\u0636\u0627\u0641\u0629 \u0645\u0646\u062A\u062C'), // TODO: localize
+          title: Text(l10n.addProduct),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: '\u0627\u0633\u0645 \u0627\u0644\u0645\u0646\u062A\u062C *'),
+                decoration: InputDecoration(labelText: l10n.productNameLabel),
               ),
               const SizedBox(height: 12),
               Row(
@@ -491,7 +493,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   Expanded(
                     child: TextField(
                       controller: qtyController,
-                      decoration: const InputDecoration(labelText: '\u0627\u0644\u0643\u0645\u064A\u0629'),
+                      decoration: InputDecoration(labelText: l10n.quantityLabel),
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -499,7 +501,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   Expanded(
                     child: TextField(
                       controller: costController,
-                      decoration: const InputDecoration(labelText: '\u0633\u0639\u0631 \u0627\u0644\u0634\u0631\u0627\u0621'),
+                      decoration: InputDecoration(labelText: l10n.purchasePriceLabel),
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -510,7 +512,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('\u0625\u0644\u063A\u0627\u0621'),
+              child: Text(l10n.cancelLabel),
             ),
             FilledButton(
               onPressed: () {
@@ -530,7 +532,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('\u0625\u0636\u0627\u0641\u0629'),
+              child: Text(l10n.addLabel),
             ),
           ],
         );
@@ -539,9 +541,10 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Future<void> _savePurchase() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedSupplierId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى اختيار المورد')),
+        SnackBar(content: Text(l10n.selectSupplierRequired)),
       );
       return;
     }
@@ -619,7 +622,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'تم حفظ فاتورة الشراء - الإجمالي: ${_subtotal.toStringAsFixed(2)} ر.س',
+              l10n.purchaseInvoiceSaved(_subtotal.toStringAsFixed(2)),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -631,7 +634,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في حفظ المشتريات: $e'),
+            content: Text(l10n.errorSavingPurchase(e)),
             backgroundColor: AppColors.error,
           ),
         );

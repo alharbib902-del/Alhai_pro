@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../widgets/layout/app_header.dart';
 
 class DeviceLogScreen extends ConsumerStatefulWidget {
   const DeviceLogScreen({super.key});
@@ -130,90 +133,80 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-              border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.deviceLog,
+          onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 0,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(
+                _dateRange != null ? Icons.filter_alt : Icons.filter_alt_outlined,
+                color: _dateRange != null ? AppColors.primary : (isDark ? Colors.white70 : AppColors.textSecondary),
+              ),
+              tooltip: l10n.filter,
+              onPressed: _pickDateRange,
             ),
-            child: Row(
-              children: [
-                if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
-                const Icon(Icons.devices, color: AppColors.primary, size: 28),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text('سجل الأجهزة', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-                ),
-                // زر فلتر التاريخ
-                IconButton(
-                  icon: Icon(
-                    _dateRange != null ? Icons.filter_alt : Icons.filter_alt_outlined,
-                    color: _dateRange != null ? AppColors.primary : null,
-                  ),
-                  tooltip: 'فلتر بالتاريخ',
-                  onPressed: _pickDateRange,
-                ),
-                if (_dateRange != null)
-                  IconButton(
-                    icon: const Icon(Icons.clear, size: 20),
-                    tooltip: 'إزالة الفلتر',
-                    onPressed: _clearDateFilter,
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'تحديث',
-                  onPressed: _loadLogs,
-                ),
-              ],
+            if (_dateRange != null)
+              IconButton(
+                icon: Icon(Icons.clear, size: 20, color: isDark ? Colors.white70 : AppColors.textSecondary),
+                tooltip: l10n.clearAll,
+                onPressed: _clearDateFilter,
+              ),
+            IconButton(
+              icon: Icon(Icons.refresh, color: isDark ? Colors.white70 : AppColors.textSecondary),
+              tooltip: l10n.refresh,
+              onPressed: _loadLogs,
             ),
+          ],
+        ),
+        // Info banner
+        Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.info.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.2)),
           ),
-          // Info banner
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    _dateRange != null
-                        ? 'عرض السجلات من ${DateFormat('yyyy/MM/dd').format(_dateRange!.start)} إلى ${DateFormat('yyyy/MM/dd').format(_dateRange!.end)}'
-                        : 'يتم تسجيل جميع العمليات على الأجهزة تلقائياً',
-                    style: const TextStyle(fontSize: 13, color: Colors.blue),
-                  ),
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline, color: AppColors.info, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  _dateRange != null
+                      ? '${l10n.filter}: ${DateFormat('yyyy/MM/dd').format(_dateRange!.start)} - ${DateFormat('yyyy/MM/dd').format(_dateRange!.end)}'
+                      : l10n.allOperationsSynced,
+                  style: TextStyle(fontSize: 13, color: isDark ? AppColors.info : AppColors.info),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          // Content area
-          Expanded(
-            child: _buildContent(isDark),
-          ),
-        ],
-      ),
+        ),
+        // Content area
+        Expanded(
+          child: _buildContent(isDark, l10n),
+        ),
+      ],
     );
   }
 
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('جاري تحميل السجلات...', style: TextStyle(color: Colors.grey)),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.loading, style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary)),
           ],
         ),
       );
@@ -224,14 +217,14 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 48, color: AppColors.error.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
-            Text(_error!, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+            Text(_error!, style: const TextStyle(color: AppColors.error), textAlign: TextAlign.center),
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: _loadLogs,
               icon: const Icon(Icons.refresh),
-              label: const Text('إعادة المحاولة'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -243,11 +236,11 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.history_outlined, size: 48, color: Colors.grey.shade400),
+            Icon(Icons.history_outlined, size: 48, color: isDark ? Colors.white38 : AppColors.textTertiary),
             const SizedBox(height: 16),
             Text(
-              'لا توجد سجلات${_dateRange != null ? ' في الفترة المحددة' : ''}',
-              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+              l10n.noData,
+              style: TextStyle(fontSize: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
             ),
           ],
         ),
@@ -275,9 +268,9 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
       ),
       child: Row(
         children: [
@@ -299,7 +292,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                     Expanded(
                       child: Text(
                         meta.label,
-                        style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : AppColors.textPrimary),
                       ),
                     ),
                     Container(
@@ -319,7 +312,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                   const SizedBox(height: 4),
                   Text(
                     log.description!,
-                    style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.grey),
+                    style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -327,20 +320,20 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 12, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                    Icon(Icons.access_time, size: 12, color: isDark ? Colors.white38 : AppColors.textTertiary),
                     const SizedBox(width: 4),
                     Text(
                       timeStr,
-                      style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                      style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
                     ),
                     if (log.deviceInfo != null) ...[
                       const SizedBox(width: 12),
-                      Icon(Icons.devices, size: 12, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                      Icon(Icons.devices, size: 12, color: isDark ? Colors.white38 : AppColors.textTertiary),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           log.deviceInfo!,
-                          style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey.shade400),
+                          style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

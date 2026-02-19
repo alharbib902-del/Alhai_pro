@@ -447,7 +447,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             DropdownMenuItem(value: '7', child: Text(l10n.sevenDays)),
             DropdownMenuItem(value: '14', child: Text(l10n.fourteenDays)),
             DropdownMenuItem(value: '30', child: Text(l10n.thirtyDays)),
-            const DropdownMenuItem(value: '45', child: Text('45 يوم')),
+            DropdownMenuItem(value: '45', child: Text(l10n.fortyFiveDays)),
             DropdownMenuItem(value: '60', child: Text(l10n.sixtyDays)),
           ],
           onChanged: (value) {
@@ -473,7 +473,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // IBAN
         _buildTextField(
           controller: _ibanController,
-          label: 'رقم الحساب IBAN', // TODO: localize
+          label: l10n.ibanLabel,
           hint: 'SAxx xxxx xxxx xxxx xxxx xxxx',
           icon: Icons.credit_card,
           isDark: isDark,
@@ -489,9 +489,10 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   }
 
   Widget _buildAdditionalSection(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return _buildSectionCard(
       isDark: isDark,
-      title: 'إعدادات إضافية', // TODO: localize
+      title: l10n.additionalSettings,
       icon: Icons.settings,
       color: AppColors.grey600,
       children: [
@@ -507,14 +508,14 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           child: SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
-              'المورد نشط', // TODO: localize
+              l10n.supplierActiveLabel,
               style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(
-              'يمكن إنشاء طلبات شراء من هذا المورد', // TODO: localize
+              l10n.supplierCanCreateOrders,
               style: TextStyle(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.5)
@@ -534,8 +535,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // ملاحظات
         _buildTextField(
           controller: _notesController,
-          label: 'ملاحظات', // TODO: localize
-          hint: 'أي ملاحظات إضافية عن المورد...', // TODO: localize
+          label: l10n.notesLabel,
+          hint: l10n.notesFieldHint,
           icon: Icons.note,
           isDark: isDark,
           maxLines: 3,
@@ -686,6 +687,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   }
 
   Widget _buildSaveButton(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
@@ -702,10 +704,10 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             : const Icon(Icons.save_rounded),
         label: Text(
           _isLoading
-              ? 'جاري الحفظ...' // TODO: localize
+              ? l10n.savingLabel
               : (widget.isEditing
-                  ? 'تحديث المورد' // TODO: localize
-                  : 'إضافة المورد'), // TODO: localize
+                  ? l10n.updateSupplier
+                  : l10n.addSupplierBtn),
         ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -719,12 +721,13 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   }
 
   Widget _buildDeleteButton(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: _showDeleteConfirmation,
         icon: const Icon(Icons.delete_outline_rounded),
-        label: const Text('حذف المورد'), // TODO: localize
+        label: Text(l10n.deleteSupplier),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.error,
           minimumSize: const Size.fromHeight(52),
@@ -739,6 +742,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     );
   }
   void _saveSupplier() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -800,8 +804,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           SnackBar(
             content: Text(
               widget.isEditing
-                  ? 'تم تحديث بيانات المورد' // TODO: localize
-                  : 'تم إضافة المورد بنجاح', // TODO: localize
+                  ? l10n.supplierUpdatedMsg
+                  : l10n.supplierAddedSuccess,
             ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
@@ -819,7 +823,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ: $e'),
+            content: Text(l10n.errorOccurredMsg(e)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
             shape:
@@ -832,19 +836,20 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
   void _showDeleteConfirmation() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'حذف المورد', // TODO: localize
+          l10n.deleteSupplier,
           style: TextStyle(
             color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         content: Text(
-          'هل أنت متأكد من حذف هذا المورد؟ سيتم حذف جميع البيانات المرتبطة به.', // TODO: localize
+          l10n.deleteSupplierConfirm,
           style: TextStyle(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.7)
@@ -855,7 +860,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'إلغاء', // TODO: localize
+              l10n.deleteConfirmCancel,
               style: TextStyle(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.7)
@@ -874,7 +879,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('حذف'), // TODO: localize
+            child: Text(l10n.deleteConfirmBtn),
           ),
         ],
       ),
@@ -882,6 +887,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   }
 
   void _deleteSupplier() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _isLoading = true;
     });
@@ -894,7 +900,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('تم حذف المورد'), // TODO: localize
+            content: Text(l10n.supplierDeletedMsg),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
             shape:
@@ -911,7 +917,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ أثناء الحذف: $e'),
+            content: Text(l10n.errorDuringDeleteMsg(e)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
             shape:

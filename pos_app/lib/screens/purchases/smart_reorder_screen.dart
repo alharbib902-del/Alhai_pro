@@ -70,13 +70,13 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     return Column(
               children: [
                 AppHeader(
-                  title: '\u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0630\u0643\u064A', // TODO: localize
+                  title: l10n.smartReorderTitle,
                   onMenuTap: isWideScreen
                       ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
@@ -105,7 +105,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '\u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0630\u0643\u064A', // TODO: localize
+                l10n.smartReorderTitle,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               FilledButton.icon(
                 onPressed: _sendOrder,
                 icon: const AdaptiveIcon(Icons.send, size: 18),
-                label: const Text('\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628'), // TODO: localize
+                label: Text(l10n.sendOrder),
               ),
           ],
         ),
@@ -161,7 +161,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '\u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0630\u0643\u064A \u0628\u0627\u0644\u0640 AI', // TODO: localize
+                      l10n.smartReorderAiTitle,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -170,7 +170,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '\u062D\u062F\u062F \u0627\u0644\u0645\u064A\u0632\u0627\u0646\u064A\u0629 \u0648\u0633\u064A\u0642\u0648\u0645 \u0627\u0644\u0646\u0638\u0627\u0645 \u0628\u062A\u0648\u0632\u064A\u0639\u0647\u0627 \u0639\u0644\u0649 \u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A \u062D\u0633\u0628 \u0645\u0639\u062F\u0644 \u0627\u0644\u062F\u0648\u0631\u0627\u0646', // TODO: localize
+                      l10n.smartReorderDescription,
                       style: TextStyle(
                         fontSize: 13,
                         color: isDark
@@ -215,6 +215,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   Widget _buildFormSection(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -242,7 +243,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                '\u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0637\u0644\u0628', // TODO: localize
+                l10n.orderSettings,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -256,20 +257,20 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             controller: _budgetController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: '\u0627\u0644\u0645\u064A\u0632\u0627\u0646\u064A\u0629 \u0627\u0644\u0645\u062A\u0627\u062D\u0629', // TODO: localize
-              suffixText: '\u0631.\u0633',
+              labelText: l10n.availableBudget,
+              suffixText: l10n.sar,
               prefixIcon: const Icon(Icons.account_balance_wallet),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              helperText: '\u0623\u062F\u062E\u0644 \u0627\u0644\u0645\u0628\u0644\u063A \u0627\u0644\u0645\u062A\u0627\u062D \u0644\u0644\u0634\u0631\u0627\u0621', // TODO: localize
+              helperText: l10n.enterAvailableAmount,
             ),
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             initialValue: _selectedSupplier,
             decoration: InputDecoration(
-              labelText: '\u0627\u0644\u0645\u0648\u0631\u062F', // TODO: localize
+              labelText: l10n.supplierLabel,
               prefixIcon: const Icon(Icons.storefront),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -295,8 +296,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                     )
                   : const Icon(Icons.auto_awesome),
               label: Text(_isCalculating
-                  ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0633\u0627\u0628...'
-                  : '\u062D\u0633\u0627\u0628 \u0627\u0644\u062A\u0648\u0632\u064A\u0639 \u0627\u0644\u0630\u0643\u064A'), // TODO: localize
+                  ? l10n.calculating
+                  : l10n.calculateSmartDistribution),
             ),
           ),
         ],
@@ -305,6 +306,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   Widget _buildResultsSection(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     if (_suggestions.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(48),
@@ -327,7 +329,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                       : AppColors.textTertiary),
               const SizedBox(height: 16),
               Text(
-                '\u062D\u062F\u062F \u0627\u0644\u0645\u064A\u0632\u0627\u0646\u064A\u0629 \u0648\u0627\u0636\u063A\u0637 \u062D\u0633\u0627\u0628', // TODO: localize
+                l10n.setBudgetAndCalculate,
                 style: TextStyle(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.5)
@@ -348,7 +350,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           children: [
             Expanded(
               child: _SummaryCard(
-                title: '\u0639\u062F\u062F \u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A', // TODO: localize
+                title: l10n.numberOfProducts,
                 value: '${_suggestions.length}',
                 icon: Icons.inventory_2,
                 color: AppColors.info,
@@ -358,8 +360,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _SummaryCard(
-                title: '\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A', // TODO: localize
-                value: '${_totalCost.toStringAsFixed(0)} \u0631.\u0633',
+                title: l10n.totalLabel,
+                value: '${_totalCost.toStringAsFixed(0)} ${l10n.sar}',
                 icon: Icons.payments,
                 color: AppColors.success,
                 isDark: isDark,
@@ -385,7 +387,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '\u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A \u0627\u0644\u0645\u0642\u062A\u0631\u062D\u0629', // TODO: localize
+                l10n.suggestedProducts,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -423,7 +425,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               child: FilledButton.icon(
                 onPressed: () => _sendVia('email'),
                 icon: const Icon(Icons.email),
-                label: const Text('\u0627\u0644\u0628\u0631\u064A\u062F'), // TODO: localize
+                label: Text(l10n.emailLabel),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
@@ -444,10 +446,11 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     final budget = double.tryParse(_budgetController.text) ?? 0;
     if (budget <= 0) {
       final messenger = ScaffoldMessenger.of(context);
+      final l10n = AppLocalizations.of(context)!;
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content:
-                Text('\u0627\u0644\u0631\u062C\u0627\u0621 \u0625\u062F\u062E\u0627\u0644 \u0645\u064A\u0632\u0627\u0646\u064A\u0629 \u0635\u062D\u064A\u062D\u0629')),
+                Text(l10n.enterValidBudget)),
       );
       return;
     }
@@ -519,28 +522,29 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   void _sendOrder() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('\u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0625\u0631\u0633\u0627\u0644'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.confirmSendTitle),
         content: Text(
-            '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0625\u0644\u0649 ${_selectedSupplier ?? '\u0627\u0644\u0645\u0648\u0631\u062F'}\u061F'),
+            l10n.sendOrderToMsg(_selectedSupplier ?? l10n.supplierLabel)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('\u0625\u0644\u063A\u0627\u0621'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0628\u0646\u062C\u0627\u062D'),
+                SnackBar(
+                  content: Text(l10n.orderSentSuccessMsg),
                   backgroundColor: AppColors.success,
                 ),
               );
             },
-            child: const Text('\u0625\u0631\u0633\u0627\u0644'),
+            child: Text(l10n.sendOrder),
           ),
         ],
       ),
@@ -548,10 +552,11 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   void _sendVia(String method) {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-            '\u062C\u0627\u0631\u064A \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0639\u0628\u0631 ${method == 'whatsapp' ? 'WhatsApp' : '\u0627\u0644\u0628\u0631\u064A\u062F'}...'),
+            l10n.sendingOrderVia(method == 'whatsapp' ? 'WhatsApp' : l10n.emailLabel)),
       ),
     );
   }
@@ -685,7 +690,7 @@ class _ReorderItemCard extends StatelessWidget {
                     _Tag(
                       icon: Icons.inventory,
                       label:
-                          '\u0627\u0644\u0645\u062E\u0632\u0648\u0646: ${item.currentStock}', // TODO: localize
+                          AppLocalizations.of(context)!.stockLabelCount(item.currentStock),
                       color: item.currentStock < item.minStock
                           ? AppColors.error
                           : AppColors.textSecondary,
@@ -695,7 +700,7 @@ class _ReorderItemCard extends StatelessWidget {
                     _Tag(
                       icon: Icons.trending_up,
                       label:
-                          '\u0627\u0644\u062F\u0648\u0631\u0627\u0646: ${item.turnoverRate}%', // TODO: localize
+                          AppLocalizations.of(context)!.turnoverLabel(item.turnoverRate),
                       color: AppColors.info,
                       isDark: isDark,
                     ),
@@ -707,7 +712,7 @@ class _ReorderItemCard extends StatelessWidget {
           Column(
             children: [
               Text(
-                '${item.price.toStringAsFixed(1)} \u0631.\u0633',
+                '${item.price.toStringAsFixed(1)} ${AppLocalizations.of(context)!.sar}',
                 style: TextStyle(
                   fontSize: 12,
                   color: isDark

@@ -56,16 +56,16 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
               const SizedBox(height: 16),
-              Text('حدث خطأ أثناء تحميل الفئات', style: Theme.of(context).textTheme.titleMedium),
+              Text('حدث خطأ أثناء تحميل الفئات', style: Theme.of(context).textTheme.titleMedium), // TODO: i18n
               const SizedBox(height: 8),
-              Text(error.toString(), style: const TextStyle(color: Colors.grey)),
+              Text(error.toString(), style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 16),
               FilledButton.icon(
                 onPressed: () => ref.invalidate(_categoriesDbProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'),
+                label: const Text('إعادة المحاولة'), // TODO: i18n
               ),
             ],
           ),
@@ -76,11 +76,11 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.category_outlined, size: 64, color: Colors.grey.shade400),
+                  Icon(Icons.category_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   const SizedBox(height: 16),
-                  Text('لا توجد فئات', style: Theme.of(context).textTheme.titleMedium),
+                  Text('لا توجد فئات', style: Theme.of(context).textTheme.titleMedium), // TODO: i18n
                   const SizedBox(height: 8),
-                  Text('اضغط على + لإضافة فئة جديدة', style: TextStyle(color: Colors.grey.shade600)),
+                  Text('اضغط على + لإضافة فئة جديدة', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)), // TODO: i18n
                 ],
               ),
             );
@@ -126,7 +126,7 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
                       ),
                       ReorderableDragStartListener(
                         index: index,
-                        child: const Icon(Icons.drag_handle, color: Colors.grey),
+                        child: Icon(Icons.drag_handle, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -284,10 +284,10 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: selectedIcon == icon ? selectedColor.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.1),
+                              color: selectedIcon == icon ? selectedColor.withValues(alpha: 0.2) : Theme.of(context).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(icon, color: selectedIcon == icon ? selectedColor : Colors.grey),
+                            child: Icon(icon, color: selectedIcon == icon ? selectedColor : Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ),
                     ],
@@ -311,7 +311,7 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
                             decoration: BoxDecoration(
                               color: color,
                               shape: BoxShape.circle,
-                              border: selectedColor == color ? Border.all(color: Colors.black, width: 2) : null,
+                              border: selectedColor == color ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2) : null,
                             ),
                           ),
                         ),
@@ -403,7 +403,7 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
               Navigator.pop(context);
               _deleteCategory(category);
             },
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -466,7 +466,7 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
               ref.invalidate(_categoriesDbProvider);
               if (context.mounted) Navigator.pop(context);
             },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text(l10n.delete),
           ),
         ],
@@ -523,11 +523,11 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('حدث خطأ: ${snapshot.error}'));
+                    return Center(child: Text('حدث خطأ: ${snapshot.error}')); // TODO: i18n
                   }
                   final products = snapshot.data ?? [];
                   if (products.isEmpty) {
-                    return const Center(child: Text('لا توجد منتجات في هذه الفئة'));
+                    return const Center(child: Text('لا توجد منتجات في هذه الفئة')); // TODO: i18n
                   }
                   return ListView.builder(
                     controller: scrollController,
@@ -539,10 +539,10 @@ class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScree
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.inventory_2, color: Colors.grey),
+                          child: Icon(Icons.inventory_2, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                         title: Text(product.name),
                         subtitle: Text(l10n.priceWithCurrency(product.price.toStringAsFixed(2))),

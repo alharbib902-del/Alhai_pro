@@ -147,7 +147,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       child: Focus(
         autofocus: true,
         child: Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: _showSuccess
               ? _buildSuccessState()
               : _isProcessing
@@ -174,6 +174,39 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     PaymentDeviceSettings settings = const PaymentDeviceSettings(),
   ]) {
     final isDesktop = AppBreakpoints.isDesktop(context);
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final theme = Theme.of(context);
+
+    if (isMobile) {
+      // Mobile: stacked layout
+      return Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'طريقة الدفع', // TODO: i18n
+                    style: AppTypography.titleLarge.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  _buildPaymentMethods(isOffline: _isOffline, settings: settings),
+                  const SizedBox(height: AppSpacing.xxl),
+                  _buildPaymentDetails(total, change),
+                  const SizedBox(height: AppSpacing.xxl),
+                  _buildSummaryPanel(total, subtotal, tax, discount, change),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Row(
       children: [
@@ -194,9 +227,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     children: [
                       // Payment Methods
                       Text(
-                        'طريقة الدفع',
+                        'طريقة الدفع', // TODO: i18n
                         style: AppTypography.titleLarge.copyWith(
-                          color: AppColors.textPrimary,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
@@ -218,9 +251,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         Container(
           width: isDesktop ? 400 : 350,
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            border: const Border(
-              right: BorderSide(color: AppColors.border),
+            color: theme.colorScheme.surface,
+            border: const BorderDirectional(
+              end: BorderSide(color: AppColors.border),
             ),
             boxShadow: AppShadows.lg,
           ),
@@ -231,13 +264,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }
 
   Widget _buildHeader() {
+    final theme = Theme.of(context);
     return Container(
       height: AppTopBarSize.height,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: AppColors.border),
+          bottom: BorderSide(color: theme.dividerColor),
         ),
       ),
       child: Row(
@@ -246,16 +280,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           AppIconButton(
             icon: Icons.arrow_forward,
             onPressed: () => context.pop(),
-            tooltip: 'رجوع (Esc)',
+            tooltip: 'رجوع (Esc)', // TODO: i18n
           ),
 
           const SizedBox(width: AppSpacing.md),
 
           // Title
           Text(
-            'إتمام الدفع',
+            'إتمام الدفع', // TODO: i18n
             style: AppTypography.titleLarge.copyWith(
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
             ),
           ),
 
@@ -268,17 +302,17 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               vertical: AppSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: AppColors.grey100,
+              color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(AppRadius.md),
             ),
             child: Row(
               children: [
-                const Icon(Icons.keyboard, size: 16, color: AppColors.textMuted),
+                Icon(Icons.keyboard, size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
-                  'Enter للتأكيد',
+                  'Enter للتأكيد', // TODO: i18n
                   style: AppTypography.labelSmall.copyWith(
-                    color: AppColors.textMuted,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -792,6 +826,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }
 
   Widget _buildProcessingState() {
+    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -806,16 +841,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
-            'جاري معالجة الدفع...',
+            'جاري معالجة الدفع...', // TODO: i18n
             style: AppTypography.titleLarge.copyWith(
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'يرجى الانتظار',
+            'يرجى الانتظار', // TODO: i18n
             style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -869,6 +904,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   // ============================================================================
 
   Widget _buildWhatsAppPhoneInput() {
+    final theme = Theme.of(context);
+    final whatsAppColor = const Color(0xFF25D366);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -883,14 +920,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   _showPhoneInput
                       ? Icons.check_box
                       : Icons.check_box_outline_blank,
-                  color: Colors.green.shade600,
+                  color: whatsAppColor,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                const Text('إيصال واتساب',
-                    style: TextStyle(fontSize: 14)),
+                Text('إيصال واتساب', // TODO: i18n
+                    style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface)),
                 const SizedBox(width: 4),
-                Icon(Icons.chat, size: 16, color: Colors.green.shade600),
+                Icon(Icons.chat, size: 16, color: whatsAppColor),
               ],
             ),
           ),
@@ -910,7 +947,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               isDense: true,
               suffixIcon: Icon(Icons.phone_android,
-                  size: 18, color: Colors.green.shade600),
+                  size: 18, color: whatsAppColor),
             ),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,

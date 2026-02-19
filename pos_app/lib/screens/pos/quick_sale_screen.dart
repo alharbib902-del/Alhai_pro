@@ -159,15 +159,15 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: AppColors.background,
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -200,7 +200,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       child: Focus(
         autofocus: true,
         child: Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SplitView(
             primaryContent: _buildProductsSection(),
             secondaryContent: _buildCartSection(),
@@ -243,10 +243,10 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: AppColors.border),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Row(
@@ -257,9 +257,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             child: Container(
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primarySurface,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: AppColors.primaryBorder),
+                border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -271,9 +271,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
                       controller: _barcodeController,
                       focusNode: _focusNode,
                       decoration: InputDecoration(
-                        hintText: 'امسح الباركود أو أدخله (F1)',
+                        hintText: 'امسح الباركود أو أدخله (F1)', // TODO: i18n
                         hintStyle: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
@@ -339,10 +339,10 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: AppColors.border),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: ListView.separated(
@@ -404,7 +404,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   /// قسم السلة
   Widget _buildCartSection() {
     return Container(
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // Cart Header
@@ -465,18 +465,18 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: const Border(
-          top: BorderSide(color: AppColors.border),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor),
         ),
         boxShadow: AppShadows.sm,
       ),
       child: Column(
         children: [
           // Summary Lines
-          _buildSummaryLine('المجموع الفرعي', _subtotal),
+          _buildSummaryLine('المجموع الفرعي', _subtotal), // TODO: i18n
           const SizedBox(height: AppSpacing.xs),
-          _buildSummaryLine('ضريبة القيمة المضافة (15%)', _vat),
+          _buildSummaryLine('ضريبة القيمة المضافة (15%)', _vat), // TODO: i18n
 
           const Divider(height: AppSpacing.xl),
 
@@ -485,9 +485,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'الإجمالي',
+                'الإجمالي', // TODO: i18n
                 style: AppTypography.titleMedium.copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Text(
@@ -533,9 +533,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
           // Shortcut hint
           Text(
-            'F12 للدفع السريع',
+            'F12 للدفع السريع', // TODO: i18n
             style: AppTypography.labelSmall.copyWith(
-              color: AppColors.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -550,13 +550,13 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         Text(
           label,
           style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         Text(
-          '${amount.toStringAsFixed(2)} ر.س',
+          '${amount.toStringAsFixed(2)} ر.س', // TODO: i18n
           style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -596,7 +596,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             final messenger = ScaffoldMessenger.of(context);
             messenger.showSnackBar(
               SnackBar(
-                content: Text('لم يتم العثور على منتج بالباركود: $barcode'),
+                content: Text('لم يتم العثور على منتج بالباركود: $barcode'), // TODO: i18n
                 backgroundColor: AppColors.warning,
               ),
             );
@@ -660,7 +660,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     // TODO: Implement hold order
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('تم تعليق الطلب'),
+        content: Text('تم تعليق الطلب'), // TODO: i18n
         backgroundColor: AppColors.warning,
       ),
     );
@@ -730,10 +730,10 @@ class _ProductTileState extends State<_ProductTile> {
       child: AnimatedContainer(
         duration: AppDurations.fast,
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: _isHovered ? AppColors.primary : AppColors.border,
+            color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor,
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
@@ -800,7 +800,7 @@ class _ProductTileState extends State<_ProductTile> {
                   Text(
                     widget.product.name,
                     style: AppTypography.titleSmall.copyWith(
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -860,9 +860,9 @@ class _CartItemTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.grey50,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -874,16 +874,16 @@ class _CartItemTile extends StatelessWidget {
                 Text(
                   item.product.name,
                   style: AppTypography.titleSmall.copyWith(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  '${item.product.price.toStringAsFixed(2)} ر.س',
+                  '${item.product.price.toStringAsFixed(2)} ر.س', // TODO: i18n
                   style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -911,9 +911,9 @@ class _CartItemTile extends StatelessWidget {
                 ),
               ),
               Text(
-                'ر.س',
+                'ر.س', // TODO: i18n
                 style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -924,8 +924,8 @@ class _CartItemTile extends StatelessWidget {
             onPressed: onRemove,
             icon: const Icon(Icons.close),
             iconSize: 18,
-            color: AppColors.error,
-            tooltip: 'حذف',
+            color: Theme.of(context).colorScheme.error,
+            tooltip: 'حذف', // TODO: i18n
           ),
         ],
       ),

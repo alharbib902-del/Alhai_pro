@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/ai/eoq_calculator_card.dart';
 import '../../widgets/ai/abc_analysis_chart.dart';
@@ -47,7 +48,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     return Column(
               children: [
                 AppHeader(
-                  title: 'المخزون الذكي بالذكاء الاصطناعي', // AI Smart Inventory
+                  title: AppLocalizations.of(context)!.aiSmartInventoryTitle,
                   onMenuTap: !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
                 ),
                 Expanded(child: _buildContent(isDark, isWideScreen)),

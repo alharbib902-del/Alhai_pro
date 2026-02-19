@@ -154,7 +154,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                             children: [
                               Icon(Icons.check_circle, size: 64, color: Colors.green.shade400),
                               const SizedBox(height: 16),
-                              Text('لا توجد ديون مستحقة', style: TextStyle(color: Colors.grey.shade600)),
+                              Text('لا توجد ديون مستحقة', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         )
@@ -178,10 +178,10 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     if (debt['phone'] != null)
-                                      Text(debt['phone'] as String, style: TextStyle(color: Colors.grey.shade600)),
+                                      Text(debt['phone'] as String, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                                     Text(
                                       'آخر تحديث: ${_formatDate(debt['lastPayment'] as DateTime)}',
-                                      style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                      style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
                                     ),
                                   ],
                                 ),

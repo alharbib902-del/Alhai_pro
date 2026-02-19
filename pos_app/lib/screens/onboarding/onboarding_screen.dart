@@ -17,6 +17,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/settings_db_providers.dart';
 
@@ -180,12 +181,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final isLastPage = _currentPage == _pages.length - 1;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            // زر التخطي
+            // Skip button
             Align(
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
@@ -193,7 +195,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: TextButton(
                   onPressed: _skipOnboarding,
                   child: Text(
-                    'تخطي',
+                    l10n.skip,
                     style: AppTypography.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -249,7 +251,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             vertical: AppSizes.md,
                           ),
                         ),
-                        child: const Text('السابق'),
+                        child: Text(l10n.previous),
                       ),
                     )
                   else
@@ -269,7 +271,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                       ),
                       child: Text(
-                        isLastPage ? 'ابدأ الآن' : 'التالي',
+                        isLastPage ? '\u0627\u0628\u062F\u0623 \u0627\u0644\u0622\u0646' : l10n.next,
                         style: AppTypography.buttonMedium.copyWith(
                           color: Colors.white,
                         ),

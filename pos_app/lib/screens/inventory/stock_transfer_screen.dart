@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/inventory_advanced_providers.dart';
 
@@ -23,6 +24,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
   List<StoresTableData> _stores = [];
   List<_Product> _products = [];
   bool _isLoadingStores = true;
+  String? _loadError;
 
   @override
   void initState() {
@@ -54,7 +56,10 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoadingStores = false);
+      if (mounted) setState(() {
+        _isLoadingStores = false;
+        _loadError = e.toString();
+      });
     }
   }
 
@@ -66,24 +71,47 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تحويل المخزون'),
+        title: Text(l10n.stockTransfer),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'تحويل جديد'), Tab(text: 'السجل')],
+          tabs: [Tab(text: l10n.newTransfer), Tab(text: l10n.history)],
         ),
       ),
       body: _isLoadingStores
           ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-              controller: _tabController,
-              children: [_buildNewTransfer(), _buildHistory()],
-            ),
+          : _loadError != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+                      const SizedBox(height: 16),
+                      Text(l10n.errorOccurred, style: TextStyle(color: colorScheme.error)),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() { _isLoadingStores = true; _loadError = null; });
+                          _loadStoresAndProducts();
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: Text(l10n.retry),
+                      ),
+                    ],
+                  ),
+                )
+              : TabBarView(
+                  controller: _tabController,
+                  children: [_buildNewTransfer(l10n, colorScheme), _buildHistory(l10n, colorScheme)],
+                ),
     );
   }
 
-  Widget _buildNewTransfer() {
+  Widget _buildNewTransfer(AppLocalizations l10n, ColorScheme colorScheme) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -96,12 +124,12 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('من فرع', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(l10n.fromBranch, style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _fromStoreId,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Icons.store)),
-                    hint: const Text('اختر الفرع المصدر'),
+                    decoration: InputDecoration(border: const OutlineInputBorder(), prefixIcon: const Icon(Icons.store), hintText: l10n.selectSourceBranch),
+                    hint: Text(l10n.selectSourceBranch),
                     items: _stores.where((s) => s.id != _toStoreId).map((s) => DropdownMenuItem(value: s.id, child: Text(s.name))).toList(),
                     onChanged: (v) => setState(() => _fromStoreId = v),
                   ),
@@ -111,7 +139,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
           ),
 
           // السهم
-          const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Icon(Icons.arrow_downward, color: Colors.blue, size: 32))),
+          Center(child: Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Icon(Icons.arrow_downward, color: colorScheme.primary, size: 32))),
 
           // اختيار الفرع الهدف
           Card(
@@ -120,12 +148,12 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('إلى فرع', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(l10n.toBranch, style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _toStoreId,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Icons.store)),
-                    hint: const Text('اختر الفرع الهدف'),
+                    decoration: InputDecoration(border: const OutlineInputBorder(), prefixIcon: const Icon(Icons.store), hintText: l10n.selectTargetBranch),
+                    hint: Text(l10n.selectTargetBranch),
                     items: _stores.where((s) => s.id != _fromStoreId).map((s) => DropdownMenuItem(value: s.id, child: Text(s.name))).toList(),
                     onChanged: (v) => setState(() => _toStoreId = v),
                   ),
@@ -140,27 +168,27 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('المنتجات (${_items.length})', style: const TextStyle(fontWeight: FontWeight.bold)),
-              TextButton.icon(onPressed: _fromStoreId != null ? _addProduct : null, icon: const Icon(Icons.add), label: const Text('إضافة')),
+              Text('${l10n.products} (${_items.length})', style: const TextStyle(fontWeight: FontWeight.bold)),
+              TextButton.icon(onPressed: _fromStoreId != null ? () => _addProduct(l10n, colorScheme) : null, icon: const Icon(Icons.add), label: Text(l10n.add)),
             ],
           ),
 
           if (_items.isEmpty)
-            const Card(child: Padding(padding: EdgeInsets.all(32), child: Center(child: Text('اختر منتجات للتحويل', style: TextStyle(color: Colors.grey)))))
+            Card(child: Padding(padding: const EdgeInsets.all(32), child: Center(child: Text(l10n.selectProductsForTransfer, style: TextStyle(color: colorScheme.onSurfaceVariant)))))
           else
             ...List.generate(_items.length, (index) {
               final item = _items[index];
               return Card(
                 child: ListTile(
                   title: Text(item.product.name),
-                  subtitle: Text('المتاح: ${item.product.available}', style: const TextStyle(fontSize: 12)),
+                  subtitle: Text('${l10n.available}: ${item.product.available}', style: const TextStyle(fontSize: 12)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(icon: const Icon(Icons.remove), onPressed: item.quantity > 1 ? () => _updateQty(index, -1) : null),
                       Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(icon: const Icon(Icons.add), onPressed: item.quantity < item.product.available ? () => _updateQty(index, 1) : null),
-                      IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => setState(() => _items.removeAt(index))),
+                      IconButton(icon: Icon(Icons.delete, color: colorScheme.error), onPressed: () => setState(() => _items.removeAt(index))),
                     ],
                   ),
                 ),
@@ -174,8 +202,8 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: (_fromStoreId != null && _toStoreId != null && _items.isNotEmpty && !_isSubmitting) ? _submitTransfer : null,
-              icon: _isSubmitting ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.swap_horiz),
-              label: Text(_isSubmitting ? 'جاري الإنشاء...' : 'إنشاء طلب التحويل'),
+              icon: _isSubmitting ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.surface)) : const Icon(Icons.swap_horiz),
+              label: Text(_isSubmitting ? l10n.creating : l10n.createTransferRequest),
             ),
           ),
         ],
@@ -183,7 +211,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
     );
   }
 
-  Widget _buildHistory() {
+  Widget _buildHistory(AppLocalizations l10n, ColorScheme colorScheme) {
     final transfersAsync = ref.watch(stockTransfersListProvider);
 
     return transfersAsync.when(
@@ -192,11 +220,11 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: colorScheme.error),
             const SizedBox(height: 16),
-            Text('خطأ في تحميل التحويلات', style: TextStyle(color: Colors.red.shade600, fontSize: 16)),
+            Text(l10n.errorLoadingTransfers, style: TextStyle(color: colorScheme.error, fontSize: 16)),
             const SizedBox(height: 8),
-            TextButton(onPressed: () => ref.invalidate(stockTransfersListProvider), child: const Text('إعادة المحاولة')),
+            TextButton(onPressed: () => ref.invalidate(stockTransfersListProvider), child: Text(l10n.retry)),
           ],
         ),
       ),
@@ -206,11 +234,11 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.swap_horiz, size: 64, color: Colors.grey.shade400),
+                Icon(Icons.swap_horiz, size: 64, color: colorScheme.onSurfaceVariant),
                 const SizedBox(height: 16),
                 Text(
-                  'لا توجد تحويلات سابقة',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                  l10n.noPreviousTransfers,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
                 ),
               ],
             ),
@@ -225,8 +253,8 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
             itemBuilder: (context, index) {
               final t = transfers[index];
               final itemCount = _getItemCount(t.items);
-              final statusColor = t.status == 'completed' ? Colors.green : (t.status == 'cancelled' ? Colors.red : Colors.orange);
-              final statusText = _getStatusText(t.status);
+              final statusColor = t.status == 'completed' ? Colors.green : (t.status == 'cancelled' ? colorScheme.error : Colors.orange);
+              final statusText = _getStatusText(t.status, l10n);
 
               return Card(
                 child: ListTile(
@@ -240,7 +268,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('${_getStoreName(t.fromStoreId)} \u2192 ${_getStoreName(t.toStoreId)}', style: const TextStyle(fontSize: 12)),
-                      Text('$itemCount منتجات', style: const TextStyle(fontSize: 11)),
+                      Text('$itemCount ${l10n.products}', style: const TextStyle(fontSize: 11)),
                     ],
                   ),
                   trailing: Column(
@@ -254,8 +282,8 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
                       if (t.status == 'pending') ...[
                         const SizedBox(height: 4),
                         InkWell(
-                          onTap: () => _onCompleteTransfer(t.id),
-                          child: const Text('إكمال', style: TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold)),
+                          onTap: () => _onCompleteTransfer(t.id, l10n),
+                          child: Text(l10n.complete, style: TextStyle(fontSize: 10, color: colorScheme.primary, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ],
@@ -283,25 +311,25 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
     return store.isNotEmpty ? store.first.name : storeId;
   }
 
-  String _getStatusText(String status) {
+  String _getStatusText(String status, AppLocalizations l10n) {
     switch (status) {
-      case 'completed': return 'مكتمل';
-      case 'cancelled': return 'ملغي';
-      case 'approved': return 'موافق عليه';
-      case 'in_transit': return 'قيد النقل';
-      default: return 'معلق';
+      case 'completed': return l10n.completed;
+      case 'cancelled': return l10n.cancelled;
+      case 'approved': return l10n.approved;
+      case 'in_transit': return l10n.inTransit;
+      default: return l10n.pending;
     }
   }
 
-  Future<void> _onCompleteTransfer(String id) async {
+  Future<void> _onCompleteTransfer(String id, AppLocalizations l10n) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إكمال التحويل'),
-        content: const Text('هل تريد إكمال هذا التحويل؟ سيتم خصم الكميات من الفرع المصدر وإضافتها للفرع الهدف.'),
+        title: Text(l10n.completeTransfer),
+        content: Text(l10n.completeTransferConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('إكمال')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.complete)),
         ],
       ),
     );
@@ -311,15 +339,15 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success ? 'تم إكمال التحويل وتحديث المخزون' : 'خطأ في إكمال التحويل'),
-            backgroundColor: success ? Colors.green : Colors.red,
+            content: Text(success ? l10n.transferCompletedSuccess : l10n.errorCompletingTransfer),
+            backgroundColor: success ? Colors.green : Theme.of(context).colorScheme.error,
           ),
         );
       }
     }
   }
 
-  void _addProduct() {
+  void _addProduct(AppLocalizations l10n, ColorScheme colorScheme) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -327,7 +355,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
-              child: Text('لا توجد منتجات', style: TextStyle(color: Colors.grey.shade600)),
+              child: Text(l10n.noProducts, style: TextStyle(color: colorScheme.onSurfaceVariant)),
             ),
           );
         }
@@ -338,7 +366,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
             final added = _items.any((i) => i.product.sku == p.sku);
             return ListTile(
               title: Text(p.name),
-              subtitle: Text('المتاح: ${p.available}'),
+              subtitle: Text('${l10n.available}: ${p.available}'),
               trailing: added ? const Icon(Icons.check, color: Colors.green) : null,
               onTap: added ? null : () { setState(() => _items.add(_TransferItem(product: p, quantity: 1))); Navigator.pop(context); },
             );
@@ -352,6 +380,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
 
   Future<void> _submitTransfer() async {
     if (_fromStoreId == null || _toStoreId == null || _items.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
 
     setState(() => _isSubmitting = true);
 
@@ -375,7 +404,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
 
       if (result != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم إنشاء طلب التحويل بنجاح'), backgroundColor: Colors.green),
+          SnackBar(content: Text(l10n.transferCreatedSuccess), backgroundColor: Colors.green),
         );
         setState(() {
           _items.clear();
@@ -386,7 +415,7 @@ class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with 
         _tabController.animateTo(1);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('خطأ في إنشاء التحويل'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.errorCreatingTransfer), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }

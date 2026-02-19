@@ -67,7 +67,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               children: [
                 // Header
                 AppHeader(
-                  title: 'تفاصيل المورد', // TODO: localize
+                  title: l10n.supplierDetailTitle,
                   subtitle: _supplier?.name ?? '',
                   onMenuTap: isWideScreen
                       ? null
@@ -85,7 +85,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                       : _supplier == null
                           ? Center(
                               child: Text(
-                                'لم يتم العثور على المورد',
+                                l10n.supplierNotFoundMsg,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: isDark
@@ -115,21 +115,21 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             // Back button
             _ActionButton(
               icon: Icons.arrow_forward_rounded,
-              label: 'رجوع', // TODO: localize
+              label: l10n.back,
               isDark: isDark,
               onTap: () => context.go(AppRoutes.suppliers),
             ),
             const Spacer(),
             _ActionButton(
               icon: Icons.edit_outlined,
-              label: 'تعديل', // TODO: localize
+              label: l10n.edit,
               isDark: isDark,
               onTap: _editSupplier,
             ),
             const SizedBox(width: 8),
             _ActionButton(
               icon: Icons.add_shopping_cart_rounded,
-              label: 'طلب شراء جديد', // TODO: localize
+              label: l10n.newPurchaseInvoice,
               isDark: isDark,
               isPrimary: true,
               onTap: _newPurchase,
@@ -137,7 +137,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             const SizedBox(width: 8),
             _ActionButton(
               icon: Icons.delete_outline_rounded,
-              label: 'حذف', // TODO: localize
+              label: l10n.delete,
               isDark: isDark,
               isDestructive: true,
               onTap: _deleteSupplier,
@@ -184,6 +184,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildSupplierInfoCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -280,21 +281,21 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           // Contact info
           _InfoRow(
             icon: Icons.phone_outlined,
-            label: 'الهاتف', // TODO: localize
+            label: l10n.phone,
             value: _supplier!.phone ?? '-',
             isDark: isDark,
           ),
           const SizedBox(height: 12),
           _InfoRow(
             icon: Icons.email_outlined,
-            label: 'البريد', // TODO: localize
+            label: l10n.supplierEmail,
             value: _supplier!.email ?? '-',
             isDark: isDark,
           ),
           const SizedBox(height: 12),
           _InfoRow(
             icon: Icons.location_on_outlined,
-            label: 'العنوان', // TODO: localize
+            label: l10n.supplierAddress,
             value: _supplier!.address ?? '-',
             isDark: isDark,
           ),
@@ -304,6 +305,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildBalanceCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final balance = _supplier!.balance;
     final isNegative = balance < 0;
     final balanceColor = isNegative ? AppColors.error : AppColors.success;
@@ -350,8 +352,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   children: [
                     Text(
                       isNegative
-                          ? 'مستحق للمورد' // TODO: localize
-                          : 'رصيد لصالحنا', // TODO: localize
+                          ? l10n.duePayments
+                          : l10n.balance,
                       style: TextStyle(
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.6)
@@ -361,7 +363,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${balance.abs().toStringAsFixed(0)} ر.س',
+                      '${balance.abs().toStringAsFixed(0)} ${l10n.sar}',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -380,7 +382,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               child: FilledButton.icon(
                 onPressed: _paySupplier,
                 icon: const Icon(Icons.payment_rounded, size: 18),
-                label: const Text('سداد'), // TODO: localize
+                label: Text(l10n.registerPayment),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.error,
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -397,6 +399,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildStatsCards(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final totalPurchases = _recentPurchases.fold<double>(
       0.0,
       (sum, p) => sum + p.total,
@@ -410,8 +413,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         Expanded(
           child: _StatCard(
             icon: Icons.shopping_cart_outlined,
-            label: 'إجمالي المشتريات', // TODO: localize
-            value: '${totalPurchases.toStringAsFixed(0)} ر.س',
+            label: l10n.totalPurchasesLabel,
+            value: '${totalPurchases.toStringAsFixed(0)} ${l10n.sar}',
             color: AppColors.info,
             isDark: isDark,
           ),
@@ -420,7 +423,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         Expanded(
           child: _StatCard(
             icon: Icons.calendar_today_outlined,
-            label: 'آخر شراء', // TODO: localize
+            label: l10n.lastPurchaseLabel,
             value: lastPurchaseDate != null
                 ? _formatDate(lastPurchaseDate)
                 : '-',
@@ -433,6 +436,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildRecentPurchasesSection(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -441,7 +445,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'آخر المشتريات', // TODO: localize
+              l10n.recentPurchasesLabel,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -452,7 +456,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('\u0639\u0631\u0636 \u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A'), // عرض جميع المشتريات
+                    content: Text(l10n.viewAllPurchases), // عرض جميع المشتريات
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -460,7 +464,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 );
               },
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
-              label: const Text('\u0639\u0631\u0636 \u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A'), // عرض جميع المشتريات
+              label: Text(l10n.viewAllPurchases), // عرض جميع المشتريات
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primary,
               ),
@@ -485,7 +489,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0634\u062A\u0631\u064A\u0627\u062A', // لا توجد مشتريات
+                    l10n.noPurchasesLabel, // لا توجد مشتريات
                     style: TextStyle(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.5)
@@ -572,8 +576,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     ),
                     child: Text(
                       isCompleted
-                          ? 'مكتمل' // TODO: localize
-                          : 'معلق', // TODO: localize
+                          ? l10n.completedLabel
+                          : l10n.pendingStatusLabel,
                       style: TextStyle(
                         color: statusColor,
                         fontSize: 11,
@@ -585,7 +589,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
 
                   // Amount
                   Text(
-                    '${purchase.total.toStringAsFixed(0)} ر.س',
+                    '${purchase.total.toStringAsFixed(0)} ${l10n.sar}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -612,6 +616,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
 
   void _deleteSupplier() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -619,13 +624,13 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'حذف المورد', // TODO: localize
+          l10n.deleteSupplier,
           style: TextStyle(
             color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         content: Text(
-          'هل تريد حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.', // TODO: localize
+          l10n.deleteSupplierConfirm,
           style: TextStyle(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.7)
@@ -636,7 +641,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'إلغاء', // TODO: localize
+              l10n.deleteConfirmCancel,
               style: TextStyle(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.7)
@@ -654,7 +659,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     HapticFeedback.mediumImpact();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('تم حذف المورد'), // TODO: localize
+                        content: Text(l10n.supplierDeletedMsg),
                         backgroundColor: AppColors.error,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
@@ -667,7 +672,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('حدث خطأ أثناء الحذف: $e'),
+                        content: Text(l10n.errorDuringDeleteMsg(e)),
                         backgroundColor: AppColors.error,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
@@ -684,7 +689,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('حذف'), // TODO: localize
+            child: Text(l10n.deleteConfirmBtn),
           ),
         ],
       ),
@@ -694,7 +699,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   void _paySupplier() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('تسجيل دفعة للمورد'), // TODO: localize
+        content: Text(AppLocalizations.of(context)!.registerPayment),
         backgroundColor: isDark ? const Color(0xFF334155) : null,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

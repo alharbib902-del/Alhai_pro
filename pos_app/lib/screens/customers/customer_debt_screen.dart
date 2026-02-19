@@ -5,6 +5,7 @@ import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
 
 /// Customer Debt Management Screen
 class CustomerDebtScreen extends ConsumerStatefulWidget {
@@ -19,6 +20,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   late TabController _tabController;
   String _sortBy = 'amount';
   bool _isLoading = true;
+  String? _loadError;
 
   List<AccountsTableData> _debtors = [];
 
@@ -60,7 +62,10 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
       final db = getIt<AppDatabase>();
@@ -75,7 +80,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _loadError = e.toString();
+        });
+      }
     }
   }
 
@@ -100,11 +110,38 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.debtManagement)),
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_loadError != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.debtManagement)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+              const SizedBox(height: 16),
+              Text(l10n.errorOccurred,
+                  style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
+              const SizedBox(height: 8),
+              Text(_loadError!,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant)),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _loadData,
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -114,7 +151,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
+            tooltip: l10n.retry,
             onPressed: _loadData,
           ),
           PopupMenuButton<String>(
@@ -147,8 +184,31 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
       ),
       body: Column(
         children: [
-          // Summary cards
-          Container(
+          // Summary cards - responsive layout
+          _buildSummaryCards(l10n, colorScheme),
+
+          // Debts list
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildDebtList('all', l10n, colorScheme),
+                _buildDebtList('overdue', l10n, colorScheme),
+                _buildDebtList('pending', l10n, colorScheme),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCards(AppLocalizations l10n, ColorScheme colorScheme) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 600;
+        if (isWide) {
+          return Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
@@ -158,7 +218,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     title: l10n.totalDebts,
                     value: l10n.debtAmountWithCurrency(
                         _totalDebt.toStringAsFixed(0)),
-                    color: Colors.red,
+                    color: colorScheme.error,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -167,7 +227,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     icon: Icons.warning,
                     title: l10n.overdueDebts,
                     value: l10n.customerCount('$_overdueCount'),
-                    color: Colors.orange,
+                    color: colorScheme.tertiary,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -176,31 +236,55 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     icon: Icons.people,
                     title: l10n.debtorCustomers,
                     value: '${_debtors.length}',
-                    color: Colors.blue,
+                    color: colorScheme.primary,
                   ),
                 ),
               ],
             ),
+          );
+        }
+        // Narrow: vertical stack
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _SummaryCard(
+                      icon: Icons.account_balance_wallet,
+                      title: l10n.totalDebts,
+                      value: l10n.debtAmountWithCurrency(
+                          _totalDebt.toStringAsFixed(0)),
+                      color: colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _SummaryCard(
+                      icon: Icons.warning,
+                      title: l10n.overdueDebts,
+                      value: l10n.customerCount('$_overdueCount'),
+                      color: colorScheme.tertiary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _SummaryCard(
+                icon: Icons.people,
+                title: l10n.debtorCustomers,
+                value: '${_debtors.length}',
+                color: colorScheme.primary,
+              ),
+            ],
           ),
-
-          // Debts list
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildDebtList('all'),
-                _buildDebtList('overdue'),
-                _buildDebtList('pending'),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildDebtList(String filter) {
-    final l10n = AppLocalizations.of(context)!;
+  Widget _buildDebtList(String filter, AppLocalizations l10n, ColorScheme colorScheme) {
     final debts = _getFilteredDebts(filter);
     if (debts.isEmpty) {
       return Center(
@@ -208,146 +292,168 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.check_circle,
-                size: 64, color: Colors.green.shade300),
+                size: 64, color: colorScheme.primary),
             const SizedBox(height: 16),
-            Text(l10n.noDebts, style: const TextStyle(fontSize: 18)),
+            Text(l10n.noDebts,
+                style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
           ],
         ),
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: debts.length,
-      itemBuilder: (context, index) {
-        final debt = debts[index];
-        final status = _getStatus(debt);
-        final isOverdue = status == 'overdue';
-        final dueDate = _getDueDate(debt);
-        final daysLeft = dueDate.difference(DateTime.now()).inDays;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 800;
+        if (isWide) {
+          // Grid layout for wide screens
+          return GridView.builder(
+            padding: const EdgeInsetsDirectional.only(start: 16, end: 16, top: 8, bottom: 16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 2.5,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: debts.length,
+            itemBuilder: (context, index) => _buildDebtCard(debts[index], l10n, colorScheme),
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
+          itemCount: debts.length,
+          itemBuilder: (context, index) =>
+              _buildDebtCard(debts[index], l10n, colorScheme),
+        );
+      },
+    );
+  }
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => _showDebtDetails(debt),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildDebtCard(AccountsTableData debt, AppLocalizations l10n, ColorScheme colorScheme) {
+    final status = _getStatus(debt);
+    final isOverdue = status == 'overdue';
+    final dueDate = _getDueDate(debt);
+    final daysLeft = dueDate.difference(DateTime.now()).inDays;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        onTap: () => _showDebtDetails(debt),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: isOverdue
-                            ? Colors.red.withValues(alpha: 0.1)
-                            : Colors.blue.withValues(alpha: 0.1),
-                        child: Text(
-                          debt.name.isNotEmpty ? debt.name[0] : '?',
-                          style: TextStyle(
-                            color:
-                                isOverdue ? Colors.red : Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  CircleAvatar(
+                    backgroundColor: isOverdue
+                        ? colorScheme.errorContainer
+                        : colorScheme.primaryContainer,
+                    child: Text(
+                      debt.name.isNotEmpty ? debt.name[0] : '?',
+                      style: TextStyle(
+                        color: isOverdue
+                            ? colorScheme.onErrorContainer
+                            : colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              debt.name,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              debt.phone ?? '',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey.shade600),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            l10n.debtAmountWithCurrency(
-                                debt.balance.toStringAsFixed(0)),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: isOverdue
-                                  ? Colors.red
-                                  : Colors.blue,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isOverdue
-                                  ? Colors.red
-                                      .withValues(alpha: 0.1)
-                                  : Colors.green
-                                      .withValues(alpha: 0.1),
-                              borderRadius:
-                                  BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              isOverdue
-                                  ? l10n.overdueDays(-daysLeft)
-                                  : l10n.remainingDays(daysLeft),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isOverdue
-                                    ? Colors.red
-                                    : Colors.green,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                  if (debt.lastTransactionAt != null) ...[
-                    const Divider(height: 24),
-                    Row(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.history,
-                            size: 14, color: Colors.grey.shade600),
-                        const SizedBox(width: 4),
                         Text(
-                          l10n.lastPaymentDate(
-                              _formatDate(debt.lastTransactionAt!)),
+                          debt.name,
                           style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600),
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface),
                         ),
-                        const Spacer(),
-                        TextButton.icon(
-                          onPressed: () => _recordPayment(debt),
-                          icon:
-                              const Icon(Icons.payment, size: 16),
-                          label: Text(l10n.recordPayment),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12),
-                          ),
+                        Text(
+                          debt.phone ?? '',
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
-                  ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        l10n.debtAmountWithCurrency(
+                            debt.balance.toStringAsFixed(0)),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: isOverdue
+                              ? colorScheme.error
+                              : colorScheme.primary,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isOverdue
+                              ? colorScheme.errorContainer
+                              : colorScheme.primaryContainer,
+                          borderRadius:
+                              BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          isOverdue
+                              ? l10n.overdueDays(-daysLeft)
+                              : l10n.remainingDays(daysLeft),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isOverdue
+                                ? colorScheme.onErrorContainer
+                                : colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ),
+              if (debt.lastTransactionAt != null) ...[
+                Divider(height: 24, color: colorScheme.outlineVariant),
+                Row(
+                  children: [
+                    Icon(Icons.history,
+                        size: 14, color: colorScheme.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n.lastPaymentDate(
+                          _formatDate(debt.lastTransactionAt!)),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant),
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: () => _recordPayment(debt),
+                      icon:
+                          const Icon(Icons.payment, size: 16),
+                      label: Text(l10n.recordPayment),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -357,7 +463,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
 
   void _showDebtDetails(AccountsTableData debt) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     final status = _getStatus(debt);
+    final isOverdue = status == 'overdue';
     final dueDate = _getDueDate(debt);
     showModalBottomSheet(
       context: context,
@@ -377,7 +485,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -401,7 +509,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                               .titleLarge),
                       Text(debt.phone ?? '',
                           style: TextStyle(
-                              color: Colors.grey.shade600)),
+                              color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ),
@@ -411,10 +519,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: (status == 'overdue'
-                        ? Colors.red
-                        : Colors.blue)
-                    .withValues(alpha: 0.1),
+                color: isOverdue
+                    ? colorScheme.errorContainer
+                    : colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -425,12 +532,16 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: status == 'overdue'
-                          ? Colors.red
-                          : Colors.blue,
+                      color: isOverdue
+                          ? colorScheme.onErrorContainer
+                          : colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  Text(l10n.amountDue),
+                  Text(l10n.amountDue,
+                      style: TextStyle(
+                          color: isOverdue
+                              ? colorScheme.onErrorContainer
+                              : colorScheme.onPrimaryContainer)),
                 ],
               ),
             ),
@@ -547,11 +658,33 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     balanceAfter:
                         newBalance < 0 ? 0 : newBalance,
                     paymentMethod: paymentMethod,
-                    description: 'Payment via debt screen',
+                    description: l10n.recordPayment,
                   );
                   await db.accountsDao.updateBalance(
                       debt.id,
                       newBalance < 0 ? 0 : newBalance);
+
+                  // Enqueue sync for transaction and account update
+                  ref.read(syncServiceProvider).enqueueCreate(
+                    tableName: 'transactions',
+                    recordId: txnId,
+                    data: {
+                      'id': txnId,
+                      'store_id': storeId,
+                      'account_id': debt.id,
+                      'amount': amount,
+                      'balance_after': newBalance < 0 ? 0 : newBalance,
+                      'payment_method': paymentMethod,
+                    },
+                  );
+                  ref.read(syncServiceProvider).enqueueUpdate(
+                    tableName: 'accounts',
+                    recordId: debt.id,
+                    changes: {
+                      'balance': newBalance < 0 ? 0 : newBalance,
+                    },
+                  );
+
                   await _loadData();
                   if (mounted) {
                     ScaffoldMessenger.of(this.context)
@@ -566,7 +699,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     ScaffoldMessenger.of(this.context)
                         .showSnackBar(
                       SnackBar(
-                          content: Text('Error: $e')),
+                          content: Text('${l10n.errorOccurred}: $e')),
                     );
                   }
                 }
@@ -626,6 +759,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -646,7 +780,7 @@ class _SummaryCard extends StatelessWidget {
             title,
             style: TextStyle(
                 fontSize: 11,
-                color: color.withValues(alpha: 0.8)),
+                color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -663,15 +797,18 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(color: Colors.grey.shade600)),
+              style: TextStyle(color: colorScheme.onSurfaceVariant)),
           Text(value,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface)),
         ],
       ),
     );

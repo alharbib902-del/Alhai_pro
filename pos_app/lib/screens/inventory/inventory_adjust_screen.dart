@@ -14,6 +14,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/validators/validators.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/sync_providers.dart';
 
@@ -112,15 +113,18 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تعديل المخزون'),
+        title: Text(l10n.adjustStock),
         actions: [
           // سجل التعديلات
           IconButton(
             onPressed: _showAdjustmentHistory,
             icon: const Icon(Icons.history),
-            tooltip: 'سجل التعديلات',
+            tooltip: l10n.adjustmentHistory,
           ),
         ],
       ),
@@ -131,11 +135,11 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      Icon(Icons.error_outline, size: 64, color: colorScheme.error),
                       const SizedBox(height: 16),
-                      const Text('حدث خطأ أثناء تحميل المنتجات'),
+                      Text(l10n.errorLoadingProducts, style: TextStyle(color: colorScheme.onSurface)),
                       const SizedBox(height: 8),
-                      Text(_loadError!, style: const TextStyle(color: Colors.grey)),
+                      Text(_loadError!, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                       const SizedBox(height: 16),
                       FilledButton.icon(
                         onPressed: () {
@@ -146,56 +150,67 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                           _loadProducts();
                         },
                         icon: const Icon(Icons.refresh),
-                        label: const Text('إعادة المحاولة'),
+                        label: Text(l10n.retry),
                       ),
                     ],
                   ),
                 )
-              : Form(
-                  key: _formKey,
-                  child: ListView(
-                    padding: const EdgeInsets.all(AppSizes.lg),
-                    children: [
-                      // اختيار المنتج
-                      _buildProductSelector(),
-                      const SizedBox(height: AppSizes.lg),
+              : _products.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.inventory_2_outlined, size: 64, color: colorScheme.onSurfaceVariant),
+                          const SizedBox(height: 16),
+                          Text(l10n.noProducts, style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16)),
+                        ],
+                      ),
+                    )
+                  : Form(
+                      key: _formKey,
+                      child: ListView(
+                        padding: const EdgeInsets.all(AppSizes.lg),
+                        children: [
+                          // اختيار المنتج
+                          _buildProductSelector(l10n),
+                          const SizedBox(height: AppSizes.lg),
 
-                      // معلومات المخزون الحالي
-                      if (_selectedProduct != null) ...[
-                        _buildCurrentStockCard(),
-                        const SizedBox(height: AppSizes.lg),
-                      ],
+                          // معلومات المخزون الحالي
+                          if (_selectedProduct != null) ...[
+                            _buildCurrentStockCard(l10n),
+                            const SizedBox(height: AppSizes.lg),
+                          ],
 
-                      // نوع التعديل
-                      _buildAdjustmentTypeSelector(),
-                      const SizedBox(height: AppSizes.lg),
+                          // نوع التعديل
+                          _buildAdjustmentTypeSelector(l10n),
+                          const SizedBox(height: AppSizes.lg),
 
-                      // الكمية
-                      _buildQuantityField(),
-                      const SizedBox(height: AppSizes.lg),
+                          // الكمية
+                          _buildQuantityField(l10n),
+                          const SizedBox(height: AppSizes.lg),
 
-                      // سبب التعديل
-                      _buildReasonSelector(),
-                      const SizedBox(height: AppSizes.lg),
+                          // سبب التعديل
+                          _buildReasonSelector(l10n),
+                          const SizedBox(height: AppSizes.lg),
 
-                      // ملاحظات
-                      _buildNotesField(),
-                      const SizedBox(height: AppSizes.lg),
+                          // ملاحظات
+                          _buildNotesField(l10n),
+                          const SizedBox(height: AppSizes.lg),
 
-                      // ملخص التعديل
-                      if (_selectedProduct != null && _quantityController.text.isNotEmpty)
-                        _buildAdjustmentSummary(),
-                      const SizedBox(height: AppSizes.xl),
+                          // ملخص التعديل
+                          if (_selectedProduct != null && _quantityController.text.isNotEmpty)
+                            _buildAdjustmentSummary(l10n),
+                          const SizedBox(height: AppSizes.xl),
 
-                      // زر الحفظ
-                      _buildSaveButton(),
-                    ],
-                  ),
-                ),
+                          // زر الحفظ
+                          _buildSaveButton(l10n),
+                        ],
+                      ),
+                    ),
     );
   }
 
-  Widget _buildProductSelector() {
+  Widget _buildProductSelector(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -207,7 +222,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 const Icon(Icons.inventory_2, color: AppColors.primary),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'اختيار المنتج',
+                  l10n.selectProduct,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -223,15 +238,15 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
               child: Container(
                 padding: const EdgeInsets.all(AppSizes.md),
                 decoration: BoxDecoration(
-                  color: AppColors.grey100,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  border: Border.all(color: AppColors.grey300),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.search,
-                      color: AppColors.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: AppSizes.md),
                     Expanded(
@@ -248,15 +263,15 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                                 Text(
                                   'SKU: ${_selectedProduct!.sku}',
                                   style: AppTypography.bodySmall.copyWith(
-                                    color: AppColors.textMuted,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],
                             )
                           : Text(
-                              'ابحث بالاسم أو الباركود...',
+                              l10n.searchByNameOrBarcode,
                               style: AppTypography.bodyMedium.copyWith(
-                                color: AppColors.textMuted,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                     ),
@@ -267,7 +282,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                             _selectedProduct = null;
                           });
                         },
-                        icon: const Icon(Icons.clear, color: AppColors.textMuted),
+                        icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -281,7 +296,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
             OutlinedButton.icon(
               onPressed: _scanBarcode,
               icon: const Icon(Icons.qr_code_scanner),
-              label: const Text('مسح الباركود'),
+              label: Text(l10n.scanBarcode),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(44),
               ),
@@ -292,7 +307,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildCurrentStockCard() {
+  Widget _buildCurrentStockCard(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       color: AppColors.info.withValues(alpha: 0.1),
       child: Padding(
@@ -305,9 +321,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 color: AppColors.info,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.inventory,
-                color: Colors.white,
+                color: colorScheme.surface,
                 size: 32,
               ),
             ),
@@ -317,9 +333,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'المخزون الحالي',
+                    l10n.currentStock,
                     style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textMuted,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
@@ -343,7 +359,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusSm),
               ),
               child: Text(
-                _getStockStatusText(),
+                _getStockStatusText(l10n),
                 style: AppTypography.labelSmall.copyWith(
                   color: _getStockStatusColor(),
                   fontWeight: FontWeight.bold,
@@ -356,7 +372,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildAdjustmentTypeSelector() {
+  Widget _buildAdjustmentTypeSelector(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -364,7 +380,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'نوع التعديل',
+              l10n.adjustmentType,
               style: AppTypography.titleSmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -376,7 +392,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   child: _buildTypeOption(
                     type: AdjustmentType.add,
                     icon: Icons.add_circle,
-                    label: 'إضافة',
+                    label: l10n.add,
                     color: AppColors.success,
                   ),
                 ),
@@ -385,7 +401,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   child: _buildTypeOption(
                     type: AdjustmentType.subtract,
                     icon: Icons.remove_circle,
-                    label: 'خصم',
+                    label: l10n.subtract,
                     color: AppColors.error,
                   ),
                 ),
@@ -394,7 +410,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   child: _buildTypeOption(
                     type: AdjustmentType.set,
                     icon: Icons.edit,
-                    label: 'تعيين',
+                    label: l10n.setQuantity,
                     color: AppColors.warning,
                   ),
                 ),
@@ -428,7 +444,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           border: Border.all(
-            color: isSelected ? color : AppColors.grey300,
+            color: isSelected ? color : Theme.of(context).dividerColor,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -436,7 +452,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? color : AppColors.textMuted,
+              color: isSelected ? color : Theme.of(context).colorScheme.onSurfaceVariant,
               size: 28,
             ),
             const SizedBox(height: AppSizes.xs),
@@ -453,7 +469,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildQuantityField() {
+  Widget _buildQuantityField(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -462,8 +479,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           children: [
             Text(
               _adjustmentType == AdjustmentType.set
-                  ? 'الكمية الجديدة'
-                  : 'الكمية',
+                  ? l10n.newQuantity
+                  : l10n.quantity,
               style: AppTypography.titleSmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -483,8 +500,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   },
                   icon: const Icon(Icons.remove),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.grey200,
-                    foregroundColor: AppColors.textPrimary,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    foregroundColor: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(width: AppSizes.md),
@@ -506,21 +523,21 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                     decoration: InputDecoration(
                       hintText: '0',
                       filled: true,
-                      fillColor: AppColors.grey100,
+                      fillColor: colorScheme.surfaceContainerHighest,
                       border: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(AppSizes.radiusMd),
                         borderSide: BorderSide.none,
                       ),
-                      suffixText: _selectedProduct?.unit ?? 'وحدة',
+                      suffixText: _selectedProduct?.unit ?? l10n.unit,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'أدخل الكمية';
+                        return l10n.enterQuantity;
                       }
                       final qty = int.tryParse(value);
                       if (qty == null || qty <= 0) {
-                        return 'أدخل كمية صحيحة';
+                        return l10n.enterValidQuantity;
                       }
                       return null;
                     },
@@ -540,7 +557,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   icon: const Icon(Icons.add),
                   style: IconButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    foregroundColor: colorScheme.surface,
                   ),
                 ),
               ],
@@ -551,7 +568,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildReasonSelector() {
+  Widget _buildReasonSelector(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -559,7 +577,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'سبب التعديل',
+              l10n.adjustmentReason,
               style: AppTypography.titleSmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -572,11 +590,11 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 final isSelected = _selectedReason == reason;
                 return FilterChip(
                   selected: isSelected,
-                  label: Text(reason.label),
+                  label: Text(reason.getLabel(l10n)),
                   avatar: Icon(
                     reason.icon,
                     size: 18,
-                    color: isSelected ? Colors.white : AppColors.textMuted,
+                    color: isSelected ? colorScheme.surface : colorScheme.onSurfaceVariant,
                   ),
                   onSelected: (selected) {
                     if (selected) {
@@ -587,9 +605,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                     }
                   },
                   selectedColor: AppColors.primary,
-                  checkmarkColor: Colors.white,
+                  checkmarkColor: colorScheme.surface,
                   labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : AppColors.textPrimary,
+                    color: isSelected ? colorScheme.surface : colorScheme.onSurface,
                   ),
                 );
               }).toList(),
@@ -600,7 +618,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildNotesField() {
+  Widget _buildNotesField(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -608,7 +626,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ملاحظات (اختياري)',
+              l10n.notesOptional,
               style: AppTypography.titleSmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -620,9 +638,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
               maxLength: 500,
               validator: FormValidators.notes(),
               decoration: InputDecoration(
-                hintText: 'أدخل أي ملاحظات إضافية...',
+                hintText: l10n.enterAdditionalNotes,
                 filled: true,
-                fillColor: AppColors.grey100,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   borderSide: BorderSide.none,
@@ -635,7 +653,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildAdjustmentSummary() {
+  Widget _buildAdjustmentSummary(AppLocalizations l10n) {
     final quantity = int.tryParse(_quantityController.text) ?? 0;
     final currentStock = _selectedProduct?.currentStock ?? 0;
 
@@ -666,7 +684,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 const Icon(Icons.summarize, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'ملخص التعديل',
+                  l10n.adjustmentSummary,
                   style: AppTypography.titleSmall.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -679,13 +697,13 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
             // المخزون الحالي
             _buildSummaryRow(
-              'المخزون الحالي',
+              l10n.currentStock,
               '$currentStock ${_selectedProduct?.unit ?? ''}',
             ),
 
             // التعديل
             _buildSummaryRow(
-              _adjustmentType.label,
+              _adjustmentType.getLabel(l10n),
               '${difference >= 0 ? '+' : ''}$difference ${_selectedProduct?.unit ?? ''}',
               valueColor: difference >= 0 ? AppColors.success : AppColors.error,
             ),
@@ -694,7 +712,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
             // المخزون الجديد
             _buildSummaryRow(
-              'المخزون الجديد',
+              l10n.newStock,
               '$newStock ${_selectedProduct?.unit ?? ''}',
               isTotal: true,
               valueColor: newStock < 0 ? AppColors.error : null,
@@ -713,7 +731,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                     const Icon(Icons.warning, color: AppColors.error, size: 20),
                     const SizedBox(width: AppSizes.xs),
                     Text(
-                      'تحذير: المخزون سيصبح سالباً!',
+                      l10n.warningNegativeStock,
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.error,
                         fontWeight: FontWeight.bold,
@@ -761,20 +779,21 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return FilledButton.icon(
       onPressed: _selectedProduct != null && !_isLoading ? _saveAdjustment : null,
       icon: _isLoading
-          ? const SizedBox(
+          ? SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: colorScheme.surface,
               ),
             )
           : const Icon(Icons.save),
-      label: Text(_isLoading ? 'جاري الحفظ...' : 'حفظ التعديل'),
+      label: Text(_isLoading ? l10n.saving : l10n.saveAdjustment),
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(56),
       ),
@@ -788,16 +807,18 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     return AppColors.success;
   }
 
-  String _getStockStatusText() {
+  String _getStockStatusText(AppLocalizations l10n) {
     final stock = _selectedProduct?.currentStock ?? 0;
-    if (stock <= 10) return 'منخفض';
-    if (stock <= 30) return 'متوسط';
-    return 'جيد';
+    if (stock <= 10) return l10n.lowStock;
+    if (stock <= 30) return l10n.medium;
+    return l10n.good;
   }
 
   void _showProductSearch() {
     final searchController = TextEditingController();
     List<ProductForAdjust> filteredProducts = List.from(_products);
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
       context: context,
@@ -821,7 +842,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -829,11 +850,11 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
+                padding: const EdgeInsetsDirectional.only(start: AppSizes.lg, end: AppSizes.lg),
                 child: Row(
                   children: [
-                    const Text(
-                      'اختيار المنتج',
+                    Text(
+                      l10n.selectProduct,
                       style: AppTypography.headlineSmall,
                     ),
                     const Spacer(),
@@ -852,10 +873,10 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   controller: searchController,
                   maxLength: 100,
                   decoration: InputDecoration(
-                    hintText: 'ابحث بالاسم أو SKU أو الباركود...',
+                    hintText: l10n.searchByNameOrBarcode,
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
-                    fillColor: AppColors.grey100,
+                    fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       borderSide: BorderSide.none,
@@ -891,22 +912,22 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
               // Products List
               Expanded(
                 child: filteredProducts.isEmpty
-                    ? const Center(
-                        child: Text('لا توجد منتجات مطابقة', style: TextStyle(color: Colors.grey)),
+                    ? Center(
+                        child: Text(l10n.noMatchingProducts, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
+                        padding: const EdgeInsetsDirectional.only(start: AppSizes.lg, end: AppSizes.lg),
                         itemCount: filteredProducts.length,
                         itemBuilder: (context, index) {
                           final product = filteredProducts[index];
                           return Card(
                             margin: const EdgeInsets.only(bottom: AppSizes.sm),
                             child: ListTile(
-                              leading: const CircleAvatar(
-                                backgroundColor: AppColors.grey100,
+                              leading: CircleAvatar(
+                                backgroundColor: colorScheme.surfaceContainerHighest,
                                 child: Icon(
                                   Icons.inventory_2,
-                                  color: AppColors.textMuted,
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               title: Text(
@@ -914,9 +935,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                                 style: AppTypography.titleSmall,
                               ),
                               subtitle: Text(
-                                'SKU: ${product.sku} | المخزون: ${product.currentStock}',
+                                'SKU: ${product.sku} | ${l10n.stock}: ${product.currentStock}',
                                 style: AppTypography.bodySmall.copyWith(
-                                  color: AppColors.textMuted,
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
@@ -962,6 +983,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
   }
 
   void _showAdjustmentHistory() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -983,7 +1006,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -991,11 +1014,11 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
+              padding: const EdgeInsetsDirectional.only(start: AppSizes.lg, end: AppSizes.lg),
               child: Row(
                 children: [
-                  const Text(
-                    'سجل التعديلات',
+                  Text(
+                    l10n.adjustmentHistory,
                     style: AppTypography.headlineSmall,
                   ),
                   const Spacer(),
@@ -1011,7 +1034,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
             // History List - تحميل من قاعدة البيانات
             Expanded(
-              child: _buildHistoryList(),
+              child: _buildHistoryList(l10n),
             ),
           ],
         ),
@@ -1019,13 +1042,14 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildHistoryList() {
+  Widget _buildHistoryList(AppLocalizations l10n) {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) {
-      return const Center(child: Text('لم يتم تحديد المتجر'));
+      return Center(child: Text(l10n.storeNotSelected));
     }
 
     final db = getIt<AppDatabase>();
+    final colorScheme = Theme.of(context).colorScheme;
     return FutureBuilder<List<InventoryMovementsTableData>>(
       future: _selectedProduct != null
           ? db.inventoryDao.getMovementsByProduct(_selectedProduct!.id)
@@ -1039,17 +1063,30 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, color: Colors.red),
+                Icon(Icons.error_outline, color: colorScheme.error),
                 const SizedBox(height: 8),
-                Text('حدث خطأ: ${snapshot.error}'),
+                Text('${l10n.errorOccurred}: ${snapshot.error}'),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  onPressed: () => setState(() {}),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(l10n.retry),
+                ),
               ],
             ),
           );
         }
         final movements = snapshot.data ?? [];
         if (movements.isEmpty) {
-          return const Center(
-            child: Text('لا توجد حركات مخزون', style: TextStyle(color: Colors.grey)),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.history, size: 48, color: colorScheme.onSurfaceVariant),
+                const SizedBox(height: 8),
+                Text(l10n.noInventoryMovements, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+              ],
+            ),
           );
         }
         return ListView.builder(
@@ -1093,7 +1130,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                     style: AppTypography.titleSmall,
                   ),
                   Text(
-                    '${isAddition ? '+' : ''}${movement.qty} وحدة (${movement.previousQty} -> ${movement.newQty})',
+                    '${isAddition ? '+' : ''}${movement.qty} (${movement.previousQty} -> ${movement.newQty})',
                     style: AppTypography.bodySmall.copyWith(
                       color: isAddition ? AppColors.success : AppColors.error,
                     ),
@@ -1101,7 +1138,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
                   Text(
                     movement.createdAt.toString().substring(0, 16),
                     style: AppTypography.labelSmall.copyWith(
-                      color: AppColors.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -1117,6 +1154,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final sanitizedNotes = InputSanitizer.sanitize(_notesController.text.trim());
+    final l10n = AppLocalizations.of(context)!;
 
     setState(() {
       _isLoading = true;
@@ -1150,7 +1188,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
         storeId: storeId!,
         newQty: newStock,
         previousQty: product.currentStock,
-        reason: '${_selectedReason.label}: $sanitizedNotes',
+        reason: '${_selectedReason.getLabel(l10n)}: $sanitizedNotes',
         userId: null, // سيتم تعيينه من المستخدم الحالي لاحقاً
       );
 
@@ -1169,7 +1207,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           'qty': newStock - product.currentStock,
           'previous_qty': product.currentStock,
           'new_qty': newStock,
-          'reason': '${_selectedReason.label}: $sanitizedNotes',
+          'reason': '${_selectedReason.getLabel(l10n)}: $sanitizedNotes',
           'created_at': DateTime.now().toIso8601String(),
         },
       );
@@ -1192,8 +1230,8 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
         HapticFeedback.heavyImpact();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ التعديل بنجاح'),
+          SnackBar(
+            content: Text(l10n.adjustmentSavedSuccess),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -1209,7 +1247,7 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ أثناء الحفظ: $e'),
+            content: Text('${l10n.errorSaving}: $e'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -1226,9 +1264,10 @@ class _BarcodeScannerForAdjust extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final barcodeController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('مسح الباركود')),
+      appBar: AppBar(title: Text(l10n.scanBarcode)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -1239,9 +1278,9 @@ class _BarcodeScannerForAdjust extends ConsumerWidget {
             TextField(
               controller: barcodeController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'أدخل الباركود',
-                prefixIcon: Icon(Icons.keyboard),
+              decoration: InputDecoration(
+                labelText: l10n.enterBarcode,
+                prefixIcon: const Icon(Icons.keyboard),
               ),
             ),
             const SizedBox(height: 16),
@@ -1261,15 +1300,15 @@ class _BarcodeScannerForAdjust extends ConsumerWidget {
                 } else {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('لم يتم العثور على المنتج'),
+                      SnackBar(
+                        content: Text(l10n.productNotFound),
                         backgroundColor: AppColors.error,
                       ),
                     );
                   }
                 }
               },
-              child: const Text('بحث'),
+              child: Text(l10n.search),
             ),
           ],
         ),
@@ -1284,14 +1323,14 @@ enum AdjustmentType {
   subtract,
   set;
 
-  String get label {
+  String getLabel(AppLocalizations l10n) {
     switch (this) {
       case AdjustmentType.add:
-        return 'إضافة';
+        return l10n.add;
       case AdjustmentType.subtract:
-        return 'خصم';
+        return l10n.subtract;
       case AdjustmentType.set:
-        return 'تعيين';
+        return l10n.setQuantity;
     }
   }
 }
@@ -1306,22 +1345,22 @@ enum AdjustmentReason {
   correction,
   other;
 
-  String get label {
+  String getLabel(AppLocalizations l10n) {
     switch (this) {
       case AdjustmentReason.count:
-        return 'جرد';
+        return l10n.stockTake;
       case AdjustmentReason.damage:
-        return 'تالف';
+        return l10n.damaged;
       case AdjustmentReason.expiry:
-        return 'منتهي الصلاحية';
+        return l10n.expired;
       case AdjustmentReason.theft:
-        return 'سرقة';
+        return l10n.theft;
       case AdjustmentReason.return_:
-        return 'مرتجع';
+        return l10n.returned;
       case AdjustmentReason.correction:
-        return 'تصحيح خطأ';
+        return l10n.correction;
       case AdjustmentReason.other:
-        return 'أخرى';
+        return l10n.other;
     }
   }
 

@@ -563,16 +563,16 @@ class _AiInvoiceReviewScreenState
               child: Column(
                 children: [
                   Text(
-                    '\u0645\u0637\u0627\u0628\u0642\u0629: ${item.rawName}',
+                    AppLocalizations.of(context)!.matchLabel(item.rawName),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                  const TextField(
+                  TextField(
                     decoration: InputDecoration(
-                      hintText: '\u0628\u062D\u062B \u0639\u0646 \u0645\u0646\u062A\u062C...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
+                      hintText: AppLocalizations.of(context)!.search,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -585,14 +585,14 @@ class _AiInvoiceReviewScreenState
                 itemBuilder: (context, i) => ListTile(
                   leading:
                       const CircleAvatar(child: Icon(Icons.inventory_2)),
-                  title: Text('\u0645\u0646\u062A\u062C \u0645\u0642\u062A\u0631\u062D ${i + 1}'),
-                  subtitle: const Text('\u0628\u0627\u0631\u0643\u0648\u062F: 123456789'),
+                  title: Text(AppLocalizations.of(context)!.suggestedProduct(i + 1)),
+                  subtitle: Text(AppLocalizations.of(context)!.barcodeLabel),
                   trailing: const AdaptiveIcon(Icons.chevron_left),
                   onTap: () {
                     setState(() {
                       _items[index].matchedProductId = 'product_$i';
                       _items[index].matchedProductName =
-                          '\u0645\u0646\u062A\u062C \u0645\u0642\u062A\u0631\u062D ${i + 1}';
+                          AppLocalizations.of(context)!.suggestedProduct(i + 1);
                       _items[index].isConfirmed = true;
                     });
                     Navigator.pop(context);
@@ -608,7 +608,7 @@ class _AiInvoiceReviewScreenState
                   _showCreateProductDialog(item, index);
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('\u0625\u0646\u0634\u0627\u0621 \u0645\u0646\u062A\u062C \u062C\u062F\u064A\u062F'),
+                label: Text(AppLocalizations.of(context)!.addProduct),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),
                 ),
@@ -624,13 +624,13 @@ class _AiInvoiceReviewScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('\u0625\u0646\u0634\u0627\u0621 \u0645\u0646\u062A\u062C \u062C\u062F\u064A\u062F'),
+        title: Text(AppLocalizations.of(context)!.addProduct),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               decoration: InputDecoration(
-                labelText: '\u0627\u0633\u0645 \u0627\u0644\u0645\u0646\u062A\u062C',
+                labelText: AppLocalizations.of(context)!.productNameLabel,
                 hintText: item.rawName,
                 border: const OutlineInputBorder(),
               ),
@@ -639,7 +639,7 @@ class _AiInvoiceReviewScreenState
             const SizedBox(height: 16),
             TextField(
               decoration: InputDecoration(
-                labelText: '\u0633\u0639\u0631 \u0627\u0644\u0634\u0631\u0627\u0621',
+                labelText: AppLocalizations.of(context)!.purchasePriceLabel,
                 hintText: item.unitPrice.toString(),
                 border: const OutlineInputBorder(),
               ),
@@ -650,7 +650,7 @@ class _AiInvoiceReviewScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('\u0625\u0644\u063A\u0627\u0621'),
+            child: Text(AppLocalizations.of(context)!.cancelLabel),
           ),
           FilledButton(
             onPressed: () {
@@ -662,7 +662,7 @@ class _AiInvoiceReviewScreenState
               });
               Navigator.pop(context);
             },
-            child: const Text('\u0625\u0646\u0634\u0627\u0621'),
+            child: Text(AppLocalizations.of(context)!.addLabel),
           ),
         ],
       ),
@@ -690,25 +690,26 @@ class _AiInvoiceReviewScreenState
           .toList();
 
       // حفظ المشتريات عبر المزود (يشمل SyncQueue)
+      final l10n = AppLocalizations.of(context)!;
       await createPurchase(
         ref,
-        supplierId: '', // المورد غير محدد بعد - يتم تحديده لاحقاً
-        supplierName: widget.invoiceData.supplierName ?? 'مورد غير معروف',
+        supplierId: '',
+        supplierName: widget.invoiceData.supplierName ?? l10n.unknownSupplier,
         subtotal: widget.invoiceData.totalAmount - widget.invoiceData.taxAmount,
         tax: widget.invoiceData.taxAmount,
         discount: 0,
         total: widget.invoiceData.totalAmount,
         notes: widget.invoiceData.invoiceNumber != null
-            ? 'فاتورة AI: ${widget.invoiceData.invoiceNumber}'
-            : 'فاتورة مستوردة بالذكاء الاصطناعي',
+            ? l10n.aiInvoiceNote(widget.invoiceData.invoiceNumber!)
+            : l10n.aiImportedInvoice,
         items: purchaseItems,
       );
 
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ فاتورة الشراء بنجاح'),
+          SnackBar(
+            content: Text(l10n.purchaseInvoiceSavedSuccess),
             backgroundColor: AppColors.success,
           ),
         );
@@ -719,7 +720,7 @@ class _AiInvoiceReviewScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e'),
+              content: Text(AppLocalizations.of(context)!.errorWithDetails(e.toString())),
               backgroundColor: AppColors.error),
         );
       }

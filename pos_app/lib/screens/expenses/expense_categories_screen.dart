@@ -79,7 +79,7 @@ class _ExpenseCategoriesScreenState
       body: Column(
               children: [
                 AppHeader(
-                  title: 'فئات المصروفات',
+                  title: l10n.expenseCategoriesTitle,
                   subtitle: _getDateSubtitle(l10n),
                   showSearch: isWideScreen,
                   searchHint: l10n.searchPlaceholder,
@@ -95,7 +95,7 @@ class _ExpenseCategoriesScreenState
                 Expanded(
                   child: ref.watch(allExpenseCategoriesProvider).when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text('خطأ: $e')),
+                    error: (e, _) => Center(child: Text(l10n.errorPrefix(e))),
                     data: (categoriesData) {
                       final categories = categoriesData.map(_fromData).toList();
                       final totalBudget = categories.fold(0.0, (sum, c) => sum + c.budget);
@@ -134,7 +134,7 @@ class _ExpenseCategoriesScreenState
                 children: [
                   Icon(Icons.category_rounded, size: 48, color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
                   const SizedBox(height: 8),
-                  Text('لا توجد فئات مصروفات', style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted)),
+                  Text(l10n.noCategoriesFound, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted)),
                 ],
               ),
             ),
@@ -148,6 +148,7 @@ class _ExpenseCategoriesScreenState
   }
 
   Widget _buildBudgetSummary(double totalBudget, double totalSpent, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final percentage = totalBudget > 0 ? totalSpent / totalBudget * 100 : 0.0;
     final remaining = totalBudget - totalSpent;
 
@@ -175,12 +176,12 @@ class _ExpenseCategoriesScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'الميزانية الشهرية', // TODO: l10n.monthlyBudget
+                    l10n.monthlyBudget,
                     style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${totalBudget.toStringAsFixed(0)} ر.س',
+                    '${totalBudget.toStringAsFixed(0)} ${l10n.sarCurrency}',
                     style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -212,9 +213,9 @@ class _ExpenseCategoriesScreenState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSummaryStat('المصروف', '${totalSpent.toStringAsFixed(0)} ر.س', Icons.arrow_upward),
+              _buildSummaryStat(l10n.spentAmount, '${totalSpent.toStringAsFixed(0)} ${l10n.sarCurrency}', Icons.arrow_upward),
               Container(height: 40, width: 1, color: Colors.white24),
-              _buildSummaryStat('المتبقي', '${remaining.toStringAsFixed(0)} ر.س', Icons.account_balance_wallet),
+              _buildSummaryStat(l10n.remainingAmount, '${remaining.toStringAsFixed(0)} ${l10n.sarCurrency}', Icons.account_balance_wallet),
             ],
           ),
         ],
@@ -318,12 +319,12 @@ class _ExpenseCategoriesScreenState
                                 color: AppColors.error.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.warning, size: 12, color: AppColors.error),
-                                  SizedBox(width: 2),
-                                  Text('تجاوز', style: TextStyle(color: AppColors.error, fontSize: 10)),
+                                  const Icon(Icons.warning, size: 12, color: AppColors.error),
+                                  const SizedBox(width: 2),
+                                  Text(l10n.overBudget, style: const TextStyle(color: AppColors.error, fontSize: 10)),
                                 ],
                               ),
                             ),
@@ -331,7 +332,7 @@ class _ExpenseCategoriesScreenState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${category.expensesCount} مصروف',
+                        l10n.expenseCount(category.expensesCount),
                         style: TextStyle(
                           color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                           fontSize: 12,
@@ -381,14 +382,14 @@ class _ExpenseCategoriesScreenState
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'المصروف: ${category.spent.toStringAsFixed(0)} ر.س',
+                  l10n.spentLabel(category.spent.toStringAsFixed(0)),
                   style: TextStyle(
                     color: isOverBudget ? AppColors.error : (isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
                     fontSize: 12,
                   ),
                 ),
                 Text(
-                  'المتبقي: ${(category.budget - category.spent).toStringAsFixed(0)} ر.س',
+                  l10n.remainingLabel2((category.budget - category.spent).toStringAsFixed(0)),
                   style: TextStyle(
                     color: isOverBudget ? AppColors.error : AppColors.success,
                     fontSize: 12,
@@ -404,6 +405,7 @@ class _ExpenseCategoriesScreenState
 
   void _showCategoryDetails(ExpenseCategory category) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -436,7 +438,7 @@ class _ExpenseCategoriesScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(category.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
-                        Text('${category.expensesCount} مصروف هذا الشهر', style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted, fontSize: 13)),
+                        Text(l10n.expensesThisMonth(category.expensesCount), style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted, fontSize: 13)),
                       ],
                     ),
                   ),
@@ -449,11 +451,11 @@ class _ExpenseCategoriesScreenState
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Expanded(child: _buildDetailStat('الميزانية', '${category.budget.toStringAsFixed(0)} ر.س', AppColors.info, isDark)),
+                  Expanded(child: _buildDetailStat(l10n.budgetLabel, '${category.budget.toStringAsFixed(0)} ${l10n.sarCurrency}', AppColors.info, isDark)),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildDetailStat('المصروف', '${category.spent.toStringAsFixed(0)} ر.س', AppColors.warning, isDark)),
+                  Expanded(child: _buildDetailStat(l10n.spentAmount, '${category.spent.toStringAsFixed(0)} ${l10n.sarCurrency}', AppColors.warning, isDark)),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildDetailStat('المتبقي', '${(category.budget - category.spent).toStringAsFixed(0)} ر.س', AppColors.success, isDark)),
+                  Expanded(child: _buildDetailStat(l10n.remainingAmount, '${(category.budget - category.spent).toStringAsFixed(0)} ${l10n.sarCurrency}', AppColors.success, isDark)),
                 ],
               ),
             ),
@@ -462,7 +464,7 @@ class _ExpenseCategoriesScreenState
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Text('آخر المصروفات', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
+                  Text(l10n.recentExpenses, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
                   const Spacer(),
                   TextButton(onPressed: () {}, child: Text(AppLocalizations.of(context)!.viewAll)),
                 ],
@@ -478,13 +480,13 @@ class _ExpenseCategoriesScreenState
                       backgroundColor: category.color.withValues(alpha: 0.1),
                       child: Icon(Icons.receipt, color: category.color, size: 20),
                     ),
-                    title: Text('مصروف #${1000 + index}', style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)),
+                    title: Text(l10n.expenseNumber(1000 + index), style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)),
                     subtitle: Text(
                       '${DateTime.now().subtract(Duration(days: index)).day}/${DateTime.now().month}/${DateTime.now().year}',
                       style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary),
                     ),
                     trailing: Text(
-                      '${(category.spent / 5).toStringAsFixed(0)} ر.س',
+                      '${(category.spent / 5).toStringAsFixed(0)} ${l10n.sarCurrency}',
                       style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
                     ),
                   );
@@ -641,13 +643,13 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(controller: _nameController, decoration: InputDecoration(labelText: l10n.categoryName, hintText: 'مثال: رواتب الموظفين')),
+            TextField(controller: _nameController, decoration: InputDecoration(labelText: l10n.categoryName, hintText: l10n.categoryNameHint)),
             const SizedBox(height: 16),
             TextField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(labelText: 'الميزانية الشهرية', hintText: '5000', suffixText: l10n.sar),
+              decoration: InputDecoration(labelText: l10n.monthlyBudgetLabel, hintText: '5000', suffixText: l10n.sar),
             ),
             const SizedBox(height: 16),
             Text(l10n.categoryIcon, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),

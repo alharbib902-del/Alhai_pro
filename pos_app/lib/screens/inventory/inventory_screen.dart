@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
@@ -49,6 +50,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final productsState = ref.watch(productsStateProvider);
     final products = productsState.products;
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
+    final l10n = AppLocalizations.of(context)!;
 
     // Calculate stats once per build
     final totalProducts = products.length;
@@ -72,23 +74,23 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Column(
           children: [
             // Header
-            _buildHeader(context, products),
+            _buildHeader(context, products, l10n),
             // Stats Cards
-            _buildStatsRow(totalProducts, lowStockCount, outOfStockCount, totalValue),
+            _buildStatsRow(totalProducts, lowStockCount, outOfStockCount, totalValue, l10n),
             // Content
             Expanded(
               child: Row(
                 children: [
                   // Filters Sidebar (Desktop only)
                   if (isDesktop && _showFilters)
-                    _buildFiltersSidebar(totalProducts, lowStockCount, outOfStockCount),
+                    _buildFiltersSidebar(totalProducts, lowStockCount, outOfStockCount, l10n),
                   // Inventory List
                   Expanded(
-                    child: _buildInventoryContent(productsState, filteredProducts),
+                    child: _buildInventoryContent(productsState, filteredProducts, l10n),
                   ),
                 ],
               ),
@@ -99,14 +101,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, List<dynamic> products) {
+  Widget _buildHeader(BuildContext context, List<dynamic> products, AppLocalizations l10n) {
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Column(
         children: [
@@ -133,7 +136,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         ),
                         const SizedBox(width: AppSizes.sm),
                         Text(
-                          'المخزون',
+                          l10n.inventory,
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -147,7 +150,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     ),
                     const SizedBox(height: AppSizes.xs),
                     Text(
-                      'إدارة ومتابعة المخزون',
+                      l10n.inventoryManagement,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -160,7 +163,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 AppIconButton(
                   icon: _showFilters ? Icons.filter_list_off : Icons.filter_list,
                   onPressed: () => setState(() => _showFilters = !_showFilters),
-                  tooltip: _showFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر',
+                  tooltip: _showFilters ? l10n.hideFilters : l10n.showFilters,
                 ),
                 const SizedBox(width: AppSizes.xs),
                 AppIconButton(
@@ -174,20 +177,20 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                       );
                     }
                   },
-                  tooltip: 'تحديث (F5)',
+                  tooltip: l10n.refresh,
                 ),
                 const SizedBox(width: AppSizes.sm),
               ],
               AppButton.secondary(
-                onPressed: () => _showBulkAdjustDialog(),
+                onPressed: () => _showBulkAdjustDialog(l10n),
                 icon: Icons.tune_rounded,
-                label: isDesktop ? 'تعديل جماعي' : '',
+                label: isDesktop ? l10n.bulkEdit : '',
               ),
               const SizedBox(width: AppSizes.sm),
               AppButton.primary(
-                onPressed: () => _showInventoryCountDialog(),
+                onPressed: () => _showInventoryCountDialog(l10n),
                 icon: Icons.calculate_rounded,
-                label: isDesktop ? 'جرد المخزون' : '',
+                label: isDesktop ? l10n.stockTake : '',
               ),
             ],
           ),
@@ -199,7 +202,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 child: AppSearchField(
                   controller: _searchController,
                   focusNode: _searchFocusNode,
-                  hintText: 'بحث بالاسم أو الباركود... (Ctrl+F)',
+                  hintText: l10n.searchByNameOrBarcode,
                   maxLength: 100,
                   onChanged: (v) {
                     final sanitized = InputSanitizer.sanitize(v);
@@ -226,23 +229,23 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     vertical: AppSizes.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceVariant,
+                    color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.sort_rounded, size: 18, color: AppColors.textSecondary),
+                      Icon(Icons.sort_rounded, size: 18, color: colorScheme.onSurfaceVariant),
                       const SizedBox(width: AppSizes.xs),
                       DropdownButton<String>(
                         value: _sortBy,
                         underline: const SizedBox(),
                         isDense: true,
-                        items: const [
-                          DropdownMenuItem(value: 'name', child: Text('الاسم')),
-                          DropdownMenuItem(value: 'stock', child: Text('الكمية')),
-                          DropdownMenuItem(value: 'recent', child: Text('الأحدث')),
+                        items: [
+                          DropdownMenuItem(value: 'name', child: Text(l10n.productName)),
+                          DropdownMenuItem(value: 'stock', child: Text(l10n.quantity)),
+                          DropdownMenuItem(value: 'recent', child: Text(l10n.newest)),
                         ],
                         onChanged: (value) {
                           if (value != null) setState(() => _sortBy = value);
@@ -273,10 +276,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildFilterChip('الكل', 'all', null),
-                  _buildFilterChip('مخزون منخفض', 'low', AppColors.stockLow),
-                  _buildFilterChip('نفذ', 'out', AppColors.stockOut),
-                  _buildFilterChip('متوفر', 'available', AppColors.stockAvailable),
+                  _buildFilterChip(l10n.all, 'all', null),
+                  _buildFilterChip(l10n.lowStock, 'low', AppColors.stockLow),
+                  _buildFilterChip(l10n.outOfStock, 'out', AppColors.stockOut),
+                  _buildFilterChip(l10n.available, 'available', AppColors.stockAvailable),
                 ],
               ),
             ),
@@ -286,7 +289,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Widget _buildStatsRow(int total, int lowStock, int outOfStock, double totalValue) {
+  Widget _buildStatsRow(int total, int lowStock, int outOfStock, double totalValue, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
       child: Row(
@@ -294,7 +297,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           Expanded(
             child: _StatCard(
               icon: Icons.inventory_2_rounded,
-              label: 'إجمالي المنتجات',
+              label: l10n.totalProducts,
               value: '$total',
               color: AppColors.primary,
             ),
@@ -303,7 +306,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           Expanded(
             child: _StatCard(
               icon: Icons.warning_amber_rounded,
-              label: 'مخزون منخفض',
+              label: l10n.lowStock,
               value: '$lowStock',
               color: AppColors.stockLow,
               isAlert: lowStock > 0,
@@ -313,7 +316,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           Expanded(
             child: _StatCard(
               icon: Icons.error_outline_rounded,
-              label: 'نفذ المخزون',
+              label: l10n.outOfStock,
               value: '$outOfStock',
               color: AppColors.stockOut,
               isAlert: outOfStock > 0,
@@ -323,8 +326,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           Expanded(
             child: _StatCard(
               icon: Icons.attach_money_rounded,
-              label: 'قيمة المخزون',
-              value: '${totalValue.toStringAsFixed(0)} ر.س',
+              label: l10n.inventoryValue,
+              value: '${totalValue.toStringAsFixed(0)} ${l10n.sar}',
               color: AppColors.success,
             ),
           ),
@@ -333,14 +336,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Widget _buildFiltersSidebar(int total, int lowStock, int outOfStock) {
+  Widget _buildFiltersSidebar(int total, int lowStock, int outOfStock, AppLocalizations l10n) {
     final availableCount = total - lowStock - outOfStock;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       width: 260,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(left: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(left: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,7 +357,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 const Icon(Icons.filter_alt_rounded, size: 18, color: AppColors.textSecondary),
                 const SizedBox(width: AppSizes.xs),
                 Text(
-                  'حالة المخزون',
+                  l10n.stockStatus,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -362,14 +366,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             ),
           ),
           _buildFilterOption(
-            'الكل',
+            l10n.all,
             Icons.inventory_2_rounded,
             _filterType == 'all',
             () => setState(() => _filterType = 'all'),
             count: total,
           ),
           _buildFilterOption(
-            'متوفر',
+            l10n.available,
             Icons.check_circle_rounded,
             _filterType == 'available',
             () => setState(() => _filterType = 'available'),
@@ -377,7 +381,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             count: availableCount,
           ),
           _buildFilterOption(
-            'مخزون منخفض',
+            l10n.lowStock,
             Icons.warning_rounded,
             _filterType == 'low',
             () => setState(() => _filterType = 'low'),
@@ -385,7 +389,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             count: lowStock,
           ),
           _buildFilterOption(
-            'نفذ المخزون',
+            l10n.outOfStock,
             Icons.error_rounded,
             _filterType == 'out',
             () => setState(() => _filterType = 'out'),
@@ -401,7 +405,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 const Icon(Icons.flash_on_rounded, size: 18, color: AppColors.textSecondary),
                 const SizedBox(width: AppSizes.xs),
                 Text(
-                  'إجراءات سريعة',
+                  l10n.quickActions,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -410,19 +414,19 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             ),
           ),
           _buildQuickAction(
-            'تصدير تقرير المخزون',
+            l10n.exportInventoryReport,
             Icons.download_rounded,
             AppColors.primary,
             () {},
           ),
           _buildQuickAction(
-            'طباعة قائمة الطلب',
+            l10n.printOrderList,
             Icons.print_rounded,
             AppColors.textSecondary,
             () {},
           ),
           _buildQuickAction(
-            'سجل حركة المخزون',
+            l10n.inventoryMovementLog,
             Icons.history_rounded,
             AppColors.textSecondary,
             () {},
@@ -435,16 +439,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               child: Column(
                 children: [
                   AppButton.primary(
-                    onPressed: () => _showBulkAdjustDialog(),
+                    onPressed: () => _showBulkAdjustDialog(l10n),
                     icon: Icons.tune_rounded,
-                    label: 'تعديل المحدد (${_selectedIds.length})',
+                    label: '${l10n.editSelected} (${_selectedIds.length})',
                     isFullWidth: true,
                   ),
                   const SizedBox(height: AppSizes.sm),
                   AppButton.ghost(
                     onPressed: () => setState(() => _selectedIds.clear()),
                     icon: Icons.clear_all_rounded,
-                    label: 'إلغاء التحديد',
+                    label: l10n.clearSelection,
                     isFullWidth: true,
                   ),
                 ],
@@ -539,7 +543,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Icon(icon, size: 18, color: color),
               const SizedBox(width: AppSizes.sm),
               Expanded(
-                child: Text(label, style: const TextStyle(color: AppColors.textPrimary)),
+                child: Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               ),
               const AdaptiveIcon(Icons.chevron_left_rounded, size: 18, color: AppColors.textSecondary),
             ],
@@ -551,20 +555,21 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
   Widget _buildFilterChip(String label, String value, Color? color) {
     final isSelected = _filterType == value;
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsetsDirectional.only(start: AppSizes.xs),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => setState(() => _filterType = value),
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         selectedColor: (color ?? AppColors.primary).withValues(alpha: 0.15),
         checkmarkColor: color ?? AppColors.primary,
         labelStyle: TextStyle(
-          color: isSelected ? (color ?? AppColors.primary) : AppColors.textPrimary,
+          color: isSelected ? (color ?? AppColors.primary) : colorScheme.onSurface,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
-        side: BorderSide(color: isSelected ? (color ?? AppColors.primary) : AppColors.border),
+        side: BorderSide(color: isSelected ? (color ?? AppColors.primary) : Theme.of(context).dividerColor),
       ),
     );
   }
@@ -629,7 +634,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     return result;
   }
 
-  Widget _buildInventoryContent(ProductsState state, List<dynamic> filtered) {
+  Widget _buildInventoryContent(ProductsState state, List<dynamic> filtered, AppLocalizations l10n) {
     // Loading state
     if (state.isLoading && state.products.isEmpty) {
       return ListView.builder(
@@ -674,12 +679,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       }
       if (_filterType == 'out') {
         return AppEmptyState.noData(
-          title: 'لا يوجد منتجات نفذت',
-          description: 'جميع المنتجات متوفرة في المخزون',
+          title: l10n.noOutOfStockProducts,
+          description: l10n.allProductsAvailable,
         );
       }
       return AppEmptyState.noProducts(
-        onAdd: () => _showInventoryCountDialog(),
+        onAdd: () => _showInventoryCountDialog(l10n),
       );
     }
 
@@ -693,7 +698,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           child: _InventoryCard(
             product: product,
             isSelected: _selectedIds.contains(product.id),
-            onTap: () => _showAdjustDialog(product.id, product.name, product.stockQty),
+            onTap: () => _showAdjustDialog(product.id, product.name, product.stockQty, l10n),
             onSelect: (selected) {
               setState(() {
                 if (selected) {
@@ -738,7 +743,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     }
   }
 
-  void _showAdjustDialog(String productId, String productName, int currentQty) {
+  void _showAdjustDialog(String productId, String productName, int currentQty, AppLocalizations l10n) {
     final controller = TextEditingController(text: currentQty.toString());
     String reason = 'count';
 
@@ -763,7 +768,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('تعديل المخزون'),
+                  Text(l10n.editStock),
                   Text(
                     productName,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -784,15 +789,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Container(
                 padding: const EdgeInsets.all(AppSizes.md),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'الكمية الحالية: ',
-                      style: TextStyle(color: AppColors.textSecondary),
+                    Text(
+                      '${l10n.currentQuantity}: ',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     Text(
                       '$currentQty',
@@ -818,7 +823,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
-                  labelText: 'الكمية الجديدة',
+                  labelText: l10n.newQuantity,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
@@ -870,19 +875,19 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               DropdownButtonFormField<String>(
                 initialValue: reason,
                 decoration: InputDecoration(
-                  labelText: 'سبب التعديل',
+                  labelText: l10n.adjustmentReason,
                   prefixIcon: const Icon(Icons.note_rounded),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'count', child: Text('جرد')),
-                  DropdownMenuItem(value: 'receive', child: Text('استلام بضاعة')),
-                  DropdownMenuItem(value: 'damage', child: Text('تالف')),
-                  DropdownMenuItem(value: 'return', child: Text('مرتجع')),
-                  DropdownMenuItem(value: 'correction', child: Text('تصحيح')),
-                  DropdownMenuItem(value: 'other', child: Text('أخرى')),
+                items: [
+                  DropdownMenuItem(value: 'count', child: Text(l10n.stockTake)),
+                  DropdownMenuItem(value: 'receive', child: Text(l10n.receiveGoods)),
+                  DropdownMenuItem(value: 'damage', child: Text(l10n.damaged)),
+                  DropdownMenuItem(value: 'return', child: Text(l10n.returned)),
+                  DropdownMenuItem(value: 'correction', child: Text(l10n.correction)),
+                  DropdownMenuItem(value: 'other', child: Text(l10n.other)),
                 ],
                 onChanged: (v) => reason = v ?? 'count',
               ),
@@ -892,7 +897,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           AppButton.primary(
             onPressed: () async {
@@ -907,7 +912,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: [
                       const Icon(Icons.check_circle_rounded, color: Colors.white),
                       const SizedBox(width: AppSizes.sm),
-                      Text('تم تعديل مخزون $productName إلى $newQty'),
+                      Text('${l10n.stockUpdatedTo} $productName: $newQty'),
                     ],
                   ),
                   backgroundColor: AppColors.success,
@@ -918,7 +923,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 ),
               );
             },
-            label: 'حفظ',
+            label: l10n.save,
             icon: Icons.save_rounded,
           ),
         ],
@@ -928,7 +933,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     });
   }
 
-  void _showBulkAdjustDialog() {
+  void _showBulkAdjustDialog(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -946,21 +951,21 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               child: const Icon(Icons.tune_rounded, color: AppColors.primary),
             ),
             const SizedBox(width: AppSizes.sm),
-            const Text('تعديل جماعي'),
+            Text(l10n.bulkEdit),
           ],
         ),
-        content: const Text('هذه الميزة قيد التطوير...'),
+        content: Text(l10n.featureUnderDevelopment),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق'),
+            child: Text(l10n.close),
           ),
         ],
       ),
     );
   }
 
-  void _showInventoryCountDialog() {
+  void _showInventoryCountDialog(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -978,14 +983,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               child: const Icon(Icons.calculate_rounded, color: AppColors.primary),
             ),
             const SizedBox(width: AppSizes.sm),
-            const Text('جرد المخزون'),
+            Text(l10n.stockTake),
           ],
         ),
-        content: const Text('هذه الميزة قيد التطوير...'),
+        content: Text(l10n.featureUnderDevelopment),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق'),
+            child: Text(l10n.close),
           ),
         ],
       ),
@@ -1011,13 +1016,14 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
         border: Border.all(
-          color: isAlert ? color.withValues(alpha: 0.5) : AppColors.border,
+          color: isAlert ? color.withValues(alpha: 0.5) : Theme.of(context).dividerColor,
           width: isAlert ? 2 : 1,
         ),
       ),
@@ -1038,7 +1044,7 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                 ),
                 Text(
                   value,
@@ -1058,7 +1064,7 @@ class _StatCard extends StatelessWidget {
                 color: color,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.priority_high_rounded, size: 12, color: Colors.white),
+              child: Icon(Icons.priority_high_rounded, size: 12, color: colorScheme.surface),
             ),
         ],
       ),
@@ -1096,6 +1102,8 @@ class _InventoryCardState extends State<_InventoryCard> {
         : isLowStock
             ? AppColors.stockLow
             : AppColors.stockAvailable;
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -1105,7 +1113,7 @@ class _InventoryCardState extends State<_InventoryCard> {
         decoration: BoxDecoration(
           color: widget.isSelected
               ? AppColors.primary.withValues(alpha: 0.05)
-              : Colors.white,
+              : colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           border: Border.all(
             color: widget.isSelected
@@ -1114,7 +1122,7 @@ class _InventoryCardState extends State<_InventoryCard> {
                     ? AppColors.primary.withValues(alpha: 0.5)
                     : isOutOfStock || isLowStock
                         ? stockColor.withValues(alpha: 0.3)
-                        : AppColors.border,
+                        : Theme.of(context).dividerColor,
             width: widget.isSelected ? 2 : 1,
           ),
           boxShadow: _isHovered ? AppSizes.shadowMd : AppSizes.shadowSm,
@@ -1174,7 +1182,7 @@ class _InventoryCardState extends State<_InventoryCard> {
                           ),
                           const SizedBox(width: AppSizes.xxs),
                           Text(
-                            widget.product.barcode ?? 'بدون باركود',
+                            widget.product.barcode ?? l10n.noBarcode,
                             style: const TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
@@ -1199,10 +1207,10 @@ class _InventoryCardState extends State<_InventoryCard> {
                     ),
                     AppBadge(
                       label: isOutOfStock
-                          ? 'نفذ'
+                          ? l10n.outOfStock
                           : isLowStock
-                              ? 'منخفض'
-                              : 'متوفر',
+                              ? l10n.lowStock
+                              : l10n.available,
                       color: stockColor,
                       variant: AppBadgeVariant.soft,
                     ),
@@ -1214,7 +1222,7 @@ class _InventoryCardState extends State<_InventoryCard> {
                   AppIconButton(
                     icon: Icons.edit_rounded,
                     onPressed: widget.onTap,
-                    tooltip: 'تعديل',
+                    tooltip: l10n.edit,
                   ),
                 const AdaptiveIcon(Icons.chevron_left_rounded, color: AppColors.textSecondary),
               ],

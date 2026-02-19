@@ -249,6 +249,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (_isLoading) {
       return Scaffold(
@@ -265,11 +266,15 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              Icon(Icons.error_outline, size: 64, color: colorScheme.error),
               const SizedBox(height: 16),
-              Text(l10n.errorOccurred, style: const TextStyle(fontSize: 18)),
+              Text(l10n.errorOccurred,
+                  style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
               const SizedBox(height: 8),
-              TextButton.icon(
+              Text(_error!,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant)),
+              const SizedBox(height: 16),
+              FilledButton.icon(
                 onPressed: _loadData,
                 icon: const Icon(Icons.refresh),
                 label: Text(l10n.retry),
@@ -302,160 +307,252 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
       ),
       body: RefreshIndicator(
         onRefresh: _loadData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // اختيار الفترة الزمنية
-              SegmentedButton<String>(
-                segments: [
-                  ButtonSegment(value: 'week', label: Text(l10n.weekPeriod)),
-                  ButtonSegment(value: 'month', label: Text(l10n.monthPeriod)),
-                  ButtonSegment(value: 'year', label: Text(l10n.yearPeriod)),
-                ],
-                selected: {_period},
-                onSelectionChanged: (v) {
-                  setState(() => _period = v.first);
-                  _loadData();
-                },
-              ),
-
-              const SizedBox(height: 24),
-
-              // الإحصائيات الرئيسية
-              Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 800;
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StatCard(
-                    icon: Icons.people,
-                    label: l10n.totalCustomers,
-                    value: '${_data.totalCustomers}',
-                    color: Colors.blue,
+                  // اختيار الفترة الزمنية
+                  SegmentedButton<String>(
+                    segments: [
+                      ButtonSegment(value: 'week', label: Text(l10n.weekPeriod)),
+                      ButtonSegment(value: 'month', label: Text(l10n.monthPeriod)),
+                      ButtonSegment(value: 'year', label: Text(l10n.yearPeriod)),
+                    ],
+                    selected: {_period},
+                    onSelectionChanged: (v) {
+                      setState(() => _period = v.first);
+                      _loadData();
+                    },
                   ),
-                  const SizedBox(width: 12),
-                  _StatCard(
-                    icon: Icons.person_add,
-                    label: l10n.newCustomers,
-                    value: '${_data.newCustomers}',
-                    color: Colors.green,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _StatCard(
-                    icon: Icons.account_balance_wallet,
-                    label: l10n.totalDebts,
-                    value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
-                    color: Colors.red,
-                  ),
-                  const SizedBox(width: 12),
-                  _StatCard(
-                    icon: Icons.attach_money,
-                    label: l10n.averageSpending,
-                    value: l10n.priceWithCurrency(_data.avgSpending.toStringAsFixed(0)),
-                    color: Colors.orange,
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              // أفضل العملاء
-              Text(l10n.topCustomers, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
-              _data.topCustomers.isEmpty
-                  ? Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Center(
-                          child: Text(l10n.noData, style: TextStyle(color: Colors.grey.shade600)),
+                  // الإحصائيات الرئيسية - responsive
+                  if (isWide)
+                    Row(
+                      children: [
+                        _StatCard(
+                          icon: Icons.people,
+                          label: l10n.totalCustomers,
+                          value: '${_data.totalCustomers}',
+                          color: colorScheme.primary,
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        _StatCard(
+                          icon: Icons.person_add,
+                          label: l10n.newCustomers,
+                          value: '${_data.newCustomers}',
+                          color: colorScheme.tertiary,
+                        ),
+                        const SizedBox(width: 12),
+                        _StatCard(
+                          icon: Icons.account_balance_wallet,
+                          label: l10n.totalDebts,
+                          value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
+                          color: colorScheme.error,
+                        ),
+                        const SizedBox(width: 12),
+                        _StatCard(
+                          icon: Icons.attach_money,
+                          label: l10n.averageSpending,
+                          value: l10n.priceWithCurrency(_data.avgSpending.toStringAsFixed(0)),
+                          color: colorScheme.secondary,
+                        ),
+                      ],
                     )
-                  : Card(
-                      child: Column(
-                        children: _data.topCustomers.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final customer = entry.value;
-                          return Column(
-                            children: [
-                              if (index > 0) const Divider(height: 1),
-                              _CustomerTile(
-                                rank: index + 1,
-                                name: customer.name,
-                                orders: customer.orderCount,
-                                spent: customer.totalSpent,
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                  else ...[
+                    Row(
+                      children: [
+                        _StatCard(
+                          icon: Icons.people,
+                          label: l10n.totalCustomers,
+                          value: '${_data.totalCustomers}',
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        _StatCard(
+                          icon: Icons.person_add,
+                          label: l10n.newCustomers,
+                          value: '${_data.newCustomers}',
+                          color: colorScheme.tertiary,
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        _StatCard(
+                          icon: Icons.account_balance_wallet,
+                          label: l10n.totalDebts,
+                          value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
+                          color: colorScheme.error,
+                        ),
+                        const SizedBox(width: 12),
+                        _StatCard(
+                          icon: Icons.attach_money,
+                          label: l10n.averageSpending,
+                          value: l10n.priceWithCurrency(_data.avgSpending.toStringAsFixed(0)),
+                          color: colorScheme.secondary,
+                        ),
+                      ],
+                    ),
+                  ],
 
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              // توزيع العملاء حسب الإنفاق
-              Text(l10n.customerDistribution, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _DistributionRow(label: '${l10n.vipCustomers} (> 5000)', percentage: vipPct, color: Colors.amber),
-                      const SizedBox(height: 12),
-                      _DistributionRow(label: '${l10n.regularCustomers} (1000-5000)', percentage: regularPct, color: Colors.blue),
-                      const SizedBox(height: 12),
-                      _DistributionRow(label: '${l10n.normalCustomers} (< 1000)', percentage: normalPct, color: Colors.grey),
-                    ],
-                  ),
-                ),
+                  // Wide: top customers + distribution side by side
+                  if (isWide) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // أفضل العملاء
+                        Expanded(
+                          flex: 3,
+                          child: _buildTopCustomersSection(l10n, colorScheme),
+                        ),
+                        const SizedBox(width: 16),
+                        // توزيع العملاء
+                        Expanded(
+                          flex: 2,
+                          child: _buildDistributionSection(l10n, colorScheme, vipPct, regularPct, normalPct),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
+                  ] else ...[
+                    // أفضل العملاء
+                    _buildTopCustomersSection(l10n, colorScheme),
+                    const SizedBox(height: 24),
+                    // توزيع العملاء
+                    _buildDistributionSection(l10n, colorScheme, vipPct, regularPct, normalPct),
+                    const SizedBox(height: 24),
+                    // نشاط العملاء
+                    _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
+                  ],
+                ],
               ),
-
-              const SizedBox(height: 24),
-
-              // نشاط العملاء
-              Text(l10n.customerActivity, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _ActivityStat(
-                            label: l10n.activeLabel,
-                            value: '${_data.activeCustomers}',
-                            percentage: activePct,
-                            color: Colors.green,
-                          ),
-                          _ActivityStat(
-                            label: l10n.dormantLabel,
-                            value: '${_data.dormantCustomers}',
-                            percentage: dormantPct,
-                            color: Colors.orange,
-                          ),
-                          _ActivityStat(
-                            label: l10n.inactiveLabel,
-                            value: '${_data.inactiveCustomers}',
-                            percentage: inactivePct,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildTopCustomersSection(AppLocalizations l10n, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.topCustomers, style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _data.topCustomers.isEmpty
+            ? Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Center(
+                    child: Text(l10n.noData,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                  ),
+                ),
+              )
+            : Card(
+                child: Column(
+                  children: _data.topCustomers.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final customer = entry.value;
+                    return Column(
+                      children: [
+                        if (index > 0) const Divider(height: 1),
+                        _CustomerTile(
+                          rank: index + 1,
+                          name: customer.name,
+                          orders: customer.orderCount,
+                          spent: customer.totalSpent,
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+      ],
+    );
+  }
+
+  Widget _buildDistributionSection(
+      AppLocalizations l10n, ColorScheme colorScheme, int vipPct, int regularPct, int normalPct) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.customerDistribution, style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _DistributionRow(
+                    label: '${l10n.vipCustomers} (> 5000)',
+                    percentage: vipPct,
+                    color: colorScheme.tertiary),
+                const SizedBox(height: 12),
+                _DistributionRow(
+                    label: '${l10n.regularCustomers} (1000-5000)',
+                    percentage: regularPct,
+                    color: colorScheme.primary),
+                const SizedBox(height: 12),
+                _DistributionRow(
+                    label: '${l10n.normalCustomers} (< 1000)',
+                    percentage: normalPct,
+                    color: colorScheme.outline),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivitySection(
+      AppLocalizations l10n, ColorScheme colorScheme, int activePct, int dormantPct, int inactivePct) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.customerActivity, style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _ActivityStat(
+                  label: l10n.activeLabel,
+                  value: '${_data.activeCustomers}',
+                  percentage: activePct,
+                  color: colorScheme.primary,
+                ),
+                _ActivityStat(
+                  label: l10n.dormantLabel,
+                  value: '${_data.dormantCustomers}',
+                  percentage: dormantPct,
+                  color: colorScheme.tertiary,
+                ),
+                _ActivityStat(
+                  label: l10n.inactiveLabel,
+                  value: '${_data.inactiveCustomers}',
+                  percentage: inactivePct,
+                  color: colorScheme.error,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -468,6 +565,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: Card(
         child: Padding(
@@ -477,8 +575,12 @@ class _StatCard extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 20),
               const SizedBox(height: 8),
-              Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-              Text(label, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+              Text(label,
+                  style: TextStyle(
+                      fontSize: 11, color: colorScheme.onSurfaceVariant)),
             ],
           ),
         ),
@@ -497,14 +599,23 @@ class _CustomerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: rank <= 3 ? Colors.amber.shade100 : Colors.grey.shade100,
-        child: Text('$rank', style: TextStyle(color: rank <= 3 ? Colors.amber.shade800 : Colors.grey, fontWeight: FontWeight.bold)),
+        backgroundColor: rank <= 3
+            ? colorScheme.tertiaryContainer
+            : colorScheme.surfaceContainerHighest,
+        child: Text('$rank',
+            style: TextStyle(
+                color: rank <= 3
+                    ? colorScheme.onTertiaryContainer
+                    : colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.bold)),
       ),
       title: Text(name),
       subtitle: Text('$orders ${l10n.orders}'),
-      trailing: Text(l10n.priceWithCurrency(spent.toStringAsFixed(0)), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+      trailing: Text(l10n.priceWithCurrency(spent.toStringAsFixed(0)),
+          style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.primary)),
     );
   }
 }
@@ -517,15 +628,25 @@ class _DistributionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(label, style: const TextStyle(fontSize: 12)), Text('$percentage%', style: const TextStyle(fontWeight: FontWeight.bold))],
+          children: [
+            Text(label,
+                style: TextStyle(fontSize: 12, color: colorScheme.onSurface)),
+            Text('$percentage%',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+          ],
         ),
         const SizedBox(height: 4),
-        LinearProgressIndicator(value: percentage / 100, backgroundColor: Colors.grey.shade200, valueColor: AlwaysStoppedAnimation(color)),
+        LinearProgressIndicator(
+            value: percentage / 100,
+            backgroundColor: colorScheme.surfaceContainerHighest,
+            valueColor: AlwaysStoppedAnimation(color)),
       ],
     );
   }
@@ -539,18 +660,31 @@ class _ActivityStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
-            SizedBox(width: 60, height: 60, child: CircularProgressIndicator(value: percentage / 100, backgroundColor: Colors.grey.shade200, valueColor: AlwaysStoppedAnimation(color), strokeWidth: 6)),
-            Text('$percentage%', style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+            SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                    value: percentage / 100,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    valueColor: AlwaysStoppedAnimation(color),
+                    strokeWidth: 6)),
+            Text('$percentage%',
+                style: TextStyle(fontWeight: FontWeight.bold, color: color)),
           ],
         ),
         const SizedBox(height: 8),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(label, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+        Text(value,
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+        Text(label,
+            style: TextStyle(
+                fontSize: 11, color: colorScheme.onSurfaceVariant)),
       ],
     );
   }

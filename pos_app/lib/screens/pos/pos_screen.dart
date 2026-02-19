@@ -816,8 +816,8 @@ class _CategoryColumn extends StatelessWidget {
       width: 80,
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
-        border: Border(
-          left: BorderSide(
+        border: BorderDirectional(
+          start: BorderSide(
             color: isDark ? AppColors.borderDark : AppColors.border,
             width: 0.5,
           ),
@@ -1415,8 +1415,8 @@ class _CartPanel extends ConsumerWidget {
         color: isDark ? AppColors.surfaceDark : Colors.white,
         border: isBottomSheet
             ? null
-            : Border(
-                left: BorderSide(
+            : BorderDirectional(
+                start: BorderSide(
                   color: isDark ? AppColors.borderDark : AppColors.grey200,
                 ),
               ),

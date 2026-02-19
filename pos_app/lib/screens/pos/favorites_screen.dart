@@ -17,6 +17,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/favorites_providers.dart';
+import '../../providers/sync_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 
 /// شاشة المنتجات المفضلة
@@ -36,7 +37,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المفضلة'),
+        title: const Text('المفضلة'), // TODO: i18n
         centerTitle: true,
         actions: [
           favoritesAsync.maybeWhen(
@@ -49,7 +50,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                     },
                     icon:
                         Icon(_isEditMode ? Icons.check : Icons.edit_outlined),
-                    tooltip: _isEditMode ? 'تم' : 'تعديل',
+                    tooltip: _isEditMode ? 'تم' : 'تعديل', // TODO: i18n
                   )
                 : const SizedBox.shrink(),
             orElse: () => const SizedBox.shrink(),
@@ -64,24 +65,24 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
               const SizedBox(height: AppSizes.md),
               const Text(
-                'خطأ في تحميل المفضلة',
+                'خطأ في تحميل المفضلة', // TODO: i18n
                 style: AppTypography.titleMedium,
               ),
               const SizedBox(height: AppSizes.sm),
               Text(
                 error.toString(),
                 style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textMuted),
+                    .copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSizes.lg),
               ElevatedButton.icon(
                 onPressed: () => ref.invalidate(favoritesListProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'),
+                label: const Text('إعادة المحاولة'), // TODO: i18n
               ),
             ],
           ),
@@ -90,27 +91,27 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
         data: (favorites) => favorites.isEmpty
             ? const AppEmptyState(
                 icon: Icons.favorite_border,
-                title: 'لا توجد منتجات مفضلة',
-                description: 'أضف منتجات للمفضلة من شاشة المنتجات',
+                title: 'لا توجد منتجات مفضلة', // TODO: i18n
+                description: 'أضف منتجات للمفضلة من شاشة المنتجات', // TODO: i18n
               )
             : Column(
                 children: [
                   // Header info
                   Container(
                     padding: const EdgeInsets.all(AppSizes.md),
-                    color: AppColors.primarySurface,
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.info_outline,
                           size: 18,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: AppSizes.sm),
                         Text(
-                          'اضغط على المنتج لإضافته للسلة',
+                          'اضغط على المنتج لإضافته للسلة', // TODO: i18n
                           style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],
@@ -163,14 +164,14 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    color: AppColors.grey100,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Stack(
                       children: [
-                        const Center(
+                        Center(
                           child: Icon(
                             Icons.inventory_2_outlined,
                             size: 40,
-                            color: AppColors.grey400,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         // Stock badge
@@ -184,7 +185,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.error,
+                                color: Theme.of(context).colorScheme.error,
                                 borderRadius:
                                     BorderRadius.circular(AppSizes.radiusSm),
                               ),
@@ -293,7 +294,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تمت إضافة ${favoriteData.name} للسلة'),
+        content: Text('تمت إضافة ${favoriteData.name} للسلة'), // TODO: i18n
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
@@ -318,7 +319,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -331,7 +332,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             const SizedBox(height: AppSizes.lg),
             ListTile(
               leading: const Icon(Icons.add_shopping_cart),
-              title: const Text('إضافة للسلة'),
+              title: const Text('إضافة للسلة'), // TODO: i18n
               onTap: () {
                 Navigator.pop(context);
                 _addToCart(favoriteData);
@@ -339,10 +340,10 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             ),
             ListTile(
               leading:
-                  const Icon(Icons.delete_outline, color: AppColors.error),
-              title: const Text(
-                'إزالة من المفضلة',
-                style: TextStyle(color: AppColors.error),
+                  Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+              title: Text(
+                'إزالة من المفضلة', // TODO: i18n
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -360,16 +361,31 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     // حذف من قاعدة البيانات
     await removeFavoriteById(ref, favoriteData.id);
 
+    // مزامنة الحذف
+    ref.read(syncServiceProvider).enqueueDelete(
+      tableName: 'favorites',
+      recordId: favoriteData.id,
+    );
+
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تمت إزالة ${favoriteData.name} من المفضلة'),
+        content: Text('تمت إزالة ${favoriteData.name} من المفضلة'), // TODO: i18n
         action: SnackBarAction(
-          label: 'تراجع',
+          label: 'تراجع', // TODO: i18n
           onPressed: () async {
             // إعادة الإضافة عند التراجع
             await reAddFavorite(ref, favoriteData);
+            // مزامنة إعادة الإضافة
+            ref.read(syncServiceProvider).enqueueCreate(
+              tableName: 'favorites',
+              recordId: favoriteData.id,
+              data: {
+                'id': favoriteData.id,
+                'product_id': favoriteData.product.id,
+              },
+            );
           },
         ),
       ),

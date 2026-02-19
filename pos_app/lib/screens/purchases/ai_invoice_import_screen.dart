@@ -302,7 +302,7 @@ class _AiInvoiceImportScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل في التقاط الصورة: $e'),
+            content: Text(AppLocalizations.of(context)!.failedCapture(e)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -324,7 +324,7 @@ class _AiInvoiceImportScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل في اختيار الصورة: $e'),
+            content: Text(AppLocalizations.of(context)!.failedPickImage(e)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -364,7 +364,7 @@ class _AiInvoiceImportScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('فشل في معالجة الفاتورة: $e'),
+          content: Text(AppLocalizations.of(context)!.failedProcessInvoice(e)),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 4),

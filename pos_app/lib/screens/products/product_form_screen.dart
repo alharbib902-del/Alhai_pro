@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart' as drift;
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -126,17 +126,17 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final isDesktop = size.width >= AppSizes.breakpointTablet;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-        foregroundColor: isDark ? Colors.white : AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         title: Text(widget.isEditing ? l10n.editProduct : l10n.newProduct),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+            color: Theme.of(context).dividerColor,
           ),
         ),
       ),
@@ -150,10 +150,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               child: Container(
                 padding: const EdgeInsets.all(AppSizes.lg),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                   border: Border.all(
-                    color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                    color: Theme.of(context).dividerColor,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -211,7 +211,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             suffixIcon: IconButton(
                               icon: Icon(
                                 Icons.qr_code_scanner_rounded,
-                                color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               onPressed: () {
                                 // TODO: Scan barcode
@@ -395,10 +395,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     border: Border.all(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                      color: Theme.of(context).dividerColor,
                     ),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -414,7 +414,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       color: AppColors.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         width: 3,
                       ),
                     ),
@@ -432,10 +432,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       onTap: _removeImage,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: Theme.of(context).colorScheme.error,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                             width: 2,
                           ),
                         ),
@@ -454,7 +454,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             l10n.productImage,
             style: TextStyle(
               fontSize: 13,
-              color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -497,9 +497,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     return Icon(
       Icons.image_rounded,
       size: 48,
-      color: isDark
-          ? Colors.white.withValues(alpha: 0.2)
-          : AppColors.textSecondary.withValues(alpha: 0.3),
+      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
     );
   }
 
@@ -553,13 +551,13 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(width: AppSizes.sm),
         Expanded(
           child: Divider(
-            color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+            color: Theme.of(context).dividerColor,
           ),
         ),
       ],
@@ -587,31 +585,31 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       inputFormatters: inputFormatters,
       validator: validator,
       style: TextStyle(
-        color: isDark ? Colors.white : AppColors.textPrimary,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(
           icon,
-          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         suffixText: suffixText,
         suffixIcon: suffixIcon,
         labelStyle: TextStyle(
-          color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         filled: true,
-        fillColor: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant.withValues(alpha: 0.5),
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+            color: Theme.of(context).dividerColor,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+            color: Theme.of(context).dividerColor,
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -620,7 +618,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
         ),
       ),
     );
@@ -671,31 +669,31 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         return DropdownButtonFormField<String>(
           initialValue: _selectedCategoryId,
           isExpanded: true,
-          dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          dropdownColor: Theme.of(context).colorScheme.surface,
           style: TextStyle(
-            color: isDark ? Colors.white : AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           decoration: InputDecoration(
             labelText: l10n.selectCategory,
             prefixIcon: Icon(
               Icons.category_rounded,
-              color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             labelStyle: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             filled: true,
-            fillColor: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant.withValues(alpha: 0.5),
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               borderSide: BorderSide(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                color: Theme.of(context).dividerColor,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               borderSide: BorderSide(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+                color: Theme.of(context).dividerColor,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -706,7 +704,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           hint: Text(
             l10n.selectCategory,
             style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           items: [
@@ -715,7 +713,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               child: Text(
                 l10n.uncategorized,
                 style: TextStyle(
-                  color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -742,10 +740,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: Theme.of(context).dividerColor,
         ),
       ),
       child: SwitchListTile(
@@ -755,18 +753,18 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         secondary: Icon(
           icon,
-          color: value ? AppColors.primary : (isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textSecondary),
+          color: value ? AppColors.primary : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -935,7 +933,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
