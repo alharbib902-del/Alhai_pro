@@ -133,9 +133,9 @@ class _QuickActionButtonState extends State<QuickActionButton>
                     ),
                   ),
                   if (action.badge != null)
-                    Positioned(
+                    PositionedDirectional(
                       top: -4,
-                      right: -4,
+                      end: -4,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,

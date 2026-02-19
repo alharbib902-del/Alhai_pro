@@ -499,9 +499,9 @@ class _NotificationButtonState extends State<_NotificationButton> {
                   size: 22,
                 ),
                 if (widget.count > 0)
-                  Positioned(
+                  PositionedDirectional(
                     top: -4,
-                    right: -4,
+                    end: -4,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 5,

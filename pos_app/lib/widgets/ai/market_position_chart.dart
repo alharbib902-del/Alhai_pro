@@ -127,7 +127,7 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(40, 0, 20, 40),
+              padding: const EdgeInsetsDirectional.fromSTEB(40, 0, 20, 40),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {

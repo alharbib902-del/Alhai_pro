@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../core/security/pin_service.dart';
@@ -10,7 +11,7 @@ enum ManagerApprovalMode { setup, verify, dialog }
 /// شاشة موافقة المشرف بـ PIN
 ///
 /// يمكن استخدامها كشاشة كاملة أو كحوار (dialog) عبر [showApprovalDialog].
-class ManagerApprovalScreen extends StatefulWidget {
+class ManagerApprovalScreen extends ConsumerStatefulWidget {
   /// وضع العرض: dialog يُستخدم عند العرض كحوار
   final ManagerApprovalMode mode;
 
@@ -46,10 +47,10 @@ class ManagerApprovalScreen extends StatefulWidget {
   }
 
   @override
-  State<ManagerApprovalScreen> createState() => _ManagerApprovalScreenState();
+  ConsumerState<ManagerApprovalScreen> createState() => _ManagerApprovalScreenState();
 }
 
-class _ManagerApprovalScreenState extends State<ManagerApprovalScreen> {
+class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   String _pin = '';
   bool _isLoading = false;
   String? _error;

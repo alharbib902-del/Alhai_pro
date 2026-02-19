@@ -873,16 +873,16 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                           : _buildPlaceholder(isDark),
                     ),
                     // Stock Badge
-                    Positioned(
+                    PositionedDirectional(
                       top: AppSizes.xs,
-                      right: AppSizes.xs,
+                      end: AppSizes.xs,
                       child: _buildStockBadge(),
                     ),
                     // Quick Edit Button (on hover)
                     if (_isHovered)
-                      Positioned(
+                      PositionedDirectional(
                         top: AppSizes.xs,
-                        left: AppSizes.xs,
+                        start: AppSizes.xs,
                         child: Container(
                           decoration: BoxDecoration(
                             color: isDark ? const Color(0xFF1E293B) : Colors.white,

@@ -161,9 +161,9 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.info),
                             ),
                           ),
-                          Positioned(
+                          PositionedDirectional(
                             bottom: 0,
-                            right: 0,
+                            end: 0,
                             child: Container(
                               width: 16,
                               height: 16,

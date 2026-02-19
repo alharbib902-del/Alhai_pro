@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات الإشعارات
+const String _kNotifPushEnabled = 'notif_push_enabled';
+const String _kNotifEmailEnabled = 'notif_email_enabled';
+const String _kNotifSmsEnabled = 'notif_sms_enabled';
+const String _kNotifSalesAlert = 'notif_sales_alert';
+const String _kNotifLowStockAlert = 'notif_low_stock_alert';
+const String _kNotifSecurityAlert = 'notif_security_alert';
+const String _kNotifReportAlert = 'notif_report_alert';
 
 /// شاشة إعدادات الإشعارات
 class NotificationsSettingsScreen extends ConsumerStatefulWidget {
@@ -22,6 +35,62 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
   bool _inventoryAlerts = true;
   bool _securityAlerts = true;
   bool _reportAlerts = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'notif_');
+
+      if (mounted) {
+        setState(() {
+          _pushEnabled = settings[_kNotifPushEnabled] != 'false';
+          _emailEnabled = settings[_kNotifEmailEnabled] == 'true';
+          _smsEnabled = settings[_kNotifSmsEnabled] == 'true';
+          _salesAlerts = settings[_kNotifSalesAlert] != 'false';
+          _inventoryAlerts = settings[_kNotifLowStockAlert] != 'false';
+          _securityAlerts = settings[_kNotifSecurityAlert] != 'false';
+          _reportAlerts = settings[_kNotifReportAlert] == 'true';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ إعداد فردي في قاعدة البيانات مع المزامنة
+  Future<void> _saveSingleSetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    try {
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: key,
+        value: value,
+        ref: ref,
+      );
+    } catch (e) {
+      // الخطأ اختياري
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -29,6 +98,26 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.notificationSettings,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(children: [
           AppHeader(
@@ -51,29 +140,50 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
       _buildGroup(l10n.notificationChannels, [
         _switchTile(Icons.notifications_active_rounded, l10n.pushNotifications,
             l10n.instantNotifications, _pushEnabled,
-            (v) => setState(() => _pushEnabled = v), isDark),
+            (v) {
+              setState(() => _pushEnabled = v);
+              _saveSingleSetting(_kNotifPushEnabled, v.toString());
+            }, isDark),
         _switchTile(Icons.email_rounded, l10n.emailNotifications,
             l10n.emailNotificationsDesc, _emailEnabled,
-            (v) => setState(() => _emailEnabled = v), isDark),
+            (v) {
+              setState(() => _emailEnabled = v);
+              _saveSingleSetting(_kNotifEmailEnabled, v.toString());
+            }, isDark),
         _switchTile(Icons.sms_rounded, l10n.smsNotifications,
             l10n.smsNotificationsDesc, _smsEnabled,
-            (v) => setState(() => _smsEnabled = v), isDark),
+            (v) {
+              setState(() => _smsEnabled = v);
+              _saveSingleSetting(_kNotifSmsEnabled, v.toString());
+            }, isDark),
       ], isDark),
 
       // Alert types
       _buildGroup(l10n.alertTypes, [
         _switchTile(Icons.receipt_long_rounded, l10n.salesAlerts,
             l10n.salesAlertsDesc, _salesAlerts,
-            (v) => setState(() => _salesAlerts = v), isDark),
+            (v) {
+              setState(() => _salesAlerts = v);
+              _saveSingleSetting(_kNotifSalesAlert, v.toString());
+            }, isDark),
         _switchTile(Icons.inventory_2_rounded, l10n.inventoryAlerts,
             l10n.inventoryAlertsDesc, _inventoryAlerts,
-            (v) => setState(() => _inventoryAlerts = v), isDark),
+            (v) {
+              setState(() => _inventoryAlerts = v);
+              _saveSingleSetting(_kNotifLowStockAlert, v.toString());
+            }, isDark),
         _switchTile(Icons.security_rounded, l10n.securityAlerts,
             l10n.securityAlertsDesc, _securityAlerts,
-            (v) => setState(() => _securityAlerts = v), isDark),
+            (v) {
+              setState(() => _securityAlerts = v);
+              _saveSingleSetting(_kNotifSecurityAlert, v.toString());
+            }, isDark),
         _switchTile(Icons.analytics_rounded, l10n.reportAlerts,
             l10n.reportAlertsDesc, _reportAlerts,
-            (v) => setState(() => _reportAlerts = v), isDark),
+            (v) {
+              setState(() => _reportAlerts = v);
+              _saveSingleSetting(_kNotifReportAlert, v.toString());
+            }, isDark),
       ], isDark),
     ]);
   }

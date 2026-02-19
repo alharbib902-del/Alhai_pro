@@ -1,164 +1,314 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
 
-/// شاشة تتبع الطلبات
-class OrderTrackingScreen extends StatefulWidget {
+/// شاشة تتبع الطلبات - تعرض الطلبات النشطة (غير المكتملة) مع إمكانية تحديث حالتها
+class OrderTrackingScreen extends ConsumerStatefulWidget {
   const OrderTrackingScreen({super.key});
 
   @override
-  State<OrderTrackingScreen> createState() => _OrderTrackingScreenState();
+  ConsumerState<OrderTrackingScreen> createState() => _OrderTrackingScreenState();
 }
 
-class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
-  late List<_TrackedOrder> _orders;
-  bool _initialized = false;
+class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
+  List<OrdersTableData> _orders = [];
+  Map<String, List<OrderItemsTableData>> _orderItems = {};
+  Map<String, CustomersTableData> _customers = {};
+  bool _isLoading = true;
+  String? _error;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      final l10n = AppLocalizations.of(context)!;
-      _orders = [
-        _TrackedOrder(
-          id: 'ORD-2024-001',
-          customerName: l10n.defaultUserName,
-          customerPhone: '0501234567',
-          address: 'حي النزهة، شارع الملك فهد',
-          status: 'preparing',
-          driverName: 'سعد محمد',
-          estimatedTime: 25,
-          items: 5,
-          total: 245.50,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-        ),
-        _TrackedOrder(
-          id: 'ORD-2024-002',
-          customerName: 'خالد عمر',
-          customerPhone: '0551234567',
-          address: 'حي الروضة، شارع الأمير سلطان',
-          status: 'delivering',
-          driverName: 'فهد عبدالله',
-          estimatedTime: 10,
-          items: 3,
-          total: 180.00,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
-        ),
-        _TrackedOrder(
-          id: 'ORD-2024-003',
-          customerName: 'محمد علي',
-          customerPhone: '0561234567',
-          address: 'حي السلامة، شارع التحلية',
-          status: 'pending',
-          driverName: null,
-          estimatedTime: 45,
-          items: 8,
-          total: 520.00,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-        ),
-      ];
-      _initialized = true;
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  /// تحميل الطلبات النشطة (المعلقة والجاري تنفيذها) من قاعدة البيانات
+  Future<void> _loadData() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final db = getIt<AppDatabase>();
+
+      // جلب الطلبات النشطة (pending, confirmed, preparing, ready, delivering)
+      final orders = await db.ordersDao.getPendingOrders(storeId);
+
+      // جلب عناصر كل طلب وبيانات العميل
+      final itemsMap = <String, List<OrderItemsTableData>>{};
+      final customersMap = <String, CustomersTableData>{};
+
+      for (final order in orders) {
+        try {
+          itemsMap[order.id] = await db.ordersDao.getOrderItems(order.id);
+        } catch (_) {
+          itemsMap[order.id] = [];
+        }
+
+        // جلب بيانات العميل إذا كان موجوداً
+        if (order.customerId != null && !customersMap.containsKey(order.customerId)) {
+          try {
+            final customer = await db.customersDao.getCustomerById(order.customerId!);
+            if (customer != null) {
+              customersMap[order.customerId!] = customer;
+            }
+          } catch (_) {
+            // العميل قد لا يكون موجوداً في قاعدة البيانات المحلية
+          }
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _orders = orders;
+          _orderItems = itemsMap;
+          _customers = customersMap;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
+    }
+  }
+
+  /// تحديث حالة الطلب مع المزامنة
+  Future<void> _updateStatus(OrdersTableData order, String newStatus) async {
+    try {
+      final db = getIt<AppDatabase>();
+      await db.ordersDao.updateOrderStatus(order.id, newStatus);
+
+      // إضافة للمزامنة
+      try {
+        final syncService = ref.read(syncServiceProvider);
+        await syncService.enqueueUpdate(
+          tableName: 'orders',
+          recordId: order.id,
+          changes: {'status': newStatus, 'updatedAt': DateTime.now().toIso8601String()},
+        );
+      } catch (_) {
+        // المزامنة اختيارية
+      }
+
+      await _loadData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${order.orderNumber} - $newStatus')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.orders)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // حالة الخطأ
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.orders)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              const SizedBox(height: 16),
+              Text(l10n.errorOccurred, style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: _loadData,
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تتبع الطلبات'),
+        title: Text(l10n.orders),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: () => setState(() {})),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
           IconButton(icon: const Icon(Icons.map), onPressed: _showMap),
         ],
       ),
       body: Column(
         children: [
+          // إحصائيات سريعة للطلبات النشطة
           Container(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _StatCard(icon: Icons.pending, label: 'معلق', value: '${_orders.where((o) => o.status == "pending").length}', color: Colors.orange),
+                _StatCard(
+                  icon: Icons.pending,
+                  label: l10n.pending,
+                  value: '${_orders.where((o) => o.status == "pending").length}',
+                  color: Colors.orange,
+                ),
                 const SizedBox(width: 12),
-                _StatCard(icon: Icons.restaurant, label: 'تحضير', value: '${_orders.where((o) => o.status == "preparing").length}', color: Colors.blue),
+                _StatCard(
+                  icon: Icons.restaurant,
+                  label: l10n.orderStatusPreparing,
+                  value: '${_orders.where((o) => o.status == "preparing" || o.status == "confirmed").length}',
+                  color: Colors.blue,
+                ),
                 const SizedBox(width: 12),
-                _StatCard(icon: Icons.delivery_dining, label: 'توصيل', value: '${_orders.where((o) => o.status == "delivering").length}', color: Colors.green),
+                _StatCard(
+                  icon: Icons.delivery_dining,
+                  label: l10n.orderStatusDelivering,
+                  value: '${_orders.where((o) => o.status == "delivering" || o.status == "ready").length}',
+                  color: Colors.green,
+                ),
               ],
             ),
           ),
+
+          // قائمة الطلبات أو حالة فارغة
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _orders.length,
-              itemBuilder: (context, index) {
-                final order = _orders[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: InkWell(
-                    onTap: () => _showOrderDetails(order),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(order.id, style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                              const Spacer(),
-                              _StatusChip(status: order.status),
-                            ],
+            child: _orders.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delivery_dining, size: 64, color: Colors.grey.shade300),
+                        const SizedBox(height: 16),
+                        Text(l10n.noOrders, style: const TextStyle(fontSize: 18)),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadData,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: _orders.length,
+                      itemBuilder: (context, index) {
+                        final order = _orders[index];
+                        final items = _orderItems[order.id] ?? [];
+                        final customer = order.customerId != null ? _customers[order.customerId] : null;
+                        final customerName = customer?.name ?? (order.customerId ?? l10n.guestCustomer);
+                        final customerPhone = customer?.phone ?? '';
+                        final address = order.deliveryAddress ?? '';
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: InkWell(
+                            onTap: () => _showOrderDetails(order, items, customerName, customerPhone, address),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(order.orderNumber, style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+                                      const Spacer(),
+                                      _StatusChip(status: order.status),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.person, size: 16, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Text(customerName),
+                                      const Spacer(),
+                                      Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  if (address.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                                        const SizedBox(width: 4),
+                                        Expanded(child: Text(address, style: TextStyle(fontSize: 12, color: Colors.grey.shade600), overflow: TextOverflow.ellipsis)),
+                                      ],
+                                    ),
+                                  ],
+                                  const Divider(height: 24),
+                                  Row(
+                                    children: [
+                                      if (order.driverId != null) ...[
+                                        const Icon(Icons.directions_car, size: 16, color: Colors.blue),
+                                        const SizedBox(width: 4),
+                                        Text(order.driverId!, style: const TextStyle(fontSize: 12)),
+                                        const SizedBox(width: 16),
+                                      ],
+                                      const Icon(Icons.timer, size: 16, color: Colors.orange),
+                                      const SizedBox(width: 4),
+                                      Text(_formatTimeSinceOrder(order.orderDate, l10n), style: const TextStyle(fontSize: 12)),
+                                      const Spacer(),
+                                      Text('${items.length} ${l10n.products}', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              const Icon(Icons.person, size: 16, color: Colors.grey),
-                              const SizedBox(width: 4),
-                              Text(order.customerName),
-                              const Spacer(),
-                              Text('${order.total.toStringAsFixed(0)} ر.س', style: const TextStyle(fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                              const SizedBox(width: 4),
-                              Expanded(child: Text(order.address, style: TextStyle(fontSize: 12, color: Colors.grey.shade600), overflow: TextOverflow.ellipsis)),
-                            ],
-                          ),
-                          const Divider(height: 24),
-                          Row(
-                            children: [
-                              if (order.driverName != null) ...[
-                                const Icon(Icons.directions_car, size: 16, color: Colors.blue),
-                                const SizedBox(width: 4),
-                                Text(order.driverName!, style: const TextStyle(fontSize: 12)),
-                                const SizedBox(width: 16),
-                              ],
-                              const Icon(Icons.timer, size: 16, color: Colors.orange),
-                              const SizedBox(width: 4),
-                              Text('${order.estimatedTime} دقيقة', style: const TextStyle(fontSize: 12)),
-                              const Spacer(),
-                              Text('${order.items} منتجات', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-                            ],
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
     );
   }
 
-  void _showMap() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('عرض الخريطة يتطلب اشتراك GPS')));
+  /// حساب الوقت المنقضي منذ إنشاء الطلب
+  String _formatTimeSinceOrder(DateTime orderDate, AppLocalizations l10n) {
+    final diff = DateTime.now().difference(orderDate);
+    if (diff.inMinutes < 60) {
+      return l10n.minutesAgoTime(diff.inMinutes);
+    } else if (diff.inHours < 24) {
+      return l10n.hoursAgoTime(diff.inHours);
+    } else {
+      return l10n.daysAgoTime(diff.inDays);
+    }
   }
 
-  void _showOrderDetails(_TrackedOrder order) {
+  void _showMap() {
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.comingSoon)));
+  }
+
+  void _showOrderDetails(
+    OrdersTableData order,
+    List<OrderItemsTableData> items,
+    String customerName,
+    String customerPhone,
+    String address,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -174,36 +324,85 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
             ),
             Row(
               children: [
-                Text(order.id, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+                Text(order.orderNumber, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
                 const Spacer(),
                 _StatusChip(status: order.status),
               ],
             ),
             const SizedBox(height: 24),
+
+            // خط زمني لحالة الطلب
             _buildTimeline(order),
+
             const Divider(height: 32),
-            ListTile(leading: const Icon(Icons.person), title: Text(order.customerName), subtitle: Text(order.customerPhone)),
-            ListTile(leading: const Icon(Icons.location_on), title: const Text('العنوان'), subtitle: Text(order.address)),
-            if (order.driverName != null) ListTile(leading: const Icon(Icons.directions_car), title: Text(order.driverName!), subtitle: const Text('السائق')),
+            ListTile(leading: const Icon(Icons.person), title: Text(customerName), subtitle: customerPhone.isNotEmpty ? Text(customerPhone) : null),
+            if (address.isNotEmpty)
+              ListTile(leading: const Icon(Icons.location_on), title: Text(l10n.addressLabel), subtitle: Text(address)),
+            if (order.driverId != null)
+              ListTile(leading: const Icon(Icons.directions_car), title: Text(order.driverId!), subtitle: Text(l10n.driverName)),
+
+            // عناصر الطلب
+            if (items.isNotEmpty) ...[
+              const Divider(height: 24),
+              Text(l10n.products, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 8),
+              ...items.map((item) => ListTile(
+                dense: true,
+                title: Text(item.productName),
+                trailing: Text(l10n.priceWithCurrency(item.total.toStringAsFixed(0))),
+                subtitle: Text('x${item.quantity.toStringAsFixed(0)}'),
+              )),
+              const Divider(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.total, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+                ],
+              ),
+            ],
+
             const Divider(height: 24),
+
+            // أزرار تقدم الحالة
             if (order.status == 'pending')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'preparing'); }, icon: const Icon(Icons.restaurant), label: const Text('بدء التحضير'))
+              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'confirmed'); }, icon: const Icon(Icons.check), label: Text(l10n.orderStatusConfirmed))
+            else if (order.status == 'confirmed')
+              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'preparing'); }, icon: const Icon(Icons.restaurant), label: Text(l10n.orderStatusPreparing))
             else if (order.status == 'preparing')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'delivering'); }, icon: const Icon(Icons.delivery_dining), label: const Text('بدء التوصيل'))
+              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'ready'); }, icon: const Icon(Icons.check_circle), label: Text(l10n.orderStatusReady))
+            else if (order.status == 'ready')
+              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'delivering'); }, icon: const Icon(Icons.delivery_dining), label: Text(l10n.orderStatusDelivering))
             else if (order.status == 'delivering')
-              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'delivered'); }, icon: const Icon(Icons.check_circle), label: const Text('تم التوصيل')),
+              FilledButton.icon(onPressed: () { Navigator.pop(context); _updateStatus(order, 'delivered'); }, icon: const Icon(Icons.done_all), label: Text(l10n.completed)),
+
+            // زر إلغاء الطلب
+            if (order.status != 'delivered' && order.status != 'cancelled') ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _updateStatus(order, 'cancelled');
+                },
+                icon: const Icon(Icons.cancel, color: Colors.red),
+                label: Text(l10n.cancelled, style: const TextStyle(color: Colors.red)),
+                style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTimeline(_TrackedOrder order) {
+  /// بناء الخط الزمني لحالات الطلب
+  Widget _buildTimeline(OrdersTableData order) {
+    final l10n = AppLocalizations.of(context)!;
     final steps = [
-      {'label': 'تم الطلب', 'done': true},
-      {'label': 'تحضير', 'done': order.status != 'pending'},
-      {'label': 'في الطريق', 'done': order.status == 'delivering' || order.status == 'delivered'},
-      {'label': 'تم التوصيل', 'done': order.status == 'delivered'},
+      {'label': l10n.pending, 'done': true},
+      {'label': l10n.orderStatusPreparing, 'done': order.status != 'pending' && order.status != 'confirmed'},
+      {'label': l10n.orderStatusDelivering, 'done': order.status == 'delivering' || order.status == 'delivered'},
+      {'label': l10n.completed, 'done': order.status == 'delivered'},
     ];
     return Row(
       children: steps.asMap().entries.map((e) {
@@ -230,29 +429,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
       }).toList(),
     );
   }
-
-  void _updateStatus(_TrackedOrder order, String newStatus) {
-    setState(() {
-      final index = _orders.indexOf(order);
-      if (index != -1) {
-        _orders[index] = _TrackedOrder(
-          id: order.id, customerName: order.customerName, customerPhone: order.customerPhone,
-          address: order.address, status: newStatus, driverName: order.driverName,
-          estimatedTime: order.estimatedTime, items: order.items, total: order.total, createdAt: order.createdAt,
-        );
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم تحديث حالة الطلب ${order.id}')));
-  }
-}
-
-class _TrackedOrder {
-  final String id, customerName, customerPhone, address, status;
-  final String? driverName;
-  final int estimatedTime, items;
-  final double total;
-  final DateTime createdAt;
-  _TrackedOrder({required this.id, required this.customerName, required this.customerPhone, required this.address, required this.status, this.driverName, required this.estimatedTime, required this.items, required this.total, required this.createdAt});
 }
 
 class _StatCard extends StatelessWidget {
@@ -281,8 +457,25 @@ class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.status});
   @override
   Widget build(BuildContext context) {
-    final colors = {'pending': Colors.orange, 'preparing': Colors.blue, 'delivering': Colors.green, 'delivered': Colors.grey};
-    final labels = {'pending': 'معلق', 'preparing': 'تحضير', 'delivering': 'توصيل', 'delivered': 'تم'};
+    final l10n = AppLocalizations.of(context)!;
+    final colors = {
+      'pending': Colors.orange,
+      'confirmed': Colors.blue,
+      'preparing': Colors.indigo,
+      'ready': Colors.teal,
+      'delivering': Colors.green,
+      'delivered': Colors.grey,
+      'cancelled': Colors.red,
+    };
+    final labels = {
+      'pending': l10n.pending,
+      'confirmed': l10n.orderStatusConfirmed,
+      'preparing': l10n.orderStatusPreparing,
+      'ready': l10n.orderStatusReady,
+      'delivering': l10n.orderStatusDelivering,
+      'delivered': l10n.completed,
+      'cancelled': l10n.cancelled,
+    };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(color: (colors[status] ?? Colors.grey).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),

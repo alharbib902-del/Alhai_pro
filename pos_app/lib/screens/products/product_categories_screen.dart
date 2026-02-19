@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 /// شاشة إدارة فئات المنتجات
-class ProductCategoriesScreen extends StatefulWidget {
+class ProductCategoriesScreen extends ConsumerStatefulWidget {
   const ProductCategoriesScreen({super.key});
 
   @override
-  State<ProductCategoriesScreen> createState() => _ProductCategoriesScreenState();
+  ConsumerState<ProductCategoriesScreen> createState() => _ProductCategoriesScreenState();
 }
 
-class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
+class _ProductCategoriesScreenState extends ConsumerState<ProductCategoriesScreen> {
   final List<_Category> _categories = [
     _Category(id: '1', name: 'ألبان ومشتقاتها', icon: Icons.local_drink, color: Colors.blue, productCount: 45),
     _Category(id: '2', name: 'مواد غذائية', icon: Icons.restaurant, color: Colors.orange, productCount: 120),

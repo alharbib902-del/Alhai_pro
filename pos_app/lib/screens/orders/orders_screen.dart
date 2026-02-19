@@ -210,8 +210,8 @@ Expanded(
                     color: Colors.black.withValues(alpha: 0.5),
                   ),
                 ),
-                Positioned(
-                  left: 0,
+                PositionedDirectional(
+                  start: 0,
                   top: 0,
                   bottom: 0,
                   width: isWideScreen ? 420 : size.width,

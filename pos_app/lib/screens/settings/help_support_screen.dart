@@ -70,7 +70,7 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
           title: Text(faq.q, style: TextStyle(
               color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.w500, fontSize: 14)),
           children: [
-            Padding(padding: const EdgeInsets.fromLTRB(72, 0, 16, 16),
+            Padding(padding: const EdgeInsetsDirectional.fromSTEB(72, 0, 16, 16),
               child: Text(faq.a, style: TextStyle(
                   color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary, fontSize: 13))),
           ],

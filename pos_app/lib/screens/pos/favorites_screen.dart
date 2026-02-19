@@ -175,9 +175,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                         ),
                         // Stock badge
                         if (isLowStock)
-                          Positioned(
+                          PositionedDirectional(
                             top: AppSizes.xs,
-                            right: AppSizes.xs,
+                            end: AppSizes.xs,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,

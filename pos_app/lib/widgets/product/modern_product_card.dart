@@ -252,17 +252,17 @@ class _ModernProductCardState extends State<ModernProductCard>
           ),
 
         // شارة المخزون
-        Positioned(
+        PositionedDirectional(
           top: AppSizes.sm,
-          right: AppSizes.sm,
+          end: AppSizes.sm,
           child: _buildStockBadge(),
         ),
 
         // شارة الفئة
         if (widget.category != null)
-          Positioned(
+          PositionedDirectional(
             top: AppSizes.sm,
-            left: AppSizes.sm,
+            start: AppSizes.sm,
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.sm,
@@ -284,9 +284,9 @@ class _ModernProductCardState extends State<ModernProductCard>
 
         // زر إضافة سريعة عند التحويم
         if (_isHovered && widget.onAddToCart != null && !_isOutOfStock)
-          Positioned(
+          PositionedDirectional(
             bottom: AppSizes.sm,
-            right: AppSizes.sm,
+            end: AppSizes.sm,
             child: _buildQuickAddButton(),
           ),
       ],

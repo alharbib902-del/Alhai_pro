@@ -406,9 +406,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
                       : _buildImagePreview(isDark),
                 ),
-                Positioned(
+                PositionedDirectional(
                   bottom: 0,
-                  right: 0,
+                  end: 0,
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors.primary,
@@ -425,9 +425,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   ),
                 ),
                 if (hasImage)
-                  Positioned(
+                  PositionedDirectional(
                     top: 0,
-                    left: 0,
+                    start: 0,
                     child: GestureDetector(
                       onTap: _removeImage,
                       child: Container(
@@ -637,9 +637,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           final index = children.indexOf(child);
           return Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                left: index > 0 ? AppSizes.md / 2 : 0,
-                right: index < children.length - 1 ? AppSizes.md / 2 : 0,
+              padding: EdgeInsetsDirectional.only(
+                start: index > 0 ? AppSizes.md / 2 : 0,
+                end: index < children.length - 1 ? AppSizes.md / 2 : 0,
               ),
               child: child,
             ),

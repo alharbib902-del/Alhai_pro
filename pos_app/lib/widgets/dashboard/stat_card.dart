@@ -89,9 +89,9 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
               clipBehavior: Clip.none,
               children: [
                 // الدائرة المتدرجة في الخلفية
-                Positioned(
+                PositionedDirectional(
                   top: -40,
-                  left: -40,
+                  start: -40,
                   child: Container(
                     width: 128,
                     height: 128,

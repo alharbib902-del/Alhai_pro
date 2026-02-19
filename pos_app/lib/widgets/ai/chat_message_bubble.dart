@@ -155,7 +155,7 @@ class ChatMessageBubble extends StatelessWidget {
 
           // الوقت + زر النسخ
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 0, 8, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 8, 8),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -211,9 +211,9 @@ class TopBarNotificationButton extends StatelessWidget {
           tooltip: l10n.notifications,
         ),
         if (count > 0)
-          Positioned(
+          PositionedDirectional(
             top: 8,
-            left: 8,
+            start: 8,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(

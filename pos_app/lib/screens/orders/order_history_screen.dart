@@ -4,6 +4,7 @@ import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
 
 /// شاشة سجل الطلبات
 class OrderHistoryScreen extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   final _searchController = TextEditingController();
   List<OrdersTableData> _orders = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -27,12 +29,37 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     _loadData();
   }
 
+  /// تحميل الطلبات من قاعدة البيانات مع دعم فلترة التاريخ والحالة
   Future<void> _loadData() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final db = getIt<AppDatabase>();
-      final orders = await db.ordersDao.getOrders(storeId);
+
+      List<OrdersTableData> orders;
+
+      // فلترة حسب الحالة على مستوى قاعدة البيانات
+      if (_filterStatus != 'all') {
+        orders = await db.ordersDao.getOrdersByStatus(storeId, _filterStatus);
+      } else {
+        orders = await db.ordersDao.getOrders(storeId);
+      }
+
+      // فلترة حسب نطاق التاريخ
+      if (_dateRange != null) {
+        final start = _dateRange!.start;
+        final end = _dateRange!.end.add(const Duration(days: 1));
+        orders = orders.where((o) =>
+          o.orderDate.isAfter(start.subtract(const Duration(seconds: 1))) &&
+          o.orderDate.isBefore(end)
+        ).toList();
+      }
+
       if (mounted) {
         setState(() {
           _orders = orders;
@@ -40,15 +67,18 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
     }
   }
 
   List<OrdersTableData> get _filteredOrders {
     var list = _orders;
-    if (_filterStatus != 'all') {
-      list = list.where((o) => o.status == _filterStatus).toList();
-    }
+    // فلترة القناة محلياً (الحالة تمت فلترتها في SQL)
     if (_filterChannel != 'all') {
       list = list.where((o) => o.channel == _filterChannel).toList();
     }
@@ -69,6 +99,29 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.orderHistory)),
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // حالة الخطأ
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.orderHistory)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              const SizedBox(height: 16),
+              Text(l10n.errorOccurred, style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: _loadData,
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -113,26 +166,37 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
             ),
           ),
 
-          // Filter chips
-          if (_filterStatus != 'all' || _filterChannel != 'all')
+          // Filter chips - عرض الفلاتر النشطة
+          if (_filterStatus != 'all' || _filterChannel != 'all' || _dateRange != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
+              child: Wrap(
+                spacing: 8,
                 children: [
                   if (_filterStatus != 'all')
                     Chip(
                       label: Text(_getStatusName(_filterStatus, l10n)),
-                      onDeleted: () => setState(() => _filterStatus = 'all'),
+                      onDeleted: () {
+                        setState(() => _filterStatus = 'all');
+                        _loadData();
+                      },
                       deleteIconColor: Colors.grey,
                     ),
-                  if (_filterChannel != 'all') ...[
-                    const SizedBox(width: 8),
+                  if (_filterChannel != 'all')
                     Chip(
                       label: Text(_getChannelName(_filterChannel, l10n)),
                       onDeleted: () => setState(() => _filterChannel = 'all'),
                       deleteIconColor: Colors.grey,
                     ),
-                  ],
+                  if (_dateRange != null)
+                    Chip(
+                      label: Text('${_dateRange!.start.day}/${_dateRange!.start.month} - ${_dateRange!.end.day}/${_dateRange!.end.month}'),
+                      onDeleted: () {
+                        setState(() => _dateRange = null);
+                        _loadData();
+                      },
+                      deleteIconColor: Colors.grey,
+                    ),
                 ],
               ),
             ),
@@ -223,6 +287,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     }
   }
 
+  /// اختيار نطاق التاريخ وإعادة تحميل البيانات
   void _selectDateRange() async {
     final range = await showDateRangePicker(
       context: context,
@@ -232,6 +297,8 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     );
     if (range != null) {
       setState(() => _dateRange = range);
+      // إعادة تحميل البيانات مع النطاق الجديد
+      _loadData();
     }
   }
   
@@ -331,7 +398,11 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // إعادة تحميل البيانات مع الفلاتر المحدثة
+                    _loadData();
+                  },
                   child: Text(l10n.confirm),
                 ),
               ),
@@ -342,6 +413,41 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     );
   }
   
+  /// تحديث حالة الطلب مع المزامنة
+  Future<void> _updateOrderStatus(String orderId, String newStatus) async {
+    try {
+      final db = getIt<AppDatabase>();
+      await db.ordersDao.updateOrderStatus(orderId, newStatus);
+
+      // إضافة للمزامنة
+      try {
+        final syncService = ref.read(syncServiceProvider);
+        await syncService.enqueueUpdate(
+          tableName: 'orders',
+          recordId: orderId,
+          changes: {'status': newStatus, 'updatedAt': DateTime.now().toIso8601String()},
+        );
+      } catch (_) {
+        // المزامنة اختيارية - لا نوقف العملية إذا فشلت
+      }
+
+      // إعادة تحميل البيانات
+      await _loadData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.status}: $newStatus')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.errorOccurred}: $e')),
+        );
+      }
+    }
+  }
+
   void _showOrderDetails(OrdersTableData order) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
@@ -352,88 +458,199 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         minChildSize: 0.4,
         maxChildSize: 0.9,
         expand: false,
-        builder: (context, scrollController) => ListView(
-          controller: scrollController,
-          padding: const EdgeInsets.all(24),
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        builder: (context, scrollController) => FutureBuilder<List<OrderItemsTableData>>(
+          future: getIt<AppDatabase>().ordersDao.getOrderItems(order.id),
+          builder: (context, snapshot) {
+            final items = snapshot.data ?? [];
+            return ListView(
+              controller: scrollController,
+              padding: const EdgeInsets.all(24),
               children: [
-                Text(order.orderNumber, style: Theme.of(context).textTheme.titleLarge),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(order.status).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    _getStatusName(order.status, l10n),
-                    style: TextStyle(color: _getStatusColor(order.status), fontWeight: FontWeight.w500),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _DetailRow(icon: Icons.person, label: l10n.customer, value: order.customerId ?? l10n.guestCustomer),
-            _DetailRow(icon: Icons.access_time, label: l10n.date, value: _formatDateTime(order.orderDate, l10n)),
-            _DetailRow(icon: Icons.shopping_bag, label: l10n.products, value: '—'),
-            _DetailRow(icon: Icons.payment, label: l10n.payment, value: _getPaymentName(order.paymentMethod ?? 'cash', l10n)),
-            _DetailRow(icon: Icons.storefront, label: l10n.channelLabel, value: _getChannelName(order.channel, l10n)),
-            const Divider(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.total, style: const TextStyle(fontSize: 18)),
-                Text(
-                  l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(order.orderNumber, style: Theme.of(context).textTheme.titleLarge),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(order.status).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        _getStatusName(order.status, l10n),
+                        style: TextStyle(color: _getStatusColor(order.status), fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
+                const SizedBox(height: 16),
+                _DetailRow(icon: Icons.person, label: l10n.customer, value: order.customerId ?? l10n.guestCustomer),
+                _DetailRow(icon: Icons.access_time, label: l10n.date, value: _formatDateTime(order.orderDate, l10n)),
+                _DetailRow(icon: Icons.shopping_bag, label: l10n.products, value: '${items.length}'),
+                _DetailRow(icon: Icons.payment, label: l10n.payment, value: _getPaymentName(order.paymentMethod ?? 'cash', l10n)),
+                _DetailRow(icon: Icons.storefront, label: l10n.channelLabel, value: _getChannelName(order.channel, l10n)),
+
+                // عرض عناصر الطلب الحقيقية
+                if (items.isNotEmpty) ...[
+                  const Divider(height: 24),
+                  Text(l10n.products, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  ...items.map((item) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(item.productName, style: const TextStyle(fontSize: 14))),
+                        Text('x${item.quantity.toStringAsFixed(0)}', style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+                        const SizedBox(width: 12),
+                        Text(l10n.priceWithCurrency(item.total.toStringAsFixed(0)), style: const TextStyle(fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  )),
+                ],
+
+                const Divider(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(l10n.total, style: const TextStyle(fontSize: 18)),
+                    Text(
+                      l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // أزرار تحديث الحالة حسب الحالة الحالية
+                if (order.status == 'pending') ...[
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'confirmed');
+                    },
+                    icon: const Icon(Icons.check),
+                    label: Text(l10n.orderStatusConfirmed),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ] else if (order.status == 'confirmed') ...[
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'preparing');
+                    },
+                    icon: const Icon(Icons.restaurant),
+                    label: Text(l10n.orderStatusPreparing),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ] else if (order.status == 'preparing') ...[
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'ready');
+                    },
+                    icon: const Icon(Icons.check_circle),
+                    label: Text(l10n.orderStatusReady),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ] else if (order.status == 'ready') ...[
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'delivering');
+                    },
+                    icon: const Icon(Icons.delivery_dining),
+                    label: Text(l10n.orderStatusDelivering),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ] else if (order.status == 'delivering') ...[
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'delivered');
+                    },
+                    icon: const Icon(Icons.done_all),
+                    label: Text(l10n.completed),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.print),
+                        label: Text(l10n.printReceipt),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.share),
+                        label: Text(l10n.shareAction),
+                      ),
+                    ),
+                  ],
+                ),
+                if (order.status == 'delivered') ...[
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.print),
-                    label: Text(l10n.printReceipt),
+                    icon: const Icon(Icons.replay),
+                    label: Text(l10n.returnText),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.share),
-                    label: Text(l10n.shareAction),
+                ],
+                // زر إلغاء الطلب إذا لم يكتمل
+                if (order.status != 'delivered' && order.status != 'cancelled') ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateOrderStatus(order.id, 'cancelled');
+                    },
+                    icon: const Icon(Icons.cancel, color: Colors.red),
+                    label: Text(l10n.cancelled, style: const TextStyle(color: Colors.red)),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
                   ),
-                ),
+                ],
               ],
-            ),
-            if (order.status == 'delivered') ...[
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.replay),
-                label: Text(l10n.returnText),
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  minimumSize: const Size(double.infinity, 48),
-                ),
-              ),
-            ],
-          ],
+            );
+          },
         ),
       ),
     );

@@ -108,9 +108,9 @@ class ElegantQuickActions extends StatelessWidget {
             ),
 
             // Decorative blur circle in top-right corner (Positioned — after non-Positioned)
-            Positioned(
+            PositionedDirectional(
               top: -30,
-              right: -30,
+              end: -30,
               child: Container(
                 width: 120,
                 height: 120,

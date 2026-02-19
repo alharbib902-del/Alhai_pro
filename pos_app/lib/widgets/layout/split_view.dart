@@ -189,8 +189,8 @@ class _SplitViewState extends State<SplitView>
                 ),
 
                 // Secondary Panel (slide from left)
-                Positioned(
-                  right: 0,
+                PositionedDirectional(
+                  end: 0,
                   top: 0,
                   bottom: 0,
                   width: MediaQuery.of(context).size.width * 0.85,

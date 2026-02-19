@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات ZATCA
+const String _kZatcaEInvoicing = 'zatca_e_invoicing';
+const String _kZatcaQrCode = 'zatca_qr_code';
 
 /// شاشة التوافق مع ZATCA
 class ZatcaComplianceScreen extends ConsumerStatefulWidget {
@@ -17,6 +25,57 @@ class ZatcaComplianceScreen extends ConsumerStatefulWidget {
 class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
   bool _eInvoicingEnabled = true;
   bool _qrCodeEnabled = true;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'zatca_');
+
+      if (mounted) {
+        setState(() {
+          _eInvoicingEnabled = settings[_kZatcaEInvoicing] != 'false';
+          _qrCodeEnabled = settings[_kZatcaQrCode] != 'false';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ إعداد فردي في قاعدة البيانات مع المزامنة
+  Future<void> _saveSingleSetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    try {
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: key,
+        value: value,
+        ref: ref,
+      );
+    } catch (e) {
+      // الخطأ اختياري
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -24,6 +83,26 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.zatcaCompliance,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(children: [
           AppHeader(
@@ -78,7 +157,11 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           title: Text(l10n.eInvoicing, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.w500)),
           subtitle: Text(_eInvoicingEnabled ? l10n.enabled : l10n.disabled,
             style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 12)),
-          value: _eInvoicingEnabled, onChanged: (v) => setState(() => _eInvoicingEnabled = v),
+          value: _eInvoicingEnabled,
+          onChanged: (v) {
+            setState(() => _eInvoicingEnabled = v);
+            _saveSingleSetting(_kZatcaEInvoicing, v.toString());
+          },
         ),
       ], isDark),
 
@@ -91,7 +174,11 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           title: Text(l10n.qrCodeOnInvoice, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.w500)),
           subtitle: Text(_qrCodeEnabled ? l10n.qrCodeOnInvoice : l10n.disabledLabel,
             style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 12)),
-          value: _qrCodeEnabled, onChanged: (v) => setState(() => _qrCodeEnabled = v),
+          value: _qrCodeEnabled,
+          onChanged: (v) {
+            setState(() => _qrCodeEnabled = v);
+            _saveSingleSetting(_kZatcaQrCode, v.toString());
+          },
         ),
       ], isDark),
 

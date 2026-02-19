@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات الفوائد الشهرية
+const String _kInterestEnabled = 'interest_enabled';
+const String _kInterestRate = 'interest_rate';
+const String _kInterestGracePeriod = 'interest_grace_period';
+const String _kInterestCompound = 'interest_compound';
+const String _kInterestAutoCalculate = 'interest_auto_calculate';
+const String _kInterestNotifyCustomer = 'interest_notify_customer';
+const String _kInterestMaxRate = 'interest_max_rate';
 
 /// شاشة إعدادات الفوائد الشهرية
 class InterestSettingsScreen extends ConsumerStatefulWidget {
@@ -24,6 +36,8 @@ class _InterestSettingsScreenState
   bool _autoCalculate = true;
   bool _notifyCustomer = true;
   double _maxInterestRate = 5.0;
+  bool _isLoading = true;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -31,38 +45,81 @@ class _InterestSettingsScreenState
     _loadSettings();
   }
 
+  /// تحميل الإعدادات من قاعدة البيانات بدلاً من SharedPreferences
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _enableInterest = prefs.getBool('interest_enabled') ?? true;
-      _monthlyRate = prefs.getDouble('interest_monthly_rate') ?? 2.0;
-      _gracePeriodDays = prefs.getInt('interest_grace_days') ?? 30;
-      _compoundInterest = prefs.getBool('interest_compound') ?? false;
-      _autoCalculate = prefs.getBool('interest_auto_calculate') ?? true;
-      _notifyCustomer = prefs.getBool('interest_notify_customer') ?? true;
-      _maxInterestRate = prefs.getDouble('interest_max_rate') ?? 5.0;
-    });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'interest_');
+
+      if (mounted) {
+        setState(() {
+          _enableInterest = settings[_kInterestEnabled] != 'false';
+          _monthlyRate = double.tryParse(settings[_kInterestRate] ?? '') ?? 2.0;
+          _gracePeriodDays = int.tryParse(settings[_kInterestGracePeriod] ?? '') ?? 30;
+          _compoundInterest = settings[_kInterestCompound] == 'true';
+          _autoCalculate = settings[_kInterestAutoCalculate] != 'false';
+          _notifyCustomer = settings[_kInterestNotifyCustomer] != 'false';
+          _maxInterestRate = double.tryParse(settings[_kInterestMaxRate] ?? '') ?? 5.0;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
+  /// حفظ الإعدادات في قاعدة البيانات مع المزامنة بدلاً من SharedPreferences
   Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('interest_enabled', _enableInterest);
-    await prefs.setDouble('interest_monthly_rate', _monthlyRate);
-    await prefs.setInt('interest_grace_days', _gracePeriodDays);
-    await prefs.setBool('interest_compound', _compoundInterest);
-    await prefs.setBool('interest_auto_calculate', _autoCalculate);
-    await prefs.setBool('interest_notify_customer', _notifyCustomer);
-    await prefs.setDouble('interest_max_rate', _maxInterestRate);
+    setState(() => _isSaving = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
 
-    if (mounted) {
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.interestSettingsSaved),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-        ),
+      final db = getIt<AppDatabase>();
+
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kInterestEnabled: _enableInterest.toString(),
+          _kInterestRate: _monthlyRate.toString(),
+          _kInterestGracePeriod: _gracePeriodDays.toString(),
+          _kInterestCompound: _compoundInterest.toString(),
+          _kInterestAutoCalculate: _autoCalculate.toString(),
+          _kInterestNotifyCustomer: _notifyCustomer.toString(),
+          _kInterestMaxRate: _maxInterestRate.toString(),
+        },
+        ref: ref,
       );
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.interestSettingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
@@ -73,6 +130,24 @@ class _InterestSettingsScreenState
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.interestSettingsTitle,
+            onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -219,8 +294,14 @@ class _InterestSettingsScreenState
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: _saveSettings,
-            icon: const Icon(Icons.save_rounded),
+            onPressed: _isSaving ? null : _saveSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),

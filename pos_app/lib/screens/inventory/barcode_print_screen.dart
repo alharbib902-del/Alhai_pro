@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// شاشة طباعة الباركود
-class BarcodePrintScreen extends StatefulWidget {
+class BarcodePrintScreen extends ConsumerStatefulWidget {
   const BarcodePrintScreen({super.key});
 
   @override
-  State<BarcodePrintScreen> createState() => _BarcodePrintScreenState();
+  ConsumerState<BarcodePrintScreen> createState() => _BarcodePrintScreenState();
 }
 
-class _BarcodePrintScreenState extends State<BarcodePrintScreen> {
+class _BarcodePrintScreenState extends ConsumerState<BarcodePrintScreen> {
   final List<_ProductLabel> _selectedProducts = [];
   final _searchController = TextEditingController();
 

@@ -166,9 +166,9 @@ class LoginBackground extends StatelessWidget {
         // الأنماط الزخرفية
         if (showPatterns) ...[
           // دوائر شفافة
-          Positioned(
+          PositionedDirectional(
             top: -100,
-            right: -100,
+            end: -100,
             child: Container(
               width: 300,
               height: 300,
@@ -178,9 +178,9 @@ class LoginBackground extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          PositionedDirectional(
             bottom: -50,
-            left: -50,
+            start: -50,
             child: Container(
               width: 200,
               height: 200,
@@ -190,9 +190,9 @@ class LoginBackground extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          PositionedDirectional(
             top: 200,
-            left: 50,
+            start: 50,
             child: Container(
               width: 80,
               height: 80,
@@ -202,9 +202,9 @@ class LoginBackground extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          PositionedDirectional(
             bottom: 300,
-            right: 30,
+            end: 30,
             child: Container(
               width: 60,
               height: 60,

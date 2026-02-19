@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات قالب الإيصال
+const String _kReceiptHeader = 'receipt_header';
+const String _kReceiptFooter = 'receipt_footer';
+const String _kReceiptShowLogo = 'receipt_show_logo';
+const String _kReceiptShowStoreName = 'receipt_show_store_name';
+const String _kReceiptShowAddress = 'receipt_show_address';
+const String _kReceiptShowPhone = 'receipt_show_phone';
+const String _kReceiptShowVatNumber = 'receipt_show_vat_number';
+const String _kReceiptShowDate = 'receipt_show_date';
+const String _kReceiptShowCashier = 'receipt_show_cashier';
+const String _kReceiptShowBarcode = 'receipt_show_barcode';
+const String _kReceiptShowQrCode = 'receipt_show_qr_code';
+const String _kReceiptPaperSize = 'receipt_paper_size';
 
 /// شاشة قالب الإيصال
 class ReceiptTemplateScreen extends ConsumerStatefulWidget {
@@ -16,8 +33,6 @@ class ReceiptTemplateScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
-  static const _prefix = 'receipt_template_';
-
   final _headerController = TextEditingController(text: 'متجر الإيمان');
   final _footerController =
       TextEditingController(text: 'شكراً لزيارتكم - نتمنى لكم تجربة ممتعة');
@@ -33,6 +48,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
   bool _showQrCode = false;
   String _paperSize = '80mm';
   bool _isSaving = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,44 +56,72 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     _loadSettings();
   }
 
+  /// تحميل الإعدادات من قاعدة البيانات بدلاً من SharedPreferences
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _headerController.text =
-          prefs.getString('${_prefix}header') ?? _headerController.text;
-      _footerController.text =
-          prefs.getString('${_prefix}footer') ?? _footerController.text;
-      _showLogo = prefs.getBool('${_prefix}show_logo') ?? _showLogo;
-      _showStoreName =
-          prefs.getBool('${_prefix}show_store_name') ?? _showStoreName;
-      _showAddress = prefs.getBool('${_prefix}show_address') ?? _showAddress;
-      _showPhone = prefs.getBool('${_prefix}show_phone') ?? _showPhone;
-      _showVatNumber =
-          prefs.getBool('${_prefix}show_vat_number') ?? _showVatNumber;
-      _showDate = prefs.getBool('${_prefix}show_date') ?? _showDate;
-      _showCashier = prefs.getBool('${_prefix}show_cashier') ?? _showCashier;
-      _showBarcode = prefs.getBool('${_prefix}show_barcode') ?? _showBarcode;
-      _showQrCode = prefs.getBool('${_prefix}show_qr_code') ?? _showQrCode;
-      _paperSize = prefs.getString('${_prefix}paper_size') ?? _paperSize;
-    });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'receipt_');
+
+      if (mounted) {
+        setState(() {
+          if (settings[_kReceiptHeader] != null) {
+            _headerController.text = settings[_kReceiptHeader]!;
+          }
+          if (settings[_kReceiptFooter] != null) {
+            _footerController.text = settings[_kReceiptFooter]!;
+          }
+          _showLogo = settings[_kReceiptShowLogo] != 'false';
+          _showStoreName = settings[_kReceiptShowStoreName] != 'false';
+          _showAddress = settings[_kReceiptShowAddress] != 'false';
+          _showPhone = settings[_kReceiptShowPhone] != 'false';
+          _showVatNumber = settings[_kReceiptShowVatNumber] != 'false';
+          _showDate = settings[_kReceiptShowDate] != 'false';
+          _showCashier = settings[_kReceiptShowCashier] != 'false';
+          _showBarcode = settings[_kReceiptShowBarcode] != 'false';
+          _showQrCode = settings[_kReceiptShowQrCode] == 'true';
+          _paperSize = settings[_kReceiptPaperSize] ?? '80mm';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
+  /// حفظ الإعدادات في قاعدة البيانات مع المزامنة
   Future<void> _saveSettings() async {
     setState(() => _isSaving = true);
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('${_prefix}header', _headerController.text);
-      await prefs.setString('${_prefix}footer', _footerController.text);
-      await prefs.setBool('${_prefix}show_logo', _showLogo);
-      await prefs.setBool('${_prefix}show_store_name', _showStoreName);
-      await prefs.setBool('${_prefix}show_address', _showAddress);
-      await prefs.setBool('${_prefix}show_phone', _showPhone);
-      await prefs.setBool('${_prefix}show_vat_number', _showVatNumber);
-      await prefs.setBool('${_prefix}show_date', _showDate);
-      await prefs.setBool('${_prefix}show_cashier', _showCashier);
-      await prefs.setBool('${_prefix}show_barcode', _showBarcode);
-      await prefs.setBool('${_prefix}show_qr_code', _showQrCode);
-      await prefs.setString('${_prefix}paper_size', _paperSize);
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      final db = getIt<AppDatabase>();
+
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kReceiptHeader: _headerController.text,
+          _kReceiptFooter: _footerController.text,
+          _kReceiptShowLogo: _showLogo.toString(),
+          _kReceiptShowStoreName: _showStoreName.toString(),
+          _kReceiptShowAddress: _showAddress.toString(),
+          _kReceiptShowPhone: _showPhone.toString(),
+          _kReceiptShowVatNumber: _showVatNumber.toString(),
+          _kReceiptShowDate: _showDate.toString(),
+          _kReceiptShowCashier: _showCashier.toString(),
+          _kReceiptShowBarcode: _showBarcode.toString(),
+          _kReceiptShowQrCode: _showQrCode.toString(),
+          _kReceiptPaperSize: _paperSize,
+        },
+        ref: ref,
+      );
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -119,6 +163,26 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.receiptTemplateTitle,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
               children: [

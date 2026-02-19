@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/locale/locale_provider.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/auth/branch_card.dart';
@@ -24,39 +26,48 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
   late AnimationController _floatController;
   late Animation<double> _floatAnimation;
 
-  // بيانات تجريبية للفروع
-  final List<BranchData> _stores = [
-    const BranchData(
-      id: 'store_demo_001',
-      name: 'الفرع الرئيسي - الرياض',
-      address: 'طريق الملك فهد، حي العليا',
+  // بيانات الفروع من قاعدة البيانات
+  List<BranchData> _stores = [];
+  bool _isLoadingStores = true;
+  String? _storesError;
+
+  /// تحويل بيانات المتجر من قاعدة البيانات إلى BranchData
+  BranchData _mapStoreToBranch(StoresTableData store, {bool isFirst = false}) {
+    return BranchData(
+      id: store.id,
+      name: store.name,
+      address: store.address,
       type: BranchType.store,
-      status: BranchStatus.open,
-      isDefault: true,
-    ),
-    const BranchData(
-      id: 'store_2',
-      name: 'فرع جدة - التحلية',
-      address: 'شارع التحلية، مركز البساتين',
-      type: BranchType.store,
-      status: BranchStatus.open,
-    ),
-    const BranchData(
-      id: 'store_3',
-      name: 'مستودع الدمام',
-      address: 'المنطقة الصناعية الثانية',
-      type: BranchType.warehouse,
-      status: BranchStatus.closed,
-      closedUntil: '8:00 ص',
-    ),
-    const BranchData(
-      id: 'store_4',
-      name: 'كشك المطار',
-      address: 'صالة المغادرة الدولية، بوابة 4',
-      type: BranchType.kiosk,
-      status: BranchStatus.open,
-    ),
-  ];
+      status: store.isActive ? BranchStatus.open : BranchStatus.closed,
+      isDefault: isFirst,
+    );
+  }
+
+  /// تحميل الفروع من قاعدة البيانات
+  Future<void> _loadStores() async {
+    setState(() {
+      _isLoadingStores = true;
+      _storesError = null;
+    });
+    try {
+      final db = getIt<AppDatabase>();
+      final stores = await db.storesDao.getActiveStores();
+
+      if (mounted) {
+        setState(() {
+          _stores = stores.asMap().entries.map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0)).toList();
+          _isLoadingStores = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingStores = false;
+          _storesError = e.toString();
+        });
+      }
+    }
+  }
 
   List<BranchData> get _filteredStores {
     if (_searchQuery.isEmpty) return _stores;
@@ -69,6 +80,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
   @override
   void initState() {
     super.initState();
+    // تحميل الفروع من قاعدة البيانات
+    _loadStores();
+
     // Animation للـ floating
     _floatController = AnimationController(
       duration: const Duration(seconds: 3),
@@ -233,9 +247,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
         child: Stack(
           children: [
             // دائرة كبيرة في الأعلى
-            Positioned(
+            PositionedDirectional(
               top: -100,
-              right: -100,
+              end: -100,
               child: Container(
                 width: 400,
                 height: 400,
@@ -249,9 +263,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
               ),
             ),
             // دائرة ضبابية في الأسفل
-            Positioned(
+            PositionedDirectional(
               bottom: -50,
-              left: -50,
+              start: -50,
               child: Container(
                 width: 300,
                 height: 300,
@@ -430,10 +444,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
   // ============================================================================
   Widget _buildMobileBrandHeader() {
     return Container(
-      padding: EdgeInsets.only(
+      padding: EdgeInsetsDirectional.only(
         top: MediaQuery.of(context).padding.top + 16,
-        left: 20,
-        right: 20,
+        start: 20,
+        end: 20,
         bottom: 24,
       ),
       decoration: const BoxDecoration(
@@ -797,6 +811,37 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
   }
 
   Widget _buildStoresList(bool isDarkMode) {
+    // حالة التحميل
+    if (_isLoadingStores) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // حالة الخطأ
+    if (_storesError != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ',
+              style: TextStyle(
+                fontSize: 18,
+                color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: _loadStores,
+              icon: const Icon(Icons.refresh),
+              label: Text(AppLocalizations.of(context)?.retry ?? 'إعادة المحاولة'),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (_filteredStores.isEmpty) {
       return _buildEmptyState(isDarkMode);
     }

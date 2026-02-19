@@ -857,9 +857,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             // Content
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: isAdjustment ? 12 : 16,
-                  right: 16,
+                padding: EdgeInsetsDirectional.only(
+                  start: isAdjustment ? 12 : 16,
+                  end: 16,
                   top: 14,
                   bottom: 14,
                 ),

@@ -416,8 +416,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          left: 16, right: 16, top: 16,
+        padding: EdgeInsetsDirectional.only(
+          start: 16, end: 16, top: 16,
           bottom: MediaQuery.of(context).viewInsets.bottom + 16,
         ),
         child: Column(

@@ -278,29 +278,29 @@ class AppColors {
   /// تدرج أساسي
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF10B981), Color(0xFF059669)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
   );
 
   /// تدرج ثانوي
   static const LinearGradient secondaryGradient = LinearGradient(
     colors: [Color(0xFFF97316), Color(0xFFEA580C)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
   );
 
   /// تدرج النجاح
   static const LinearGradient successGradient = LinearGradient(
     colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
   );
 
   /// تدرج للكارد
   static const LinearGradient cardGradient = LinearGradient(
     colors: [Color(0xFF10B981), Color(0xFF0EA5E9)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
   );
 
   // ==========================================================================

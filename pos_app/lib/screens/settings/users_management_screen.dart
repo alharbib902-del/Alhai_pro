@@ -167,9 +167,9 @@ class _UsersManagementScreenState
             ),
           ),
           if (!user.active)
-            Positioned(
+            PositionedDirectional(
               bottom: 0,
-              right: 0,
+              end: 0,
               child: Container(
                 width: 12,
                 height: 12,

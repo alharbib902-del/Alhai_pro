@@ -163,8 +163,8 @@ class PinNumpad extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: keys.asMap().entries.map((entry) {
         return Padding(
-          padding: EdgeInsets.only(
-            left: entry.key > 0 ? 16 : 0,
+          padding: EdgeInsetsDirectional.only(
+            start: entry.key > 0 ? 16 : 0,
           ),
           child: _NumpadButton(
             text: entry.value,

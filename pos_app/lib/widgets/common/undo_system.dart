@@ -204,8 +204,8 @@ class UndoFloatingButton extends ConsumerWidget {
 
     if (!canUndo) return const SizedBox.shrink();
 
-    return Positioned(
-      left: 16,
+    return PositionedDirectional(
+      start: 16,
       bottom: 100,
       child: AnimatedOpacity(
         opacity: canUndo ? 1 : 0,

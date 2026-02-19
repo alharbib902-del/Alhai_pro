@@ -2,8 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات الخصومات
+const String _kDiscountEnabled = 'discount_enabled';
+const String _kDiscountAllowManual = 'discount_allow_manual';
+const String _kDiscountMaxPercent = 'discount_max_percent';
+const String _kDiscountRequireApproval = 'discount_require_approval';
+const String _kDiscountVipEnabled = 'discount_vip_enabled';
+const String _kDiscountVipRate = 'discount_vip_rate';
+const String _kDiscountVolumeEnabled = 'discount_volume_enabled';
+const String _kDiscountCouponsEnabled = 'discount_coupons_enabled';
 
 /// شاشة إعدادات الخصومات
 class DiscountsSettingsScreen extends ConsumerStatefulWidget {
@@ -24,6 +38,94 @@ class _DiscountsSettingsScreenState
   double _vipDiscountRate = 10.0;
   bool _enableVolumeDiscount = false;
   bool _enableCoupons = true;
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'discount_');
+
+      if (mounted) {
+        setState(() {
+          _enableDiscounts = settings[_kDiscountEnabled] != 'false';
+          _allowManualDiscount = settings[_kDiscountAllowManual] != 'false';
+          _maxDiscountPercent = double.tryParse(settings[_kDiscountMaxPercent] ?? '') ?? 50.0;
+          _requireApproval = settings[_kDiscountRequireApproval] == 'true';
+          _enableVipDiscount = settings[_kDiscountVipEnabled] != 'false';
+          _vipDiscountRate = double.tryParse(settings[_kDiscountVipRate] ?? '') ?? 10.0;
+          _enableVolumeDiscount = settings[_kDiscountVolumeEnabled] == 'true';
+          _enableCoupons = settings[_kDiscountCouponsEnabled] != 'false';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ جميع إعدادات الخصومات في قاعدة البيانات مع المزامنة
+  Future<void> _saveSettings() async {
+    setState(() => _isSaving = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      final db = getIt<AppDatabase>();
+
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kDiscountEnabled: _enableDiscounts.toString(),
+          _kDiscountAllowManual: _allowManualDiscount.toString(),
+          _kDiscountMaxPercent: _maxDiscountPercent.toString(),
+          _kDiscountRequireApproval: _requireApproval.toString(),
+          _kDiscountVipEnabled: _enableVipDiscount.toString(),
+          _kDiscountVipRate: _vipDiscountRate.toString(),
+          _kDiscountVolumeEnabled: _enableVolumeDiscount.toString(),
+          _kDiscountCouponsEnabled: _enableCoupons.toString(),
+        },
+        ref: ref,
+      );
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.discountSettingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +134,24 @@ class _DiscountsSettingsScreenState
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.discountSettingsTitle,
+            onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -176,16 +296,14 @@ class _DiscountsSettingsScreenState
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.discountSettingsSaved),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            icon: const Icon(Icons.save_rounded),
+            onPressed: _isSaving ? null : _saveSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),

@@ -297,8 +297,8 @@ class OrdersBadge extends ConsumerWidget {
           tooltip: 'الطلبات الأونلاين',
         ),
         if (count > 0)
-          Positioned(
-            right: 4,
+          PositionedDirectional(
+            end: 4,
             top: 4,
             child: _AnimatedBadge(count: count, isNew: hasNew),
           ),
@@ -411,9 +411,9 @@ class OrderNotificationManager {
     _currentNotification?.remove();
 
     _currentNotification = OverlayEntry(
-      builder: (context) => Positioned(
+      builder: (context) => PositionedDirectional(
         top: 80,
-        left: 16,
+        start: 16,
         child: OrderNotificationPopup(
           order: order,
           onAccept: onAccept,

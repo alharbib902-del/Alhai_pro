@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات النسخ الاحتياطي
+const String _kBackupAutoEnabled = 'backup_auto_enabled';
+const String _kBackupFrequency = 'backup_frequency';
 
 /// شاشة إعدادات النسخ الاحتياطي
 class BackupSettingsScreen extends ConsumerStatefulWidget {
@@ -18,6 +26,56 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
   bool _autoBackupEnabled = true;
   String _backupFrequency = 'daily';
   bool _isBackingUp = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'backup_');
+
+      if (mounted) {
+        setState(() {
+          _autoBackupEnabled = settings[_kBackupAutoEnabled] != 'false';
+          _backupFrequency = settings[_kBackupFrequency] ?? 'daily';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ إعداد فردي في قاعدة البيانات مع المزامنة
+  Future<void> _saveSingleSetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    try {
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: key,
+        value: value,
+        ref: ref,
+      );
+    } catch (e) {
+      // الخطأ اختياري
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +84,24 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.backupSettings,
+            onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -57,7 +133,11 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
           title: Text(l10n.autoBackup, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.w500)),
           subtitle: Text(_autoBackupEnabled ? l10n.autoBackupEnabled : l10n.autoBackupDisabledLabel,
             style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 12)),
-          value: _autoBackupEnabled, onChanged: (v) => setState(() => _autoBackupEnabled = v),
+          value: _autoBackupEnabled,
+          onChanged: (v) {
+            setState(() => _autoBackupEnabled = v);
+            _saveSingleSetting(_kBackupAutoEnabled, v.toString());
+          },
         ),
         if (_autoBackupEnabled)
           _tile(Icons.schedule_rounded, l10n.backupFrequency, _getFreqLabel(l10n), isDark,
@@ -67,7 +147,10 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
                 DropdownMenuItem(value: 'daily', child: Text(l10n.dailyBackup)),
                 DropdownMenuItem(value: 'weekly', child: Text(l10n.weeklyBackup)),
               ],
-              onChanged: (v) => setState(() => _backupFrequency = v ?? _backupFrequency))),
+              onChanged: (v) {
+                setState(() => _backupFrequency = v ?? _backupFrequency);
+                _saveSingleSetting(_kBackupFrequency, v ?? _backupFrequency);
+              })),
       ], isDark),
 
       _buildGroup(l10n.manualBackupSection, [

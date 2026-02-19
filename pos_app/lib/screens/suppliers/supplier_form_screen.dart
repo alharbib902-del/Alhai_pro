@@ -160,7 +160,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // Right column: financial + additional + save
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(0, 24, 24, 24),
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 24, 24, 24),
             child: Column(
               children: [
                 _buildFinancialSection(isDark, l10n),

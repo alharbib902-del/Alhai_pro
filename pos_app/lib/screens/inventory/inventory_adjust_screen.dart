@@ -6,13 +6,14 @@ library;
 import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/validators/validators.dart';
 
 /// شاشة تعديل المخزون
-class InventoryAdjustScreen extends StatefulWidget {
+class InventoryAdjustScreen extends ConsumerStatefulWidget {
   final String? productId;
   final String? productName;
 
@@ -23,10 +24,10 @@ class InventoryAdjustScreen extends StatefulWidget {
   });
 
   @override
-  State<InventoryAdjustScreen> createState() => _InventoryAdjustScreenState();
+  ConsumerState<InventoryAdjustScreen> createState() => _InventoryAdjustScreenState();
 }
 
-class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
+class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
   final _formKey = GlobalKey<FormState>();
   final _quantityController = TextEditingController();
   final _notesController = TextEditingController();

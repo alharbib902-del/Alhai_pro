@@ -121,9 +121,9 @@ class _AppCardState extends State<AppCard> {
 
                   // Corner Widget (Badge, Checkbox, etc.)
                   if (widget.cornerWidget != null)
-                    Positioned(
+                    PositionedDirectional(
                       top: AppSpacing.sm,
-                      left: AppSpacing.sm,
+                      start: AppSpacing.sm,
                       child: widget.cornerWidget!,
                     ),
                 ],

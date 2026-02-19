@@ -667,9 +667,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                               : null,
                         ),
                         // نقطة الحالة (متصل)
-                        Positioned(
+                        PositionedDirectional(
                           bottom: 0,
-                          right: 0,
+                          end: 0,
                           child: Container(
                             width: 10,
                             height: 10,
@@ -711,9 +711,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                                 : null,
                           ),
                           // نقطة الحالة (متصل)
-                          Positioned(
+                          PositionedDirectional(
                             bottom: 0,
-                            right: 0,
+                            end: 0,
                             child: Container(
                               width: 12,
                               height: 12,

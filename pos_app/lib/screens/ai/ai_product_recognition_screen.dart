@@ -267,9 +267,9 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
           ),
 
           // Mode label
-          Positioned(
+          PositionedDirectional(
             top: 12,
-            right: 12,
+            end: 12,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(

@@ -3,8 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات الباركود
+const String _kEnableBarcodeScanner = 'barcode_enable_scanner';
+const String _kEnableCameraScanner = 'barcode_enable_camera';
+const String _kEnableBluetoothScanner = 'barcode_enable_bluetooth';
+const String _kBeepOnScan = 'barcode_beep_on_scan';
+const String _kVibrateOnScan = 'barcode_vibrate_on_scan';
+const String _kAutoAddToCart = 'barcode_auto_add_to_cart';
+const String _kBarcodeFormat = 'barcode_format';
 
 /// شاشة إعدادات الباركود والماسح الضوئي
 class BarcodeSettingsScreen extends ConsumerStatefulWidget {
@@ -23,6 +36,68 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
   bool _vibrateOnScan = false;
   bool _autoAddToCart = true;
   String _barcodeFormat = 'all';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'barcode_');
+
+      if (mounted) {
+        setState(() {
+          _enableBarcodeScanner = settings[_kEnableBarcodeScanner] != 'false';
+          _enableCameraScanner = settings[_kEnableCameraScanner] != 'false';
+          _enableBluetoothScanner = settings[_kEnableBluetoothScanner] == 'true';
+          _beepOnScan = settings[_kBeepOnScan] != 'false';
+          _vibrateOnScan = settings[_kVibrateOnScan] == 'true';
+          _autoAddToCart = settings[_kAutoAddToCart] != 'false';
+          _barcodeFormat = settings[_kBarcodeFormat] ?? 'all';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ جميع إعدادات الباركود في قاعدة البيانات مع المزامنة
+  Future<void> _saveAllSettings() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    try {
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kEnableBarcodeScanner: _enableBarcodeScanner.toString(),
+          _kEnableCameraScanner: _enableCameraScanner.toString(),
+          _kEnableBluetoothScanner: _enableBluetoothScanner.toString(),
+          _kBeepOnScan: _beepOnScan.toString(),
+          _kVibrateOnScan: _vibrateOnScan.toString(),
+          _kAutoAddToCart: _autoAddToCart.toString(),
+          _kBarcodeFormat: _barcodeFormat,
+        },
+        ref: ref,
+      );
+    } catch (e) {
+      // الحفظ في الخلفية - لا نعرض خطأ
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +106,24 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.barcodeSettings,
+            onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -69,7 +162,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             subtitle: Text(l10n.barcodeScannerDesc),
             secondary: const Icon(Icons.qr_code_scanner),
             value: _enableBarcodeScanner,
-            onChanged: (v) => setState(() => _enableBarcodeScanner = v),
+            onChanged: (v) {
+              setState(() => _enableBarcodeScanner = v);
+              _saveAllSettings();
+            },
           ),
           if (_enableBarcodeScanner) ...[
             const Divider(indent: 16, endIndent: 16),
@@ -79,7 +175,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               secondary: const Icon(Icons.camera_alt),
               value: _enableCameraScanner,
-              onChanged: (v) => setState(() => _enableCameraScanner = v),
+              onChanged: (v) {
+                setState(() => _enableCameraScanner = v);
+                _saveAllSettings();
+              },
             ),
             SwitchListTile(
               title: Text(l10n.bluetoothScanner,
@@ -88,7 +187,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               subtitle: Text(l10n.externalScannerConnected),
               secondary: const Icon(Icons.bluetooth),
               value: _enableBluetoothScanner,
-              onChanged: (v) => setState(() => _enableBluetoothScanner = v),
+              onChanged: (v) {
+                setState(() => _enableBluetoothScanner = v);
+                _saveAllSettings();
+              },
             ),
           ],
           const SizedBox(height: 8),
@@ -104,7 +206,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.volume_up),
             value: _beepOnScan,
-            onChanged: (v) => setState(() => _beepOnScan = v),
+            onChanged: (v) {
+              setState(() => _beepOnScan = v);
+              _saveAllSettings();
+            },
           ),
           SwitchListTile(
             title: Text(l10n.vibrateOnScan,
@@ -112,7 +217,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.vibration),
             value: _vibrateOnScan,
-            onChanged: (v) => setState(() => _vibrateOnScan = v),
+            onChanged: (v) {
+              setState(() => _vibrateOnScan = v);
+              _saveAllSettings();
+            },
           ),
           const SizedBox(height: 8),
         ]),
@@ -127,7 +235,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             subtitle: Text(l10n.autoAddToCartDesc),
             secondary: const Icon(Icons.add_shopping_cart),
             value: _autoAddToCart,
-            onChanged: (v) => setState(() => _autoAddToCart = v),
+            onChanged: (v) {
+              setState(() => _autoAddToCart = v);
+              _saveAllSettings();
+            },
           ),
           const Divider(indent: 16, endIndent: 16),
           ListTile(
@@ -275,6 +386,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
                 Navigator.pop(ctx);
               },
             ),
@@ -286,6 +398,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
                 Navigator.pop(ctx);
               },
             ),
@@ -297,6 +410,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
                 Navigator.pop(ctx);
               },
             ),
@@ -308,6 +422,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
+                _saveAllSettings();
                 Navigator.pop(ctx);
               },
             ),

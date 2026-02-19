@@ -203,8 +203,8 @@ void main() {
 
     test('التدرج الأساسي يحتوي على ألوان صحيحة', () {
       expect(AppColors.primaryGradient.colors.length, 2);
-      expect(AppColors.primaryGradient.begin, Alignment.topLeft);
-      expect(AppColors.primaryGradient.end, Alignment.bottomRight);
+      expect(AppColors.primaryGradient.begin, AlignmentDirectional.topStart);
+      expect(AppColors.primaryGradient.end, AlignmentDirectional.bottomEnd);
     });
   });
 

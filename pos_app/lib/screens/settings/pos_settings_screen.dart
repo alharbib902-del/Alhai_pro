@@ -12,8 +12,38 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات نقطة البيع
+const String _kProductDisplay = 'pos_product_display';
+const String _kGridColumns = 'pos_grid_columns';
+const String _kShowProductImages = 'pos_show_product_images';
+const String _kShowProductPrices = 'pos_show_product_prices';
+const String _kShowStockLevel = 'pos_show_stock_level';
+const String _kAutoFocusBarcode = 'pos_auto_focus_barcode';
+const String _kAllowNegativeStock = 'pos_allow_negative_stock';
+const String _kConfirmBeforeDelete = 'pos_confirm_before_delete';
+const String _kShowItemNotes = 'pos_show_item_notes';
+const String _kEnableCashPayment = 'pos_enable_cash_payment';
+const String _kEnableCardPayment = 'pos_enable_card_payment';
+const String _kEnableCreditPayment = 'pos_enable_credit_payment';
+const String _kEnableBankTransfer = 'pos_enable_bank_transfer';
+const String _kEnableSplitPayment = 'pos_enable_split_payment';
+const String _kRequireCustomerForCredit = 'pos_require_customer_for_credit';
+const String _kAutoPrintReceipt = 'pos_auto_print';
+const String _kEmailReceipt = 'pos_email_receipt';
+const String _kSmsReceipt = 'pos_sms_receipt';
+const String _kReceiptCopies = 'pos_receipt_copies';
+const String _kEnableHoldInvoice = 'pos_enable_hold_invoice';
+const String _kMaxHoldInvoices = 'pos_max_hold_invoices';
+const String _kEnableQuickSale = 'pos_quick_mode';
+const String _kSoundEffects = 'pos_sound_effects';
+const String _kHapticFeedback = 'pos_haptic_feedback';
 
 /// شاشة إعدادات نقطة البيع
 class PosSettingsScreen extends ConsumerStatefulWidget {
@@ -58,6 +88,61 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   bool _enableQuickSale = true;
   bool _soundEffects = true;
   bool _hapticFeedback = true;
+
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'pos_');
+
+      if (mounted) {
+        setState(() {
+          _productDisplay = settings[_kProductDisplay] ?? 'grid';
+          _gridColumns = int.tryParse(settings[_kGridColumns] ?? '') ?? 4;
+          _showProductImages = settings[_kShowProductImages] != 'false';
+          _showProductPrices = settings[_kShowProductPrices] != 'false';
+          _showStockLevel = settings[_kShowStockLevel] != 'false';
+          _autoFocusBarcode = settings[_kAutoFocusBarcode] != 'false';
+          _allowNegativeStock = settings[_kAllowNegativeStock] == 'true';
+          _confirmBeforeDelete = settings[_kConfirmBeforeDelete] != 'false';
+          _showItemNotes = settings[_kShowItemNotes] != 'false';
+          _enableCashPayment = settings[_kEnableCashPayment] != 'false';
+          _enableCardPayment = settings[_kEnableCardPayment] != 'false';
+          _enableCreditPayment = settings[_kEnableCreditPayment] != 'false';
+          _enableBankTransfer = settings[_kEnableBankTransfer] != 'false';
+          _enableSplitPayment = settings[_kEnableSplitPayment] != 'false';
+          _requireCustomerForCredit = settings[_kRequireCustomerForCredit] != 'false';
+          _autoPrintReceipt = settings[_kAutoPrintReceipt] != 'false';
+          _emailReceipt = settings[_kEmailReceipt] == 'true';
+          _smsReceipt = settings[_kSmsReceipt] == 'true';
+          _receiptCopies = int.tryParse(settings[_kReceiptCopies] ?? '') ?? 1;
+          _enableHoldInvoice = settings[_kEnableHoldInvoice] != 'false';
+          _maxHoldInvoices = int.tryParse(settings[_kMaxHoldInvoices] ?? '') ?? 10;
+          _enableQuickSale = settings[_kEnableQuickSale] != 'false';
+          _soundEffects = settings[_kSoundEffects] != 'false';
+          _hapticFeedback = settings[_kHapticFeedback] != 'false';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -65,6 +150,26 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.posSettings,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
               children: [
@@ -528,16 +633,69 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     ]);
   }
 
-  void _saveSettings() {
+  /// حفظ جميع الإعدادات في قاعدة البيانات مع المزامنة
+  Future<void> _saveSettings() async {
     HapticFeedback.heavyImpact();
-    final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.settingsSaved),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+
+    try {
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kProductDisplay: _productDisplay,
+          _kGridColumns: _gridColumns.toString(),
+          _kShowProductImages: _showProductImages.toString(),
+          _kShowProductPrices: _showProductPrices.toString(),
+          _kShowStockLevel: _showStockLevel.toString(),
+          _kAutoFocusBarcode: _autoFocusBarcode.toString(),
+          _kAllowNegativeStock: _allowNegativeStock.toString(),
+          _kConfirmBeforeDelete: _confirmBeforeDelete.toString(),
+          _kShowItemNotes: _showItemNotes.toString(),
+          _kEnableCashPayment: _enableCashPayment.toString(),
+          _kEnableCardPayment: _enableCardPayment.toString(),
+          _kEnableCreditPayment: _enableCreditPayment.toString(),
+          _kEnableBankTransfer: _enableBankTransfer.toString(),
+          _kEnableSplitPayment: _enableSplitPayment.toString(),
+          _kRequireCustomerForCredit: _requireCustomerForCredit.toString(),
+          _kAutoPrintReceipt: _autoPrintReceipt.toString(),
+          _kEmailReceipt: _emailReceipt.toString(),
+          _kSmsReceipt: _smsReceipt.toString(),
+          _kReceiptCopies: _receiptCopies.toString(),
+          _kEnableHoldInvoice: _enableHoldInvoice.toString(),
+          _kMaxHoldInvoices: _maxHoldInvoices.toString(),
+          _kEnableQuickSale: _enableQuickSale.toString(),
+          _kSoundEffects: _soundEffects.toString(),
+          _kHapticFeedback: _hapticFeedback.toString(),
+        },
+        ref: ref,
+      );
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.settingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   void _showKeyboardShortcuts() {
@@ -620,6 +778,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     );
   }
 
+  /// إعادة تعيين الإعدادات للقيم الافتراضية وحفظها في قاعدة البيانات
   void _resetSettings() {
     setState(() {
       _productDisplay = 'grid';
@@ -647,6 +806,10 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       _soundEffects = true;
       _hapticFeedback = true;
     });
+
+    // حفظ القيم الافتراضية في قاعدة البيانات
+    _saveSettings();
+
     final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

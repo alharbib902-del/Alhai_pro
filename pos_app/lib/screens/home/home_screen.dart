@@ -1050,8 +1050,8 @@ class _NotificationsButton extends ConsumerWidget {
           ),
           // Badge
           if (unreadCount > 0)
-            Positioned(
-              right: 0,
+            PositionedDirectional(
+              end: 0,
               top: 0,
               child: Container(
                 padding: const EdgeInsets.all(4),

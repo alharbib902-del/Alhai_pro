@@ -138,7 +138,7 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
           // Heatmap
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(60, 0, 16, 40),
+              padding: const EdgeInsetsDirectional.fromSTEB(60, 0, 16, 40),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {

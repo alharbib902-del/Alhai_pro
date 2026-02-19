@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// مفاتيح إعدادات الطابعة
+const String _kPrinterType = 'printer_type';
+const String _kPrinterAutoPrint = 'printer_auto_print';
+const String _kPrinterTemplate = 'printer_template';
 
 /// شاشة إعدادات الطابعة
 class PrinterSettingsScreen extends ConsumerStatefulWidget {
@@ -19,6 +28,85 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   String _printerType = 'usb';
   bool _autoPrint = true;
   String _template = 'compact';
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'printer_');
+
+      if (mounted) {
+        setState(() {
+          _printerType = settings[_kPrinterType] ?? 'usb';
+          _autoPrint = settings[_kPrinterAutoPrint] != 'false';
+          _template = settings[_kPrinterTemplate] ?? 'compact';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ جميع إعدادات الطابعة في قاعدة البيانات مع المزامنة
+  Future<void> _saveAllSettings() async {
+    setState(() => _isSaving = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      final db = getIt<AppDatabase>();
+
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kPrinterType: _printerType,
+          _kPrinterAutoPrint: _autoPrint.toString(),
+          _kPrinterTemplate: _template,
+        },
+        ref: ref,
+      );
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.printerSettingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -26,6 +114,26 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Column(
+        children: [
+          AppHeader(
+            title: l10n.printerSettings,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
+    }
 
     return Column(
               children: [
@@ -162,17 +270,18 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.printerSettingsSaved),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            icon: const Icon(Icons.save_rounded),
-            label: Text(l10n.saveSettings),
+            onPressed: _isSaving ? null : _saveAllSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.save_rounded),
+            label: Text(_isSaving ? 'جاري الحفظ...' : l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(

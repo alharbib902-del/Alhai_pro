@@ -395,9 +395,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           ),
         ),
         // Status dot
-        Positioned(
+        PositionedDirectional(
           bottom: 0,
-          right: 0,
+          end: 0,
           child: Container(
             width: 14,
             height: 14,
@@ -1593,16 +1593,16 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Left accent stripe
-          Positioned(
-            left: 0,
+          // Start accent stripe
+          PositionedDirectional(
+            start: 0,
             top: 0,
             bottom: 0,
             child: Container(width: 4, color: accentColor),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 16, right: 12, top: 16, bottom: 12),
+            padding: const EdgeInsetsDirectional.only(
+                start: 16, end: 12, top: 16, bottom: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

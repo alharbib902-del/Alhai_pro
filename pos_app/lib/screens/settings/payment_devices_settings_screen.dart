@@ -12,9 +12,10 @@ import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
-// Settings keys for payment devices
+// مفاتيح إعدادات أجهزة الدفع
 const String _kEnableMada = 'payment_enable_mada';
 const String _kEnableVisa = 'payment_enable_visa';
 const String _kEnableStcPay = 'payment_enable_stc_pay';
@@ -48,6 +49,7 @@ class _PaymentDevicesSettingsScreenState
     _loadSettings();
   }
 
+  /// تحميل الإعدادات من قاعدة البيانات
   Future<void> _loadSettings() async {
     try {
       final storeId = ref.read(currentStoreIdProvider);
@@ -57,23 +59,16 @@ class _PaymentDevicesSettingsScreenState
       }
 
       final db = getIt<AppDatabase>();
-      final settings = await (db.select(db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
-
-      final settingsMap = <String, String>{};
-      for (final s in settings) {
-        settingsMap[s.key] = s.value;
-      }
+      final settings = await getSettingsByPrefix(db, storeId, 'payment_');
 
       if (mounted) {
         setState(() {
-          _enableMada = settingsMap[_kEnableMada] != 'false';
-          _enableVisa = settingsMap[_kEnableVisa] != 'false';
-          _enableStcPay = settingsMap[_kEnableStcPay] == 'true';
-          _enableApplePay = settingsMap[_kEnableApplePay] == 'true';
-          _terminalType = settingsMap[_kTerminalType] ?? 'ingenico';
-          _autoSettle = settingsMap[_kAutoSettle] != 'false';
+          _enableMada = settings[_kEnableMada] != 'false';
+          _enableVisa = settings[_kEnableVisa] != 'false';
+          _enableStcPay = settings[_kEnableStcPay] == 'true';
+          _enableApplePay = settings[_kEnableApplePay] == 'true';
+          _terminalType = settings[_kTerminalType] ?? 'ingenico';
+          _autoSettle = settings[_kAutoSettle] != 'false';
           _isLoading = false;
         });
       }
@@ -82,35 +77,47 @@ class _PaymentDevicesSettingsScreenState
     }
   }
 
-  Future<void> _saveSetting(String key, String value) async {
+  /// حفظ إعداد واحد في قاعدة البيانات مع المزامنة
+  Future<void> _saveSingleSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) return;
 
     final db = getIt<AppDatabase>();
-    final id = 'setting_${storeId}_$key';
-
-    await db.into(db.settingsTable).insertOnConflictUpdate(
-          SettingsTableCompanion.insert(
-            id: id,
-            storeId: storeId,
-            key: key,
-            value: value,
-            updatedAt: DateTime.now(),
-          ),
-        );
+    try {
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: key,
+        value: value,
+        ref: ref,
+      );
+    } catch (e) {
+      // الخطأ اختياري - لا نوقف التفاعل بسببه
+    }
   }
 
+  /// حفظ جميع الإعدادات دفعة واحدة
   Future<void> _saveAllSettings() async {
     setState(() => _isSaving = true);
     try {
-      await Future.wait([
-        _saveSetting(_kEnableMada, _enableMada.toString()),
-        _saveSetting(_kEnableVisa, _enableVisa.toString()),
-        _saveSetting(_kEnableStcPay, _enableStcPay.toString()),
-        _saveSetting(_kEnableApplePay, _enableApplePay.toString()),
-        _saveSetting(_kTerminalType, _terminalType),
-        _saveSetting(_kAutoSettle, _autoSettle.toString()),
-      ]);
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      final db = getIt<AppDatabase>();
+
+      await saveSettingsBatch(
+        db: db,
+        storeId: storeId,
+        settings: {
+          _kEnableMada: _enableMada.toString(),
+          _kEnableVisa: _enableVisa.toString(),
+          _kEnableStcPay: _enableStcPay.toString(),
+          _kEnableApplePay: _enableApplePay.toString(),
+          _kTerminalType: _terminalType,
+          _kAutoSettle: _autoSettle.toString(),
+        },
+        ref: ref,
+      );
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -206,7 +213,7 @@ class _PaymentDevicesSettingsScreenState
             value: _enableMada,
             onChanged: (v) {
               setState(() => _enableMada = v);
-              _saveSetting(_kEnableMada, v.toString());
+              _saveSingleSetting(_kEnableMada, v.toString());
             },
           ),
           SwitchListTile(
@@ -218,7 +225,7 @@ class _PaymentDevicesSettingsScreenState
             value: _enableVisa,
             onChanged: (v) {
               setState(() => _enableVisa = v);
-              _saveSetting(_kEnableVisa, v.toString());
+              _saveSingleSetting(_kEnableVisa, v.toString());
             },
           ),
           const Divider(indent: 16, endIndent: 16),
@@ -231,7 +238,7 @@ class _PaymentDevicesSettingsScreenState
             value: _enableStcPay,
             onChanged: (v) {
               setState(() => _enableStcPay = v);
-              _saveSetting(_kEnableStcPay, v.toString());
+              _saveSingleSetting(_kEnableStcPay, v.toString());
             },
           ),
           SwitchListTile(
@@ -242,7 +249,7 @@ class _PaymentDevicesSettingsScreenState
             value: _enableApplePay,
             onChanged: (v) {
               setState(() => _enableApplePay = v);
-              _saveSetting(_kEnableApplePay, v.toString());
+              _saveSingleSetting(_kEnableApplePay, v.toString());
             },
           ),
           const SizedBox(height: 8),
@@ -262,7 +269,7 @@ class _PaymentDevicesSettingsScreenState
             // ignore: deprecated_member_use
             onChanged: (v) {
               setState(() => _terminalType = v!);
-              _saveSetting(_kTerminalType, v!);
+              _saveSingleSetting(_kTerminalType, v!);
             },
           ),
           RadioListTile<String>(
@@ -276,7 +283,7 @@ class _PaymentDevicesSettingsScreenState
             // ignore: deprecated_member_use
             onChanged: (v) {
               setState(() => _terminalType = v!);
-              _saveSetting(_kTerminalType, v!);
+              _saveSingleSetting(_kTerminalType, v!);
             },
           ),
           RadioListTile<String>(
@@ -290,7 +297,7 @@ class _PaymentDevicesSettingsScreenState
             // ignore: deprecated_member_use
             onChanged: (v) {
               setState(() => _terminalType = v!);
-              _saveSetting(_kTerminalType, v!);
+              _saveSingleSetting(_kTerminalType, v!);
             },
           ),
           const SizedBox(height: 8),
@@ -307,7 +314,7 @@ class _PaymentDevicesSettingsScreenState
             value: _autoSettle,
             onChanged: (v) {
               setState(() => _autoSettle = v);
-              _saveSetting(_kAutoSettle, v.toString());
+              _saveSingleSetting(_kAutoSettle, v.toString());
             },
           ),
           ListTile(

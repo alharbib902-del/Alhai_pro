@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
@@ -7,14 +8,14 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/common/common.dart';
 
 /// شاشة التقارير - تصميم Web محسّن مع بطاقات تقارير احترافية
-class ReportsScreen extends StatefulWidget {
+class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
 
   @override
-  State<ReportsScreen> createState() => _ReportsScreenState();
+  ConsumerState<ReportsScreen> createState() => _ReportsScreenState();
 }
 
-class _ReportsScreenState extends State<ReportsScreen> {
+class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   final FocusNode _keyboardFocusNode = FocusNode();
   String _selectedPeriod = 'today'; // today, week, month, custom
   DateTime? _startDate;

@@ -61,8 +61,8 @@ class QuickActionsPanel extends StatelessWidget {
       child: Stack(
         children: [
           // الدائرة الضبابية في الخلفية
-          Positioned(
-            right: -40,
+          PositionedDirectional(
+            end: -40,
             top: -60,
             child: Container(
               width: 160,

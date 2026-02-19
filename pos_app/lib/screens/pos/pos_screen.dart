@@ -534,9 +534,9 @@ class _PosFab extends StatelessWidget {
           children: [
             const Icon(Icons.shopping_cart_rounded, color: Colors.white, size: 26),
             if (itemCount > 0)
-              Positioned(
+              PositionedDirectional(
                 top: 6,
-                right: 6,
+                end: 6,
                 child: Container(
                   padding: const EdgeInsets.all(2),
                   constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
@@ -1190,7 +1190,7 @@ class _ProductCardState extends State<_ProductCard> {
               // Info area - Row with consistent + button position
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 4, 4),
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 4, 4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -1286,9 +1286,9 @@ class _ProductCardState extends State<_ProductCard> {
 
         // Price badge (top-right)
         if (!isOutOfStock)
-          Positioned(
+          PositionedDirectional(
             top: 6,
-            right: 6,
+            end: 6,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: BackdropFilter(
@@ -1349,9 +1349,9 @@ class _ProductCardState extends State<_ProductCard> {
 
         // Low stock indicator
         if (product.isLowStock && !isOutOfStock)
-          Positioned(
+          PositionedDirectional(
             top: 6,
-            left: 6,
+            start: 6,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
@@ -2332,9 +2332,9 @@ class _DraftButton extends ConsumerWidget {
           ),
           // Badge
           if (heldCount > 0)
-            Positioned(
+            PositionedDirectional(
               top: -6,
-              right: -4,
+              end: -4,
               child: Container(
                 padding: const EdgeInsets.all(4),
                 constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
@@ -2423,9 +2423,9 @@ class _ShortcutsBar extends ConsumerWidget {
                   onTap: onHoldInvoice ?? () {},
                 ),
                 if (heldCount > 0)
-                  Positioned(
+                  PositionedDirectional(
                     top: -4,
-                    right: -4,
+                    end: -4,
                     child: Container(
                       padding: const EdgeInsets.all(3),
                       constraints: const BoxConstraints(minWidth: 18, minHeight: 18),

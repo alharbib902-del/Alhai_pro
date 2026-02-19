@@ -1,15 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 
-class ShippingGatewaysScreen extends ConsumerWidget {
+// مفاتيح إعدادات بوابات الشحن
+const String _kShippingAramex = 'shipping_aramex_enabled';
+const String _kShippingSmsa = 'shipping_smsa_enabled';
+const String _kShippingFastlo = 'shipping_fastlo_enabled';
+const String _kShippingDhl = 'shipping_dhl_enabled';
+const String _kShippingJt = 'shipping_jt_enabled';
+const String _kShippingCustom = 'shipping_custom_enabled';
+
+class ShippingGatewaysScreen extends ConsumerStatefulWidget {
   const ShippingGatewaysScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ShippingGatewaysScreen> createState() => _ShippingGatewaysScreenState();
+}
+
+class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen> {
+  bool _aramexActive = true;
+  bool _smsaActive = false;
+  bool _fastloActive = false;
+  bool _dhlActive = false;
+  bool _jtActive = false;
+  bool _customActive = true;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  /// تحميل الإعدادات من قاعدة البيانات
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await getSettingsByPrefix(db, storeId, 'shipping_');
+
+      if (mounted) {
+        setState(() {
+          _aramexActive = settings[_kShippingAramex] != 'false';
+          _smsaActive = settings[_kShippingSmsa] == 'true';
+          _fastloActive = settings[_kShippingFastlo] == 'true';
+          _dhlActive = settings[_kShippingDhl] == 'true';
+          _jtActive = settings[_kShippingJt] == 'true';
+          _customActive = settings[_kShippingCustom] != 'false';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// حفظ إعداد فردي في قاعدة البيانات مع المزامنة
+  Future<void> _saveSingleSetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    try {
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: key,
+        value: value,
+        ref: ref,
+      );
+    } catch (e) {
+      // الخطأ اختياري
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
+
+    if (_isLoading) {
+      return Scaffold(
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+                border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+              ),
+              child: Row(
+                children: [
+                  if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
+                  const Icon(Icons.local_shipping, color: AppColors.primary, size: 28),
+                  const SizedBox(width: 12),
+                  Text('بوابات الشحن', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+                ],
+              ),
+            ),
+            const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       body: Column(
@@ -39,17 +144,41 @@ class ShippingGatewaysScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text('قم بتفعيل وإعداد بوابات الشحن لتوصيل الطلبات', style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey)),
                   const SizedBox(height: 20),
-                  _buildGatewayCard('أرامكس', 'Aramex', 'شركة شحن عالمية بخدمات متعددة', Icons.flight, true, const Color(0xFFE44D26), isDark),
+                  _buildGatewayCard('أرامكس', 'Aramex', 'شركة شحن عالمية بخدمات متعددة', Icons.flight, _aramexActive, const Color(0xFFE44D26), isDark,
+                    onToggle: (v) {
+                      setState(() => _aramexActive = v);
+                      _saveSingleSetting(_kShippingAramex, v.toString());
+                    }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('SMSA Express', 'SMSA', 'شحن سريع داخل المملكة', Icons.speed, false, const Color(0xFF00539F), isDark),
+                  _buildGatewayCard('SMSA Express', 'SMSA', 'شحن سريع داخل المملكة', Icons.speed, _smsaActive, const Color(0xFF00539F), isDark,
+                    onToggle: (v) {
+                      setState(() => _smsaActive = v);
+                      _saveSingleSetting(_kShippingSmsa, v.toString());
+                    }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('فاستلو', 'Fastlo', 'توصيل سريع في نفس اليوم', Icons.electric_moped, false, const Color(0xFF6C63FF), isDark),
+                  _buildGatewayCard('فاستلو', 'Fastlo', 'توصيل سريع في نفس اليوم', Icons.electric_moped, _fastloActive, const Color(0xFF6C63FF), isDark,
+                    onToggle: (v) {
+                      setState(() => _fastloActive = v);
+                      _saveSingleSetting(_kShippingFastlo, v.toString());
+                    }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('DHL', 'DHL Express', 'شحن دولي سريع وموثوق', Icons.public, false, const Color(0xFFFFCC00), isDark),
+                  _buildGatewayCard('DHL', 'DHL Express', 'شحن دولي سريع وموثوق', Icons.public, _dhlActive, const Color(0xFFFFCC00), isDark,
+                    onToggle: (v) {
+                      setState(() => _dhlActive = v);
+                      _saveSingleSetting(_kShippingDhl, v.toString());
+                    }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('سمسا', 'J&T Express', 'شحن اقتصادي', Icons.local_shipping, false, const Color(0xFFE60012), isDark),
+                  _buildGatewayCard('سمسا', 'J&T Express', 'شحن اقتصادي', Icons.local_shipping, _jtActive, const Color(0xFFE60012), isDark,
+                    onToggle: (v) {
+                      setState(() => _jtActive = v);
+                      _saveSingleSetting(_kShippingJt, v.toString());
+                    }),
                   const SizedBox(height: 12),
-                  _buildGatewayCard('توصيل خاص', 'Custom Delivery', 'إدارة التوصيل بسائقيك الخاصين', Icons.person_pin_circle, true, Colors.teal, isDark),
+                  _buildGatewayCard('توصيل خاص', 'Custom Delivery', 'إدارة التوصيل بسائقيك الخاصين', Icons.person_pin_circle, _customActive, Colors.teal, isDark,
+                    onToggle: (v) {
+                      setState(() => _customActive = v);
+                      _saveSingleSetting(_kShippingCustom, v.toString());
+                    }),
                 ],
               ),
             ),
@@ -59,20 +188,20 @@ class ShippingGatewaysScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGatewayCard(String name, String nameEn, String description, IconData icon, bool isActive, Color brandColor, bool isDark) {
+  Widget _buildGatewayCard(String name, String nameEn, String description, IconData icon, bool isActive, Color brandColor, bool isDark, {required ValueChanged<bool> onToggle}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isActive ? AppColors.primary.withOpacity(0.3) : (isDark ? Colors.white12 : Colors.grey.shade200)),
-        boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withOpacity(0.05), blurRadius: 10)] : null,
+        border: Border.all(color: isActive ? AppColors.primary.withValues(alpha: 0.3) : (isDark ? Colors.white12 : Colors.grey.shade200)),
+        boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.05), blurRadius: 10)] : null,
       ),
       child: Row(
         children: [
           Container(
             width: 56, height: 56,
-            decoration: BoxDecoration(color: brandColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: brandColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: brandColor, size: 28),
           ),
           const SizedBox(width: 16),
@@ -94,7 +223,7 @@ class ShippingGatewaysScreen extends ConsumerWidget {
           ),
           Column(
             children: [
-              Switch(value: isActive, onChanged: (_) {}, activeColor: AppColors.primary),
+              Switch(value: isActive, onChanged: onToggle, activeTrackColor: AppColors.primary.withValues(alpha: 0.5), thumbColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? AppColors.primary : null)),
               if (isActive) TextButton(
                 onPressed: () {},
                 child: const Text('إعدادات', style: TextStyle(fontSize: 12)),
