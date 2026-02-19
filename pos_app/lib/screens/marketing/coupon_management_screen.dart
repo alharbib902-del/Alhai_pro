@@ -1,84 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:drift/drift.dart' show Value;
-import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
-import '../../di/injection.dart';
-import '../../providers/products_providers.dart';
+import '../../providers/marketing_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 
-/// Coupon Management Screen
-class CouponManagementScreen extends ConsumerStatefulWidget {
+/// Coupon Management Screen - شاشة إدارة الكوبونات
+class CouponManagementScreen extends ConsumerWidget {
   const CouponManagementScreen({super.key});
 
   @override
-  ConsumerState<CouponManagementScreen> createState() => _CouponManagementScreenState();
-}
-
-class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen> {
-
-  List<CouponsTableData> _coupons = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-      final db = getIt<AppDatabase>();
-      final results = await db.discountsDao.getAllCoupons(storeId);
-      if (mounted) {
-        setState(() {
-          _coupons = results;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-      debugPrint('Error loading coupons: $e');
-    }
-  }
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final couponsAsync = ref.watch(couponsListProvider);
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.manageCoupons,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.cashCustomer,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                        ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.manageCoupons,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: couponsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => AppErrorState.general(
+              message: error.toString(),
+              onRetry: () => ref.invalidate(couponsListProvider),
+            ),
+            data: (coupons) => SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _CouponsContent(
+                coupons: coupons,
+                isWideScreen: isWideScreen,
+                isMediumScreen: isMediumScreen,
+                isDark: isDark,
+                l10n: l10n,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+}
+
+class _CouponsContent extends ConsumerWidget {
+  final List<CouponsTableData> coupons;
+  final bool isWideScreen;
+  final bool isMediumScreen;
+  final bool isDark;
+  final AppLocalizations l10n;
+
+  const _CouponsContent({
+    required this.coupons,
+    required this.isWideScreen,
+    required this.isMediumScreen,
+    required this.isDark,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -92,7 +87,7 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
           children: [
             Text(l10n.couponsTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
             FilledButton.icon(
-              onPressed: _addCoupon,
+              onPressed: () => _showAddCouponDialog(context, ref),
               icon: const Icon(Icons.add, size: 18),
               label: Text(l10n.newCoupon),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
@@ -104,17 +99,20 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
         // Stats
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.confirmation_number, l10n.couponsTitle, '${_coupons.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(Icons.confirmation_number, l10n.couponsTitle, '${coupons.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${_coupons.where((c) => c.isActive).length}', AppColors.success, isDark)),
+            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${coupons.where((c) => c.isActive).length}', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.analytics, l10n.usages, '${_coupons.fold(0, (sum, c) => sum + c.currentUses)}', AppColors.secondary, isDark)),
+            Expanded(child: _buildStatCard(Icons.analytics, l10n.usages, '${coupons.fold(0, (sum, c) => sum + c.currentUses)}', AppColors.secondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
 
         // Coupons list
-        ..._coupons.map((coupon) {
+        if (coupons.isEmpty)
+          AppEmptyState.noOffers()
+        else
+        ...coupons.map((coupon) {
           final isExpired = coupon.expiresAt?.isBefore(DateTime.now()) ?? false;
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
@@ -151,10 +149,10 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
               ),
               trailing: Switch(
                 value: coupon.isActive && !isExpired,
-                onChanged: isExpired ? null : (v) => _toggleActive(coupon, v),
+                onChanged: isExpired ? null : (v) => _toggleActive(ref, coupon, v),
                 activeThumbColor: AppColors.primary,
               ),
-              onTap: () => _showDetails(coupon),
+              onTap: () => _showDetails(context, ref, coupon),
             ),
           );
         }),
@@ -208,12 +206,13 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     }
   }
 
-  Future<void> _toggleActive(CouponsTableData coupon, bool value) async {
+  /// تبديل حالة نشاط الكوبون مع مزامنة
+  Future<void> _toggleActive(WidgetRef ref, CouponsTableData coupon, bool value) async {
     try {
-      final db = getIt<AppDatabase>();
       final updated = CouponsTableData(
         id: coupon.id,
         storeId: coupon.storeId,
+        orgId: coupon.orgId,
         code: coupon.code,
         discountId: coupon.discountId,
         type: coupon.type,
@@ -226,28 +225,26 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
         createdAt: coupon.createdAt,
         syncedAt: coupon.syncedAt,
       );
-      await db.discountsDao.updateCoupon(updated);
-      await _loadData();
+      await updateCoupon(ref, updated);
     } catch (e) {
       debugPrint('Error toggling coupon: $e');
     }
   }
 
-  Future<void> _deleteCoupon(CouponsTableData coupon) async {
+  /// حذف كوبون مع مزامنة
+  Future<void> _deleteCoupon(WidgetRef ref, CouponsTableData coupon) async {
     try {
-      final db = getIt<AppDatabase>();
-      await db.discountsDao.deleteCoupon(coupon.id);
-      await _loadData();
+      await deleteCoupon(ref, coupon.id);
     } catch (e) {
       debugPrint('Error deleting coupon: $e');
     }
   }
 
-  void _addCoupon() {
+  /// عرض نافذة إضافة كوبون جديد
+  void _showAddCouponDialog(BuildContext context, WidgetRef ref) {
     final codeController = TextEditingController();
     final valueController = TextEditingController();
     String type = 'percentage';
-    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -294,25 +291,12 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
               onPressed: () async {
                 if (codeController.text.isNotEmpty) {
                   try {
-                    final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-                    final db = getIt<AppDatabase>();
-                    final now = DateTime.now();
-                    final companion = CouponsTableCompanion(
-                      id: Value(const Uuid().v4()),
-                      storeId: Value(storeId),
-                      code: Value(codeController.text.toUpperCase()),
-                      discountId: const Value(null),
-                      type: Value(type),
-                      value: Value(double.tryParse(valueController.text) ?? 0),
-                      maxUses: const Value(100),
-                      currentUses: const Value(0),
-                      minPurchase: const Value(0),
-                      isActive: const Value(true),
-                      expiresAt: Value(now.add(const Duration(days: 30))),
-                      createdAt: Value(now),
+                    await addCoupon(
+                      ref,
+                      code: codeController.text.toUpperCase(),
+                      type: type,
+                      value: double.tryParse(valueController.text) ?? 0,
                     );
-                    await db.discountsDao.insertCoupon(companion);
-                    await _loadData();
                   } catch (e) {
                     debugPrint('Error adding coupon: $e');
                   }
@@ -328,30 +312,30 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     );
   }
 
-  void _showDetails(CouponsTableData c) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+  /// عرض تفاصيل الكوبون
+  void _showDetails(BuildContext context, WidgetRef ref, CouponsTableData c) {
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: isDark ? Colors.white : AppColors.textPrimary)),
+            Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: isDarkTheme ? Colors.white : AppColors.textPrimary)),
             const SizedBox(height: 16),
-            _DetailRow(label: l10n.couponTypeLabel, value: _getTypeLabel(c, l10n), isDark: isDark),
-            _DetailRow(label: l10n.minimumOrder, value: '${c.minPurchase.toInt()} ${l10n.currency}', isDark: isDark),
-            _DetailRow(label: l10n.usages, value: '${c.currentUses}/${c.maxUses}', isDark: isDark),
-            _DetailRow(label: l10n.expiryDate, value: c.expiresAt != null ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}' : '-', isDark: isDark),
+            _DetailRow(label: l10n.couponTypeLabel, value: _getTypeLabel(c, l10n), isDark: isDarkTheme),
+            _DetailRow(label: l10n.minimumOrder, value: '${c.minPurchase.toInt()} ${l10n.currency}', isDark: isDarkTheme),
+            _DetailRow(label: l10n.usages, value: '${c.currentUses}/${c.maxUses}', isDark: isDarkTheme),
+            _DetailRow(label: l10n.expiryDate, value: c.expiresAt != null ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}' : '-', isDark: isDarkTheme),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () { Navigator.pop(context); _deleteCoupon(c); },
+                    onPressed: () { Navigator.pop(context); _deleteCoupon(ref, c); },
                     icon: const Icon(Icons.delete, color: AppColors.error),
                     label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)),
                   ),

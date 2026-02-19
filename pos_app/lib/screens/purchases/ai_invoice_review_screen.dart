@@ -1,11 +1,15 @@
 import 'package:pos_app/widgets/common/adaptive_icon.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
 import '../../services/ai_invoice_service.dart';
+import '../../providers/purchases_providers.dart';
 
 /// شاشة مراجعة ومطابقة المنتجات المستخرجة بالـ AI
 class AiInvoiceReviewScreen extends ConsumerStatefulWidget {
@@ -669,13 +673,42 @@ class _AiInvoiceReviewScreenState
     setState(() => _isProcessing = true);
 
     try {
-      // TODO: Save to database
-      await Future.delayed(const Duration(seconds: 1));
+      const uuid = Uuid();
+
+      // تحويل العناصر المؤكدة لـ PurchaseItemsTableCompanion
+      final purchaseItems = _items
+          .where((item) => item.isConfirmed)
+          .map((item) => PurchaseItemsTableCompanion(
+                id: Value(uuid.v4()),
+                purchaseId: const Value(''), // سيتم ربطه بالمشتريات
+                productId: Value(item.matchedProductId ?? ''),
+                productName: Value(item.rawName),
+                qty: Value(item.quantity.toInt()),
+                unitCost: Value(item.unitPrice),
+                total: Value(item.total),
+              ))
+          .toList();
+
+      // حفظ المشتريات عبر المزود (يشمل SyncQueue)
+      await createPurchase(
+        ref,
+        supplierId: '', // المورد غير محدد بعد - يتم تحديده لاحقاً
+        supplierName: widget.invoiceData.supplierName ?? 'مورد غير معروف',
+        subtotal: widget.invoiceData.totalAmount - widget.invoiceData.taxAmount,
+        tax: widget.invoiceData.taxAmount,
+        discount: 0,
+        total: widget.invoiceData.totalAmount,
+        notes: widget.invoiceData.invoiceNumber != null
+            ? 'فاتورة AI: ${widget.invoiceData.invoiceNumber}'
+            : 'فاتورة مستوردة بالذكاء الاصطناعي',
+        items: purchaseItems,
+      );
 
       if (mounted) {
+        setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('\u062A\u0645 \u062D\u0641\u0638 \u0641\u0627\u062A\u0648\u0631\u0629 \u0627\u0644\u0634\u0631\u0627\u0621 \u0628\u0646\u062C\u0627\u062D'),
+            content: Text('تم حفظ فاتورة الشراء بنجاح'),
             backgroundColor: AppColors.success,
           ),
         );
@@ -686,7 +719,7 @@ class _AiInvoiceReviewScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('\u062E\u0637\u0623: $e'),
+              content: Text('خطأ: $e'),
               backgroundColor: AppColors.error),
         );
       }

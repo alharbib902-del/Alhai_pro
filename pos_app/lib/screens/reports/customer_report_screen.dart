@@ -51,8 +51,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
       final accounts = await db.accountsDao.getAllAccounts(storeId);
-      final now = DateTime.now();
-      final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+      final now = _dateRange.end;
+      final thirtyDaysAgo = _dateRange.start;
 
       _totalCustomers = accounts.length;
       _activeCustomers = accounts.where((a) =>
@@ -282,13 +282,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const Spacer(),
-                const Icon(Icons.arrow_upward, color: AppColors.success, size: 16),
-                Text(
-                  '+12%',
-                  style: AppTypography.labelSmall.copyWith(
-                    color: AppColors.success,
-                  ),
-                ),
+                const SizedBox.shrink(),
               ],
             ),
             const SizedBox(height: AppSizes.md),
@@ -311,11 +305,21 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   }
 
   Widget _buildTierDistribution() {
+    // حساب التوزيع الحقيقي من بيانات العملاء المحملة
+    int diamond = 0, gold = 0, silver = 0, bronze = 0;
+    for (final c in _topCustomers) {
+      switch (c.tier) {
+        case '\u0645\u0627\u0633\u064a': diamond++; break;
+        case '\u0630\u0647\u0628\u064a': gold++; break;
+        case '\u0641\u0636\u064a': silver++; break;
+        default: bronze++; break;
+      }
+    }
     final tiers = [
-      {'name': 'ماسي', 'count': 45, 'color': Colors.purple},
-      {'name': 'ذهبي', 'count': 120, 'color': AppColors.warning},
-      {'name': 'فضي', 'count': 350, 'color': AppColors.grey500},
-      {'name': 'برونزي', 'count': 735, 'color': Colors.brown},
+      {'name': '\u0645\u0627\u0633\u064a', 'count': diamond, 'color': Colors.purple},
+      {'name': '\u0630\u0647\u0628\u064a', 'count': gold, 'color': AppColors.warning},
+      {'name': '\u0641\u0636\u064a', 'count': silver, 'color': AppColors.grey500},
+      {'name': '\u0628\u0631\u0648\u0646\u0632\u064a', 'count': bronze, 'color': Colors.brown},
     ];
 
     return Card(
@@ -334,8 +338,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
             // Bar Chart simulation
             ...tiers.map((tier) {
-              final percentage =
-                  (tier['count'] as int) / _totalCustomers * 100;
+              final percentage = _totalCustomers > 0
+                  ? (tier['count'] as int) / _totalCustomers * 100
+                  : 0.0;
               return Padding(
                 padding: const EdgeInsets.only(bottom: AppSizes.md),
                 child: Row(
@@ -425,21 +430,21 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               AppColors.success,
             ),
             _buildActivityRow(
-              'متوسط عدد الطلبات لكل عميل',
-              '3.2 طلب',
+              'متوسط قيمة الطلب لكل عميل',
+              '${_avgOrderValue.toStringAsFixed(0)} ر.س',
               Icons.shopping_bag,
               AppColors.primary,
             ),
             _buildActivityRow(
-              'معدل إعادة الشراء',
-              '68%',
+              'عملاء نشطين (آخر 30 يوم)',
+              '$_activeCustomers من $_totalCustomers',
               Icons.replay,
               AppColors.info,
             ),
             _buildActivityRow(
-              'نقاط الولاء الموزعة',
-              '45,800 نقطة',
-              Icons.stars,
+              'عملاء جدد (آخر 30 يوم)',
+              '$_newCustomers',
+              Icons.person_add,
               AppColors.warning,
             ),
           ],
@@ -806,21 +811,21 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                 Expanded(
                   child: _buildRetentionStat(
                     'شهري',
-                    '78%',
+                    _totalCustomers > 0 ? '${(_activeCustomers / _totalCustomers * 100).toStringAsFixed(0)}%' : '0%',
                     AppColors.success,
                   ),
                 ),
                 Expanded(
                   child: _buildRetentionStat(
-                    'ربع سنوي',
-                    '65%',
+                    'إجمالي العملاء',
+                    '$_totalCustomers',
                     AppColors.info,
                   ),
                 ),
                 Expanded(
                   child: _buildRetentionStat(
-                    'سنوي',
-                    '52%',
+                    'نشطين',
+                    '$_activeCustomers',
                     AppColors.warning,
                   ),
                 ),
@@ -1246,7 +1251,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     if (picked != null) {
       setState(() {
         _dateRange = picked;
+        _isLoading = true;
       });
+      _loadCustomerData();
     }
   }
 

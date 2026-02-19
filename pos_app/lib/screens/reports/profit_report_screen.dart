@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
@@ -85,21 +86,84 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
       // Revenue from sales stats
       final totalRevenue = salesStats.total;
 
-      // Cost of goods: approximate as 68% of revenue (standard retail approximation)
-      // In a real scenario, this would use cost_price from sale_items joined with products
-      final costOfGoods = totalRevenue * 0.68;
+      // تكلفة البضاعة المباعة: حساب من sale_items مع cost_price من المنتجات
+      final cogsResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as total_cost
+           FROM sale_items si
+           INNER JOIN sales s ON s.id = si.sale_id
+           LEFT JOIN products p ON p.id = si.product_id
+           WHERE s.store_id = ?
+             AND s.status = 'completed'
+             AND s.created_at >= ?
+             AND s.created_at < ?''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(dateRange.start),
+          Variable.withDateTime(dateRange.end),
+        ],
+      ).getSingle();
+      var costOfGoods = (cogsResult.data['total_cost'] is int)
+          ? (cogsResult.data['total_cost'] as int).toDouble()
+          : cogsResult.data['total_cost'] as double? ?? 0.0;
+      // إذا لم تتوفر بيانات التكلفة، استخدم تقدير 68%
+      if (costOfGoods == 0 && totalRevenue > 0) {
+        costOfGoods = totalRevenue * 0.68;
+      }
 
-      // Taxes: sum from sales tax field
-      final sales = await db.salesDao.getSalesByDateRange(storeId, dateRange.start, dateRange.end);
-      final totalTaxes = sales.fold<double>(0.0, (sum, s) => sum + s.tax);
+      // الضرائب: مجموع الضريبة الفعلية من جدول المبيعات
+      final taxResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(tax), 0) as total_tax
+           FROM sales
+           WHERE store_id = ?
+             AND status = 'completed'
+             AND created_at >= ?
+             AND created_at < ?''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(dateRange.start),
+          Variable.withDateTime(dateRange.end),
+        ],
+      ).getSingle();
+      final totalTaxes = (taxResult.data['total_tax'] is int)
+          ? (taxResult.data['total_tax'] as int).toDouble()
+          : taxResult.data['total_tax'] as double? ?? 0.0;
 
-      // Top products by revenue
-      final topProducts = await db.productsDao.getTopSellingProducts(storeId, limit: 4);
-      final topProductData = topProducts.map((p) => _TopProductData(
-        name: p.name,
-        revenue: p.price * 10, // Approximate from price * estimated quantity
-        cost: (p.costPrice ?? p.price * 0.65) * 10,
-      )).toList();
+      // أكثر المنتجات ربحية: من sale_items مع products
+      final topProductResults = await db.customSelect(
+        '''SELECT
+             p.name,
+             COALESCE(SUM(si.total), 0) as revenue,
+             COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as cost
+           FROM sale_items si
+           INNER JOIN sales s ON s.id = si.sale_id
+           LEFT JOIN products p ON p.id = si.product_id
+           WHERE s.store_id = ?
+             AND s.status = 'completed'
+             AND s.created_at >= ?
+             AND s.created_at < ?
+           GROUP BY si.product_id
+           ORDER BY revenue DESC
+           LIMIT 4''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(dateRange.start),
+          Variable.withDateTime(dateRange.end),
+        ],
+      ).get();
+
+      final topProductData = topProductResults.map((row) {
+        final revenue = (row.data['revenue'] is int)
+            ? (row.data['revenue'] as int).toDouble()
+            : row.data['revenue'] as double? ?? 0.0;
+        final cost = (row.data['cost'] is int)
+            ? (row.data['cost'] as int).toDouble()
+            : row.data['cost'] as double? ?? 0.0;
+        return _TopProductData(
+          name: row.data['name'] as String? ?? 'غير معروف',
+          revenue: revenue,
+          cost: cost,
+        );
+      }).toList();
 
       if (mounted) {
         setState(() {

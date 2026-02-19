@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/inventory_advanced_providers.dart';
 
 /// شاشة تتبع تاريخ انتهاء الصلاحية
 class ExpiryTrackingScreen extends ConsumerStatefulWidget {
@@ -19,11 +20,6 @@ class ExpiryTrackingScreen extends ConsumerStatefulWidget {
 class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isLoading = true;
-
-  List<_ExpiryItemData> _expiringIn7Days = [];
-  List<_ExpiryItemData> _expiringIn30Days = [];
-  List<_ExpiryItemData> _expired = [];
 
   // Dialog controllers
   final _barcodeController = TextEditingController();
@@ -38,77 +34,6 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) {
-        if (mounted) setState(() => _isLoading = false);
-        return;
-      }
-
-      final db = getIt<AppDatabase>();
-      final now = DateTime.now();
-      final in7Days = now.add(const Duration(days: 7));
-      final in30Days = now.add(const Duration(days: 30));
-
-      // Query all expiry records for this store
-      final allExpiry = await (db.select(db.productExpiryTable)
-            ..where((e) => e.storeId.equals(storeId))
-            ..orderBy([(e) => OrderingTerm.asc(e.expiryDate)]))
-          .get();
-
-      // Build a map of product IDs to names
-      final productIds =
-          allExpiry.map((e) => e.productId).toSet().toList();
-      final Map<String, String> productNames = {};
-      if (productIds.isNotEmpty) {
-        for (final pid in productIds) {
-          try {
-            final product = await (db.select(db.productsTable)
-                  ..where((p) => p.id.equals(pid)))
-                .getSingleOrNull();
-            if (product != null) {
-              productNames[pid] = product.name;
-            }
-          } catch (_) {
-            // Product not found
-          }
-        }
-      }
-
-      // Categorize
-      final expired = <_ExpiryItemData>[];
-      final within7 = <_ExpiryItemData>[];
-      final within30 = <_ExpiryItemData>[];
-
-      for (final e in allExpiry) {
-        final item = _ExpiryItemData(
-          expiry: e,
-          productName: productNames[e.productId] ?? 'منتج غير معروف',
-        );
-        if (e.expiryDate.isBefore(now)) {
-          expired.add(item);
-        } else if (e.expiryDate.isBefore(in7Days)) {
-          within7.add(item);
-        } else if (e.expiryDate.isBefore(in30Days)) {
-          within30.add(item);
-        }
-      }
-
-      if (mounted) {
-        setState(() {
-          _expired = expired;
-          _expiringIn7Days = within7;
-          _expiringIn30Days = within30;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   @override
@@ -123,80 +48,121 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
+    final expiryAsync = ref.watch(expiryTrackingProvider);
+
+    return expiryAsync.when(
+      loading: () => Scaffold(
         appBar: AppBar(title: const Text('تتبع الصلاحية')),
         body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('تتبع الصلاحية'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(
-              icon: Badge(
-                label: Text('${_expiringIn7Days.length}'),
-                backgroundColor: Colors.red,
-                child: const Icon(Icons.warning_amber),
+      ),
+      error: (error, _) => Scaffold(
+        appBar: AppBar(title: const Text('تتبع الصلاحية')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+              const SizedBox(height: 16),
+              Text('خطأ في تحميل بيانات الصلاحية',
+                  style: TextStyle(color: Colors.red.shade600, fontSize: 16)),
+              const SizedBox(height: 8),
+              Text('$error', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+              const SizedBox(height: 16),
+              TextButton.icon(
+                onPressed: () => ref.invalidate(expiryTrackingProvider),
+                icon: const Icon(Icons.refresh),
+                label: const Text('إعادة المحاولة'),
               ),
-              text: 'قريب الانتهاء',
-            ),
-            Tab(
-              icon: Badge(
-                label: Text('${_expiringIn30Days.length}'),
-                backgroundColor: Colors.orange,
-                child: const Icon(Icons.schedule),
-              ),
-              text: 'خلال شهر',
-            ),
-            Tab(
-              icon: Badge(
-                label: Text('${_expired.length}'),
-                backgroundColor: Colors.grey,
-                child: const Icon(Icons.dangerous),
-              ),
-              text: 'منتهية',
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              setState(() => _isLoading = true);
-              _loadData();
-            },
-            tooltip: 'تحديث',
+            ],
           ),
-        ],
+        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildExpiryList(_expiringIn7Days, Colors.red, 'لا توجد منتجات تنتهي خلال 7 أيام'),
-          _buildExpiryList(_expiringIn30Days, Colors.orange, 'لا توجد منتجات تنتهي خلال شهر'),
-          _buildExpiryList(_expired, Colors.grey, 'لا توجد منتجات منتهية الصلاحية'),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddExpiryDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('إضافة منتج'),
-      ),
+      data: (allItems) {
+        // تصنيف العناصر حسب الفترة
+        final now = DateTime.now();
+        final in7Days = now.add(const Duration(days: 7));
+        final in30Days = now.add(const Duration(days: 30));
+
+        final expired = <ExpiryItemData>[];
+        final within7 = <ExpiryItemData>[];
+        final within30 = <ExpiryItemData>[];
+
+        for (final item in allItems) {
+          if (item.expiry.expiryDate.isBefore(now)) {
+            expired.add(item);
+          } else if (item.expiry.expiryDate.isBefore(in7Days)) {
+            within7.add(item);
+          } else if (item.expiry.expiryDate.isBefore(in30Days)) {
+            within30.add(item);
+          }
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('تتبع الصلاحية'),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: [
+                Tab(
+                  icon: Badge(
+                    label: Text('${within7.length}'),
+                    backgroundColor: Colors.red,
+                    child: const Icon(Icons.warning_amber),
+                  ),
+                  text: 'قريب الانتهاء',
+                ),
+                Tab(
+                  icon: Badge(
+                    label: Text('${within30.length}'),
+                    backgroundColor: Colors.orange,
+                    child: const Icon(Icons.schedule),
+                  ),
+                  text: 'خلال شهر',
+                ),
+                Tab(
+                  icon: Badge(
+                    label: Text('${expired.length}'),
+                    backgroundColor: Colors.grey,
+                    child: const Icon(Icons.dangerous),
+                  ),
+                  text: 'منتهية',
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () => ref.invalidate(expiryTrackingProvider),
+                tooltip: 'تحديث',
+              ),
+            ],
+          ),
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildExpiryList(within7, Colors.red, 'لا توجد منتجات تنتهي خلال 7 أيام'),
+              _buildExpiryList(within30, Colors.orange, 'لا توجد منتجات تنتهي خلال شهر'),
+              _buildExpiryList(expired, Colors.grey, 'لا توجد منتجات منتهية الصلاحية'),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _showAddExpiryDialog,
+            icon: const Icon(Icons.add),
+            label: const Text('إضافة منتج'),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildExpiryList(
-      List<_ExpiryItemData> items, Color statusColor, String emptyMessage) {
+      List<ExpiryItemData> items, Color statusColor, String emptyMessage) {
     if (items.isEmpty) {
       return _buildEmptyState(emptyMessage);
     }
 
     return RefreshIndicator(
-      onRefresh: _loadData,
+      onRefresh: () async => ref.invalidate(expiryTrackingProvider),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
@@ -208,7 +174,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  Widget _buildExpiryCard(_ExpiryItemData item, Color statusColor) {
+  Widget _buildExpiryCard(ExpiryItemData item, Color statusColor) {
     final daysLeft = item.expiry.expiryDate.difference(DateTime.now()).inDays;
     final dateFormatter = DateFormat('yyyy/MM/dd');
     final isExpired = daysLeft < 0;
@@ -376,7 +342,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  void _showDiscountDialog(_ExpiryItemData item) {
+  void _showDiscountDialog(ExpiryItemData item) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('تطبيق خصم على "${item.productName}" - قريباً'),
@@ -385,7 +351,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  void _confirmRemove(_ExpiryItemData item) {
+  void _confirmRemove(ExpiryItemData item) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -412,30 +378,17 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     );
   }
 
-  Future<void> _removeExpiry(_ExpiryItemData item) async {
-    try {
-      final db = getIt<AppDatabase>();
-      await (db.delete(db.productExpiryTable)
-            ..where((e) => e.id.equals(item.expiry.id)))
-          .go();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إزالة تتبع الصلاحية'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        _loadData();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+  Future<void> _removeExpiry(ExpiryItemData item) async {
+    // استخدام المزود مع SyncQueue
+    final success = await deleteExpiryRecord(ref, item.expiry.id);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? 'تم إزالة تتبع الصلاحية' : 'خطأ في إزالة تتبع الصلاحية'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
 
@@ -638,61 +591,27 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   }
 
   Future<void> _addExpiry() async {
-    try {
-      final db = getIt<AppDatabase>();
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null || _selectedProductId == null || _selectedExpiryDate == null) return;
+    if (_selectedProductId == null || _selectedExpiryDate == null) return;
 
-      final id =
-          'exp_${DateTime.now().millisecondsSinceEpoch}_$_selectedProductId';
-      final quantity = int.tryParse(_quantityController.text) ?? 1;
+    final quantity = int.tryParse(_quantityController.text) ?? 1;
 
-      await db.into(db.productExpiryTable).insert(
-            ProductExpiryTableCompanion.insert(
-              id: id,
-              productId: _selectedProductId!,
-              storeId: storeId,
-              batchNumber: Value(_batchController.text.isEmpty
-                  ? null
-                  : _batchController.text),
-              expiryDate: _selectedExpiryDate!,
-              quantity: quantity,
-              notes: Value(_notesController.text.isEmpty
-                  ? null
-                  : _notesController.text),
-              createdAt: DateTime.now(),
-            ),
-          );
+    // استخدام المزود مع SyncQueue
+    final result = await addExpiryRecord(
+      ref,
+      productId: _selectedProductId!,
+      expiryDate: _selectedExpiryDate!,
+      quantity: quantity,
+      batchNumber: _batchController.text.isEmpty ? null : _batchController.text,
+      notes: _notesController.text.isEmpty ? null : _notesController.text,
+    );
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إضافة تتبع الصلاحية بنجاح'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        _loadData();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result != null ? 'تم إضافة تتبع الصلاحية بنجاح' : 'خطأ في إضافة تتبع الصلاحية'),
+          backgroundColor: result != null ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
-}
-
-/// Data model combining expiry record with product name
-class _ExpiryItemData {
-  final ProductExpiryTableData expiry;
-  final String productName;
-
-  const _ExpiryItemData({
-    required this.expiry,
-    required this.productName,
-  });
 }

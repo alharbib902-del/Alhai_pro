@@ -447,7 +447,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             DropdownMenuItem(value: '7', child: Text(l10n.sevenDays)),
             DropdownMenuItem(value: '14', child: Text(l10n.fourteenDays)),
             DropdownMenuItem(value: '30', child: Text(l10n.thirtyDays)),
-            DropdownMenuItem(value: '45', child: Text('45 يوم')),
+            const DropdownMenuItem(value: '45', child: Text('45 يوم')),
             DropdownMenuItem(value: '60', child: Text(l10n.sixtyDays)),
           ],
           onChanged: (value) {
@@ -756,28 +756,28 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     final sanitizedNotes = InputSanitizer.sanitize(_notesController.text);
 
     try {
-      final db = getIt<AppDatabase>();
       if (widget.isEditing) {
-        // Update existing supplier
+        // تحديث مورد موجود عبر المزود (يشمل SyncQueue)
+        final db = getIt<AppDatabase>();
         final existing = await db.suppliersDao.getSupplierById(widget.supplierId!);
         if (existing != null) {
-          await db.suppliersDao.updateSupplier(existing.copyWith(
-            name: sanitizedName,
-            phone: Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
-            email: Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
-            address: Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
-            taxNumber: Value(sanitizedVat.isEmpty ? null : sanitizedVat),
-            notes: Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
-            paymentTerms: Value(_paymentTerms),
-            isActive: _isActive,
-            updatedAt: Value(DateTime.now()),
-          ));
-          ref.invalidate(suppliersListProvider);
-          ref.invalidate(activeSuppliersProvider);
-          ref.invalidate(supplierDetailProvider(widget.supplierId!));
+          await updateSupplier(
+            ref,
+            supplier: existing.copyWith(
+              name: sanitizedName,
+              phone: Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
+              email: Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
+              address: Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
+              taxNumber: Value(sanitizedVat.isEmpty ? null : sanitizedVat),
+              notes: Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
+              paymentTerms: Value(_paymentTerms),
+              isActive: _isActive,
+              updatedAt: Value(DateTime.now()),
+            ),
+          );
         }
       } else {
-        // Create new supplier
+        // إنشاء مورد جديد عبر المزود (يشمل SyncQueue)
         await addSupplier(
           ref,
           name: sanitizedName,

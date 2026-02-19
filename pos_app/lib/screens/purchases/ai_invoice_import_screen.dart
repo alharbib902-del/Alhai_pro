@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
@@ -20,6 +21,7 @@ class AiInvoiceImportScreen extends ConsumerStatefulWidget {
 class _AiInvoiceImportScreenState
     extends ConsumerState<AiInvoiceImportScreen> {
 
+  final _picker = ImagePicker();
   bool _isProcessing = false;
   String? _imagePath;
   @override
@@ -177,13 +179,23 @@ class _AiInvoiceImportScreenState
                       : AppColors.border,
                 ),
               ),
-              child: Center(
-                child: Icon(Icons.image,
-                    size: 100,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : AppColors.textTertiary),
-              ),
+              child: _imagePath != null && File(_imagePath!).existsSync()
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.file(
+                        File(_imagePath!),
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                    )
+                  : Center(
+                      child: Icon(Icons.image,
+                          size: 100,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : AppColors.textTertiary),
+                    ),
             ),
           ),
         ),
@@ -276,14 +288,48 @@ class _AiInvoiceImportScreenState
     );
   }
 
-  void _captureImage() {
-    // TODO: Camera capture
-    setState(() => _imagePath = 'captured');
+  Future<void> _captureImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+        maxWidth: 2000,
+      );
+      if (image != null && mounted) {
+        setState(() => _imagePath = image.path);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل في التقاط الصورة: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
-  void _pickFromGallery() {
-    // TODO: Gallery picker
-    setState(() => _imagePath = 'picked');
+  Future<void> _pickFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+        maxWidth: 2000,
+      );
+      if (image != null && mounted) {
+        setState(() => _imagePath = image.path);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل في اختيار الصورة: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   void _processImage() async {

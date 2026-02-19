@@ -1,87 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:drift/drift.dart' show Value;
-import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
-import '../../di/injection.dart';
-import '../../providers/products_providers.dart';
+import '../../providers/marketing_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 
-/// Discounts Screen
-class DiscountsScreen extends ConsumerStatefulWidget {
+/// Discounts Screen - شاشة الخصومات
+class DiscountsScreen extends ConsumerWidget {
   const DiscountsScreen({super.key});
 
   @override
-  ConsumerState<DiscountsScreen> createState() => _DiscountsScreenState();
-}
-
-class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
-
-  List<DiscountsTableData> _discounts = [];
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() { _isLoading = true; _error = null; });
-    try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-      final db = getIt<AppDatabase>();
-      final results = await db.discountsDao.getAllDiscounts(storeId);
-      if (mounted) {
-        setState(() {
-          _discounts = results;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() { _isLoading = false; _error = e.toString(); });
-    }
-  }
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final discountsAsync = ref.watch(discountsListProvider);
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.discountsTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.cashCustomer,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _error != null
-                      ? AppErrorState.general(message: _error, onRetry: _loadData)
-                      : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                        ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.discountsTitle,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: discountsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => AppErrorState.general(
+              message: error.toString(),
+              onRetry: () => ref.invalidate(discountsListProvider),
+            ),
+            data: (discounts) => SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _DiscountsContent(
+                discounts: discounts,
+                isWideScreen: isWideScreen,
+                isMediumScreen: isMediumScreen,
+                isDark: isDark,
+                l10n: l10n,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final active = _discounts.where((d) => d.isActive).length;
+}
+
+class _DiscountsContent extends ConsumerWidget {
+  final List<DiscountsTableData> discounts;
+  final bool isWideScreen;
+  final bool isMediumScreen;
+  final bool isDark;
+  final AppLocalizations l10n;
+
+  const _DiscountsContent({
+    required this.discounts,
+    required this.isWideScreen,
+    required this.isMediumScreen,
+    required this.isDark,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final active = discounts.where((d) => d.isActive).length;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -98,7 +91,7 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
             ),
             FilledButton.icon(
-              onPressed: _addDiscount,
+              onPressed: () => _showAddDialog(context, ref),
               icon: const Icon(Icons.add, size: 18),
               label: Text(l10n.newDiscount),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
@@ -110,20 +103,20 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
         // Stats cards
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${_discounts.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${discounts.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
             Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '$active', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.pause_circle, l10n.stopped, '${_discounts.length - active}', AppColors.textSecondary, isDark)),
+            Expanded(child: _buildStatCard(Icons.pause_circle, l10n.stopped, '${discounts.length - active}', AppColors.textSecondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
 
         // Discounts list
-        if (_discounts.isEmpty)
+        if (discounts.isEmpty)
           AppEmptyState.noOffers()
         else
-        ..._discounts.map((discount) => Container(
+        ...discounts.map((discount) => Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: !discount.isActive ? (isDark ? const Color(0xFF1E293B).withValues(alpha: 0.5) : Colors.grey.shade100) : cardColor,
@@ -160,12 +153,12 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
                     ),
                     Switch(
                       value: discount.isActive,
-                      onChanged: (v) => _toggleActive(discount, v),
+                      onChanged: (v) => _toggleActive(ref, discount, v),
                       activeThumbColor: AppColors.primary,
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
-                      onPressed: () => _deleteDiscount(discount),
+                      onPressed: () => _deleteDiscount(ref, discount),
                     ),
                   ],
                 ),
@@ -211,12 +204,13 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
 
   String _formatDate(DateTime? d) => d != null ? '${d.day}/${d.month}' : '-';
 
-  Future<void> _toggleActive(DiscountsTableData discount, bool value) async {
+  /// تبديل حالة النشاط مع مزامنة
+  Future<void> _toggleActive(WidgetRef ref, DiscountsTableData discount, bool value) async {
     try {
-      final db = getIt<AppDatabase>();
       final updated = DiscountsTableData(
         id: discount.id,
         storeId: discount.storeId,
+        orgId: discount.orgId,
         name: discount.name,
         nameEn: discount.nameEn,
         type: discount.type,
@@ -233,28 +227,26 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
         updatedAt: DateTime.now(),
         syncedAt: discount.syncedAt,
       );
-      await db.discountsDao.updateDiscount(updated);
-      await _loadData();
+      await updateDiscount(ref, updated);
     } catch (e) {
       debugPrint('Error toggling discount: $e');
     }
   }
 
-  Future<void> _deleteDiscount(DiscountsTableData discount) async {
+  /// حذف خصم مع مزامنة
+  Future<void> _deleteDiscount(WidgetRef ref, DiscountsTableData discount) async {
     try {
-      final db = getIt<AppDatabase>();
-      await db.discountsDao.deleteDiscount(discount.id);
-      await _loadData();
+      await deleteDiscount(ref, discount.id);
     } catch (e) {
       debugPrint('Error deleting discount: $e');
     }
   }
 
-  void _addDiscount() {
+  /// عرض نافذة إضافة خصم جديد
+  void _showAddDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     final valueController = TextEditingController();
     String type = 'percentage';
-    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -295,29 +287,12 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
               onPressed: () async {
                 if (nameController.text.isNotEmpty && valueController.text.isNotEmpty) {
                   try {
-                    final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-                    final db = getIt<AppDatabase>();
-                    final now = DateTime.now();
-                    final companion = DiscountsTableCompanion(
-                      id: Value(const Uuid().v4()),
-                      storeId: Value(storeId),
-                      name: Value(nameController.text),
-                      nameEn: Value(nameController.text),
-                      type: Value(type),
-                      value: Value(double.tryParse(valueController.text) ?? 0),
-                      minPurchase: const Value(0),
-                      maxDiscount: const Value(null),
-                      appliesTo: const Value('all'),
-                      productIds: const Value(null),
-                      categoryIds: const Value(null),
-                      startDate: Value(now),
-                      endDate: Value(now.add(const Duration(days: 30))),
-                      isActive: const Value(true),
-                      createdAt: Value(now),
-                      updatedAt: Value(now),
+                    await addDiscount(
+                      ref,
+                      name: nameController.text,
+                      type: type,
+                      value: double.tryParse(valueController.text) ?? 0,
                     );
-                    await db.discountsDao.insertDiscount(companion);
-                    await _loadData();
                   } catch (e) {
                     debugPrint('Error adding discount: $e');
                   }

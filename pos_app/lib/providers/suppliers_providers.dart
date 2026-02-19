@@ -4,12 +4,14 @@
 library;
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
 import 'products_providers.dart';
+import 'sync_providers.dart';
 
 const _uuid = Uuid();
 
@@ -48,7 +50,7 @@ final supplierSearchProvider = FutureProvider.autoDispose
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null || query.isEmpty) return [];
   final db = getIt<AppDatabase>();
-  return db.suppliersDao.searchSuppliers(storeId, query);
+  return db.suppliersDao.searchSuppliers(query, storeId);
 });
 
 // ============================================================================
@@ -69,8 +71,10 @@ Future<void> addSupplier(
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null) return;
   final db = getIt<AppDatabase>();
+  final id = _uuid.v4();
+
   await db.suppliersDao.insertSupplier(SuppliersTableCompanion(
-    id: Value(_uuid.v4()),
+    id: Value(id),
     storeId: Value(storeId),
     name: Value(name),
     phone: Value(phone),
@@ -83,14 +87,83 @@ Future<void> addSupplier(
     balance: const Value(0.0),
     createdAt: Value(DateTime.now()),
   ));
+
+  // إضافة للطابور المحلي للمزامنة لاحقاً
+  try {
+    await ref.read(syncServiceProvider).enqueueCreate(
+      tableName: 'suppliers',
+      recordId: id,
+      data: {
+        'id': id,
+        'store_id': storeId,
+        'name': name,
+        'phone': phone,
+        'email': email,
+        'address': address,
+        'city': city,
+        'tax_number': taxNumber,
+        'notes': notes,
+        'is_active': true,
+        'balance': 0.0,
+      },
+    );
+  } catch (e) {
+    debugPrint('فشل إضافة المورد لطابور المزامنة: $e');
+  }
+
   ref.invalidate(suppliersListProvider);
   ref.invalidate(activeSuppliersProvider);
+}
+
+/// تحديث مورد موجود
+Future<void> updateSupplier(
+  WidgetRef ref, {
+  required SuppliersTableData supplier,
+}) async {
+  final db = getIt<AppDatabase>();
+  await db.suppliersDao.updateSupplier(supplier);
+
+  // إضافة عملية التحديث لطابور المزامنة
+  try {
+    await ref.read(syncServiceProvider).enqueueUpdate(
+      tableName: 'suppliers',
+      recordId: supplier.id,
+      changes: {
+        'id': supplier.id,
+        'name': supplier.name,
+        'phone': supplier.phone,
+        'email': supplier.email,
+        'address': supplier.address,
+        'tax_number': supplier.taxNumber,
+        'notes': supplier.notes,
+        'is_active': supplier.isActive,
+        'balance': supplier.balance,
+      },
+    );
+  } catch (e) {
+    debugPrint('فشل إضافة تحديث المورد لطابور المزامنة: $e');
+  }
+
+  ref.invalidate(suppliersListProvider);
+  ref.invalidate(activeSuppliersProvider);
+  ref.invalidate(supplierDetailProvider(supplier.id));
 }
 
 /// حذف مورد
 Future<void> deleteSupplier(WidgetRef ref, String id) async {
   final db = getIt<AppDatabase>();
   await db.suppliersDao.deleteSupplier(id);
+
+  // إضافة عملية الحذف لطابور المزامنة
+  try {
+    await ref.read(syncServiceProvider).enqueueDelete(
+      tableName: 'suppliers',
+      recordId: id,
+    );
+  } catch (e) {
+    debugPrint('فشل إضافة حذف المورد لطابور المزامنة: $e');
+  }
+
   ref.invalidate(suppliersListProvider);
   ref.invalidate(activeSuppliersProvider);
 }

@@ -57,7 +57,8 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
     )).toList();
 
     final filtered = _selectedCategory == 'all' ? inventory : inventory.where((i) => i.category == _selectedCategory).toList();
-    final lowStock = inventory.where((i) => i.stock < i.minStock).length;
+    final outOfStock = inventory.where((i) => i.stock <= 0).length;
+    final lowStock = inventory.where((i) => i.stock > 0 && i.stock <= i.minStock).length;
     final totalValue = inventory.fold(0.0, (sum, i) => sum + (i.cost * i.stock));
     final totalItems = inventory.fold(0, (sum, i) => sum + i.stock);
 
@@ -81,6 +82,8 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                 _StatCard(icon: Icons.shopping_bag, label: 'إجمالي الوحدات', value: '$totalItems', color: Colors.green),
                 const SizedBox(width: 12),
                 _StatCard(icon: Icons.warning, label: 'منخفض', value: '$lowStock', color: Colors.orange),
+                const SizedBox(width: 12),
+                _StatCard(icon: Icons.remove_shopping_cart, label: 'نافد', value: '$outOfStock', color: Colors.red),
               ],
             ),
           ),

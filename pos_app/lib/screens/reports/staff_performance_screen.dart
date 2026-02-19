@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
@@ -24,23 +25,88 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
     _loadStaff();
   }
 
+  /// حساب الفترة الزمنية المحددة
+  ({DateTime start, DateTime end}) _getDateRange() {
+    final now = DateTime.now();
+    switch (_period) {
+      case 'today':
+        return (start: DateTime(now.year, now.month, now.day), end: now);
+      case 'week':
+        return (start: now.subtract(const Duration(days: 7)), end: now);
+      case 'month':
+        return (start: DateTime(now.year, now.month, 1), end: now);
+      default:
+        return (start: DateTime(now.year, now.month, now.day), end: now);
+    }
+  }
+
   Future<void> _loadStaff() async {
     try {
+      setState(() => _isLoading = true);
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
       final users = await db.usersDao.getAllUsers(storeId);
 
-      _staff = users.map((u) => _StaffData(
-        name: u.name,
-        role: u.role,
-        sales: 0,
-        transactions: 0,
-        avgTicket: 0,
-      )).toList();
+      final dateRange = _getDateRange();
 
-      setState(() => _isLoading = false);
+      // استعلام المبيعات مجمعة حسب الكاشير
+      final staffSalesResults = await db.customSelect(
+        '''SELECT
+             cashier_id,
+             COUNT(*) as sale_count,
+             COALESCE(SUM(total), 0) as total_sales,
+             COALESCE(AVG(total), 0) as avg_ticket
+           FROM sales
+           WHERE store_id = ?
+             AND status = 'completed'
+             AND created_at >= ?
+             AND created_at < ?
+           GROUP BY cashier_id
+           ORDER BY total_sales DESC''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(dateRange.start),
+          Variable.withDateTime(dateRange.end),
+        ],
+      ).get();
+
+      // تحويل النتائج إلى Map للبحث السريع
+      final salesMap = <String, ({int count, double total, double avg})>{};
+      for (final row in staffSalesResults) {
+        final cashierId = row.data['cashier_id'] as String;
+        final count = row.data['sale_count'] as int? ?? 0;
+        final total = (row.data['total_sales'] is int)
+            ? (row.data['total_sales'] as int).toDouble()
+            : row.data['total_sales'] as double? ?? 0.0;
+        final avg = (row.data['avg_ticket'] is int)
+            ? (row.data['avg_ticket'] as int).toDouble()
+            : row.data['avg_ticket'] as double? ?? 0.0;
+        salesMap[cashierId] = (count: count, total: total, avg: avg);
+      }
+
+      // دمج بيانات المستخدمين مع بيانات المبيعات
+      final staffList = users.map((u) {
+        final sales = salesMap[u.id];
+        return _StaffData(
+          name: u.name,
+          role: u.role,
+          sales: sales?.total ?? 0,
+          transactions: sales?.count ?? 0,
+          avgTicket: (sales?.avg ?? 0).toInt(),
+        );
+      }).toList();
+
+      // ترتيب حسب إجمالي المبيعات تنازلياً
+      staffList.sort((a, b) => b.sales.compareTo(a.sales));
+
+      if (mounted) {
+        setState(() {
+          _staff = staffList;
+          _isLoading = false;
+        });
+      }
     } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -57,7 +123,10 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
         title: const Text('أداء الموظفين'),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) => setState(() => _period = v),
+            onSelected: (v) {
+              setState(() => _period = v);
+              _loadStaff();
+            },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'today', child: Text('اليوم')),
               const PopupMenuItem(value: 'week', child: Text('الأسبوع')),
@@ -75,7 +144,9 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
           ),
         ],
       ),
-      body: ListView(
+      body: _staff.isEmpty
+          ? const Center(child: Text('لا توجد بيانات للفترة المحددة'))
+          : ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Leader board
@@ -108,7 +179,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Detailed stats
           ...List.generate(_staff.length, (index) {
             final staff = _staff[index];
@@ -143,16 +214,9 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                           color: Colors.green,
                         ),
                         const SizedBox(height: 12),
-                        const _StatRow(
-                          icon: Icons.schedule,
-                          label: 'ساعات العمل',
-                          value: '8 ساعات',
-                          color: Colors.orange,
-                        ),
-                        const SizedBox(height: 12),
                         _StatRow(
                           icon: Icons.speed,
-                          label: 'المبيعات/ساعة',
+                          label: 'المبيعات/ساعة (تقديري)',
                           value: '${(staff.sales / 8).toStringAsFixed(0)} ر.س',
                           color: Colors.purple,
                         ),
@@ -163,7 +227,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
               ),
             );
           }),
-          
+
           // Comparison chart
           Card(
             child: Padding(
@@ -217,7 +281,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
       ),
     );
   }
-  
+
   String _getPeriodName() {
     switch (_period) {
       case 'today': return 'اليوم';
@@ -234,7 +298,7 @@ class _StaffData {
   final double sales;
   final int transactions;
   final int avgTicket;
-  
+
   _StaffData({
     required this.name,
     required this.role,
@@ -249,7 +313,7 @@ class _LeaderItem extends StatelessWidget {
   final String name;
   final double sales;
   final Color color;
-  
+
   const _LeaderItem({
     required this.rank,
     required this.name,
@@ -294,7 +358,7 @@ class _StatRow extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  
+
   const _StatRow({
     required this.icon,
     required this.label,

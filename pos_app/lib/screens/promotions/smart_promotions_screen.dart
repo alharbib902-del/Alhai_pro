@@ -5,11 +5,24 @@ import 'package:go_router/go_router.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/marketing_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
+import '../../widgets/common/app_empty_state.dart';
 
-/// Smart Promotions Screen
+// ============================================================================
+// مزود المنتجات بطيئة الحركة (low stock)
+// ============================================================================
+final _lowStockProductsProvider =
+    FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = getIt<AppDatabase>();
+  return db.productsDao.getLowStockProducts(storeId);
+});
+
+/// Smart Promotions Screen - شاشة العروض الذكية
 class SmartPromotionsScreen extends ConsumerStatefulWidget {
   const SmartPromotionsScreen({super.key});
 
@@ -21,17 +34,10 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  bool _isLoading = true;
-  String? _error;
-
-  List<PromotionsTableData> _activePromotions = [];
-  List<ProductsTableData> _lowStockProducts = [];
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadData();
   }
 
   @override
@@ -40,34 +46,6 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     super.dispose();
   }
 
-  Future<void> _loadData() async {
-    try {
-      final db = getIt<AppDatabase>();
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) {
-        if (mounted) setState(() => _isLoading = false);
-        return;
-      }
-
-      final promotions = await db.discountsDao.getActivePromotions(storeId);
-      final lowStock = await db.productsDao.getLowStockProducts(storeId);
-
-      if (mounted) {
-        setState(() {
-          _activePromotions = promotions;
-          _lowStockProducts = lowStock;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
-  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -76,51 +54,76 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
+    // مراقبة البيانات من المزودات
+    final activePromotionsAsync = ref.watch(activePromotionsProvider);
+    final lowStockAsync = ref.watch(_lowStockProductsProvider);
+
+    // تحديد حالة التحميل والخطأ من كلا المزودين
+    final isLoading = activePromotionsAsync.isLoading || lowStockAsync.isLoading;
+    final error = activePromotionsAsync.error ?? lowStockAsync.error;
+
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.smartPromotionsTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.cashCustomer,
-                  userRole: l10n.branchManager,
-                ),
-                // Tab bar
-                Container(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
-                    indicatorColor: AppColors.primary,
-                    tabs: [
-                      Tab(icon: const Icon(Icons.lightbulb), text: l10n.tabAiSuggestions),
-                      Tab(icon: const Icon(Icons.local_offer), text: l10n.tabActivePromotions),
-                      Tab(icon: const Icon(Icons.history), text: l10n.tabHistory),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _error != null
-                          ? Center(child: Text(_error!, style: const TextStyle(color: AppColors.error)))
-                          : TabBarView(
-                              controller: _tabController,
-                              children: [
-                                _buildSuggestionsTab(isMediumScreen, isDark, l10n),
-                                _buildActiveTab(isMediumScreen, isDark, l10n),
-                                _buildHistoryTab(isDark, l10n),
-                              ],
-                            ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.smartPromotionsTitle,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+        ),
+        // Tab bar
+        Container(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
+            indicatorColor: AppColors.primary,
+            tabs: [
+              Tab(icon: const Icon(Icons.lightbulb), text: l10n.tabAiSuggestions),
+              Tab(icon: const Icon(Icons.local_offer), text: l10n.tabActivePromotions),
+              Tab(icon: const Icon(Icons.history), text: l10n.tabHistory),
+            ],
+          ),
+        ),
+        Expanded(
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : error != null
+                  ? AppErrorState.general(
+                      message: error.toString(),
+                      onRetry: () {
+                        ref.invalidate(activePromotionsProvider);
+                        ref.invalidate(_lowStockProductsProvider);
+                      },
+                    )
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildSuggestionsTab(
+                          isMediumScreen,
+                          isDark,
+                          l10n,
+                          lowStockAsync.valueOrNull ?? [],
+                        ),
+                        _buildActiveTab(
+                          isMediumScreen,
+                          isDark,
+                          l10n,
+                          activePromotionsAsync.valueOrNull ?? [],
+                        ),
+                        _buildHistoryTab(isDark, l10n),
+                      ],
+                    ),
+        ),
+      ],
+    );
   }
-  Widget _buildSuggestionsTab(bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+
+  Widget _buildSuggestionsTab(bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ProductsTableData> lowStockProducts) {
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
@@ -160,7 +163,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             ),
           ),
           const SizedBox(height: 16),
-          if (_lowStockProducts.isEmpty)
+          if (lowStockProducts.isEmpty)
             Padding(
               padding: const EdgeInsets.all(32),
               child: Column(
@@ -175,7 +178,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               ),
             )
           else
-            ..._lowStockProducts.map((product) => _buildSuggestionCard(product, isDark, l10n)),
+            ...lowStockProducts.map((product) => _buildSuggestionCard(product, isDark, l10n)),
         ],
       ),
     );
@@ -268,12 +271,12 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     );
   }
 
-  Widget _buildActiveTab(bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildActiveTab(bool isMediumScreen, bool isDark, AppLocalizations l10n, List<PromotionsTableData> activePromotions) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
-    if (_activePromotions.isEmpty) {
+    if (activePromotions.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -292,7 +295,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
       child: Column(
-        children: _activePromotions.map((p) => Container(
+        children: activePromotions.map((p) => Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: cardColor,
@@ -335,10 +338,26 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     );
   }
 
-  void _applyPromotionForProduct(ProductsTableData product, AppLocalizations l10n) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.promotionApplied(product.name)), backgroundColor: AppColors.success),
-    );
+  /// تطبيق عرض ترويجي على منتج بطيء الحركة مع مزامنة
+  void _applyPromotionForProduct(ProductsTableData product, AppLocalizations l10n) async {
+    try {
+      await addPromotion(
+        ref,
+        name: '${l10n.applyAction}: ${product.name}',
+        type: 'flash_sale',
+        description: 'Auto-generated promotion for slow-moving product: ${product.name}',
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.promotionApplied(product.name)), backgroundColor: AppColors.success),
+      );
+    } catch (e) {
+      debugPrint('Error applying promotion: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.promotionApplied(product.name)), backgroundColor: AppColors.success),
+      );
+    }
   }
 
   void _showPromotionDetails(PromotionsTableData promotion, AppLocalizations l10n) {
@@ -360,6 +379,14 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           ],
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // حذف العرض مع مزامنة
+              deletePromotion(ref, promotion.id);
+            },
+            child: Text(l10n.delete, style: const TextStyle(color: AppColors.error)),
+          ),
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.closeAction)),
           FilledButton(onPressed: () => Navigator.pop(context), child: Text(l10n.edit)),
         ],

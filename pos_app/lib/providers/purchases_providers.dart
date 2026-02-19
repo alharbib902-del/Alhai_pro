@@ -4,12 +4,14 @@
 library;
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
 import 'products_providers.dart';
+import 'sync_providers.dart';
 
 const _uuid = Uuid();
 
@@ -99,14 +101,53 @@ Future<String> createPurchase(
     await db.purchasesDao.insertPurchaseItems(items);
   }
 
+  // إضافة عملية الإنشاء لطابور المزامنة
+  try {
+    await ref.read(syncServiceProvider).enqueueCreate(
+      tableName: 'purchases',
+      recordId: id,
+      data: {
+        'id': id,
+        'store_id': storeId,
+        'supplier_id': supplierId,
+        'supplier_name': supplierName,
+        'purchase_number': purchaseNumber,
+        'status': 'draft',
+        'subtotal': subtotal,
+        'tax': tax,
+        'discount': discount,
+        'total': total,
+        'notes': notes,
+      },
+    );
+  } catch (e) {
+    debugPrint('فشل إضافة المشتريات لطابور المزامنة: $e');
+  }
+
   ref.invalidate(purchasesListProvider);
   return id;
 }
 
-/// استلام المشتريات
+/// استلام المشتريات - تحديث حالة الشراء للمستلم
 Future<void> receivePurchase(WidgetRef ref, String id) async {
   final db = getIt<AppDatabase>();
   await db.purchasesDao.receivePurchase(id);
+
+  // إضافة عملية الاستلام لطابور المزامنة
+  try {
+    await ref.read(syncServiceProvider).enqueueUpdate(
+      tableName: 'purchases',
+      recordId: id,
+      changes: {
+        'id': id,
+        'status': 'received',
+        'received_at': DateTime.now().toIso8601String(),
+      },
+    );
+  } catch (e) {
+    debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
+  }
+
   ref.invalidate(purchasesListProvider);
   ref.invalidate(purchaseDetailProvider(id));
 }

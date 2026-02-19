@@ -1,84 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:drift/drift.dart' show Value;
-import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
-import '../../di/injection.dart';
-import '../../providers/products_providers.dart';
+import '../../providers/marketing_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 
-/// Special Offers Screen
-class SpecialOffersScreen extends ConsumerStatefulWidget {
+/// Special Offers Screen - شاشة العروض الخاصة
+class SpecialOffersScreen extends ConsumerWidget {
   const SpecialOffersScreen({super.key});
 
   @override
-  ConsumerState<SpecialOffersScreen> createState() => _SpecialOffersScreenState();
-}
-
-class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
-
-  List<PromotionsTableData> _promotions = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-      final db = getIt<AppDatabase>();
-      final results = await db.discountsDao.getAllPromotions(storeId);
-      if (mounted) {
-        setState(() {
-          _promotions = results;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-      debugPrint('Error loading promotions: $e');
-    }
-  }
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final promotionsAsync = ref.watch(promotionsListProvider);
 
     return Column(
-              children: [
-                AppHeader(
-                  title: l10n.specialOffersTitle,
-                  onMenuTap: isWideScreen
-                      ? null
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: l10n.cashCustomer,
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                        ),
-                ),
-              ],
-            );
+      children: [
+        AppHeader(
+          title: l10n.specialOffersTitle,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: promotionsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => AppErrorState.general(
+              message: error.toString(),
+              onRetry: () => ref.invalidate(promotionsListProvider),
+            ),
+            data: (promotions) => SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _OffersContent(
+                promotions: promotions,
+                isWideScreen: isWideScreen,
+                isMediumScreen: isMediumScreen,
+                isDark: isDark,
+                l10n: l10n,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+}
+
+class _OffersContent extends ConsumerWidget {
+  final List<PromotionsTableData> promotions;
+  final bool isWideScreen;
+  final bool isMediumScreen;
+  final bool isDark;
+  final AppLocalizations l10n;
+
+  const _OffersContent({
+    required this.promotions,
+    required this.isWideScreen,
+    required this.isMediumScreen,
+    required this.isDark,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -92,7 +87,7 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
           children: [
             Text(l10n.manageSpecialOffers, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
             FilledButton.icon(
-              onPressed: _addPromotion,
+              onPressed: () => _showAddPromotionDialog(context, ref),
               icon: const Icon(Icons.add, size: 18),
               label: Text(l10n.newOffer),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
@@ -104,17 +99,20 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
         // Stats
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${_promotions.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${promotions.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${_promotions.where((p) => p.isActive).length}', AppColors.success, isDark)),
+            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${promotions.where((p) => p.isActive).length}', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.timer, l10n.expiringSoon, '${_promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}', AppColors.secondary, isDark)),
+            Expanded(child: _buildStatCard(Icons.timer, l10n.expiringSoon, '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}', AppColors.secondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
 
         // Promotions list
-        ..._promotions.map((promotion) {
+        if (promotions.isEmpty)
+          AppEmptyState.noOffers()
+        else
+        ...promotions.map((promotion) {
           final isExpired = promotion.endDate.isBefore(DateTime.now());
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
@@ -152,10 +150,10 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
               ),
               trailing: Switch(
                 value: promotion.isActive && !isExpired,
-                onChanged: isExpired ? null : (v) => _toggleActive(promotion, v),
+                onChanged: isExpired ? null : (v) => _toggleActive(ref, promotion, v),
                 activeThumbColor: AppColors.primary,
               ),
-              onTap: () => _showPromotionDetails(promotion),
+              onTap: () => _showPromotionDetails(context, ref, promotion),
             ),
           );
         }),
@@ -203,12 +201,13 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
     }
   }
 
-  Future<void> _toggleActive(PromotionsTableData promotion, bool value) async {
+  /// تبديل حالة نشاط العرض مع مزامنة
+  Future<void> _toggleActive(WidgetRef ref, PromotionsTableData promotion, bool value) async {
     try {
-      final db = getIt<AppDatabase>();
       final updated = PromotionsTableData(
         id: promotion.id,
         storeId: promotion.storeId,
+        orgId: promotion.orgId,
         name: promotion.name,
         nameEn: promotion.nameEn,
         description: promotion.description,
@@ -221,27 +220,25 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
         updatedAt: DateTime.now(),
         syncedAt: promotion.syncedAt,
       );
-      await db.discountsDao.updatePromotion(updated);
-      await _loadData();
+      await updatePromotion(ref, updated);
     } catch (e) {
       debugPrint('Error toggling promotion: $e');
     }
   }
 
-  Future<void> _deletePromotion(PromotionsTableData promotion) async {
+  /// حذف عرض ترويجي مع مزامنة
+  Future<void> _deletePromotion(WidgetRef ref, PromotionsTableData promotion) async {
     try {
-      final db = getIt<AppDatabase>();
-      await db.discountsDao.deletePromotion(promotion.id);
-      await _loadData();
+      await deletePromotion(ref, promotion.id);
     } catch (e) {
       debugPrint('Error deleting promotion: $e');
     }
   }
 
-  void _addPromotion() {
+  /// عرض نافذة إضافة عرض ترويجي جديد
+  void _showAddPromotionDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     String type = 'flash_sale';
-    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -273,25 +270,11 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
               onPressed: () async {
                 if (nameController.text.isNotEmpty) {
                   try {
-                    final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
-                    final db = getIt<AppDatabase>();
-                    final now = DateTime.now();
-                    final companion = PromotionsTableCompanion(
-                      id: Value(const Uuid().v4()),
-                      storeId: Value(storeId),
-                      name: Value(nameController.text),
-                      nameEn: Value(nameController.text),
-                      description: const Value(null),
-                      type: Value(type),
-                      rules: const Value('{}'),
-                      startDate: Value(now),
-                      endDate: Value(now.add(const Duration(days: 30))),
-                      isActive: const Value(true),
-                      createdAt: Value(now),
-                      updatedAt: Value(now),
+                    await addPromotion(
+                      ref,
+                      name: nameController.text,
+                      type: type,
                     );
-                    await db.discountsDao.insertPromotion(companion);
-                    await _loadData();
                   } catch (e) {
                     debugPrint('Error adding promotion: $e');
                   }
@@ -307,12 +290,12 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
     );
   }
 
-  void _showPromotionDetails(PromotionsTableData p) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+  /// عرض تفاصيل العرض الترويجي
+  void _showPromotionDetails(BuildContext context, WidgetRef ref, PromotionsTableData p) {
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -322,16 +305,16 @@ class _SpecialOffersScreenState extends ConsumerState<SpecialOffersScreen> {
             Row(children: [
               Icon(_getTypeIcon(p.type), size: 32, color: _getTypeColor(p.type)),
               const SizedBox(width: 12),
-              Expanded(child: Text(p.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary))),
+              Expanded(child: Text(p.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkTheme ? Colors.white : AppColors.textPrimary))),
             ]),
             const SizedBox(height: 16),
-            _DetailRow(label: l10n.offerType, value: _getTypeLabel(p, l10n), isDark: isDark),
-            _DetailRow(label: l10n.startDateLabel, value: '${p.startDate.day}/${p.startDate.month}/${p.startDate.year}', isDark: isDark),
-            _DetailRow(label: l10n.endDateLabel, value: '${p.endDate.day}/${p.endDate.month}/${p.endDate.year}', isDark: isDark),
-            _DetailRow(label: l10n.productsLabel, value: '0', isDark: isDark),
+            _DetailRow(label: l10n.offerType, value: _getTypeLabel(p, l10n), isDark: isDarkTheme),
+            _DetailRow(label: l10n.startDateLabel, value: '${p.startDate.day}/${p.startDate.month}/${p.startDate.year}', isDark: isDarkTheme),
+            _DetailRow(label: l10n.endDateLabel, value: '${p.endDate.day}/${p.endDate.month}/${p.endDate.year}', isDark: isDarkTheme),
+            _DetailRow(label: l10n.productsLabel, value: '0', isDark: isDarkTheme),
             const SizedBox(height: 16),
             Row(children: [
-              Expanded(child: OutlinedButton.icon(onPressed: () { Navigator.pop(context); _deletePromotion(p); }, icon: const Icon(Icons.delete, color: AppColors.error), label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)))),
+              Expanded(child: OutlinedButton.icon(onPressed: () { Navigator.pop(context); _deletePromotion(ref, p); }, icon: const Icon(Icons.delete, color: AppColors.error), label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)))),
               const SizedBox(width: 12),
               Expanded(child: FilledButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit), style: FilledButton.styleFrom(backgroundColor: AppColors.primary))),
             ]),

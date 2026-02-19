@@ -1,8 +1,10 @@
 /// شاشة تقرير أفضل المنتجات - Top Products Report Screen
 ///
 /// تقرير شامل لأداء المنتجات والمبيعات
+/// يستعلم من sale_items مع products للحصول على بيانات المبيعات الحقيقية
 library;
 
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
@@ -47,35 +49,85 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
   Future<void> _loadProducts() async {
     try {
+      setState(() => _isLoading = true);
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
-      final dbProducts = await db.productsDao.getAllProducts(storeId);
 
-      if (dbProducts.isEmpty) {
+      // استعلام المنتجات الأكثر مبيعاً من sale_items مع join على products و sales
+      final results = await db.customSelect(
+        '''SELECT
+             p.id,
+             p.name,
+             p.sku,
+             p.category_id,
+             p.price,
+             p.cost_price,
+             p.stock_qty,
+             COALESCE(SUM(si.qty), 0) as units_sold,
+             COALESCE(SUM(si.total), 0) as revenue,
+             COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as total_cost
+           FROM products p
+           LEFT JOIN sale_items si ON si.product_id = p.id
+           LEFT JOIN sales s ON s.id = si.sale_id
+             AND s.status = 'completed'
+             AND s.created_at >= ?
+             AND s.created_at < ?
+           WHERE p.store_id = ?
+             AND p.is_active = 1
+           GROUP BY p.id
+           ORDER BY revenue DESC''',
+        variables: [
+          Variable.withDateTime(_dateRange.start),
+          Variable.withDateTime(DateTime(_dateRange.end.year, _dateRange.end.month, _dateRange.end.day + 1)),
+          Variable.withString(storeId),
+        ],
+      ).get();
+
+      if (results.isEmpty) {
         setState(() => _isLoading = false);
         return;
       }
 
-      final mappedProducts = dbProducts.map((p) {
-        final cost = p.costPrice ?? 0.0;
-        final revenue = p.price * p.stockQty;
-        final profit = (p.price - cost) * p.stockQty;
+      final mappedProducts = results.map((row) {
+        final unitsSold = row.data['units_sold'] as int? ?? 0;
+        final revenue = (row.data['revenue'] is int)
+            ? (row.data['revenue'] as int).toDouble()
+            : row.data['revenue'] as double? ?? 0.0;
+        final totalCost = (row.data['total_cost'] is int)
+            ? (row.data['total_cost'] as int).toDouble()
+            : row.data['total_cost'] as double? ?? 0.0;
+        final profit = revenue - totalCost;
+        final price = (row.data['price'] is int)
+            ? (row.data['price'] as int).toDouble()
+            : row.data['price'] as double? ?? 0.0;
+        final stockQty = row.data['stock_qty'] as int? ?? 0;
+
+        // تحديد الاتجاه بناءً على الكمية المباعة
+        String trend;
+        if (unitsSold > 50) {
+          trend = 'up';
+        } else if (unitsSold > 10) {
+          trend = 'stable';
+        } else {
+          trend = 'down';
+        }
+
         return ProductReport(
-          id: p.id,
-          name: p.name,
-          sku: p.sku ?? '',
-          category: p.categoryId ?? '',
-          unitsSold: 0,
+          id: row.data['id'] as String,
+          name: row.data['name'] as String,
+          sku: row.data['sku'] as String? ?? '',
+          category: row.data['category_id'] as String? ?? '',
+          unitsSold: unitsSold,
           revenue: revenue,
           profit: profit,
-          avgPrice: p.price,
-          stockLevel: p.stockQty,
+          avgPrice: price,
+          stockLevel: stockQty,
           returnRate: 0,
-          trend: 'stable',
+          trend: trend,
         );
       }).toList();
 
-      // Extract unique categories
+      // استخراج الفئات الفريدة
       final cats = <String>{'all'};
       for (final p in mappedProducts) {
         if (p.category.isNotEmpty) cats.add(p.category);
@@ -98,7 +150,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   }
 
   List<ProductReport> get _filteredProducts {
-    var filtered = _products;
+    var filtered = List<ProductReport>.from(_products);
     if (_selectedCategory != 'all') {
       filtered =
           filtered.where((p) => p.category == _selectedCategory).toList();
@@ -197,7 +249,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
         // القائمة
         Expanded(
-          child: ListView.builder(
+          child: _filteredProducts.isEmpty
+              ? const Center(child: Text('لا توجد بيانات مبيعات للفترة المحددة'))
+              : ListView.builder(
             padding: const EdgeInsets.all(AppSizes.md),
             itemCount: _filteredProducts.length,
             itemBuilder: (context, index) {
@@ -348,25 +402,27 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                               color: AppColors.textMuted,
                             ),
                           ),
-                          const SizedBox(width: AppSizes.sm),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.grey100,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusSm),
-                            ),
-                            child: Text(
-                              product.category,
-                              style: AppTypography.labelSmall.copyWith(
-                                color: AppColors.textMuted,
-                                fontSize: 10,
+                          if (product.category.isNotEmpty) ...[
+                            const SizedBox(width: AppSizes.sm),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.grey100,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.radiusSm),
+                              ),
+                              child: Text(
+                                product.category,
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: AppColors.textMuted,
+                                  fontSize: 10,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ],
@@ -455,24 +511,25 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
-      if (!categoryStats.containsKey(product.category)) {
-        categoryStats[product.category] = CategoryStats(
-          name: product.category,
+      final catName = product.category.isEmpty ? 'غير مصنف' : product.category;
+      if (!categoryStats.containsKey(catName)) {
+        categoryStats[catName] = CategoryStats(
+          name: catName,
           productCount: 0,
           totalRevenue: 0,
           totalUnits: 0,
           totalProfit: 0,
         );
       }
-      categoryStats[product.category] = CategoryStats(
-        name: product.category,
-        productCount: categoryStats[product.category]!.productCount + 1,
+      categoryStats[catName] = CategoryStats(
+        name: catName,
+        productCount: categoryStats[catName]!.productCount + 1,
         totalRevenue:
-            categoryStats[product.category]!.totalRevenue + product.revenue,
+            categoryStats[catName]!.totalRevenue + product.revenue,
         totalUnits:
-            categoryStats[product.category]!.totalUnits + product.unitsSold,
+            categoryStats[catName]!.totalUnits + product.unitsSold,
         totalProfit:
-            categoryStats[product.category]!.totalProfit + product.profit,
+            categoryStats[catName]!.totalProfit + product.profit,
       );
     }
 
@@ -500,9 +557,15 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 ),
                 const SizedBox(height: AppSizes.lg),
 
+                if (totalRevenue == 0)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: Text('لا توجد إيرادات في هذه الفترة')),
+                  )
+                else
                 // Chart simulation
                 ...sortedCategories.map((cat) {
-                  final percentage = cat.totalRevenue / totalRevenue * 100;
+                  final percentage = totalRevenue > 0 ? cat.totalRevenue / totalRevenue * 100 : 0.0;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: AppSizes.md),
                     child: Column(
@@ -549,7 +612,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
   Widget _buildCategoryCard(CategoryStats category) {
     final categoryProducts =
-        _products.where((p) => p.category == category.name).toList();
+        _products.where((p) => (p.category.isEmpty ? 'غير مصنف' : p.category) == category.name).toList()
+          ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.md),
@@ -573,12 +637,12 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           ),
         ),
         subtitle: Text(
-          '${category.productCount} منتج • ${category.totalRevenue.toStringAsFixed(0)} ر.س',
+          '${category.productCount} منتج | ${category.totalUnits} وحدة | ${category.totalRevenue.toStringAsFixed(0)} ر.س',
           style: AppTypography.bodySmall.copyWith(
             color: AppColors.textMuted,
           ),
         ),
-        children: categoryProducts
+        children: categoryProducts.take(10)
             .map((p) => ListTile(
                   title: Text(p.name),
                   subtitle: Text('${p.unitsSold} وحدة'),
@@ -611,8 +675,8 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         _buildSlowMovingProducts(),
         const SizedBox(height: AppSizes.lg),
 
-        // توصيات
-        _buildRecommendations(),
+        // المنتجات منخفضة المخزون مع مبيعات عالية
+        _buildLowStockHighSales(),
       ],
     );
   }
@@ -621,7 +685,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     final totalRevenue = _products.fold(0.0, (sum, p) => sum + p.revenue);
     final totalUnits = _products.fold(0, (sum, p) => sum + p.unitsSold);
     final totalProfit = _products.fold(0.0, (sum, p) => sum + p.profit);
-    final avgMargin = totalProfit / totalRevenue * 100;
+    final avgMargin = totalRevenue > 0 ? totalProfit / totalRevenue * 100 : 0.0;
 
     return Column(
       children: [
@@ -633,7 +697,6 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 '${totalRevenue.toStringAsFixed(0)} ر.س',
                 Icons.attach_money,
                 AppColors.success,
-                '+15%',
               ),
             ),
             const SizedBox(width: AppSizes.md),
@@ -643,7 +706,6 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 totalUnits.toString(),
                 Icons.inventory,
                 AppColors.primary,
-                '+8%',
               ),
             ),
           ],
@@ -657,7 +719,6 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 '${totalProfit.toStringAsFixed(0)} ر.س',
                 Icons.trending_up,
                 AppColors.info,
-                '+12%',
               ),
             ),
             const SizedBox(width: AppSizes.md),
@@ -667,7 +728,6 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 '${avgMargin.toStringAsFixed(1)}%',
                 Icons.percent,
                 AppColors.warning,
-                '+2%',
               ),
             ),
           ],
@@ -681,7 +741,6 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     String value,
     IconData icon,
     Color color,
-    String change,
   ) {
     return Card(
       child: Padding(
@@ -689,44 +748,13 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSizes.sm),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-                  ),
-                  child: Icon(icon, color: color, size: 20),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.arrow_upward,
-                        size: 12,
-                        color: AppColors.success,
-                      ),
-                      Text(
-                        change,
-                        style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.success,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(AppSizes.sm),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+              ),
+              child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(height: AppSizes.md),
             Text(
@@ -748,6 +776,10 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   }
 
   Widget _buildPerformanceOverview() {
+    final upCount = _products.where((p) => p.trend == 'up').length;
+    final stableCount = _products.where((p) => p.trend == 'stable').length;
+    final downCount = _products.where((p) => p.trend == 'down').length;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -766,7 +798,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 Expanded(
                   child: _buildPerformanceIndicator(
                     'منتجات متصاعدة',
-                    '5',
+                    '$upCount',
                     Icons.trending_up,
                     AppColors.success,
                   ),
@@ -774,7 +806,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 Expanded(
                   child: _buildPerformanceIndicator(
                     'منتجات مستقرة',
-                    '2',
+                    '$stableCount',
                     Icons.trending_flat,
                     AppColors.warning,
                   ),
@@ -782,7 +814,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 Expanded(
                   child: _buildPerformanceIndicator(
                     'منتجات متراجعة',
-                    '1',
+                    '$downCount',
                     Icons.trending_down,
                     AppColors.error,
                   ),
@@ -830,8 +862,13 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
   }
 
   Widget _buildSlowMovingProducts() {
-    final slowMoving = _products.where((p) => p.unitsSold < 500).toList()
-      ..sort((a, b) => a.unitsSold.compareTo(b.unitsSold));
+    // المنتجات التي لم تُباع أو مبيعاتها منخفضة جداً
+    final slowMoving = _products.where((p) => p.unitsSold == 0 && p.stockLevel > 0).toList()
+      ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
+
+    if (slowMoving.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Card(
       child: Padding(
@@ -844,7 +881,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                 const Icon(Icons.warning_amber, color: AppColors.warning),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'منتجات بطيئة الحركة',
+                  'منتجات بدون مبيعات (${slowMoving.length})',
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -852,11 +889,11 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            ...slowMoving.take(3).map(
+            ...slowMoving.take(5).map(
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      '${product.unitsSold} وحدة • ${product.stockLevel} في المخزون',
+                      '${product.stockLevel} في المخزون',
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -883,7 +920,15 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     );
   }
 
-  Widget _buildRecommendations() {
+  /// منتجات مبيعاتها عالية ولكن مخزونها منخفض - تحتاج إعادة طلب
+  Widget _buildLowStockHighSales() {
+    final needsReorder = _products.where((p) => p.unitsSold > 10 && p.stockLevel < 20).toList()
+      ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
+
+    if (needsReorder.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -892,10 +937,10 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
           children: [
             Row(
               children: [
-                const Icon(Icons.lightbulb, color: AppColors.info),
+                const Icon(Icons.inventory_2, color: AppColors.error),
                 const SizedBox(width: AppSizes.sm),
                 Text(
-                  'توصيات AI',
+                  'تحتاج إعادة طلب (${needsReorder.length})',
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -903,70 +948,33 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            _buildRecommendationItem(
-              'زيادة المخزون',
-              'زيت عافية نباتي يحتاج لإعادة طلب - المخزون أقل من الحد الأدنى',
-              Icons.inventory,
-              AppColors.warning,
-            ),
-            _buildRecommendationItem(
-              'عرض ترويجي',
-              'سكر أبيض - أداء منخفض، جرب عرض خاص لزيادة المبيعات',
-              Icons.local_offer,
-              AppColors.primary,
-            ),
-            _buildRecommendationItem(
-              'فرصة نمو',
-              'أرز بسمتي - مبيعات متصاعدة، فكر في زيادة المخزون',
-              Icons.trending_up,
-              AppColors.success,
-            ),
+            ...needsReorder.take(5).map(
+                  (product) => ListTile(
+                    title: Text(product.name),
+                    subtitle: Text(
+                      'بيع: ${product.unitsSold} وحدة | مخزون: ${product.stockLevel}',
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.sm,
+                        vertical: AppSizes.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withValues(alpha: 0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppSizes.radiusSm),
+                      ),
+                      child: Text(
+                        'أعد الطلب',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.error,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRecommendationItem(
-    String title,
-    String description,
-    IconData icon,
-    Color color,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppSizes.sm),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: AppSizes.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTypography.titleSmall.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1024,7 +1032,9 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
     if (picked != null) {
       setState(() {
         _dateRange = picked;
+        _isLoading = true;
       });
+      _loadProducts();
     }
   }
 

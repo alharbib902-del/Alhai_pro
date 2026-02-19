@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,12 +17,16 @@ class TaxReportScreen extends ConsumerStatefulWidget {
 class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
   String _period = 'month';
   bool _isLoading = true;
+  String? _error;
 
   double _totalSales = 0;
   double _salesTax = 0;
   double _totalPurchases = 0;
   double _purchasesTax = 0;
   double _netTax = 0;
+
+  // تفاصيل الضريبة حسب طريقة الدفع
+  List<_TaxByPaymentMethod> _taxByPayment = [];
 
   @override
   void initState() {
@@ -31,13 +36,18 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
   Future<void> _loadTaxData() async {
     try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
       final now = DateTime.now();
       DateTime startDate;
       switch (_period) {
         case 'quarter':
-          startDate = DateTime(now.year, now.month - 3, 1);
+          final quarterMonth = ((now.month - 1) ~/ 3) * 3 + 1;
+          startDate = DateTime(now.year, quarterMonth, 1);
           break;
         case 'year':
           startDate = DateTime(now.year, 1, 1);
@@ -46,17 +56,110 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
           startDate = DateTime(now.year, now.month, 1);
       }
 
-      final salesStats = await db.salesDao.getSalesStats(storeId, startDate: startDate, endDate: now);
-      _totalSales = salesStats.total;
-      _salesTax = _totalSales * 0.15;
-      // Purchases not readily available from salesDao, set to 0
+      // استعلام إجمالي المبيعات وإجمالي الضريبة الفعلية من جدول المبيعات
+      final taxResult = await db.customSelect(
+        '''SELECT
+             COALESCE(SUM(total), 0) as total_sales,
+             COALESCE(SUM(tax), 0) as total_tax,
+             COUNT(*) as sale_count
+           FROM sales
+           WHERE store_id = ?
+             AND status = 'completed'
+             AND created_at >= ?
+             AND created_at < ?''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(startDate),
+          Variable.withDateTime(now),
+        ],
+      ).getSingle();
+
+      _totalSales = (taxResult.data['total_sales'] is int)
+          ? (taxResult.data['total_sales'] as int).toDouble()
+          : taxResult.data['total_sales'] as double? ?? 0.0;
+
+      _salesTax = (taxResult.data['total_tax'] is int)
+          ? (taxResult.data['total_tax'] as int).toDouble()
+          : taxResult.data['total_tax'] as double? ?? 0.0;
+
+      // إذا كانت الضريبة صفر ولكن هناك مبيعات، احسب 15% كتقدير
+      if (_salesTax == 0 && _totalSales > 0) {
+        _salesTax = _totalSales * 0.15;
+      }
+
+      // استعلام الضريبة حسب طريقة الدفع
+      final paymentTaxResults = await db.customSelect(
+        '''SELECT
+             payment_method,
+             COALESCE(SUM(total), 0) as method_total,
+             COALESCE(SUM(tax), 0) as method_tax,
+             COUNT(*) as method_count
+           FROM sales
+           WHERE store_id = ?
+             AND status = 'completed'
+             AND created_at >= ?
+             AND created_at < ?
+           GROUP BY payment_method
+           ORDER BY method_total DESC''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(startDate),
+          Variable.withDateTime(now),
+        ],
+      ).get();
+
+      _taxByPayment = paymentTaxResults.map((row) {
+        final method = row.data['payment_method'] as String? ?? 'unknown';
+        final total = (row.data['method_total'] is int)
+            ? (row.data['method_total'] as int).toDouble()
+            : row.data['method_total'] as double? ?? 0.0;
+        var tax = (row.data['method_tax'] is int)
+            ? (row.data['method_tax'] as int).toDouble()
+            : row.data['method_tax'] as double? ?? 0.0;
+        final count = row.data['method_count'] as int? ?? 0;
+
+        // إذا الضريبة صفر ولكن هناك مبيعات، احسب 15%
+        if (tax == 0 && total > 0) {
+          tax = total * 0.15;
+        }
+
+        return _TaxByPaymentMethod(
+          method: _translatePaymentMethod(method),
+          total: total,
+          tax: tax,
+          count: count,
+        );
+      }).toList();
+
+      // المشتريات - ليس متاحاً حالياً من قاعدة البيانات
       _totalPurchases = 0;
-      _purchasesTax = _totalPurchases * 0.15;
+      _purchasesTax = 0;
       _netTax = _salesTax - _purchasesTax;
 
-      setState(() => _isLoading = false);
-    } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// ترجمة أسماء طرق الدفع
+  String _translatePaymentMethod(String method) {
+    switch (method.toLowerCase()) {
+      case 'cash':
+        return 'نقدي';
+      case 'card':
+        return 'بطاقة';
+      case 'mixed':
+        return 'مختلط';
+      case 'credit':
+        return 'آجل';
+      default:
+        return method;
     }
   }
 
@@ -68,6 +171,28 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
+
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تقرير الضرائب')),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(_error!),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadTaxData,
+                child: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تقرير الضرائب'),
@@ -134,6 +259,21 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
             const SizedBox(height: 24),
 
+            // تفاصيل الضريبة حسب طريقة الدفع
+            if (_taxByPayment.isNotEmpty) ...[
+              Text('الضريبة حسب طريقة الدفع', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 12),
+              Card(
+                child: Column(
+                  children: _taxByPayment.map((item) => _TaxRow(
+                    label: '${item.method} (${item.count} فاتورة)',
+                    value: item.tax.toStringAsFixed(2),
+                  )).toList(),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+
             // جدول التفاصيل
             Text('تفاصيل الضريبة', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
@@ -169,7 +309,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('تذكير ZATCA', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-                          Text('الموعد النهائي للإقرار: 28 فبراير 2026', style: TextStyle(fontSize: 12)),
+                          Text('الموعد النهائي للإقرار: نهاية الشهر التالي', style: TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -193,6 +333,21 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
       ),
     );
   }
+}
+
+/// بيانات الضريبة حسب طريقة الدفع
+class _TaxByPaymentMethod {
+  final String method;
+  final double total;
+  final double tax;
+  final int count;
+
+  const _TaxByPaymentMethod({
+    required this.method,
+    required this.total,
+    required this.tax,
+    required this.count,
+  });
 }
 
 class _DetailCard extends StatelessWidget {

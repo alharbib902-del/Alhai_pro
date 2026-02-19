@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/purchases_providers.dart';
+import '../../providers/suppliers_providers.dart';
 
 /// شاشة إضافة فاتورة شراء
 class PurchaseFormScreen extends ConsumerStatefulWidget {
@@ -23,26 +27,10 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   String _paymentStatus = 'paid';
   final _invoiceNoController = TextEditingController();
 
-  List<SuppliersTableData> _suppliers = [];
   final String _userName = 'المستخدم';
+  bool _isSaving = false;
 
   double get _subtotal => _items.fold(0, (sum, item) => sum + item.total);
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSuppliers();
-  }
-
-  Future<void> _loadSuppliers() async {
-    try {
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
-      final db = getIt<AppDatabase>();
-      final suppliers = await db.suppliersDao.getActiveSuppliers(storeId);
-      if (mounted) setState(() => _suppliers = suppliers);
-    } catch (_) {}
-  }
 
   @override
   void dispose() {
@@ -104,9 +92,18 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ),
             ),
             FilledButton.icon(
-              onPressed: _items.isEmpty ? null : _savePurchase,
-              icon: const Icon(Icons.save),
-              label: const Text('\u062D\u0641\u0638'), // TODO: localize
+              onPressed: _items.isEmpty || _isSaving ? null : _savePurchase,
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.save),
+              label: Text(_isSaving ? 'جاري الحفظ...' : 'حفظ'),
             ),
           ],
         ),
@@ -158,6 +155,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
 
   Widget _buildSupplierCard(bool isDark) {
     final l10n = AppLocalizations.of(context)!;
+    final suppliersAsync = ref.watch(activeSuppliersProvider);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -195,22 +194,26 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: l10n.selectSupplierRequired,
-              prefixIcon: const Icon(Icons.store),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+          suppliersAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Text('خطأ في تحميل الموردين: $e'),
+            data: (suppliers) => DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: l10n.selectSupplierRequired,
+                prefixIcon: const Icon(Icons.store),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+              initialValue: _selectedSupplierId,
+              items: suppliers
+                  .map((s) => DropdownMenuItem(
+                        value: s.id,
+                        child: Text(s.name),
+                      ))
+                  .toList(),
+              onChanged: (v) => setState(() => _selectedSupplierId = v),
             ),
-            initialValue: _selectedSupplierId,
-            items: _suppliers
-                .map((s) => DropdownMenuItem(
-                      value: s.id,
-                      child: Text(s.name),
-                    ))
-                .toList(),
-            onChanged: (v) => setState(() => _selectedSupplierId = v),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -535,34 +538,105 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     );
   }
 
-  void _savePurchase() {
+  Future<void> _savePurchase() async {
     if (_selectedSupplierId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('\u064A\u0631\u062C\u0649 \u0627\u062E\u062A\u064A\u0627\u0631 \u0627\u0644\u0645\u0648\u0631\u062F')),
+        const SnackBar(content: Text('يرجى اختيار المورد')),
       );
       return;
     }
 
-    // TODO(purchase): STUB - This does NOT actually save to the database.
-    // Implement real persistence via a PurchaseService that:
-    //   1. Creates a purchase record in the purchases table
-    //   2. Creates purchase_items for each _items entry
-    //   3. Updates product stock quantities (inventory movements)
-    //   4. Records a transaction in the transactions table
-    //   5. Queues a sync entry if offline
-    // Until implemented, show a warning instead of a fake success message.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '\u26A0 \u062D\u0641\u0638 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A \u063A\u064A\u0631 \u0645\u064F\u0641\u0639\u0651\u0644 \u0628\u0639\u062F - \u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A: ${_subtotal.toStringAsFixed(2)} \u0631.\u0633',
-        ),
-        backgroundColor: Colors.orange.shade800,
-        duration: const Duration(seconds: 3),
-      ),
-    );
-    // Do NOT pop - the user should know the save did not persist.
-    // Once real save logic is implemented, uncomment:
-    // context.pop();
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+
+    try {
+      // الحصول على اسم المورد المحدد
+      final suppliersAsync = ref.read(activeSuppliersProvider);
+      final suppliers = suppliersAsync.valueOrNull ?? [];
+      final selectedSupplier = suppliers.firstWhere(
+        (s) => s.id == _selectedSupplierId,
+        orElse: () => suppliers.first,
+      );
+
+      const uuid = Uuid();
+
+      // تحويل العناصر لـ PurchaseItemsTableCompanion
+      final purchaseItems = _items.map((item) {
+        return PurchaseItemsTableCompanion(
+          id: Value(uuid.v4()),
+          purchaseId: const Value(''), // سيتم ربطه بالمشتريات
+          productId: Value(item.productId),
+          productName: Value(item.productName),
+          qty: Value(item.qty),
+          unitCost: Value(item.cost),
+          total: Value(item.total),
+        );
+      }).toList();
+
+      // حفظ المشتريات عبر المزود (يشمل SyncQueue)
+      final purchaseId = await createPurchase(
+        ref,
+        supplierId: _selectedSupplierId!,
+        supplierName: selectedSupplier.name,
+        subtotal: _subtotal,
+        tax: 0, // يمكن إضافة حساب الضريبة لاحقاً
+        discount: 0,
+        total: _subtotal,
+        notes: _invoiceNoController.text.isNotEmpty
+            ? 'رقم فاتورة المورد: ${_invoiceNoController.text}'
+            : null,
+        items: purchaseItems,
+      );
+
+      // تحديث المخزون وإنشاء حركات المخزون لكل منتج
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      for (final item in _items) {
+        if (!item.productId.startsWith('temp_')) {
+          try {
+            final product = await db.productsDao.getProductById(item.productId);
+            if (product != null) {
+              final previousQty = product.stockQty;
+              final newQty = previousQty + item.qty;
+              await db.productsDao.updateStock(item.productId, newQty);
+              await db.inventoryDao.recordPurchaseMovement(
+                id: uuid.v4(),
+                productId: item.productId,
+                storeId: storeId ?? '',
+                qty: item.qty,
+                previousQty: previousQty,
+                purchaseId: purchaseId,
+              );
+            }
+          } catch (e) {
+            debugPrint('خطأ في تحديث المخزون للمنتج ${item.productId}: $e');
+          }
+        }
+      }
+
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'تم حفظ فاتورة الشراء - الإجمالي: ${_subtotal.toStringAsFixed(2)} ر.س',
+            ),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في حفظ المشتريات: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 }
 

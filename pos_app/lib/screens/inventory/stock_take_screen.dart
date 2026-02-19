@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/inventory_advanced_providers.dart';
 
 /// شاشة الجرد
 class StockTakeScreen extends ConsumerStatefulWidget {
@@ -17,6 +20,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   bool _inProgress = false;
   bool _isLoading = true;
   List<_StockItem> _items = [];
+
+  // معرّف الجرد الحالي (عند البدء يتم حفظه في قاعدة البيانات)
+  String? _currentStockTakeId;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -176,9 +183,18 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
             decoration: BoxDecoration(color: Colors.grey.shade100, border: Border(top: BorderSide(color: Colors.grey.shade300))),
             child: Row(
               children: [
-                Expanded(child: OutlinedButton(onPressed: () => setState(() => _inProgress = false), child: const Text('إلغاء'))),
+                Expanded(child: OutlinedButton(onPressed: _isSaving ? null : () => setState(() { _inProgress = false; _currentStockTakeId = null; }), child: const Text('إلغاء'))),
                 const SizedBox(width: 12),
-                Expanded(flex: 2, child: FilledButton.icon(onPressed: counted == _items.length ? _completeStockTake : null, icon: const Icon(Icons.check), label: const Text('إنهاء الجرد'))),
+                Expanded(
+                  flex: 2,
+                  child: FilledButton.icon(
+                    onPressed: (counted == _items.length && !_isSaving) ? _completeStockTake : null,
+                    icon: _isSaving
+                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Icon(Icons.check),
+                    label: Text(_isSaving ? 'جاري الحفظ...' : 'إنهاء الجرد'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -187,18 +203,45 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     );
   }
 
-  void _startStockTake() {
+  void _startStockTake() async {
     if (_items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لا توجد منتجات لبدء الجرد')),
       );
       return;
     }
-    setState(() => _inProgress = true);
+
+    // إنشاء عملية جرد في قاعدة البيانات
+    final name = 'جرد ${DateFormat('yyyy/MM/dd HH:mm').format(DateTime.now())}';
+    final id = await createStockTake(ref, name);
+
+    if (id != null && mounted) {
+      setState(() {
+        _inProgress = true;
+        _currentStockTakeId = id;
+      });
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('خطأ في إنشاء عملية الجرد'), backgroundColor: Colors.red),
+      );
+    }
   }
 
   void _scanBarcode() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('مسح الباركود')));
-  void _showHistory() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سجل الجرد السابق')));
+
+  void _showHistory() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (context, scrollController) => _StockTakeHistorySheet(scrollController: scrollController),
+      ),
+    );
+  }
 
   void _completeStockTake() {
     showDialog(
@@ -212,29 +255,62 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
               Navigator.pop(context);
+
+              if (_currentStockTakeId == null) {
+                // الطريقة القديمة - حفظ مباشرة بدون stock_take record
+                await _saveLegacyStockTake(messenger);
+                return;
+              }
+
+              setState(() => _isSaving = true);
+
               try {
-                final db = getIt<AppDatabase>();
-                final updates = <String, int>{};
-                for (final item in _items) {
-                  if (item.countedQty != null) {
-                    updates[item.id] = item.countedQty!;
-                  }
-                }
-                if (updates.isNotEmpty) {
-                  await db.productsDao.batchUpdateStock(updates);
-                }
+                // تحديث عناصر الجرد أولاً بالقيم المعدودة
+                final updatedItems = _items.map((item) => {
+                  'productId': item.id,
+                  'name': item.name,
+                  'sku': item.sku,
+                  'expectedQty': item.systemQty,
+                  'countedQty': item.countedQty,
+                }).toList();
+
+                final itemsJson = jsonEncode(updatedItems);
+                final countedCount = _items.where((i) => i.countedQty != null).length;
+
+                await updateStockTakeItems(
+                  ref,
+                  _currentStockTakeId!,
+                  itemsJson: itemsJson,
+                  countedItems: countedCount,
+                );
+
+                // إكمال الجرد وتحديث المخزون
+                final success = await completeStockTake(ref, _currentStockTakeId!);
+
                 if (mounted) {
-                  setState(() => _inProgress = false);
-                  messenger.showSnackBar(
-                    const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح')),
-                  );
-                  // Reload data to reflect updated stock
-                  _loadData();
+                  setState(() {
+                    _inProgress = false;
+                    _isSaving = false;
+                    _currentStockTakeId = null;
+                  });
+
+                  if (success) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح'), backgroundColor: Colors.green),
+                    );
+                    // إعادة تحميل البيانات لعرض المخزون المحدّث
+                    _loadData();
+                  } else {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('خطأ في إكمال الجرد'), backgroundColor: Colors.red),
+                    );
+                  }
                 }
               } catch (e) {
                 if (mounted) {
+                  setState(() => _isSaving = false);
                   messenger.showSnackBar(
-                    SnackBar(content: Text('خطأ في حفظ الجرد: $e')),
+                    SnackBar(content: Text('خطأ في حفظ الجرد: $e'), backgroundColor: Colors.red),
                   );
                 }
               }
@@ -244,6 +320,40 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
         ],
       ),
     );
+  }
+
+  /// الطريقة القديمة - حفظ مباشر بدون سجل جرد (للتوافقية)
+  Future<void> _saveLegacyStockTake(ScaffoldMessengerState messenger) async {
+    setState(() => _isSaving = true);
+    try {
+      final db = getIt<AppDatabase>();
+      final updates = <String, int>{};
+      for (final item in _items) {
+        if (item.countedQty != null) {
+          updates[item.id] = item.countedQty!;
+        }
+      }
+      if (updates.isNotEmpty) {
+        await db.productsDao.batchUpdateStock(updates);
+      }
+      if (mounted) {
+        setState(() {
+          _inProgress = false;
+          _isSaving = false;
+        });
+        messenger.showSnackBar(
+          const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح'), backgroundColor: Colors.green),
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        messenger.showSnackBar(
+          SnackBar(content: Text('خطأ في حفظ الجرد: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 }
 
@@ -262,4 +372,111 @@ class _StatCard extends StatelessWidget {
   const _StatCard({required this.icon, required this.label, required this.value, required this.color});
   @override
   Widget build(BuildContext context) => Expanded(child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Column(children: [Icon(icon, color: color, size: 20), Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 16)), Text(label, style: TextStyle(fontSize: 10, color: color))])));
+}
+
+/// ورقة سفلية لعرض سجل الجرد السابق
+class _StockTakeHistorySheet extends ConsumerWidget {
+  final ScrollController scrollController;
+  const _StockTakeHistorySheet({required this.scrollController});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stockTakesAsync = ref.watch(stockTakesListProvider);
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Text('سجل الجرد', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Spacer(),
+              IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: stockTakesAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
+                  const SizedBox(height: 8),
+                  Text('خطأ في تحميل السجل', style: TextStyle(color: Colors.red.shade600)),
+                  TextButton(onPressed: () => ref.invalidate(stockTakesListProvider), child: const Text('إعادة المحاولة')),
+                ],
+              ),
+            ),
+            data: (stockTakes) {
+              if (stockTakes.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.history, size: 48, color: Colors.grey.shade400),
+                      const SizedBox(height: 8),
+                      Text('لا يوجد سجل جرد سابق', style: TextStyle(color: Colors.grey.shade600)),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: stockTakes.length,
+                itemBuilder: (context, index) {
+                  final st = stockTakes[index];
+                  final isCompleted = st.status == 'completed';
+                  final dateFormat = DateFormat('yyyy/MM/dd HH:mm');
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: (isCompleted ? Colors.green : Colors.orange).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          isCompleted ? Icons.check_circle : Icons.pending,
+                          color: isCompleted ? Colors.green : Colors.orange,
+                        ),
+                      ),
+                      title: Text(st.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(dateFormat.format(st.startedAt), style: const TextStyle(fontSize: 12)),
+                          Text(
+                            'إجمالي: ${st.totalItems} | معدود: ${st.countedItems} | فروقات: ${st.varianceItems}',
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ],
+                      ),
+                      trailing: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: (isCompleted ? Colors.green : Colors.orange).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          isCompleted ? 'مكتمل' : 'قيد التنفيذ',
+                          style: TextStyle(fontSize: 10, color: isCompleted ? Colors.green : Colors.orange),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
