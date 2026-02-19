@@ -9,12 +9,11 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/returns_providers.dart';
 import '../../widgets/returns/returns_stat_card.dart';
 import '../../widgets/returns/returns_data_table.dart';
 import '../../widgets/returns/create_return_drawer.dart';
@@ -46,6 +45,20 @@ class ReturnModel {
     required this.reason,
     required this.type,
   });
+
+  /// تحويل من بيانات قاعدة البيانات
+  factory ReturnModel.fromData(ReturnsTableData data) {
+    return ReturnModel(
+      id: data.returnNumber,
+      invoiceNo: data.saleId,
+      customer: data.customerName ?? 'عميل',
+      date: data.createdAt,
+      amount: data.totalRefund,
+      status: data.status,
+      reason: data.reason ?? 'other',
+      type: data.type,
+    );
+  }
 }
 
 // ============================================================================
@@ -60,34 +73,13 @@ class ReturnsScreen extends ConsumerStatefulWidget {
 }
 
 class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'returns';
   String _activeTab = 'sales'; // sales, purchase
   String _searchQuery = '';
   int _currentPage = 1;
   static const int _pageSize = 10;
 
-  // Demo data
-  final List<ReturnModel> _salesReturns = [
-    ReturnModel(id: 'RET-24001', invoiceNo: 'INV-889', customer: 'أحمد محمد', customerAvatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg', date: DateTime(2024, 8, 15), amount: 150.00, status: 'pending', reason: 'defective', type: 'sales'),
-    ReturnModel(id: 'RET-24002', invoiceNo: 'INV-902', customer: 'سارة علي', customerAvatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg', date: DateTime(2024, 8, 14), amount: 45.50, status: 'refunded', reason: 'customer_request', type: 'sales'),
-    ReturnModel(id: 'RET-24003', invoiceNo: 'INV-915', customer: 'محمد العلي', date: DateTime(2024, 8, 13), amount: 320.00, status: 'rejected', reason: 'wrong', type: 'sales'),
-    ReturnModel(id: 'RET-24004', invoiceNo: 'INV-920', customer: 'فاطمة حسن', customerAvatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg', date: DateTime(2024, 8, 12), amount: 85.00, status: 'refunded', reason: 'defective', type: 'sales'),
-    ReturnModel(id: 'RET-24005', invoiceNo: 'INV-935', customer: 'عبدالله سعد', date: DateTime(2024, 8, 11), amount: 210.00, status: 'pending', reason: 'customer_request', type: 'sales'),
-    ReturnModel(id: 'RET-24006', invoiceNo: 'INV-940', customer: 'نورة خالد', customerAvatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg', date: DateTime(2024, 8, 10), amount: 125.00, status: 'refunded', reason: 'wrong', type: 'sales'),
-    ReturnModel(id: 'RET-24007', invoiceNo: 'INV-948', customer: 'خالد يوسف', date: DateTime(2024, 8, 9), amount: 95.50, status: 'refunded', reason: 'defective', type: 'sales'),
-    ReturnModel(id: 'RET-24008', invoiceNo: 'INV-955', customer: 'ريم عبدالرحمن', date: DateTime(2024, 8, 8), amount: 180.00, status: 'pending', reason: 'other', type: 'sales'),
-  ];
-
-  final List<ReturnModel> _purchaseReturns = [
-    ReturnModel(id: 'PRET-24001', invoiceNo: 'PO-050', customer: 'شركة التوريدات', date: DateTime(2024, 8, 12), amount: 1500.00, status: 'refunded', reason: 'defective', type: 'purchase'),
-    ReturnModel(id: 'PRET-24002', invoiceNo: 'PO-055', customer: 'مصنع الألبان', date: DateTime(2024, 8, 10), amount: 800.00, status: 'pending', reason: 'wrong', type: 'purchase'),
-  ];
-
-  List<ReturnModel> get _currentReturns => _activeTab == 'sales' ? _salesReturns : _purchaseReturns;
-
-  List<ReturnModel> get _filteredReturns {
-    var list = _currentReturns;
+  List<ReturnModel> _filterReturns(List<ReturnModel> allReturns) {
+    var list = allReturns.where((r) => r.type == (_activeTab == 'sales' ? 'sales' : 'purchase')).toList();
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       list = list.where((r) => r.id.toLowerCase().contains(q) || r.customer.toLowerCase().contains(q) || r.invoiceNo.toLowerCase().contains(q)).toList();
@@ -95,46 +87,16 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     return list;
   }
 
-  int get _totalPages => (_filteredReturns.length / _pageSize).ceil().clamp(1, 999);
-
-  List<ReturnModel> get _paginatedReturns {
+  List<ReturnModel> _paginateReturns(List<ReturnModel> filtered) {
     final start = (_currentPage - 1) * _pageSize;
-    final end = (start + _pageSize).clamp(0, _filteredReturns.length);
-    return _filteredReturns.sublist(start, end);
-  }
-
-  double get _totalRefundedAmount {
-    return _currentReturns.where((r) => r.status == 'refunded').fold(0.0, (sum, r) => sum + r.amount);
+    final end = (start + _pageSize).clamp(0, filtered.length);
+    if (start >= filtered.length) return [];
+    return filtered.sublist(start, end);
   }
 
   // ============================================================================
   // NAVIGATION
   // ============================================================================
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-      case 'pos':
-        context.go(AppRoutes.pos);
-      case 'products':
-        context.push(AppRoutes.products);
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-      case 'customers':
-        context.push(AppRoutes.customers);
-      case 'sales':
-        context.push(AppRoutes.invoices);
-      case 'returns':
-        break; // already here
-      case 'reports':
-        context.push(AppRoutes.reports);
-      case 'suppliers':
-        context.push(AppRoutes.suppliers);
-    }
-  }
-
   // ============================================================================
   // ACTIONS
   // ============================================================================
@@ -251,8 +213,6 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
       floatingActionButton: !isWideScreen
           ? FloatingActionButton(
               onPressed: _openCreateReturn,
@@ -260,83 +220,39 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
               child: const Icon(Icons.add, color: Colors.white, size: 28),
             )
           : null,
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: _getSidebarGroups(l10n),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'كريم محمود',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+      body: Column(
               children: [
                 _buildHeader(context, isWideScreen, isDark, l10n),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: Column(
-                      children: [
-                        // Tabs
-                        _buildTabs(l10n, isDark),
-                        SizedBox(height: isMediumScreen ? 24 : 16),
-                        // Stats
-                        _buildStatsSection(l10n, isDark, isWideScreen, isMediumScreen),
-                        SizedBox(height: isMediumScreen ? 24 : 16),
-                        // Data Table
-                        _buildTableSection(l10n, isDark, isWideScreen, isMediumScreen),
-                        const SizedBox(height: 24),
-                        _buildFooter(l10n, isDark),
-                      ],
-                    ),
+                  child: ref.watch(returnsListProvider).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('خطأ: $e')),
+                    data: (returnsData) {
+                      final allReturns = returnsData.map((r) => ReturnModel.fromData(r)).toList();
+                      final filteredReturns = _filterReturns(allReturns);
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        child: Column(
+                          children: [
+                            // Tabs
+                            _buildTabs(l10n, isDark),
+                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            // Stats
+                            _buildStatsSection(filteredReturns, l10n, isDark, isWideScreen, isMediumScreen),
+                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            // Data Table
+                            _buildTableSection(filteredReturns, l10n, isDark, isWideScreen, isMediumScreen),
+                            const SizedBox(height: 24),
+                            _buildFooter(l10n, isDark),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
-  }
-
-  // ============================================================================
-  // SIDEBAR GROUPS (with returns item)
-  // ============================================================================
-
-  List<SidebarGroup> _getSidebarGroups(AppLocalizations l10n) {
-    return [
-      SidebarGroup(
-        items: [
-          AppSidebarItem(id: 'dashboard', title: l10n.dashboard, icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard_rounded),
-          AppSidebarItem(id: 'pos', title: l10n.pos, icon: Icons.point_of_sale_outlined, activeIcon: Icons.point_of_sale_rounded),
-        ],
-      ),
-      SidebarGroup(
-        title: l10n.storeManagement,
-        items: [
-          AppSidebarItem(id: 'products', title: l10n.products, icon: Icons.inventory_2_outlined, activeIcon: Icons.inventory_2_rounded),
-          AppSidebarItem(id: 'inventory', title: l10n.inventory, icon: Icons.warehouse_outlined, activeIcon: Icons.warehouse_rounded),
-          AppSidebarItem(id: 'customers', title: l10n.customers, icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded),
-          AppSidebarItem(id: 'suppliers', title: l10n.supplier, icon: Icons.local_shipping_outlined, activeIcon: Icons.local_shipping_rounded),
-        ],
-      ),
-      SidebarGroup(
-        title: l10n.finance,
-        items: [
-          AppSidebarItem(id: 'sales', title: l10n.invoices, icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long_rounded),
-          AppSidebarItem(id: 'returns', title: l10n.returns, icon: Icons.assignment_return_outlined, activeIcon: Icons.assignment_return_rounded),
-          AppSidebarItem(id: 'reports', title: l10n.reports, icon: Icons.analytics_outlined, activeIcon: Icons.analytics_rounded),
-        ],
-      ),
-    ];
   }
 
   // ============================================================================
@@ -355,7 +271,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           // Menu button
           IconButton(
             onPressed: isWideScreen
-                ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                ? null
                 : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
@@ -534,16 +450,16 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // STATS SECTION
   // ============================================================================
 
-  Widget _buildStatsSection(AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
-    final totalCount = _currentReturns.length;
-    final totalAmount = _totalRefundedAmount;
+  Widget _buildStatsSection(List<ReturnModel> currentReturns, AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
+    final totalCount = currentReturns.length;
+    final totalAmount = currentReturns.fold<double>(0.0, (sum, r) => sum + r.amount);
     final processedPercent = totalCount > 0
-        ? ((_currentReturns.where((r) => r.status == 'refunded').length / totalCount) * 100).round()
+        ? ((currentReturns.where((r) => r.status == 'refunded' || r.status == 'completed').length / totalCount) * 100).round()
         : 0;
 
-    // Most returned product (demo data)
-    const mostReturnedProduct = 'حليب كامل الدسم';
-    const mostReturnedSku = 'SKU: 882910';
+    // Most returned product (calculated or placeholder)
+    const mostReturnedProduct = '-';
+    const mostReturnedSku = '';
 
     final stats = <ReturnsStatData>[
       ReturnsStatData(
@@ -603,7 +519,9 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // TABLE SECTION
   // ============================================================================
 
-  Widget _buildTableSection(AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
+  Widget _buildTableSection(List<ReturnModel> filtered, AppLocalizations l10n, bool isDark, bool isWideScreen, bool isMediumScreen) {
+    final paginated = _paginateReturns(filtered);
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -617,40 +535,16 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           // Data
           if (isMediumScreen)
             ReturnsDataTable(
-              returns: _paginatedReturns,
+              returns: paginated,
               onCopyId: _copyReturnId,
               onView: (r) {},
-              onApprove: (r) {
-                setState(() {
-                  final index = _currentReturns.indexWhere((e) => e.id == r.id);
-                  if (index != -1) {
-                    final list = _activeTab == 'sales' ? _salesReturns : _purchaseReturns;
-                    list[index] = ReturnModel(
-                      id: r.id, invoiceNo: r.invoiceNo, customer: r.customer,
-                      customerAvatar: r.customerAvatar, date: r.date, amount: r.amount,
-                      status: 'refunded', reason: r.reason, type: r.type,
-                    );
-                  }
-                });
-              },
-              onReject: (r) {
-                setState(() {
-                  final index = _currentReturns.indexWhere((e) => e.id == r.id);
-                  if (index != -1) {
-                    final list = _activeTab == 'sales' ? _salesReturns : _purchaseReturns;
-                    list[index] = ReturnModel(
-                      id: r.id, invoiceNo: r.invoiceNo, customer: r.customer,
-                      customerAvatar: r.customerAvatar, date: r.date, amount: r.amount,
-                      status: 'rejected', reason: r.reason, type: r.type,
-                    );
-                  }
-                });
-              },
+              onApprove: (r) {},
+              onReject: (r) {},
             )
           else
-            _buildMobileCards(l10n, isDark),
+            _buildMobileCards(paginated, l10n, isDark),
           // Pagination
-          _buildPagination(l10n, isDark),
+          _buildPagination(filtered.length, l10n, isDark),
         ],
       ),
     );
@@ -719,13 +613,13 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // MOBILE CARDS
   // ============================================================================
 
-  Widget _buildMobileCards(AppLocalizations l10n, bool isDark) {
-    if (_paginatedReturns.isEmpty) {
+  Widget _buildMobileCards(List<ReturnModel> paginated, AppLocalizations l10n, bool isDark) {
+    if (paginated.isEmpty) {
       return _buildEmptyState(l10n, isDark);
     }
 
     return Column(
-      children: _paginatedReturns.map((r) => _buildMobileReturnCard(r, l10n, isDark)).toList(),
+      children: paginated.map((r) => _buildMobileReturnCard(r, l10n, isDark)).toList(),
     );
   }
 
@@ -815,8 +709,8 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // PAGINATION
   // ============================================================================
 
-  Widget _buildPagination(AppLocalizations l10n, bool isDark) {
-    final total = _filteredReturns.length;
+  Widget _buildPagination(int total, AppLocalizations l10n, bool isDark) {
+    final totalPages = (total / _pageSize).ceil().clamp(1, 999);
     final from = total == 0 ? 0 : ((_currentPage - 1) * _pageSize + 1);
     final to = (_currentPage * _pageSize).clamp(0, total);
 
@@ -835,12 +729,12 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
           // Page buttons
           _buildPageButton(l10n.previous, isDark, enabled: _currentPage > 1, onTap: () => setState(() => _currentPage--)),
           const SizedBox(width: 4),
-          for (int i = 1; i <= _totalPages; i++) ...[
+          for (int i = 1; i <= totalPages; i++) ...[
             _buildPageNumberButton(i, isDark),
-            if (i < _totalPages) const SizedBox(width: 4),
+            if (i < totalPages) const SizedBox(width: 4),
           ],
           const SizedBox(width: 4),
-          _buildPageButton(l10n.next, isDark, enabled: _currentPage < _totalPages, onTap: () => setState(() => _currentPage++)),
+          _buildPageButton(l10n.next, isDark, enabled: _currentPage < totalPages, onTap: () => setState(() => _currentPage++)),
         ],
       ),
     );
@@ -1064,30 +958,4 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
   // ============================================================================
   // DRAWER (mobile)
   // ============================================================================
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: _getSidebarGroups(l10n),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'كريم محمود',
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
 }

@@ -10,7 +10,7 @@ library;
 
 import 'dart:async';
 import 'dart:collection';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// نوع خوارزمية Rate Limiting
 enum RateLimitAlgorithm {
@@ -292,9 +292,7 @@ class RateLimiter {
       );
       _blockedUntil[key] = DateTime.now().add(blockDuration);
 
-      if (kDebugMode) {
-        debugPrint('🚫 Rate Limiter: Blocked $key for ${blockDuration.inMinutes} minutes');
-      }
+      AppLogger.warning('Rate Limiter: Blocked $key for ${blockDuration.inMinutes} minutes', tag: 'RateLimiter');
     }
   }
 

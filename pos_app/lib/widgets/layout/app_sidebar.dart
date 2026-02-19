@@ -40,7 +40,7 @@ class SidebarGroup {
 }
 
 /// القائمة الجانبية
-class AppSidebar extends StatelessWidget {
+class AppSidebar extends StatefulWidget {
   final String? storeName;
   final String? storeLogoUrl;
   final List<SidebarGroup> groups;
@@ -73,20 +73,55 @@ class AppSidebar extends StatelessWidget {
   });
 
   @override
+  State<AppSidebar> createState() => _AppSidebarState();
+}
+
+class _AppSidebarState extends State<AppSidebar> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// فلترة المجموعات حسب نص البحث
+  List<SidebarGroup> _filterGroups(List<SidebarGroup> groups) {
+    if (_searchQuery.isEmpty) return groups;
+
+    final query = _searchQuery.toLowerCase();
+    final filtered = <SidebarGroup>[];
+
+    for (final group in groups) {
+      final matchedItems = group.items
+          .where((item) => item.title.toLowerCase().contains(query))
+          .toList();
+      if (matchedItems.isNotEmpty) {
+        filtered.add(SidebarGroup(title: group.title, items: matchedItems));
+      }
+    }
+
+    return filtered;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    
+    final l10n = AppLocalizations.of(context)!;
+    final filteredGroups = _filterGroups(widget.groups);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: collapsed ? 80 : 280,
+      width: widget.collapsed ? 80 : 280,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
         border: Border(
           left: BorderSide(
-            color: isDarkMode 
-                ? Colors.white.withAlpha(26) 
+            color: isDarkMode
+                ? Colors.white.withAlpha(26)
                 : AppColors.border,
           ),
         ),
@@ -102,65 +137,157 @@ class AppSidebar extends StatelessWidget {
         children: [
           // الهيدر (اسم المتجر وشعاره)
           _SidebarHeader(
-            storeName: storeName,
-            storeLogoUrl: storeLogoUrl,
-            collapsed: collapsed,
+            storeName: widget.storeName,
+            storeLogoUrl: widget.storeLogoUrl,
+            collapsed: widget.collapsed,
           ),
+
+          // حقل البحث
+          if (!widget.collapsed)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) => setState(() => _searchQuery = value),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  hintText: l10n.search,
+                  hintStyle: TextStyle(
+                    fontSize: 13,
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.4)
+                        : AppColors.textTertiary,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search_rounded,
+                    size: 18,
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.4)
+                        : AppColors.textTertiary,
+                  ),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 16,
+                            color: isDarkMode
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : AppColors.textTertiary,
+                          ),
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: isDarkMode
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.backgroundSecondary,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
           // القائمة
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              children: [
-                for (final group in groups) ...[
-                  if (group.title != null && !collapsed) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                      child: Text(
-                        group.title!,
-                        style: const TextStyle(
-                          color: AppColors.textTertiary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+            child: filteredGroups.isEmpty && _searchQuery.isNotEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 36,
+                          color: isDarkMode
+                              ? Colors.white.withValues(alpha: 0.3)
+                              : AppColors.textTertiary,
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.noResults,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDarkMode
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : AppColors.textTertiary,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                  ...group.items.map((item) => _SidebarItemWidget(
-                        item: item,
-                        isSelected: item.id == selectedId,
-                        collapsed: collapsed,
-                        onTap: () => onItemTap?.call(item),
-                      )),
-                ],
-              ],
-            ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    children: [
+                      for (final group in filteredGroups) ...[
+                        if (group.title != null && !widget.collapsed) ...[
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                            child: Text(
+                              group.title!,
+                              style: const TextStyle(
+                                color: AppColors.textTertiary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                        ...group.items.map((item) => _SidebarItemWidget(
+                              item: item,
+                              isSelected: item.id == widget.selectedId,
+                              collapsed: widget.collapsed,
+                              onTap: () => widget.onItemTap?.call(item),
+                            )),
+                      ],
+                    ],
+                  ),
           ),
 
           // الفاصل
           const Divider(color: AppColors.border, height: 1),
 
           // بطاقة المستخدم
-          if (userName != null)
+          if (widget.userName != null)
             _UserProfileCard(
-              name: userName!,
-              role: userRole,
-              avatarUrl: userAvatarUrl,
-              collapsed: collapsed,
-              onTap: onUserTap,
+              name: widget.userName!,
+              role: widget.userRole,
+              avatarUrl: widget.userAvatarUrl,
+              collapsed: widget.collapsed,
+              onTap: widget.onUserTap,
             ),
 
           // الفاصل
-          if (userName != null)
+          if (widget.userName != null)
             const Divider(color: AppColors.border, height: 1),
 
           // الأزرار السفلية
           _SidebarFooter(
-            collapsed: collapsed,
-            onSettingsTap: onSettingsTap,
-            onSupportTap: onSupportTap,
-            onLogoutTap: onLogoutTap,
+            collapsed: widget.collapsed,
+            onSettingsTap: widget.onSettingsTap,
+            onSupportTap: widget.onSupportTap,
+            onLogoutTap: widget.onLogoutTap,
           ),
         ],
       ),
@@ -204,8 +331,8 @@ class _SidebarHeader extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: AlignmentDirectional.topStart,
+                    end: AlignmentDirectional.bottomEnd,
                     colors: [AppColors.primary, Color(0xFF047857)],
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -240,8 +367,8 @@ class _SidebarHeader extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: AlignmentDirectional.topStart,
+                      end: AlignmentDirectional.bottomEnd,
                       colors: [AppColors.primary, Color(0xFF047857)],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -927,21 +1054,219 @@ class DefaultSidebarItems {
       activeIcon: Icons.shopping_bag_rounded,
     );
 
+    // TODO: Add dynamic badge to print-queue showing pending print jobs count
+    final printQueue = AppSidebarItem(
+      id: 'print-queue',
+      title: l10n.printQueueTitle,
+      icon: Icons.print_outlined,
+      activeIcon: Icons.print_rounded,
+    );
+
+    final ecommerce = AppSidebarItem(
+      id: 'ecommerce',
+      title: l10n.ecommerce,
+      icon: Icons.storefront_outlined,
+      activeIcon: Icons.storefront_rounded,
+      isNew: true,
+    );
+
+    final wallet = AppSidebarItem(
+      id: 'wallet',
+      title: l10n.wallet,
+      icon: Icons.account_balance_wallet_outlined,
+      activeIcon: Icons.account_balance_wallet_rounded,
+      isNew: true,
+    );
+
+    final subscription = AppSidebarItem(
+      id: 'subscription',
+      title: l10n.subscription,
+      icon: Icons.card_membership_outlined,
+      activeIcon: Icons.card_membership_rounded,
+      isNew: true,
+    );
+
+    final complaintsReport = AppSidebarItem(
+      id: 'complaints-report',
+      title: l10n.complaintsReport,
+      icon: Icons.report_problem_outlined,
+      activeIcon: Icons.report_problem_rounded,
+      isNew: true,
+    );
+
+    final mediaLibrary = AppSidebarItem(
+      id: 'media-library',
+      title: l10n.mediaLibrary,
+      icon: Icons.photo_library_outlined,
+      activeIcon: Icons.photo_library_rounded,
+      isNew: true,
+    );
+
+    final deviceLog = AppSidebarItem(
+      id: 'device-log',
+      title: l10n.deviceLog,
+      icon: Icons.devices_outlined,
+      activeIcon: Icons.devices_rounded,
+      isNew: true,
+    );
+
+    final shippingGateways = AppSidebarItem(
+      id: 'shipping-gateways',
+      title: l10n.shippingGateways,
+      icon: Icons.local_shipping_outlined,
+      activeIcon: Icons.local_shipping_rounded,
+      isNew: true,
+    );
+
+    final aiAssistant = AppSidebarItem(
+      id: 'ai-assistant',
+      title: l10n.aiAssistantTitle,
+      icon: Icons.smart_toy_outlined,
+      activeIcon: Icons.smart_toy_rounded,
+      isNew: true,
+    );
+
+    final aiSalesForecasting = AppSidebarItem(
+      id: 'ai-sales-forecasting',
+      title: l10n.aiSalesForecastingTitle,
+      icon: Icons.trending_up_outlined,
+      activeIcon: Icons.trending_up_rounded,
+    );
+
+    final aiSmartPricing = AppSidebarItem(
+      id: 'ai-smart-pricing',
+      title: l10n.aiSmartPricingTitle,
+      icon: Icons.price_change_outlined,
+      activeIcon: Icons.price_change_rounded,
+    );
+
+    final aiFraudDetection = AppSidebarItem(
+      id: 'ai-fraud-detection',
+      title: l10n.aiFraudDetectionTitle,
+      icon: Icons.security_outlined,
+      activeIcon: Icons.security_rounded,
+    );
+
+    final aiBasketAnalysis = AppSidebarItem(
+      id: 'ai-basket-analysis',
+      title: l10n.aiBasketAnalysisTitle,
+      icon: Icons.shopping_basket_outlined,
+      activeIcon: Icons.shopping_basket_rounded,
+    );
+
+    final aiCustomerRecommendations = AppSidebarItem(
+      id: 'ai-customer-recommendations',
+      title: l10n.aiCustomerRecommendationsTitle,
+      icon: Icons.recommend_outlined,
+      activeIcon: Icons.recommend_rounded,
+    );
+
+    final aiSmartInventory = AppSidebarItem(
+      id: 'ai-smart-inventory',
+      title: l10n.aiSmartInventoryTitle,
+      icon: Icons.inventory_outlined,
+      activeIcon: Icons.inventory_rounded,
+    );
+
+    final aiCompetitorAnalysis = AppSidebarItem(
+      id: 'ai-competitor-analysis',
+      title: l10n.aiCompetitorAnalysisTitle,
+      icon: Icons.compare_arrows_outlined,
+      activeIcon: Icons.compare_arrows_rounded,
+    );
+
+    final aiSmartReports = AppSidebarItem(
+      id: 'ai-smart-reports',
+      title: l10n.aiSmartReportsTitle,
+      icon: Icons.auto_awesome_outlined,
+      activeIcon: Icons.auto_awesome_rounded,
+    );
+
+    final aiStaffAnalytics = AppSidebarItem(
+      id: 'ai-staff-analytics',
+      title: l10n.aiStaffAnalyticsTitle,
+      icon: Icons.people_alt_outlined,
+      activeIcon: Icons.people_alt_rounded,
+    );
+
+    final aiProductRecognition = AppSidebarItem(
+      id: 'ai-product-recognition',
+      title: l10n.aiProductRecognitionTitle,
+      icon: Icons.camera_alt_outlined,
+      activeIcon: Icons.camera_alt_rounded,
+    );
+
+    final aiSentimentAnalysis = AppSidebarItem(
+      id: 'ai-sentiment-analysis',
+      title: l10n.aiSentimentAnalysisTitle,
+      icon: Icons.sentiment_satisfied_alt_outlined,
+      activeIcon: Icons.sentiment_satisfied_alt_rounded,
+    );
+
+    final aiReturnPrediction = AppSidebarItem(
+      id: 'ai-return-prediction',
+      title: l10n.aiReturnPredictionTitle,
+      icon: Icons.assignment_return_outlined,
+      activeIcon: Icons.assignment_return_rounded,
+    );
+
+    final aiPromotionDesigner = AppSidebarItem(
+      id: 'ai-promotion-designer',
+      title: l10n.aiPromotionDesignerTitle,
+      icon: Icons.campaign_outlined,
+      activeIcon: Icons.campaign_rounded,
+    );
+
+    final aiChatWithData = AppSidebarItem(
+      id: 'ai-chat-with-data',
+      title: l10n.aiChatWithDataTitle,
+      icon: Icons.chat_outlined,
+      activeIcon: Icons.chat_rounded,
+    );
+
     return [
       SidebarGroup(
         items: [dashboard, pos],
       ),
       SidebarGroup(
         title: l10n.storeManagement,
-        items: [products, categories, inventory, customers, suppliers2],
+        items: [products, categories, inventory, customers, suppliers2, mediaLibrary],
+      ),
+      SidebarGroup(
+        title: l10n.ecommerceSection,
+        items: [ecommerce, shippingGateways],
       ),
       SidebarGroup(
         title: l10n.finance,
-        items: [invoices, orders, sales, returns, voidTransaction, expenses, reports],
+        items: [invoices, orders, sales, returns, voidTransaction, expenses, wallet, reports, complaintsReport, printQueue],
       ),
       SidebarGroup(
         title: l10n.teamSection,
         items: [employees, loyalty, shifts, purchases],
+      ),
+      SidebarGroup(
+        title: l10n.systemSection,
+        items: [subscription, deviceLog],
+      ),
+      SidebarGroup(
+        title: l10n.aiSection,
+        items: [
+          aiAssistant,
+          aiSalesForecasting,
+          aiSmartPricing,
+          aiFraudDetection,
+          aiBasketAnalysis,
+          aiCustomerRecommendations,
+          aiSmartInventory,
+          aiCompetitorAnalysis,
+          aiSmartReports,
+          aiStaffAnalytics,
+          aiProductRecognition,
+          aiSentimentAnalysis,
+          aiReturnPrediction,
+          aiPromotionDesigner,
+          aiChatWithData,
+        ],
       ),
     ];
   }

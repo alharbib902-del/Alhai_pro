@@ -121,6 +121,8 @@ class AnimatedCounter extends StatefulWidget {
 
 class _AnimatedCounterState extends State<AnimatedCounter>
     with SingleTickerProviderStateMixin {
+  static final _thousandSeparatorRegExp = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
   late AnimationController _controller;
   late Animation<double> _animation;
   double _previousValue = 0;
@@ -176,7 +178,7 @@ class _AnimatedCounterState extends State<AnimatedCounter>
     if (widget.useThousandSeparator) {
       final parts = formatted.split('.');
       final intPart = parts[0].replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        _thousandSeparatorRegExp,
         (Match m) => '${m[1]},',
       );
       formatted = parts.length > 1 ? '$intPart.${parts[1]}' : intPart;
@@ -483,7 +485,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
                 borderRadius: BorderRadius.circular(widget.borderRadius),
               ),
               child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 widthFactor: _animation.value,
                 child: Container(
                   decoration: BoxDecoration(

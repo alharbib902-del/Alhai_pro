@@ -7,7 +7,7 @@
 library;
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 import '../security/csrf_protection.dart';
 import '../security/request_signer.dart';
 
@@ -50,9 +50,7 @@ class SecurityInterceptor extends Interceptor {
     // إضافة CSRF token للـ paths المحمية
     if (enableCsrf && _needsCsrf(options)) {
       options.headers.addAll(CsrfProtection.getHeaders());
-      if (kDebugMode) {
-        debugPrint('🔐 CSRF token added to ${options.path}');
-      }
+      AppLogger.debug('CSRF token added to ${options.path}', tag: 'SecurityInterceptor');
     }
 
     // إضافة التوقيع للـ paths الحساسة
@@ -66,9 +64,7 @@ class SecurityInterceptor extends Interceptor {
         ),
       );
       options.headers.addAll(signature.toHeaders());
-      if (kDebugMode) {
-        debugPrint('🔐 Request signed: ${options.method} ${options.path}');
-      }
+      AppLogger.debug('Request signed: ${options.method} ${options.path}', tag: 'SecurityInterceptor');
     }
 
     handler.next(options);
@@ -80,9 +76,7 @@ class SecurityInterceptor extends Interceptor {
     final newCsrfToken = response.headers.value('X-CSRF-Token');
     if (newCsrfToken != null && newCsrfToken.isNotEmpty) {
       // السيرفر أرسل token جديد - يمكن تحديثه هنا إذا لزم الأمر
-      if (kDebugMode) {
-        debugPrint('🔐 New CSRF token received from server');
-      }
+      AppLogger.debug('New CSRF token received from server', tag: 'SecurityInterceptor');
     }
 
     handler.next(response);
@@ -98,9 +92,7 @@ class SecurityInterceptor extends Interceptor {
         CsrfProtection.invalidate();
         CsrfProtection.generateToken();
 
-        if (kDebugMode) {
-          debugPrint('⚠️ CSRF token regenerated after 403 error');
-        }
+        AppLogger.warning('CSRF token regenerated after 403 error', tag: 'SecurityInterceptor');
       }
     }
 
@@ -108,9 +100,7 @@ class SecurityInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       final errorCode = err.response?.data?['code'];
       if (errorCode == 'SIGNATURE_INVALID' || errorCode == 'SIGNATURE_EXPIRED') {
-        if (kDebugMode) {
-          debugPrint('⚠️ Request signature rejected by server');
-        }
+        AppLogger.warning('Request signature rejected by server', tag: 'SecurityInterceptor');
       }
     }
 

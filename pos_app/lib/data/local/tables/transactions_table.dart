@@ -1,6 +1,18 @@
 import 'package:drift/drift.dart';
 
 /// جدول حركات الحسابات (المدفوعات والفوائد والفواتير)
+///
+/// Indexes:
+/// - idx_transactions_store_id: للاستعلامات حسب المتجر
+/// - idx_transactions_account_id: للاستعلامات حسب الحساب
+/// - idx_transactions_type: لفلترة حسب النوع
+/// - idx_transactions_created_at: للاستعلامات حسب التاريخ
+/// - idx_transactions_synced_at: للمزامنة
+@TableIndex(name: 'idx_transactions_store_id', columns: {#storeId})
+@TableIndex(name: 'idx_transactions_account_id', columns: {#accountId})
+@TableIndex(name: 'idx_transactions_type', columns: {#type})
+@TableIndex(name: 'idx_transactions_created_at', columns: {#createdAt})
+@TableIndex(name: 'idx_transactions_synced_at', columns: {#syncedAt})
 class TransactionsTable extends Table {
   @override
   String get tableName => 'transactions';

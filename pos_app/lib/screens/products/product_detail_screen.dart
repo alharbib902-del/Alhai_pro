@@ -10,7 +10,6 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/products_providers.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/dashboard/sales_chart.dart';
 
@@ -27,8 +26,6 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
 
 class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   // UI state
-  bool _sidebarCollapsed = false;
-  final String _selectedNavId = 'products';
   bool _isHoveringImage = false;
 
   // Data state
@@ -122,39 +119,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       setState(() => _isLoading = false);
     }
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    switch (item.id) {
-      case 'dashboard':
-        context.go('/');
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.go(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push('/sales');
-        break;
-      case 'reports':
-        context.push('/reports');
-        break;
-      case 'employees':
-        context.push('/employees');
-        break;
-      case 'loyalty':
-        context.push('/loyalty');
-        break;
-    }
-  }
-
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
@@ -186,40 +150,18 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: _product?.name ?? l10n.productDetails,
                   subtitle: l10n.productDetails,
                   showSearch: false,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                   actions: isWideScreen && _product != null
@@ -263,43 +205,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar:
-          !isWideScreen && _product != null
-              ? _buildMobileBottomBar(isDark, l10n)
-              : null,
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   // ============================================================================
   // CONTENT
   // ============================================================================
@@ -1382,8 +1289,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -1467,68 +1374,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================================
-  // MOBILE BOTTOM BAR
-  // ============================================================================
-
-  Widget _buildMobileBottomBar(bool isDark, AppLocalizations l10n) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 12,
-        bottom: 12 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.getBorder(isDark),
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: AlhaiButton(
-              label: l10n.edit,
-              variant: AlhaiButtonVariant.filled,
-              size: AlhaiButtonSize.medium,
-              leadingIcon: Icons.edit_outlined,
-              onPressed: () async {
-                await context.push(AppRoutes.productsEditPath(_product!.id));
-                _loadProductData();
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: AlhaiButton(
-              label: l10n.printLabel,
-              variant: AlhaiButtonVariant.outlined,
-              size: AlhaiButtonSize.medium,
-              leadingIcon: Icons.print_outlined,
-              onPressed: () {},
-            ),
-          ),
-          const SizedBox(width: 12),
-          AlhaiIconButton(
-            icon: Icons.more_horiz,
-            onPressed: () => _showMoreOptions(context),
-            tooltip: l10n.moreOptions,
           ),
         ],
       ),

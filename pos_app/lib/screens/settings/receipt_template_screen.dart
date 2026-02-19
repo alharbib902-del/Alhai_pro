@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/router/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة قالب الإيصال
@@ -17,8 +16,7 @@ class ReceiptTemplateScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
+  static const _prefix = 'receipt_template_';
 
   final _headerController = TextEditingController(text: 'متجر الإيمان');
   final _footerController =
@@ -34,6 +32,79 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
   bool _showBarcode = true;
   bool _showQrCode = false;
   String _paperSize = '80mm';
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _headerController.text =
+          prefs.getString('${_prefix}header') ?? _headerController.text;
+      _footerController.text =
+          prefs.getString('${_prefix}footer') ?? _footerController.text;
+      _showLogo = prefs.getBool('${_prefix}show_logo') ?? _showLogo;
+      _showStoreName =
+          prefs.getBool('${_prefix}show_store_name') ?? _showStoreName;
+      _showAddress = prefs.getBool('${_prefix}show_address') ?? _showAddress;
+      _showPhone = prefs.getBool('${_prefix}show_phone') ?? _showPhone;
+      _showVatNumber =
+          prefs.getBool('${_prefix}show_vat_number') ?? _showVatNumber;
+      _showDate = prefs.getBool('${_prefix}show_date') ?? _showDate;
+      _showCashier = prefs.getBool('${_prefix}show_cashier') ?? _showCashier;
+      _showBarcode = prefs.getBool('${_prefix}show_barcode') ?? _showBarcode;
+      _showQrCode = prefs.getBool('${_prefix}show_qr_code') ?? _showQrCode;
+      _paperSize = prefs.getString('${_prefix}paper_size') ?? _paperSize;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    setState(() => _isSaving = true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('${_prefix}header', _headerController.text);
+      await prefs.setString('${_prefix}footer', _footerController.text);
+      await prefs.setBool('${_prefix}show_logo', _showLogo);
+      await prefs.setBool('${_prefix}show_store_name', _showStoreName);
+      await prefs.setBool('${_prefix}show_address', _showAddress);
+      await prefs.setBool('${_prefix}show_phone', _showPhone);
+      await prefs.setBool('${_prefix}show_vat_number', _showVatNumber);
+      await prefs.setBool('${_prefix}show_date', _showDate);
+      await prefs.setBool('${_prefix}show_cashier', _showCashier);
+      await prefs.setBool('${_prefix}show_barcode', _showBarcode);
+      await prefs.setBool('${_prefix}show_qr_code', _showQrCode);
+      await prefs.setString('${_prefix}paper_size', _paperSize);
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.receiptTemplateSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('حدث خطأ أثناء الحفظ'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -41,46 +112,6 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     _footerController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -89,96 +120,43 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'قالب الإيصال',
+                  title: l10n.receiptTemplateTitle,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark),
+                    child: _buildContent(isDark, l10n),
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // Header / Footer
-        _buildSettingsGroup('الرأس والتذييل', Icons.text_fields_rounded,
+        _buildSettingsGroup(l10n.headerAndFooter, Icons.text_fields_rounded,
             const Color(0xFFEC4899), isDark, [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
             child: TextField(
               controller: _headerController,
               decoration: InputDecoration(
-                labelText: 'عنوان الإيصال',
+                labelText: l10n.receiptTitleField,
                 prefixIcon: const Icon(Icons.title),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -191,7 +169,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
               controller: _footerController,
               maxLines: 2,
               decoration: InputDecoration(
-                labelText: 'نص التذييل',
+                labelText: l10n.footerText,
                 prefixIcon: const Icon(Icons.notes),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -201,10 +179,10 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         ]),
 
         // Fields to show
-        _buildSettingsGroup('الحقول المعروضة', Icons.list_rounded,
+        _buildSettingsGroup(l10n.displayedFields, Icons.list_rounded,
             AppColors.info, isDark, [
           SwitchListTile(
-            title: Text('شعار المتجر',
+            title: Text(l10n.storeLogo,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.image),
@@ -212,7 +190,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showLogo = v),
           ),
           SwitchListTile(
-            title: Text('اسم المتجر',
+            title: Text(l10n.storeName,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.store),
@@ -220,7 +198,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showStoreName = v),
           ),
           SwitchListTile(
-            title: Text('العنوان',
+            title: Text(l10n.addressField,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.location_on),
@@ -228,7 +206,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showAddress = v),
           ),
           SwitchListTile(
-            title: Text('رقم الهاتف',
+            title: Text(l10n.phoneNumberField,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.phone),
@@ -236,7 +214,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showPhone = v),
           ),
           SwitchListTile(
-            title: Text('الرقم الضريبي',
+            title: Text(l10n.vatNumberField,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.numbers),
@@ -245,7 +223,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           ),
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
-            title: Text('التاريخ والوقت',
+            title: Text(l10n.dateAndTime,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.access_time),
@@ -253,7 +231,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showDate = v),
           ),
           SwitchListTile(
-            title: Text('اسم الكاشير',
+            title: Text(l10n.cashierName,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.person),
@@ -262,7 +240,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           ),
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
-            title: Text('باركود الفاتورة',
+            title: Text(l10n.invoiceBarcode,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.qr_code),
@@ -270,10 +248,10 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             onChanged: (v) => setState(() => _showBarcode = v),
           ),
           SwitchListTile(
-            title: Text('رمز QR',
+            title: Text(l10n.qrCodeField,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('رمز QR للفاتورة الإلكترونية'),
+            subtitle: Text(l10n.qrCodeEInvoice),
             secondary: const Icon(Icons.qr_code_2),
             value: _showQrCode,
             onChanged: (v) => setState(() => _showQrCode = v),
@@ -282,33 +260,39 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         ]),
 
         // Paper size
-        _buildSettingsGroup('حجم الورق', Icons.straighten_rounded,
+        _buildSettingsGroup(l10n.paperSize, Icons.straighten_rounded,
             AppColors.success, isDark, [
           RadioListTile<String>(
             title: Text('80mm',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('الحجم القياسي'),
+            subtitle: Text(l10n.standardSize),
             value: '80mm',
+            // ignore: deprecated_member_use
             groupValue: _paperSize,
+            // ignore: deprecated_member_use
             onChanged: (v) => setState(() => _paperSize = v!),
           ),
           RadioListTile<String>(
             title: Text('58mm',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('حجم صغير'),
+            subtitle: Text(l10n.smallSize),
             value: '58mm',
+            // ignore: deprecated_member_use
             groupValue: _paperSize,
+            // ignore: deprecated_member_use
             onChanged: (v) => setState(() => _paperSize = v!),
           ),
           RadioListTile<String>(
             title: Text('A4',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('طباعة عادية'),
+            subtitle: Text(l10n.normalPrint),
             value: 'a4',
+            // ignore: deprecated_member_use
             groupValue: _paperSize,
+            // ignore: deprecated_member_use
             onChanged: (v) => setState(() => _paperSize = v!),
           ),
           const SizedBox(height: 8),
@@ -318,17 +302,15 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم حفظ قالب الإيصال'),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            onPressed: _isSaving ? null : _saveSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Icon(Icons.save_rounded),
+            label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -340,7 +322,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -362,12 +344,12 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('قالب الإيصال',
+            Text(l10n.receiptTemplateTitle,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('الرأس، التذييل، الحقول، حجم الورق',
+            Text(l10n.receiptTemplateSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark

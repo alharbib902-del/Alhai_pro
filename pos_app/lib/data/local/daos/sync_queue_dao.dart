@@ -110,10 +110,98 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
   /// مراقبة عدد العناصر المعلقة
   Stream<int> watchPendingCount() {
     return customSelect(
-      '''SELECT COUNT(*) as count FROM sync_queue 
-         WHERE (status = 'pending' OR status = 'failed') 
+      '''SELECT COUNT(*) as count FROM sync_queue
+         WHERE (status = 'pending' OR status = 'failed')
          AND retry_count < max_retries''',
       readsFrom: {syncQueueTable},
     ).map((row) => row.data['count'] as int? ?? 0).watchSingle();
+  }
+
+  /// مراقبة قائمة العناصر المعلقة
+  Stream<List<SyncQueueTableData>> watchPendingItems() {
+    return (select(syncQueueTable)
+      ..where((q) => q.status.equals('pending') | q.status.equals('failed'))
+      ..where((q) => q.retryCount.isSmallerThan(q.maxRetries))
+      ..orderBy([
+        (q) => OrderingTerm.desc(q.priority),
+        (q) => OrderingTerm.asc(q.createdAt),
+      ]))
+      .watch();
+  }
+
+  /// الحصول على العناصر المتعارضة (فشلت بعد استنفاد المحاولات)
+  Future<List<SyncQueueTableData>> getConflictItems() {
+    return (select(syncQueueTable)
+      ..where((q) =>
+          q.status.equals('conflict') |
+          (q.status.equals('failed') &
+              q.retryCount.isBiggerOrEqual(q.maxRetries)))
+      ..orderBy([
+        (q) => OrderingTerm.desc(q.priority),
+        (q) => OrderingTerm.asc(q.createdAt),
+      ]))
+      .get();
+  }
+
+  /// مراقبة العناصر المتعارضة
+  Stream<List<SyncQueueTableData>> watchConflictItems() {
+    return (select(syncQueueTable)
+      ..where((q) =>
+          q.status.equals('conflict') |
+          (q.status.equals('failed') &
+              q.retryCount.isBiggerOrEqual(q.maxRetries)))
+      ..orderBy([
+        (q) => OrderingTerm.desc(q.priority),
+        (q) => OrderingTerm.asc(q.createdAt),
+      ]))
+      .watch();
+  }
+
+  /// عدد العناصر المتعارضة
+  Stream<int> watchConflictCount() {
+    return customSelect(
+      '''SELECT COUNT(*) as count FROM sync_queue
+         WHERE status = 'conflict'
+         OR (status = 'failed' AND retry_count >= max_retries)''',
+      readsFrom: {syncQueueTable},
+    ).map((row) => row.data['count'] as int? ?? 0).watchSingle();
+  }
+
+  /// تحديث الحالة إلى "تم الحل"
+  Future<int> markResolved(String id) {
+    return (update(syncQueueTable)..where((q) => q.id.equals(id)))
+      .write(SyncQueueTableCompanion(
+        status: const Value('resolved'),
+        syncedAt: Value(DateTime.now()),
+      ));
+  }
+
+  /// إعادة تعيين عنصر للمحاولة مرة أخرى
+  Future<int> retryItem(String id) {
+    return (update(syncQueueTable)..where((q) => q.id.equals(id)))
+      .write(const SyncQueueTableCompanion(
+        status: Value('pending'),
+        retryCount: Value(0),
+        lastError: Value(null),
+      ));
+  }
+
+  /// تحديث الحالة إلى "تعارض"
+  Future<int> markAsConflict(String id, String error) {
+    return (update(syncQueueTable)..where((q) => q.id.equals(id)))
+      .write(SyncQueueTableCompanion(
+        status: const Value('conflict'),
+        lastError: Value(error),
+        lastAttemptAt: Value(DateTime.now()),
+      ));
+  }
+
+  /// الحصول على جميع العناصر (لعرض شامل)
+  Future<List<SyncQueueTableData>> getAllItems() {
+    return (select(syncQueueTable)
+      ..orderBy([
+        (q) => OrderingTerm.desc(q.createdAt),
+      ]))
+      .get();
   }
 }

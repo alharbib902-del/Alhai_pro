@@ -1,74 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../data/local/app_database.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/expenses_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إدارة المصروفات
-class ExpensesScreen extends ConsumerStatefulWidget {
+class ExpensesScreen extends ConsumerWidget {
   const ExpensesScreen({super.key});
 
   @override
-  ConsumerState<ExpensesScreen> createState() => _ExpensesScreenState();
-}
-
-class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'expenses';
-
-  final List<_Expense> _expenses = [
-    _Expense(id: '1', title: 'إيجار المحل', amount: 5000, category: 'rent', date: DateTime.now().subtract(const Duration(days: 1))),
-    _Expense(id: '2', title: 'فاتورة الكهرباء', amount: 850, category: 'utilities', date: DateTime.now().subtract(const Duration(days: 3))),
-    _Expense(id: '3', title: 'رواتب الموظفين', amount: 12000, category: 'salaries', date: DateTime.now().subtract(const Duration(days: 5))),
-    _Expense(id: '4', title: 'صيانة أجهزة', amount: 500, category: 'maintenance', date: DateTime.now().subtract(const Duration(days: 7))),
-  ];
-
-  double get _totalExpenses => _expenses.fold(0, (sum, e) => sum + e.amount);
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
@@ -76,55 +21,40 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addExpense,
+        onPressed: () => _addExpense(context, ref),
         icon: const Icon(Icons.add),
-        label: Text(l10n.add), // TODO: l10n.addExpense
+        label: Text(l10n.addExpense),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
-      body: Row(
+      body: Column(
         children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
+          AppHeader(
+            title: l10n.expenses,
+            subtitle: _getDateSubtitle(l10n),
+            showSearch: isWideScreen,
+            searchHint: l10n.searchPlaceholder,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+            onUserTap: () {},
+          ),
           Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'المصروفات', // TODO: l10n.expenses
-                  subtitle: _getDateSubtitle(l10n),
-                  showSearch: isWideScreen,
-                  searchHint: l10n.searchPlaceholder,
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-                ),
-              ],
+            child: ref.watch(expensesStreamProvider).when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => AppErrorState.general(
+                message: e.toString(),
+                onRetry: () => ref.invalidate(expensesStreamProvider),
+              ),
+              data: (expenses) => SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                child: _buildContent(context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
+              ),
             ),
           ),
         ],
@@ -132,80 +62,54 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Stat cards
-        _buildStatsSection(isWideScreen, isMediumScreen, isDark),
+        _buildStatsSection(isWideScreen, isMediumScreen, isDark, l10n, expenses),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Categories row
-        _buildCategoriesRow(isDark, isMediumScreen),
+        _buildCategoriesRow(isDark, isMediumScreen, l10n),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Expenses list
-        _buildExpensesList(isDark, l10n),
+        _buildExpensesList(context, isDark, l10n, expenses),
       ],
     );
   }
 
-  Widget _buildStatsSection(bool isWideScreen, bool isMediumScreen, bool isDark) {
-    final thisMonth = _totalExpenses;
-    final categoriesCount = {'rent', 'utilities', 'salaries', 'maintenance'}.length;
-    final avgExpense = _expenses.isNotEmpty ? thisMonth / _expenses.length : 0.0;
+  Widget _buildStatsSection(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
+    final thisMonth = expenses.fold(0.0, (sum, e) => sum + e.amount);
+    final categoriesCount = expenses.map((e) => e.categoryId).toSet().length;
+    final avgExpense = expenses.isNotEmpty ? thisMonth / expenses.length : 0.0;
 
     final cards = [
       _buildStatCard(
-        title: 'إجمالي المصروفات', // TODO: l10n.totalExpenses
-        value: '${thisMonth.toStringAsFixed(0)}',
+        title: l10n.totalExpenses,
+        value: thisMonth.toStringAsFixed(0),
         icon: Icons.account_balance_wallet_rounded,
         color: AppColors.error,
         isDark: isDark,
       ),
       _buildStatCard(
-        title: 'هذا الشهر', // TODO: l10n.thisMonth
-        value: '${_expenses.length}',
+        title: l10n.thisMonth,
+        value: '${expenses.length}',
         icon: Icons.receipt_long_rounded,
         color: AppColors.warning,
         isDark: isDark,
       ),
       _buildStatCard(
-        title: 'التصنيفات', // TODO: l10n.categories
+        title: l10n.categories,
         value: '$categoriesCount',
         icon: Icons.category_rounded,
         color: AppColors.info,
         isDark: isDark,
       ),
       _buildStatCard(
-        title: 'متوسط المصروف', // TODO: l10n.averageExpense
-        value: '${avgExpense.toStringAsFixed(0)}',
+        title: l10n.averageExpense,
+        value: avgExpense.toStringAsFixed(0),
         icon: Icons.trending_down_rounded,
         color: AppColors.primary,
         isDark: isDark,
@@ -311,12 +215,12 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     );
   }
 
-  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen) {
+  Widget _buildCategoriesRow(bool isDark, bool isMediumScreen, AppLocalizations l10n) {
     final categories = [
-      _CategorySummary(icon: Icons.home_rounded, label: 'إيجار', amount: 5000, color: AppColors.info),
-      _CategorySummary(icon: Icons.bolt_rounded, label: 'كهرباء', amount: 850, color: AppColors.warning),
-      _CategorySummary(icon: Icons.people_rounded, label: 'رواتب', amount: 12000, color: AppColors.primary),
-      _CategorySummary(icon: Icons.build_rounded, label: 'صيانة', amount: 500, color: AppColors.secondary),
+      _CategorySummary(icon: Icons.home_rounded, label: l10n.rent, amount: 5000, color: AppColors.info),
+      _CategorySummary(icon: Icons.bolt_rounded, label: l10n.electricity, amount: 850, color: AppColors.warning),
+      _CategorySummary(icon: Icons.people_rounded, label: l10n.salaries, amount: 12000, color: AppColors.primary),
+      _CategorySummary(icon: Icons.build_rounded, label: l10n.maintenance, amount: 500, color: AppColors.secondary),
     ];
 
     return SizedBox(
@@ -366,7 +270,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     );
   }
 
-  Widget _buildExpensesList(bool isDark, AppLocalizations l10n) {
+  Widget _buildExpensesList(BuildContext context, bool isDark, AppLocalizations l10n, [List<ExpensesTableData>? expensesData]) {
+    final expenses = expensesData ?? [];
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -382,7 +287,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             child: Row(
               children: [
                 Text(
-                  'قائمة المصروفات', // TODO: l10n.expensesList
+                  l10n.expensesList,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -391,7 +296,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                 ),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: _showFilterDialog,
+                  onPressed: () => _showFilterDialog(context),
                   icon: const Icon(Icons.filter_list_rounded, size: 18),
                   label: Text(l10n.filter),
                 ),
@@ -399,54 +304,68 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             ),
           ),
           const Divider(height: 1),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _expenses.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final expense = _expenses[index];
-              return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                leading: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(expense.category).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    _getCategoryIcon(expense.category),
-                    color: _getCategoryColor(expense.category),
-                    size: 22,
-                  ),
+          if (expenses.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.receipt_long_rounded, size: 48, color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+                    const SizedBox(height: 12),
+                    Text(l10n.noExpenses, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary)),
+                  ],
                 ),
-                title: Text(
-                  expense.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: expenses.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final expense = expenses[index];
+                final category = expense.categoryId ?? 'other';
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  leading: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _getCategoryColor(category).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      _getCategoryIcon(category),
+                      color: _getCategoryColor(category),
+                      size: 22,
+                    ),
                   ),
-                ),
-                subtitle: Text(
-                  _formatDate(expense.date),
-                  style: TextStyle(
-                    color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
-                    fontSize: 12,
+                  title: Text(
+                    expense.description ?? l10n.expense,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
                   ),
-                ),
-                trailing: Text(
-                  '-${expense.amount.toStringAsFixed(0)} ${l10n.sar}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.error,
-                    fontSize: 14,
+                  subtitle: Text(
+                    _formatDate(expense.expenseDate),
+                    style: TextStyle(
+                      color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-                onTap: () => _showExpenseDetails(expense),
-              );
-            },
-          ),
+                  trailing: Text(
+                    '-${expense.amount.toStringAsFixed(0)} ${l10n.sar}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.error,
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
@@ -492,7 +411,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  void _addExpense() {
+  void _addExpense(BuildContext context, WidgetRef ref) {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
     String category = 'utilities';
@@ -502,7 +421,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(l10n.add), // TODO: l10n.addExpense
+          title: Text(l10n.addExpense),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -525,17 +444,17 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: category,
+                initialValue: category,
                 decoration: InputDecoration(
                   labelText: l10n.categoryLabel,
                   prefixIcon: const Icon(Icons.category),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'rent', child: Text('إيجار')),
-                  DropdownMenuItem(value: 'utilities', child: Text('خدمات')),
-                  DropdownMenuItem(value: 'salaries', child: Text('رواتب')),
-                  DropdownMenuItem(value: 'maintenance', child: Text('صيانة')),
-                  DropdownMenuItem(value: 'other', child: Text('أخرى')),
+                items: [
+                  DropdownMenuItem(value: 'rent', child: Text(l10n.rent)),
+                  DropdownMenuItem(value: 'utilities', child: Text(l10n.services)),
+                  DropdownMenuItem(value: 'salaries', child: Text(l10n.salaries)),
+                  DropdownMenuItem(value: 'maintenance', child: Text(l10n.maintenance)),
+                  DropdownMenuItem(value: 'other', child: Text(l10n.other)),
                 ],
                 onChanged: (v) => setDialogState(() => category = v!),
               ),
@@ -549,18 +468,12 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             FilledButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  setState(() {
-                    _expenses.insert(
-                      0,
-                      _Expense(
-                        id: 'new_${_expenses.length}',
-                        title: titleController.text,
-                        amount: double.tryParse(amountController.text) ?? 0,
-                        category: category,
-                        date: DateTime.now(),
-                      ),
-                    );
-                  });
+                  addExpense(
+                    ref,
+                    categoryId: category,
+                    amount: double.tryParse(amountController.text) ?? 0,
+                    description: titleController.text,
+                  );
                 }
                 Navigator.pop(context);
               },
@@ -569,100 +482,19 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
           ],
         ),
       ),
-    );
+    ).then((_) {
+      titleController.dispose();
+      amountController.dispose();
+    });
   }
 
-  void _showFilterDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('فلترة المصروفات')),
-    );
-  }
-
-  void _showExpenseDetails(_Expense expense) {
+  void _showFilterDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              expense.title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _DetailRow(
-              label: l10n.amount,
-              value: '${expense.amount.toStringAsFixed(0)} ${l10n.sar}',
-              isDark: isDark,
-            ),
-            _DetailRow(
-              label: l10n.date,
-              value: _formatDate(expense.date),
-              isDark: isDark,
-            ),
-            _DetailRow(
-              label: l10n.categoryLabel,
-              value: expense.category,
-              isDark: isDark,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.edit),
-                    label: Text(l10n.edit),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      setState(() => _expenses.remove(expense));
-                    },
-                    style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-                    icon: const Icon(Icons.delete),
-                    label: Text(l10n.delete),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.filterExpenses)),
     );
   }
-}
 
-class _Expense {
-  final String id;
-  final String title;
-  final double amount;
-  final String category;
-  final DateTime date;
-
-  _Expense({
-    required this.id,
-    required this.title,
-    required this.amount,
-    required this.category,
-    required this.date,
-  });
 }
 
 class _CategorySummary {
@@ -677,37 +509,4 @@ class _CategorySummary {
     required this.amount,
     required this.color,
   });
-}
-
-class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isDark;
-
-  const _DetailRow({required this.label, required this.value, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: isDark ? Colors.white : AppColors.textPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

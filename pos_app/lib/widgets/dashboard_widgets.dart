@@ -1,4 +1,6 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
+import '../l10n/generated/app_localizations.dart';
 
 /// ويدجت مخطط المبيعات للداشبورد
 class SalesChartWidget extends StatelessWidget {
@@ -71,9 +73,10 @@ class QuickStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: _StatCard(
             title: 'مبيعات اليوم',
             value: '3,450',
@@ -83,12 +86,12 @@ class QuickStatsWidget extends StatelessWidget {
             trend: '+12%',
           ),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
             title: 'عدد الفواتير',
             value: '24',
-            unit: 'فاتورة',
+            unit: l10n.invoice,
             icon: Icons.receipt_long,
             color: Colors.blue,
             trend: '+5',
@@ -236,6 +239,7 @@ class AlertsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,7 +250,7 @@ class AlertsWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.notifications_active, color: Colors.orange, size: 20),
                 const SizedBox(width: 8),
-                Text('تنبيهات', style: Theme.of(context).textTheme.titleMedium),
+                Text(l10n.alerts, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
           ),
@@ -307,7 +311,7 @@ class _AlertTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(child: Text(title)),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            const AdaptiveIcon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),

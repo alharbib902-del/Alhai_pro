@@ -2,8 +2,20 @@
   "baseURL": "http://localhost:8080",
   "hashRouting": true,
   "routes": {
+    "home": "/home",
     "dashboard": "/dashboard",
     "pos": "/pos",
+    "posPayment": "/pos/payment",
+    "posReceipt": "/pos/receipt",
+    "profile": "/profile",
+    "onboarding": "/onboarding",
+    "products": "/products",
+    "productsAdd": "/products/add",
+    "productDetail": "/products/:id",
+    "categories": "/categories",
+    "inventory": "/inventory",
+    "customers": "/customers",
+    "customerDetail": "/customers/:id",
     "invoices": "/invoices",
     "invoiceDetail": "/invoices/:id",
     "orders": "/orders",
@@ -56,10 +68,6 @@
     "backupSettings": "/settings/backup",
     "notificationsSettings": "/settings/notifications",
     "zatcaCompliance": "/settings/zatca",
-    "helpSupport": "/settings/help",
-    "products": "/products",
-    "categories": "/categories",
-    "inventory": "/inventory",
-    "customers": "/customers"
+    "helpSupport": "/settings/help"
   }
 }

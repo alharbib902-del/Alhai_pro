@@ -125,10 +125,12 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                           ),
                         ),
                         if (widget.change != null && widget.changeType != null)
-                          _ChangeIndicator(
-                            change: widget.change!,
-                            type: widget.changeType!,
-                            compact: isMobile,
+                          Flexible(
+                            child: _ChangeIndicator(
+                              change: widget.change!,
+                              type: widget.changeType!,
+                              compact: isMobile,
+                            ),
                           ),
                       ],
                     ),

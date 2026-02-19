@@ -19,8 +19,12 @@ import '../../core/router/routes.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/settings_providers.dart';
+import '../../providers/sync_providers.dart';
 import '../../services/sale_service.dart';
 import '../../widgets/common/app_button.dart';
+import '../../widgets/common/offline_banner.dart';
+import '../../providers/whatsapp_queue_providers.dart';
 
 /// شاشة الدفع
 class PaymentScreen extends ConsumerStatefulWidget {
@@ -35,9 +39,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   PaymentMethod _selectedMethod = PaymentMethod.cash;
   final _cashReceivedController = TextEditingController();
   final _cardRrnController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _focusNode = FocusNode();
   bool _isProcessing = false;
   bool _showSuccess = false;
+  bool _showPhoneInput = false;
   double _cashReceived = 0;
 
   late AnimationController _animationController;
@@ -60,14 +66,61 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   void dispose() {
     _cashReceivedController.dispose();
     _cardRrnController.dispose();
+    _phoneController.dispose();
     _focusNode.dispose();
     _animationController.dispose();
     super.dispose();
   }
 
+  /// Whether the device is currently offline
+  bool get _isOffline {
+    final isOnlineAsync = ref.read(isOnlineProvider);
+    return isOnlineAsync.when(
+      data: (isOnline) => !isOnline,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartStateProvider);
+    // Watch online status to trigger rebuilds on connectivity changes
+    final isOnlineAsync = ref.watch(isOnlineProvider);
+    final isOffline = isOnlineAsync.when(
+      data: (isOnline) => !isOnline,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+
+    // Watch payment device settings
+    final paymentSettings = ref.watch(paymentDeviceSettingsProvider);
+    final settings = paymentSettings.when(
+      data: (s) => s,
+      loading: () => const PaymentDeviceSettings(),
+      error: (_, __) => const PaymentDeviceSettings(),
+    );
+
+    // Determine if card payment is allowed by settings
+    final cardEnabledBySettings = settings.hasCardPayment;
+
+    // Force cash payment when offline or card not enabled
+    if ((isOffline || !cardEnabledBySettings) &&
+        _selectedMethod == PaymentMethod.card) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _selectedMethod = PaymentMethod.cash);
+        }
+      });
+    }
+    if (isOffline && _selectedMethod != PaymentMethod.cash) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _selectedMethod = PaymentMethod.cash);
+        }
+      });
+    }
+
     final subtotal = cartState.subtotal;
     final tax = subtotal * 0.15;
     final discount = cartState.discount;
@@ -82,10 +135,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         },
         const SingleActivator(LogicalKeyboardKey.digit1): () =>
             setState(() => _selectedMethod = PaymentMethod.cash),
-        const SingleActivator(LogicalKeyboardKey.digit2): () =>
-            setState(() => _selectedMethod = PaymentMethod.card),
-        const SingleActivator(LogicalKeyboardKey.digit3): () =>
-            setState(() => _selectedMethod = PaymentMethod.wallet),
+        const SingleActivator(LogicalKeyboardKey.digit2): () {
+          if (!isOffline && cardEnabledBySettings) {
+            setState(() => _selectedMethod = PaymentMethod.card);
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.digit3): () {
+          if (!isOffline) setState(() => _selectedMethod = PaymentMethod.wallet);
+        },
       },
       child: Focus(
         autofocus: true,
@@ -95,7 +152,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               ? _buildSuccessState()
               : _isProcessing
                   ? _buildProcessingState()
-                  : _buildPaymentContent(total, subtotal, tax, discount, change),
+                  : Column(
+                      children: [
+                        const OfflineBanner(),
+                        Expanded(
+                          child: _buildPaymentContent(total, subtotal, tax, discount, change, settings),
+                        ),
+                      ],
+                    ),
         ),
       ),
     );
@@ -106,8 +170,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     double subtotal,
     double tax,
     double discount,
-    double change,
-  ) {
+    double change, [
+    PaymentDeviceSettings settings = const PaymentDeviceSettings(),
+  ]) {
     final isDesktop = AppBreakpoints.isDesktop(context);
 
     return Row(
@@ -135,7 +200,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      _buildPaymentMethods(),
+                      _buildPaymentMethods(isOffline: _isOffline, settings: settings),
 
                       const SizedBox(height: AppSpacing.xxl),
 
@@ -224,40 +289,124 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     );
   }
 
-  Widget _buildPaymentMethods() {
-    return Row(
+  Widget _buildPaymentMethods({
+    bool isOffline = false,
+    PaymentDeviceSettings settings = const PaymentDeviceSettings(),
+  }) {
+    final cardDisabled = isOffline || !settings.hasCardPayment;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _PaymentMethodCard(
-            icon: Icons.payments_outlined,
-            label: 'نقداً',
-            shortcut: '1',
-            color: AppColors.cash,
-            selected: _selectedMethod == PaymentMethod.cash,
-            onTap: () => setState(() => _selectedMethod = PaymentMethod.cash),
+        // Offline warning message
+        if (isOffline)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade50,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: Colors.orange.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.wifi_off, size: 20, color: Colors.orange.shade800),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'نقد فقط في وضع عدم الاتصال',
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: Colors.orange.shade800,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: _PaymentMethodCard(
-            icon: Icons.credit_card,
-            label: 'بطاقة',
-            shortcut: '2',
-            color: AppColors.card,
-            selected: _selectedMethod == PaymentMethod.card,
-            onTap: () => setState(() => _selectedMethod = PaymentMethod.card),
+
+        // Card payment disabled by settings warning
+        if (!isOffline && !settings.hasCardPayment)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: Colors.blue.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, size: 20, color: Colors.blue.shade800),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'البطاقات معطلة من الاعدادات',
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: Colors.blue.shade800,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: _PaymentMethodCard(
-            icon: Icons.access_time,
-            label: 'آجل',
-            shortcut: '3',
-            color: AppColors.debt,
-            selected: _selectedMethod == PaymentMethod.wallet,
-            onTap: () => setState(() => _selectedMethod = PaymentMethod.wallet),
-          ),
+
+        Row(
+          children: [
+            Expanded(
+              child: _PaymentMethodCard(
+                icon: Icons.payments_outlined,
+                label: 'نقدا',
+                shortcut: '1',
+                color: AppColors.cash,
+                selected: _selectedMethod == PaymentMethod.cash,
+                onTap: () => setState(() => _selectedMethod = PaymentMethod.cash),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: _PaymentMethodCard(
+                icon: Icons.credit_card,
+                label: 'بطاقة',
+                shortcut: '2',
+                color: AppColors.card,
+                selected: _selectedMethod == PaymentMethod.card,
+                onTap: cardDisabled
+                    ? null
+                    : () => setState(() => _selectedMethod = PaymentMethod.card),
+                disabled: cardDisabled,
+                disabledLabel: isOffline
+                    ? 'غير متاح بدون اتصال'
+                    : !settings.hasCardPayment
+                        ? 'معطل من الاعدادات'
+                        : null,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: _PaymentMethodCard(
+                icon: Icons.access_time,
+                label: 'آجل',
+                shortcut: '3',
+                color: AppColors.debt,
+                selected: _selectedMethod == PaymentMethod.wallet,
+                onTap: isOffline
+                    ? null
+                    : () => setState(() => _selectedMethod = PaymentMethod.wallet),
+                disabled: isOffline,
+                disabledLabel: isOffline ? 'غير متاح بدون اتصال' : null,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -607,6 +756,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   ),
                 ),
 
+                const SizedBox(height: AppSpacing.md),
+                _buildWhatsAppPhoneInput(),
+
                 const SizedBox(height: AppSpacing.xl),
 
                 // Confirm Button
@@ -713,6 +865,64 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
   }
 
   // ============================================================================
+  // WhatsApp Phone Input
+  // ============================================================================
+
+  Widget _buildWhatsAppPhoneInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => setState(() => _showPhoneInput = !_showPhoneInput),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Icon(
+                  _showPhoneInput
+                      ? Icons.check_box
+                      : Icons.check_box_outline_blank,
+                  color: Colors.green.shade600,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                const Text('إيصال واتساب',
+                    style: TextStyle(fontSize: 14)),
+                const SizedBox(width: 4),
+                Icon(Icons.chat, size: 16, color: Colors.green.shade600),
+              ],
+            ),
+          ),
+        ),
+        if (_showPhoneInput) ...[
+          const SizedBox(height: 8),
+          TextField(
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              prefixText: '+966 ',
+              hintText: '5X XXX XXXX',
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              isDense: true,
+              suffixIcon: Icon(Icons.phone_android,
+                  size: 18, color: Colors.green.shade600),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(9),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ============================================================================
   // Helpers
   // ============================================================================
 
@@ -811,6 +1021,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       // مسح السلة بعد البيع الناجح
       ref.read(cartStateProvider.notifier).clear();
 
+      // حفظ رقم الهاتف لشاشة الإيصال
+      if (_showPhoneInput && _phoneController.text.trim().isNotEmpty) {
+        final rawDigits = _phoneController.text.replaceAll(' ', '').trim();
+        if (rawDigits.length >= 8) {
+          ref.read(receiptPhoneProvider.notifier).state = '0$rawDigits';
+        }
+      }
+
       // الانتقال لشاشة الإيصال
       if (mounted) {
         context.go('${AppRoutes.posReceipt}?saleId=$saleId');
@@ -839,7 +1057,9 @@ class _PaymentMethodCard extends StatefulWidget {
   final String shortcut;
   final Color color;
   final bool selected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool disabled;
+  final String? disabledLabel;
 
   const _PaymentMethodCard({
     required this.icon,
@@ -848,6 +1068,8 @@ class _PaymentMethodCard extends StatefulWidget {
     required this.color,
     required this.selected,
     required this.onTap,
+    this.disabled = false,
+    this.disabledLabel,
   });
 
   @override
@@ -859,80 +1081,103 @@ class _PaymentMethodCardState extends State<_PaymentMethodCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: AppDurations.fast,
-        decoration: BoxDecoration(
-          color: widget.selected
-              ? widget.color.withValues(alpha: 0.1)
-              : _isHovered
-                  ? AppColors.grey50
-                  : AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(
-            color: widget.selected ? widget.color : AppColors.border,
-            width: widget.selected ? 2 : 1,
-          ),
-          boxShadow: widget.selected || _isHovered ? AppShadows.md : AppShadows.sm,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.onTap,
+    final isDisabled = widget.disabled;
+    final effectiveColor = isDisabled ? AppColors.grey400 : widget.color;
+
+    return Opacity(
+      opacity: isDisabled ? 0.5 : 1.0,
+      child: MouseRegion(
+        onEnter: isDisabled ? null : (_) => setState(() => _isHovered = true),
+        onExit: isDisabled ? null : (_) => setState(() => _isHovered = false),
+        cursor: isDisabled ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
+        child: AnimatedContainer(
+          duration: AppDurations.fast,
+          decoration: BoxDecoration(
+            color: isDisabled
+                ? AppColors.grey100
+                : widget.selected
+                    ? widget.color.withValues(alpha: 0.1)
+                    : _isHovered
+                        ? AppColors.grey50
+                        : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Column(
-                children: [
-                  // Icon
-                  AnimatedContainer(
-                    duration: AppDurations.fast,
-                    width: widget.selected ? 72 : 64,
-                    height: widget.selected ? 72 : 64,
-                    decoration: BoxDecoration(
-                      color: widget.color.withValues(alpha: widget.selected ? 0.2 : 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      widget.icon,
-                      size: widget.selected ? 36 : 32,
-                      color: widget.color,
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Label
-                  Text(
-                    widget.label,
-                    style: AppTypography.titleMedium.copyWith(
-                      color: widget.selected ? widget.color : AppColors.textPrimary,
-                      fontWeight: widget.selected ? FontWeight.w700 : FontWeight.w500,
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.xs),
-
-                  // Shortcut
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                      vertical: AppSpacing.xxs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.grey100,
-                      borderRadius: BorderRadius.circular(AppRadius.xs),
-                    ),
-                    child: Text(
-                      widget.shortcut,
-                      style: AppTypography.labelSmall.copyWith(
-                        color: AppColors.textMuted,
+            border: Border.all(
+              color: isDisabled
+                  ? AppColors.grey300
+                  : widget.selected
+                      ? widget.color
+                      : AppColors.border,
+              width: widget.selected ? 2 : 1,
+            ),
+            boxShadow: isDisabled
+                ? null
+                : widget.selected || _isHovered
+                    ? AppShadows.md
+                    : AppShadows.sm,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isDisabled ? null : widget.onTap,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Column(
+                  children: [
+                    // Icon
+                    AnimatedContainer(
+                      duration: AppDurations.fast,
+                      width: widget.selected ? 72 : 64,
+                      height: widget.selected ? 72 : 64,
+                      decoration: BoxDecoration(
+                        color: effectiveColor.withValues(alpha: widget.selected ? 0.2 : 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        widget.icon,
+                        size: widget.selected ? 36 : 32,
+                        color: effectiveColor,
                       ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Label
+                    Text(
+                      widget.label,
+                      style: AppTypography.titleMedium.copyWith(
+                        color: isDisabled
+                            ? AppColors.textMuted
+                            : widget.selected
+                                ? widget.color
+                                : AppColors.textPrimary,
+                        fontWeight: widget.selected ? FontWeight.w700 : FontWeight.w500,
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.xs),
+
+                    // Shortcut or disabled label
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDisabled ? Colors.orange.shade50 : AppColors.grey100,
+                        borderRadius: BorderRadius.circular(AppRadius.xs),
+                      ),
+                      child: Text(
+                        isDisabled
+                            ? (widget.disabledLabel ?? 'غير متاح')
+                            : widget.shortcut,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: isDisabled ? Colors.orange.shade700 : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

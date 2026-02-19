@@ -103,14 +103,14 @@ class GradientBackground extends StatelessWidget {
       case GradientType.horizontal:
         return LinearGradient(
           colors: colors,
-          begin: Alignment.centerRight,
-          end: Alignment.centerLeft,
+          begin: AlignmentDirectional.centerEnd,
+          end: AlignmentDirectional.centerStart,
         );
       case GradientType.diagonal:
         return LinearGradient(
           colors: colors,
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          begin: AlignmentDirectional.topEnd,
+          end: AlignmentDirectional.bottomStart,
         );
       case GradientType.radial:
         return RadialGradient(

@@ -2,6 +2,8 @@
 ///
 /// تعرض قائمة الفواتير مع إحصائيات، مخطط إيرادات،
 /// فلاتر، جدول بيانات، وإنشاء فاتورة جديدة
+///
+/// البيانات تأتي من قاعدة البيانات عبر invoicesListProvider
 library;
 
 import 'package:flutter/material.dart';
@@ -9,9 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/validators/input_sanitizer.dart';
 import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/invoices_providers.dart';
 import '../../widgets/invoices/invoice_stat_card.dart';
 import '../../widgets/invoices/invoice_revenue_chart.dart';
 import '../../widgets/invoices/invoice_payment_methods.dart';
@@ -19,8 +23,10 @@ import '../../widgets/invoices/invoice_data_table.dart';
 import '../../widgets/invoices/invoice_filters.dart';
 import '../../widgets/invoices/create_invoice_dialog.dart';
 import '../../widgets/invoices/delete_invoice_dialog.dart';
+import '../../widgets/common/app_empty_state.dart';
 
-/// نموذج بيانات الفاتورة
+/// نموذج بيانات الفاتورة (واجهة UI)
+/// يتم تحويل SalesTableData إلى هذا النموذج للعرض
 class InvoiceModel {
   final String id;
   final String customer;
@@ -41,6 +47,34 @@ class InvoiceModel {
     required this.paymentMethod,
     this.itemsCount = 0,
   });
+
+  /// تحويل بيانات البيع من قاعدة البيانات إلى نموذج الفاتورة
+  factory InvoiceModel.fromSalesData(SalesTableData sale) {
+    // تحويل حالة البيع إلى حالة الفاتورة
+    String status;
+    switch (sale.status) {
+      case 'completed':
+        status = 'paid';
+        break;
+      case 'voided':
+        status = 'cancelled';
+        break;
+      case 'pending':
+        status = 'pending';
+        break;
+      default:
+        status = sale.status;
+    }
+
+    return InvoiceModel(
+      id: sale.receiptNo,
+      customer: sale.customerName ?? 'عميل نقدي',
+      date: sale.createdAt,
+      amount: sale.total,
+      status: status,
+      paymentMethod: sale.paymentMethod,
+    );
+  }
 }
 
 class InvoicesScreen extends ConsumerStatefulWidget {
@@ -51,24 +85,13 @@ class InvoicesScreen extends ConsumerStatefulWidget {
 }
 
 class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'sales';
   String _activeTab = 'all';
   String _searchQuery = '';
   final Set<String> _selectedInvoices = {};
   bool _isGridView = false;
 
-  final List<InvoiceModel> _allInvoices = [
-    InvoiceModel(id: 'INV-2024-001', customer: 'محمد العلي', date: DateTime(2026, 2, 9), amount: 1250.00, status: 'paid', paymentMethod: 'card', itemsCount: 5),
-    InvoiceModel(id: 'INV-2024-002', customer: 'سارة أحمد', date: DateTime(2026, 2, 8), amount: 540.50, status: 'pending', paymentMethod: 'cash', itemsCount: 3),
-    InvoiceModel(id: 'INV-2024-003', customer: 'خالد يوسف', date: DateTime(2026, 2, 1), amount: 3200.00, status: 'overdue', paymentMethod: 'wallet', itemsCount: 8),
-    InvoiceModel(id: 'INV-2024-004', customer: 'منى سالم', date: DateTime(2026, 1, 28), amount: 850.00, status: 'paid', paymentMethod: 'card', itemsCount: 4),
-    InvoiceModel(id: 'INV-2024-005', customer: 'فهد عبدالله', date: DateTime(2026, 1, 25), amount: 1780.00, status: 'paid', paymentMethod: 'cash', itemsCount: 7),
-    InvoiceModel(id: 'INV-2024-006', customer: 'نورة خالد', date: DateTime(2026, 1, 20), amount: 920.00, status: 'cancelled', paymentMethod: 'card', itemsCount: 2),
-  ];
-
-  List<InvoiceModel> get _filteredInvoices {
-    var list = _allInvoices;
+  List<InvoiceModel> _filterInvoices(List<InvoiceModel> allInvoices) {
+    var list = allInvoices;
     if (_activeTab != 'all') {
       list = list.where((i) => i.status == _activeTab).toList();
     }
@@ -78,24 +101,6 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     }
     return list;
   }
-
-  int get _pendingCount => _allInvoices.where((i) => i.status == 'pending').length;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': break;
-      case 'sales': break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
-
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
     final l10n = AppLocalizations.of(context)!;
@@ -118,7 +123,6 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       context: context,
       builder: (ctx) => DeleteInvoiceDialog(
         onConfirm: () {
-          setState(() => _allInvoices.remove(invoice));
           Navigator.pop(ctx);
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -137,9 +141,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
+    // جلب البيانات من قاعدة البيانات
+    final invoicesAsync = ref.watch(invoicesListProvider);
+    final statsAsync = ref.watch(invoicesStatsProvider);
+
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
       floatingActionButton: !isWideScreen
           ? FloatingActionButton(
               onPressed: _showCreateInvoiceDialog,
@@ -147,71 +153,69 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
               child: const Icon(Icons.add, color: Colors.white, size: 28),
             )
           : null,
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+      body: Column(
               children: [
                 _buildHeader(context, isWideScreen, isDark, l10n),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: Column(
-                      children: [
-                        _buildStatsSection(l10n, isDark, isWideScreen),
-                        SizedBox(height: isMediumScreen ? 24 : 16),
-                        _buildChartSection(l10n, isDark, isWideScreen),
-                        SizedBox(height: isMediumScreen ? 24 : 16),
-                        InvoiceFilters(
-                          activeTab: _activeTab,
-                          onTabChanged: (tab) => setState(() => _activeTab = tab),
-                          isGridView: _isGridView,
-                          onViewToggle: () => setState(() => _isGridView = !_isGridView),
-                          onReset: () => setState(() { _activeTab = 'all'; _searchQuery = ''; }),
-                        ),
-                        const SizedBox(height: 16),
-                        InvoiceDataTable(
-                          invoices: _filteredInvoices,
-                          selectedIds: _selectedInvoices,
-                          onSelectAll: (selected) {
-                            setState(() {
-                              if (selected) { _selectedInvoices.addAll(_filteredInvoices.map((i) => i.id)); }
-                              else { _selectedInvoices.clear(); }
-                            });
-                          },
-                          onSelectInvoice: (id, selected) {
-                            setState(() { if (selected) { _selectedInvoices.add(id); } else { _selectedInvoices.remove(id); } });
-                          },
-                          onCopyId: _copyInvoiceId,
-                          onView: (invoice) => context.push(AppRoutes.invoiceDetailPath(invoice.id)),
-                          onDelete: _showDeleteDialog,
-                          isMobile: !isMediumScreen,
-                        ),
-                        const SizedBox(height: 24),
-                        _buildFooter(l10n, isDark),
-                      ],
+                  child: invoicesAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => AppErrorState.general(
+                      message: e.toString(),
+                      onRetry: () => ref.invalidate(invoicesListProvider),
                     ),
+                    data: (salesList) {
+                      // تحويل بيانات المبيعات إلى نموذج الفواتير
+                      final allInvoices = salesList.map((s) => InvoiceModel.fromSalesData(s)).toList();
+                      final filteredInvoices = _filterInvoices(allInvoices);
+                      final pendingCount = allInvoices.where((i) => i.status == 'pending').length;
+
+                      if (allInvoices.isEmpty) {
+                        return AppEmptyState.noInvoices();
+                      }
+
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        child: Column(
+                          children: [
+                            _buildStatsSection(l10n, isDark, isWideScreen, statsAsync, pendingCount),
+                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            _buildChartSection(l10n, isDark, isWideScreen),
+                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            InvoiceFilters(
+                              activeTab: _activeTab,
+                              onTabChanged: (tab) => setState(() => _activeTab = tab),
+                              isGridView: _isGridView,
+                              onViewToggle: () => setState(() => _isGridView = !_isGridView),
+                              onReset: () => setState(() { _activeTab = 'all'; _searchQuery = ''; }),
+                            ),
+                            const SizedBox(height: 16),
+                            InvoiceDataTable(
+                              invoices: filteredInvoices,
+                              selectedIds: _selectedInvoices,
+                              onSelectAll: (selected) {
+                                setState(() {
+                                  if (selected) { _selectedInvoices.addAll(filteredInvoices.map((i) => i.id)); }
+                                  else { _selectedInvoices.clear(); }
+                                });
+                              },
+                              onSelectInvoice: (id, selected) {
+                                setState(() { if (selected) { _selectedInvoices.add(id); } else { _selectedInvoices.remove(id); } });
+                              },
+                              onCopyId: _copyInvoiceId,
+                              onView: (invoice) => context.push(AppRoutes.invoiceDetailPath(invoice.id)),
+                              onDelete: _showDeleteDialog,
+                              isMobile: !isMediumScreen,
+                            ),
+                            const SizedBox(height: 24),
+                            _buildFooter(l10n, isDark),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -225,7 +229,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: isWideScreen ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed) : () => Scaffold.of(context).openDrawer(),
+            onPressed: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
           const SizedBox(width: 8),
@@ -268,8 +272,13 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             SizedBox(
               width: 300,
               child: TextField(
-                onChanged: (v) => setState(() => _searchQuery = v),
+                maxLength: 100,
+                onChanged: (v) {
+                  final sanitized = InputSanitizer.sanitize(v);
+                  setState(() => _searchQuery = sanitized);
+                },
                 decoration: InputDecoration(
+                  counterText: '',
                   hintText: l10n.searchInvoiceHint,
                   hintStyle: TextStyle(color: isDark ? AppColors.textMutedDark : AppColors.textMuted, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
@@ -290,12 +299,18 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildStatsSection(AppLocalizations l10n, bool isDark, bool isWideScreen) {
+  Widget _buildStatsSection(AppLocalizations l10n, bool isDark, bool isWideScreen, AsyncValue statsAsync, int pendingCount) {
+    // استخدام الإحصائيات الحقيقية من قاعدة البيانات
+    final statsData = statsAsync.valueOrNull;
+    final totalCount = statsData?.count ?? 0;
+    final totalAmount = statsData?.total ?? 0.0;
+    final formattedTotal = totalAmount.toStringAsFixed(0);
+
     final stats = [
-      InvoiceStatData(title: l10n.totalInvoices, value: '1,248', icon: Icons.receipt_long, iconBgColor: AppColors.info.withValues(alpha: 0.1), iconColor: AppColors.info, gradientColor: AppColors.info, changeValue: '+12.5%', isPositive: true, subtitle: l10n.comparedToLastMonth),
-      InvoiceStatData(title: l10n.totalPaid, value: '45,200 ${l10n.sar}', icon: Icons.check_circle, iconBgColor: AppColors.success.withValues(alpha: 0.1), iconColor: AppColors.success, gradientColor: AppColors.success, subtitle: l10n.ofTotalDue('75'), progressValue: 0.75),
-      InvoiceStatData(title: l10n.totalPending, value: '12,450 ${l10n.sar}', icon: Icons.access_time, iconBgColor: AppColors.warning.withValues(alpha: 0.1), iconColor: AppColors.warning, gradientColor: AppColors.warning, subtitle: l10n.invoicesWaitingPayment(_pendingCount)),
-      InvoiceStatData(title: l10n.totalOverdue, value: '2,300 ${l10n.sar}', icon: Icons.warning_amber, iconBgColor: AppColors.error.withValues(alpha: 0.1), iconColor: AppColors.error, gradientColor: AppColors.error, actionText: l10n.sendReminderNow, onAction: () {}),
+      InvoiceStatData(title: l10n.totalInvoices, value: '$totalCount', icon: Icons.receipt_long, iconBgColor: AppColors.info.withValues(alpha: 0.1), iconColor: AppColors.info, gradientColor: AppColors.info, changeValue: '', isPositive: true, subtitle: l10n.comparedToLastMonth),
+      InvoiceStatData(title: l10n.totalPaid, value: '$formattedTotal ${l10n.sar}', icon: Icons.check_circle, iconBgColor: AppColors.success.withValues(alpha: 0.1), iconColor: AppColors.success, gradientColor: AppColors.success, subtitle: l10n.sar),
+      InvoiceStatData(title: l10n.totalPending, value: '$pendingCount', icon: Icons.access_time, iconBgColor: AppColors.warning.withValues(alpha: 0.1), iconColor: AppColors.warning, gradientColor: AppColors.warning, subtitle: l10n.invoicesWaitingPayment(pendingCount)),
+      InvoiceStatData(title: l10n.totalOverdue, value: '${statsData?.average.toStringAsFixed(0) ?? 0} ${l10n.sar}', icon: Icons.trending_up, iconBgColor: AppColors.error.withValues(alpha: 0.1), iconColor: AppColors.error, gradientColor: AppColors.error, subtitle: 'متوسط الفاتورة'),
     ];
 
     if (isWideScreen) {
@@ -338,23 +353,6 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.supportFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
         ]),
       ]),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
     );
   }
 }

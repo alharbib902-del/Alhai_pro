@@ -10,6 +10,7 @@ library;
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// نتيجة فحص السلامة
 class IntegrityCheckResult {
@@ -88,9 +89,7 @@ class DataIntegrity {
   /// تهيئة الخدمة
   static void initialize(String hmacKey) {
     _hmacKey = hmacKey;
-    if (kDebugMode) {
-      debugPrint('🔐 DataIntegrity initialized');
-    }
+    AppLogger.debug('DataIntegrity initialized', tag: 'DataIntegrity');
   }
 
   /// حساب Hash للبيانات
@@ -138,9 +137,7 @@ class DataIntegrity {
     final hash = computeHash(data);
     _storedHashes[key] = hash;
 
-    if (kDebugMode) {
-      debugPrint('🔐 Hash registered for $key: ${hash.substring(0, 16)}...');
-    }
+    AppLogger.debug('Hash registered for $key: ${hash.substring(0, 16)}...', tag: 'DataIntegrity');
   }
 
   /// التحقق من سلامة البيانات
@@ -210,9 +207,7 @@ class DataIntegrity {
       _changeLog.removeAt(0);
     }
 
-    if (kDebugMode) {
-      debugPrint('📝 Change logged: $entityType:$entityId.$fieldName');
-    }
+    AppLogger.debug('Change logged: $entityType:$entityId.$fieldName', tag: 'DataIntegrity');
   }
 
   /// التحقق من سلامة سجل التغييرات
@@ -230,9 +225,7 @@ class DataIntegrity {
       final expectedHash = computeHmac(changeData);
 
       if (!_constantTimeEquals(record.hash, expectedHash)) {
-        if (kDebugMode) {
-          debugPrint('⚠️ Change log integrity violation detected!');
-        }
+        AppLogger.error('Change log integrity violation detected!', tag: 'DataIntegrity');
         return false;
       }
     }
@@ -291,14 +284,18 @@ class DataIntegrity {
   }
 
   /// تسلسل Map بترتيب ثابت
-  static String _serializeMap(Map<String, dynamic> map) {
+  static String _serializeMap(Map<String, dynamic> map, {int maxDepth = 10}) {
     final sortedKeys = map.keys.toList()..sort();
     final sortedMap = <String, dynamic>{};
 
     for (final key in sortedKeys) {
       var value = map[key];
       if (value is Map<String, dynamic>) {
-        value = _serializeMap(value);
+        if (maxDepth <= 0) {
+          value = '{_truncated}';
+        } else {
+          value = _serializeMap(value, maxDepth: maxDepth - 1);
+        }
       }
       sortedMap[key] = value;
     }

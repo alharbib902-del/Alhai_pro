@@ -1,12 +1,16 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
+import 'package:drift/drift.dart' show Variable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/router/routes.dart';
 import '../../providers/auth_providers.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة الملف الشخصي - بيانات حقيقية
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -17,8 +21,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'dashboard';
   int _salesCount = 0;
   int _daysActive = 0;
   bool _isLoading = true;
@@ -32,33 +34,77 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _loadStats() async {
     setState(() => _isLoading = true);
 
-    // Mock data للتطوير - TODO: ربط بقاعدة البيانات
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      final user = ref.read(currentUserProvider);
 
-    setState(() {
-      _salesCount = 125;
-      _daysActive = 45;
-      _isLoading = false;
-    });
-  }
+      if (storeId == null || user == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
+      // Get total sales count for this cashier
+      final salesStats = await db.salesDao.getSalesStats(
+        storeId,
+        cashierId: user.id,
+      );
+
+      // Calculate days active from user creation date
+      // Use createdAt if available, otherwise approximate
+      int daysActive = 0;
+      try {
+        // Try to get user record from DB for createdAt
+        final userRecord = await db.customSelect(
+          'SELECT created_at FROM users WHERE id = ? LIMIT 1',
+          variables: [Variable.withString(user.id)],
+        ).getSingleOrNull();
+
+        if (userRecord != null && userRecord.data['created_at'] != null) {
+          final createdAt = DateTime.fromMillisecondsSinceEpoch(
+            userRecord.data['created_at'] as int,
+          );
+          daysActive = DateTime.now().difference(createdAt).inDays;
+        } else {
+          // Fallback: use sales data to estimate
+          final allSales = await db.salesDao.getSalesPaginated(
+            storeId,
+            cashierId: user.id,
+            limit: 1,
+          );
+          if (allSales.isNotEmpty) {
+            daysActive = DateTime.now().difference(allSales.last.createdAt).inDays;
+          }
+        }
+      } catch (_) {
+        // If users table query fails, estimate from earliest sale
+        try {
+          final allSales = await db.salesDao.getSalesPaginated(
+            storeId,
+            cashierId: user.id,
+            limit: 1,
+          );
+          if (allSales.isNotEmpty) {
+            daysActive = DateTime.now().difference(allSales.last.createdAt).inDays;
+          }
+        } catch (_) {
+          // Keep default 0
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _salesCount = salesStats.count;
+          _daysActive = daysActive;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,32 +117,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final userEmail = user?.email ?? '';
     final userRole = (user?.role ?? 'موظف').toString(); // TODO: localize
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: userName,
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: 'الملف الشخصي', // TODO: localize
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
@@ -116,11 +142,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, String userName, String userEmail, String userRole, dynamic user) {
@@ -135,8 +157,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               colors: isDark
                   ? [AppColors.primary.withValues(alpha: 0.2), AppColors.primary.withValues(alpha: 0.1)]
                   : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
+              begin: AlignmentDirectional.topEnd,
+              end: AlignmentDirectional.bottomStart,
             ),
             borderRadius: BorderRadius.circular(16),
           ),
@@ -256,7 +278,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   'تغيير كلمة المرور', // TODO: localize
                   style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
-                trailing: Icon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                trailing: AdaptiveIcon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
                 onTap: _changePassword,
               ),
               Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
@@ -266,7 +288,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   'سجل النشاط', // TODO: localize
                   style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
-                trailing: Icon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                trailing: AdaptiveIcon(Icons.chevron_left, color: isDark ? Colors.white38 : AppColors.textTertiary),
                 onTap: () => context.push('/settings/activity-log'),
               ),
             ],
@@ -280,8 +302,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: _logout,
-            icon: Icon(Icons.logout, color: AppColors.error),
-            label: Text('تسجيل الخروج', style: TextStyle(color: AppColors.error)), // TODO: localize
+            icon: const Icon(Icons.logout, color: AppColors.error),
+            label: const Text('تسجيل الخروج', style: TextStyle(color: AppColors.error)), // TODO: localize
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -291,35 +313,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ],
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    final user = ref.read(currentUserProvider);
-    final userName = user?.name ?? 'غير معروف'; // TODO: localize
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: userName,
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
-
   String _translateRole(String role) {
     switch (role) {
       case 'admin': return 'مدير النظام'; // TODO: localize
@@ -337,25 +330,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SnackBar(content: Text('تغيير كلمة المرور')), // TODO: localize
       );
 
-  void _logout() {
-    showDialog(
+  Future<void> _logout() async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('تسجيل الخروج'), // TODO: localize
         content: const Text('هل تريد تسجيل الخروج من النظام؟'), // TODO: localize
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('إلغاء')), // TODO: localize
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go(AppRoutes.login);
-            },
+            onPressed: () => Navigator.pop(dialogContext, true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('خروج'), // TODO: localize
           ),
         ],
       ),
     );
+    if (confirmed == true && mounted) {
+      await ref.read(authStateProvider.notifier).logout();
+      if (mounted) context.go(AppRoutes.login);
+    }
   }
 }
 

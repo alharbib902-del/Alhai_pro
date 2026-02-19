@@ -10,26 +10,29 @@ class AiInvoiceService {
   /// استخراج بيانات الفاتورة من الصورة
   static Future<AiInvoiceResult> extractInvoiceData(File imageFile) async {
     try {
-      // قراءة الصورة وتحويلها لـ base64
       final bytes = await imageFile.readAsBytes();
       // ignore: unused_local_variable
       final base64Image = base64Encode(bytes);
-      
-      // في بيئة الإنتاج، سيتم إرسال الصورة للـ API
-      // هنا نستخدم بيانات وهمية للتطوير
+
+      // بيانات وهمية للتطوير فقط
       if (kDebugMode) {
         return _getMockData();
       }
-      
-      // TODO: تنفيذ الاتصال الفعلي بالـ API
+
+      // TODO: Enable when API endpoint is ready
       // final response = await http.post(
       //   Uri.parse('$_baseUrl/extract-invoice'),
       //   headers: {'Content-Type': 'application/json'},
       //   body: jsonEncode({'image': base64Image}),
       // );
-      
-      return _getMockData();
+
+      // In production, throw until the API is ready
+      throw AiInvoiceException(
+        'خدمة استخراج الفواتير بالذكاء الاصطناعي غير متاحة حالياً. '
+        'يرجى إدخال البيانات يدوياً.',
+      );
     } catch (e) {
+      if (e is AiInvoiceException) rethrow;
       throw AiInvoiceException('فشل في استخراج البيانات: $e');
     }
   }

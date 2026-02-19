@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
+import '../../core/validators/input_sanitizer.dart';
 import '../../providers/products_providers.dart';
 import '../../providers/cart_providers.dart';
 
@@ -63,8 +64,10 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
   void _onSearchChanged(String value) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(widget.debounceDuration, () {
-      ref.read(instantSearchQueryProvider.notifier).state = value;
-      setState(() => _showResults = value.isNotEmpty);
+      final sanitized = InputSanitizer.sanitize(value);
+      if (InputSanitizer.containsDangerousContent(sanitized)) return;
+      ref.read(instantSearchQueryProvider.notifier).state = sanitized;
+      setState(() => _showResults = sanitized.isNotEmpty);
     });
   }
 
@@ -95,6 +98,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
           controller: _controller,
           focusNode: widget.focusNode,
           onChanged: _onSearchChanged,
+          maxLength: 100,
           decoration: InputDecoration(
             hintText: widget.hintText ?? 'بحث سريع (اسم / كود / باركود)...',
             prefixIcon: const Icon(Icons.search),

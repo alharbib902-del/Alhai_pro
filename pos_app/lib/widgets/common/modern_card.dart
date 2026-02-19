@@ -297,8 +297,8 @@ class _ModernCardState extends State<ModernCard>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
               gradient: widget.gradient ?? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
                 colors: [
                   AppColors.primary,
                   AppColors.primary.withValues(alpha: 0.8),

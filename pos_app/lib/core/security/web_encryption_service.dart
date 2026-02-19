@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// خوارزمية التشفير المستخدمة
 enum EncryptionAlgorithm {
@@ -124,7 +125,7 @@ class WebEncryptionService {
     _initialized = true;
 
     if (kDebugMode) {
-      debugPrint('🔐 WebEncryptionService initialized');
+      AppLogger.debug('WebEncryptionService initialized', tag: 'Encryption');
     }
   }
 

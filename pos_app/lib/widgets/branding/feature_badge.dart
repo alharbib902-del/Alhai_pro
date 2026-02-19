@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// أنواع الشعارات
 enum FeatureBadgeType {
@@ -106,7 +107,18 @@ class FeatureBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final badgeData = data ?? FeatureBadgeData.fromType(type!);
+    final l10n = AppLocalizations.of(context)!;
+    var badgeData = data ?? FeatureBadgeData.fromType(type!);
+
+    // Use localized title for cloud badge
+    if (type == FeatureBadgeType.cloud) {
+      badgeData = FeatureBadgeData(
+        icon: badgeData.icon,
+        title: l10n.cloud,
+        subtitle: badgeData.subtitle,
+        color: badgeData.color,
+      );
+    }
 
     if (compact) {
       return _CompactBadge(data: badgeData, light: light);

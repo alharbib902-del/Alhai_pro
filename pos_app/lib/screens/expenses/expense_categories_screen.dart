@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/expenses_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة فئات المصروفات
@@ -24,38 +24,42 @@ class ExpenseCategoriesScreen extends ConsumerStatefulWidget {
 
 class _ExpenseCategoriesScreenState
     extends ConsumerState<ExpenseCategoriesScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'expenses';
 
-  // بيانات تجريبية
-  final List<ExpenseCategory> _categories = [
-    ExpenseCategory(id: '1', name: 'رواتب الموظفين', icon: Icons.people, color: AppColors.primary, budget: 50000.0, spent: 45000.0, expensesCount: 12, isActive: true),
-    ExpenseCategory(id: '2', name: 'إيجار المحل', icon: Icons.store, color: AppColors.warning, budget: 15000.0, spent: 15000.0, expensesCount: 1, isActive: true),
-    ExpenseCategory(id: '3', name: 'فواتير الكهرباء', icon: Icons.bolt, color: Colors.amber, budget: 3000.0, spent: 2800.0, expensesCount: 1, isActive: true),
-    ExpenseCategory(id: '4', name: 'صيانة وإصلاحات', icon: Icons.build, color: Colors.orange, budget: 5000.0, spent: 3200.0, expensesCount: 5, isActive: true),
-    ExpenseCategory(id: '5', name: 'مستلزمات المكتب', icon: Icons.inventory_2, color: AppColors.info, budget: 2000.0, spent: 1500.0, expensesCount: 8, isActive: true),
-    ExpenseCategory(id: '6', name: 'تسويق وإعلانات', icon: Icons.campaign, color: Colors.purple, budget: 10000.0, spent: 7500.0, expensesCount: 4, isActive: true),
-    ExpenseCategory(id: '7', name: 'نقل ومواصلات', icon: Icons.local_shipping, color: Colors.teal, budget: 4000.0, spent: 2800.0, expensesCount: 15, isActive: true),
-    ExpenseCategory(id: '8', name: 'أخرى', icon: Icons.more_horiz, color: AppColors.grey500, budget: 5000.0, spent: 1200.0, expensesCount: 6, isActive: true),
-  ];
+  // Map icon name to IconData
+  static final _iconMap = <String, IconData>{
+    'people': Icons.people,
+    'store': Icons.store,
+    'bolt': Icons.bolt,
+    'build': Icons.build,
+    'inventory_2': Icons.inventory_2,
+    'campaign': Icons.campaign,
+    'local_shipping': Icons.local_shipping,
+    'more_horiz': Icons.more_horiz,
+  };
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
+  static final _colorMap = <String, Color>{
+    'primary': AppColors.primary,
+    'warning': AppColors.warning,
+    'amber': Colors.amber,
+    'orange': Colors.orange,
+    'info': AppColors.info,
+    'purple': Colors.purple,
+    'teal': Colors.teal,
+    'grey': AppColors.grey500,
+  };
+
+  ExpenseCategory _fromData(ExpenseCategoriesTableData data) {
+    return ExpenseCategory(
+      id: data.id,
+      name: data.name,
+      icon: _iconMap[data.icon] ?? Icons.category,
+      color: _colorMap[data.color] ?? AppColors.primary,
+      budget: 0,
+      spent: 0,
+      expensesCount: 0,
+      isActive: data.isActive,
+    );
   }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -64,12 +68,7 @@ class _ExpenseCategoriesScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    final totalBudget = _categories.fold(0.0, (sum, c) => sum + c.budget);
-    final totalSpent = _categories.fold(0.0, (sum, c) => sum + c.spent);
-
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddCategoryDialog,
         icon: const Icon(Icons.add),
@@ -77,86 +76,48 @@ class _ExpenseCategoriesScreenState
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+      body: Column(
               children: [
                 AppHeader(
-                  title: 'فئات المصروفات', // TODO: l10n.expenseCategories
+                  title: 'فئات المصروفات',
                   subtitle: _getDateSubtitle(l10n),
                   showSearch: isWideScreen,
                   searchHint: l10n.searchPlaceholder,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, totalBudget, totalSpent),
+                  child: ref.watch(allExpenseCategoriesProvider).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('خطأ: $e')),
+                    data: (categoriesData) {
+                      final categories = categoriesData.map(_fromData).toList();
+                      final totalBudget = categories.fold(0.0, (sum, c) => sum + c.budget);
+                      final totalSpent = categories.fold(0.0, (sum, c) => sum + c.spent);
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        child: _buildContent(categories, isWideScreen, isMediumScreen, isDark, l10n, totalBudget, totalSpent),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, double totalBudget, double totalSpent) {
+  Widget _buildContent(List<ExpenseCategory> categories, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, double totalBudget, double totalSpent) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -165,10 +126,23 @@ class _ExpenseCategoriesScreenState
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Categories grid/list
-        if (isWideScreen)
-          _buildCategoriesGrid(isDark, l10n)
+        if (categories.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: [
+                  Icon(Icons.category_rounded, size: 48, color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+                  const SizedBox(height: 8),
+                  Text('لا توجد فئات مصروفات', style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted)),
+                ],
+              ),
+            ),
+          )
+        else if (isWideScreen)
+          _buildCategoriesGrid(categories, isDark, l10n)
         else
-          _buildCategoriesList(isDark, l10n),
+          _buildCategoriesList(categories, isDark, l10n),
       ],
     );
   }
@@ -264,20 +238,20 @@ class _ExpenseCategoriesScreenState
     );
   }
 
-  Widget _buildCategoriesGrid(bool isDark, AppLocalizations l10n) {
+  Widget _buildCategoriesGrid(List<ExpenseCategory> categories, bool isDark, AppLocalizations l10n) {
     return Wrap(
       spacing: 16,
       runSpacing: 16,
-      children: _categories.map((cat) => SizedBox(
+      children: categories.map((cat) => SizedBox(
         width: 340,
         child: _buildCategoryCard(cat, isDark, l10n),
       )).toList(),
     );
   }
 
-  Widget _buildCategoriesList(bool isDark, AppLocalizations l10n) {
+  Widget _buildCategoriesList(List<ExpenseCategory> categories, bool isDark, AppLocalizations l10n) {
     return Column(
-      children: _categories.map((cat) => Padding(
+      children: categories.map((cat) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: _buildCategoryCard(cat, isDark, l10n),
       )).toList(),
@@ -544,23 +518,17 @@ class _ExpenseCategoriesScreenState
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => _CategoryFormDialog(
-        onSave: (name, icon, color, budget) {
-          setState(() {
-            _categories.add(ExpenseCategory(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              name: name,
-              icon: icon,
-              color: color,
-              budget: budget,
-              spent: 0,
-              expensesCount: 0,
-              isActive: true,
-            ));
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${l10n.categorySavedSuccess}: $name'), backgroundColor: AppColors.success),
-          );
+      builder: (dialogContext) => _CategoryFormDialog(
+        onSave: (name, icon, color, budget) async {
+          // Find the icon/color key for storage
+          final iconKey = _iconMap.entries.firstWhere((e) => e.value == icon, orElse: () => const MapEntry('category', Icons.category)).key;
+          final colorKey = _colorMap.entries.firstWhere((e) => e.value == color, orElse: () => const MapEntry('primary', AppColors.primary)).key;
+          await addExpenseCategory(ref, name: name, icon: iconKey, color: colorKey);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${l10n.categorySavedSuccess}: $name'), backgroundColor: AppColors.success),
+            );
+          }
         },
       ),
     );
@@ -578,18 +546,10 @@ class _ExpenseCategoriesScreenState
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => _CategoryFormDialog(
+      builder: (dialogContext) => _CategoryFormDialog(
         category: category,
         onSave: (name, icon, color, budget) {
-          setState(() {
-            final index = _categories.indexWhere((c) => c.id == category.id);
-            if (index != -1) {
-              _categories[index] = ExpenseCategory(
-                id: category.id, name: name, icon: icon, color: color,
-                budget: budget, spent: category.spent, expensesCount: category.expensesCount, isActive: category.isActive,
-              );
-            }
-          });
+          // TODO: implement update category when DAO supports it
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${l10n.categorySavedSuccess}: $name'), backgroundColor: AppColors.success),
           );
@@ -602,19 +562,21 @@ class _ExpenseCategoriesScreenState
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(l10n.deleteCategory),
         content: Text(l10n.deleteCategoryConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() => _categories.removeWhere((c) => c.id == category.id));
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await deleteExpenseCategory(ref, category.id);
               HapticFeedback.mediumImpact();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.categoryDeletedSuccess), backgroundColor: AppColors.error),
-              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.categoryDeletedSuccess), backgroundColor: AppColors.error),
+                );
+              }
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             child: Text(l10n.delete),

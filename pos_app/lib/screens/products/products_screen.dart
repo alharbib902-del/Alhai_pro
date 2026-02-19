@@ -6,10 +6,10 @@ import 'package:alhai_core/alhai_core.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../core/validators/input_sanitizer.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
 import '../../widgets/common/common.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة قائمة المنتجات - تصميم Web محسّن مع App Shell + Dark Mode
@@ -23,6 +23,7 @@ class ProductsScreen extends ConsumerStatefulWidget {
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   final _searchController = TextEditingController();
   final _searchFocusNode = FocusNode();
+  final _keyboardFocusNode = FocusNode();
   String? _selectedCategoryId;
   String _stockFilter = 'all'; // all, available, low, out
   bool _isGridView = true;
@@ -30,9 +31,6 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   bool _sortAscending = true;
   bool _showFilters = true;
 
-  // App Shell state
-  bool _sidebarCollapsed = false;
-  final String _selectedNavId = 'products';
 
   @override
   void initState() {
@@ -49,64 +47,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _keyboardFocusNode.dispose();
     super.dispose();
-  }
-
-  void _handleNavigation(AppSidebarItem item) {
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        break; // Already on products
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push('/sales');
-        break;
-      case 'reports':
-        context.push('/reports');
-        break;
-      case 'employees':
-        context.push('/employees');
-        break;
-      case 'loyalty':
-        context.push('/loyalty');
-        break;
-    }
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
   }
 
   @override
@@ -120,30 +62,14 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return KeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _keyboardFocusNode,
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-        drawer: isWideScreen ? null : _buildDrawer(l10n),
         body: Row(
           children: [
             // App Sidebar (Desktop only)
-            if (isWideScreen)
-              AppSidebar(
-                storeName: l10n.brandName,
-                groups: DefaultSidebarItems.getGroups(context),
-                selectedId: _selectedNavId,
-                onItemTap: _handleNavigation,
-                onSettingsTap: () => context.push(AppRoutes.settings),
-                onSupportTap: () {},
-                onLogoutTap: () => context.go('/login'),
-                collapsed: _sidebarCollapsed,
-                userName: 'أحمد محمد',
-                userRole: l10n.branchManager,
-                onUserTap: () {},
-              ),
-            // Main Content
+// Main Content
             Expanded(
               child: Column(
                 children: [
@@ -153,11 +79,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     subtitle: '${productsState.products.length} ${l10n.product}',
                     showSearch: false,
                     onMenuTap: isWideScreen
-                        ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                        : () => Scaffold.of(context).openDrawer(),
+                      ? null
+                      : () => Scaffold.of(context).openDrawer(),
                     onNotificationsTap: () => context.push('/notifications'),
                     notificationsCount: 3,
-                    userName: 'أحمد محمد',
+                    userName: l10n.defaultUserName,
                     userRole: l10n.branchManager,
                     onUserTap: () {},
                     actions: [
@@ -215,7 +141,17 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   controller: _searchController,
                   focusNode: _searchFocusNode,
                   hintText: '${l10n.searchByNameOrBarcode} (Ctrl+F)',
-                  onChanged: _onSearch,
+                  maxLength: 100,
+                  onChanged: (v) {
+                    final sanitized = InputSanitizer.sanitize(v);
+                    if (sanitized != v) {
+                      _searchController.text = sanitized;
+                      _searchController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: sanitized.length),
+                      );
+                    }
+                    _onSearch(sanitized);
+                  },
                   onClear: () => _onSearch(''),
                 ),
               ),
@@ -680,7 +616,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   Widget _buildCategoryChip(String label, String? categoryId, bool isDark) {
     final isSelected = _selectedCategoryId == categoryId;
     return Padding(
-      padding: const EdgeInsets.only(left: AppSizes.xs),
+      padding: const EdgeInsetsDirectional.only(start: AppSizes.xs),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
@@ -1040,10 +976,10 @@ class _ProductGridCardState extends State<_ProductGridCard> {
 
   Widget _buildStockBadge() {
     if (widget.product.isOutOfStock) {
-      return AppBadge.stock(0);
+      return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(widget.product.stockQty, minQuantity: widget.product.minQty);
+      return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
     }
     return const SizedBox.shrink();
   }
@@ -1206,11 +1142,11 @@ class _ProductListCardState extends State<_ProductListCard> {
 
   Widget _buildStockBadge() {
     if (widget.product.isOutOfStock) {
-      return AppBadge.stock(0);
+      return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(widget.product.stockQty, minQuantity: widget.product.minQty);
+      return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
     }
-    return AppBadge.stock(widget.product.stockQty, minQuantity: widget.product.minQty);
+    return AppBadge.stock(context, widget.product.stockQty, minQuantity: widget.product.minQty);
   }
 }

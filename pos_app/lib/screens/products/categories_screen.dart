@@ -8,17 +8,16 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:drift/drift.dart' as drift;
 
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../core/validators/validators.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart'; // categoriesProvider + currentStoreIdProvider
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 // ============================================================================
@@ -106,8 +105,6 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   // Navigation
-  String _selectedNavId = 'categories';
-  bool _sidebarCollapsed = false;
 
   // Category selection & editing
   String? _selectedCategoryId;
@@ -135,42 +132,6 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   // ============================================================================
   // Navigation
   // ============================================================================
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push('/sales');
-        break;
-      case 'reports':
-        context.push('/reports');
-        break;
-      case 'employees':
-        context.push('/employees');
-        break;
-      case 'loyalty':
-        context.push('/loyalty');
-        break;
-    }
-  }
-
   // ============================================================================
   // Category CRUD
   // ============================================================================
@@ -211,6 +172,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
 
+    // Sanitize category name before saving
+    final sanitizedName = InputSanitizer.sanitize(_nameArController.text.trim());
+    final sanitizedNameEn = InputSanitizer.sanitize(_nameEnController.text.trim());
+
     try {
       if (_isCreating) {
         // إنشاء تصنيف جديد
@@ -218,10 +183,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         await dao.insertCategory(CategoriesTableCompanion(
           id: drift.Value(newId),
           storeId: drift.Value(storeId),
-          name: drift.Value(_nameArController.text.trim()),
-          nameEn: drift.Value(_nameEnController.text.trim().isEmpty
+          name: drift.Value(sanitizedName),
+          nameEn: drift.Value(sanitizedNameEn.isEmpty
               ? null
-              : _nameEnController.text.trim()),
+              : sanitizedNameEn),
           parentId: drift.Value(_selectedParentId),
           color: drift.Value(_colorToHex(_selectedColor)),
           icon: drift.Value(_iconToString(_selectedIcon)),
@@ -239,10 +204,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         final existing = await dao.getCategoryById(_selectedCategoryId!);
         if (existing != null) {
           await dao.updateCategory(existing.copyWith(
-            name: _nameArController.text.trim(),
-            nameEn: drift.Value(_nameEnController.text.trim().isEmpty
+            name: sanitizedName,
+            nameEn: drift.Value(sanitizedNameEn.isEmpty
                 ? null
-                : _nameEnController.text.trim()),
+                : sanitizedNameEn),
             parentId: drift.Value(_selectedParentId),
             color: drift.Value(_colorToHex(_selectedColor)),
             icon: drift.Value(_iconToString(_selectedIcon)),
@@ -347,39 +312,18 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+      body: Column(
               children: [
                 AppHeader(
                   title: l10n.categoriesManagement,
                   subtitle: l10n.categories,
                   showSearch: false,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () {},
                   notificationsCount: 0,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                 ),
@@ -393,9 +337,6 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
       floatingActionButton: !isMediumScreen
           ? FloatingActionButton(
               onPressed: _startCreating,
@@ -405,33 +346,6 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           : null,
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   // ============================================================================
   // Split View (Desktop/Tablet)
   // ============================================================================
@@ -565,8 +479,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 const SizedBox(height: 12),
                 // البحث
                 TextField(
-                  onChanged: (value) => setState(() => _searchQuery = value),
+                  maxLength: 100,
+                  onChanged: (value) {
+                    final sanitized = InputSanitizer.sanitize(value);
+                    setState(() => _searchQuery = sanitized);
+                  },
                   decoration: InputDecoration(
+                    counterText: '',
                     hintText: l10n.searchCategories,
                     hintStyle: TextStyle(
                       color: isDark
@@ -1070,14 +989,16 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           isDark: isDark,
           label: l10n.categoryNameAr,
           controller: _nameArController,
-          validator: (v) =>
-              (v == null || v.trim().isEmpty) ? l10n.categoryName : null,
+          maxLength: 80,
+          validator: FormValidators.requiredField(maxLength: 80),
         ),
         const SizedBox(height: 12),
         _buildTextField(
           isDark: isDark,
           label: l10n.categoryNameEn,
           controller: _nameEnController,
+          maxLength: 80,
+          validator: FormValidators.notes(maxLength: 80),
         ),
       ],
     );
@@ -1088,10 +1009,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     required String label,
     required TextEditingController controller,
     String? Function(String?)? validator,
+    int? maxLength,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
       validator: validator,
+      maxLength: maxLength,
+      inputFormatters: inputFormatters,
       style: TextStyle(
         color: isDark ? Colors.white : AppColors.textPrimary,
         fontSize: 14,
@@ -1239,6 +1164,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       isDark: isDark,
       label: l10n.sortOrder,
       controller: _sortOrderController,
+      maxLength: 5,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      validator: FormValidators.numeric(isRequired: false, max: 99999, allowZero: true),
     );
   }
 

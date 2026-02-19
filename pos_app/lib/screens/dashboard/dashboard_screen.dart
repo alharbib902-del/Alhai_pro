@@ -4,266 +4,154 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
-import '../../providers/products_providers.dart';
-import '../../data/local/app_database.dart';
-import '../../di/injection.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/dashboard_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/dashboard/stat_card.dart';
 import '../../widgets/dashboard/sales_chart.dart';
 import '../../widgets/dashboard/elegant_quick_actions.dart';
 import '../../widgets/dashboard/recent_transactions.dart';
 
-/// لوحة التحكم الرئيسية بالتصميم الجديد
-class DashboardScreen extends ConsumerStatefulWidget {
+/// Main dashboard screen with real-time data from database
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  @override
-  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  // البيانات
-  double _todaySales = 0;
-  int _todayOrders = 0;
-  int _lowStockCount = 0;
-  int _newCustomers = 0;
-  bool _isLoading = true;
-  List<SalesTableData> _recentSales = [];
-
-  // حالة الـ UI
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'dashboard';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDashboardData();
-  }
-
-  Future<void> _loadDashboardData() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final db = getIt<AppDatabase>();
-      final storeId = ref.read(currentStoreIdProvider);
-      const userId = '';
-
-      if (storeId != null) {
-        final total = await db.salesDao.getTodayTotal(storeId, userId);
-        final count = await db.salesDao.getTodayCount(storeId, userId);
-        final lowStock = await db.productsDao.getLowStockProducts(storeId);
-        final today = DateTime.now();
-        final recent = await db.salesDao.getSalesByDate(storeId, today);
-
-        setState(() {
-          _todaySales = total;
-          _todayOrders = count;
-          _lowStockCount = lowStock.length;
-          _newCustomers = 12;
-          _recentSales = recent.take(5).toList();
-          _isLoading = false;
-        });
-      } else {
-        setState(() => _isLoading = false);
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-
-    switch (item.id) {
-      case 'dashboard':
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'void-transaction':
-        context.push(AppRoutes.voidTransaction);
-        break;
-      case 'reports':
-        context.push('/reports');
-        break;
-      case 'employees':
-        context.push('/employees');
-        break;
-      case 'loyalty':
-        context.push('/loyalty');
-        break;
-    }
+  Future<void> _refreshDashboard(WidgetRef ref) async {
+    // Invalidate the provider to force a refresh
+    ref.invalidate(dashboardDataProvider);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
+    // Watch the dashboard data provider reactively
+    final dashboardAsync = ref.watch(dashboardDataProvider);
 
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.dashboardTitle,
-                  subtitle: _getDateSubtitle(l10n),
-                  showSearch: isWideScreen,
-                  searchHint: l10n.searchPlaceholder,
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.dashboardTitle,
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: isWideScreen,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () => _refreshDashboard(ref),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: dashboardAsync.when(
+                data: (data) => _buildContent(context, data, isWideScreen, isMediumScreen, l10n),
+                loading: () => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(64),
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
-
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _loadDashboardData,
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                      child: _buildContent(isWideScreen, isMediumScreen, l10n),
+                error: (error, _) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(64),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 48,
+                          color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.errorOccurred,
+                          style: TextStyle(
+                            color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: () => _refreshDashboard(ref),
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(l10n.tryAgain),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  /// المحتوى الرئيسي
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
-    if (_isLoading) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(64),
-          child: CircularProgressIndicator(),
         ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // كروت الإحصائيات
-        _buildStatsSection(isWideScreen, isMediumScreen, l10n),
-
-        SizedBox(height: isMediumScreen ? 24 : 16),
-
-        // الرسم البياني + الإجراءات السريعة + الأكثر مبيعاً
-        if (isWideScreen)
-          _buildMainRow(l10n)
-        else
-          _buildMainColumn(l10n),
-
-        SizedBox(height: isMediumScreen ? 24 : 16),
-
-        // أحدث العمليات
-        _buildRecentTransactions(l10n),
       ],
     );
   }
 
-  /// قسم الإحصائيات - باستخدام Row/Column بدلاً من GridView لإصلاح الـ overflow
-  Widget _buildStatsSection(bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
+  /// Main content with real data
+  Widget _buildContent(BuildContext context, DashboardData data, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Stats cards
+        _buildStatsSection(context, data, isWideScreen, isMediumScreen, l10n),
+
+        // Expiry alert banner
+        if (data.expiringProductsCount > 0) ...[
+          SizedBox(height: isMediumScreen ? 16 : 12),
+          _buildExpiryAlert(context, data.expiringProductsCount),
+        ],
+
+        SizedBox(height: isMediumScreen ? 24 : 16),
+
+        // Chart + Quick Actions + Top Selling
+        if (isWideScreen)
+          _buildMainRow(context, data, l10n)
+        else
+          _buildMainColumn(context, data, l10n),
+
+        SizedBox(height: isMediumScreen ? 24 : 16),
+
+        // Recent transactions
+        _buildRecentTransactions(context, data, l10n),
+      ],
+    );
+  }
+
+  /// Stats section with real data from DB
+  Widget _buildStatsSection(BuildContext context, DashboardData data, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
     final cards = [
       DefaultStatCards.todaySales(
         l10n: l10n,
-        value: _todaySales.toStringAsFixed(0),
-        change: 12.5,
+        value: data.todaySales.toStringAsFixed(0),
+        change: data.salesChangePercent,
         onTap: () => context.push('/sales'),
       ),
       DefaultStatCards.ordersCount(
         l10n: l10n,
-        value: '$_todayOrders',
-        change: 5.2,
+        value: '${data.todayOrders}',
+        change: data.ordersChangePercent,
         onTap: () => context.push('/sales'),
       ),
       DefaultStatCards.newCustomers(
         l10n: l10n,
-        value: '$_newCustomers',
-        change: 0,
+        value: '${data.newCustomersToday}',
+        change: null,
         onTap: () => context.push(AppRoutes.customers),
       ),
       DefaultStatCards.lowStock(
         l10n: l10n,
-        value: '$_lowStockCount',
-        alertIncrease: 2,
+        value: '${data.lowStockCount}',
+        alertIncrease: data.lowStockCount > 0 ? data.lowStockCount : null,
         onTap: () => context.push(AppRoutes.inventory),
       ),
     ];
@@ -307,8 +195,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  /// الصف الرئيسي (Desktop): Chart(8) + QuickActions+TopSelling(4)
-  Widget _buildMainRow(AppLocalizations l10n) {
+  /// Desktop main row: Chart(2/3) + QuickActions+TopSelling(1/3)
+  Widget _buildMainRow(BuildContext context, DashboardData data, AppLocalizations l10n) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -317,7 +205,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           child: SalesChartCard(
             title: l10n.salesAnalysis,
             subtitle: l10n.storePerformance,
-            data: _getSampleChartData(),
+            data: _buildChartData(data, l10n),
           ),
         ),
         const SizedBox(width: 24),
@@ -333,7 +221,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               const SizedBox(height: 24),
               TopProductsList(
-                products: _getSampleTopProducts(),
+                products: _buildTopProducts(data),
                 onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
               ),
             ],
@@ -343,14 +231,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  /// العمود الرئيسي (Mobile/Tablet)
-  Widget _buildMainColumn(AppLocalizations l10n) {
+  /// Mobile/Tablet main column
+  Widget _buildMainColumn(BuildContext context, DashboardData data, AppLocalizations l10n) {
     return Column(
       children: [
         SalesChartCard(
           title: l10n.salesAnalysis,
           subtitle: l10n.storePerformance,
-          data: _getSampleChartData(),
+          data: _buildChartData(data, l10n),
         ),
         const SizedBox(height: 16),
         ElegantQuickActions(
@@ -361,16 +249,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         const SizedBox(height: 16),
         TopProductsList(
-          products: _getSampleTopProducts(),
+          products: _buildTopProducts(data),
           onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
         ),
       ],
     );
   }
 
-  /// أحدث العمليات
-  Widget _buildRecentTransactions(AppLocalizations l10n) {
-    final transactions = _recentSales.map((sale) {
+  /// Recent transactions from real sales data
+  Widget _buildRecentTransactions(BuildContext context, DashboardData data, AppLocalizations l10n) {
+    final transactions = data.recentSales.map((sale) {
       return Transaction(
         id: sale.receiptNo,
         customerName: sale.customerName ?? l10n.cashCustomer,
@@ -381,34 +269,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       );
     }).toList();
 
-    // بيانات نموذجية إذا كانت القائمة فارغة
-    if (transactions.isEmpty) {
-      final now = DateTime.now();
-      transactions.addAll([
-        Transaction(
-          id: '#ORD-0245',
-          customerName: 'محمد علي',
-          amount: 125.00,
-          type: TransactionType.sale,
-          timestamp: now.subtract(const Duration(minutes: 5)),
-        ),
-        Transaction(
-          id: '#ORD-0244',
-          customerName: 'سارة أحمد',
-          amount: 45.50,
-          type: TransactionType.sale,
-          timestamp: now.subtract(const Duration(minutes: 12)),
-        ),
-        Transaction(
-          id: '#ORD-0243',
-          customerName: l10n.guestCustomer,
-          amount: 32.00,
-          type: TransactionType.refund,
-          timestamp: now.subtract(const Duration(minutes: 25)),
-        ),
-      ]);
-    }
-
     return RecentTransactionsList(
       transactions: transactions,
       onViewAll: () => context.push('/sales'),
@@ -416,60 +276,135 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+  /// Expiry alert banner for products expiring within 7 days
+  Widget _buildExpiryAlert(BuildContext context, int count) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.expiryTracking),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.orange.shade300),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.warning_amber_rounded,
+                    color: Colors.orange.shade800, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$count منتج قريب الانتهاء',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange.shade900,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'منتجات تنتهي صلاحيتها خلال 7 ايام',
+                      style: TextStyle(
+                        color: Colors.orange.shade700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios,
+                  size: 16, color: Colors.orange.shade600),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
-    return '$dateStr • ${l10n.mainBranch}';
+    return '$dateStr \u2022 ${l10n.mainBranch}';
   }
 
-  Map<ChartPeriod, List<ChartDataPoint>> _getSampleChartData() {
+  /// Build chart data from real weekly/monthly sales
+  Map<ChartPeriod, List<ChartDataPoint>> _buildChartData(DashboardData data, AppLocalizations l10n) {
+    // Weekly data from real DB queries
+    final weeklyData = data.weeklySales.map((day) {
+      return ChartDataPoint(
+        label: _getDayLabel(day.date.weekday, l10n),
+        value: day.total,
+        date: day.date,
+      );
+    }).toList();
+
+    // Monthly data (4 weeks) from real DB queries
+    final monthlyData = data.monthlySales.asMap().entries.map((entry) {
+      final weekNum = entry.key + 1;
+      return ChartDataPoint(
+        label: '${l10n.weekly} $weekNum',
+        value: entry.value.total,
+        date: entry.value.date,
+      );
+    }).toList();
+
     return {
-      ChartPeriod.weekly: const [
-        ChartDataPoint(label: 'سبت', value: 1200),
-        ChartDataPoint(label: 'أحد', value: 1500),
-        ChartDataPoint(label: 'إثنين', value: 1100),
-        ChartDataPoint(label: 'ثلاثاء', value: 1800),
-        ChartDataPoint(label: 'أربعاء', value: 1600),
-        ChartDataPoint(label: 'خميس', value: 2100),
-        ChartDataPoint(label: 'جمعة', value: 1900),
-      ],
-      ChartPeriod.monthly: const [
-        ChartDataPoint(label: 'أسبوع 1', value: 8500),
-        ChartDataPoint(label: 'أسبوع 2', value: 9200),
-        ChartDataPoint(label: 'أسبوع 3', value: 7800),
-        ChartDataPoint(label: 'أسبوع 4', value: 10500),
-      ],
-      ChartPeriod.yearly: const [
-        ChartDataPoint(label: 'يناير', value: 32000),
-        ChartDataPoint(label: 'فبراير', value: 28000),
-        ChartDataPoint(label: 'مارس', value: 35000),
-        ChartDataPoint(label: 'أبريل', value: 31000),
-        ChartDataPoint(label: 'مايو', value: 38000),
-        ChartDataPoint(label: 'يونيو', value: 42000),
-      ],
+      ChartPeriod.weekly: weeklyData,
+      ChartPeriod.monthly: monthlyData,
+      // Yearly still uses empty since we don't have year-level aggregation yet
+      ChartPeriod.yearly: const [],
     };
   }
 
-  List<TopProductItem> _getSampleTopProducts() {
-    return const [
-      TopProductItem(
-        name: 'قهوة لاتيه وسط',
-        icon: Icons.coffee_rounded,
-        quantity: 42,
-        revenue: 630,
-      ),
-      TopProductItem(
-        name: 'كوكيز شوكولاتة',
-        icon: Icons.cookie_rounded,
-        quantity: 28,
-        revenue: 280,
-      ),
-      TopProductItem(
-        name: 'مياه معدنية',
-        icon: Icons.water_drop_rounded,
-        quantity: 25,
-        revenue: 50,
-      ),
-    ];
+  /// Build top products from real DB query
+  List<TopProductItem> _buildTopProducts(DashboardData data) {
+    if (data.topSellingProducts.isEmpty) {
+      return const [];
+    }
+
+    return data.topSellingProducts.map((product) {
+      return TopProductItem(
+        id: product.id,
+        name: product.name,
+        icon: Icons.inventory_2_rounded,
+        quantity: product.stockQty,
+        revenue: product.price * product.stockQty,
+      );
+    }).toList();
+  }
+
+  /// Get localized short day name from weekday number
+  String _getDayLabel(int weekday, AppLocalizations l10n) {
+    switch (weekday) {
+      case DateTime.saturday:
+        return l10n.sat;
+      case DateTime.sunday:
+        return l10n.sun;
+      case DateTime.monday:
+        return l10n.mon;
+      case DateTime.tuesday:
+        return l10n.tue;
+      case DateTime.wednesday:
+        return l10n.wed;
+      case DateTime.thursday:
+        return l10n.thu;
+      case DateTime.friday:
+        return l10n.fri;
+      default:
+        return '';
+    }
   }
 }

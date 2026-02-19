@@ -6,7 +6,12 @@
 // - بدء بيع جديدة
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/whatsapp_service.dart';
+import '../../services/whatsapp/phone_validation_service.dart';
+import '../../services/whatsapp/wasender_api_client.dart';
 import '../../services/receipt_printer_service.dart';
 
 /// نتيجة dialog النجاح
@@ -109,24 +114,35 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
 
     setState(() => _isSending = true);
 
-    final success = await WhatsAppService.sendReceipt(
-      phoneNumber: phone,
-      customerName: widget.customerName ?? '',
-      receiptNumber: widget.receiptNumber,
-      total: widget.amount,
-      storeName: widget.storeName,
-    );
+    try {
+      final db = getIt<AppDatabase>();
+      final service = WhatsAppService(
+        messagesDao: db.whatsAppMessagesDao,
+        phoneValidator: PhoneValidationService(
+          apiClient: WaSenderApiClient(),
+        ),
+      );
 
-    if (mounted) {
-      setState(() {
-        _isSending = false;
-        _sent = success;
-      });
+      await service.sendReceipt(
+        phoneNumber: phone,
+        customerName: widget.customerName ?? '',
+        receiptNumber: widget.receiptNumber,
+        total: widget.amount,
+        storeName: widget.storeName,
+      );
 
-      if (!success) {
+      if (mounted) {
+        setState(() {
+          _isSending = false;
+          _sent = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSending = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تعذر فتح واتساب'),
+          SnackBar(
+            content: Text('تعذر إرسال واتساب: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -320,7 +336,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         }
                       },
                       icon: const Icon(Icons.print_outlined, size: 18),
-                      label: const Text('طباعة'),
+                      label: Text(AppLocalizations.of(context)!.print),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

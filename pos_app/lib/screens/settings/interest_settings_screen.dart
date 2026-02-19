@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات الفوائد الشهرية
@@ -19,9 +17,6 @@ class InterestSettingsScreen extends ConsumerStatefulWidget {
 
 class _InterestSettingsScreenState
     extends ConsumerState<InterestSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
-
   bool _enableInterest = true;
   double _monthlyRate = 2.0;
   int _gracePeriodDays = 30;
@@ -60,52 +55,14 @@ class _InterestSettingsScreenState
     await prefs.setDouble('interest_max_rate', _maxInterestRate);
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم حفظ إعدادات الفوائد'),
+        SnackBar(
+          content: Text(l10n.interestSettingsSaved),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
-    }
-  }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
     }
   }
 
@@ -117,103 +74,49 @@ class _InterestSettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'إعدادات الفوائد',
-                  onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark),
-                  ),
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.interestSettingsTitle,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // Interest settings
-        _buildSettingsGroup('الفوائد الشهرية', Icons.trending_up_rounded,
+        _buildSettingsGroup(l10n.monthlyInterest, Icons.trending_up_rounded,
             const Color(0xFFF97316), isDark, [
           SwitchListTile(
-            title: Text('تفعيل الفوائد',
+            title: Text(l10n.enableInterest,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             subtitle:
-                const Text('تطبيق فوائد على الديون الآجلة'),
+                Text(l10n.enableInterestDesc),
             value: _enableInterest,
             onChanged: (v) => setState(() => _enableInterest = v),
           ),
           if (_enableInterest) ...[
             const Divider(indent: 16, endIndent: 16),
             ListTile(
-              title: Text('نسبة الفائدة الشهرية',
+              title: Text(l10n.monthlyInterestRate,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle: Text('${_monthlyRate.toStringAsFixed(1)}%'),
@@ -230,7 +133,7 @@ class _InterestSettingsScreenState
               ),
             ),
             ListTile(
-              title: Text('الحد الأقصى للفائدة',
+              title: Text(l10n.maxInterestRateLabel,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle: Text('${_maxInterestRate.toStringAsFixed(1)}%'),
@@ -257,13 +160,13 @@ class _InterestSettingsScreenState
 
         // Grace period
         if (_enableInterest)
-          _buildSettingsGroup('فترة السماح', Icons.schedule_rounded,
+          _buildSettingsGroup(l10n.gracePeriod, Icons.schedule_rounded,
               AppColors.info, isDark, [
             ListTile(
-              title: Text('أيام السماح',
+              title: Text(l10n.graceDays,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: Text('$_gracePeriodDays يوم قبل احتساب الفائدة'),
+              subtitle: Text(l10n.graceDaysLabel(_gracePeriodDays)),
               trailing: SizedBox(
                 width: 200,
                 child: Slider(
@@ -271,17 +174,17 @@ class _InterestSettingsScreenState
                   min: 0,
                   max: 90,
                   divisions: 9,
-                  label: '$_gracePeriodDays يوم',
+                  label: '$_gracePeriodDays',
                   onChanged: (v) =>
                       setState(() => _gracePeriodDays = v.toInt()),
                 ),
               ),
             ),
             SwitchListTile(
-              title: Text('الفائدة المركبة',
+              title: Text(l10n.compoundInterest,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('احتساب فائدة على الفائدة'),
+              subtitle: Text(l10n.compoundInterestDesc),
               value: _compoundInterest,
               onChanged: (v) => setState(() => _compoundInterest = v),
             ),
@@ -290,22 +193,22 @@ class _InterestSettingsScreenState
 
         // Auto & Notifications
         if (_enableInterest)
-          _buildSettingsGroup('الحساب والتنبيهات', Icons.notifications_rounded,
+          _buildSettingsGroup(l10n.calculationAndAlerts, Icons.notifications_rounded,
               AppColors.success, isDark, [
             SwitchListTile(
-              title: Text('الحساب التلقائي',
+              title: Text(l10n.autoCalculation,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle:
-                  const Text('احتساب الفوائد تلقائياً نهاية كل شهر'),
+                  Text(l10n.autoCalculationDesc),
               value: _autoCalculate,
               onChanged: (v) => setState(() => _autoCalculate = v),
             ),
             SwitchListTile(
-              title: Text('إشعار العميل',
+              title: Text(l10n.customerNotification,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('إرسال إشعار عند احتساب الفائدة'),
+              subtitle: Text(l10n.customerNotificationDesc),
               value: _notifyCustomer,
               onChanged: (v) => setState(() => _notifyCustomer = v),
             ),
@@ -318,7 +221,7 @@ class _InterestSettingsScreenState
           child: FilledButton.icon(
             onPressed: _saveSettings,
             icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -330,7 +233,7 @@ class _InterestSettingsScreenState
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -352,12 +255,12 @@ class _InterestSettingsScreenState
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إعدادات الفوائد',
+            Text(l10n.interestSettingsTitle,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('النسبة، فترة السماح، الحساب التلقائي',
+            Text(l10n.interestSettingsSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark

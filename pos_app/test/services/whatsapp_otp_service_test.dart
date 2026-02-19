@@ -3,9 +3,9 @@ import 'package:pos_app/services/whatsapp_otp_service.dart';
 import 'package:pos_app/core/config/whatsapp_config.dart';
 
 void main() {
-  setUp(() {
+  setUp(() async {
     // Reset state before each test
-    WhatsAppOtpService.reset();
+    await WhatsAppOtpService.reset();
   });
 
   group('WhatsAppOtpService', () {

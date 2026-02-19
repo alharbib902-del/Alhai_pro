@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// شاشة تتبع الطلبات
 class OrderTrackingScreen extends StatefulWidget {
@@ -9,44 +10,55 @@ class OrderTrackingScreen extends StatefulWidget {
 }
 
 class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
-  final List<_TrackedOrder> _orders = [
-    _TrackedOrder(
-      id: 'ORD-2024-001',
-      customerName: 'أحمد محمد',
-      customerPhone: '0501234567',
-      address: 'حي النزهة، شارع الملك فهد',
-      status: 'preparing',
-      driverName: 'سعد محمد',
-      estimatedTime: 25,
-      items: 5,
-      total: 245.50,
-      createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-    ),
-    _TrackedOrder(
-      id: 'ORD-2024-002',
-      customerName: 'خالد عمر',
-      customerPhone: '0551234567',
-      address: 'حي الروضة، شارع الأمير سلطان',
-      status: 'delivering',
-      driverName: 'فهد عبدالله',
-      estimatedTime: 10,
-      items: 3,
-      total: 180.00,
-      createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
-    ),
-    _TrackedOrder(
-      id: 'ORD-2024-003',
-      customerName: 'محمد علي',
-      customerPhone: '0561234567',
-      address: 'حي السلامة، شارع التحلية',
-      status: 'pending',
-      driverName: null,
-      estimatedTime: 45,
-      items: 8,
-      total: 520.00,
-      createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-    ),
-  ];
+  late List<_TrackedOrder> _orders;
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final l10n = AppLocalizations.of(context)!;
+      _orders = [
+        _TrackedOrder(
+          id: 'ORD-2024-001',
+          customerName: l10n.defaultUserName,
+          customerPhone: '0501234567',
+          address: 'حي النزهة، شارع الملك فهد',
+          status: 'preparing',
+          driverName: 'سعد محمد',
+          estimatedTime: 25,
+          items: 5,
+          total: 245.50,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
+        ),
+        _TrackedOrder(
+          id: 'ORD-2024-002',
+          customerName: 'خالد عمر',
+          customerPhone: '0551234567',
+          address: 'حي الروضة، شارع الأمير سلطان',
+          status: 'delivering',
+          driverName: 'فهد عبدالله',
+          estimatedTime: 10,
+          items: 3,
+          total: 180.00,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
+        ),
+        _TrackedOrder(
+          id: 'ORD-2024-003',
+          customerName: 'محمد علي',
+          customerPhone: '0561234567',
+          address: 'حي السلامة، شارع التحلية',
+          status: 'pending',
+          driverName: null,
+          estimatedTime: 45,
+          items: 8,
+          total: 520.00,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
+        ),
+      ];
+      _initialized = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

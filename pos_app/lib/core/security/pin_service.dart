@@ -153,7 +153,7 @@ class PinService {
       inputHash = _hashPinLegacy(pin);
     }
 
-    if (inputHash == savedHash) {
+    if (_constantTimeEquals(inputHash, savedHash)) {
       await _resetAttempts();
 
       // ترحيل الـ PIN القديم للإصدار الجديد
@@ -300,6 +300,16 @@ class PinService {
     final bytes = utf8.encode(pin);
     final digest = sha256.convert(bytes);
     return digest.toString();
+  }
+
+  /// مقارنة ثابتة الوقت لمنع هجمات التوقيت (timing attacks)
+  static bool _constantTimeEquals(String a, String b) {
+    if (a.length != b.length) return false;
+    int result = 0;
+    for (int i = 0; i < a.length; i++) {
+      result |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
+    }
+    return result == 0;
   }
 }
 

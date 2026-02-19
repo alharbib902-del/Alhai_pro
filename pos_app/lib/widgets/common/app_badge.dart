@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نوع الشارة
 enum AppBadgeVariant { filled, outlined, soft }
@@ -89,10 +90,11 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المخزون
-  factory AppBadge.stock(int quantity, {int minQuantity = 5}) {
+  static AppBadge stock(BuildContext context, int quantity, {int minQuantity = 5}) {
+    final l10n = AppLocalizations.of(context)!;
     if (quantity <= 0) {
-      return const AppBadge(
-        label: 'نفذ',
+      return AppBadge(
+        label: l10n.soldOut,
         color: AppColors.stockOut,
         variant: AppBadgeVariant.soft,
         size: AppBadgeSize.small,
@@ -100,14 +102,14 @@ class AppBadge extends StatelessWidget {
     }
     if (quantity <= minQuantity) {
       return AppBadge(
-        label: 'قليل ($quantity)',
+        label: '${l10n.lowStockLabel} ($quantity)',
         color: AppColors.stockLow,
         variant: AppBadgeVariant.soft,
         size: AppBadgeSize.small,
       );
     }
     return AppBadge(
-      label: 'متوفر ($quantity)',
+      label: '${l10n.available} ($quantity)',
       color: AppColors.stockAvailable,
       variant: AppBadgeVariant.soft,
       size: AppBadgeSize.small,
@@ -115,7 +117,8 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة طريقة الدفع
-  factory AppBadge.paymentMethod(String method) {
+  static AppBadge paymentMethod(BuildContext context, String method) {
+    final l10n = AppLocalizations.of(context)!;
     final color = AppColors.getPaymentMethodColor(method);
     String label;
     IconData icon;
@@ -123,17 +126,17 @@ class AppBadge extends StatelessWidget {
     switch (method.toLowerCase()) {
       case 'cash':
       case 'نقد':
-        label = 'نقد';
+        label = l10n.cash;
         icon = Icons.payments_outlined;
         break;
       case 'card':
       case 'بطاقة':
-        label = 'بطاقة';
+        label = l10n.card;
         icon = Icons.credit_card;
         break;
       case 'credit':
       case 'آجل':
-        label = 'آجل';
+        label = l10n.credit;
         icon = Icons.access_time;
         break;
       default:
@@ -376,19 +379,21 @@ class AppStatusBadge extends StatelessWidget {
   });
 
   /// حالة الاتصال
-  factory AppStatusBadge.online({bool isOnline = true}) {
+  static AppStatusBadge online(BuildContext context, {bool isOnline = true}) {
+    final l10n = AppLocalizations.of(context)!;
     return AppStatusBadge(
       isActive: isOnline,
-      label: isOnline ? 'متصل' : 'غير متصل',
+      label: isOnline ? l10n.online : l10n.offline,
       pulse: isOnline,
     );
   }
 
   /// حالة النشاط
-  factory AppStatusBadge.active({bool isActive = true}) {
+  static AppStatusBadge active(BuildContext context, {bool isActive = true}) {
+    final l10n = AppLocalizations.of(context)!;
     return AppStatusBadge(
       isActive: isActive,
-      label: isActive ? 'نشط' : 'غير نشط',
+      label: isActive ? l10n.active : l10n.inactive,
     );
   }
 

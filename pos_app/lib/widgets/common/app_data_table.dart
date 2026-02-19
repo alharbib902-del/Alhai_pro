@@ -3,10 +3,12 @@
 /// جداول بيانات احترافية للويب
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 import 'app_empty_state.dart';
 
 /// جدول بيانات موحد
@@ -247,14 +249,14 @@ class AppDataTable<T> extends StatelessWidget {
     );
   }
 
-  Alignment _getAlignment(ColumnAlignment alignment) {
+  AlignmentGeometry _getAlignment(ColumnAlignment alignment) {
     switch (alignment) {
       case ColumnAlignment.start:
-        return Alignment.centerRight;
+        return AlignmentDirectional.centerEnd;
       case ColumnAlignment.center:
         return Alignment.center;
       case ColumnAlignment.end:
-        return Alignment.centerLeft;
+        return AlignmentDirectional.centerStart;
     }
   }
 }
@@ -324,6 +326,7 @@ class AppPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: const BoxDecoration(
@@ -337,7 +340,7 @@ class AppPagination extends StatelessWidget {
           // Page Size Selector
           if (onPageSizeChanged != null) ...[
             Text(
-              'عرض',
+              l10n.display,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -371,7 +374,7 @@ class AppPagination extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              'عنصر',
+              l10n.item,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -397,7 +400,7 @@ class AppPagination extends StatelessWidget {
               // First Page
               IconButton(
                 onPressed: currentPage > 1 ? () => onPageChanged(1) : null,
-                icon: const Icon(Icons.first_page),
+                icon: const AdaptiveIcon(Icons.first_page),
                 iconSize: 20,
                 tooltip: 'الصفحة الأولى',
               ),
@@ -407,7 +410,7 @@ class AppPagination extends StatelessWidget {
                 onPressed: currentPage > 1
                     ? () => onPageChanged(currentPage - 1)
                     : null,
-                icon: const Icon(Icons.chevron_right),
+                icon: const AdaptiveIcon(Icons.chevron_right),
                 iconSize: 20,
                 tooltip: 'الصفحة السابقة',
               ),
@@ -420,7 +423,7 @@ class AppPagination extends StatelessWidget {
                 onPressed: currentPage < totalPages
                     ? () => onPageChanged(currentPage + 1)
                     : null,
-                icon: const Icon(Icons.chevron_left),
+                icon: const AdaptiveIcon(Icons.chevron_left),
                 iconSize: 20,
                 tooltip: 'الصفحة التالية',
               ),
@@ -430,7 +433,7 @@ class AppPagination extends StatelessWidget {
                 onPressed: currentPage < totalPages
                     ? () => onPageChanged(totalPages)
                     : null,
-                icon: const Icon(Icons.last_page),
+                icon: const AdaptiveIcon(Icons.last_page),
                 iconSize: 20,
                 tooltip: 'الصفحة الأخيرة',
               ),

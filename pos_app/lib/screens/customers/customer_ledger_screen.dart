@@ -1,14 +1,14 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة كشف حساب العميل (Customer Ledger)
 /// تعرض جميع حركات العميل مع فلترة ومجاميع وتسويات يدوية
@@ -30,201 +30,35 @@ class CustomerLedgerScreen extends ConsumerStatefulWidget {
 class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   final _db = getIt<AppDatabase>();
   AccountsTableData? _account;
+  List<TransactionsTableData> _transactions = [];
   bool _isLoading = true;
-
-  // Sidebar state
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'customers';
 
   // Filters
   String _dateFilter = 'all'; // all, thisMonth, threeMonths
   String _typeFilter = 'all'; // all, invoice, payment, return, adjustment
   DateTimeRange? _customDateRange;
 
-  // Mock data for demo
-  final List<Map<String, dynamic>> _mockTransactions = [
-    {
-      'id': 'TXN-001',
-      'type': 'opening',
-      'description': 'رصيد افتتاحي',
-      'descriptionEn': 'Opening Balance',
-      'reference': '-',
-      'debit': 0.0,
-      'credit': 0.0,
-      'balance': 5000.0,
-      'date': DateTime(2026, 1, 1),
-    },
-    {
-      'id': 'TXN-002',
-      'type': 'invoice',
-      'description': 'فاتورة مبيعات',
-      'descriptionEn': 'Sales Invoice',
-      'reference': 'INV-2026-0042',
-      'debit': 1250.0,
-      'credit': 0.0,
-      'balance': 6250.0,
-      'date': DateTime(2026, 1, 5, 10, 30),
-    },
-    {
-      'id': 'TXN-003',
-      'type': 'payment',
-      'description': 'دفعة نقدية',
-      'descriptionEn': 'Cash Payment',
-      'reference': 'PAY-0018',
-      'debit': 0.0,
-      'credit': 2000.0,
-      'balance': 4250.0,
-      'date': DateTime(2026, 1, 10, 14, 15),
-    },
-    {
-      'id': 'TXN-004',
-      'type': 'invoice',
-      'description': 'فاتورة مبيعات',
-      'descriptionEn': 'Sales Invoice',
-      'reference': 'INV-2026-0058',
-      'debit': 890.0,
-      'credit': 0.0,
-      'balance': 5140.0,
-      'date': DateTime(2026, 1, 15, 9, 45),
-    },
-    {
-      'id': 'TXN-005',
-      'type': 'adjustment',
-      'description': 'تسوية يدوية - خصم',
-      'descriptionEn': 'Manual Adjustment - Discount',
-      'reference': 'ADJ-003',
-      'debit': 0.0,
-      'credit': 500.0,
-      'balance': 4640.0,
-      'date': DateTime(2026, 1, 20, 11, 0),
-    },
-    {
-      'id': 'TXN-006',
-      'type': 'invoice',
-      'description': 'فاتورة مبيعات',
-      'descriptionEn': 'Sales Invoice',
-      'reference': 'INV-2026-0071',
-      'debit': 1750.0,
-      'credit': 0.0,
-      'balance': 6390.0,
-      'date': DateTime(2026, 1, 25, 16, 20),
-    },
-    {
-      'id': 'TXN-007',
-      'type': 'return',
-      'description': 'مرتجع مبيعات',
-      'descriptionEn': 'Sales Return',
-      'reference': 'RET-0005',
-      'debit': 0.0,
-      'credit': 350.0,
-      'balance': 6040.0,
-      'date': DateTime(2026, 2, 1, 10, 0),
-    },
-    {
-      'id': 'TXN-008',
-      'type': 'payment',
-      'description': 'دفعة نقدية',
-      'descriptionEn': 'Cash Payment',
-      'reference': 'PAY-0025',
-      'debit': 0.0,
-      'credit': 3000.0,
-      'balance': 3040.0,
-      'date': DateTime(2026, 2, 5, 13, 30),
-    },
-    {
-      'id': 'TXN-009',
-      'type': 'invoice',
-      'description': 'فاتورة مبيعات',
-      'descriptionEn': 'Sales Invoice',
-      'reference': 'INV-2026-0089',
-      'debit': 2200.0,
-      'credit': 0.0,
-      'balance': 5240.0,
-      'date': DateTime(2026, 2, 8, 11, 45),
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
     _loadData();
-  }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Future<void> _loadData() async {
+  }  Future<void> _loadData() async {
     setState(() => _isLoading = true);
 
     try {
       final account = await _db.accountsDao.getAccountById(widget.accountId);
-      // ignore: unused_local_variable
       final transactions =
           await _db.transactionsDao.getAccountTransactions(widget.accountId);
 
-      setState(() {
-        _account = account;
-        // Note: transactions data is available but using mock data for demo
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _account = account;
+          _transactions = transactions;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -232,8 +66,27 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   // FILTER LOGIC
   // =========================================================================
 
-  List<Map<String, dynamic>> get _filteredMockTransactions {
-    var list = List<Map<String, dynamic>>.from(_mockTransactions);
+  /// Convert TransactionsTableData to ledger map format used by the UI.
+  /// Positive amount = debit (invoice/interest), negative = credit (payment/return).
+  List<Map<String, dynamic>> _txnToMap(TransactionsTableData t) {
+    final isDebit = t.amount > 0;
+    return [
+      {
+        'id': t.id,
+        'type': t.type,
+        'description': t.description ?? t.type,
+        'reference': t.referenceId ?? '-',
+        'debit': isDebit ? t.amount.abs() : 0.0,
+        'credit': isDebit ? 0.0 : t.amount.abs(),
+        'balance': t.balanceAfter,
+        'date': t.createdAt,
+      }
+    ];
+  }
+
+  List<Map<String, dynamic>> get _filteredTransactions {
+    // Convert all DB transactions to map format
+    var list = _transactions.expand(_txnToMap).toList();
 
     // Date filter
     final now = DateTime.now();
@@ -266,17 +119,17 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   }
 
   double get _totalDebit {
-    return _filteredMockTransactions.fold(
+    return _filteredTransactions.fold(
         0.0, (sum, t) => sum + (t['debit'] as double));
   }
 
   double get _totalCredit {
-    return _filteredMockTransactions.fold(
+    return _filteredTransactions.fold(
         0.0, (sum, t) => sum + (t['credit'] as double));
   }
 
   double get _currentBalance {
-    return _account?.balance ?? 5240.0;
+    return _account?.balance ?? 0.0;
   }
 
   String get _customerInitials {
@@ -298,13 +151,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWideScreen = screenWidth > 900;
     final isMobile = screenWidth < AppBreakpoints.tablet;
     final isDesktop = screenWidth >= AppBreakpoints.laptop;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAdjustmentDialog(isDark, l10n),
         backgroundColor: AppColors.primary,
@@ -312,24 +162,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         icon: const Icon(Icons.tune_rounded, size: 20),
         label: Text(l10n.manualAdjustment),
       ),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: _isLoading
+      body: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : Column(
                     children: [
@@ -368,9 +201,6 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       if (isMobile) _buildMobileBottomSummary(isDark, l10n),
                     ],
                   ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -485,8 +315,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
               ),
               borderRadius: BorderRadius.circular(AppSizes.radiusXl),
             ),
@@ -762,7 +592,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   // =========================================================================
 
   Widget _buildDesktopTable(bool isDark, AppLocalizations l10n) {
-    final txns = _filteredMockTransactions;
+    final txns = _filteredTransactions;
 
     if (txns.isEmpty) {
       return _buildEmptyState(isDark, l10n);
@@ -973,7 +803,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   // =========================================================================
 
   Widget _buildMobileTransactions(bool isDark, AppLocalizations l10n) {
-    final txns = _filteredMockTransactions;
+    final txns = _filteredTransactions;
 
     if (txns.isEmpty) {
       return _buildEmptyState(isDark, l10n);
@@ -1762,43 +1592,55 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     );
   }
 
-  void _handleSaveAdjustment(
+  Future<void> _handleSaveAdjustment(
     String type,
     double amount,
     String reason,
     DateTime date,
     AppLocalizations l10n,
-  ) {
-    // Add to mock list
+  ) async {
     final isDebit = type == 'debit';
-    final lastBalance = _mockTransactions.isNotEmpty
-        ? (_mockTransactions.last['balance'] as double)
-        : 0.0;
-    final newBalance =
-        isDebit ? lastBalance + amount : lastBalance - amount;
+    final currentBal = _account?.balance ?? 0.0;
+    final signedAmount = isDebit ? amount : -amount;
+    final newBalance = currentBal + signedAmount;
+    final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
 
-    setState(() {
-      _mockTransactions.add({
-        'id': 'ADJ-${DateTime.now().millisecondsSinceEpoch}',
-        'type': 'adjustment',
-        'description': reason.isEmpty ? l10n.manualAdjustment : reason,
-        'descriptionEn': 'Manual Adjustment',
-        'reference':
-            'ADJ-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
-        'debit': isDebit ? amount : 0.0,
-        'credit': isDebit ? 0.0 : amount,
-        'balance': newBalance,
-        'date': date,
-      });
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.adjustmentSaved),
-          backgroundColor: AppColors.success,
+    try {
+      final txnId = 'ADJ-${DateTime.now().millisecondsSinceEpoch}';
+      await _db.transactionsDao.insertTransaction(
+        TransactionsTableCompanion.insert(
+          id: txnId,
+          storeId: storeId,
+          accountId: widget.accountId,
+          type: 'adjustment',
+          amount: signedAmount,
+          balanceAfter: newBalance,
+          description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
+          createdAt: date,
         ),
       );
+      // Update account balance
+      await _db.accountsDao.updateBalance(widget.accountId, newBalance);
+      // Reload data
+      await _loadData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.adjustmentSaved),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 

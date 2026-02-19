@@ -11,6 +11,7 @@ library lazy_screen;
 /// - قابل للتخصيص
 
 import 'package:flutter/material.dart';
+import '../../core/responsive/responsive_utils.dart';
 import 'shimmer_loading.dart';
 
 /// Widget لتحميل الشاشات بشكل متأخر
@@ -311,7 +312,7 @@ class PosLoadingScreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: 5,
                           itemBuilder: (_, __) => Padding(
-                            padding: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsetsDirectional.only(start: 8),
                             child: Container(
                               width: 80,
                               height: 40,
@@ -326,9 +327,9 @@ class PosLoadingScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // Products Grid
-                    const Expanded(
+                    Expanded(
                       child: ShimmerGrid(
-                        crossAxisCount: 3,
+                        crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
                         itemCount: 9,
                       ),
                     ),
@@ -439,7 +440,7 @@ class ProductsLoadingScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
                     itemBuilder: (_, __) => Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsetsDirectional.only(start: 8),
                       child: Container(
                         width: 100,
                         height: 40,
@@ -538,7 +539,7 @@ class CustomersLoadingScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
                     itemBuilder: (_, __) => Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsetsDirectional.only(start: 8),
                       child: Container(
                         width: 80,
                         height: 36,

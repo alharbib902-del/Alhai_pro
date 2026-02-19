@@ -123,7 +123,7 @@ class AppHeader extends ConsumerWidget {
                 ),
               ],
 
-              const Spacer(),
+              const SizedBox(width: 16),
 
               // البحث - مخفي على الجوال
               ResponsiveVisibility.hiddenOnMobile(
@@ -142,7 +142,7 @@ class AppHeader extends ConsumerWidget {
                     : const SizedBox.shrink(),
               ),
 
-              const Spacer(),
+              const SizedBox(width: 16),
 
               // الإجراءات
               if (actions != null) ...actions!,
@@ -347,7 +347,7 @@ class _SearchFieldState extends State<_SearchField> {
               fontSize: 14,
             ),
             prefixIcon: Padding(
-              padding: const EdgeInsets.only(right: 12, left: 16),
+              padding: const EdgeInsetsDirectional.only(end: 12, start: 16),
               child: Icon(
                 Icons.search_rounded,
                 color: _isFocused

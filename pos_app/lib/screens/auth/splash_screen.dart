@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../di/injection.dart';
 import '../../core/monitoring/memory_monitor.dart';
+import '../../core/monitoring/production_logger.dart';
 import '../../data/local/seeders/database_seeder.dart';
+import '../../l10n/generated/app_localizations.dart';
+
+enum _SplashStatus { loading, initSearch, loadData, initDemo, ready }
 
 /// شاشة البداية - نقطة دخول التطبيق
 ///
@@ -18,7 +22,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  String _statusText = 'جاري التحميل...';
+  _SplashStatus _status = _SplashStatus.loading;
 
   @override
   void initState() {
@@ -28,30 +32,50 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _initializeAndNavigate() async {
     final stopwatch = Stopwatch()..start();
-    debugPrint('⏱️ [SPLASH] بدء تهيئة التطبيق...');
+    AppLogger.debug('Starting app initialization...', tag: 'SPLASH');
 
     try {
       // DI تمت بالفعل في main.dart (ضرورية قبل runApp)
       // هنا فقط العمليات البطيئة
 
       // 1. FTS - تهيئة البحث السريع
-      setState(() => _statusText = 'تهيئة البحث...');
+      setState(() => _status = _SplashStatus.initSearch);
       await _initializeFts();
-      debugPrint('⏱️ [SPLASH] FTS: ${stopwatch.elapsedMilliseconds}ms');
+      AppLogger.debug('FTS: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
 
       // 2. Database Seeding
-      setState(() => _statusText = 'تحميل البيانات...');
+      setState(() => _status = _SplashStatus.loadData);
       await _seedDatabaseIfNeeded();
-      debugPrint('⏱️ [SPLASH] Seed: ${stopwatch.elapsedMilliseconds}ms');
+      AppLogger.debug('Seed: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
 
       // 3. Memory Monitor
       MemoryMonitor.instance.startMonitoring();
 
       stopwatch.stop();
-      debugPrint('⏱️ [SPLASH] ✅ المدة الكلية: ${stopwatch.elapsedMilliseconds}ms');
-    } catch (e) {
+      AppLogger.debug('Total init time: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
+    } catch (e, stackTrace) {
       stopwatch.stop();
-      debugPrint('❌ [SPLASH] خطأ في التهيئة: $e');
+      AppLogger.error('Initialization error: $e', tag: 'SPLASH');
+      ProductionLogger.error(
+        'Splash initialization failed',
+        tag: 'SPLASH',
+        error: e,
+        stackTrace: stackTrace,
+      );
+
+      // Show error feedback before navigating to login
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred during initialization',
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        // Short delay so the user can see the error toast
+        await Future.delayed(const Duration(seconds: 1));
+      }
     }
 
     // التنقل لشاشة الدخول
@@ -63,37 +87,45 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> _initializeFts() async {
     try {
       await appDatabase.initializeFts();
-      if (kDebugMode) {
-        debugPrint('✅ تم تهيئة FTS للبحث السريع');
-      }
+      AppLogger.debug('FTS initialized successfully', tag: 'SPLASH');
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('⚠️ FTS غير متاح: $e');
-      }
+      AppLogger.warning('FTS not available: $e', tag: 'SPLASH');
     }
   }
 
   /// Seeds the database with demo data if it's empty
   Future<void> _seedDatabaseIfNeeded() async {
+    if (!kDebugMode) return;
     try {
       final seeder = DatabaseSeeder(appDatabase);
       final isEmpty = await seeder.isDatabaseEmpty();
 
       if (isEmpty) {
-        debugPrint('🌱 تهيئة قاعدة البيانات بالبيانات التجريبية...');
-        if (mounted) setState(() => _statusText = 'تهيئة البيانات التجريبية...');
+        AppLogger.debug('Seeding database with demo data...', tag: 'SPLASH');
+        if (mounted) setState(() => _status = _SplashStatus.initDemo);
         await seeder.seedAll();
-        debugPrint('✅ تم تهيئة قاعدة البيانات بنجاح!');
+        AppLogger.debug('Database seeded successfully', tag: 'SPLASH');
       } else {
-        debugPrint('ℹ️ قاعدة البيانات تحتوي على بيانات - تخطي التهيئة');
+        AppLogger.debug('Database already has data - skipping seed', tag: 'SPLASH');
       }
     } catch (e) {
-      debugPrint('❌ خطأ في تهيئة قاعدة البيانات: $e');
+      AppLogger.error('Database seeding error: $e', tag: 'SPLASH');
+    }
+  }
+
+  String _getStatusText(_SplashStatus status, AppLocalizations l10n) {
+    switch (status) {
+      case _SplashStatus.loading: return l10n.loadingApp;
+      case _SplashStatus.initSearch: return l10n.initializingSearch;
+      case _SplashStatus.loadData: return l10n.loadingData;
+      case _SplashStatus.initDemo: return l10n.initializingDemoData;
+      case _SplashStatus.ready: return l10n.pointOfSale;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // اللون الأخضر الطازج
     const primaryGreen = Color(0xFF10B981);
     const darkGreen = Color(0xFF059669);
@@ -134,7 +166,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                'نقاط البيع',
+                l10n.pointOfSale,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -154,7 +186,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               const SizedBox(height: 16),
               // نص الحالة
               Text(
-                _statusText,
+                _getStatusText(_status, l10n),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 14,

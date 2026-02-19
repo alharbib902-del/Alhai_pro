@@ -86,8 +86,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
           blendMode: BlendMode.srcATop,
           shaderCallback: (bounds) {
             return LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 baseColor,
                 highlightColor,
@@ -447,7 +447,7 @@ class ShimmerTopBar extends StatelessWidget {
             Row(
               children: List.generate(3, (index) {
                 return Padding(
-                  padding: const EdgeInsets.only(left: AppSizes.sm),
+                  padding: const EdgeInsetsDirectional.only(start: AppSizes.sm),
                   child: ShimmerPlaceholder.circular(size: 40),
                 );
               }),

@@ -235,15 +235,17 @@ void main() {
 
     group('getTodayTotal', () {
       test('يحسب إجمالي مبيعات اليوم', () async {
-        // Arrange
-        final today = DateTime.now();
+        // Arrange - استخدام منتصف النهار لتجنب مشاكل منتصف الليل
+        final now = DateTime.now();
+        final todayNoon = DateTime(now.year, now.month, now.day, 12, 0, 0);
+        final todayMorning = DateTime(now.year, now.month, now.day, 10, 0, 0);
         await _insertTestSale(
           db,
           id: 'sale-1',
           storeId: 'store-1',
           cashierId: 'cashier-1',
           total: 100.0,
-          createdAt: today,
+          createdAt: todayNoon,
         );
         await _insertTestSale(
           db,
@@ -251,7 +253,7 @@ void main() {
           storeId: 'store-1',
           cashierId: 'cashier-1',
           total: 150.0,
-          createdAt: today.subtract(const Duration(hours: 1)),
+          createdAt: todayMorning,
         );
 
         // Act

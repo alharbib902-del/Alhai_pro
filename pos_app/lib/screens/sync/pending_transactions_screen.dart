@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/sync_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 
 /// شاشة العمليات المعلقة للمزامنة
 class PendingTransactionsScreen extends ConsumerStatefulWidget {
@@ -16,50 +16,7 @@ class PendingTransactionsScreen extends ConsumerStatefulWidget {
 }
 
 class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'dashboard';
-
-  bool _isLoading = true;
   bool _isSyncing = false;
-  List<Map<String, dynamic>> _pendingItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPendingItems();
-  }
-
-  Future<void> _loadPendingItems() async {
-    setState(() => _isLoading = true);
-
-    // Mock data للتطوير - TODO: ربط بقاعدة البيانات
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    setState(() {
-      _pendingItems = [
-        {'id': 1, 'operation': 'INSERT', 'tableName': 'sales', 'recordId': 'sale-001-abc', 'createdAt': DateTime.now().subtract(const Duration(minutes: 5))},
-        {'id': 2, 'operation': 'UPDATE', 'tableName': 'products', 'recordId': 'prod-002-xyz', 'createdAt': DateTime.now().subtract(const Duration(minutes: 15))},
-      ];
-      _isLoading = false;
-    });
-  }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,83 +26,86 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد', // TODO: localize
-              userRole: l10n.branchManager,
-              onUserTap: () {},
+    final pendingItemsAsync = ref.watch(pendingSyncItemsProvider);
+
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.pendingTransactionsTitle,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh, color: isDark ? Colors.white70 : AppColors.textSecondary),
+              onPressed: () => ref.invalidate(pendingSyncItemsProvider),
             ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'العمليات المعلقة', // TODO: localize
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد', // TODO: localize
-                  userRole: l10n.branchManager,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.refresh, color: isDark ? Colors.white70 : AppColors.textSecondary),
-                      onPressed: _loadPendingItems,
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _pendingItems.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.cloud_done, size: 64, color: isDark ? Colors.white24 : AppColors.success),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'جميع العمليات متزامنة', // TODO: localize
-                                    style: TextStyle(
-                                      color: isDark ? Colors.white54 : AppColors.textSecondary,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'لا توجد عمليات معلقة', // TODO: localize
-                                    style: TextStyle(color: isDark ? Colors.white38 : AppColors.textTertiary),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                              child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                            ),
-                ),
-              ],
+          ],
+        ),
+        Expanded(
+          child: pendingItemsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+                  const SizedBox(height: 16),
+                  Text(
+                    error.toString(),
+                    style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: () => ref.invalidate(pendingSyncItemsProvider),
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: Text(l10n.retry),
+                  ),
+                ],
+              ),
             ),
+            data: (pendingItems) {
+              if (pendingItems.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.cloud_done, size: 64, color: isDark ? Colors.white24 : AppColors.success),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.allOperationsSynced,
+                        style: TextStyle(
+                          color: isDark ? Colors.white54 : AppColors.textSecondary,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.noPendingOperations,
+                        style: TextStyle(color: isDark ? Colors.white38 : AppColors.textTertiary),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                child: _buildContent(pendingItems, isWideScreen, isMediumScreen, isDark, l10n),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(List<SyncQueueTableData> pendingItems, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,21 +119,21 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
           ),
           child: Row(
             children: [
-              Icon(Icons.cloud_off, color: AppColors.warning),
+              const Icon(Icons.cloud_off, color: AppColors.warning),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_pendingItems.length} عملية معلقة', // TODO: localize
+                      l10n.nPendingCount(pendingItems.length),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
                     Text(
-                      'سيتم مزامنتها عند الاتصال بالإنترنت', // TODO: localize
+                      l10n.willSyncWhenOnline,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.white54 : AppColors.textSecondary,
@@ -187,7 +147,7 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
                 icon: _isSyncing
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.sync, size: 18),
-                label: Text(_isSyncing ? 'مزامنة...' : 'مزامنة الكل'), // TODO: localize
+                label: Text(_isSyncing ? l10n.syncing : l10n.syncAll),
               ),
             ],
           ),
@@ -195,8 +155,9 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
         const SizedBox(height: 16),
 
         // Pending items list
-        ...List.generate(_pendingItems.length, (index) {
-          final item = _pendingItems[index];
+        ...List.generate(pendingItems.length, (index) {
+          final item = pendingItems[index];
+          final recordIdDisplay = item.recordId.length > 8 ? item.recordId.substring(0, 8) : item.recordId;
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
@@ -207,14 +168,14 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               leading: CircleAvatar(
-                backgroundColor: _getOperationColor(item['operation']).withValues(alpha: 0.1),
+                backgroundColor: _getOperationColor(item.operation).withValues(alpha: 0.1),
                 child: Icon(
-                  _getOperationIcon(item['operation']),
-                  color: _getOperationColor(item['operation']),
+                  _getOperationIcon(item.operation),
+                  color: _getOperationColor(item.operation),
                 ),
               ),
               title: Text(
-                _translateOperation(item['operation']),
+                _translateOperation(item.operation, l10n),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white : AppColors.textPrimary,
@@ -224,24 +185,54 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${item['tableName']} - ${item['recordId'].toString().substring(0, 8)}',
+                    '${item.tableName_} - $recordIdDisplay',
                     style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary),
                   ),
-                  Text(
-                    _formatDate(item['createdAt']),
-                    style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                  Row(
+                    children: [
+                      Text(
+                        _formatDate(item.createdAt),
+                        style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                      ),
+                      if (item.retryCount > 0) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.error.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '${item.retryCount}/${item.maxRetries}',
+                            style: const TextStyle(fontSize: 10, color: AppColors.error, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                  if (item.lastError != null && item.lastError!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        item.lastError!,
+                        style: const TextStyle(fontSize: 11, color: AppColors.error),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                 ],
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.sync, color: AppColors.info),
-                    onPressed: () => _syncItem(item),
+                    icon: const Icon(Icons.sync, color: AppColors.info),
+                    tooltip: l10n.retry,
+                    onPressed: () => _retryItem(item),
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete_outline, color: AppColors.error),
+                    icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                    tooltip: l10n.delete,
                     onPressed: () => _deleteItem(item),
                   ),
                 ],
@@ -253,56 +244,45 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد', // TODO: localize
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
-
   Color _getOperationColor(String? operation) {
     switch (operation) {
-      case 'INSERT': return AppColors.success;
-      case 'UPDATE': return AppColors.info;
-      case 'DELETE': return AppColors.error;
-      default: return AppColors.textSecondary;
+      case 'INSERT':
+      case 'CREATE':
+        return AppColors.success;
+      case 'UPDATE':
+        return AppColors.info;
+      case 'DELETE':
+        return AppColors.error;
+      default:
+        return AppColors.textSecondary;
     }
   }
 
   IconData _getOperationIcon(String? operation) {
     switch (operation) {
-      case 'INSERT': return Icons.add;
-      case 'UPDATE': return Icons.edit;
-      case 'DELETE': return Icons.delete;
-      default: return Icons.sync;
+      case 'INSERT':
+      case 'CREATE':
+        return Icons.add;
+      case 'UPDATE':
+        return Icons.edit;
+      case 'DELETE':
+        return Icons.delete;
+      default:
+        return Icons.sync;
     }
   }
 
-  String _translateOperation(String? operation) {
+  String _translateOperation(String? operation, AppLocalizations l10n) {
     switch (operation) {
-      case 'INSERT': return 'إضافة'; // TODO: localize
-      case 'UPDATE': return 'تعديل'; // TODO: localize
-      case 'DELETE': return 'حذف'; // TODO: localize
-      default: return 'عملية'; // TODO: localize
+      case 'INSERT':
+      case 'CREATE':
+        return l10n.insertOperation;
+      case 'UPDATE':
+        return l10n.updateOperation;
+      case 'DELETE':
+        return l10n.delete;
+      default:
+        return l10n.operationLabel;
     }
   }
 
@@ -313,37 +293,79 @@ class _PendingTransactionsScreenState extends ConsumerState<PendingTransactionsS
 
   Future<void> _syncAll() async {
     setState(() => _isSyncing = true);
-    await Future.delayed(const Duration(seconds: 2));
-    await _loadPendingItems();
-    setState(() => _isSyncing = false);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تمت المزامنة بنجاح'), backgroundColor: Colors.green), // TODO: localize
-    );
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final manager = ref.read(syncManagerProvider);
+      final result = await manager.syncPending();
+      if (!mounted) return;
+      if (result.hasErrors) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.syncFailed}: ${result.failedCount} ${l10n.syncFailed}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      } else {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.syncSuccessful), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+      );
+    } finally {
+      if (mounted) setState(() => _isSyncing = false);
+    }
   }
 
-  void _syncItem(Map<String, dynamic> item) {
-    setState(() => _pendingItems.remove(item));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تمت مزامنة العملية')), // TODO: localize
-    );
+  Future<void> _retryItem(SyncQueueTableData item) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final syncService = ref.read(syncServiceProvider);
+      await syncService.retryItem(item.id);
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.operationSynced)),
+      );
+      // Trigger a sync attempt for this item
+      final manager = ref.read(syncManagerProvider);
+      manager.syncPending();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+      );
+    }
   }
 
-  void _deleteItem(Map<String, dynamic> item) {
+  void _deleteItem(SyncQueueTableData item) {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('حذف العملية'), // TODO: localize
-        content: const Text('هل تريد حذف هذه العملية من قائمة الانتظار؟'), // TODO: localize
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deleteOperation),
+        content: Text(l10n.deleteOperationConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() => _pendingItems.remove(item));
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              try {
+                final syncService = ref.read(syncServiceProvider);
+                await syncService.removeItem(item.id);
+              } catch (e) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+                );
+              }
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('حذف'), // TODO: localize
+            child: Text(l10n.delete),
           ),
         ],
       ),

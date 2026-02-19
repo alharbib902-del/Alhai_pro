@@ -5,7 +5,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/auth_providers.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/shifts_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة فتح الوردية
@@ -17,29 +17,9 @@ class ShiftOpenScreen extends ConsumerStatefulWidget {
 }
 
 class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'pos';
 
   final _openingCashController = TextEditingController();
   bool _isLoading = false;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
-
   @override
   void dispose() {
     _openingCashController.dispose();
@@ -54,27 +34,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.openShift,
@@ -82,11 +42,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   showSearch: false,
                   searchHint: l10n.searchPlaceholder,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                 ),
@@ -97,39 +57,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
@@ -451,21 +380,37 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
   }
 
   Future<void> _openShift() async {
-    final openingCash = double.tryParse(_openingCashController.text) ?? 0;
+    final l10n = AppLocalizations.of(context)!;
+    final openingCash = double.tryParse(_openingCashController.text);
+
+    // Validate: opening cash is required and must be numeric > 0
+    if (openingCash == null || openingCash <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('يرجى إدخال مبلغ النقدية الافتتاحية (أكبر من صفر)'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Save shift to database
-      // final db = getIt<AppDatabase>();
-      // await db.shiftsDao.openShift(openingCash: openingCash);
-      await Future.delayed(const Duration(milliseconds: 500));
+      final user = ref.read(currentUserProvider);
+      final openShift = ref.read(openShiftActionProvider);
+
+      await openShift(
+        openingCash: openingCash,
+        cashierId: user?.id ?? 'unknown',
+        cashierName: user?.name ?? 'غير معروف',
+      );
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تم فتح الوردية بمبلغ ${openingCash.toStringAsFixed(0)} ر.س'),
+          content: Text('تم فتح الوردية بمبلغ ${openingCash.toStringAsFixed(0)} ${l10n.sar}'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -473,8 +418,18 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       context.go(AppRoutes.home);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('خطأ في فتح الوردية'),
+          content: Text('$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

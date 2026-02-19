@@ -57,8 +57,34 @@ class SaleService {
         createdAt: now,
       ));
       
-      // 2. إضافة عناصر البيع وخصم المخزون
+      // 2. التحقق من توفر المخزون قبل الخصم (قراءة حية من قاعدة البيانات)
+      final freshProducts = <String, ProductsTableData>{};
       for (final item in items) {
+        final product = await _db.productsDao.getProductById(item.product.id);
+        if (product == null) {
+          throw SaleException(
+            message: 'Product not found in DB: ${item.product.id}',
+            userMessage: 'المنتج "${item.product.name}" غير موجود في قاعدة البيانات',
+            code: 'PRODUCT_NOT_FOUND',
+          );
+        }
+        freshProducts[item.product.id] = product;
+
+        // تخطي المنتجات التي لا تتبع المخزون
+        if (!product.trackInventory) continue;
+
+        if (product.stockQty < item.quantity) {
+          throw SaleException.insufficientStock(
+            product.name,
+            product.stockQty,
+            item.quantity,
+          );
+        }
+      }
+
+      // 3. إضافة عناصر البيع وخصم المخزون
+      for (final item in items) {
+        final freshProduct = freshProducts[item.product.id]!;
         final itemId = _uuid.v4();
         await _db.saleItemsDao.insertItem(SaleItemsTableCompanion.insert(
           id: itemId,
@@ -71,7 +97,7 @@ class SaleService {
           discount: const Value(0),
           total: item.total,
         ));
-        
+
         // خصم المخزون
         final movementId = _uuid.v4();
         await _db.inventoryDao.recordSaleMovement(
@@ -79,18 +105,18 @@ class SaleService {
           productId: item.product.id,
           storeId: storeId,
           qty: item.quantity,
-          previousQty: item.product.stockQty,
+          previousQty: freshProduct.stockQty,
           saleId: saleId,
         );
-        
+
         // تحديث كمية المنتج
         await _db.productsDao.updateStock(
-          item.product.id, 
-          item.product.stockQty - item.quantity,
+          item.product.id,
+          freshProduct.stockQty - item.quantity,
         );
       }
       
-      // 3. إضافة للمزامنة
+      // 4. إضافة للمزامنة
       await _syncService.enqueueCreate(
         tableName: 'sales',
         recordId: saleId,

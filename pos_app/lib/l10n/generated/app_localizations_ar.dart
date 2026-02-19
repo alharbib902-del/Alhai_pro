@@ -219,7 +219,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lowStock => 'مخزون منخفض';
 
   @override
-  String get outOfStock => 'نفذ المخزون';
+  String get outOfStock => 'نفذ';
 
   @override
   String get inStock => 'متوفر';
@@ -993,7 +993,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showFilters => 'إظهار الفلاتر';
 
   @override
-  String get sortByName => 'الاسم';
+  String get sortByName => 'حسب الاسم';
 
   @override
   String get sortByPrice => 'السعر';
@@ -1752,7 +1752,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invoiceDetails => 'تفاصيل الفاتورة';
 
   @override
-  String get invoiceNumberLabel => 'رقم:';
+  String invoiceNumberLabel(String number) {
+    return 'رقم:';
+  }
 
   @override
   String get additionalOptions => 'خيارات إضافية';
@@ -1788,7 +1790,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get voidedStatus => 'ملغاة';
 
   @override
-  String get storeName => 'سوبرماركت الحي';
+  String get storeName => 'اسم المتجر';
 
   @override
   String get storeAddress => 'الرياض، حي الملز، شارع التخصصي';
@@ -2468,7 +2470,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get startingCash => 'النقد الابتدائي';
 
   @override
-  String get cashierName => 'الكاشير';
+  String get cashierName => 'اسم الكاشير';
 
   @override
   String get shiftDuration => 'المدة';
@@ -2753,7 +2755,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get receiptTemplate => 'قالب الإيصال';
 
   @override
-  String get taxSettings => 'إعدادات الضريبة';
+  String get taxSettings => 'إعدادات الضرائب';
 
   @override
   String get discountSettings => 'إعدادات الخصومات';
@@ -2891,7 +2893,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vatNumber => 'الرقم الضريبي';
 
   @override
-  String get taxNumber => 'رقم الضريبة';
+  String get taxNumber => 'الرقم الضريبي';
 
   @override
   String get pushNotifications => 'إشعارات الدفع';
@@ -2975,7 +2977,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get branchCode => 'رمز الفرع';
 
   @override
-  String get qrCodeOnInvoice => 'رمز QR على الفاتورة';
+  String get qrCodeOnInvoice => 'يظهر رمز QR على كل فاتورة';
 
   @override
   String get certificates => 'الشهادات';
@@ -2991,4 +2993,4022 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get configured => 'مهيأ';
+
+  @override
+  String get aiSection => 'الذكاء الاصطناعي';
+
+  @override
+  String get aiAssistantTitle => 'المساعد الذكي';
+
+  @override
+  String get aiAssistantSubtitle => 'اسأل مساعدك الذكي أي شيء عن متجرك';
+
+  @override
+  String get aiSalesForecastingTitle => 'التنبؤ بالمبيعات';
+
+  @override
+  String get aiSalesForecastingSubtitle =>
+      'توقع المبيعات المستقبلية باستخدام البيانات التاريخية';
+
+  @override
+  String get aiSmartPricingTitle => 'التسعير الذكي';
+
+  @override
+  String get aiSmartPricingSubtitle =>
+      'اقتراحات تحسين الأسعار بالذكاء الاصطناعي';
+
+  @override
+  String get aiFraudDetectionTitle => 'كشف الاحتيال';
+
+  @override
+  String get aiFraudDetectionSubtitle => 'كشف الأنماط المشبوهة وحماية أعمالك';
+
+  @override
+  String get aiBasketAnalysisTitle => 'تحليل السلة';
+
+  @override
+  String get aiBasketAnalysisSubtitle =>
+      'اكتشف المنتجات المُشتراة معاً بشكل متكرر';
+
+  @override
+  String get aiCustomerRecommendationsTitle => 'توصيات العملاء';
+
+  @override
+  String get aiCustomerRecommendationsSubtitle =>
+      'اقتراحات منتجات مخصصة لكل عميل';
+
+  @override
+  String get aiSmartInventoryTitle => 'المخزون الذكي';
+
+  @override
+  String get aiSmartInventorySubtitle =>
+      'مستويات المخزون المثالية والتنبؤ بالهدر';
+
+  @override
+  String get aiCompetitorAnalysisTitle => 'تحليل المنافسين';
+
+  @override
+  String get aiCompetitorAnalysisSubtitle => 'قارن أسعارك مع المنافسين';
+
+  @override
+  String get aiSmartReportsTitle => 'التقارير الذكية';
+
+  @override
+  String get aiSmartReportsSubtitle => 'أنشئ تقارير باستخدام اللغة الطبيعية';
+
+  @override
+  String get aiStaffAnalyticsTitle => 'تحليل الموظفين';
+
+  @override
+  String get aiStaffAnalyticsSubtitle => 'تحليل أداء الموظفين وتحسين الجدولة';
+
+  @override
+  String get aiProductRecognitionTitle => 'التعرف على المنتجات';
+
+  @override
+  String get aiProductRecognitionSubtitle =>
+      'تعرّف على المنتجات باستخدام الكاميرا';
+
+  @override
+  String get aiSentimentAnalysisTitle => 'تحليل المشاعر';
+
+  @override
+  String get aiSentimentAnalysisSubtitle =>
+      'تحليل ملاحظات العملاء ومستوى الرضا';
+
+  @override
+  String get aiReturnPredictionTitle => 'التنبؤ بالمرتجعات';
+
+  @override
+  String get aiReturnPredictionSubtitle => 'توقع ومنع إرجاع المنتجات';
+
+  @override
+  String get aiPromotionDesignerTitle => 'مصمم العروض';
+
+  @override
+  String get aiPromotionDesignerSubtitle =>
+      'عروض مولّدة بالذكاء الاصطناعي مع توقع العائد';
+
+  @override
+  String get aiChatWithDataTitle => 'الدردشة مع البيانات';
+
+  @override
+  String get aiChatWithDataSubtitle => 'استعلم عن بياناتك باللغة الطبيعية';
+
+  @override
+  String get aiConfidence => 'الثقة';
+
+  @override
+  String get aiHighConfidence => 'ثقة عالية';
+
+  @override
+  String get aiMediumConfidence => 'ثقة متوسطة';
+
+  @override
+  String get aiLowConfidence => 'ثقة منخفضة';
+
+  @override
+  String get aiAnalyzing => 'جاري التحليل...';
+
+  @override
+  String get aiGenerating => 'جاري الإنشاء...';
+
+  @override
+  String get aiNoData => 'لا توجد بيانات كافية للتحليل';
+
+  @override
+  String get aiRefresh => 'تحديث التحليل';
+
+  @override
+  String get aiExport => 'تصدير النتائج';
+
+  @override
+  String get aiApply => 'تطبيق الاقتراحات';
+
+  @override
+  String get aiDismiss => 'تجاهل';
+
+  @override
+  String get aiViewDetails => 'عرض التفاصيل';
+
+  @override
+  String get aiSuggestions => 'اقتراحات AI';
+
+  @override
+  String get aiInsights => 'رؤى AI';
+
+  @override
+  String get aiPrediction => 'تنبؤ';
+
+  @override
+  String get aiRecommendation => 'توصية';
+
+  @override
+  String get aiAlert => 'تنبيه';
+
+  @override
+  String get aiWarning => 'تحذير';
+
+  @override
+  String get aiTrend => 'الاتجاه';
+
+  @override
+  String get aiPositive => 'إيجابي';
+
+  @override
+  String get aiNegative => 'سلبي';
+
+  @override
+  String get aiNeutral => 'محايد';
+
+  @override
+  String get aiSendMessage => 'اكتب رسالتك...';
+
+  @override
+  String get aiQuickTemplates => 'قوالب سريعة';
+
+  @override
+  String get aiForecastPeriod => 'فترة التنبؤ';
+
+  @override
+  String get aiWeekly => 'أسبوعي';
+
+  @override
+  String get aiMonthly => 'شهري';
+
+  @override
+  String get aiQuarterly => 'ربع سنوي';
+
+  @override
+  String get aiWhatIfScenario => 'سيناريو ماذا لو';
+
+  @override
+  String get aiSeasonalPatterns => 'الأنماط الموسمية';
+
+  @override
+  String get aiPriceSuggestion => 'اقتراح السعر';
+
+  @override
+  String get aiCurrentPrice => 'السعر الحالي';
+
+  @override
+  String get aiSuggestedPrice => 'السعر المقترح';
+
+  @override
+  String get aiPriceImpact => 'تأثير السعر';
+
+  @override
+  String get aiDemandElasticity => 'مرونة الطلب';
+
+  @override
+  String get aiFraudAlerts => 'تنبيهات الاحتيال';
+
+  @override
+  String get aiFraudRiskScore => 'درجة الخطورة';
+
+  @override
+  String get aiBehaviorScore => 'درجة السلوك';
+
+  @override
+  String get aiInvestigation => 'التحقيق';
+
+  @override
+  String get aiAssociationRules => 'قواعد الارتباط';
+
+  @override
+  String get aiBundleSuggestions => 'اقتراحات الحزم';
+
+  @override
+  String get aiRepurchaseReminder => 'تذكير إعادة الشراء';
+
+  @override
+  String get aiCustomerSegment => 'شريحة العميل';
+
+  @override
+  String get aiEoqCalculator => 'حاسبة الكمية المثالية';
+
+  @override
+  String get aiAbcAnalysis => 'تحليل ABC';
+
+  @override
+  String get aiWastePrediction => 'التنبؤ بالهدر';
+
+  @override
+  String get aiReorderPoint => 'نقطة إعادة الطلب';
+
+  @override
+  String get aiCompetitorPrices => 'أسعار المنافسين';
+
+  @override
+  String get aiMarketPosition => 'الموقع السوقي';
+
+  @override
+  String get aiQueryInput => 'اسأل أي شيء عن بياناتك...';
+
+  @override
+  String get aiReportTemplate => 'قالب التقرير';
+
+  @override
+  String get aiStaffPerformance => 'أداء الموظفين';
+
+  @override
+  String get aiShiftOptimization => 'تحسين الورديات';
+
+  @override
+  String get aiProductScan => 'مسح المنتج';
+
+  @override
+  String get aiOcrResults => 'نتائج OCR';
+
+  @override
+  String get aiSentimentScore => 'مؤشر المشاعر';
+
+  @override
+  String get aiKeywords => 'الكلمات المفتاحية';
+
+  @override
+  String get aiReturnRisk => 'خطر الإرجاع';
+
+  @override
+  String get aiPreventiveActions => 'إجراءات وقائية';
+
+  @override
+  String get aiRoiForecast => 'توقع العائد';
+
+  @override
+  String get aiAbTesting => 'اختبار A/B';
+
+  @override
+  String get aiQueryHistory => 'سجل الاستعلامات';
+
+  @override
+  String get aiApplied => 'مُطبّق';
+
+  @override
+  String get aiPending => 'قيد الانتظار';
+
+  @override
+  String get aiHighPriority => 'أولوية عالية';
+
+  @override
+  String get aiMediumPriority => 'أولوية متوسطة';
+
+  @override
+  String get aiLowPriority => 'أولوية منخفضة';
+
+  @override
+  String get aiCritical => 'حرج';
+
+  @override
+  String get aiSar => 'ر.س';
+
+  @override
+  String aiPercentChange(String percent) {
+    return '$percent% تغيير';
+  }
+
+  @override
+  String aiItemsCount(int count) {
+    return '$count عنصر';
+  }
+
+  @override
+  String aiLastUpdated(String time) {
+    return 'آخر تحديث: $time';
+  }
+
+  @override
+  String get connectedToServer => 'متصل بالسيرفر';
+
+  @override
+  String lastSyncAt(String time) {
+    return 'آخر مزامنة: $time';
+  }
+
+  @override
+  String get pendingOperations => 'العمليات المعلقة';
+
+  @override
+  String nPendingOperations(int count) {
+    return '$count عملية تنتظر المزامنة';
+  }
+
+  @override
+  String get noPendingOperations => 'لا توجد عمليات معلقة';
+
+  @override
+  String get syncInfo => 'معلومات المزامنة';
+
+  @override
+  String get device => 'الجهاز';
+
+  @override
+  String get appVersion => 'إصدار التطبيق';
+
+  @override
+  String get lastFullSync => 'آخر مزامنة كاملة';
+
+  @override
+  String get databaseStatus => 'حالة قاعدة البيانات';
+
+  @override
+  String get healthy => 'سليمة';
+
+  @override
+  String get syncSuccessful => 'تمت المزامنة بنجاح';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String get allOperationsSynced => 'جميع العمليات متزامنة';
+
+  @override
+  String get willSyncWhenOnline => 'سيتم مزامنتها عند الاتصال بالإنترنت';
+
+  @override
+  String get syncAll => 'مزامنة الكل';
+
+  @override
+  String get operationSynced => 'تمت مزامنة العملية';
+
+  @override
+  String get deleteOperation => 'حذف العملية';
+
+  @override
+  String get deleteOperationConfirm =>
+      'هل تريد حذف هذه العملية من قائمة الانتظار؟';
+
+  @override
+  String get insertOperation => 'إضافة';
+
+  @override
+  String get updateOperation => 'تعديل';
+
+  @override
+  String get operationLabel => 'عملية';
+
+  @override
+  String nPendingCount(int count) {
+    return '$count عملية معلقة';
+  }
+
+  @override
+  String conflictsNeedResolution(int count) {
+    return '$count تعارضات تحتاج حل';
+  }
+
+  @override
+  String get chooseCorrectValue => 'اختر القيمة الصحيحة لكل تعارض';
+
+  @override
+  String get noConflicts => 'لا توجد تعارضات';
+
+  @override
+  String get productPriceConflict => 'تعارض في سعر المنتج';
+
+  @override
+  String get stockQuantityConflict => 'تعارض في كمية المخزون';
+
+  @override
+  String get useAllLocal => 'استخدام الكل المحلي';
+
+  @override
+  String get useAllServer => 'استخدام الكل من السيرفر';
+
+  @override
+  String get conflictResolvedLocal => 'تم حل التعارض باستخدام القيمة المحلية';
+
+  @override
+  String get conflictResolvedServer =>
+      'تم حل التعارض باستخدام القيمة من السيرفر';
+
+  @override
+  String get useLocalValues => 'القيم المحلية';
+
+  @override
+  String get useServerValues => 'قيم السيرفر';
+
+  @override
+  String applyToAllConflicts(String choice) {
+    return 'سيتم تطبيق $choice على جميع التعارضات';
+  }
+
+  @override
+  String get allConflictsResolved => 'تم حل جميع التعارضات';
+
+  @override
+  String get localValueLabel => 'القيمة المحلية';
+
+  @override
+  String get serverValueLabel => 'القيمة من السيرفر';
+
+  @override
+  String get noteOptional => 'ملاحظة (اختياري)';
+
+  @override
+  String get suspendInvoice => 'تعليق الفاتورة';
+
+  @override
+  String get invoiceSuspended => 'تم تعليق الفاتورة';
+
+  @override
+  String nItems(int count) {
+    return '$count عنصر';
+  }
+
+  @override
+  String saveSaleError(String error) {
+    return 'خطأ في حفظ البيع: $error';
+  }
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get stockGood => 'المخزون جيد!';
+
+  @override
+  String get manageInventory => 'إدارة المخزون';
+
+  @override
+  String pendingSyncCount(int count) {
+    return '$count قيد المزامنة';
+  }
+
+  @override
+  String get freshMilk => 'حليب طازج';
+
+  @override
+  String get whiteBread => 'خبز أبيض';
+
+  @override
+  String get localEggs => 'بيض بلدي';
+
+  @override
+  String get yogurt => 'زبادي';
+
+  @override
+  String minQuantityLabel(int count) {
+    return 'الحد الأدنى: $count';
+  }
+
+  @override
+  String get manageDiscounts => 'إدارة الخصومات';
+
+  @override
+  String get newDiscount => 'خصم جديد';
+
+  @override
+  String get totalLabel => 'إجمالي';
+
+  @override
+  String get stopped => 'متوقف';
+
+  @override
+  String get allProducts => 'جميع المنتجات';
+
+  @override
+  String get specificCategory => 'تصنيف محدد';
+
+  @override
+  String get percentageLabel => 'نسبة %';
+
+  @override
+  String get fixedAmount => 'مبلغ ثابت';
+
+  @override
+  String get thePercentage => 'النسبة';
+
+  @override
+  String get theAmount => 'المبلغ';
+
+  @override
+  String discountOff(String value) {
+    return '$value% خصم';
+  }
+
+  @override
+  String sarDiscountOff(String value) {
+    return '$value ر.س خصم';
+  }
+
+  @override
+  String get manageCoupons => 'إدارة الكوبونات';
+
+  @override
+  String get newCoupon => 'كوبون جديد';
+
+  @override
+  String get expired => 'منتهي';
+
+  @override
+  String get deactivated => 'معطل';
+
+  @override
+  String usageCount(int used, int max) {
+    return '$used/$max استخدام';
+  }
+
+  @override
+  String get freeDelivery => 'توصيل مجاني';
+
+  @override
+  String percentageDiscountLabel(int value) {
+    return 'خصم $value%';
+  }
+
+  @override
+  String fixedDiscountLabel(int value) {
+    return 'خصم $value ر.س';
+  }
+
+  @override
+  String get couponTypeLabel => 'النوع';
+
+  @override
+  String get percentageRate => 'النسبة %';
+
+  @override
+  String get minimumOrder => 'الحد الأدنى للطلب';
+
+  @override
+  String get expiryDate => 'تاريخ الانتهاء';
+
+  @override
+  String get copyCode => 'نسخ';
+
+  @override
+  String get usages => 'الاستخدامات';
+
+  @override
+  String get percentageDiscountOption => 'خصم نسبة';
+
+  @override
+  String get fixedDiscountOption => 'خصم ثابت';
+
+  @override
+  String get freeDeliveryOption => 'توصيل مجاني';
+
+  @override
+  String get percentageField => 'النسبة %';
+
+  @override
+  String get manageSpecialOffers => 'إدارة العروض الخاصة';
+
+  @override
+  String get newOffer => 'عرض جديد';
+
+  @override
+  String get expiringSoon => 'ينتهي قريباً';
+
+  @override
+  String get offerExpired => 'منتهي';
+
+  @override
+  String bundleDiscount(String discount) {
+    return 'باقة - خصم $discount%';
+  }
+
+  @override
+  String get buyAndGetFree => 'اشتري واحصل مجاناً';
+
+  @override
+  String offerDiscountPercent(String discount) {
+    return 'خصم $discount%';
+  }
+
+  @override
+  String offerDiscountFixed(String discount) {
+    return 'خصم $discount ر.س';
+  }
+
+  @override
+  String get bundleLabel => 'باقة';
+
+  @override
+  String get buyAndGet => 'اشترِ واحصل';
+
+  @override
+  String get startDateLabel => 'البداية';
+
+  @override
+  String get endDateLabel => 'النهاية';
+
+  @override
+  String get productsLabel => 'المنتجات';
+
+  @override
+  String get offerType => 'النوع';
+
+  @override
+  String get theDiscount => 'الخصم:';
+
+  @override
+  String get smartSuggestions => 'اقتراحات ذكية';
+
+  @override
+  String get suggestionsBasedOnAnalysis =>
+      'عروض مقترحة بناءً على تحليل المبيعات والمخزون';
+
+  @override
+  String suggestedDiscountPercent(int percent) {
+    return '$percent% خصم مقترح';
+  }
+
+  @override
+  String stockLabelCount(int count) {
+    return 'المخزون: $count';
+  }
+
+  @override
+  String validityDays(int days) {
+    return 'الصلاحية: $days يوم';
+  }
+
+  @override
+  String get ignore => 'تجاهل';
+
+  @override
+  String get applyAction => 'تطبيق';
+
+  @override
+  String usageCountTimes(int count) {
+    return 'استخدام: $count مرة';
+  }
+
+  @override
+  String get promotionHistory => 'سجل العروض السابقة';
+
+  @override
+  String get createNewPromotion => 'إنشاء عرض جديد';
+
+  @override
+  String get percentageDiscountType => 'خصم نسبة مئوية';
+
+  @override
+  String get percentageDiscountDesc => 'خصم 10%، 20%، إلخ';
+
+  @override
+  String get buyXGetY => 'اشتري X واحصل على Y';
+
+  @override
+  String get buyXGetYDesc => 'اشتري 2 واحصل على 1 مجاناً';
+
+  @override
+  String get fixedAmountDiscount => 'خصم مبلغ ثابت';
+
+  @override
+  String get fixedAmountDiscountDesc => 'خصم 10 ر.س على المنتج';
+
+  @override
+  String promotionApplied(String product) {
+    return 'تم تطبيق العرض على $product';
+  }
+
+  @override
+  String promotionType(String type) {
+    return 'النوع: $type';
+  }
+
+  @override
+  String promotionValue(String value) {
+    return 'القيمة: $value';
+  }
+
+  @override
+  String promotionUsage(int count) {
+    return 'الاستخدام: $count مرة';
+  }
+
+  @override
+  String get percentageType => 'نسبة مئوية';
+
+  @override
+  String get buyXGetYType => 'اشتري واحصل';
+
+  @override
+  String get fixedAmountType => 'مبلغ ثابت';
+
+  @override
+  String get closeAction => 'إغلاق';
+
+  @override
+  String get holdInvoices => 'الفواتير المعلقة';
+
+  @override
+  String get clearAll => 'مسح الكل';
+
+  @override
+  String get noHoldInvoices => 'لا توجد فواتير معلقة';
+
+  @override
+  String get holdInvoicesDesc =>
+      'عند تعليق فاتورة من نقطة البيع ستظهر هنا\nيمكنك تعليق عدة فواتير واستئنافها لاحقاً';
+
+  @override
+  String get deleteInvoiceTitle => 'حذف الفاتورة';
+
+  @override
+  String deleteInvoiceConfirmMsg(String name) {
+    return 'هل تريد حذف \"$name\"?\nهذا الإجراء لا يمكن التراجع عنه.';
+  }
+
+  @override
+  String get cannotUndo => 'هذا الإجراء لا يمكن التراجع عنه.';
+
+  @override
+  String get deleteAllLabel => 'حذف الكل';
+
+  @override
+  String get deleteAllInvoices => 'حذف جميع الفواتير';
+
+  @override
+  String deleteAllInvoicesConfirm(int count) {
+    return 'هل تريد حذف جميع الفواتير المعلقة ($count فاتورة)?\nهذا الإجراء لا يمكن التراجع عنه.';
+  }
+
+  @override
+  String get invoiceDeletedMsg => 'تم حذف الفاتورة';
+
+  @override
+  String get allInvoicesDeleted => 'تم حذف جميع الفواتير';
+
+  @override
+  String resumedInvoice(String name) {
+    return 'تم استئناف: $name';
+  }
+
+  @override
+  String itemLabel(int count) {
+    return '$count عنصر';
+  }
+
+  @override
+  String moreItems(int count) {
+    return '+$count عناصر أخرى';
+  }
+
+  @override
+  String get resume => 'استئناف';
+
+  @override
+  String get justNowTime => 'الآن';
+
+  @override
+  String minutesAgoTime(int count) {
+    return 'منذ $count دقيقة';
+  }
+
+  @override
+  String hoursAgoTime(int count) {
+    return 'منذ $count ساعة';
+  }
+
+  @override
+  String daysAgoTime(int count) {
+    return 'منذ $count يوم';
+  }
+
+  @override
+  String get debtManagement => 'إدارة الديون';
+
+  @override
+  String get sortLabel => 'ترتيب';
+
+  @override
+  String get sortByAmount => 'حسب المبلغ';
+
+  @override
+  String get sortByDate => 'حسب التاريخ';
+
+  @override
+  String get sendReminders => 'إرسال تذكيرات';
+
+  @override
+  String get allTab => 'الكل';
+
+  @override
+  String get overdueTab => 'متأخرة';
+
+  @override
+  String get upcomingTab => 'قادمة';
+
+  @override
+  String get totalDebts => 'إجمالي الديون';
+
+  @override
+  String get overdueDebts => 'ديون متأخرة';
+
+  @override
+  String get debtorCustomers => 'عملاء مدينون';
+
+  @override
+  String get noDebts => 'لا توجد ديون';
+
+  @override
+  String customerLabel2(int count) {
+    return '$count عميل';
+  }
+
+  @override
+  String overdueDays(int days) {
+    return 'متأخر $days يوم';
+  }
+
+  @override
+  String remainingDays(int days) {
+    return 'متبقي $days يوم';
+  }
+
+  @override
+  String lastPaymentDate(String date) {
+    return 'آخر دفعة: $date';
+  }
+
+  @override
+  String get recordPayment => 'تسجيل دفعة';
+
+  @override
+  String get amountDue => 'المبلغ المستحق';
+
+  @override
+  String currentDebt(String amount) {
+    return 'الدين الحالي: $amount ر.س';
+  }
+
+  @override
+  String get paidAmount => 'المبلغ المدفوع';
+
+  @override
+  String get cashMethod => 'نقدي';
+
+  @override
+  String get cardMethod => 'بطاقة';
+
+  @override
+  String get transferMethod => 'تحويل';
+
+  @override
+  String get paymentRecordedSuccess => 'تم تسجيل الدفعة بنجاح';
+
+  @override
+  String get sendRemindersTitle => 'إرسال تذكيرات';
+
+  @override
+  String sendRemindersConfirm(int count) {
+    return 'سيتم إرسال تذكير لـ $count عميل لديهم ديون متأخرة';
+  }
+
+  @override
+  String get sendAction => 'إرسال';
+
+  @override
+  String remindersSent(int count) {
+    return 'تم إرسال $count تذكير';
+  }
+
+  @override
+  String recordPaymentFor(String name) {
+    return 'تسجيل دفعة - $name';
+  }
+
+  @override
+  String get sendReminder => 'إرسال تذكير';
+
+  @override
+  String get tabAiSuggestions => 'اقتراحات AI';
+
+  @override
+  String get tabActivePromotions => 'العروض النشطة';
+
+  @override
+  String get tabHistory => 'السجل';
+
+  @override
+  String get fruitYogurt => 'زبادي فواكه';
+
+  @override
+  String get buttermilk => 'لبن رايب';
+
+  @override
+  String get appleJuice => 'عصير تفاح';
+
+  @override
+  String get whiteCheese => 'جبنة بيضاء';
+
+  @override
+  String get orangeJuice => 'عصير برتقال';
+
+  @override
+  String slowMovementReason(String days) {
+    return 'حركة بطيئة - $days يوم بدون بيع';
+  }
+
+  @override
+  String get nearExpiryReason => 'قرب انتهاء الصلاحية';
+
+  @override
+  String get excessStockReason => 'مخزون زائد';
+
+  @override
+  String get weekendOffer => 'عرض نهاية الأسبوع';
+
+  @override
+  String get buy2Get1Free => 'اشتري 2 واحصل على 1 مجاناً';
+
+  @override
+  String get productsListLabel => 'المنتجات:';
+
+  @override
+  String get paymentMethodLabel2 => 'طريقة الدفع';
+
+  @override
+  String get lastPaymentLabel => 'آخر دفعة';
+
+  @override
+  String get currencySAR => 'ر.س';
+
+  @override
+  String debtAmountWithCurrency(String amount) {
+    return '$amount ر.س';
+  }
+
+  @override
+  String get defaultUserName => 'أحمد محمد';
+
+  @override
+  String get saveSettings => 'حفظ الإعدادات';
+
+  @override
+  String get settingsSaved => 'تم حفظ الإعدادات';
+
+  @override
+  String get settingsReset => 'تم إعادة ضبط الإعدادات';
+
+  @override
+  String get resetSettings => 'إعادة ضبط الإعدادات';
+
+  @override
+  String get resetSettingsDesc => 'إعادة جميع الإعدادات للقيم الافتراضية';
+
+  @override
+  String get resetSettingsConfirm =>
+      'هل أنت متأكد من إعادة جميع إعدادات نقطة البيع للقيم الافتراضية؟';
+
+  @override
+  String get resetAction => 'إعادة ضبط';
+
+  @override
+  String get posSettingsSubtitle => 'العرض، السلة، الدفع، الإيصال';
+
+  @override
+  String get displaySettings => 'إعدادات العرض';
+
+  @override
+  String get productDisplayMode => 'طريقة عرض المنتجات';
+
+  @override
+  String get productDisplayModeDesc => 'كيفية عرض المنتجات في شاشة POS';
+
+  @override
+  String get gridColumns => 'عدد الأعمدة';
+
+  @override
+  String nColumns(int count) {
+    return '$count أعمدة';
+  }
+
+  @override
+  String get showProductImages => 'عرض صور المنتجات';
+
+  @override
+  String get showProductImagesDesc => 'إظهار الصور في بطاقات المنتجات';
+
+  @override
+  String get showPrices => 'عرض الأسعار';
+
+  @override
+  String get showPricesDesc => 'إظهار السعر على بطاقة المنتج';
+
+  @override
+  String get showStockLevel => 'عرض مستوى المخزون';
+
+  @override
+  String get showStockLevelDesc => 'إظهار الكمية المتاحة';
+
+  @override
+  String get cartSettings => 'إعدادات السلة';
+
+  @override
+  String get autoFocusBarcode => 'التركيز التلقائي على الباركود';
+
+  @override
+  String get autoFocusBarcodeDesc => 'التركيز على حقل الباركود عند فتح الشاشة';
+
+  @override
+  String get allowNegativeStock => 'السماح بالمخزون السالب';
+
+  @override
+  String get allowNegativeStockDesc => 'البيع حتى لو كان المخزون صفر';
+
+  @override
+  String get confirmBeforeDelete => 'تأكيد قبل الحذف';
+
+  @override
+  String get confirmBeforeDeleteDesc => 'طلب تأكيد عند حذف منتج من السلة';
+
+  @override
+  String get showItemNotes => 'عرض ملاحظات المنتج';
+
+  @override
+  String get showItemNotesDesc => 'إمكانية إضافة ملاحظات لكل منتج';
+
+  @override
+  String get cashPaymentOption => 'الدفع نقداً';
+
+  @override
+  String get cardPaymentOption => 'الدفع بالبطاقة';
+
+  @override
+  String get creditPaymentOption => 'الدفع الآجل';
+
+  @override
+  String get bankTransferOption => 'التحويل البنكي';
+
+  @override
+  String get allowSplitPayment => 'السماح بتقسيم الدفع';
+
+  @override
+  String get allowSplitPaymentDesc => 'الدفع بأكثر من طريقة';
+
+  @override
+  String get requireCustomerForCredit => 'اشتراط العميل للدفع الآجل';
+
+  @override
+  String get requireCustomerForCreditDesc => 'يجب تحديد عميل للدفع الآجل';
+
+  @override
+  String get receiptSettings => 'إعدادات الإيصال';
+
+  @override
+  String get autoPrintReceipt => 'طباعة الإيصال تلقائياً';
+
+  @override
+  String get autoPrintReceiptDesc => 'طباعة فور إتمام العملية';
+
+  @override
+  String get receiptCopies => 'عدد نسخ الإيصال';
+
+  @override
+  String get emailReceiptOption => 'إرسال الإيصال بالإيميل';
+
+  @override
+  String get emailReceiptDesc => 'إرسال نسخة للعميل';
+
+  @override
+  String get smsReceiptOption => 'إرسال الإيصال برسالة SMS';
+
+  @override
+  String get smsReceiptDesc => 'رسالة نصية للعميل';
+
+  @override
+  String get printerSettingsDesc => 'اختيار الطابعة وإعداداتها';
+
+  @override
+  String get receiptDesign => 'تصميم الإيصال';
+
+  @override
+  String get receiptDesignDesc => 'تخصيص شكل الإيصال';
+
+  @override
+  String get advancedSettings => 'إعدادات متقدمة';
+
+  @override
+  String get allowHoldInvoices => 'السماح بتعليق الفواتير';
+
+  @override
+  String get allowHoldInvoicesDesc => 'حفظ الفاتورة مؤقتاً';
+
+  @override
+  String get maxHoldInvoices => 'الحد الأقصى للفواتير المعلقة';
+
+  @override
+  String get quickSaleMode => 'وضع البيع السريع';
+
+  @override
+  String get quickSaleModeDesc => 'شاشة مبسطة للبيع السريع';
+
+  @override
+  String get soundEffects => 'المؤثرات الصوتية';
+
+  @override
+  String get soundEffectsDesc => 'أصوات عند المسح والإضافة';
+
+  @override
+  String get hapticFeedback => 'اهتزاز اللمس';
+
+  @override
+  String get hapticFeedbackDesc => 'اهتزاز عند الضغط على الأزرار';
+
+  @override
+  String get keyboardShortcuts => 'اختصارات لوحة المفاتيح';
+
+  @override
+  String get customizeShortcuts => 'تخصيص الاختصارات';
+
+  @override
+  String get shortcutSearchProduct => 'البحث عن منتج';
+
+  @override
+  String get shortcutSearchCustomer => 'البحث عن عميل';
+
+  @override
+  String get shortcutHoldInvoice => 'تعليق الفاتورة';
+
+  @override
+  String get shortcutFavorites => 'المفضلة';
+
+  @override
+  String get shortcutApplyDiscount => 'تطبيق خصم';
+
+  @override
+  String get shortcutPayment => 'الدفع';
+
+  @override
+  String get shortcutCancelBack => 'إلغاء / رجوع';
+
+  @override
+  String get shortcutDeleteProduct => 'حذف منتج';
+
+  @override
+  String get paymentDevicesSubtitle => 'mada, STC Pay, Apple Pay';
+
+  @override
+  String get supportedPaymentMethods => 'طرق الدفع المدعومة';
+
+  @override
+  String get madaLocalCards => 'بطاقات مدى المحلية';
+
+  @override
+  String get internationalCards => 'البطاقات الدولية';
+
+  @override
+  String get stcDigitalWallet => 'محفظة STC الرقمية';
+
+  @override
+  String get paymentTerminal => 'جهاز الدفع';
+
+  @override
+  String get ingenicoDevices => 'أجهزة Ingenico';
+
+  @override
+  String get verifoneDevices => 'أجهزة Verifone';
+
+  @override
+  String get paxDevices => 'أجهزة PAX';
+
+  @override
+  String get settlement => 'التسوية';
+
+  @override
+  String get autoSettlement => 'التسوية التلقائية';
+
+  @override
+  String get autoSettlementDesc => 'تسوية نهاية اليوم تلقائياً';
+
+  @override
+  String get manualSettlement => 'تسوية يدوية';
+
+  @override
+  String get executeSettlementNow => 'تنفيذ التسوية الآن';
+
+  @override
+  String get settlingInProgress => 'جاري التسوية...';
+
+  @override
+  String get paymentDevicesSettingsSaved => 'تم حفظ إعدادات أجهزة الدفع';
+
+  @override
+  String get printerType => 'نوع الطابعة';
+
+  @override
+  String get thermalUsbPrinter => 'طابعة حرارية USB';
+
+  @override
+  String get bluetoothPortablePrinter => 'طابعة بلوتوث محمولة';
+
+  @override
+  String get saveAsPdf => 'حفظ كملف PDF';
+
+  @override
+  String get compactTemplate => 'مختصر';
+
+  @override
+  String get basicInfoOnly => 'معلومات أساسية فقط';
+
+  @override
+  String get detailedTemplate => 'تفصيلي';
+
+  @override
+  String get allDetails => 'كل التفاصيل';
+
+  @override
+  String get printOptions => 'خيارات الطباعة';
+
+  @override
+  String get autoPrinting => 'الطباعة التلقائية';
+
+  @override
+  String get autoPrintAfterSale => 'طباعة الإيصال تلقائياً بعد كل عملية بيع';
+
+  @override
+  String get testPrintInProgress => 'جاري الطباعة التجريبية...';
+
+  @override
+  String get testPrint => 'طباعة تجريبية';
+
+  @override
+  String get printerSettingsSaved => 'تم حفظ إعدادات الطابعة';
+
+  @override
+  String get printerSettingsSubtitle =>
+      'نوع الطابعة، القالب، الطباعة التلقائية';
+
+  @override
+  String get enableScanner => 'تفعيل الماسح';
+
+  @override
+  String get barcodeScanner => 'الماسح الضوئي';
+
+  @override
+  String get barcodeScannerDesc => 'استخدام ماسح الباركود لإضافة المنتجات';
+
+  @override
+  String get deviceCamera => 'كاميرا الجهاز';
+
+  @override
+  String get bluetoothScanner => 'ماسح Bluetooth';
+
+  @override
+  String get externalScannerConnected => 'ماسح خارجي متصل';
+
+  @override
+  String get alerts => 'التنبيهات';
+
+  @override
+  String get beepOnScan => 'صوت عند المسح';
+
+  @override
+  String get vibrateOnScan => 'اهتزاز عند المسح';
+
+  @override
+  String get behavior => 'السلوك';
+
+  @override
+  String get autoAddToCart => 'إضافة تلقائية للسلة';
+
+  @override
+  String get autoAddToCartDesc => 'عند مسح منتج موجود';
+
+  @override
+  String get barcodeFormats => 'صيغ الباركود';
+
+  @override
+  String get allFormats => 'جميع الصيغ';
+
+  @override
+  String get unspecified => 'غير محدد';
+
+  @override
+  String get qrCodeOnly => 'QR Code فقط';
+
+  @override
+  String get testing => 'الاختبار';
+
+  @override
+  String get testScanner => 'اختبار الماسح';
+
+  @override
+  String get testScanBarcode => 'تجربة مسح باركود';
+
+  @override
+  String get pointCameraAtBarcode => 'وجه الكاميرا نحو الباركود';
+
+  @override
+  String get scanArea => 'منطقة المسح';
+
+  @override
+  String get barcodeSettingsSubtitle => 'الماسح الضوئي، التنبيهات، الصيغ';
+
+  @override
+  String get taxSettingsSubtitle => 'VAT, ZATCA, الفوترة الإلكترونية';
+
+  @override
+  String get vatSettings => 'ضريبة القيمة المضافة';
+
+  @override
+  String get enableVat => 'تفعيل ضريبة القيمة المضافة';
+
+  @override
+  String get enableVatDesc => 'تطبيق VAT على جميع المبيعات';
+
+  @override
+  String get taxRate => 'نسبة الضريبة';
+
+  @override
+  String get taxNumberHint => '15 رقم يبدأ بـ 3';
+
+  @override
+  String get pricesIncludeTax => 'الأسعار شاملة الضريبة';
+
+  @override
+  String get pricesIncludeTaxDesc => 'الأسعار المعروضة تتضمن الضريبة';
+
+  @override
+  String get showTaxOnReceipt => 'إظهار الضريبة في الإيصال';
+
+  @override
+  String get showTaxOnReceiptDesc => 'عرض تفاصيل الضريبة';
+
+  @override
+  String get zatcaEInvoicing => 'ZATCA - الفوترة الإلكترونية';
+
+  @override
+  String get enableZatca => 'تفعيل ZATCA';
+
+  @override
+  String get enableZatcaDesc => 'الامتثال لنظام الفوترة الإلكترونية';
+
+  @override
+  String get phaseOne => 'المرحلة الأولى';
+
+  @override
+  String get phaseOneDesc => 'إصدار الفاتورة';
+
+  @override
+  String get phaseTwo => 'المرحلة الثانية';
+
+  @override
+  String get phaseTwoDesc => 'الربط والتكامل';
+
+  @override
+  String get taxSettingsSaved => 'تم حفظ إعدادات الضرائب';
+
+  @override
+  String get discountSettingsTitle => 'إعدادات الخصومات';
+
+  @override
+  String get discountSettingsSubtitle => 'الخصم اليدوي، VIP، الكمية، الكوبونات';
+
+  @override
+  String get generalDiscounts => 'الخصومات العامة';
+
+  @override
+  String get enableDiscountsOption => 'تفعيل الخصومات';
+
+  @override
+  String get enableDiscountsDesc => 'السماح بتطبيق الخصومات';
+
+  @override
+  String get manualDiscount => 'الخصم اليدوي';
+
+  @override
+  String get manualDiscountDesc => 'السماح للكاشير بإدخال خصم يدوي';
+
+  @override
+  String get maxDiscountLimit => 'الحد الأقصى للخصم';
+
+  @override
+  String get requireApproval => 'اشتراط الموافقة';
+
+  @override
+  String get requireApprovalDesc => 'طلب موافقة المدير للخصم';
+
+  @override
+  String get vipCustomerDiscount => 'خصم العملاء المميزين';
+
+  @override
+  String get vipDiscount => 'خصم VIP';
+
+  @override
+  String get vipDiscountDesc => 'خصم تلقائي للعملاء المميزين';
+
+  @override
+  String get vipDiscountRate => 'نسبة خصم VIP';
+
+  @override
+  String get otherDiscounts => 'خصومات أخرى';
+
+  @override
+  String get volumeDiscount => 'خصم الكمية';
+
+  @override
+  String get volumeDiscountDesc => 'خصم تلقائي عند شراء كمية معينة';
+
+  @override
+  String get couponsOption => 'الكوبونات';
+
+  @override
+  String get couponsDesc => 'دعم كوبونات الخصم';
+
+  @override
+  String get discountSettingsSaved => 'تم حفظ إعدادات الخصومات';
+
+  @override
+  String get interestSettingsTitle => 'إعدادات الفوائد';
+
+  @override
+  String get interestSettingsSubtitle => 'النسبة، فترة السماح، الحساب التلقائي';
+
+  @override
+  String get monthlyInterest => 'الفوائد الشهرية';
+
+  @override
+  String get enableInterest => 'تفعيل الفوائد';
+
+  @override
+  String get enableInterestDesc => 'تطبيق فوائد على الديون الآجلة';
+
+  @override
+  String get monthlyInterestRate => 'نسبة الفائدة الشهرية';
+
+  @override
+  String get maxInterestRateLabel => 'الحد الأقصى للفائدة';
+
+  @override
+  String get gracePeriod => 'فترة السماح';
+
+  @override
+  String get graceDays => 'أيام السماح';
+
+  @override
+  String graceDaysLabel(int days) {
+    return '$days يوم قبل احتساب الفائدة';
+  }
+
+  @override
+  String get compoundInterest => 'الفائدة المركبة';
+
+  @override
+  String get compoundInterestDesc => 'احتساب فائدة على الفائدة';
+
+  @override
+  String get calculationAndAlerts => 'الحساب والتنبيهات';
+
+  @override
+  String get autoCalculation => 'الحساب التلقائي';
+
+  @override
+  String get autoCalculationDesc => 'احتساب الفوائد تلقائياً نهاية كل شهر';
+
+  @override
+  String get customerNotification => 'إشعار العميل';
+
+  @override
+  String get customerNotificationDesc => 'إرسال إشعار عند احتساب الفائدة';
+
+  @override
+  String get interestSettingsSaved => 'تم حفظ إعدادات الفوائد';
+
+  @override
+  String get receiptTemplateTitle => 'قالب الإيصال';
+
+  @override
+  String get receiptTemplateSubtitle => 'الرأس، التذييل، الحقول، حجم الورق';
+
+  @override
+  String get headerAndFooter => 'الرأس والتذييل';
+
+  @override
+  String get receiptTitleField => 'عنوان الإيصال';
+
+  @override
+  String get footerText => 'نص التذييل';
+
+  @override
+  String get displayedFields => 'الحقول المعروضة';
+
+  @override
+  String get storeLogo => 'شعار المتجر';
+
+  @override
+  String get addressField => 'العنوان';
+
+  @override
+  String get phoneNumberField => 'رقم الهاتف';
+
+  @override
+  String get vatNumberField => 'الرقم الضريبي';
+
+  @override
+  String get invoiceBarcode => 'باركود الفاتورة';
+
+  @override
+  String get qrCodeField => 'رمز QR';
+
+  @override
+  String get qrCodeEInvoice => 'رمز QR للفاتورة الإلكترونية';
+
+  @override
+  String get paperSize => 'حجم الورق';
+
+  @override
+  String get standardSize => 'الحجم القياسي';
+
+  @override
+  String get smallSize => 'حجم صغير';
+
+  @override
+  String get normalPrint => 'طباعة عادية';
+
+  @override
+  String get receiptTemplateSaved => 'تم حفظ قالب الإيصال';
+
+  @override
+  String get instantNotifications => 'إشعارات فورية على الجهاز';
+
+  @override
+  String get emailNotificationsDesc => 'إرسال إشعارات عبر البريد';
+
+  @override
+  String get smsNotificationsDesc => 'إشعارات عبر الرسائل النصية';
+
+  @override
+  String get salesAlertsDesc => 'تنبيهات المبيعات والفواتير';
+
+  @override
+  String get inventoryAlertsDesc => 'تنبيهات المخزون المنخفض';
+
+  @override
+  String get securityAlertsDesc => 'تنبيهات الأمان وتسجيل الدخول';
+
+  @override
+  String get reportAlertsDesc => 'تقارير يومية وأسبوعية';
+
+  @override
+  String get contactSupportDesc => 'متاح 24/7';
+
+  @override
+  String get systemGuide => 'دليل استخدام النظام';
+
+  @override
+  String get changeLog => 'سجل التحديثات';
+
+  @override
+  String get faqQuestion1 => 'كيف أضيف منتج جديد؟';
+
+  @override
+  String get faqAnswer1 => 'اذهب إلى المنتجات > إضافة منتج واملأ التفاصيل';
+
+  @override
+  String get faqQuestion2 => 'كيف أطبع الفواتير؟';
+
+  @override
+  String get faqAnswer2 => 'بعد إتمام البيع، اضغط على طباعة الإيصال';
+
+  @override
+  String get faqQuestion3 => 'كيف أضبط الخصومات؟';
+
+  @override
+  String get faqAnswer3 => 'من الإعدادات > إعدادات الخصومات يمكنك ضبط الخصومات';
+
+  @override
+  String get faqQuestion4 => 'كيف أضيف مستخدم جديد؟';
+
+  @override
+  String get faqAnswer4 => 'من الإعدادات > إدارة المستخدمين > إضافة مستخدم';
+
+  @override
+  String get faqQuestion5 => 'كيف أشاهد التقارير؟';
+
+  @override
+  String get faqAnswer5 =>
+      'من القائمة الرئيسية > التقارير، اختر نوع التقرير المطلوب';
+
+  @override
+  String get businessNameValue => 'مؤسسة الهاي';
+
+  @override
+  String get disabledLabel => 'معطل';
+
+  @override
+  String get allFilter => 'الكل';
+
+  @override
+  String get loginLogoutFilter => 'الدخول/الخروج';
+
+  @override
+  String get salesFilter => 'المبيعات';
+
+  @override
+  String get productsFilter => 'المنتجات';
+
+  @override
+  String get usersFilter => 'المستخدمين';
+
+  @override
+  String get systemFilter => 'النظام';
+
+  @override
+  String get noActivities => 'لا توجد نشاطات';
+
+  @override
+  String get pinSection => 'رمز PIN';
+
+  @override
+  String get createPinOption => 'إنشاء رمز PIN';
+
+  @override
+  String get createPinDesc => 'تعيين رمز PIN من 4 أرقام للدخول السريع';
+
+  @override
+  String get changePinOption => 'تغيير رمز PIN';
+
+  @override
+  String get changePinDesc => 'تحديث رمز PIN الحالي';
+
+  @override
+  String get removePinOption => 'إزالة رمز PIN';
+
+  @override
+  String get removePinDesc => 'حذف PIN واستخدام دخول OTP';
+
+  @override
+  String get biometricSection => 'تسجيل الدخول البيومتري';
+
+  @override
+  String get fingerprintOption => 'بصمة الإصبع';
+
+  @override
+  String get fingerprintDesc => 'الدخول باستخدام بصمة الإصبع';
+
+  @override
+  String get faceIdOption => 'التعرف على الوجه';
+
+  @override
+  String get faceIdDesc => 'الدخول باستخدام التعرف على الوجه';
+
+  @override
+  String get sessionSection => 'الجلسة';
+
+  @override
+  String get autoLockOption => 'القفل التلقائي';
+
+  @override
+  String get autoLockDesc => 'قفل الشاشة بعد عدم النشاط';
+
+  @override
+  String get autoLockTimeout => 'مدة القفل التلقائي';
+
+  @override
+  String get dangerZone => 'منطقة الخطر';
+
+  @override
+  String get logoutAllDevices => 'تسجيل الخروج من كل الأجهزة';
+
+  @override
+  String get logoutAllDevicesDesc => 'إنهاء جميع الجلسات النشطة';
+
+  @override
+  String get clearAllData => 'مسح جميع البيانات';
+
+  @override
+  String get clearAllDataDesc => 'حذف جميع البيانات المحلية';
+
+  @override
+  String get createPinTitle => 'إنشاء رمز PIN';
+
+  @override
+  String get enterNewPin => 'أدخل رمز PIN جديد من 4 أرقام';
+
+  @override
+  String get changePinTitle => 'تغيير رمز PIN';
+
+  @override
+  String get enterCurrentPin => 'أدخل رمز PIN الحالي';
+
+  @override
+  String get enterNewPinChange => 'أدخل رمز PIN الجديد';
+
+  @override
+  String get removePinTitle => 'إزالة رمز PIN';
+
+  @override
+  String get removePinConfirm => 'هل أنت متأكد من إزالة تسجيل الدخول بـ PIN؟';
+
+  @override
+  String get removeAction => 'إزالة';
+
+  @override
+  String get pinCreated => 'تم إنشاء رمز PIN بنجاح';
+
+  @override
+  String get pinChangedSuccess => 'تم تغيير رمز PIN بنجاح';
+
+  @override
+  String get pinRemovedSuccess => 'تم إزالة رمز PIN';
+
+  @override
+  String get logoutAllTitle => 'تسجيل الخروج من كل الأجهزة';
+
+  @override
+  String get logoutAllConfirm =>
+      'سيتم إنهاء جميع الجلسات النشطة. ستحتاج لتسجيل الدخول مرة أخرى.';
+
+  @override
+  String get logoutAllAction => 'تسجيل الخروج من الكل';
+
+  @override
+  String get loggedOutAll => 'تم تسجيل الخروج من جميع الأجهزة';
+
+  @override
+  String get clearDataTitle => 'مسح جميع البيانات';
+
+  @override
+  String get clearDataConfirm =>
+      'سيتم حذف جميع البيانات المحلية. هذا الإجراء لا يمكن التراجع عنه.';
+
+  @override
+  String get clearDataAction => 'مسح البيانات';
+
+  @override
+  String get dataCleared => 'تم مسح جميع البيانات';
+
+  @override
+  String afterMinutes(int count) {
+    return 'بعد $count دقيقة';
+  }
+
+  @override
+  String get storeInfo => 'معلومات المتجر';
+
+  @override
+  String get storeNameField => 'اسم المتجر';
+
+  @override
+  String get addressLabel => 'العنوان';
+
+  @override
+  String get taxInfo => 'المعلومات الضريبية';
+
+  @override
+  String get vatNumberFieldLabel => 'الرقم الضريبي (VAT)';
+
+  @override
+  String get vatNumberHintText => '15 رقم يبدأ بـ 3';
+
+  @override
+  String get commercialRegister => 'السجل التجاري';
+
+  @override
+  String get enableVatOption => 'تفعيل ضريبة القيمة المضافة';
+
+  @override
+  String get taxRateField => 'نسبة الضريبة';
+
+  @override
+  String get languageAndCurrency => 'اللغة والعملة';
+
+  @override
+  String get currencyFieldLabel => 'العملة';
+
+  @override
+  String get saudiRiyal => 'ريال سعودي (SAR)';
+
+  @override
+  String get usDollar => 'دولار أمريكي (USD)';
+
+  @override
+  String get storeLogoSection => 'شعار المتجر';
+
+  @override
+  String get storeLogoDesc => 'يظهر في الفواتير والإيصالات';
+
+  @override
+  String get changeButton => 'تغيير';
+
+  @override
+  String get storeSettingsSaved => 'تم حفظ إعدادات المتجر';
+
+  @override
+  String get ownerRole => 'مالك';
+
+  @override
+  String get managerRole => 'مدير';
+
+  @override
+  String get supervisorRole => 'مشرف';
+
+  @override
+  String get cashierRole => 'كاشير';
+
+  @override
+  String get disabledStatus => 'معطل';
+
+  @override
+  String get editMenuAction => 'تعديل';
+
+  @override
+  String get disableMenuAction => 'تعطيل';
+
+  @override
+  String get enableMenuAction => 'تفعيل';
+
+  @override
+  String get addUserTitle => 'إضافة مستخدم';
+
+  @override
+  String get editUserTitle => 'تعديل المستخدم';
+
+  @override
+  String get nameRequired => 'الاسم *';
+
+  @override
+  String get roleLabel => 'الصلاحية';
+
+  @override
+  String get userDetailsTitle => 'تفاصيل المستخدم';
+
+  @override
+  String get rolesTab => 'الأدوار';
+
+  @override
+  String get permissionsTab => 'الصلاحيات';
+
+  @override
+  String get newRoleButton => 'دور جديد';
+
+  @override
+  String get systemBadge => 'نظام';
+
+  @override
+  String userCountLabel(int count) {
+    return '$count مستخدم';
+  }
+
+  @override
+  String permissionCountLabel(int count) {
+    return '$count صلاحية';
+  }
+
+  @override
+  String get editRoleMenu => 'تعديل';
+
+  @override
+  String get duplicateRoleMenu => 'نسخ';
+
+  @override
+  String get deleteRoleMenu => 'حذف';
+
+  @override
+  String get addRoleTitle => 'إضافة دور';
+
+  @override
+  String get editRoleTitle => 'تعديل الدور';
+
+  @override
+  String get roleNameField => 'اسم الدور';
+
+  @override
+  String get roleDescField => 'الوصف';
+
+  @override
+  String get rolePermissionsLabel => 'الصلاحيات';
+
+  @override
+  String get permViewSales => 'عرض المبيعات';
+
+  @override
+  String get permViewSalesDesc => 'عرض المبيعات والفواتير';
+
+  @override
+  String get permCreateSale => 'إنشاء بيع';
+
+  @override
+  String get permCreateSaleDesc => 'إنشاء عمليات بيع جديدة';
+
+  @override
+  String get permApplyDiscount => 'تطبيق خصم';
+
+  @override
+  String get permApplyDiscountDesc => 'تطبيق خصومات على الفواتير';
+
+  @override
+  String get permVoidSale => 'إلغاء بيع';
+
+  @override
+  String get permVoidSaleDesc => 'إلغاء وحذف عمليات البيع';
+
+  @override
+  String get permViewProducts => 'عرض المنتجات';
+
+  @override
+  String get permViewProductsDesc => 'عرض قائمة المنتجات';
+
+  @override
+  String get permEditProducts => 'تعديل المنتجات';
+
+  @override
+  String get permEditProductsDesc => 'تعديل تفاصيل وأسعار المنتجات';
+
+  @override
+  String get permManageInventory => 'إدارة المخزون';
+
+  @override
+  String get permManageInventoryDesc => 'إدارة المخزون والجرد';
+
+  @override
+  String get permViewReports => 'عرض التقارير';
+
+  @override
+  String get permViewReportsDesc => 'عرض جميع التقارير';
+
+  @override
+  String get permExportReports => 'تصدير التقارير';
+
+  @override
+  String get permExportReportsDesc => 'تصدير التقارير كـ PDF/Excel';
+
+  @override
+  String get permViewCustomers => 'عرض العملاء';
+
+  @override
+  String get permViewCustomersDesc => 'عرض قائمة العملاء';
+
+  @override
+  String get permManageCustomers => 'إدارة العملاء';
+
+  @override
+  String get permManageCustomersDesc => 'إضافة وتعديل العملاء';
+
+  @override
+  String get permManageDebts => 'إدارة الديون';
+
+  @override
+  String get permManageDebtsDesc => 'إدارة ديون العملاء';
+
+  @override
+  String get permOpenCloseShift => 'فتح/إغلاق الوردية';
+
+  @override
+  String get permOpenCloseShiftDesc => 'فتح وإغلاق ورديات العمل';
+
+  @override
+  String get permManageCashDrawer => 'إدارة درج النقد';
+
+  @override
+  String get permManageCashDrawerDesc => 'إضافة وسحب النقد';
+
+  @override
+  String get permManageUsers => 'إدارة المستخدمين';
+
+  @override
+  String get permManageUsersDesc => 'إضافة وتعديل المستخدمين';
+
+  @override
+  String get permManageRoles => 'إدارة الأدوار';
+
+  @override
+  String get permManageRolesDesc => 'إدارة الأدوار والصلاحيات';
+
+  @override
+  String get permViewSettings => 'عرض الإعدادات';
+
+  @override
+  String get permViewSettingsDesc => 'عرض إعدادات النظام';
+
+  @override
+  String get permEditSettings => 'تعديل الإعدادات';
+
+  @override
+  String get permEditSettingsDesc => 'تعديل إعدادات النظام';
+
+  @override
+  String get permViewAuditLog => 'عرض سجل النشاطات';
+
+  @override
+  String get permViewAuditLogDesc => 'عرض سجل النشاطات';
+
+  @override
+  String get permManageBackup => 'إدارة النسخ الاحتياطي';
+
+  @override
+  String get permManageBackupDesc => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get permCategorySales => 'المبيعات';
+
+  @override
+  String get permCategoryProducts => 'المنتجات';
+
+  @override
+  String get permCategoryReports => 'التقارير';
+
+  @override
+  String get permCategoryCustomers => 'العملاء';
+
+  @override
+  String get permCategoryShifts => 'الورديات';
+
+  @override
+  String get permCategoryUsers => 'المستخدمين';
+
+  @override
+  String get permCategorySettings => 'الإعدادات';
+
+  @override
+  String get permCategorySecurity => 'الأمان';
+
+  @override
+  String get autoBackupEnabled => 'يتم النسخ تلقائياً';
+
+  @override
+  String get autoBackupDisabledLabel => 'معطل';
+
+  @override
+  String get backupFrequency => 'تكرار النسخ';
+
+  @override
+  String get everyHour => 'كل ساعة';
+
+  @override
+  String get dailyBackup => 'يومياً';
+
+  @override
+  String get weeklyBackup => 'أسبوعياً';
+
+  @override
+  String get manualBackupSection => 'النسخ اليدوي';
+
+  @override
+  String get createBackupNow => 'إنشاء نسخة احتياطية الآن';
+
+  @override
+  String get lastBackupTime => 'آخر نسخة: منذ 3 ساعات';
+
+  @override
+  String get restoreSection => 'الاستعادة';
+
+  @override
+  String get restoreFromBackup => 'استعادة من نسخة احتياطية';
+
+  @override
+  String get restoreFromBackupDesc => 'استرجاع البيانات من نسخة سابقة';
+
+  @override
+  String get backupHistoryLabel => 'سجل النسخ الاحتياطي';
+
+  @override
+  String get backupInProgress => 'جاري إنشاء النسخة الاحتياطية...';
+
+  @override
+  String get backupCreated => 'تم إنشاء النسخة الاحتياطية بنجاح';
+
+  @override
+  String get restoreConfirmTitle => 'استعادة من نسخة احتياطية';
+
+  @override
+  String get restoreConfirmMessage =>
+      'سيتم استبدال جميع البيانات الحالية. هذا الإجراء لا يمكن التراجع عنه.';
+
+  @override
+  String get restoreAction => 'استعادة';
+
+  @override
+  String get restoreInProgress => 'جاري الاستعادة...';
+
+  @override
+  String get restoreComplete => 'تمت الاستعادة بنجاح';
+
+  @override
+  String get pasteCode => 'لصق الرمز';
+
+  @override
+  String devOtpMessage(String otp) {
+    return 'رمز التطوير: $otp';
+  }
+
+  @override
+  String get orderHistory => 'سجل الطلبات';
+
+  @override
+  String get selectDateRange => 'تحديد فترة';
+
+  @override
+  String get orderSearchHint => 'بحث برقم الطلب أو معرف العميل...';
+
+  @override
+  String get noOrders => 'لا توجد طلبات';
+
+  @override
+  String get orderStatusConfirmed => 'مؤكد';
+
+  @override
+  String get orderStatusPreparing => 'قيد التحضير';
+
+  @override
+  String get orderStatusReady => 'جاهز';
+
+  @override
+  String get orderStatusDelivering => 'قيد التوصيل';
+
+  @override
+  String get filterOrders => 'فلترة الطلبات';
+
+  @override
+  String get channelApp => 'التطبيق';
+
+  @override
+  String get channelWhatsapp => 'واتساب';
+
+  @override
+  String get channelPos => 'نقطة البيع';
+
+  @override
+  String get paymentCashType => 'نقدي';
+
+  @override
+  String get paymentMixed => 'مختلط';
+
+  @override
+  String get paymentOnline => 'إلكتروني';
+
+  @override
+  String get shareAction => 'مشاركة';
+
+  @override
+  String get exportOrders => 'تصدير الطلبات';
+
+  @override
+  String get selectExportFormat => 'اختر صيغة التصدير';
+
+  @override
+  String get exportedAsExcel => 'تم التصدير كـ Excel';
+
+  @override
+  String get exportedAsPdf => 'تم التصدير كـ PDF';
+
+  @override
+  String get alertSettings => 'إعدادات التنبيهات';
+
+  @override
+  String get acknowledgeAll => 'تأكيد الكل';
+
+  @override
+  String allWithCount(int count) {
+    return 'الكل ($count)';
+  }
+
+  @override
+  String lowStockWithCount(int count) {
+    return 'نفاد مخزون ($count)';
+  }
+
+  @override
+  String expiryWithCount(int count) {
+    return 'انتهاء صلاحية ($count)';
+  }
+
+  @override
+  String get urgentAlerts => 'تنبيهات عاجلة';
+
+  @override
+  String get nearExpiry => 'قريب الانتهاء';
+
+  @override
+  String get noAlerts => 'لا توجد تنبيهات';
+
+  @override
+  String get alertDismissed => 'تم إخفاء التنبيه';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get criticalPriority => 'حرج';
+
+  @override
+  String get highPriority => 'عاجل';
+
+  @override
+  String stockAlertMessage(int current, int threshold) {
+    return 'الكمية: $current (الحد الأدنى: $threshold)';
+  }
+
+  @override
+  String get expiryAlertLabel => 'تنبيه صلاحية';
+
+  @override
+  String get currentQuantity => 'الكمية الحالية';
+
+  @override
+  String get minimumThreshold => 'الحد الأدنى';
+
+  @override
+  String get dismissAction => 'تجاهل';
+
+  @override
+  String get lowStockNotifications => 'تنبيهات نفاد المخزون';
+
+  @override
+  String get expiryNotifications => 'تنبيهات انتهاء الصلاحية';
+
+  @override
+  String get minimumStockLevel => 'الحد الأدنى للمخزون';
+
+  @override
+  String thresholdUnits(int count) {
+    return '$count وحدة';
+  }
+
+  @override
+  String get acknowledgeAllAlerts => 'تأكيد جميع التنبيهات';
+
+  @override
+  String willDismissAlerts(int count) {
+    return 'سيتم إخفاء $count تنبيه';
+  }
+
+  @override
+  String get allAlertsAcknowledged => 'تم تأكيد جميع التنبيهات';
+
+  @override
+  String get createPurchaseOrder => 'إنشاء طلب شراء';
+
+  @override
+  String productLabelName(String name) {
+    return 'المنتج: $name';
+  }
+
+  @override
+  String get requiredQuantity => 'الكمية المطلوبة';
+
+  @override
+  String get createAction => 'إنشاء';
+
+  @override
+  String get purchaseOrderCreated => 'تم إنشاء طلب الشراء';
+
+  @override
+  String get newCategory => 'فئة جديدة';
+
+  @override
+  String productCountUnit(int count) {
+    return '$count منتج';
+  }
+
+  @override
+  String get iconLabel => 'الأيقونة:';
+
+  @override
+  String get colorLabel => 'اللون:';
+
+  @override
+  String deleteCategoryMessage(String name, int count) {
+    return 'هل تريد حذف فئة \"$name\"؟\nسيتم نقل $count منتج إلى \"بدون فئة\".';
+  }
+
+  @override
+  String productNumber(int number) {
+    return 'منتج $number';
+  }
+
+  @override
+  String priceWithCurrency(String price) {
+    return '$price ر.س';
+  }
+
+  @override
+  String get currentlyOpenShift => 'وردية مفتوحة حالياً';
+
+  @override
+  String get since => 'منذ';
+
+  @override
+  String get transaction => 'عملية';
+
+  @override
+  String get totalTransactions => 'إجمالي العمليات';
+
+  @override
+  String get openShifts => 'ورديات مفتوحة';
+
+  @override
+  String get closedShifts => 'ورديات مغلقة';
+
+  @override
+  String get shiftsLog => 'سجل الورديات';
+
+  @override
+  String get noShiftsToday => 'لا توجد ورديات اليوم';
+
+  @override
+  String get open => 'مفتوحة';
+
+  @override
+  String get customPeriod => 'فترة مخصصة';
+
+  @override
+  String get salesReport => 'تقرير المبيعات';
+
+  @override
+  String get salesReportDesc => 'تفاصيل المبيعات والفواتير';
+
+  @override
+  String get profitReport => 'تقرير الأرباح';
+
+  @override
+  String get profitReportDesc => 'صافي الربح والخسائر';
+
+  @override
+  String get inventoryReport => 'تقرير المخزون';
+
+  @override
+  String get inventoryReportDesc => 'حركات المخزون والجرد';
+
+  @override
+  String get vatReport => 'تقرير الضريبة (VAT)';
+
+  @override
+  String get vatReportDesc => 'ضريبة القيمة المضافة 15%';
+
+  @override
+  String get customerReport => 'تقرير العملاء';
+
+  @override
+  String get customerReportDesc => 'نشاط العملاء والديون';
+
+  @override
+  String get purchasesReport => 'تقرير المشتريات';
+
+  @override
+  String get purchasesReportDesc => 'فواتير الشراء والموردين';
+
+  @override
+  String get costs => 'التكاليف';
+
+  @override
+  String get netProfit => 'صافي الربح';
+
+  @override
+  String get salesTax => 'ضريبة المبيعات';
+
+  @override
+  String get purchasesTax => 'ضريبة المشتريات';
+
+  @override
+  String get taxDue => 'المستحق';
+
+  @override
+  String get debts => 'الديون';
+
+  @override
+  String get paidDebts => 'المسددة';
+
+  @override
+  String get averageAmount => 'المتوسط';
+
+  @override
+  String get suppliers => 'الموردين';
+
+  @override
+  String get todayExpenses => 'مصروفات اليوم';
+
+  @override
+  String get transactionCount => 'عدد العمليات';
+
+  @override
+  String get salaries => 'رواتب';
+
+  @override
+  String get rent => 'إيجار';
+
+  @override
+  String get purchases => 'المشتريات';
+
+  @override
+  String get noDriversRegistered => 'لا يوجد سائقون مسجلون';
+
+  @override
+  String get addDriversForDelivery => 'أضف سائقين لإدارة التوصيل';
+
+  @override
+  String get onDelivery => 'في توصيلة';
+
+  @override
+  String get unavailable => 'غير متاح';
+
+  @override
+  String get totalDrivers => 'إجمالي السائقين';
+
+  @override
+  String get availableDrivers => 'سائقون متاحون';
+
+  @override
+  String get inDelivery => 'في التوصيل';
+
+  @override
+  String get excellentRating => 'تقييم ممتاز';
+
+  @override
+  String get delivery => 'توصيلة';
+
+  @override
+  String get track => 'تتبع';
+
+  @override
+  String get percentage => 'نسبة مئوية';
+
+  @override
+  String get totalSavings => 'إجمالي التوفير';
+
+  @override
+  String get totalUsage => 'إجمالي الاستخدام';
+
+  @override
+  String get times => 'مرات';
+
+  @override
+  String get activeOffers => 'عروض فعالة';
+
+  @override
+  String get upcomingOffers => 'عروض قادمة';
+
+  @override
+  String get expiredOffers => 'عروض منتهية';
+
+  @override
+  String get bundle => 'باقة';
+
+  @override
+  String get dueDebts => 'ديون مستحقة';
+
+  @override
+  String get collected => 'تم التحصيل';
+
+  @override
+  String get newNotification => 'إشعار جديد';
+
+  @override
+  String get oneHourAgo => 'قبل ساعة';
+
+  @override
+  String get twoHoursAgo => 'قبل ساعتين';
+
+  @override
+  String get trackingMap => 'خريطة التتبع';
+
+  @override
+  String deliveriesToday(int count) {
+    return '$count توصيلة اليوم';
+  }
+
+  @override
+  String get assignOrder => 'تعيين طلب';
+
+  @override
+  String get driversTrackingMap => 'خريطة تتبع السائقين';
+
+  @override
+  String get gpsSubscriptionRequired => '(يتطلب اشتراك GPS)';
+
+  @override
+  String get vehicleLabel => 'المركبة';
+
+  @override
+  String get vehicleHint => 'مثال: هايلكس - أبيض';
+
+  @override
+  String get plateNumberLabel => 'رقم اللوحة';
+
+  @override
+  String assignOrderTo(String name) {
+    return 'تعيين طلب لـ $name';
+  }
+
+  @override
+  String get orderLabel => 'طلب';
+
+  @override
+  String orderAssignedTo(String name) {
+    return 'تم تعيين الطلب لـ $name';
+  }
+
+  @override
+  String closingPeriod(String period) {
+    return 'فترة الإقفال: $period';
+  }
+
+  @override
+  String lastClosing(String date) {
+    return 'آخر إقفال: $date';
+  }
+
+  @override
+  String interestRateAndGrace(String rate, String days) {
+    return 'نسبة الفائدة: $rate% | فترة السماح: $days يوم';
+  }
+
+  @override
+  String get selectedCustomers => 'العملاء المختارين';
+
+  @override
+  String get expectedInterests => 'الفوائد المتوقعة';
+
+  @override
+  String get noDebtsNeedClosing => 'لا توجد ديون تحتاج إقفال';
+
+  @override
+  String get allCustomersWithinGrace => 'جميع العملاء ضمن فترة السماح';
+
+  @override
+  String debtLabel(String amount) {
+    return 'الدين: $amount ر.س';
+  }
+
+  @override
+  String expectedInterestLabel(String amount) {
+    return 'الفائدة المتوقعة: $amount ر.س';
+  }
+
+  @override
+  String selectedCustomerCount(int count) {
+    return '$count عميل مختار';
+  }
+
+  @override
+  String get processingClose => 'جاري المعالجة...';
+
+  @override
+  String get executeClose => 'تنفيذ الإقفال';
+
+  @override
+  String interestWillBeAdded(int count) {
+    return 'سيتم إضافة فوائد على $count عميل';
+  }
+
+  @override
+  String totalInterestsLabel(String amount) {
+    return 'إجمالي الفوائد: $amount ر.س';
+  }
+
+  @override
+  String monthCloseSuccess(int count) {
+    return 'تم إقفال الشهر لـ $count عميل';
+  }
+
+  @override
+  String get readAll => 'قراءة الكل';
+
+  @override
+  String get averageExpense => 'متوسط المصروف';
+
+  @override
+  String get expensesList => 'قائمة المصروفات';
+
+  @override
+  String get electricity => 'كهرباء';
+
+  @override
+  String get maintenance => 'صيانة';
+
+  @override
+  String get services => 'خدمات';
+
+  @override
+  String get expense => 'مصروف';
+
+  @override
+  String get filterExpenses => 'تصفية المصروفات';
+
+  @override
+  String get openedNotification => 'مفتوحة';
+
+  @override
+  String get openTime => 'وقت الفتح';
+
+  @override
+  String get closeTime => 'وقت الإغلاق';
+
+  @override
+  String get expectedCash => 'الصندوق المتوقع';
+
+  @override
+  String get closingCash => 'صندوق الإغلاق';
+
+  @override
+  String get printAction => 'طباعة';
+
+  @override
+  String get exportAction => 'تصدير';
+
+  @override
+  String get viewReport => 'عرض التقرير';
+
+  @override
+  String get exportingReport => 'جاري تصدير التقرير...';
+
+  @override
+  String get chartsUnderDev => 'الرسوم البيانية قيد التطوير...';
+
+  @override
+  String get reportsAnalysis => 'تحليل الأداء والمبيعات';
+
+  @override
+  String aiAssociationFrequency(
+      String productA, String productB, int frequency) {
+    return '$productA + $productB: تكرار $frequency مرة';
+  }
+
+  @override
+  String aiBundleActivated(String name) {
+    return 'تم تفعيل حزمة: $name';
+  }
+
+  @override
+  String aiPromotionsGeneratedCount(int count) {
+    return 'تم توليد $count عرض ترويجي بناءً على تحليل بيانات المتجر';
+  }
+
+  @override
+  String aiPromotionApplied(String title) {
+    return 'تم تطبيق: $title';
+  }
+
+  @override
+  String aiConfidencePercent(String percent) {
+    return 'ثقة: $percent%';
+  }
+
+  @override
+  String aiAlertsWithCount(int count) {
+    return 'التنبيهات ($count)';
+  }
+
+  @override
+  String aiStaffCurrentSuggested(int current, int suggested) {
+    return '$current موظف حالياً → $suggested مقترح';
+  }
+
+  @override
+  String aiMinutesAgo(int minutes) {
+    return 'منذ $minutes دقيقة';
+  }
+
+  @override
+  String aiHoursAgo(int hours) {
+    return 'منذ $hours ساعة';
+  }
+
+  @override
+  String aiDaysAgo(int days) {
+    return 'منذ $days يوم';
+  }
+
+  @override
+  String aiDetectedCount(int count) {
+    return 'تم الكشف: $count';
+  }
+
+  @override
+  String aiMatchedCount(int count) {
+    return 'مطابق: $count';
+  }
+
+  @override
+  String aiAccuracyPercent(String percent) {
+    return 'دقة: $percent%';
+  }
+
+  @override
+  String aiProductAccepted(String name) {
+    return 'تم قبول $name';
+  }
+
+  @override
+  String aiErrorOccurred(String error) {
+    return 'حدث خطأ: $error';
+  }
+
+  @override
+  String aiErrorWithMessage(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String get aiBasketAnalysis => 'تحليل السلة بالذكاء الاصطناعي';
+
+  @override
+  String get aiAssociations => 'الارتباطات';
+
+  @override
+  String get aiCrossSell => 'البيع المتقاطع';
+
+  @override
+  String get aiAvgBasketSize => 'متوسط حجم السلة';
+
+  @override
+  String get aiProductUnit => 'منتج';
+
+  @override
+  String get aiAvgBasketValue => 'متوسط قيمة السلة';
+
+  @override
+  String get aiSaudiRiyal => 'ريال سعودي';
+
+  @override
+  String get aiStrongestAssociation => 'أقوى ارتباط';
+
+  @override
+  String get aiConversionRate => 'معدل التحويل';
+
+  @override
+  String get aiFromSuggestions => 'من الاقتراحات';
+
+  @override
+  String get aiAssistant => 'المساعد الذكي';
+
+  @override
+  String get aiAskAboutStore => 'اسأل أي سؤال عن متجرك';
+
+  @override
+  String get aiClearChat => 'مسح المحادثة';
+
+  @override
+  String get aiAssistantReady => 'المساعد الذكي جاهز لمساعدتك!';
+
+  @override
+  String get aiAskAboutSalesStock =>
+      'اسأل عن المبيعات، المخزون، العملاء، أو أي شيء عن متجرك';
+
+  @override
+  String get aiCompetitorAnalysis => 'تحليل المنافسين';
+
+  @override
+  String get aiPriceComparison => 'مقارنة الأسعار';
+
+  @override
+  String get aiTrackedProducts => 'منتجات تحت المراقبة';
+
+  @override
+  String get aiCheaperThanCompetitors => 'أرخص من المنافسين';
+
+  @override
+  String get aiMoreExpensive => 'أغلى من المنافسين';
+
+  @override
+  String get aiAvgPriceDiff => 'متوسط فرق السعر';
+
+  @override
+  String get aiSortByName => 'ترتيب بالاسم';
+
+  @override
+  String get aiSortByPriceDiff => 'ترتيب بفرق السعر';
+
+  @override
+  String get aiSortByOurPrice => 'ترتيب بسعرنا';
+
+  @override
+  String get aiSortByCategory => 'ترتيب بالتصنيف';
+
+  @override
+  String get aiSortLabel => 'ترتيب';
+
+  @override
+  String get aiPriceIndex => 'مؤشر السعر';
+
+  @override
+  String get aiQuality => 'الجودة';
+
+  @override
+  String get aiBranches => 'الفروع';
+
+  @override
+  String get aiMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get aiNoAlertsCurrently => 'لا توجد تنبيهات حالياً';
+
+  @override
+  String get aiFraudDetection => 'كشف الاحتيال بالذكاء الاصطناعي';
+
+  @override
+  String get aiTotalAlerts => 'إجمالي التنبيهات';
+
+  @override
+  String get aiCriticalAlerts => 'تنبيهات حرجة';
+
+  @override
+  String get aiNeedsReview => 'بحاجة مراجعة';
+
+  @override
+  String get aiRiskLevel => 'مستوى المخاطر';
+
+  @override
+  String get aiBehaviorScores => 'درجات السلوك';
+
+  @override
+  String get aiRiskMeter => 'مقياس المخاطر';
+
+  @override
+  String get aiHighRisk => 'مخاطر عالية';
+
+  @override
+  String get aiLowRisk => 'مخاطر منخفضة';
+
+  @override
+  String get aiPatternRefund => 'استرجاع';
+
+  @override
+  String get aiPatternAfterHours => 'بعد الدوام';
+
+  @override
+  String get aiPatternVoid => 'إلغاء';
+
+  @override
+  String get aiPatternDiscount => 'خصم';
+
+  @override
+  String get aiPatternSplit => 'تقسيم';
+
+  @override
+  String get aiPatternCashDrawer => 'درج نقد';
+
+  @override
+  String get aiNoFraudAlerts => 'لا توجد تنبيهات';
+
+  @override
+  String get aiSelectAlertToInvestigate => 'اختر تنبيهاً من القائمة للتحقيق';
+
+  @override
+  String get aiStaffAnalytics => 'تحليلات الموظفين';
+
+  @override
+  String get aiLeaderboard => 'لوحة الترتيب';
+
+  @override
+  String get aiIndividualPerformance => 'أداء فردي';
+
+  @override
+  String get aiAvgPerformance => 'متوسط الأداء';
+
+  @override
+  String get aiTotalSalesLabel => 'إجمالي المبيعات';
+
+  @override
+  String get aiTotalTransactions => 'إجمالي العمليات';
+
+  @override
+  String get aiAvgVoidRate => 'متوسط الإلغاء';
+
+  @override
+  String get aiTeamGrowth => 'نمو الفريق';
+
+  @override
+  String get aiLeaderboardThisWeek => 'لوحة الترتيب - هذا الأسبوع';
+
+  @override
+  String get aiSalesForecasting => 'توقع المبيعات';
+
+  @override
+  String get aiSmartForecastSubtitle => 'تحليل ذكي لتوقع المبيعات المستقبلية';
+
+  @override
+  String get aiForecastAccuracy => 'دقة التوقع';
+
+  @override
+  String get aiTrendUp => 'صاعد';
+
+  @override
+  String get aiTrendDown => 'هابط';
+
+  @override
+  String get aiTrendStable => 'مستقر';
+
+  @override
+  String get aiNextWeekForecast => 'توقع الأسبوع القادم';
+
+  @override
+  String get aiMonthForecast => 'توقع الشهر';
+
+  @override
+  String get aiForecastSummary => 'ملخص التوقعات';
+
+  @override
+  String get aiSalesTrendingUp => 'المبيعات في اتجاه صاعد - استمر!';
+
+  @override
+  String get aiSalesDeclining => 'المبيعات في انخفاض - فعّل العروض';
+
+  @override
+  String get aiSalesStable => 'المبيعات مستقرة - حافظ على الأداء';
+
+  @override
+  String get aiProductRecognition => 'التعرف على المنتجات';
+
+  @override
+  String get aiSingleProduct => 'منتج واحد';
+
+  @override
+  String get aiShelfScan => 'مسح الرف';
+
+  @override
+  String get aiBarcodeOcr => 'باركود OCR';
+
+  @override
+  String get aiPriceTag => 'بطاقة سعر';
+
+  @override
+  String get aiCameraArea => 'منطقة الكاميرا';
+
+  @override
+  String get aiPointCameraAtProduct => 'وجه الكاميرا نحو المنتج أو الرف';
+
+  @override
+  String get aiStartScan => 'بدء المسح';
+
+  @override
+  String get aiAnalyzingImage => 'جاري تحليل الصورة...';
+
+  @override
+  String get aiStartScanToSeeResults => 'ابدأ المسح لرؤية النتائج';
+
+  @override
+  String get aiScanResults => 'نتائج المسح';
+
+  @override
+  String get aiProductSaved => 'تم حفظ المنتج بنجاح';
+
+  @override
+  String get aiPromotionDesigner => 'مصمم العروض الذكي - AI';
+
+  @override
+  String get aiSuggestedPromotions => 'عروض مقترحة';
+
+  @override
+  String get aiRoiAnalysis => 'تحليل ROI';
+
+  @override
+  String get aiAbTest => 'اختبار A/B';
+
+  @override
+  String get aiSmartPromotionDesigner => 'مصمم العروض الذكي';
+
+  @override
+  String get aiProjectedRevenue => 'الإيرادات المتوقعة';
+
+  @override
+  String get aiAiConfidence => 'ثقة AI';
+
+  @override
+  String get aiSelectPromotionForRoi =>
+      'اختر عرضاً من التبويب الأول لعرض تحليل ROI';
+
+  @override
+  String get aiRevenueLabel => 'الإيراد';
+
+  @override
+  String get aiCostLabel => 'التكلفة';
+
+  @override
+  String get aiDiscountLabel => 'الخصم';
+
+  @override
+  String get aiAbTestDescription =>
+      'اختبار A/B يقسم عملاءك لمجموعتين ويعرض كل مجموعة عرضاً مختلفاً لتحديد الأفضل أداءً.';
+
+  @override
+  String get aiAbTestLaunched => 'تم إطلاق اختبار A/B بنجاح!';
+
+  @override
+  String get aiChatWithData => 'محادثة مع البيانات - AI';
+
+  @override
+  String get aiChatWithYourData => 'محادثة مع بياناتك';
+
+  @override
+  String get aiAskAboutDataInArabic =>
+      'اسأل أي سؤال عن مبيعاتك ومخزونك وعملائك بالعربي';
+
+  @override
+  String get aiTrySampleQuestions => 'جرّب أحد هذه الأسئلة';
+
+  @override
+  String get aiTip => 'نصيحة';
+
+  @override
+  String get aiTipDescription =>
+      'يمكنك السؤال بالعربي أو الإنجليزي. AI يفهم السياق ويختار أفضل طريقة لعرض النتائج: أرقام، جداول، أو رسوم بيانية.';
+
+  @override
+  String get loadingApp => 'جاري التحميل...';
+
+  @override
+  String get initializingSearch => 'تهيئة البحث...';
+
+  @override
+  String get loadingData => 'تحميل البيانات...';
+
+  @override
+  String get initializingDemoData => 'تهيئة البيانات التجريبية...';
+
+  @override
+  String get pointOfSale => 'نقاط البيع';
+
+  @override
+  String get managerPinSetup => 'إعداد رمز المشرف';
+
+  @override
+  String get confirmPin => 'تأكيد الرمز';
+
+  @override
+  String get createNewPin => 'إنشاء رمز جديد';
+
+  @override
+  String get reenterPinToConfirm => 'أعد إدخال الرمز للتأكيد';
+
+  @override
+  String get enterFourDigitPin => 'أدخل رمز PIN من 4 أرقام';
+
+  @override
+  String get pinsMismatch => 'الرمزان غير متطابقين';
+
+  @override
+  String get managerPinCreatedSuccess => 'تم إنشاء رمز المشرف بنجاح';
+
+  @override
+  String get enterManagerPin => 'أدخل رمز المشرف';
+
+  @override
+  String get operationRequiresApproval => 'هذه العملية تتطلب موافقة المشرف';
+
+  @override
+  String get approvalGranted => 'تمت الموافقة';
+
+  @override
+  String accountLockedWaitMinutes(int minutes) {
+    return 'تم قفل الحساب. انتظر $minutes دقيقة';
+  }
+
+  @override
+  String wrongPinAttemptsRemaining(int remaining) {
+    return 'رمز خاطئ. المحاولات المتبقية: $remaining';
+  }
+
+  @override
+  String get selectYourBranchToContinue => 'اختر فرعك للمتابعة';
+
+  @override
+  String get branchClosed => 'مغلق';
+
+  @override
+  String get noResultsFoundSearch => 'لا توجد نتائج';
+
+  @override
+  String branchSelectedMessage(String branchName) {
+    return 'تم اختيار $branchName';
+  }
+
+  @override
+  String get shiftIsClosed => 'الوردية مغلقة';
+
+  @override
+  String get noOpenShiftCurrently => 'لا توجد وردية مفتوحة حالياً';
+
+  @override
+  String get shiftIsOpen => 'الوردية مفتوحة';
+
+  @override
+  String shiftOpenSince(String time) {
+    return 'منذ: $time';
+  }
+
+  @override
+  String get balanceSummary => 'ملخص الرصيد';
+
+  @override
+  String get cashIncoming => 'النقد الوارد';
+
+  @override
+  String get cashOutgoing => 'النقد الصادر';
+
+  @override
+  String get expectedBalance => 'الرصيد المتوقع';
+
+  @override
+  String get noCashMovementsYet => 'لا توجد حركات نقدية بعد';
+
+  @override
+  String get noteLabel => 'ملاحظة';
+
+  @override
+  String get depositDone => 'تم الإيداع';
+
+  @override
+  String get withdrawalDone => 'تم السحب';
+
+  @override
+  String get amPeriod => 'ص';
+
+  @override
+  String get pmPeriod => 'م';
+
+  @override
+  String get newPurchaseInvoice => 'فاتورة شراء جديدة';
+
+  @override
+  String get supplierData => 'بيانات المورد';
+
+  @override
+  String get selectSupplierRequired => 'اختر المورد *';
+
+  @override
+  String get supplierInvoiceNumber => 'رقم فاتورة المورد';
+
+  @override
+  String get noProductsAddedYet => 'لم يتم إضافة منتجات بعد';
+
+  @override
+  String get paymentStatus => 'حالة الدفع';
+
+  @override
+  String get paidStatus => 'مدفوعة';
+
+  @override
+  String get deferredPayment => 'آجل';
+
+  @override
+  String get productNameRequired => 'اسم المنتج *';
+
+  @override
+  String get purchasePrice => 'سعر الشراء';
+
+  @override
+  String get pleaseSelectSupplier => 'يرجى اختيار المورد';
+
+  @override
+  String purchaseInvoiceSavedTotal(String total) {
+    return 'تم حفظ فاتورة الشراء بإجمالي $total ر.س';
+  }
+
+  @override
+  String get smartReorderAi => 'الطلب الذكي بالـ AI';
+
+  @override
+  String get smartReorderDescription =>
+      'حدد ميزانيتك ودع الذكاء الاصطناعي يوزع المشتريات بأفضل طريقة';
+
+  @override
+  String get orderSettings => 'إعدادات الطلب';
+
+  @override
+  String get availableBudget => 'الميزانية المتاحة';
+
+  @override
+  String get enterAvailableAmount => 'أدخل المبلغ المتاح للشراء';
+
+  @override
+  String get supplierLabel => 'المورد';
+
+  @override
+  String get calculating => 'جاري الحساب...';
+
+  @override
+  String get calculateSmartDistribution => 'حساب التوزيع الذكي';
+
+  @override
+  String get setBudgetAndCalculate => 'حدد الميزانية واضغط حساب';
+
+  @override
+  String get numberOfProducts => 'عدد المنتجات';
+
+  @override
+  String get suggestedProducts => 'المنتجات المقترحة';
+
+  @override
+  String get sendOrder => 'إرسال الطلب';
+
+  @override
+  String get emailLabel => 'البريد';
+
+  @override
+  String get confirmSending => 'تأكيد الإرسال';
+
+  @override
+  String sendOrderToSupplier(String supplier) {
+    return 'إرسال الطلب إلى $supplier؟';
+  }
+
+  @override
+  String get orderSentSuccess => 'تم إرسال الطلب بنجاح';
+
+  @override
+  String turnoverRate(String rate) {
+    return 'الدوران: $rate%';
+  }
+
+  @override
+  String get editSupplier => 'تعديل المورد';
+
+  @override
+  String get addNewSupplier => 'إضافة مورد جديد';
+
+  @override
+  String get basicInfo => 'المعلومات الأساسية';
+
+  @override
+  String get supplierContactName => 'اسم المورد / جهة الاتصال *';
+
+  @override
+  String get companyNameRequired => 'اسم الشركة *';
+
+  @override
+  String get generalCategory => 'عام';
+
+  @override
+  String get foodMaterials => 'مواد غذائية';
+
+  @override
+  String get beverages => 'مشروبات';
+
+  @override
+  String get vegetablesFruits => 'خضروات وفواكه';
+
+  @override
+  String get equipment => 'معدات';
+
+  @override
+  String get contactInfo => 'معلومات التواصل';
+
+  @override
+  String get primaryPhoneRequired => 'رقم الهاتف الأساسي *';
+
+  @override
+  String get secondaryPhoneOptional => 'رقم هاتف ثانوي (اختياري)';
+
+  @override
+  String get emailField => 'البريد الإلكتروني';
+
+  @override
+  String get addressField2 => 'العنوان';
+
+  @override
+  String get commercialInfo => 'المعلومات التجارية';
+
+  @override
+  String get taxNumberVat => 'الرقم الضريبي (VAT)';
+
+  @override
+  String get commercialRegNumber => 'رقم السجل التجاري (CR)';
+
+  @override
+  String get financialInfo => 'المعلومات المالية';
+
+  @override
+  String get paymentTerms => 'شروط الدفع';
+
+  @override
+  String get payOnDelivery => 'الدفع عند الاستلام';
+
+  @override
+  String get sevenDays => '7 أيام';
+
+  @override
+  String get fourteenDays => '14 يوم';
+
+  @override
+  String get thirtyDays => '30 يوم';
+
+  @override
+  String get sixtyDays => '60 يوم';
+
+  @override
+  String get bankName => 'اسم البنك';
+
+  @override
+  String get ibanNumber => 'رقم الحساب IBAN';
+
+  @override
+  String get additionalSettings => 'إعدادات إضافية';
+
+  @override
+  String get supplierIsActive => 'المورد نشط';
+
+  @override
+  String get notesField => 'ملاحظات';
+
+  @override
+  String get savingData => 'جاري الحفظ...';
+
+  @override
+  String get updateSupplier => 'تحديث المورد';
+
+  @override
+  String get addSupplierBtn => 'إضافة المورد';
+
+  @override
+  String get deleteSupplier => 'حذف المورد';
+
+  @override
+  String get supplierUpdatedSuccess => 'تم تحديث بيانات المورد';
+
+  @override
+  String get supplierAddedSuccess => 'تم إضافة المورد بنجاح';
+
+  @override
+  String get supplierDeletedSuccess => 'تم حذف المورد';
+
+  @override
+  String get deleteSupplierConfirmTitle => 'حذف المورد';
+
+  @override
+  String get deleteSupplierConfirmMessage =>
+      'هل أنت متأكد من حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get supplierDetailsTitle => 'تفاصيل المورد';
+
+  @override
+  String get backButton => 'رجوع';
+
+  @override
+  String get editButton => 'تعديل';
+
+  @override
+  String get newPurchaseOrder => 'طلب شراء جديد';
+
+  @override
+  String get deleteButton => 'حذف';
+
+  @override
+  String get phoneLabel => 'الهاتف';
+
+  @override
+  String get supplierEmailLabel => 'البريد';
+
+  @override
+  String get supplierAddressLabel => 'العنوان';
+
+  @override
+  String get dueToSupplier => 'مستحق للمورد';
+
+  @override
+  String get balanceInOurFavor => 'رصيد لصالحنا';
+
+  @override
+  String get paymentBtn => 'سداد';
+
+  @override
+  String get totalPurchasesLabel => 'إجمالي المشتريات';
+
+  @override
+  String get lastPurchaseDate => 'آخر شراء';
+
+  @override
+  String get recentPurchases => 'آخر المشتريات';
+
+  @override
+  String get noPurchasesYet => 'لا توجد مشتريات';
+
+  @override
+  String get pendingLabel => 'معلق';
+
+  @override
+  String get deleteSupplierDialogTitle => 'حذف المورد';
+
+  @override
+  String get deleteSupplierDialogMessage =>
+      'سيتم حذف جميع بيانات المورد. هل تريد المتابعة؟';
+
+  @override
+  String get unknownUser => 'غير معروف';
+
+  @override
+  String get employeeRole => 'موظف';
+
+  @override
+  String get operationCount => 'عملية';
+
+  @override
+  String get dayCount => 'يوم';
+
+  @override
+  String get personalInfoSection => 'المعلومات الشخصية';
+
+  @override
+  String get emailInfoLabel => 'البريد الإلكتروني';
+
+  @override
+  String get phoneInfoLabel => 'الهاتف';
+
+  @override
+  String get branchInfoLabel => 'الفرع';
+
+  @override
+  String get employeeIdLabel => 'الرقم الوظيفي';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get mainBranchDefault => 'الفرع الرئيسي';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get activityLogLink => 'سجل النشاط';
+
+  @override
+  String get logoutButton => 'تسجيل الخروج';
+
+  @override
+  String get systemAdminRole => 'مدير النظام';
+
+  @override
+  String get noBranchesRegistered => 'لا توجد فروع مسجلة';
+
+  @override
+  String get branchEmailLabel => 'البريد';
+
+  @override
+  String get branchCityLabel => 'المدينة';
+
+  @override
+  String get importSupplierInvoice => 'استيراد فاتورة المورد';
+
+  @override
+  String get captureOrSelectPhoto =>
+      'التقط صورة أو اختر من المعرض\nسيتم استخراج البيانات تلقائياً';
+
+  @override
+  String get captureImage => 'التقاط صورة';
+
+  @override
+  String get galleryPick => 'المعرض';
+
+  @override
+  String get anotherImage => 'صورة أخرى';
+
+  @override
+  String get aiProcessingBtn => 'معالجة AI';
+
+  @override
+  String get processingInvoice => 'جاري معالجة الفاتورة...';
+
+  @override
+  String get extractingDataWithAi => 'يتم استخراج البيانات بالذكاء الاصطناعي';
+
+  @override
+  String get dataExtracted => 'تم استخراج البيانات';
+
+  @override
+  String get purchaseInvoiceCreated => 'تم إنشاء فاتورة الشراء';
+
+  @override
+  String get reviewInvoice => 'مراجعة الفاتورة';
+
+  @override
+  String get confirmAllItems => 'تأكيد الكل';
+
+  @override
+  String get unknownSupplier => 'مورد غير معروف';
+
+  @override
+  String itemCount(int count) {
+    return '$count صنف';
+  }
+
+  @override
+  String progressLabel(int confirmed, int total) {
+    return 'التقدم: $confirmed / $total';
+  }
+
+  @override
+  String needsReviewCount(int count) {
+    return '$count يحتاج مراجعة';
+  }
+
+  @override
+  String get notMatchedStatus => 'لم يتم المطابقة';
+
+  @override
+  String get matchedStatus => 'مطابقة';
+
+  @override
+  String get matchedProductLabel => 'منتج مطابق';
+
+  @override
+  String matchedWithName(String name) {
+    return 'مطابقة: $name';
+  }
+
+  @override
+  String get searchForProduct => 'بحث عن منتج...';
+
+  @override
+  String get createNewProduct => 'إنشاء منتج جديد';
+
+  @override
+  String get savingInvoice => 'جاري الحفظ...';
+
+  @override
+  String get invoiceSavedSuccess => 'تم حفظ فاتورة الشراء بنجاح';
+
+  @override
+  String get customerAnalytics => 'تحليل العملاء';
+
+  @override
+  String get weekPeriod => 'أسبوع';
+
+  @override
+  String get monthPeriod => 'شهر';
+
+  @override
+  String get yearPeriod => 'سنة';
+
+  @override
+  String get totalCustomers => 'إجمالي العملاء';
+
+  @override
+  String get newCustomers => 'عملاء جدد';
+
+  @override
+  String get returningCustomers => 'عملاء متكررون';
+
+  @override
+  String get averageSpending => 'متوسط الإنفاق';
+
+  @override
+  String get topCustomers => 'أفضل العملاء';
+
+  @override
+  String orderCount(int count) {
+    return '$count طلب';
+  }
+
+  @override
+  String get customerDistribution => 'توزيع العملاء';
+
+  @override
+  String get vipCustomers => 'VIP (أكثر من 5000 ر.س)';
+
+  @override
+  String get regularCustomers => 'منتظمين (1000-5000 ر.س)';
+
+  @override
+  String get normalCustomers => 'عاديين (أقل من 1000 ر.س)';
+
+  @override
+  String get customerActivity => 'نشاط العملاء';
+
+  @override
+  String get activeLabel => 'نشط';
+
+  @override
+  String get dormantLabel => 'خامل';
+
+  @override
+  String get inactiveLabel => 'غير نشط';
+
+  @override
+  String get noPrintJobsPending => 'لا توجد مهام طباعة معلقة';
+
+  @override
+  String get printerConnected => 'الطابعة متصلة';
+
+  @override
+  String get totalPrintLabel => 'إجمالي';
+
+  @override
+  String get waitingPrintLabel => 'في الانتظار';
+
+  @override
+  String get failedPrintLabel => 'فشلت';
+
+  @override
+  String pendingJobsCount(int count) {
+    return '$count مهام معلقة';
+  }
+
+  @override
+  String get printingInProgress => 'جاري الطباعة...';
+
+  @override
+  String get failedRetry => 'فشل - حاول مرة أخرى';
+
+  @override
+  String get waitingStatus => 'في الانتظار';
+
+  @override
+  String printingOrderId(String orderId) {
+    return 'جاري طباعة $orderId...';
+  }
+
+  @override
+  String get allJobsPrinted => 'تم طباعة جميع المهام';
+
+  @override
+  String get clearPrintQueueTitle => 'مسح قائمة الطباعة';
+
+  @override
+  String get clearPrintQueueConfirm => 'هل تريد مسح جميع مهام الطباعة المعلقة؟';
+
+  @override
+  String get clearBtn => 'مسح';
+
+  @override
+  String get gotIt => 'فهمت';
+
+  @override
+  String get print => 'طباعة';
+
+  @override
+  String get display => 'عرض';
+
+  @override
+  String get item => 'عنصر';
+
+  @override
+  String get invoice => 'فاتورة';
+
+  @override
+  String get accept => 'قبول';
+
+  @override
+  String get details => 'تفاصيل';
+
+  @override
+  String get newLabel => 'جديد';
+
+  @override
+  String get mixed => 'مختلط';
+
+  @override
+  String get lowStockLabel => 'منخفض';
+
+  @override
+  String get debtor => 'مدين';
+
+  @override
+  String get creditor => 'دائن';
+
+  @override
+  String get balanceLabel => 'الرصيد';
+
+  @override
+  String get returnLabel => 'استرجاع';
+
+  @override
+  String get skip => 'تخطي';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get cloud => 'سحابي';
+
+  @override
+  String get defaultLabel => 'افتراضي';
+
+  @override
+  String get closed => 'مغلق';
+
+  @override
+  String get owes => 'عليه';
+
+  @override
+  String get due => 'له';
+
+  @override
+  String get balanced => 'متوازن';
+
+  @override
+  String get offlineModeTitle => 'الوضع غير المتصل';
+
+  @override
+  String get offlineModeDescription => 'يمكنك الاستمرار في استخدام التطبيق:';
+
+  @override
+  String get offlineCanSell => 'إجراء عمليات البيع';
+
+  @override
+  String get offlineCanAddToCart => 'إضافة منتجات للسلة';
+
+  @override
+  String get offlineCanPrint => 'طباعة الإيصالات';
+
+  @override
+  String get offlineAutoSync =>
+      'سيتم مزامنة البيانات تلقائياً عند عودة الاتصال.';
+
+  @override
+  String get offlineSavingLocally => 'غير متصل - يتم حفظ العمليات محلياً';
+
+  @override
+  String get seconds => 'ثانية';
+
+  @override
+  String get errors => 'أخطاء';
+
+  @override
+  String get syncLabel => 'مزامنة';
+
+  @override
+  String get slow => 'بطيئة';
+
+  @override
+  String get myGrocery => 'بقالتي';
+
+  @override
+  String get cashier => 'كاشير';
+
+  @override
+  String get goBack => 'رجوع';
+
+  @override
+  String get menuLabel => 'القائمة';
+
+  @override
+  String get gold => 'ذهبي';
+
+  @override
+  String get silver => 'فضي';
+
+  @override
+  String get diamond => 'ماسي';
+
+  @override
+  String get bronze => 'برونزي';
+
+  @override
+  String get saudiArabia => 'السعودية';
+
+  @override
+  String get uae => 'الإمارات';
+
+  @override
+  String get kuwait => 'الكويت';
+
+  @override
+  String get bahrain => 'البحرين';
+
+  @override
+  String get qatar => 'قطر';
+
+  @override
+  String get oman => 'عُمان';
+
+  @override
+  String get control => 'تحكم';
+
+  @override
+  String get strong => 'قوي';
+
+  @override
+  String get medium => 'متوسط';
+
+  @override
+  String get weak => 'ضعيف';
+
+  @override
+  String get good => 'جيد';
+
+  @override
+  String get danger => 'خطر';
+
+  @override
+  String get currentLabel => 'الحالي';
+
+  @override
+  String get suggested => 'المقترح';
+
+  @override
+  String get actual => 'الفعلي';
+
+  @override
+  String get forecast => 'المتوقع';
+
+  @override
+  String get critical => 'حرج';
+
+  @override
+  String get high => 'عالي';
+
+  @override
+  String get low => 'منخفض';
+
+  @override
+  String get investigation => 'التحقيق';
+
+  @override
+  String get apply => 'تطبيق';
+
+  @override
+  String get run => 'تشغيل';
+
+  @override
+  String get positive => 'إيجابي';
+
+  @override
+  String get neutral => 'محايد';
+
+  @override
+  String get negative => 'سلبي';
+
+  @override
+  String get elastic => 'مرن';
+
+  @override
+  String get demand => 'الطلب';
+
+  @override
+  String get quality => 'الجودة';
+
+  @override
+  String get luxury => 'فاخر';
+
+  @override
+  String get economic => 'اقتصادي';
+
+  @override
+  String get ourStore => 'متجرنا';
+
+  @override
+  String get upcoming => 'قادم';
+
+  @override
+  String get cost => 'التكلفة';
+
+  @override
+  String get duration => 'المدة';
+
+  @override
+  String get quiet => 'هادئ';
+
+  @override
+  String get busy => 'مزدحم';
+
+  @override
+  String get outstanding => 'متميز';
+
+  @override
+  String get donate => 'تبرع';
+
+  @override
+  String get day => 'يوم';
+
+  @override
+  String get days => 'أيام';
+
+  @override
+  String get projected => 'المتوقع';
+
+  @override
+  String get analysis => 'تحليل';
+
+  @override
+  String get review => 'مراجعة';
+
+  @override
+  String get productCategory => 'التصنيف';
+
+  @override
+  String get ourPrice => 'سعرنا';
+
+  @override
+  String get position => 'الموقف';
+
+  @override
+  String get cheapest => 'الأرخص';
+
+  @override
+  String get mostExpensive => 'الأغلى';
+
+  @override
+  String get soldOut => 'نفد';
+
+  @override
+  String get noDataAvailable => 'لا توجد بيانات';
+
+  @override
+  String get noDataFoundMessage => 'لم يتم العثور على أي بيانات';
+
+  @override
+  String get noSearchResultsFound => 'لا توجد نتائج';
+
+  @override
+  String get noProductsFound => 'لم يتم العثور على منتجات';
+
+  @override
+  String get noCustomers => 'لا يوجد عملاء';
+
+  @override
+  String get addCustomersToStart => 'أضف عملاء جدد للبدء';
+
+  @override
+  String get noOrdersYet => 'لم تقم بأي طلبات بعد';
+
+  @override
+  String get noConnection => 'لا يوجد اتصال';
+
+  @override
+  String get checkInternet => 'تحقق من اتصالك بالإنترنت';
+
+  @override
+  String get cartIsEmpty => 'السلة فارغة';
+
+  @override
+  String get browseProducts => 'تصفح المنتجات';
+
+  @override
+  String noResultsFor(String query) {
+    return 'لم يتم العثور على نتائج لـ \"$query\"';
+  }
+
+  @override
+  String get paidLabel => 'المدفوع';
+
+  @override
+  String get remainingLabel => 'المتبقي';
+
+  @override
+  String get completeLabel => 'مكتمل ✓';
+
+  @override
+  String get addPayment => 'إضافة';
+
+  @override
+  String get payments => 'الدفعات';
+
+  @override
+  String get now => 'الآن';
+
+  @override
+  String get ecommerce => 'المتجر الإلكتروني';
+
+  @override
+  String get ecommerceSection => 'التجارة الإلكترونية';
+
+  @override
+  String get wallet => 'المحفظة';
+
+  @override
+  String get subscription => 'الاشتراك';
+
+  @override
+  String get complaintsReport => 'تقرير الشكاوى';
+
+  @override
+  String get mediaLibrary => 'مكتبة الوسائط';
+
+  @override
+  String get deviceLog => 'سجل الأجهزة';
+
+  @override
+  String get shippingGateways => 'بوابات الشحن';
+
+  @override
+  String get systemSection => 'النظام';
 }

@@ -63,6 +63,7 @@ class ReceiptPdfGenerator {
     StoreInfo store = StoreInfo.defaultStore,
     String cashierName = 'كاشير',
     double paperWidth = 80, // mm
+    String? note,
   }) async {
     await _loadFonts();
 
@@ -143,6 +144,17 @@ class ReceiptPdfGenerator {
               pw.SizedBox(height: 4),
               _centeredText('يشمل ضريبة القيمة المضافة 15%', 8),
               _divider(),
+
+              // ═══════════════════════════════
+              // NOTE - ملاحظة
+              // ═══════════════════════════════
+              if (note != null && note.isNotEmpty) ...[
+                pw.SizedBox(height: 4),
+                _centeredBoldText('ملاحظة:', 10),
+                pw.SizedBox(height: 2),
+                _centeredText(note, 9),
+                _divider(),
+              ],
 
               // ═══════════════════════════════
               // FOOTER - التذييل

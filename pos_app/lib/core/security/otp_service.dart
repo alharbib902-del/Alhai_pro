@@ -1,4 +1,5 @@
-/// خدمة OTP - OTP Service
+/// @deprecated استخدم WhatsAppOtpService بدلاً من هذه الخدمة
+/// خدمة OTP العامة - Generic OTP Service (غير مستخدمة حالياً)
 ///
 /// تُدير إرسال والتحقق من رموز OTP مع:
 /// - Rate Limiting (3 محاولات كل 5 دقائق)
@@ -121,12 +122,13 @@ class OtpState {
 const String _kOtpStateKey = 'otp_state';
 const String _kAttemptHistoryKey = 'otp_attempt_history';
 
-/// خدمة OTP
+/// خدمة OTP العامة - غير مستخدمة، استخدم WhatsAppOtpService
+@Deprecated('Use WhatsAppOtpService instead')
 class OtpService {
   static OtpState? _currentOtpState;
   static final Map<String, List<DateTime>> _attemptHistory = {};
   static bool _isInitialized = false;
-  
+
   // ============================================================================
   // INITIALIZATION & PERSISTENCE
   // ============================================================================
@@ -208,7 +210,7 @@ class OtpService {
   // ============================================================================
 
   /// إرسال OTP
-  /// 
+  ///
   /// [phone] رقم الهاتف
   /// [onSend] callback لإرسال OTP الفعلي (API call)
   static Future<OtpSendResult> sendOtp({
@@ -244,13 +246,13 @@ class OtpService {
       return OtpSendResult.error(e.toString());
     }
   }
-  
+
   // ============================================================================
   // VERIFY OTP
   // ============================================================================
-  
+
   /// التحقق من OTP
-  /// 
+  ///
   /// [phone] رقم الهاتف
   /// [otp] رمز OTP
   /// [onVerify] callback للتحقق الفعلي (API call)
@@ -306,11 +308,11 @@ class OtpService {
       return OtpVerifyResult.error(e.toString());
     }
   }
-  
+
   // ============================================================================
   // RESEND OTP
   // ============================================================================
-  
+
   /// إعادة إرسال OTP
   static Future<OtpSendResult> resendOtp({
     required String phone,
@@ -319,14 +321,14 @@ class OtpService {
     if (_currentOtpState != null && !_currentOtpState!.canResend) {
       return OtpSendResult.cooldown(_currentOtpState!.resendCooldownRemaining);
     }
-    
+
     return sendOtp(phone: phone, onSend: onSend);
   }
-  
+
   // ============================================================================
   // STATE
   // ============================================================================
-  
+
   /// الحصول على حالة OTP الحالية
   static OtpState? get currentState => _currentOtpState;
 
@@ -345,37 +347,37 @@ class OtpService {
     await SecureStorageService.delete(_kOtpStateKey);
     await SecureStorageService.delete(_kAttemptHistoryKey);
   }
-  
+
   // ============================================================================
   // RATE LIMITING
   // ============================================================================
-  
+
   static void _recordAttempt(String phone) {
     _attemptHistory.putIfAbsent(phone, () => []);
     _attemptHistory[phone]!.add(DateTime.now());
-    
+
     // إزالة المحاولات القديمة
     _attemptHistory[phone]!.removeWhere(
       (time) => DateTime.now().difference(time) > kRateLimitWindow,
     );
   }
-  
+
   static int _getAttemptCount(String phone) {
     final attempts = _attemptHistory[phone];
     if (attempts == null) return 0;
-    
+
     // إزالة المحاولات القديمة
     attempts.removeWhere(
       (time) => DateTime.now().difference(time) > kRateLimitWindow,
     );
-    
+
     return attempts.length;
   }
-  
+
   static bool _isRateLimited(String phone) {
     return _getAttemptCount(phone) >= kMaxAttempts;
   }
-  
+
   static void _blockPhone(String phone) {
     // حظر لمدة فترة Rate Limit
     _attemptHistory.putIfAbsent(phone, () => []);
@@ -384,15 +386,15 @@ class OtpService {
       _attemptHistory[phone]!.add(now);
     }
   }
-  
+
   static DateTime? _getBlockedUntil(String phone) {
     final attempts = _attemptHistory[phone];
     if (attempts == null || attempts.isEmpty) return null;
-    
+
     final oldestAttempt = attempts.reduce(
       (a, b) => a.isBefore(b) ? a : b,
     );
-    
+
     return oldestAttempt.add(kRateLimitWindow);
   }
 }
@@ -416,18 +418,18 @@ class OtpSendResult {
   });
 
   factory OtpSendResult.success() => const OtpSendResult._(isSuccess: true);
-  
+
   factory OtpSendResult.error(String message) => OtpSendResult._(
     isSuccess: false,
     error: message,
   );
-  
+
   factory OtpSendResult.rateLimited(DateTime? until) => OtpSendResult._(
     isSuccess: false,
     error: 'تم تجاوز الحد الأقصى للمحاولات',
     blockedUntil: until,
   );
-  
+
   factory OtpSendResult.cooldown(Duration remaining) => OtpSendResult._(
     isSuccess: false,
     error: 'يرجى الانتظار قبل إعادة الإرسال',
@@ -450,35 +452,35 @@ class OtpVerifyResult {
   });
 
   factory OtpVerifyResult.success() => const OtpVerifyResult._(isSuccess: true);
-  
+
   factory OtpVerifyResult.invalid(int remaining) => OtpVerifyResult._(
     isSuccess: false,
     error: 'رمز التحقق غير صحيح',
     remainingAttempts: remaining,
   );
-  
+
   factory OtpVerifyResult.expired() => const OtpVerifyResult._(
     isSuccess: false,
     error: 'انتهت صلاحية رمز التحقق',
   );
-  
+
   factory OtpVerifyResult.noOtpSent() => const OtpVerifyResult._(
     isSuccess: false,
     error: 'لم يتم إرسال رمز التحقق',
   );
-  
+
   factory OtpVerifyResult.maxAttemptsExceeded() => const OtpVerifyResult._(
     isSuccess: false,
     error: 'تم تجاوز الحد الأقصى للمحاولات',
     remainingAttempts: 0,
   );
-  
+
   factory OtpVerifyResult.rateLimited(DateTime? until) => OtpVerifyResult._(
     isSuccess: false,
     error: 'يرجى الانتظار قبل المحاولة مرة أخرى',
     blockedUntil: until,
   );
-  
+
   factory OtpVerifyResult.error(String message) => OtpVerifyResult._(
     isSuccess: false,
     error: message,

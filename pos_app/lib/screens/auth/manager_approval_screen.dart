@@ -1,10 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/security/pin_service.dart';
+import '../../l10n/generated/app_localizations.dart';
+
+/// وضع الشاشة: إعداد أو تحقق أو حوار موافقة
+enum ManagerApprovalMode { setup, verify, dialog }
 
 /// شاشة موافقة المشرف بـ PIN
+///
+/// يمكن استخدامها كشاشة كاملة أو كحوار (dialog) عبر [showApprovalDialog].
 class ManagerApprovalScreen extends StatefulWidget {
-  const ManagerApprovalScreen({super.key});
+  /// وضع العرض: dialog يُستخدم عند العرض كحوار
+  final ManagerApprovalMode mode;
+
+  /// وصف الإجراء المطلوب الموافقة عليه (يظهر في وضع dialog)
+  final String? action;
+
+  const ManagerApprovalScreen({
+    super.key,
+    this.mode = ManagerApprovalMode.verify,
+    this.action,
+  });
+
+  /// عرض حوار موافقة المشرف ويعود بـ true إذا تم التحقق بنجاح
+  ///
+  /// يستخدم PinService مباشرة للتحقق (PBKDF2 + lockout).
+  /// إذا لم يكن PIN مُعداً بعد، يعرض شاشة الإعداد أولاً.
+  ///
+  /// [context] - BuildContext
+  /// [action] - وصف الإجراء (اختياري، يظهر للمستخدم)
+  static Future<bool> showApprovalDialog(
+    BuildContext context, {
+    String? action,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => ManagerApprovalScreen(
+        mode: ManagerApprovalMode.dialog,
+        action: action,
+      ),
+    );
+    return result ?? false;
+  }
 
   @override
   State<ManagerApprovalScreen> createState() => _ManagerApprovalScreenState();
@@ -32,174 +71,225 @@ class _ManagerApprovalScreenState extends State<ManagerApprovalScreen> {
     }
   }
 
+  bool get _isDialogMode => widget.mode == ManagerApprovalMode.dialog;
+
   @override
   Widget build(BuildContext context) {
     if (_needsSetup) {
+      if (_isDialogMode) {
+        return _buildDialogWrapper(child: _buildSetupContent());
+      }
       return _buildSetupScreen();
     }
-    
+
+    if (_isDialogMode) {
+      return _buildDialogWrapper(child: _buildVerifyContent());
+    }
     return _buildVerifyScreen();
   }
 
-  Widget _buildSetupScreen() {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('إعداد رمز المشرف'),
-        centerTitle: true,
-      ),
-      body: Center(
+  /// غلاف الحوار (Dialog) مع حجم مناسب وتصميم موحد
+  Widget _buildDialogWrapper({required Widget child}) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 420,
+        constraints: const BoxConstraints(maxHeight: 640),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1E293B)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.lock_outline, size: 40, color: Colors.green.shade700),
-              ),
-              const SizedBox(height: 24),
-
-              Text(
-                _isSettingUp ? 'تأكيد الرمز' : 'إنشاء رمز جديد',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _isSettingUp 
-                    ? 'أعد إدخال الرمز للتأكيد'
-                    : 'أدخل رمز PIN من 4 أرقام',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 32),
-
-              // PIN display
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  final currentPin = _isSettingUp ? _confirmPin : _setupPin;
-                  return Container(
-                    width: 50,
-                    height: 60,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: index < currentPin.length ? Colors.green : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _error != null 
-                            ? Colors.red 
-                            : (index < currentPin.length ? Colors.green : Colors.grey.shade300),
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: index < currentPin.length
-                          ? const Icon(Icons.circle, size: 16, color: Colors.white)
-                          : null,
-                    ),
-                  );
-                }),
-              ),
-              if (_error != null) ...[
-                const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-              ],
-              const SizedBox(height: 32),
-
-              // Keypad
-              _buildKeypad(isSetup: true),
-
-              if (_isLoading) ...[
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(),
-              ],
-            ],
-          ),
+          padding: const EdgeInsets.all(24),
+          child: child,
         ),
       ),
     );
   }
 
-  Widget _buildVerifyScreen() {
+  /// محتوى شاشة الإعداد (بدون Scaffold) للاستخدام في Dialog
+  Widget _buildSetupContent() {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.green.shade100,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.lock_outline, size: 40, color: Colors.green.shade700),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          _isSettingUp ? l10n.confirmPin : l10n.createNewPin,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : null,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _isSettingUp ? l10n.reenterPinToConfirm : l10n.enterFourDigitPin,
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.grey.shade600),
+        ),
+        const SizedBox(height: 32),
+        _buildPinDots(
+          currentPin: _isSettingUp ? _confirmPin : _setupPin,
+          color: Colors.green,
+        ),
+        if (_error != null) ...[
+          const SizedBox(height: 12),
+          Text(_error!, style: const TextStyle(color: Colors.red)),
+        ],
+        const SizedBox(height: 32),
+        _buildKeypad(isSetup: true),
+        if (_isLoading) ...[
+          const SizedBox(height: 24),
+          const CircularProgressIndicator(),
+        ],
+        if (_isDialogMode) ...[
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: isDark ? Colors.white54 : Colors.grey.shade600, fontSize: 16),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSetupScreen() {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('موافقة المشرف'),
+        title: Text(l10n.managerPinSetup),
         centerTitle: true,
       ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.admin_panel_settings, size: 40, color: Colors.blue.shade700),
-              ),
-              const SizedBox(height: 24),
-
-              const Text(
-                'أدخل رمز المشرف',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'هذه العملية تتطلب موافقة المشرف',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 32),
-
-              // PIN display
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  return Container(
-                    width: 50,
-                    height: 60,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: index < _pin.length ? Colors.blue : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _error != null ? Colors.red : (index < _pin.length ? Colors.blue : Colors.grey.shade300),
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: index < _pin.length
-                          ? const Icon(Icons.circle, size: 16, color: Colors.white)
-                          : null,
-                    ),
-                  );
-                }),
-              ),
-              if (_error != null) ...[
-                const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-              ],
-              const SizedBox(height: 32),
-
-              // Keypad
-              _buildKeypad(isSetup: false),
-
-              if (_isLoading) ...[
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(),
-              ],
-            ],
-          ),
+          child: _buildSetupContent(),
         ),
       ),
+    );
+  }
+
+  /// محتوى شاشة التحقق (بدون Scaffold) للاستخدام في Dialog
+  Widget _buildVerifyContent() {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.blue.shade100,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.admin_panel_settings, size: 40, color: Colors.blue.shade700),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          l10n.enterManagerPin,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : null,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          widget.action ?? l10n.operationRequiresApproval,
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.grey.shade600),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 32),
+        _buildPinDots(currentPin: _pin, color: Colors.blue),
+        if (_error != null) ...[
+          const SizedBox(height: 12),
+          Text(_error!, style: const TextStyle(color: Colors.red)),
+        ],
+        const SizedBox(height: 32),
+        _buildKeypad(isSetup: false),
+        if (_isLoading) ...[
+          const SizedBox(height: 24),
+          const CircularProgressIndicator(),
+        ],
+        if (_isDialogMode) ...[
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: isDark ? Colors.white54 : Colors.grey.shade600, fontSize: 16),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildVerifyScreen() {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.managerPinSetup),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: _buildVerifyContent(),
+        ),
+      ),
+    );
+  }
+
+  /// نقاط عرض PIN مع لون محدد
+  Widget _buildPinDots({required String currentPin, required Color color}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(4, (index) {
+        return Container(
+          width: 50,
+          height: 60,
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: index < currentPin.length ? color : Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _error != null
+                  ? Colors.red
+                  : (index < currentPin.length ? color : Colors.grey.shade300),
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: index < currentPin.length
+                ? const Icon(Icons.circle, size: 16, color: Colors.white)
+                : null,
+          ),
+        );
+      }),
     );
   }
 
@@ -209,8 +299,8 @@ class _ManagerApprovalScreenState extends State<ManagerApprovalScreen> {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
           childAspectRatio: 1.2,
@@ -311,29 +401,32 @@ class _ManagerApprovalScreenState extends State<ManagerApprovalScreen> {
   }
 
   Future<void> _confirmSetup() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_setupPin != _confirmPin) {
       setState(() {
-        _error = 'الرمزان غير متطابقين';
+        _error = l10n.pinsMismatch;
         _confirmPin = '';
       });
       return;
     }
 
     setState(() => _isLoading = true);
-    
+
     final result = await PinService.createPin(_setupPin);
-    
+
     if (!mounted) return;
-    
+
     setState(() => _isLoading = false);
-    
+
     if (result.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إنشاء رمز المشرف بنجاح'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (!_isDialogMode) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.managerPinCreatedSuccess),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
       setState(() {
         _needsSetup = false;
         _isSettingUp = false;
@@ -349,31 +442,37 @@ class _ManagerApprovalScreenState extends State<ManagerApprovalScreen> {
   }
 
   Future<void> _verifyPin() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isLoading = true);
-    
+
     final result = await PinService.verifyPin(_pin);
-    
+
     if (!mounted) return;
-    
+
     setState(() => _isLoading = false);
 
     if (result.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تمت الموافقة'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      context.pop(true); // Return success
+      if (_isDialogMode) {
+        // في وضع الحوار: نعود بـ true مباشرة
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.approvalGranted),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.pop(true); // Return success
+      }
     } else {
       setState(() {
         _pin = '';
-        
+
         if (result.errorType == PinError.lockedOut && result.lockedUntil != null) {
           final remaining = result.lockedUntil!.difference(DateTime.now());
-          _error = 'تم قفل الحساب. انتظر ${remaining.inMinutes} دقيقة';
+          _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
         } else if (result.remainingAttempts != null) {
-          _error = 'رمز خاطئ. المحاولات المتبقية: ${result.remainingAttempts}';
+          _error = l10n.wrongPinAttemptsRemaining(result.remainingAttempts!);
         } else {
           _error = result.error;
         }

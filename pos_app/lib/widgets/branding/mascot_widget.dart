@@ -363,8 +363,8 @@ class _MascotPainter extends CustomPainter {
 
     // الجسم - تدرج 3D
     const bodyGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: AlignmentDirectional.topStart,
+      end: AlignmentDirectional.bottomEnd,
       colors: [
         AppColors.primaryLight,
         AppColors.primary,
@@ -416,8 +416,8 @@ class _MascotPainter extends CustomPainter {
 
     // الرأس - تدرج 3D معدني
     const headGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: AlignmentDirectional.topStart,
+      end: AlignmentDirectional.bottomEnd,
       colors: [
         Color(0xFF34D399), // أخضر فاتح
         AppColors.primary,
@@ -473,8 +473,8 @@ class _MascotPainter extends CustomPainter {
 
     // الرأس - شاشة الوجه (3D screen effect)
     const faceGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: AlignmentDirectional.topStart,
+      end: AlignmentDirectional.bottomEnd,
       colors: [
         Color(0xFF2A2A4A),
         Color(0xFF1A1A2E),
@@ -532,8 +532,8 @@ class _MascotPainter extends CustomPainter {
 
     // الأنتينا - 3D
     const antennaGradient = LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
+      begin: AlignmentDirectional.centerStart,
+      end: AlignmentDirectional.centerEnd,
       colors: [
         AppColors.primaryDark,
         AppColors.primary,
@@ -741,8 +741,8 @@ class _MascotPainter extends CustomPainter {
 
     // شاشة اللابتوب
     final screenGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: AlignmentDirectional.topStart,
+      end: AlignmentDirectional.bottomEnd,
       colors: [
         AppColors.info.withValues(alpha: 0.8),
         AppColors.info,
@@ -772,8 +772,8 @@ class _MascotPainter extends CustomPainter {
     // انعكاس الشاشة
     final screenReflectPaint = Paint()
       ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
         colors: [
           Colors.white.withValues(alpha: 0.3),
           Colors.white.withValues(alpha: 0.0),

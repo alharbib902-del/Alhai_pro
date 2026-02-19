@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pos_app/l10n/generated/app_localizations.dart';
 import 'package:pos_app/widgets/common/undo_system.dart';
 
 void main() {
@@ -124,6 +126,14 @@ void main() {
     testWidgets('لا يعرض تأكيد للمبالغ الصغيرة', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('ar'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Builder(
             builder: (context) {
               return ElevatedButton(
@@ -155,6 +165,14 @@ void main() {
     testWidgets('يعرض تأكيد للمبالغ الكبيرة', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('ar'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Builder(
             builder: (context) {
               return ElevatedButton(

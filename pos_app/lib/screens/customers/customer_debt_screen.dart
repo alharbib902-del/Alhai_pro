@@ -1,63 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// شاشة إدارة ديون العملاء
-class CustomerDebtScreen extends StatefulWidget {
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
+
+/// Customer Debt Management Screen
+class CustomerDebtScreen extends ConsumerStatefulWidget {
   const CustomerDebtScreen({super.key});
 
   @override
-  State<CustomerDebtScreen> createState() => _CustomerDebtScreenState();
+  ConsumerState<CustomerDebtScreen> createState() => _CustomerDebtScreenState();
 }
 
-class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTickerProviderStateMixin {
+class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _sortBy = 'amount';
-  
-  final List<_DebtRecord> _debts = [
-    _DebtRecord(
-      id: '1',
-      customerName: 'أحمد محمد',
-      phone: '0501234567',
-      totalDebt: 2500,
-      dueDate: DateTime.now().subtract(const Duration(days: 10)),
-      lastPayment: DateTime.now().subtract(const Duration(days: 30)),
-      status: 'overdue',
-    ),
-    _DebtRecord(
-      id: '2',
-      customerName: 'خالد عمر',
-      phone: '0551234567',
-      totalDebt: 1800,
-      dueDate: DateTime.now().add(const Duration(days: 5)),
-      lastPayment: DateTime.now().subtract(const Duration(days: 15)),
-      status: 'pending',
-    ),
-    _DebtRecord(
-      id: '3',
-      customerName: 'محمد علي',
-      phone: '0561234567',
-      totalDebt: 3200,
-      dueDate: DateTime.now().subtract(const Duration(days: 3)),
-      lastPayment: null,
-      status: 'overdue',
-    ),
-    _DebtRecord(
-      id: '4',
-      customerName: 'فهد سعد',
-      phone: '0571234567',
-      totalDebt: 950,
-      dueDate: DateTime.now().add(const Duration(days: 20)),
-      lastPayment: DateTime.now().subtract(const Duration(days: 7)),
-      status: 'pending',
-    ),
-  ];
+  bool _isLoading = true;
 
-  double get _totalDebt => _debts.fold(0, (sum, d) => sum + d.totalDebt);
-  int get _overdueCount => _debts.where((d) => d.status == 'overdue').length;
+  List<AccountsTableData> _debtors = [];
+
+  double get _totalDebt =>
+      _debtors.fold(0.0, (sum, d) => sum + d.balance);
+  int get _overdueCount => _debtors.where((d) {
+        if (d.lastTransactionAt == null) return true;
+        return d.lastTransactionAt!
+            .isBefore(DateTime.now().subtract(const Duration(days: 30)));
+      }).length;
+
+  String _getStatus(AccountsTableData account) {
+    if (account.balance <= 0) return 'paid';
+    if (account.lastTransactionAt == null) return 'overdue';
+    final daysSinceLastTx =
+        DateTime.now().difference(account.lastTransactionAt!).inDays;
+    return daysSinceLastTx > 30 ? 'overdue' : 'pending';
+  }
+
+  DateTime _getDueDate(AccountsTableData account) {
+    // Due date = last transaction + 30 days (business convention)
+    if (account.lastTransactionAt != null) {
+      return account.lastTransactionAt!.add(const Duration(days: 30));
+    }
+    return account.createdAt.add(const Duration(days: 30));
+  }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadData();
   }
 
   @override
@@ -66,52 +59,89 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
     super.dispose();
   }
 
-  List<_DebtRecord> _getFilteredDebts(String filter) {
-    var list = _debts;
-    if (filter == 'overdue') {
-      list = list.where((d) => d.status == 'overdue').toList();
-    } else if (filter == 'pending') {
-      list = list.where((d) => d.status == 'pending').toList();
+  Future<void> _loadData() async {
+    setState(() => _isLoading = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final db = getIt<AppDatabase>();
+      final accounts = await db.accountsDao.getReceivableAccounts(storeId);
+      // Filter to only those with positive balance (actual debtors)
+      final debtors =
+          accounts.where((a) => a.balance > 0).toList();
+      if (mounted) {
+        setState(() {
+          _debtors = debtors;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
     }
-    
+  }
+
+  List<AccountsTableData> _getFilteredDebts(String filter) {
+    var list = List<AccountsTableData>.from(_debtors);
+    if (filter == 'overdue') {
+      list = list.where((d) => _getStatus(d) == 'overdue').toList();
+    } else if (filter == 'pending') {
+      list = list.where((d) => _getStatus(d) == 'pending').toList();
+    }
+
     if (_sortBy == 'amount') {
-      list.sort((a, b) => b.totalDebt.compareTo(a.totalDebt));
+      list.sort((a, b) => b.balance.compareTo(a.balance));
     } else if (_sortBy == 'date') {
-      list.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+      list.sort((a, b) => _getDueDate(a).compareTo(_getDueDate(b)));
     } else if (_sortBy == 'name') {
-      list.sort((a, b) => a.customerName.compareTo(b.customerName));
+      list.sort((a, b) => a.name.compareTo(b.name));
     }
     return list;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.debtManagement)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إدارة الديون'),
+        title: Text(l10n.debtManagement),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: _loadData,
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort),
-            tooltip: 'ترتيب',
+            tooltip: l10n.sortLabel,
             onSelected: (v) => setState(() => _sortBy = v),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'amount', child: Text('حسب المبلغ')),
-              const PopupMenuItem(value: 'date', child: Text('حسب التاريخ')),
-              const PopupMenuItem(value: 'name', child: Text('حسب الاسم')),
+              PopupMenuItem(
+                  value: 'amount', child: Text(l10n.sortByAmount)),
+              PopupMenuItem(
+                  value: 'date', child: Text(l10n.sortByDate)),
+              PopupMenuItem(
+                  value: 'name', child: Text(l10n.sortByName)),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.notifications),
-            tooltip: 'إرسال تذكيرات',
+            tooltip: l10n.sendReminders,
             onPressed: _sendReminders,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'الكل'),
-            Tab(text: 'متأخرة'),
-            Tab(text: 'قادمة'),
+          tabs: [
+            Tab(text: l10n.allTab),
+            Tab(text: l10n.overdueTab),
+            Tab(text: l10n.upcomingTab),
           ],
         ),
       ),
@@ -125,8 +155,9 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.account_balance_wallet,
-                    title: 'إجمالي الديون',
-                    value: '${_totalDebt.toStringAsFixed(0)} ر.س',
+                    title: l10n.totalDebts,
+                    value: l10n.debtAmountWithCurrency(
+                        _totalDebt.toStringAsFixed(0)),
                     color: Colors.red,
                   ),
                 ),
@@ -134,8 +165,8 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.warning,
-                    title: 'ديون متأخرة',
-                    value: '$_overdueCount عميل',
+                    title: l10n.overdueDebts,
+                    value: l10n.customerCount('$_overdueCount'),
                     color: Colors.orange,
                   ),
                 ),
@@ -143,15 +174,15 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.people,
-                    title: 'عملاء مدينون',
-                    value: '${_debts.length}',
+                    title: l10n.debtorCustomers,
+                    value: '${_debtors.length}',
                     color: Colors.blue,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Debts list
           Expanded(
             child: TabBarView(
@@ -167,30 +198,34 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
       ),
     );
   }
-  
+
   Widget _buildDebtList(String filter) {
+    final l10n = AppLocalizations.of(context)!;
     final debts = _getFilteredDebts(filter);
     if (debts.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, size: 64, color: Colors.green.shade300),
+            Icon(Icons.check_circle,
+                size: 64, color: Colors.green.shade300),
             const SizedBox(height: 16),
-            const Text('لا توجد ديون', style: TextStyle(fontSize: 18)),
+            Text(l10n.noDebts, style: const TextStyle(fontSize: 18)),
           ],
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: debts.length,
       itemBuilder: (context, index) {
         final debt = debts[index];
-        final isOverdue = debt.status == 'overdue';
-        final daysLeft = debt.dueDate.difference(DateTime.now()).inDays;
-        
+        final status = _getStatus(debt);
+        final isOverdue = status == 'overdue';
+        final dueDate = _getDueDate(debt);
+        final daysLeft = dueDate.difference(DateTime.now()).inDays;
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(
@@ -204,13 +239,14 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: isOverdue 
+                        backgroundColor: isOverdue
                             ? Colors.red.withValues(alpha: 0.1)
                             : Colors.blue.withValues(alpha: 0.1),
                         child: Text(
-                          debt.customerName[0],
+                          debt.name.isNotEmpty ? debt.name[0] : '?',
                           style: TextStyle(
-                            color: isOverdue ? Colors.red : Colors.blue,
+                            color:
+                                isOverdue ? Colors.red : Colors.blue,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -218,15 +254,19 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
                           children: [
                             Text(
-                              debt.customerName,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              debt.name,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              debt.phone,
-                              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                              debt.phone ?? '',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600),
                             ),
                           ],
                         ),
@@ -235,28 +275,37 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '${debt.totalDebt.toStringAsFixed(0)} ر.س',
+                            l10n.debtAmountWithCurrency(
+                                debt.balance.toStringAsFixed(0)),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
-                              color: isOverdue ? Colors.red : Colors.blue,
+                              color: isOverdue
+                                  ? Colors.red
+                                  : Colors.blue,
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isOverdue 
-                                  ? Colors.red.withValues(alpha: 0.1)
-                                  : Colors.green.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
+                              color: isOverdue
+                                  ? Colors.red
+                                      .withValues(alpha: 0.1)
+                                  : Colors.green
+                                      .withValues(alpha: 0.1),
+                              borderRadius:
+                                  BorderRadius.circular(8),
                             ),
                             child: Text(
-                              isOverdue 
-                                  ? 'متأخر ${-daysLeft} يوم'
-                                  : 'متبقي $daysLeft يوم',
+                              isOverdue
+                                  ? l10n.overdueDays(-daysLeft)
+                                  : l10n.remainingDays(daysLeft),
                               style: TextStyle(
                                 fontSize: 11,
-                                color: isOverdue ? Colors.red : Colors.green,
+                                color: isOverdue
+                                    ? Colors.red
+                                    : Colors.green,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -265,23 +314,29 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                       ),
                     ],
                   ),
-                  if (debt.lastPayment != null) ...[
+                  if (debt.lastTransactionAt != null) ...[
                     const Divider(height: 24),
                     Row(
                       children: [
-                        Icon(Icons.history, size: 14, color: Colors.grey.shade600),
+                        Icon(Icons.history,
+                            size: 14, color: Colors.grey.shade600),
                         const SizedBox(width: 4),
                         Text(
-                          'آخر دفعة: ${_formatDate(debt.lastPayment!)}',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          l10n.lastPaymentDate(
+                              _formatDate(debt.lastTransactionAt!)),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600),
                         ),
                         const Spacer(),
                         TextButton.icon(
                           onPressed: () => _recordPayment(debt),
-                          icon: const Icon(Icons.payment, size: 16),
-                          label: const Text('تسجيل دفعة'),
+                          icon:
+                              const Icon(Icons.payment, size: 16),
+                          label: Text(l10n.recordPayment),
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12),
                           ),
                         ),
                       ],
@@ -295,12 +350,15 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
       },
     );
   }
-  
+
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-  
-  void _showDebtDetails(_DebtRecord debt) {
+
+  void _showDebtDetails(AccountsTableData debt) {
+    final l10n = AppLocalizations.of(context)!;
+    final status = _getStatus(debt);
+    final dueDate = _getDueDate(debt);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -328,15 +386,22 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
               children: [
                 CircleAvatar(
                   radius: 32,
-                  child: Text(debt.customerName[0], style: const TextStyle(fontSize: 24)),
+                  child: Text(
+                      debt.name.isNotEmpty ? debt.name[0] : '?',
+                      style: const TextStyle(fontSize: 24)),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(debt.customerName, style: Theme.of(context).textTheme.titleLarge),
-                      Text(debt.phone, style: TextStyle(color: Colors.grey.shade600)),
+                      Text(debt.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge),
+                      Text(debt.phone ?? '',
+                          style: TextStyle(
+                              color: Colors.grey.shade600)),
                     ],
                   ),
                 ),
@@ -346,27 +411,37 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: (debt.status == 'overdue' ? Colors.red : Colors.blue).withValues(alpha: 0.1),
+                color: (status == 'overdue'
+                        ? Colors.red
+                        : Colors.blue)
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
                   Text(
-                    '${debt.totalDebt.toStringAsFixed(0)} ر.س',
+                    l10n.debtAmountWithCurrency(
+                        debt.balance.toStringAsFixed(0)),
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: debt.status == 'overdue' ? Colors.red : Colors.blue,
+                      color: status == 'overdue'
+                          ? Colors.red
+                          : Colors.blue,
                     ),
                   ),
-                  const Text('المبلغ المستحق'),
+                  Text(l10n.amountDue),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            _DetailRow(label: 'تاريخ الاستحقاق', value: _formatDate(debt.dueDate)),
-            if (debt.lastPayment != null)
-              _DetailRow(label: 'آخر دفعة', value: _formatDate(debt.lastPayment!)),
+            _DetailRow(
+                label: l10n.dueDate,
+                value: _formatDate(dueDate)),
+            if (debt.lastTransactionAt != null)
+              _DetailRow(
+                  label: l10n.lastPaymentLabel,
+                  value: _formatDate(debt.lastTransactionAt!)),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -374,7 +449,7 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                   child: OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.message),
-                    label: const Text('إرسال تذكير'),
+                    label: Text(l10n.sendReminder),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -385,7 +460,7 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
                       _recordPayment(debt);
                     },
                     icon: const Icon(Icons.payment),
-                    label: const Text('تسجيل دفعة'),
+                    label: Text(l10n.recordPayment),
                   ),
                 ),
               ],
@@ -395,88 +470,140 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
       ),
     );
   }
-  
-  void _recordPayment(_DebtRecord debt) {
+
+  void _recordPayment(AccountsTableData debt) {
     final amountController = TextEditingController();
     String paymentMethod = 'cash';
-    
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text('تسجيل دفعة - ${debt.customerName}'),
+          title: Text(l10n.recordPaymentFor(debt.name)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('الدين الحالي: ${debt.totalDebt.toStringAsFixed(0)} ر.س'),
+              Text(l10n.currentDebt(
+                  debt.balance.toStringAsFixed(0))),
               const SizedBox(height: 16),
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'المبلغ المدفوع',
-                  prefixIcon: Icon(Icons.attach_money),
-                  suffixText: 'ر.س',
+                decoration: InputDecoration(
+                  labelText: l10n.paidAmount,
+                  prefixIcon: const Icon(Icons.attach_money),
+                  suffixText: l10n.currencySAR,
                 ),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                // ignore: deprecated_member_use
-                value: paymentMethod,
-                decoration: const InputDecoration(
-                  labelText: 'طريقة الدفع',
-                  prefixIcon: Icon(Icons.payment),
+                initialValue: paymentMethod,
+                decoration: InputDecoration(
+                  labelText: l10n.paymentMethodLabel2,
+                  prefixIcon: const Icon(Icons.payment),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'cash', child: Text('نقدي')),
-                  DropdownMenuItem(value: 'card', child: Text('بطاقة')),
-                  DropdownMenuItem(value: 'transfer', child: Text('تحويل')),
+                items: [
+                  DropdownMenuItem(
+                      value: 'cash',
+                      child: Text(l10n.cashMethod)),
+                  DropdownMenuItem(
+                      value: 'card',
+                      child: Text(l10n.cardMethod)),
+                  DropdownMenuItem(
+                      value: 'transfer',
+                      child: Text(l10n.transferMethod)),
                 ],
-                onChanged: (v) => setDialogState(() => paymentMethod = v!),
+                onChanged: (v) =>
+                    setDialogState(() => paymentMethod = v!),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
+                final amount =
+                    double.tryParse(amountController.text);
+                if (amount == null || amount <= 0) return;
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم تسجيل الدفعة بنجاح')),
-                );
+                try {
+                  final db = getIt<AppDatabase>();
+                  final storeId =
+                      ref.read(currentStoreIdProvider) ??
+                          kDemoStoreId;
+                  final newBalance = debt.balance - amount;
+                  final txnId =
+                      'PAY-${DateTime.now().millisecondsSinceEpoch}';
+                  await db.transactionsDao.recordPayment(
+                    id: txnId,
+                    storeId: storeId,
+                    accountId: debt.id,
+                    amount: amount,
+                    balanceAfter:
+                        newBalance < 0 ? 0 : newBalance,
+                    paymentMethod: paymentMethod,
+                    description: 'Payment via debt screen',
+                  );
+                  await db.accountsDao.updateBalance(
+                      debt.id,
+                      newBalance < 0 ? 0 : newBalance);
+                  await _loadData();
+                  if (mounted) {
+                    ScaffoldMessenger.of(this.context)
+                        .showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              l10n.paymentRecordedSuccess)),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(this.context)
+                        .showSnackBar(
+                      SnackBar(
+                          content: Text('Error: $e')),
+                    );
+                  }
+                }
               },
-              child: const Text('تأكيد'),
+              child: Text(l10n.confirm),
             ),
           ],
         ),
       ),
     );
   }
-  
+
   void _sendReminders() {
-    final overdueDebts = _debts.where((d) => d.status == 'overdue').toList();
+    final l10n = AppLocalizations.of(context)!;
+    final overdueDebts =
+        _debtors.where((d) => _getStatus(d) == 'overdue').toList();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('إرسال تذكيرات'),
-        content: Text('سيتم إرسال تذكير لـ ${overdueDebts.length} عميل لديهم ديون متأخرة'),
+        title: Text(l10n.sendRemindersTitle),
+        content:
+            Text(l10n.sendRemindersConfirm(overdueDebts.length)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تم إرسال ${overdueDebts.length} تذكير')),
+                SnackBar(
+                    content: Text(
+                        l10n.remindersSent(overdueDebts.length))),
               );
             },
-            child: const Text('إرسال'),
+            child: Text(l10n.sendAction),
           ),
         ],
       ),
@@ -484,32 +611,12 @@ class _CustomerDebtScreenState extends State<CustomerDebtScreen> with SingleTick
   }
 }
 
-class _DebtRecord {
-  final String id;
-  final String customerName;
-  final String phone;
-  final double totalDebt;
-  final DateTime dueDate;
-  final DateTime? lastPayment;
-  final String status;
-  
-  _DebtRecord({
-    required this.id,
-    required this.customerName,
-    required this.phone,
-    required this.totalDebt,
-    required this.dueDate,
-    this.lastPayment,
-    required this.status,
-  });
-}
-
 class _SummaryCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
   final Color color;
-  
+
   const _SummaryCard({
     required this.icon,
     required this.title,
@@ -532,11 +639,14 @@ class _SummaryCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: color),
           ),
           Text(
             title,
-            style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8)),
+            style: TextStyle(
+                fontSize: 11,
+                color: color.withValues(alpha: 0.8)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -548,7 +658,7 @@ class _SummaryCard extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
-  
+
   const _DetailRow({required this.label, required this.value});
 
   @override
@@ -558,8 +668,10 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(label,
+              style: TextStyle(color: Colors.grey.shade600)),
+          Text(value,
+              style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),
     );

@@ -28,7 +28,7 @@ class SyncService {
     SyncPriority priority = SyncPriority.normal,
   }) async {
     final id = _uuid.v4();
-    final idempotencyKey = '${tableName}_${recordId}_${operation.name}_${DateTime.now().millisecondsSinceEpoch}';
+    final idempotencyKey = '${tableName}_${recordId}_${operation.name}';
     
     // التحقق من عدم وجود نفس العملية
     final existing = await _syncQueueDao.findByIdempotencyKey(idempotencyKey);
@@ -131,11 +131,46 @@ class SyncService {
     return _syncQueueDao.removeItem(id);
   }
   
+  /// الحصول على العناصر المتعارضة
+  Future<List<SyncQueueTableData>> getConflictItems() {
+    return _syncQueueDao.getConflictItems();
+  }
+
+  /// مراقبة العناصر المعلقة
+  Stream<List<SyncQueueTableData>> watchPendingItems() {
+    return _syncQueueDao.watchPendingItems();
+  }
+
+  /// مراقبة العناصر المتعارضة
+  Stream<List<SyncQueueTableData>> watchConflictItems() {
+    return _syncQueueDao.watchConflictItems();
+  }
+
+  /// مراقبة عدد العناصر المتعارضة
+  Stream<int> watchConflictCount() {
+    return _syncQueueDao.watchConflictCount();
+  }
+
+  /// تعيين كـ "تم الحل"
+  Future<void> markResolved(String id) {
+    return _syncQueueDao.markResolved(id);
+  }
+
+  /// إعادة المحاولة لعنصر
+  Future<void> retryItem(String id) {
+    return _syncQueueDao.retryItem(id);
+  }
+
+  /// تعيين كـ "تعارض"
+  Future<void> markAsConflict(String id, String error) {
+    return _syncQueueDao.markAsConflict(id, error);
+  }
+
   /// تنظيف العناصر القديمة
   Future<int> cleanup({Duration olderThan = const Duration(days: 7)}) {
     return _syncQueueDao.cleanupSyncedItems(olderThan: olderThan);
   }
-  
+
   int _priorityToInt(SyncPriority priority) {
     switch (priority) {
       case SyncPriority.low:

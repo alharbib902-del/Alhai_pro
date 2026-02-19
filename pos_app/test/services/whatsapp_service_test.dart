@@ -1,176 +1,253 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:pos_app/data/local/app_database.dart';
+import 'package:pos_app/data/local/daos/whatsapp_messages_dao.dart';
+import 'package:pos_app/services/whatsapp/phone_validation_service.dart';
 import 'package:pos_app/services/whatsapp_service.dart';
+
+// ===========================================
+// Mocks
+// ===========================================
+
+class MockWhatsAppMessagesDao extends Mock implements WhatsAppMessagesDao {}
+
+class MockPhoneValidationService extends Mock
+    implements PhoneValidationService {}
+
+class FakeWhatsAppMessagesTableCompanion extends Fake
+    implements WhatsAppMessagesTableCompanion {}
 
 // ===========================================
 // WhatsApp Service Tests
 // ===========================================
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  late MockWhatsAppMessagesDao mockDao;
+  late MockPhoneValidationService mockPhoneValidator;
+  late WhatsAppService service;
+
+  setUpAll(() {
+    registerFallbackValue(FakeWhatsAppMessagesTableCompanion());
+    registerFallbackValue(const Duration(minutes: 5));
+  });
 
   setUp(() {
-    // Mock url_launcher MethodChannel
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/url_launcher'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'canLaunch') return true;
-        if (methodCall.method == 'launch') return true;
-        return null;
-      },
+    mockDao = MockWhatsAppMessagesDao();
+    mockPhoneValidator = MockPhoneValidationService();
+
+    // enqueue always succeeds (positional parameter)
+    when(() => mockDao.enqueue(any())).thenAnswer((_) async => 1);
+
+    // no duplicate messages by default
+    when(
+      () => mockDao.findRecentDuplicate(
+        phone: any(named: 'phone'),
+        referenceType: any(named: 'referenceType'),
+        referenceId: any(named: 'referenceId'),
+      ),
+    ).thenAnswer((_) async => null);
+
+    service = WhatsAppService(
+      messagesDao: mockDao,
+      phoneValidator: mockPhoneValidator,
+      storeId: 'test-store',
     );
   });
 
-  tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io'),
-      null,
-    );
-  });
   group('WhatsAppService', () {
     group('sendMessage', () {
-      test('يُرسل رسالة بنجاح', () async {
-        final result = await WhatsAppService.sendMessage(
+      test('sends a message and returns UUID', () async {
+        final result = await service.sendMessage(
           phoneNumber: '0501234567',
           message: 'مرحباً',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        expect(result.length, greaterThan(0));
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يتعامل مع رقم يبدأ بـ 05', () async {
-        final result = await WhatsAppService.sendMessage(
+      test('handles phone starting with 05', () async {
+        final result = await service.sendMessage(
           phoneNumber: '0512345678',
           message: 'اختبار',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يتعامل مع رقم يبدأ بـ 966', () async {
-        final result = await WhatsAppService.sendMessage(
+      test('handles phone starting with 966', () async {
+        final result = await service.sendMessage(
           phoneNumber: '966512345678',
           message: 'اختبار',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يتعامل مع رقم يبدأ بـ +966', () async {
-        final result = await WhatsAppService.sendMessage(
+      test('handles phone starting with +966', () async {
+        final result = await service.sendMessage(
           phoneNumber: '+966512345678',
           message: 'اختبار',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
     });
 
     group('sendDebtReminder', () {
-      test('يُرسل تذكير الدين', () async {
-        final result = await WhatsAppService.sendDebtReminder(
+      test('sends debt reminder', () async {
+        final result = await service.sendDebtReminder(
           phoneNumber: '0501234567',
           customerName: 'محمد أحمد',
+          customerId: 'cust-001',
           amount: 500.50,
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يتعامل مع مبلغ كبير', () async {
-        final result = await WhatsAppService.sendDebtReminder(
+      test('handles large amount', () async {
+        final result = await service.sendDebtReminder(
           phoneNumber: '0501234567',
           customerName: 'عميل مهم',
+          customerId: 'cust-002',
           amount: 15000.75,
           storeName: 'سوبرماركت الأمل',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
     });
 
     group('sendReceipt', () {
-      test('يُرسل إيصال الفاتورة', () async {
-        final result = await WhatsAppService.sendReceipt(
+      test('sends receipt', () async {
+        final result = await service.sendReceipt(
           phoneNumber: '0501234567',
           customerName: 'خالد علي',
           receiptNumber: 'INV-2024-001',
           total: 250.00,
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
     });
 
     group('sendPromotion', () {
-      test('يُرسل عرض ترويجي', () async {
-        final result = await WhatsAppService.sendPromotion(
+      test('sends promotion', () async {
+        final result = await service.sendPromotion(
           phoneNumber: '0501234567',
           customerName: 'سارة',
           promotionTitle: 'خصم 20% على جميع المنتجات',
           promotionDetails: 'العرض ساري حتى نهاية الأسبوع',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
     });
 
     group('sendOrderUpdate', () {
-      test('يُرسل تحديث طلب مؤكد', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('sends confirmed order update', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-001',
           status: 'confirmed',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يُرسل تحديث طلب قيد التحضير', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('sends preparing order update', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-002',
           status: 'preparing',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يُرسل تحديث طلب جاهز', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('sends ready order update', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-003',
           status: 'ready',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يُرسل تحديث طلب قيد التوصيل', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('sends delivering order update', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-004',
           status: 'delivering',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يُرسل تحديث طلب تم توصيله', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('sends delivered order update', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-005',
           status: 'delivered',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
       });
 
-      test('يتعامل مع حالة غير معروفة', () async {
-        final result = await WhatsAppService.sendOrderUpdate(
+      test('handles unknown status', () async {
+        final result = await service.sendOrderUpdate(
           phoneNumber: '0501234567',
           orderNumber: 'ORD-2024-006',
           status: 'unknown_status',
           storeName: 'متجر الحي',
         );
-        expect(result, isTrue);
+        expect(result, isA<String>());
+        verify(() => mockDao.enqueue(any())).called(1);
+      });
+    });
+
+    group('deduplication', () {
+      test('returns existing message ID for duplicate', () async {
+        // First call - send with reference
+        final firstResult = await service.sendReceipt(
+          phoneNumber: '0501234567',
+          customerName: 'خالد',
+          receiptNumber: 'INV-001',
+          total: 100.0,
+          storeName: 'متجر',
+        );
+
+        // Setup mock to return a fake duplicate for the same reference
+        when(
+          () => mockDao.findRecentDuplicate(
+            phone: any(named: 'phone'),
+            referenceType: 'sale',
+            referenceId: 'INV-001',
+          ),
+        ).thenAnswer((_) async => _fakeMessageData(firstResult));
+
+        // Second call - should detect duplicate
+        final secondResult = await service.sendReceipt(
+          phoneNumber: '0501234567',
+          customerName: 'خالد',
+          receiptNumber: 'INV-001',
+          total: 100.0,
+          storeName: 'متجر',
+        );
+
+        expect(secondResult, equals(firstResult));
+        // enqueue should only be called once (the first time)
+        verify(() => mockDao.enqueue(any())).called(1);
       });
     });
   });
@@ -204,4 +281,20 @@ void main() {
       expect(templates[WhatsAppTemplates.welcome], 'رسالة ترحيب');
     });
   });
+}
+
+/// Helper to create a fake WhatsAppMessagesTableData for deduplication tests
+WhatsAppMessagesTableData _fakeMessageData(String id) {
+  return WhatsAppMessagesTableData(
+    id: id,
+    storeId: 'test-store',
+    phone: '966501234567',
+    messageType: 'text',
+    textContent: 'test',
+    status: 'pending',
+    retryCount: 0,
+    maxRetries: 3,
+    priority: 3,
+    createdAt: DateTime.now(),
+  );
 }

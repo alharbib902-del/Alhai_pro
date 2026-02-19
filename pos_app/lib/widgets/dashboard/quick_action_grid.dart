@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// إجراء سريع
 class QuickAction {
@@ -274,10 +275,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction refund({VoidCallback? onTap}) {
+  static QuickAction refund({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'refund',
-      title: 'استرجاع',
+      title: l10n.returnLabel,
       icon: Icons.replay_rounded,
       color: const Color(0xFFF59E0B), // Amber
       onTap: onTap,
@@ -294,10 +296,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction inventory({VoidCallback? onTap, String? badge}) {
+  static QuickAction inventory({required BuildContext context, VoidCallback? onTap, String? badge}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'inventory',
-      title: 'المخزون',
+      title: l10n.inventory,
       icon: Icons.inventory_2_rounded,
       color: const Color(0xFF06B6D4), // Cyan
       badge: badge,
@@ -305,20 +308,22 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction customers({VoidCallback? onTap}) {
+  static QuickAction customers({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'customers',
-      title: 'العملاء',
+      title: l10n.customers,
       icon: Icons.people_alt_rounded,
       color: const Color(0xFFEC4899), // Pink
       onTap: onTap,
     );
   }
 
-  static QuickAction settings({VoidCallback? onTap}) {
+  static QuickAction settings({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'settings',
-      title: 'الإعدادات',
+      title: l10n.settings,
       icon: Icons.settings_rounded,
       color: AppColors.textSecondary,
       onTap: onTap,
@@ -335,10 +340,10 @@ class DefaultQuickActions {
     );
   }
 
-  static List<QuickAction> get defaultActions => [
+  static List<QuickAction> defaultActions(BuildContext context) => [
         newSale(),
         addProduct(),
-        refund(),
+        refund(context: context),
         dailyReport(),
       ];
 }

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إدارة المستخدمين
@@ -18,55 +19,37 @@ class UsersManagementScreen extends ConsumerStatefulWidget {
 
 class _UsersManagementScreenState
     extends ConsumerState<UsersManagementScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
 
-  final List<_User> _users = [
-    _User(id: '1', name: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f', role: 'owner', phone: '0501234567', active: true),
-    _User(id: '2', name: '\u0645\u062d\u0645\u062f \u0639\u0644\u064a', role: 'manager', phone: '0551234567', active: true),
-    _User(id: '3', name: '\u062e\u0627\u0644\u062f \u0633\u0639\u062f', role: 'cashier', phone: '0561234567', active: true),
-    _User(id: '4', name: '\u0641\u0647\u062f \u0639\u0645\u0631', role: 'cashier', phone: '0571234567', active: false),
-  ];
+  List<_User> _users = [];
+  bool _isLoading = true;
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
   }
 
+  Future<void> _loadUsers() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    final db = getIt<AppDatabase>();
+    final usersData = await db.usersDao.getAllUsers(storeId);
+    if (mounted) {
+      setState(() {
+        _users = usersData.map((u) => _User(
+          id: u.id,
+          name: u.name,
+          role: u.role,
+          phone: u.phone ?? '',
+          active: u.isActive,
+        )).toList();
+        _isLoading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -75,82 +58,30 @@ class _UsersManagementScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.usersManagement,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName:
-                      '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(
-                        isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: _buildContent(
+                              isWideScreen, isMediumScreen, isDark, l10n),
+                        ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
@@ -218,6 +149,7 @@ class _UsersManagementScreenState
   }
 
   Widget _buildUserTile(_User user, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return ListTile(
       leading: Stack(
         children: [
@@ -268,8 +200,8 @@ class _UsersManagementScreenState
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                '\u0645\u0639\u0637\u0644',
-                style: TextStyle(
+                l10n.disabledStatus,
+                style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   color: AppColors.error,
@@ -293,19 +225,22 @@ class _UsersManagementScreenState
                 ? Colors.white.withValues(alpha: 0.5)
                 : AppColors.textSecondary),
         onSelected: (action) => _handleUserAction(user, action),
-        itemBuilder: (context) => [
-          const PopupMenuItem(value: 'edit', child: Text('\u062a\u0639\u062f\u064a\u0644')),
-          PopupMenuItem(
-            value: user.active ? 'disable' : 'enable',
-            child: Text(user.active ? '\u062a\u0639\u0637\u064a\u0644' : '\u062a\u0641\u0639\u064a\u0644'),
-          ),
-          if (user.role != 'owner')
-            const PopupMenuItem(
-              value: 'delete',
-              child: Text('\u062d\u0630\u0641',
-                  style: TextStyle(color: AppColors.error)),
+        itemBuilder: (context) {
+          final l10n = AppLocalizations.of(context)!;
+          return [
+            PopupMenuItem(value: 'edit', child: Text(l10n.editMenuAction)),
+            PopupMenuItem(
+              value: user.active ? 'disable' : 'enable',
+              child: Text(user.active ? l10n.disableMenuAction : l10n.enableMenuAction),
             ),
-        ],
+            if (user.role != 'owner')
+              PopupMenuItem(
+                value: 'delete',
+                child: Text(l10n.delete,
+                    style: const TextStyle(color: AppColors.error)),
+              ),
+          ];
+        },
       ),
       onTap: () => _showUserDetails(user),
     );
@@ -329,15 +264,16 @@ class _UsersManagementScreenState
   }
 
   String _getRoleName(String role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role) {
       case 'owner':
-        return '\u0645\u0627\u0644\u0643';
+        return l10n.ownerRole;
       case 'manager':
-        return '\u0645\u062f\u064a\u0631';
+        return l10n.managerRole;
       case 'supervisor':
-        return '\u0645\u0634\u0631\u0641';
+        return l10n.supervisorRole;
       case 'cashier':
-        return '\u0643\u0627\u0634\u064a\u0631';
+        return l10n.cashierRole;
       default:
         return role;
     }
@@ -374,72 +310,76 @@ class _UsersManagementScreenState
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('\u0625\u0636\u0627\u0641\u0629 \u0645\u0633\u062a\u062e\u062f\u0645'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: '\u0627\u0644\u0627\u0633\u0645 *',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: Text(l10n.addUserTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.nameRequired,
+                    prefixIcon: const Icon(Icons.person),
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: l10n.phoneNumber,
+                    prefixIcon: const Icon(Icons.phone),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  // ignore: deprecated_member_use
+                  value: role,
+                  decoration: InputDecoration(
+                    labelText: l10n.roleLabel,
+                    prefixIcon: const Icon(Icons.security),
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: [
+                    DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)),
+                    DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)),
+                    DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole)),
+                  ],
+                  onChanged: (v) => setDialogState(() => role = v!),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.cancel),
               ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: '\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641',
-                  prefixIcon: Icon(Icons.phone),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: role,
-                decoration: const InputDecoration(
-                  labelText: '\u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629',
-                  prefixIcon: Icon(Icons.security),
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'manager', child: Text('\u0645\u062f\u064a\u0631')),
-                  DropdownMenuItem(value: 'supervisor', child: Text('\u0645\u0634\u0631\u0641')),
-                  DropdownMenuItem(value: 'cashier', child: Text('\u0643\u0627\u0634\u064a\u0631')),
-                ],
-                onChanged: (v) => setDialogState(() => role = v!),
+              FilledButton(
+                onPressed: () {
+                  if (nameController.text.isNotEmpty) {
+                    setState(() {
+                      _users.add(_User(
+                        id: 'new_${_users.length}',
+                        name: nameController.text,
+                        role: role,
+                        phone: phoneController.text,
+                        active: true,
+                      ));
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+                child: Text(l10n.addAction),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('\u0625\u0644\u063a\u0627\u0621'),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty) {
-                  setState(() {
-                    _users.add(_User(
-                      id: 'new_${_users.length}',
-                      name: nameController.text,
-                      role: role,
-                      phone: phoneController.text,
-                      active: true,
-                    ));
-                  });
-                }
-                Navigator.pop(context);
-              },
-              child: const Text('\u0625\u0636\u0627\u0641\u0629'),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -450,77 +390,82 @@ class _UsersManagementScreenState
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: '\u0627\u0644\u0627\u0633\u0645 *',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: '\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641',
-                  prefixIcon: Icon(Icons.phone),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (user.role != 'owner')
-                DropdownButtonFormField<String>(
-                  value: role,
-                  decoration: const InputDecoration(
-                    labelText: '\u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629',
-                    prefixIcon: Icon(Icons.security),
-                    border: OutlineInputBorder(),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: Text(l10n.editUserTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.nameRequired,
+                    prefixIcon: const Icon(Icons.person),
+                    border: const OutlineInputBorder(),
                   ),
-                  items: const [
-                    DropdownMenuItem(value: 'manager', child: Text('\u0645\u062f\u064a\u0631')),
-                    DropdownMenuItem(value: 'supervisor', child: Text('\u0645\u0634\u0631\u0641')),
-                    DropdownMenuItem(value: 'cashier', child: Text('\u0643\u0627\u0634\u064a\u0631')),
-                  ],
-                  onChanged: (v) => setDialogState(() => role = v!),
                 ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: l10n.phoneNumber,
+                    prefixIcon: const Icon(Icons.phone),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (user.role != 'owner')
+                  DropdownButtonFormField<String>(
+                    // ignore: deprecated_member_use
+                    value: role,
+                    decoration: InputDecoration(
+                      labelText: l10n.roleLabel,
+                      prefixIcon: const Icon(Icons.security),
+                      border: const OutlineInputBorder(),
+                    ),
+                    items: [
+                      DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)),
+                      DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)),
+                      DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole)),
+                    ],
+                    onChanged: (v) => setDialogState(() => role = v!),
+                  ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton(
+                onPressed: () {
+                  setState(() {
+                    final index = _users.indexOf(user);
+                    _users[index] = _User(
+                      id: user.id,
+                      name: nameController.text,
+                      role: user.role == 'owner' ? 'owner' : role,
+                      phone: phoneController.text,
+                      active: user.active,
+                    );
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text(l10n.save),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('\u0625\u0644\u063a\u0627\u0621'),
-            ),
-            FilledButton(
-              onPressed: () {
-                setState(() {
-                  final index = _users.indexOf(user);
-                  _users[index] = _User(
-                    id: user.id,
-                    name: nameController.text,
-                    role: user.role == 'owner' ? 'owner' : role,
-                    phone: phoneController.text,
-                    active: user.active,
-                  );
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('\u062d\u0641\u0638'),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   void _showUserDetails(_User user) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -563,7 +508,7 @@ class _UsersManagementScreenState
             const SizedBox(height: 24),
             ListTile(
               leading: const Icon(Icons.phone),
-              title: Text('\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641',
+              title: Text(l10n.phoneNumber,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle: Text(user.phone),
@@ -572,11 +517,11 @@ class _UsersManagementScreenState
               leading: Icon(
                   user.active ? Icons.check_circle : Icons.cancel,
                   color: user.active ? AppColors.success : AppColors.error),
-              title: Text('\u0627\u0644\u062d\u0627\u0644\u0629',
+              title: Text(l10n.status,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle:
-                  Text(user.active ? '\u0646\u0634\u0637' : '\u0645\u0639\u0637\u0644'),
+                  Text(user.active ? l10n.activeStatus : l10n.disabledStatus),
             ),
           ],
         ),

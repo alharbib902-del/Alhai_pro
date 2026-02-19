@@ -4,76 +4,30 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/shifts_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إدارة الورديات
-class ShiftsScreen extends ConsumerStatefulWidget {
+class ShiftsScreen extends ConsumerWidget {
   const ShiftsScreen({super.key});
 
-  @override
-  ConsumerState<ShiftsScreen> createState() => _ShiftsScreenState();
-}
-
-class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'pos';
-
-  // Mock shift data
-  final List<_ShiftData> _shifts = [
-    _ShiftData(id: 1, cashier: 'أحمد محمد', openTime: '08:00', closeTime: null, totalSales: 4200, transactions: 45, cashSales: 2350, cardSales: 1850, creditSales: 0, openingCash: 500, isOpen: true),
-    _ShiftData(id: 2, cashier: 'سارة علي', openTime: '08:00', closeTime: '16:30', totalSales: 3800, transactions: 38, cashSales: 2100, cardSales: 1200, creditSales: 500, openingCash: 500, isOpen: false),
-    _ShiftData(id: 3, cashier: 'أحمد محمد', openTime: '07:30', closeTime: '15:00', totalSales: 5100, transactions: 52, cashSales: 3200, cardSales: 1500, creditSales: 400, openingCash: 500, isOpen: false),
-    _ShiftData(id: 4, cashier: 'خالد يوسف', openTime: '09:00', closeTime: '17:30', totalSales: 2900, transactions: 28, cashSales: 1600, cardSales: 1100, creditSales: 200, openingCash: 500, isOpen: false),
-    _ShiftData(id: 5, cashier: 'سارة علي', openTime: '08:00', closeTime: '16:00', totalSales: 4500, transactions: 41, cashSales: 2500, cardSales: 1500, creditSales: 500, openingCash: 500, isOpen: false),
-  ];
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
+  // Helper to format time from DateTime
+  String _formatTime(DateTime? dt) {
+    if (dt == null) return '';
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.shift,
@@ -81,11 +35,11 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                   showSearch: isWideScreen,
                   searchHint: l10n.searchPlaceholder,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                   actions: [
@@ -102,81 +56,54 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                   ],
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                  child: ref.watch(todayShiftsProvider).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('${l10n.error}: $e')),
+                    data: (shifts) => SingleChildScrollView(
+                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      child: _buildContent(context, shifts, isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final openShift = _shifts.firstWhere((s) => s.isOpen, orElse: () => _shifts.first);
+  Widget _buildContent(BuildContext context, List<ShiftsTableData> shifts, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+    final openShift = shifts.where((s) => s.status == 'open').firstOrNull;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Current shift status card
-        if (openShift.isOpen)
-          _buildCurrentShiftCard(openShift, isDark, l10n),
-        if (openShift.isOpen)
+        if (openShift != null)
+          _buildCurrentShiftCard(context, openShift, isDark, l10n),
+        if (openShift != null)
           SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Stats cards
-        _buildStatsRow(isWideScreen, isMediumScreen, isDark, l10n),
+        _buildStatsRow(shifts, isWideScreen, isMediumScreen, isDark, l10n),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Shifts list
-        _buildShiftsList(isDark, l10n),
+        _buildShiftsList(context, shifts, isDark, l10n),
       ],
     );
   }
 
-  Widget _buildCurrentShiftCard(_ShiftData shift, bool isDark, AppLocalizations l10n) {
+  Widget _buildCurrentShiftCard(BuildContext context, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF10B981), Color(0xFF059669)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -196,7 +123,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'وردية مفتوحة حالياً', // TODO: l10n.currentShiftOpen
+                  l10n.currentlyOpenShift,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -205,7 +132,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${shift.cashier} • منذ ${shift.openTime}',
+                  '${shift.cashierName} • ${l10n.since} ${_formatTime(shift.openedAt)}',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
@@ -214,9 +141,9 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    _ShiftBadge(label: '${shift.totalSales.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.attach_money),
+                    _ShiftBadge(label: '${shift.totalSalesAmount.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.attach_money),
                     const SizedBox(width: 12),
-                    _ShiftBadge(label: '${shift.transactions} عملية', icon: Icons.receipt_long_rounded),
+                    _ShiftBadge(label: '${shift.totalSales} ${l10n.transaction}', icon: Icons.receipt_long_rounded),
                   ],
                 ),
               ],
@@ -236,36 +163,36 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
     );
   }
 
-  Widget _buildStatsRow(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final totalSales = _shifts.fold(0.0, (sum, s) => sum + s.totalSales);
-    final totalTransactions = _shifts.fold(0, (sum, s) => sum + s.transactions);
-    final openCount = _shifts.where((s) => s.isOpen).length;
-    final closedCount = _shifts.where((s) => !s.isOpen).length;
+  Widget _buildStatsRow(List<ShiftsTableData> shifts, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+    final totalSales = shifts.fold(0.0, (sum, s) => sum + s.totalSalesAmount);
+    final totalTransactions = shifts.fold(0, (sum, s) => sum + s.totalSales);
+    final openCount = shifts.where((s) => s.status == 'open').length;
+    final closedCount = shifts.where((s) => s.status != 'open').length;
 
     final cards = [
       _buildStatCard(
-        'إجمالي المبيعات', // TODO: l10n
+        l10n.totalSales,
         '${totalSales.toStringAsFixed(0)} ${l10n.sar}',
         Icons.trending_up_rounded,
         AppColors.success,
         isDark,
       ),
       _buildStatCard(
-        'إجمالي العمليات', // TODO: l10n
+        l10n.totalTransactions,
         '$totalTransactions',
         Icons.receipt_long_rounded,
         AppColors.info,
         isDark,
       ),
       _buildStatCard(
-        'ورديات مفتوحة', // TODO: l10n
+        l10n.openShifts,
         '$openCount',
         Icons.lock_open_rounded,
         AppColors.warning,
         isDark,
       ),
       _buildStatCard(
-        'ورديات مغلقة', // TODO: l10n
+        l10n.closedShifts,
         '$closedCount',
         Icons.lock_rounded,
         AppColors.secondary,
@@ -336,7 +263,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
     );
   }
 
-  Widget _buildShiftsList(bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftsList(BuildContext context, List<ShiftsTableData> shifts, bool isDark, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -350,7 +277,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             child: Row(
               children: [
                 Text(
-                  'سجل الورديات', // TODO: l10n.shiftsLog
+                  l10n.shiftsLog,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -377,15 +304,19 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             ),
           ),
           Divider(height: 1, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-          ...(_shifts.map((shift) => _buildShiftTile(shift, isDark, l10n))),
+          if (shifts.isEmpty)
+            AppEmptyState.noData(title: l10n.noShiftsToday, description: l10n.openShift)
+          else
+            ...(shifts.map((shift) => _buildShiftTile(context, shift, isDark, l10n))),
         ],
       ),
     );
   }
 
-  Widget _buildShiftTile(_ShiftData shift, bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftTile(BuildContext context, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+    final isOpen = shift.status == 'open';
     return InkWell(
-      onTap: () => _showShiftDetails(shift, isDark, l10n),
+      onTap: () => _showShiftDetails(context, shift, isDark, l10n),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
@@ -401,14 +332,14 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: shift.isOpen
+                color: isOpen
                     ? AppColors.success.withValues(alpha: 0.1)
                     : (isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.backgroundSecondary),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                shift.isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
-                color: shift.isOpen ? AppColors.success : (isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted),
+                isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
+                color: isOpen ? AppColors.success : (isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted),
                 size: 22,
               ),
             ),
@@ -420,14 +351,14 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                   Row(
                     children: [
                       Text(
-                        'وردية #${shift.id}', // TODO: l10n
+                        '${l10n.shift} #${shift.id.substring(0, 6)}',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(width: 8),
-                      if (shift.isOpen)
+                      if (isOpen)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
@@ -435,15 +366,15 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            'مفتوحة', // TODO: l10n.open
-                            style: TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.w600),
+                            l10n.open,
+                            style: const TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.w600),
                           ),
                         ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${shift.cashier} • ${shift.openTime} ${shift.closeTime != null ? '- ${shift.closeTime}' : ''}',
+                    '${shift.cashierName} • ${_formatTime(shift.openedAt)} ${shift.closedAt != null ? '- ${_formatTime(shift.closedAt)}' : ''}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
@@ -456,7 +387,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${shift.totalSales.toStringAsFixed(0)} ${l10n.sar}',
+                  '${shift.totalSalesAmount.toStringAsFixed(0)} ${l10n.sar}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary,
@@ -464,7 +395,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${shift.transactions} عملية', // TODO: l10n
+                  '${shift.totalSales} ${l10n.transaction}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
@@ -484,7 +415,8 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
     );
   }
 
-  void _showShiftDetails(_ShiftData shift, bool isDark, AppLocalizations l10n) {
+  void _showShiftDetails(BuildContext context, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+    final isOpen = shift.status == 'open';
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -517,14 +449,14 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: shift.isOpen
+                    color: isOpen
                         ? AppColors.success.withValues(alpha: 0.1)
                         : AppColors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    shift.isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
-                    color: shift.isOpen ? AppColors.success : AppColors.info,
+                    isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
+                    color: isOpen ? AppColors.success : AppColors.info,
                     size: 24,
                   ),
                 ),
@@ -534,7 +466,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'وردية #${shift.id}', // TODO: l10n
+                        '${l10n.shift} #${shift.id.substring(0, 6)}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -542,13 +474,13 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                         ),
                       ),
                       Text(
-                        shift.cashier,
+                        shift.cashierName,
                         style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
                       ),
                     ],
                   ),
                 ),
-                if (shift.isOpen)
+                if (isOpen)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
@@ -556,26 +488,28 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'مفتوحة', // TODO: l10n.open
-                      style: TextStyle(color: AppColors.success, fontWeight: FontWeight.w600, fontSize: 13),
+                      l10n.open,
+                      style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.w600, fontSize: 13),
                     ),
                   ),
               ],
             ),
             const SizedBox(height: 24),
-            _DetailRow(label: 'وقت الفتح', value: shift.openTime, icon: Icons.login_rounded, isDark: isDark),
-            if (shift.closeTime != null)
-              _DetailRow(label: 'وقت الإغلاق', value: shift.closeTime!, icon: Icons.logout_rounded, isDark: isDark),
+            _DetailRow(label: l10n.openTime, value: _formatTime(shift.openedAt), icon: Icons.login_rounded, isDark: isDark),
+            if (shift.closedAt != null)
+              _DetailRow(label: l10n.closeTime, value: _formatTime(shift.closedAt), icon: Icons.logout_rounded, isDark: isDark),
             Divider(height: 32, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
             _DetailRow(label: l10n.openingBalance, value: '${shift.openingCash.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.account_balance_wallet_rounded, isDark: isDark),
-            _DetailRow(label: 'إجمالي المبيعات', value: '${shift.totalSales.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.trending_up_rounded, isDark: isDark, valueColor: AppColors.success),
-            _DetailRow(label: 'عدد العمليات', value: '${shift.transactions}', icon: Icons.receipt_long_rounded, isDark: isDark),
+            _DetailRow(label: l10n.totalSales, value: '${shift.totalSalesAmount.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.trending_up_rounded, isDark: isDark, valueColor: AppColors.success),
+            _DetailRow(label: l10n.transactionCount, value: '${shift.totalSales}', icon: Icons.receipt_long_rounded, isDark: isDark),
             Divider(height: 32, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            _DetailRow(label: 'نقداً', value: '${shift.cashSales.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.money_rounded, isDark: isDark, valueColor: AppColors.cash),
-            _DetailRow(label: 'بطاقة', value: '${shift.cardSales.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.credit_card_rounded, isDark: isDark, valueColor: AppColors.card),
-            _DetailRow(label: 'آجل', value: '${shift.creditSales.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.schedule_rounded, isDark: isDark, valueColor: AppColors.debt),
+            _DetailRow(label: l10n.expectedCash, value: '${(shift.expectedCash ?? 0).toStringAsFixed(0)} ${l10n.sar}', icon: Icons.money_rounded, isDark: isDark, valueColor: AppColors.cash),
+            if (shift.closingCash != null)
+              _DetailRow(label: l10n.closingCash, value: '${shift.closingCash!.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.account_balance_wallet_rounded, isDark: isDark, valueColor: AppColors.card),
+            if (shift.difference != null)
+              _DetailRow(label: l10n.difference, value: '${shift.difference!.toStringAsFixed(0)} ${l10n.sar}', icon: Icons.compare_arrows_rounded, isDark: isDark, valueColor: shift.difference! >= 0 ? AppColors.success : AppColors.error),
             const SizedBox(height: 24),
-            if (shift.isOpen)
+            if (isOpen)
               FilledButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
@@ -595,34 +529,6 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
       ),
     );
   }
-}
-
-class _ShiftData {
-  final int id;
-  final String cashier;
-  final String openTime;
-  final String? closeTime;
-  final double totalSales;
-  final int transactions;
-  final double cashSales;
-  final double cardSales;
-  final double creditSales;
-  final double openingCash;
-  final bool isOpen;
-
-  const _ShiftData({
-    required this.id,
-    required this.cashier,
-    required this.openTime,
-    this.closeTime,
-    required this.totalSales,
-    required this.transactions,
-    required this.cashSales,
-    required this.cardSales,
-    required this.creditSales,
-    required this.openingCash,
-    required this.isOpen,
-  });
 }
 
 class _ShiftBadge extends StatelessWidget {

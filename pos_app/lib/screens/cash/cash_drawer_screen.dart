@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/shifts_providers.dart';
+import '../../services/manager_approval_service.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إدارة درج النقد
@@ -16,31 +19,13 @@ class CashDrawerScreen extends ConsumerStatefulWidget {
 }
 
 class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'pos';
-
-  final double _openingBalance = 500.0;
-  final double _cashIn = 8450.0;
-  final double _cashOut = 350.0;
-  final double _expectedBalance = 8600.0;
-  double _actualBalance = 0;
-  bool _isOpen = true;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
+  /// Format time from DateTime
+  String _formatTime(DateTime dt) {
+    final hour = dt.hour;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'م' : 'ص';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    return '$displayHour:$minute $period';
   }
 
   @override
@@ -50,79 +35,100 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+    final userName = user?.name ?? l10n.defaultUserName;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.cashDrawer,
-                  subtitle: _getDateSubtitle(l10n),
-                  showSearch: isWideScreen,
-                  searchHint: l10n.searchPlaceholder,
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.cashDrawer,
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: isWideScreen,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: userName,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: ref.watch(openShiftProvider).when(
+            data: (shift) {
+              if (shift == null) {
+                return _buildNoShiftMessage(isDark, l10n, isMediumScreen);
+              }
+              return ref.watch(shiftMovementsProvider(shift.id)).when(
+                data: (movements) => SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(
+                    shift, movements,
+                    isWideScreen, isMediumScreen, isDark, l10n,
+                  ),
                 ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('$e')),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(child: Text('$e')),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoShiftMessage(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+      child: Column(
+        children: [
+          // Closed status card
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.error.withValues(alpha: isDark ? 0.15 : 0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.lock_rounded, color: AppColors.error, size: 32),
+                ),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.shiftIsClosed,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.error,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.noOpenShiftCurrently,
+                        style: TextStyle(
+                          color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
       ),
     );
   }
@@ -133,12 +139,29 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(
+    ShiftsTableData shift,
+    List<CashMovementsTableData> movements,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    // Compute values from shift and movements
+    final openingBalance = shift.openingCash;
+    final cashIn = movements
+        .where((m) => m.type == 'cash_in')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final cashOut = movements
+        .where((m) => m.type == 'cash_out')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final expectedBalance = openingBalance + cashIn - cashOut;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Status card
-        _buildStatusCard(isDark, l10n),
+        _buildStatusCard(shift, isDark, l10n),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Balance summary + Quick actions
@@ -146,51 +169,41 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 3, child: _buildBalanceSummary(isDark, l10n)),
+              Expanded(flex: 3, child: _buildBalanceSummary(openingBalance, cashIn, cashOut, expectedBalance, isDark, l10n)),
               const SizedBox(width: 24),
-              Expanded(flex: 2, child: _buildQuickActions(isDark, l10n)),
+              Expanded(flex: 2, child: _buildQuickActions(shift, isDark, l10n)),
             ],
           )
         else ...[
-          _buildBalanceSummary(isDark, l10n),
+          _buildBalanceSummary(openingBalance, cashIn, cashOut, expectedBalance, isDark, l10n),
           SizedBox(height: isMediumScreen ? 24 : 16),
-          _buildQuickActions(isDark, l10n),
+          _buildQuickActions(shift, isDark, l10n),
         ],
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Recent transactions
-        _buildRecentTransactions(isDark, l10n),
+        _buildRecentTransactions(movements, isDark, l10n),
       ],
     );
   }
 
-  Widget _buildStatusCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildStatusCard(ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _isOpen
-            ? AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08)
-            : AppColors.error.withValues(alpha: isDark ? 0.15 : 0.08),
+        color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _isOpen
-              ? AppColors.success.withValues(alpha: 0.3)
-              : AppColors.error.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (_isOpen ? AppColors.success : AppColors.error).withValues(alpha: 0.15),
+              color: AppColors.success.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              _isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
-              color: _isOpen ? AppColors.success : AppColors.error,
-              size: 32,
-            ),
+            child: const Icon(Icons.lock_open_rounded, color: AppColors.success, size: 32),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -198,16 +211,16 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _isOpen ? 'الوردية مفتوحة' : 'الوردية مغلقة', // TODO: l10n
-                  style: TextStyle(
+                  l10n.shiftIsOpen,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: _isOpen ? AppColors.success : AppColors.error,
+                    color: AppColors.success,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'منذ: 8:00 صباحاً', // TODO: l10n
+                  l10n.shiftOpenSince(_formatTime(shift.openedAt)),
                   style: TextStyle(
                     color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                     fontSize: 13,
@@ -216,22 +229,28 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               ],
             ),
           ),
-          if (_isOpen)
-            FilledButton.icon(
-              onPressed: _closeDrawer,
-              icon: const Icon(Icons.lock_rounded, size: 18),
-              label: Text(l10n.closeShift),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.error,
-                foregroundColor: Colors.white,
-              ),
+          FilledButton.icon(
+            onPressed: () => context.push(AppRoutes.shiftClose),
+            icon: const Icon(Icons.lock_rounded, size: 18),
+            label: Text(l10n.closeShift),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBalanceSummary(bool isDark, AppLocalizations l10n) {
+  Widget _buildBalanceSummary(
+    double openingBalance,
+    double cashIn,
+    double cashOut,
+    double expectedBalance,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -243,7 +262,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ملخص الرصيد', // TODO: l10n.balanceSummary
+            l10n.balanceSummary,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -251,9 +270,9 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _BalanceRow(label: l10n.openingBalance, amount: _openingBalance, icon: Icons.account_balance_wallet_rounded, color: AppColors.info, isDark: isDark),
-          _BalanceRow(label: 'النقد الوارد', amount: _cashIn, icon: Icons.add_circle_rounded, color: AppColors.success, isPositive: true, isDark: isDark),
-          _BalanceRow(label: 'النقد الصادر', amount: _cashOut, icon: Icons.remove_circle_rounded, color: AppColors.error, isNegative: true, isDark: isDark),
+          _BalanceRow(label: l10n.openingBalance, amount: openingBalance, icon: Icons.account_balance_wallet_rounded, color: AppColors.info, isDark: isDark),
+          _BalanceRow(label: l10n.cashIncoming, amount: cashIn, icon: Icons.add_circle_rounded, color: AppColors.success, isPositive: true, isDark: isDark),
+          _BalanceRow(label: l10n.cashOutgoing, amount: cashOut, icon: Icons.remove_circle_rounded, color: AppColors.error, isNegative: true, isDark: isDark),
           Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -261,7 +280,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'الرصيد المتوقع', // TODO: l10n.expectedBalance
+                  l10n.expectedBalance,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -269,7 +288,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                   ),
                 ),
                 Text(
-                  '${_expectedBalance.toStringAsFixed(0)} ${l10n.sar}',
+                  '${expectedBalance.toStringAsFixed(0)} ${l10n.sar}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: AppColors.success),
                 ),
               ],
@@ -280,7 +299,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     );
   }
 
-  Widget _buildQuickActions(bool isDark, AppLocalizations l10n) {
+  Widget _buildQuickActions(ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -292,7 +311,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'عمليات سريعة', // TODO: l10n.quickActions
+            l10n.quickActions,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -305,20 +324,20 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               Expanded(
                 child: _ActionButton(
                   icon: Icons.add_rounded,
-                  label: 'إيداع نقدي', // TODO: l10n.cashDeposit
+                  label: l10n.cashIn,
                   color: AppColors.success,
                   isDark: isDark,
-                  onTap: () => _addCashMovement(true),
+                  onTap: () => _addCashMovement(true, shift),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _ActionButton(
                   icon: Icons.remove_rounded,
-                  label: 'سحب نقدي', // TODO: l10n.cashWithdrawal
+                  label: l10n.cashOut,
                   color: AppColors.error,
                   isDark: isDark,
-                  onTap: () => _addCashMovement(false),
+                  onTap: () => _addCashMovement(false, shift),
                 ),
               ),
             ],
@@ -328,7 +347,12 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     );
   }
 
-  Widget _buildRecentTransactions(bool isDark, AppLocalizations l10n) {
+  Widget _buildRecentTransactions(List<CashMovementsTableData> movements, bool isDark, AppLocalizations l10n) {
+    // Show movements sorted by most recent first
+    final sortedMovements = List<CashMovementsTableData>.from(movements)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final recentMovements = sortedMovements.take(10).toList();
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -342,7 +366,7 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             child: Row(
               children: [
                 Text(
-                  'آخر الحركات', // TODO: l10n.recentTransactions
+                  l10n.recentTransactions,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
                 const Spacer(),
@@ -351,24 +375,39 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             ),
           ),
           const Divider(height: 1),
-          _TransactionTile(title: 'بيع نقدي - فاتورة #125', amount: 150, time: '10:45', isIncome: true, isDark: isDark, currency: l10n.sar),
-          _TransactionTile(title: 'سحب - مصروفات', amount: 100, time: '10:30', isIncome: false, isDark: isDark, currency: l10n.sar),
-          _TransactionTile(title: 'بيع نقدي - فاتورة #124', amount: 85, time: '10:15', isIncome: true, isDark: isDark, currency: l10n.sar),
-          _TransactionTile(title: 'بيع نقدي - فاتورة #123', amount: 230, time: '09:55', isIncome: true, isDark: isDark, currency: l10n.sar),
+          if (recentMovements.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                l10n.noCashMovementsYet,
+                style: TextStyle(
+                  color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
+                ),
+              ),
+            )
+          else
+            ...recentMovements.map((m) => _TransactionTile(
+              title: m.reason ?? (m.type == 'cash_in' ? l10n.cashIn : l10n.cashOut),
+              amount: m.amount,
+              time: _formatTime(m.createdAt),
+              isIncome: m.type == 'cash_in',
+              isDark: isDark,
+              currency: l10n.sar,
+            )),
         ],
       ),
     );
   }
 
-  void _addCashMovement(bool isDeposit) {
+  void _addCashMovement(bool isDeposit, ShiftsTableData shift) {
     final controller = TextEditingController();
     final noteController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(isDeposit ? 'إيداع نقدي' : 'سحب نقدي'), // TODO: l10n
+      builder: (dialogContext) => AlertDialog(
+        title: Text(isDeposit ? l10n.cashIn : l10n.cashOut),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -385,88 +424,70 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             TextField(
               controller: noteController,
               decoration: InputDecoration(
-                labelText: 'ملاحظة', // TODO: l10n.note
+                labelText: l10n.noteLabel,
                 prefixIcon: const Icon(Icons.note),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(isDeposit ? 'تم الإيداع' : 'تم السحب')),
-              );
+            onPressed: () async {
+              final amount = double.tryParse(controller.text);
+              if (amount == null || amount <= 0) return;
+
+              Navigator.pop(dialogContext);
+
+              // سحب نقدي: طلب موافقة المشرف عبر PinService
+              if (!isDeposit) {
+                if (!mounted) return;
+                final approved = await ManagerApprovalService.requestPinApproval(
+                  context: context,
+                  action: 'cash_out',
+                );
+                if (!approved) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم رفض العملية - لم تتم الموافقة'),
+                      backgroundColor: AppColors.warning,
+                    ),
+                  );
+                  return;
+                }
+              }
+
+              try {
+                final user = ref.read(currentUserProvider);
+                final addMovement = ref.read(addCashMovementProvider);
+                await addMovement(
+                  shiftId: shift.id,
+                  type: isDeposit ? 'cash_in' : 'cash_out',
+                  amount: amount,
+                  reason: noteController.text.isNotEmpty ? noteController.text : null,
+                  createdBy: user?.name,
+                );
+
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(isDeposit ? l10n.depositDone : l10n.withdrawalDone)),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
+                );
+              }
             },
             child: Text(l10n.confirm),
           ),
         ],
       ),
-    );
-  }
-
-  void _closeDrawer() {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(l10n.closeShift),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('الرصيد المتوقع: ${_expectedBalance.toStringAsFixed(0)} ${l10n.sar}'),
-              const SizedBox(height: 16),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'الرصيد الفعلي', suffixText: l10n.sar), // TODO: l10n
-                onChanged: (v) => setDialogState(() => _actualBalance = double.tryParse(v) ?? 0),
-              ),
-              if (_actualBalance > 0) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: _actualBalance == _expectedBalance
-                        ? AppColors.success.withValues(alpha: 0.1)
-                        : AppColors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('الفرق'), // TODO: l10n
-                      Text(
-                        '${(_actualBalance - _expectedBalance).toStringAsFixed(0)} ${l10n.sar}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _actualBalance == _expectedBalance ? AppColors.success : AppColors.warning,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() => _isOpen = false);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم إغلاق الوردية')),
-                );
-              },
-              child: Text(l10n.close),
-            ),
-          ],
-        ),
-      ),
-    );
+    ).then((_) {
+      controller.dispose();
+      noteController.dispose();
+    });
   }
 }
 
@@ -486,6 +507,7 @@ class _BalanceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -503,7 +525,7 @@ class _BalanceRow extends StatelessWidget {
             child: Text(label, style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textPrimary)),
           ),
           Text(
-            '${isPositive ? '+' : isNegative ? '-' : ''}${amount.toStringAsFixed(0)} ر.س',
+            '${isPositive ? '+' : isNegative ? '-' : ''}${amount.toStringAsFixed(0)} ${l10n.sar}',
             style: TextStyle(fontWeight: FontWeight.w600, color: color),
           ),
         ],

@@ -343,6 +343,8 @@ class AppColors {
   }
 
   /// الحصول على لون الرصيد حسب القيمة
+  /// الرصيد الموجب = مبلغ مستحق (دين) = أحمر
+  /// الرصيد السالب = رصيد دائن = تركواز
   static Color getBalanceColor(double balance) {
     if (balance > 0) return debt;
     if (balance < 0) return credit;

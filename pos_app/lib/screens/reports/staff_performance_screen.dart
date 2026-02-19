@@ -1,24 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير أداء الموظفين
-class StaffPerformanceScreen extends StatefulWidget {
+class StaffPerformanceScreen extends ConsumerStatefulWidget {
   const StaffPerformanceScreen({super.key});
 
   @override
-  State<StaffPerformanceScreen> createState() => _StaffPerformanceScreenState();
+  ConsumerState<StaffPerformanceScreen> createState() => _StaffPerformanceScreenState();
 }
 
-class _StaffPerformanceScreenState extends State<StaffPerformanceScreen> {
+class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen> {
   String _period = 'today';
-  
-  final List<_StaffData> _staff = [
-    _StaffData(name: 'أحمد محمد', role: 'كاشير', sales: 4250, transactions: 28, avgTicket: 152),
-    _StaffData(name: 'محمد علي', role: 'كاشير', sales: 3890, transactions: 24, avgTicket: 162),
-    _StaffData(name: 'خالد سعد', role: 'كاشير', sales: 3100, transactions: 20, avgTicket: 155),
-  ];
+  bool _isLoading = true;
+
+  List<_StaffData> _staff = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStaff();
+  }
+
+  Future<void> _loadStaff() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final users = await db.usersDao.getAllUsers(storeId);
+
+      _staff = users.map((u) => _StaffData(
+        name: u.name,
+        role: u.role,
+        sales: 0,
+        transactions: 0,
+        avgTicket: 0,
+      )).toList();
+
+      setState(() => _isLoading = false);
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('أداء الموظفين')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('أداء الموظفين'),
@@ -60,7 +93,7 @@ class _StaffPerformanceScreenState extends State<StaffPerformanceScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  ...List.generate(_staff.length, (index) {
+                  ...List.generate(_staff.length.clamp(0, 3), (index) {
                     final staff = _staff[index];
                     final colors = [Colors.amber, Colors.grey, Colors.brown];
                     return _LeaderItem(
@@ -142,7 +175,8 @@ class _StaffPerformanceScreenState extends State<StaffPerformanceScreen> {
                   const SizedBox(height: 16),
                   ...List.generate(_staff.length, (index) {
                     final staff = _staff[index];
-                    final maxSales = _staff.map((s) => s.sales).reduce((a, b) => a > b ? a : b);
+                    final rawMax = _staff.isEmpty ? 0.0 : _staff.map((s) => s.sales).reduce((a, b) => a > b ? a : b);
+                    final maxSales = rawMax > 0 ? rawMax : 1.0;
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Column(

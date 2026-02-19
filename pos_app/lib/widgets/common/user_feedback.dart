@@ -248,7 +248,9 @@ class QuickFeedbackWidget extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      controller.dispose();
+    });
   }
 }
 

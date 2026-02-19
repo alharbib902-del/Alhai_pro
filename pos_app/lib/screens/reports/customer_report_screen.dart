@@ -4,96 +4,105 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير العملاء
-class CustomerReportScreen extends StatefulWidget {
+class CustomerReportScreen extends ConsumerStatefulWidget {
   const CustomerReportScreen({super.key});
 
   @override
-  State<CustomerReportScreen> createState() => _CustomerReportScreenState();
+  ConsumerState<CustomerReportScreen> createState() => _CustomerReportScreenState();
 }
 
-class _CustomerReportScreenState extends State<CustomerReportScreen>
+class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   DateTimeRange _dateRange = DateTimeRange(
     start: DateTime.now().subtract(const Duration(days: 30)),
     end: DateTime.now(),
   );
+  bool _isLoading = true;
 
   // إحصائيات عامة
-  final int _totalCustomers = 1250;
-  final int _newCustomers = 85;
-  final int _activeCustomers = 456;
-  final double _totalRevenue = 125000.0;
-  final double _avgOrderValue = 275.50;
+  int _totalCustomers = 0;
+  int _newCustomers = 0;
+  int _activeCustomers = 0;
+  double _totalRevenue = 0.0;
+  double _avgOrderValue = 0.0;
 
   // أفضل العملاء
-  final List<CustomerData> _topCustomers = [
-    CustomerData(
-      id: '1',
-      name: 'أحمد محمد العلي',
-      phone: '0501234567',
-      totalOrders: 48,
-      totalSpent: 12500.0,
-      avgOrderValue: 260.4,
-      lastOrderDate: DateTime.now().subtract(const Duration(days: 2)),
-      tier: 'ذهبي',
-      loyaltyPoints: 2500,
-    ),
-    CustomerData(
-      id: '2',
-      name: 'محمد خالد السعيد',
-      phone: '0559876543',
-      totalOrders: 42,
-      totalSpent: 11200.0,
-      avgOrderValue: 266.7,
-      lastOrderDate: DateTime.now().subtract(const Duration(days: 1)),
-      tier: 'ماسي',
-      loyaltyPoints: 3200,
-    ),
-    CustomerData(
-      id: '3',
-      name: 'سارة عبدالله الأحمد',
-      phone: '0541112222',
-      totalOrders: 35,
-      totalSpent: 9800.0,
-      avgOrderValue: 280.0,
-      lastOrderDate: DateTime.now().subtract(const Duration(days: 3)),
-      tier: 'ذهبي',
-      loyaltyPoints: 1980,
-    ),
-    CustomerData(
-      id: '4',
-      name: 'فاطمة علي الحربي',
-      phone: '0563334444',
-      totalOrders: 28,
-      totalSpent: 7500.0,
-      avgOrderValue: 267.9,
-      lastOrderDate: DateTime.now().subtract(const Duration(days: 5)),
-      tier: 'فضي',
-      loyaltyPoints: 1500,
-    ),
-    CustomerData(
-      id: '5',
-      name: 'عمر حسين النجار',
-      phone: '0525556666',
-      totalOrders: 25,
-      totalSpent: 6200.0,
-      avgOrderValue: 248.0,
-      lastOrderDate: DateTime.now().subtract(const Duration(days: 4)),
-      tier: 'فضي',
-      loyaltyPoints: 1240,
-    ),
-  ];
+  List<CustomerData> _topCustomers = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _loadCustomerData();
+  }
+
+  Future<void> _loadCustomerData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final accounts = await db.accountsDao.getAllAccounts(storeId);
+      final now = DateTime.now();
+      final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+
+      _totalCustomers = accounts.length;
+      _activeCustomers = accounts.where((a) =>
+        a.lastTransactionAt != null && a.lastTransactionAt!.isAfter(thirtyDaysAgo)
+      ).length;
+      _newCustomers = accounts.where((a) =>
+        a.createdAt.isAfter(thirtyDaysAgo)
+      ).length;
+
+      // Try to get sales stats for revenue
+      try {
+        final salesStats = await db.salesDao.getSalesStats(storeId, startDate: thirtyDaysAgo, endDate: now);
+        _totalRevenue = salesStats.total;
+        _avgOrderValue = _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+      } catch (_) {
+        _totalRevenue = accounts.fold(0.0, (sum, a) => sum + a.balance);
+        _avgOrderValue = _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+      }
+
+      // Map accounts to CustomerData, sorted by balance descending
+      final sorted = List.of(accounts)..sort((a, b) => b.balance.compareTo(a.balance));
+      _topCustomers = sorted.take(20).map((a) {
+        String tier;
+        if (a.balance >= 10000) {
+          tier = '\u0645\u0627\u0633\u064a';
+        } else if (a.balance >= 5000) {
+          tier = '\u0630\u0647\u0628\u064a';
+        } else if (a.balance >= 2000) {
+          tier = '\u0641\u0636\u064a';
+        } else {
+          tier = '\u0628\u0631\u0648\u0646\u0632\u064a';
+        }
+
+        return CustomerData(
+          id: a.id,
+          name: a.name,
+          phone: a.phone ?? '',
+          totalOrders: 0,
+          totalSpent: a.balance,
+          avgOrderValue: 0,
+          lastOrderDate: a.lastTransactionAt ?? a.createdAt,
+          tier: tier,
+          loyaltyPoints: 0,
+        );
+      }).toList();
+
+      setState(() => _isLoading = false);
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -130,7 +139,9 @@ class _CustomerReportScreenState extends State<CustomerReportScreen>
           ],
         ),
       ),
-      body: Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
         children: [
           // شريط الفترة الزمنية
           _buildDateRangeBanner(),
@@ -356,7 +367,7 @@ class _CustomerReportScreenState extends State<CustomerReportScreen>
                                 borderRadius:
                                     BorderRadius.circular(AppSizes.radiusSm),
                               ),
-                              alignment: Alignment.centerRight,
+                              alignment: AlignmentDirectional.centerEnd,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSizes.sm,
                               ),

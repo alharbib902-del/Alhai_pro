@@ -1,5 +1,9 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
@@ -132,14 +136,14 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.chevron_left),
+                          icon: const AdaptiveIcon(Icons.chevron_left),
                           onPressed: () {
                             setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1)));
                             _loadReportData();
                           },
                         ),
                         IconButton(
-                          icon: const Icon(Icons.chevron_right),
+                          icon: const AdaptiveIcon(Icons.chevron_right),
                           onPressed: _selectedDate.isBefore(DateTime.now()) 
                               ? () {
                                   setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1)));
@@ -354,15 +358,106 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
     }
   }
   
-  void _shareReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري مشاركة التقرير...')),
+  pw.Document _buildReportPdf() {
+    final pdf = pw.Document();
+    pdf.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      textDirection: pw.TextDirection.rtl,
+      build: (context) => pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('تقرير المبيعات اليومي',
+              style: pw.TextStyle(
+                  fontSize: 20, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 10),
+          pw.Text('التاريخ: ${_formatDate(_selectedDate)}'),
+          pw.Divider(),
+          pw.SizedBox(height: 10),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('إجمالي المبيعات'),
+                pw.Text('${_totalSales.toStringAsFixed(0)} ر.س'),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('عدد الفواتير'),
+                pw.Text('$_totalTransactions'),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('المنتجات المباعة'),
+                pw.Text('$_totalItems'),
+              ]),
+          pw.Divider(),
+          pw.Text('طرق الدفع:',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('نقدي'),
+                pw.Text('${_cashSales.toStringAsFixed(0)} ر.س'),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('بطاقة'),
+                pw.Text('${_cardSales.toStringAsFixed(0)} ر.س'),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('آجل'),
+                pw.Text('${_creditSales.toStringAsFixed(0)} ر.س'),
+              ]),
+          pw.Divider(),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('الخصومات'),
+                pw.Text('-${_discounts.toStringAsFixed(0)} ر.س'),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('ضريبة القيمة المضافة'),
+                pw.Text('${_vat.toStringAsFixed(2)} ر.س'),
+              ]),
+          pw.Divider(),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('صافي المبيعات',
+                    style:
+                        pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.Text(
+                    '${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
+                    style:
+                        pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ]),
+        ],
+      ),
+    ));
+    return pdf;
+  }
+
+  void _shareReport() async {
+    final pdf = _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename:
+          'sales_report_${_selectedDate.toIso8601String().split('T').first}.pdf',
     );
   }
-  
-  void _printReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري طباعة التقرير...')),
+
+  void _printReport() async {
+    final pdf = _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name:
+          'sales_report_${_selectedDate.toIso8601String().split('T').first}',
     );
   }
 }

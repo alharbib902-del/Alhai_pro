@@ -10,6 +10,7 @@ library;
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// مستوى الأمان
 enum SecurityLevel {
@@ -66,9 +67,7 @@ class SecurityConfig {
   /// تعيين مستوى الأمان
   static void setSecurityLevel(SecurityLevel level) {
     _level = level;
-    if (kDebugMode) {
-      debugPrint('🔐 Security level set to: ${level.name}');
-    }
+    AppLogger.debug('Security level set to: ${level.name}', tag: 'SecurityConfig');
   }
 
   /// الحصول على مستوى الأمان
@@ -129,9 +128,7 @@ class SecretManager {
     _secrets.addAll(secrets);
     _initialized = true;
 
-    if (kDebugMode) {
-      debugPrint('🔐 SecretManager initialized with ${secrets.length} secrets');
-    }
+    AppLogger.debug('SecretManager initialized with ${secrets.length} secrets', tag: 'SecurityConfig');
   }
 
   /// الحصول على مفتاح

@@ -1,76 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تنبيهات المخزون
-class InventoryAlertsScreen extends StatefulWidget {
+class InventoryAlertsScreen extends ConsumerStatefulWidget {
   const InventoryAlertsScreen({super.key});
 
   @override
-  State<InventoryAlertsScreen> createState() => _InventoryAlertsScreenState();
+  ConsumerState<InventoryAlertsScreen> createState() => _InventoryAlertsScreenState();
 }
 
-class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with SingleTickerProviderStateMixin {
+class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _lowStockThreshold = 10;
   bool _notifyLowStock = true;
   bool _notifyExpiry = true;
-  
-  final List<_AlertItem> _alerts = [
-    _AlertItem(
-      id: '1',
-      productName: 'أرز بسمتي 5 كجم',
-      barcode: '6281001234567',
-      type: 'low_stock',
-      currentStock: 3,
-      threshold: 10,
-      expiryDate: null,
-      priority: 'high',
-      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-    ),
-    _AlertItem(
-      id: '2',
-      productName: 'حليب طازج 1 لتر',
-      barcode: '6281007654321',
-      type: 'expiry',
-      currentStock: 25,
-      threshold: 10,
-      expiryDate: DateTime.now().add(const Duration(days: 3)),
-      priority: 'high',
-      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
-    ),
-    _AlertItem(
-      id: '3',
-      productName: 'زيت ذرة 1.5 لتر',
-      barcode: '6281009876543',
-      type: 'low_stock',
-      currentStock: 8,
-      threshold: 10,
-      expiryDate: null,
-      priority: 'medium',
-      createdAt: DateTime.now().subtract(const Duration(hours: 8)),
-    ),
-    _AlertItem(
-      id: '4',
-      productName: 'جبن شرائح',
-      barcode: '6281005432109',
-      type: 'expiry',
-      currentStock: 15,
-      threshold: 10,
-      expiryDate: DateTime.now().add(const Duration(days: 7)),
-      priority: 'medium',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-    _AlertItem(
-      id: '5',
-      productName: 'سكر أبيض 2 كجم',
-      barcode: '6281001111111',
-      type: 'low_stock',
-      currentStock: 5,
-      threshold: 10,
-      expiryDate: null,
-      priority: 'high',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
-    ),
-  ];
+  bool _isLoading = true;
+
+  List<_AlertItem> _alerts = [];
 
   List<_AlertItem> get _lowStockAlerts => _alerts.where((a) => a.type == 'low_stock').toList();
   List<_AlertItem> get _expiryAlerts => _alerts.where((a) => a.type == 'expiry').toList();
@@ -79,6 +30,32 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+      final db = getIt<AppDatabase>();
+      final lowStock = await db.productsDao.getLowStockProducts(storeId);
+      final alerts = lowStock.map((p) => _AlertItem(
+        id: p.id,
+        productName: p.name,
+        barcode: p.barcode ?? '',
+        type: 'low_stock',
+        currentStock: p.stockQty,
+        threshold: p.minQty,
+        priority: p.stockQty <= 0 ? 'critical' : (p.stockQty <= p.minQty ~/ 2 ? 'high' : 'medium'),
+        createdAt: p.updatedAt ?? p.createdAt,
+      )).toList();
+      if (mounted) setState(() { _alerts = alerts; _isLoading = false; });
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -89,27 +66,35 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.inventoryAlerts)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تنبيهات المخزون'),
+        title: Text(l10n.inventoryAlerts),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'إعدادات التنبيهات',
+            tooltip: l10n.alertSettings,
             onPressed: _showSettings,
           ),
           IconButton(
             icon: const Icon(Icons.check_circle),
-            tooltip: 'تأكيد الكل',
+            tooltip: l10n.acknowledgeAll,
             onPressed: _acknowledgeAll,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'الكل (${_alerts.length})'),
-            Tab(text: 'نفاد مخزون (${_lowStockAlerts.length})'),
-            Tab(text: 'انتهاء صلاحية (${_expiryAlerts.length})'),
+            Tab(text: l10n.allWithCount(_alerts.length)),
+            Tab(text: l10n.lowStockWithCount(_lowStockAlerts.length)),
+            Tab(text: l10n.expiryWithCount(_expiryAlerts.length)),
           ],
         ),
       ),
@@ -123,8 +108,8 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.warning,
-                    label: 'تنبيهات عاجلة',
-                    value: '${_alerts.where((a) => a.priority == "high").length}',
+                    label: l10n.urgentAlerts,
+                    value: '${_alerts.where((a) => a.priority == "high" || a.priority == "critical").length}',
                     color: Colors.red,
                   ),
                 ),
@@ -132,7 +117,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.inventory,
-                    label: 'نفاد مخزون',
+                    label: l10n.lowStock,
                     value: '${_lowStockAlerts.length}',
                     color: Colors.orange,
                   ),
@@ -141,7 +126,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.calendar_today,
-                    label: 'قريب الانتهاء',
+                    label: l10n.nearExpiry,
                     value: '${_expiryAlerts.length}',
                     color: Colors.purple,
                   ),
@@ -149,7 +134,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
               ],
             ),
           ),
-          
+
           // Alerts list
           Expanded(
             child: TabBarView(
@@ -165,8 +150,9 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       ),
     );
   }
-  
+
   Widget _buildAlertList(List<_AlertItem> alerts) {
+    final l10n = AppLocalizations.of(context)!;
     if (alerts.isEmpty) {
       return Center(
         child: Column(
@@ -174,19 +160,19 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
           children: [
             Icon(Icons.check_circle, size: 64, color: Colors.green.shade300),
             const SizedBox(height: 16),
-            const Text('لا توجد تنبيهات', style: TextStyle(fontSize: 18)),
+            Text(l10n.noAlerts, style: const TextStyle(fontSize: 18)),
           ],
         ),
       );
     }
-    
+
     // Sort by priority
     final sortedAlerts = List<_AlertItem>.from(alerts)
       ..sort((a, b) {
-        final priorityOrder = {'high': 0, 'medium': 1, 'low': 2};
-        return priorityOrder[a.priority]!.compareTo(priorityOrder[b.priority]!);
+        final priorityOrder = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3};
+        return (priorityOrder[a.priority] ?? 3).compareTo(priorityOrder[b.priority] ?? 3);
       });
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: sortedAlerts.length,
@@ -196,8 +182,8 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
           key: Key(alert.id),
           direction: DismissDirection.endToStart,
           background: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 16),
+            alignment: AlignmentDirectional.centerStart,
+            padding: const EdgeInsetsDirectional.only(start: 16),
             color: Colors.green,
             child: const Icon(Icons.check, color: Colors.white),
           ),
@@ -205,9 +191,9 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
             setState(() => _alerts.remove(alert));
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('تم إخفاء التنبيه'),
+                content: Text(l10n.alertDismissed),
                 action: SnackBarAction(
-                  label: 'تراجع',
+                  label: l10n.undo,
                   onPressed: () => setState(() => _alerts.add(alert)),
                 ),
               ),
@@ -215,8 +201,8 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
           },
           child: Card(
             margin: const EdgeInsets.only(bottom: 12),
-            color: alert.priority == 'high' 
-                ? Colors.red.shade50 
+            color: (alert.priority == 'high' || alert.priority == 'critical')
+                ? Colors.red.shade50
                 : null,
             child: InkWell(
               onTap: () => _showAlertDetails(alert),
@@ -249,16 +235,16 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              if (alert.priority == 'high')
+                              if (alert.priority == 'high' || alert.priority == 'critical')
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: const Text(
-                                    'عاجل',
-                                    style: TextStyle(color: Colors.white, fontSize: 10),
+                                  child: Text(
+                                    alert.priority == 'critical' ? l10n.criticalPriority : l10n.highPriority,
+                                    style: const TextStyle(color: Colors.white, fontSize: 10),
                                   ),
                                 ),
                             ],
@@ -278,7 +264,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                     ),
                     IconButton(
                       icon: const Icon(Icons.shopping_cart, color: Colors.blue),
-                      tooltip: 'طلب شراء',
+                      tooltip: l10n.createPurchaseOrder,
                       onPressed: () => _createPurchaseOrder(alert),
                     ),
                   ],
@@ -290,7 +276,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       },
     );
   }
-  
+
   Color _getAlertColor(String type) {
     switch (type) {
       case 'low_stock': return Colors.orange;
@@ -298,7 +284,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       default: return Colors.grey;
     }
   }
-  
+
   IconData _getAlertIcon(String type) {
     switch (type) {
       case 'low_stock': return Icons.inventory;
@@ -306,28 +292,30 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       default: return Icons.warning;
     }
   }
-  
+
   String _getAlertMessage(_AlertItem alert) {
+    final l10n = AppLocalizations.of(context)!;
     if (alert.type == 'low_stock') {
-      return 'الكمية: ${alert.currentStock} (الحد الأدنى: ${alert.threshold})';
+      return l10n.stockAlertMessage(alert.currentStock, alert.threshold);
     } else {
-      final daysLeft = alert.expiryDate!.difference(DateTime.now()).inDays;
-      return 'ينتهي خلال $daysLeft يوم';
+      return l10n.expiryAlertLabel;
     }
   }
-  
+
   String _formatTimeAgo(DateTime date) {
+    final l10n = AppLocalizations.of(context)!;
     final diff = DateTime.now().difference(date);
     if (diff.inMinutes < 60) {
-      return 'منذ ${diff.inMinutes} دقيقة';
+      return l10n.minutesAgoTime(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ساعة';
+      return l10n.hoursAgoTime(diff.inHours);
     } else {
-      return 'منذ ${diff.inDays} يوم';
+      return l10n.daysAgoTime(diff.inDays);
     }
   }
-  
+
   void _showAlertDetails(_AlertItem alert) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
@@ -359,13 +347,8 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
               ],
             ),
             const SizedBox(height: 24),
-            _DetailRow(label: 'الكمية الحالية', value: '${alert.currentStock}'),
-            _DetailRow(label: 'الحد الأدنى', value: '${alert.threshold}'),
-            if (alert.expiryDate != null)
-              _DetailRow(
-                label: 'تاريخ الانتهاء',
-                value: '${alert.expiryDate!.day}/${alert.expiryDate!.month}/${alert.expiryDate!.year}',
-              ),
+            _DetailRow(label: l10n.currentQuantity, value: '${alert.currentStock}'),
+            _DetailRow(label: l10n.minimumThreshold, value: '${alert.threshold}'),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -376,7 +359,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                       setState(() => _alerts.remove(alert));
                     },
                     icon: const Icon(Icons.check),
-                    label: const Text('تجاهل'),
+                    label: Text(l10n.dismissAction),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -387,7 +370,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                       _createPurchaseOrder(alert);
                     },
                     icon: const Icon(Icons.shopping_cart),
-                    label: const Text('طلب شراء'),
+                    label: Text(l10n.createPurchaseOrder),
                   ),
                 ),
               ],
@@ -397,8 +380,9 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       ),
     );
   }
-  
+
   void _showSettings() {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -408,10 +392,10 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('إعدادات التنبيهات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(l10n.alertSettings, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               SwitchListTile(
-                title: const Text('تنبيهات نفاد المخزون'),
+                title: Text(l10n.lowStockNotifications),
                 value: _notifyLowStock,
                 onChanged: (v) {
                   setSheetState(() => _notifyLowStock = v);
@@ -419,7 +403,7 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                 },
               ),
               SwitchListTile(
-                title: const Text('تنبيهات انتهاء الصلاحية'),
+                title: Text(l10n.expiryNotifications),
                 value: _notifyExpiry,
                 onChanged: (v) {
                   setSheetState(() => _notifyExpiry = v);
@@ -427,8 +411,8 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
                 },
               ),
               ListTile(
-                title: const Text('الحد الأدنى للمخزون'),
-                subtitle: Text('$_lowStockThreshold وحدة'),
+                title: Text(l10n.minimumStockLevel),
+                subtitle: Text(l10n.thresholdUnits(_lowStockThreshold)),
                 trailing: SizedBox(
                   width: 150,
                   child: Slider(
@@ -450,47 +434,49 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
       ),
     );
   }
-  
+
   void _acknowledgeAll() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('تأكيد جميع التنبيهات'),
-        content: Text('سيتم إخفاء ${_alerts.length} تنبيه'),
+        title: Text(l10n.acknowledgeAllAlerts),
+        content: Text(l10n.willDismissAlerts(_alerts.length)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               setState(() => _alerts.clear());
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم تأكيد جميع التنبيهات')),
+                SnackBar(content: Text(l10n.allAlertsAcknowledged)),
               );
             },
-            child: const Text('تأكيد'),
+            child: Text(l10n.confirm),
           ),
         ],
       ),
     );
   }
-  
+
   void _createPurchaseOrder(_AlertItem alert) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('إنشاء طلب شراء'),
+        title: Text(l10n.createPurchaseOrder),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('المنتج: ${alert.productName}'),
+            Text(l10n.productLabelName(alert.productName)),
             const SizedBox(height: 16),
             TextField(
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'الكمية المطلوبة',
+                labelText: l10n.requiredQuantity,
                 hintText: '${alert.threshold * 2}',
                 prefixIcon: const Icon(Icons.numbers),
               ),
@@ -500,17 +486,17 @@ class _InventoryAlertsScreenState extends State<InventoryAlertsScreen> with Sing
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم إنشاء طلب الشراء')),
+                SnackBar(content: Text(l10n.purchaseOrderCreated)),
               );
               setState(() => _alerts.remove(alert));
             },
-            child: const Text('إنشاء'),
+            child: Text(l10n.createAction),
           ),
         ],
       ),
@@ -525,10 +511,9 @@ class _AlertItem {
   final String type;
   final int currentStock;
   final int threshold;
-  final DateTime? expiryDate;
   final String priority;
   final DateTime createdAt;
-  
+
   _AlertItem({
     required this.id,
     required this.productName,
@@ -536,7 +521,6 @@ class _AlertItem {
     required this.type,
     required this.currentStock,
     required this.threshold,
-    this.expiryDate,
     required this.priority,
     required this.createdAt,
   });
@@ -547,7 +531,7 @@ class _SummaryCard extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  
+
   const _SummaryCard({
     required this.icon,
     required this.label,
@@ -579,7 +563,7 @@ class _SummaryCard extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
-  
+
   const _DetailRow({required this.label, required this.value});
 
   @override

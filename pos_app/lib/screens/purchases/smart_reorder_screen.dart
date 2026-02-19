@@ -1,11 +1,13 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 
 /// شاشة الطلب الذكي من الموردين - مدعومة بالذكاء الاصطناعي
 class SmartReorderScreen extends ConsumerStatefulWidget {
@@ -16,20 +18,20 @@ class SmartReorderScreen extends ConsumerStatefulWidget {
 }
 
 class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'products';
 
   final _budgetController = TextEditingController(text: '5000');
   String? _selectedSupplier;
   bool _isCalculating = false;
   List<_ReorderItem> _suggestions = [];
 
-  // Mock data
-  final List<String> _suppliers = [
-    '\u0634\u0631\u0643\u0629 \u0627\u0644\u0623\u0644\u0628\u0627\u0646 \u0627\u0644\u0645\u062A\u062D\u062F\u0629',
-    '\u0645\u0624\u0633\u0633\u0629 \u0627\u0644\u0623\u063A\u0630\u064A\u0629 \u0627\u0644\u0637\u0627\u0632\u062C\u0629',
-    '\u0634\u0631\u0643\u0629 \u0627\u0644\u0645\u0634\u0631\u0648\u0628\u0627\u062A \u0627\u0644\u0639\u0631\u0628\u064A\u0629',
-  ];
+  bool _isLoadingSuppliers = true;
+  List<SuppliersTableData> _suppliersList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSuppliers();
+  }
 
   @override
   void dispose() {
@@ -37,45 +39,26 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     super.dispose();
   }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
+  Future<void> _loadSuppliers() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoadingSuppliers = false);
+        return;
+      }
+
+      final suppliers = await db.suppliersDao.getActiveSuppliers(storeId);
+      if (mounted) {
+        setState(() {
+          _suppliersList = suppliers;
+          _isLoadingSuppliers = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingSuppliers = false);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -84,34 +67,12 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: '\u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0630\u0643\u064A', // TODO: localize
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
@@ -126,39 +87,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
@@ -186,7 +116,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             if (_suggestions.isNotEmpty)
               FilledButton.icon(
                 onPressed: _sendOrder,
-                icon: const Icon(Icons.send, size: 18),
+                icon: const AdaptiveIcon(Icons.send, size: 18),
                 label: const Text('\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628'), // TODO: localize
               ),
           ],
@@ -201,8 +131,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               colors: isDark
                   ? [const Color(0xFF581C87), const Color(0xFF4C1D95)]
                   : [const Color(0xFFF3E8FF), const Color(0xFFEDE9FE)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
@@ -337,7 +267,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _selectedSupplier,
+            initialValue: _selectedSupplier,
             decoration: InputDecoration(
               labelText: '\u0627\u0644\u0645\u0648\u0631\u062F', // TODO: localize
               prefixIcon: const Icon(Icons.storefront),
@@ -345,9 +275,11 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            items: _suppliers
-                .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                .toList(),
+            items: _isLoadingSuppliers
+                ? []
+                : _suppliersList
+                    .map((s) => DropdownMenuItem(value: s.name, child: Text(s.name)))
+                    .toList(),
             onChanged: (v) => setState(() => _selectedSupplier = v),
           ),
           const SizedBox(height: 24),
@@ -511,7 +443,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   Future<void> _calculateSuggestions() async {
     final budget = double.tryParse(_budgetController.text) ?? 0;
     if (budget <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
         const SnackBar(
             content:
                 Text('\u0627\u0644\u0631\u062C\u0627\u0621 \u0625\u062F\u062E\u0627\u0644 \u0645\u064A\u0632\u0627\u0646\u064A\u0629 \u0635\u062D\u064A\u062D\u0629')),
@@ -521,55 +454,68 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
 
     setState(() => _isCalculating = true);
 
-    // Simulate AI calculation
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isCalculating = false);
+        return;
+      }
 
-    // Mock AI suggestions based on turnover rate
-    setState(() {
-      _suggestions = [
-        _ReorderItem(
-          name: '\u062D\u0644\u064A\u0628 \u0637\u0627\u0632\u062C 1 \u0644\u062A\u0631',
-          currentStock: 15,
-          minStock: 30,
-          turnoverRate: 45,
-          price: 8.5,
-          quantity: 50,
-        ),
-        _ReorderItem(
-          name: '\u0644\u0628\u0646 \u0631\u0627\u064A\u0628 500\u0645\u0644',
-          currentStock: 20,
-          minStock: 40,
-          turnoverRate: 38,
-          price: 4.5,
-          quantity: 40,
-        ),
-        _ReorderItem(
-          name: '\u062C\u0628\u0646\u0629 \u0628\u064A\u0636\u0627\u0621 400\u063A',
-          currentStock: 8,
-          minStock: 20,
-          turnoverRate: 25,
-          price: 15.0,
-          quantity: 25,
-        ),
-        _ReorderItem(
-          name: '\u0632\u0628\u0627\u062F\u064A \u0641\u0648\u0627\u0643\u0647',
-          currentStock: 12,
-          minStock: 25,
-          turnoverRate: 20,
-          price: 3.0,
-          quantity: 30,
-        ),
-        _ReorderItem(
-          name: '\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 1 \u0644\u062A\u0631',
-          currentStock: 18,
-          minStock: 30,
-          turnoverRate: 15,
-          price: 12.0,
-          quantity: 20,
-        ),
-      ];
-      _isCalculating = false;
-    });
+      final lowStockProducts = await db.productsDao.getLowStockProducts(storeId);
+
+      if (mounted) {
+        setState(() {
+          _suggestions = lowStockProducts.map((p) {
+            final deficit = p.minQty - p.stockQty;
+            final reorderQty = deficit > 0 ? deficit : p.minQty;
+            final costPrice = p.costPrice ?? p.price;
+
+            return _ReorderItem(
+              name: p.name,
+              currentStock: p.stockQty,
+              minStock: p.minQty,
+              turnoverRate: deficit > 0 ? ((deficit / p.minQty) * 100).round() : 0,
+              price: costPrice,
+              quantity: reorderQty,
+            );
+          }).toList();
+
+          // Sort by deficit ratio (highest need first)
+          _suggestions.sort((a, b) {
+            final aRatio = a.minStock > 0 ? (a.minStock - a.currentStock) / a.minStock : 0.0;
+            final bRatio = b.minStock > 0 ? (b.minStock - b.currentStock) / b.minStock : 0.0;
+            return bRatio.compareTo(aRatio);
+          });
+
+          // Cap total cost to budget
+          double runningTotal = 0;
+          for (int i = 0; i < _suggestions.length; i++) {
+            final itemCost = _suggestions[i].price * _suggestions[i].quantity;
+            if (runningTotal + itemCost > budget) {
+              final remaining = budget - runningTotal;
+              final maxQty = (remaining / _suggestions[i].price).floor();
+              if (maxQty > 0) {
+                _suggestions[i].quantity = maxQty;
+                runningTotal += _suggestions[i].price * maxQty;
+              }
+              _suggestions = _suggestions.sublist(0, i + (maxQty > 0 ? 1 : 0));
+              break;
+            }
+            runningTotal += itemCost;
+          }
+
+          _isCalculating = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isCalculating = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
   }
 
   void _sendOrder() {
@@ -630,7 +576,6 @@ class _ReorderItem {
   });
 }
 
-// Widgets
 class _SummaryCard extends StatelessWidget {
   final String title;
   final String value;
@@ -791,7 +736,7 @@ class _ReorderItemCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline,
+                    icon: const Icon(Icons.add_circle_outline,
                         color: AppColors.primary),
                     onPressed: () => onQuantityChanged(item.quantity + 1),
                   ),

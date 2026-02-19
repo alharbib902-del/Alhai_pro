@@ -4,55 +4,85 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير ساعات الذروة
-class PeakHoursReportScreen extends StatefulWidget {
+class PeakHoursReportScreen extends ConsumerStatefulWidget {
   const PeakHoursReportScreen({super.key});
 
   @override
-  State<PeakHoursReportScreen> createState() => _PeakHoursReportScreenState();
+  ConsumerState<PeakHoursReportScreen> createState() => _PeakHoursReportScreenState();
 }
 
-class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
+class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
   DateTimeRange _dateRange = DateTimeRange(
     start: DateTime.now().subtract(const Duration(days: 30)),
     end: DateTime.now(),
   );
 
   String _viewMode = 'hourly'; // hourly, daily, weekly
+  bool _isLoading = true;
 
   // بيانات ساعات اليوم
-  final List<HourlyData> _hourlyData = [
-    HourlyData(hour: 8, transactions: 15, revenue: 850.0),
-    HourlyData(hour: 9, transactions: 25, revenue: 1450.0),
-    HourlyData(hour: 10, transactions: 45, revenue: 2800.0),
-    HourlyData(hour: 11, transactions: 65, revenue: 4200.0),
-    HourlyData(hour: 12, transactions: 85, revenue: 5500.0),
-    HourlyData(hour: 13, transactions: 55, revenue: 3600.0),
-    HourlyData(hour: 14, transactions: 35, revenue: 2200.0),
-    HourlyData(hour: 15, transactions: 40, revenue: 2500.0),
-    HourlyData(hour: 16, transactions: 50, revenue: 3100.0),
-    HourlyData(hour: 17, transactions: 75, revenue: 4800.0),
-    HourlyData(hour: 18, transactions: 90, revenue: 5800.0),
-    HourlyData(hour: 19, transactions: 70, revenue: 4500.0),
-    HourlyData(hour: 20, transactions: 55, revenue: 3500.0),
-    HourlyData(hour: 21, transactions: 35, revenue: 2200.0),
-    HourlyData(hour: 22, transactions: 20, revenue: 1200.0),
-  ];
+  List<HourlyData> _hourlyData = [];
 
   // بيانات أيام الأسبوع
-  final List<DailyData> _dailyData = [
-    DailyData(day: 'السبت', transactions: 450, revenue: 28500.0),
-    DailyData(day: 'الأحد', transactions: 380, revenue: 24200.0),
-    DailyData(day: 'الاثنين', transactions: 320, revenue: 20500.0),
-    DailyData(day: 'الثلاثاء', transactions: 340, revenue: 21800.0),
-    DailyData(day: 'الأربعاء', transactions: 360, revenue: 23000.0),
-    DailyData(day: 'الخميس', transactions: 420, revenue: 26800.0),
-    DailyData(day: 'الجمعة', transactions: 480, revenue: 30500.0),
-  ];
+  List<DailyData> _dailyData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+
+      // Load hourly data for today
+      final hourlySales = await db.salesDao.getHourlySales(storeId, DateTime.now());
+      _hourlyData = hourlySales.map((h) => HourlyData(
+        hour: h.hour,
+        transactions: h.count,
+        revenue: h.total,
+      )).toList();
+
+      // Load daily data by iterating last 7 days
+      final dayNames = ['\u0627\u0644\u0633\u0628\u062a', '\u0627\u0644\u0623\u062d\u062f', '\u0627\u0644\u0627\u062b\u0646\u064a\u0646', '\u0627\u0644\u062b\u0644\u0627\u062b\u0627\u0621', '\u0627\u0644\u0623\u0631\u0628\u0639\u0627\u0621', '\u0627\u0644\u062e\u0645\u064a\u0633', '\u0627\u0644\u062c\u0645\u0639\u0629'];
+      final dailyList = <DailyData>[];
+      for (int i = 6; i >= 0; i--) {
+        final date = DateTime.now().subtract(Duration(days: i));
+        try {
+          final daySales = await db.salesDao.getSalesStats(
+            storeId,
+            startDate: DateTime(date.year, date.month, date.day),
+            endDate: DateTime(date.year, date.month, date.day + 1),
+          );
+          // weekday: 1=Monday ... 7=Sunday; map to Arabic week starting Saturday
+          final arabicDayIndex = (date.weekday + 1) % 7; // Saturday=0
+          dailyList.add(DailyData(
+            day: dayNames[arabicDayIndex],
+            transactions: daySales.count,
+            revenue: daySales.total,
+          ));
+        } catch (_) {
+          // Skip days that fail
+        }
+      }
+      _dailyData = dailyList;
+
+      setState(() => _isLoading = false);
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +102,9 @@ class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
           ),
         ],
       ),
-      body: ListView(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
         padding: const EdgeInsets.all(AppSizes.lg),
         children: [
           // شريط الفترة والعرض
@@ -80,12 +112,16 @@ class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
           const SizedBox(height: AppSizes.lg),
 
           // ملخص الذروة
-          _buildPeakSummary(),
-          const SizedBox(height: AppSizes.lg),
+          if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
+            _buildPeakSummary(),
+          if (_hourlyData.isNotEmpty && _dailyData.isNotEmpty)
+            const SizedBox(height: AppSizes.lg),
 
           // الرسم البياني الرئيسي
-          _buildMainChart(),
-          const SizedBox(height: AppSizes.lg),
+          if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
+            _buildMainChart(),
+          if (_hourlyData.isNotEmpty || _dailyData.isNotEmpty)
+            const SizedBox(height: AppSizes.lg),
 
           // خريطة الحرارة
           _buildHeatmap(),
@@ -272,9 +308,10 @@ class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
   }
 
   Widget _buildHourlyChart() {
+    if (_hourlyData.isEmpty) return const SizedBox.shrink();
     final maxTransactions = _hourlyData
         .map((h) => h.transactions)
-        .reduce((a, b) => a > b ? a : b);
+        .reduce((a, b) => a > b ? a : b).clamp(1, double.maxFinite.toInt());
 
     return SizedBox(
       height: 250,
@@ -328,9 +365,10 @@ class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
   }
 
   Widget _buildDailyChart() {
+    if (_dailyData.isEmpty) return const SizedBox.shrink();
     final maxTransactions = _dailyData
         .map((d) => d.transactions)
-        .reduce((a, b) => a > b ? a : b);
+        .reduce((a, b) => a > b ? a : b).clamp(1, double.maxFinite.toInt());
 
     return SizedBox(
       height: 250,
@@ -643,7 +681,9 @@ class _PeakHoursReportScreenState extends State<PeakHoursReportScreen> {
     if (picked != null) {
       setState(() {
         _dateRange = picked;
+        _isLoading = true;
       });
+      _loadData();
     }
   }
 

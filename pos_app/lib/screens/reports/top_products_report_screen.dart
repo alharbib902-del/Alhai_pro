@@ -4,20 +4,24 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير أفضل المنتجات
-class TopProductsReportScreen extends StatefulWidget {
+class TopProductsReportScreen extends ConsumerStatefulWidget {
   const TopProductsReportScreen({super.key});
 
   @override
-  State<TopProductsReportScreen> createState() =>
+  ConsumerState<TopProductsReportScreen> createState() =>
       _TopProductsReportScreenState();
 }
 
-class _TopProductsReportScreenState extends State<TopProductsReportScreen>
+class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   DateTimeRange _dateRange = DateTimeRange(
@@ -27,129 +31,64 @@ class _TopProductsReportScreenState extends State<TopProductsReportScreen>
 
   String _sortBy = 'revenue';
   String _selectedCategory = 'all';
+  bool _isLoading = true;
 
-  // بيانات تجريبية
-  final List<ProductReport> _products = [
-    ProductReport(
-      id: '1',
-      name: 'حليب المراعي كامل الدسم 1 لتر',
-      sku: 'MLK001',
-      category: 'ألبان ومشتقاتها',
-      unitsSold: 1250,
-      revenue: 8750.0,
-      profit: 1750.0,
-      avgPrice: 7.0,
-      stockLevel: 150,
-      returnRate: 1.2,
-      trend: 'up',
-    ),
-    ProductReport(
-      id: '2',
-      name: 'أرز بسمتي أبو كاس 5 كجم',
-      sku: 'RIC001',
-      category: 'أرز ومكرونة',
-      unitsSold: 850,
-      revenue: 29750.0,
-      profit: 5950.0,
-      avgPrice: 35.0,
-      stockLevel: 75,
-      returnRate: 0.5,
-      trend: 'up',
-    ),
-    ProductReport(
-      id: '3',
-      name: 'زيت عافية نباتي 1.8 لتر',
-      sku: 'OIL001',
-      category: 'زيوت وسمن',
-      unitsSold: 720,
-      revenue: 17280.0,
-      profit: 3456.0,
-      avgPrice: 24.0,
-      stockLevel: 45,
-      returnRate: 0.8,
-      trend: 'stable',
-    ),
-    ProductReport(
-      id: '4',
-      name: 'سكر أبيض 1 كجم',
-      sku: 'SUG001',
-      category: 'سكر وحلويات',
-      unitsSold: 650,
-      revenue: 4225.0,
-      profit: 845.0,
-      avgPrice: 6.5,
-      stockLevel: 200,
-      returnRate: 0.3,
-      trend: 'down',
-    ),
-    ProductReport(
-      id: '5',
-      name: 'شاي ربيع 100 كيس',
-      sku: 'TEA001',
-      category: 'مشروبات',
-      unitsSold: 580,
-      revenue: 10440.0,
-      profit: 2088.0,
-      avgPrice: 18.0,
-      stockLevel: 120,
-      returnRate: 0.6,
-      trend: 'up',
-    ),
-    ProductReport(
-      id: '6',
-      name: 'معجون طماطم الكبير 400 جم',
-      sku: 'TOM001',
-      category: 'معلبات',
-      unitsSold: 480,
-      revenue: 3360.0,
-      profit: 672.0,
-      avgPrice: 7.0,
-      stockLevel: 95,
-      returnRate: 1.0,
-      trend: 'stable',
-    ),
-    ProductReport(
-      id: '7',
-      name: 'مكرونة المهيدب 400 جم',
-      sku: 'PAS001',
-      category: 'أرز ومكرونة',
-      unitsSold: 420,
-      revenue: 2100.0,
-      profit: 420.0,
-      avgPrice: 5.0,
-      stockLevel: 180,
-      returnRate: 0.4,
-      trend: 'up',
-    ),
-    ProductReport(
-      id: '8',
-      name: 'جبنة كرافت 200 جم',
-      sku: 'CHE001',
-      category: 'ألبان ومشتقاتها',
-      unitsSold: 380,
-      revenue: 5700.0,
-      profit: 1140.0,
-      avgPrice: 15.0,
-      stockLevel: 65,
-      returnRate: 0.7,
-      trend: 'stable',
-    ),
-  ];
+  // بيانات المنتجات - يتم تحميلها من قاعدة البيانات
+  List<ProductReport> _products = [];
 
-  final List<String> _categories = [
-    'all',
-    'ألبان ومشتقاتها',
-    'أرز ومكرونة',
-    'زيوت وسمن',
-    'سكر وحلويات',
-    'مشروبات',
-    'معلبات',
-  ];
+  List<String> _categories = ['all'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final dbProducts = await db.productsDao.getAllProducts(storeId);
+
+      if (dbProducts.isEmpty) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final mappedProducts = dbProducts.map((p) {
+        final cost = p.costPrice ?? 0.0;
+        final revenue = p.price * p.stockQty;
+        final profit = (p.price - cost) * p.stockQty;
+        return ProductReport(
+          id: p.id,
+          name: p.name,
+          sku: p.sku ?? '',
+          category: p.categoryId ?? '',
+          unitsSold: 0,
+          revenue: revenue,
+          profit: profit,
+          avgPrice: p.price,
+          stockLevel: p.stockQty,
+          returnRate: 0,
+          trend: 'stable',
+        );
+      }).toList();
+
+      // Extract unique categories
+      final cats = <String>{'all'};
+      for (final p in mappedProducts) {
+        if (p.category.isNotEmpty) cats.add(p.category);
+      }
+
+      setState(() {
+        _products = mappedProducts;
+        _categories = cats.toList();
+        _isLoading = false;
+      });
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -206,7 +145,9 @@ class _TopProductsReportScreenState extends State<TopProductsReportScreen>
           ],
         ),
       ),
-      body: Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
         children: [
           // شريط الفترة الزمنية
           _buildDateRangeBanner(),

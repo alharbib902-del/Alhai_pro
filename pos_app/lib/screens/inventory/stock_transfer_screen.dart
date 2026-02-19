@@ -1,35 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة التحويلات بين الفروع
-class StockTransferScreen extends StatefulWidget {
+class StockTransferScreen extends ConsumerStatefulWidget {
   const StockTransferScreen({super.key});
 
   @override
-  State<StockTransferScreen> createState() => _StockTransferScreenState();
+  ConsumerState<StockTransferScreen> createState() => _StockTransferScreenState();
 }
 
-class _StockTransferScreenState extends State<StockTransferScreen> with SingleTickerProviderStateMixin {
+class _StockTransferScreenState extends ConsumerState<StockTransferScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? _fromBranch, _toBranch;
   final List<_TransferItem> _items = [];
 
-  final List<String> _branches = ['الفرع الرئيسي', 'فرع الروضة', 'فرع السلامة'];
-  final List<_Product> _products = [
-    _Product(name: 'أرز بسمتي 5 كجم', sku: 'R001', available: 50),
-    _Product(name: 'زيت طبخ 1.5 لتر', sku: 'O001', available: 30),
-    _Product(name: 'سكر أبيض 1 كجم', sku: 'S001', available: 100),
-    _Product(name: 'حليب طازج 1 لتر', sku: 'M001', available: 80),
-  ];
-
-  final List<_Transfer> _history = [
-    _Transfer(id: 'TR-001', from: 'الفرع الرئيسي', to: 'فرع الروضة', items: 5, status: 'completed', date: DateTime.now().subtract(const Duration(days: 1))),
-    _Transfer(id: 'TR-002', from: 'فرع الروضة', to: 'الفرع الرئيسي', items: 3, status: 'pending', date: DateTime.now().subtract(const Duration(hours: 5))),
-  ];
+  List<StoresTableData> _stores = [];
+  List<_Product> _products = [];
+  final List<_Transfer> _history = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+      final db = getIt<AppDatabase>();
+      final stores = await db.storesDao.getAllStores();
+      final dbProducts = await db.productsDao.getAllProducts(storeId);
+      if (mounted) {
+        setState(() {
+          _stores = stores;
+          _products = dbProducts.map((p) => _Product(
+            name: p.name,
+            sku: p.sku ?? '',
+            available: p.stockQty,
+          )).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -48,14 +71,18 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
           tabs: const [Tab(text: 'تحويل جديد'), Tab(text: 'السجل')],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [_buildNewTransfer(), _buildHistory()],
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : TabBarView(
+              controller: _tabController,
+              children: [_buildNewTransfer(), _buildHistory()],
+            ),
     );
   }
 
   Widget _buildNewTransfer() {
+    final storeNames = _stores.map((s) => s.name).toList();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -74,7 +101,7 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
                     initialValue: _fromBranch,
                     decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Icons.store)),
                     hint: const Text('اختر الفرع المصدر'),
-                    items: _branches.where((b) => b != _toBranch).map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+                    items: storeNames.where((b) => b != _toBranch).map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
                     onChanged: (v) => setState(() => _fromBranch = v),
                   ),
                 ],
@@ -98,7 +125,7 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
                     initialValue: _toBranch,
                     decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Icons.store)),
                     hint: const Text('اختر الفرع الهدف'),
-                    items: _branches.where((b) => b != _fromBranch).map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+                    items: storeNames.where((b) => b != _fromBranch).map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
                     onChanged: (v) => setState(() => _toBranch = v),
                   ),
                 ],
@@ -156,6 +183,21 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
   }
 
   Widget _buildHistory() {
+    if (_history.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.swap_horiz, size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              'لا توجد تحويلات سابقة',
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _history.length,
@@ -172,7 +214,7 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${t.from} → ${t.to}', style: const TextStyle(fontSize: 12)),
+                Text('${t.from} \u2192 ${t.to}', style: const TextStyle(fontSize: 12)),
                 Text('${t.items} منتجات', style: const TextStyle(fontSize: 11)),
               ],
             ),
@@ -190,26 +232,36 @@ class _StockTransferScreenState extends State<StockTransferScreen> with SingleTi
   void _addProduct() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => ListView.builder(
-        itemCount: _products.length,
-        itemBuilder: (context, index) {
-          final p = _products[index];
-          final added = _items.any((i) => i.product.sku == p.sku);
-          return ListTile(
-            title: Text(p.name),
-            subtitle: Text('المتاح: ${p.available}'),
-            trailing: added ? const Icon(Icons.check, color: Colors.green) : null,
-            onTap: added ? null : () { setState(() => _items.add(_TransferItem(product: p, quantity: 1))); Navigator.pop(context); },
+      builder: (context) {
+        if (_products.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Text('لا توجد منتجات', style: TextStyle(color: Colors.grey.shade600)),
+            ),
           );
-        },
-      ),
+        }
+        return ListView.builder(
+          itemCount: _products.length,
+          itemBuilder: (context, index) {
+            final p = _products[index];
+            final added = _items.any((i) => i.product.sku == p.sku);
+            return ListTile(
+              title: Text(p.name),
+              subtitle: Text('المتاح: ${p.available}'),
+              trailing: added ? const Icon(Icons.check, color: Colors.green) : null,
+              onTap: added ? null : () { setState(() => _items.add(_TransferItem(product: p, quantity: 1))); Navigator.pop(context); },
+            );
+          },
+        );
+      },
     );
   }
 
   void _updateQty(int index, int delta) => setState(() => _items[index].quantity += delta);
 
   void _submitTransfer() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إنشاء طلب التحويل بنجاح ✅')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إنشاء طلب التحويل بنجاح')));
     setState(() { _items.clear(); _fromBranch = null; _toBranch = null; });
   }
 }

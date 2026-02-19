@@ -3,6 +3,7 @@
 /// شاشة لإدارة إعدادات نقطة البيع
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,6 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات نقطة البيع
@@ -24,8 +24,6 @@ class PosSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
 
   // إعدادات العرض
   String _productDisplay = 'grid';
@@ -60,46 +58,6 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   bool _enableQuickSale = true;
   bool _soundEffects = true;
   bool _hapticFeedback = true;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -108,38 +66,16 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'إعدادات نقطة البيع',
+                  title: l10n.posSettings,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
@@ -150,58 +86,27 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
-        _buildDisplaySettings(isDark),
-        _buildCartSettings(isDark),
-        _buildPaymentSettings(isDark),
-        _buildReceiptSettings(isDark),
-        _buildAdvancedSettings(isDark),
+        _buildDisplaySettings(isDark, l10n),
+        _buildCartSettings(isDark, l10n),
+        _buildPaymentSettings(isDark, l10n),
+        _buildReceiptSettings(isDark, l10n),
+        _buildAdvancedSettings(isDark, l10n),
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
             onPressed: _saveSettings,
             icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -213,7 +118,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -235,12 +140,12 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إعدادات نقطة البيع',
+            Text(l10n.posSettings,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('العرض، السلة، الدفع، الإيصال',
+            Text(l10n.posSettingsSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark
@@ -296,14 +201,14 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     );
   }
 
-  Widget _buildDisplaySettings(bool isDark) {
+  Widget _buildDisplaySettings(bool isDark, AppLocalizations l10n) {
     return _buildSettingsGroup(
-        'إعدادات العرض', Icons.grid_view, AppColors.primary, isDark, [
+        l10n.displaySettings, Icons.grid_view, AppColors.primary, isDark, [
       ListTile(
-        title: Text('طريقة عرض المنتجات',
+        title: Text(l10n.productDisplayMode,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('كيفية عرض المنتجات في شاشة POS'),
+        subtitle: Text(l10n.productDisplayModeDesc),
         trailing: SegmentedButton<String>(
           segments: const [
             ButtonSegment(value: 'grid', icon: Icon(Icons.grid_view, size: 18)),
@@ -317,10 +222,10 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       if (_productDisplay == 'grid') ...[
         const Divider(indent: 16, endIndent: 16),
         ListTile(
-          title: Text('عدد الأعمدة',
+          title: Text(l10n.gridColumns,
               style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary)),
-          subtitle: Text('$_gridColumns أعمدة'),
+          subtitle: Text(l10n.nColumns(_gridColumns)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -341,26 +246,26 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       ],
       const Divider(indent: 16, endIndent: 16),
       SwitchListTile(
-        title: Text('عرض صور المنتجات',
+        title: Text(l10n.showProductImages,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('إظهار الصور في بطاقات المنتجات'),
+        subtitle: Text(l10n.showProductImagesDesc),
         value: _showProductImages,
         onChanged: (v) => setState(() => _showProductImages = v),
       ),
       SwitchListTile(
-        title: Text('عرض الأسعار',
+        title: Text(l10n.showPrices,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('إظهار السعر على بطاقة المنتج'),
+        subtitle: Text(l10n.showPricesDesc),
         value: _showProductPrices,
         onChanged: (v) => setState(() => _showProductPrices = v),
       ),
       SwitchListTile(
-        title: Text('عرض مستوى المخزون',
+        title: Text(l10n.showStockLevel,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('إظهار الكمية المتاحة'),
+        subtitle: Text(l10n.showStockLevelDesc),
         value: _showStockLevel,
         onChanged: (v) => setState(() => _showStockLevel = v),
       ),
@@ -368,38 +273,38 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     ]);
   }
 
-  Widget _buildCartSettings(bool isDark) {
+  Widget _buildCartSettings(bool isDark, AppLocalizations l10n) {
     return _buildSettingsGroup(
-        'إعدادات السلة', Icons.shopping_cart, AppColors.success, isDark, [
+        l10n.cartSettings, Icons.shopping_cart, AppColors.success, isDark, [
       SwitchListTile(
-        title: Text('التركيز التلقائي على الباركود',
+        title: Text(l10n.autoFocusBarcode,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('التركيز على حقل الباركود عند فتح الشاشة'),
+        subtitle: Text(l10n.autoFocusBarcodeDesc),
         value: _autoFocusBarcode,
         onChanged: (v) => setState(() => _autoFocusBarcode = v),
       ),
       SwitchListTile(
-        title: Text('السماح بالمخزون السالب',
+        title: Text(l10n.allowNegativeStock,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('البيع حتى لو كان المخزون صفر'),
+        subtitle: Text(l10n.allowNegativeStockDesc),
         value: _allowNegativeStock,
         onChanged: (v) => setState(() => _allowNegativeStock = v),
       ),
       SwitchListTile(
-        title: Text('تأكيد قبل الحذف',
+        title: Text(l10n.confirmBeforeDelete,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('طلب تأكيد عند حذف منتج من السلة'),
+        subtitle: Text(l10n.confirmBeforeDeleteDesc),
         value: _confirmBeforeDelete,
         onChanged: (v) => setState(() => _confirmBeforeDelete = v),
       ),
       SwitchListTile(
-        title: Text('عرض ملاحظات المنتج',
+        title: Text(l10n.showItemNotes,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('إمكانية إضافة ملاحظات لكل منتج'),
+        subtitle: Text(l10n.showItemNotesDesc),
         value: _showItemNotes,
         onChanged: (v) => setState(() => _showItemNotes = v),
       ),
@@ -407,11 +312,11 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     ]);
   }
 
-  Widget _buildPaymentSettings(bool isDark) {
+  Widget _buildPaymentSettings(bool isDark, AppLocalizations l10n) {
     return _buildSettingsGroup(
-        'طرق الدفع', Icons.payment, AppColors.info, isDark, [
+        l10n.paymentMethods, Icons.payment, AppColors.info, isDark, [
       SwitchListTile(
-        title: Text('الدفع نقداً',
+        title: Text(l10n.cashPaymentOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
         secondary: const Icon(Icons.money),
@@ -419,7 +324,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         onChanged: (v) => setState(() => _enableCashPayment = v),
       ),
       SwitchListTile(
-        title: Text('الدفع بالبطاقة',
+        title: Text(l10n.cardPaymentOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
         secondary: const Icon(Icons.credit_card),
@@ -427,7 +332,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         onChanged: (v) => setState(() => _enableCardPayment = v),
       ),
       SwitchListTile(
-        title: Text('الدفع الآجل',
+        title: Text(l10n.creditPaymentOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
         secondary: const Icon(Icons.schedule),
@@ -435,7 +340,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         onChanged: (v) => setState(() => _enableCreditPayment = v),
       ),
       SwitchListTile(
-        title: Text('التحويل البنكي',
+        title: Text(l10n.bankTransferOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
         secondary: const Icon(Icons.account_balance),
@@ -444,19 +349,19 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       ),
       const Divider(indent: 16, endIndent: 16),
       SwitchListTile(
-        title: Text('السماح بتقسيم الدفع',
+        title: Text(l10n.allowSplitPayment,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('الدفع بأكثر من طريقة'),
+        subtitle: Text(l10n.allowSplitPaymentDesc),
         value: _enableSplitPayment,
         onChanged: (v) => setState(() => _enableSplitPayment = v),
       ),
       if (_enableCreditPayment)
         SwitchListTile(
-          title: Text('اشتراط العميل للدفع الآجل',
+          title: Text(l10n.requireCustomerForCredit,
               style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary)),
-          subtitle: const Text('يجب تحديد عميل للدفع الآجل'),
+          subtitle: Text(l10n.requireCustomerForCreditDesc),
           value: _requireCustomerForCredit,
           onChanged: (v) => setState(() => _requireCustomerForCredit = v),
         ),
@@ -464,21 +369,21 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     ]);
   }
 
-  Widget _buildReceiptSettings(bool isDark) {
+  Widget _buildReceiptSettings(bool isDark, AppLocalizations l10n) {
     return _buildSettingsGroup(
-        'إعدادات الإيصال', Icons.receipt, AppColors.warning, isDark, [
+        l10n.receiptSettings, Icons.receipt, AppColors.warning, isDark, [
       SwitchListTile(
-        title: Text('طباعة الإيصال تلقائياً',
+        title: Text(l10n.autoPrintReceipt,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('طباعة فور إتمام العملية'),
+        subtitle: Text(l10n.autoPrintReceiptDesc),
         value: _autoPrintReceipt,
         onChanged: (v) => setState(() => _autoPrintReceipt = v),
       ),
       if (_autoPrintReceipt) ...[
         const Divider(indent: 16, endIndent: 16),
         ListTile(
-          title: Text('عدد نسخ الإيصال',
+          title: Text(l10n.receiptCopies,
               style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary)),
           trailing: Row(
@@ -501,19 +406,19 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       ],
       const Divider(indent: 16, endIndent: 16),
       SwitchListTile(
-        title: Text('إرسال الإيصال بالإيميل',
+        title: Text(l10n.emailReceiptOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('إرسال نسخة للعميل'),
+        subtitle: Text(l10n.emailReceiptDesc),
         secondary: const Icon(Icons.email),
         value: _emailReceipt,
         onChanged: (v) => setState(() => _emailReceipt = v),
       ),
       SwitchListTile(
-        title: Text('إرسال الإيصال برسالة SMS',
+        title: Text(l10n.smsReceiptOption,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('رسالة نصية للعميل'),
+        subtitle: Text(l10n.smsReceiptDesc),
         secondary: const Icon(Icons.sms),
         value: _smsReceipt,
         onChanged: (v) => setState(() => _smsReceipt = v),
@@ -521,40 +426,40 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       const Divider(indent: 16, endIndent: 16),
       ListTile(
         leading: const Icon(Icons.print),
-        title: Text('إعدادات الطابعة',
+        title: Text(l10n.printerSettings,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('اختيار الطابعة وإعداداتها'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        subtitle: Text(l10n.printerSettingsDesc),
+        trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
         onTap: () => context.push(AppRoutes.settingsPrinter),
       ),
       ListTile(
         leading: const Icon(Icons.design_services),
-        title: Text('تصميم الإيصال',
+        title: Text(l10n.receiptDesign,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('تخصيص شكل الإيصال'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        subtitle: Text(l10n.receiptDesignDesc),
+        trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
         onTap: () => context.push(AppRoutes.settingsReceipt),
       ),
       const SizedBox(height: 8),
     ]);
   }
 
-  Widget _buildAdvancedSettings(bool isDark) {
+  Widget _buildAdvancedSettings(bool isDark, AppLocalizations l10n) {
     return _buildSettingsGroup(
-        'إعدادات متقدمة', Icons.tune, AppColors.grey600, isDark, [
+        l10n.advancedSettings, Icons.tune, AppColors.grey600, isDark, [
       SwitchListTile(
-        title: Text('السماح بتعليق الفواتير',
+        title: Text(l10n.allowHoldInvoices,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('حفظ الفاتورة مؤقتاً'),
+        subtitle: Text(l10n.allowHoldInvoicesDesc),
         value: _enableHoldInvoice,
         onChanged: (v) => setState(() => _enableHoldInvoice = v),
       ),
       if (_enableHoldInvoice)
         ListTile(
-          title: Text('الحد الأقصى للفواتير المعلقة',
+          title: Text(l10n.maxHoldInvoices,
               style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary)),
           trailing: Row(
@@ -576,28 +481,28 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         ),
       const Divider(indent: 16, endIndent: 16),
       SwitchListTile(
-        title: Text('وضع البيع السريع',
+        title: Text(l10n.quickSaleMode,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('شاشة مبسطة للبيع السريع'),
+        subtitle: Text(l10n.quickSaleModeDesc),
         value: _enableQuickSale,
         onChanged: (v) => setState(() => _enableQuickSale = v),
       ),
       const Divider(indent: 16, endIndent: 16),
       SwitchListTile(
-        title: Text('المؤثرات الصوتية',
+        title: Text(l10n.soundEffects,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('أصوات عند المسح والإضافة'),
+        subtitle: Text(l10n.soundEffectsDesc),
         secondary: const Icon(Icons.volume_up),
         value: _soundEffects,
         onChanged: (v) => setState(() => _soundEffects = v),
       ),
       SwitchListTile(
-        title: Text('اهتزاز اللمس',
+        title: Text(l10n.hapticFeedback,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('اهتزاز عند الضغط على الأزرار'),
+        subtitle: Text(l10n.hapticFeedbackDesc),
         secondary: const Icon(Icons.vibration),
         value: _hapticFeedback,
         onChanged: (v) => setState(() => _hapticFeedback = v),
@@ -605,18 +510,18 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       const Divider(indent: 16, endIndent: 16),
       ListTile(
         leading: const Icon(Icons.keyboard),
-        title: Text('اختصارات لوحة المفاتيح',
+        title: Text(l10n.keyboardShortcuts,
             style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary)),
-        subtitle: const Text('تخصيص الاختصارات'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        subtitle: Text(l10n.customizeShortcuts),
+        trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
         onTap: _showKeyboardShortcuts,
       ),
       ListTile(
         leading: const Icon(Icons.restore, color: AppColors.error),
-        title: const Text('إعادة ضبط الإعدادات',
-            style: TextStyle(color: AppColors.error)),
-        subtitle: const Text('إعادة جميع الإعدادات للقيم الافتراضية'),
+        title: Text(l10n.resetSettings,
+            style: const TextStyle(color: AppColors.error)),
+        subtitle: Text(l10n.resetSettingsDesc),
         onTap: _showResetConfirmation,
       ),
       const SizedBox(height: 8),
@@ -625,9 +530,10 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
 
   void _saveSettings() {
     HapticFeedback.heavyImpact();
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم حفظ الإعدادات'),
+      SnackBar(
+        content: Text(l10n.settingsSaved),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
       ),
@@ -636,29 +542,30 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
 
   void _showKeyboardShortcuts() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('اختصارات لوحة المفاتيح'),
+        title: Text(l10n.keyboardShortcuts),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildShortcutRow('F1', 'البحث عن منتج', isDark),
-              _buildShortcutRow('F2', 'البحث عن عميل', isDark),
-              _buildShortcutRow('F3', 'تعليق الفاتورة', isDark),
-              _buildShortcutRow('F4', 'المفضلة', isDark),
-              _buildShortcutRow('F8', 'تطبيق خصم', isDark),
-              _buildShortcutRow('F12', 'الدفع', isDark),
-              _buildShortcutRow('ESC', 'إلغاء / رجوع', isDark),
-              _buildShortcutRow('Delete', 'حذف منتج', isDark),
+              _buildShortcutRow('F1', l10n.shortcutSearchProduct, isDark),
+              _buildShortcutRow('F2', l10n.shortcutSearchCustomer, isDark),
+              _buildShortcutRow('F3', l10n.shortcutHoldInvoice, isDark),
+              _buildShortcutRow('F4', l10n.shortcutFavorites, isDark),
+              _buildShortcutRow('F8', l10n.shortcutApplyDiscount, isDark),
+              _buildShortcutRow('F12', l10n.shortcutPayment, isDark),
+              _buildShortcutRow('ESC', l10n.shortcutCancelBack, isDark),
+              _buildShortcutRow('Delete', l10n.shortcutDeleteProduct, isDark),
             ],
           ),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('إغلاق')),
+              child: Text(l10n.close)),
         ],
       ),
     );
@@ -690,23 +597,23 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   }
 
   void _showResetConfirmation() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('إعادة ضبط الإعدادات'),
-        content: const Text(
-            'هل أنت متأكد من إعادة جميع إعدادات نقطة البيع للقيم الافتراضية؟'),
+        title: Text(l10n.resetSettings),
+        content: Text(l10n.resetSettingsConfirm),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء')),
+              child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               _resetSettings();
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('إعادة ضبط'),
+            child: Text(l10n.resetAction),
           ),
         ],
       ),
@@ -740,9 +647,10 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       _soundEffects = true;
       _hapticFeedback = true;
     });
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم إعادة ضبط الإعدادات'),
+      SnackBar(
+        content: Text(l10n.settingsReset),
         backgroundColor: AppColors.info,
         behavior: SnackBarBehavior.floating,
       ),

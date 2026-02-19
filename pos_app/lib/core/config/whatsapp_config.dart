@@ -64,6 +64,51 @@ class WhatsAppConfig {
   /// فترة الانتظار بين الإرسال (بالثواني)
   static const int resendCooldownSeconds = 60;
 
+  // ═══════════════════════════════════════════════════════
+  // إعدادات Webhook
+  // ═══════════════════════════════════════════════════════
+
+  /// Webhook Secret للتحقق من التوقيع
+  /// ⚠️ مطلوب: --dart-define=WASENDER_WEBHOOK_SECRET=xxx
+  static const String webhookSecret = String.fromEnvironment(
+    'WASENDER_WEBHOOK_SECRET',
+  );
+
+  /// هل Webhook مُعد؟
+  static bool get isWebhookConfigured => webhookSecret.isNotEmpty;
+
+  // ═══════════════════════════════════════════════════════
+  // إعدادات الإرسال الجماعي
+  // ═══════════════════════════════════════════════════════
+
+  /// الحد الأقصى لعدد الرسائل في الدفعة الواحدة
+  static const int maxBatchSize = 50;
+
+  /// التأخير بين الرسائل بالملي ثانية (لتجنب rate limiting)
+  static const int batchDelayMs = 1000;
+
+  /// الحد الأقصى لإعادة محاولة الإرسال
+  static const int maxMessageRetries = 3;
+
+  // ═══════════════════════════════════════════════════════
+  // حدود رفع الملفات (بالبايت)
+  // ═══════════════════════════════════════════════════════
+
+  /// الحد الأقصى لحجم الصور (16MB)
+  static const int maxImageSize = 16 * 1024 * 1024;
+
+  /// الحد الأقصى لحجم الفيديو (50MB)
+  static const int maxVideoSize = 50 * 1024 * 1024;
+
+  /// الحد الأقصى لحجم المستندات (100MB)
+  static const int maxDocumentSize = 100 * 1024 * 1024;
+
+  /// الحد الأقصى لحجم الصوت (16MB)
+  static const int maxAudioSize = 16 * 1024 * 1024;
+
+  /// مدة صلاحية رابط الرفع (بالساعات)
+  static const int uploadUrlValidityHours = 24;
+
   /// هل الإعدادات مكتملة؟
   static bool get isConfigured =>
       apiToken.isNotEmpty && deviceId.isNotEmpty && senderNumber.isNotEmpty;
@@ -71,9 +116,16 @@ class WhatsAppConfig {
   /// هل يستخدم Environment Variables؟
   static bool get isUsingEnvVariables => isConfigured;
 
-  /// هل هو وضع التطوير؟ (Web + Debug)
-  /// في وضع التطوير: يتم عرض OTP في Console بدلاً من إرساله عبر WhatsApp
-  static bool get isDevMode => kIsWeb && kDebugMode;
+  /// هل وضع الاختبار مفعّل عبر --dart-define=TEST_MODE=true
+  static const bool _testMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
+
+  /// هل هو وضع التطوير؟ (Debug Mode أو TEST_MODE=true في Debug فقط)
+  /// في وضع التطوير: يتم عرض OTP في UI بدلاً من إرساله عبر WhatsApp
+  /// ⚠️ يتم تجاهل TEST_MODE تماماً في Release builds
+  static bool get isDevMode {
+    if (kReleaseMode) return false;
+    return kDebugMode || _testMode;
+  }
 
   /// رسالة خطأ إذا كانت الإعدادات غير مكتملة
   static String get configurationError {

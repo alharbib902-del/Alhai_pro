@@ -1,18 +1,20 @@
-/// الشاشة الرئيسية - Home Screen / Dashboard
+/// Home Screen / Dashboard
 ///
-/// شاشة رئيسية احترافية للويب مع:
-/// - ملخص المبيعات والإحصائيات
-/// - المبيعات الأخيرة
-/// - تنبيهات المخزون
-/// - إجراءات سريعة
-/// - الوضع المظلم
-/// - الإشعارات
-/// - اقتراحات AI
+/// Professional web home screen with:
+/// - Sales summary and stats
+/// - Recent sales
+/// - Stock alerts
+/// - Quick actions
+/// - Dark mode
+/// - Notifications
+/// - AI suggestions
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
@@ -20,8 +22,10 @@ import '../../core/theme/theme_colors.dart';
 import '../../core/router/routes.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/products_providers.dart';
+import '../../providers/shifts_providers.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/notifications_provider.dart';
 import '../../services/ai_analytics_service.dart';
@@ -30,7 +34,7 @@ import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_badge.dart';
 import '../../widgets/common/app_empty_state.dart';
 
-/// الشاشة الرئيسية (Dashboard)
+/// Home Screen (Dashboard)
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -48,22 +52,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isLoading = true;
   List<AiInsight> _aiInsights = [];
 
-  // Mock recent sales
-  final List<_RecentSale> _recentSales = [
-    const _RecentSale(id: '1234', customer: 'أحمد محمد', amount: 156.50, time: '10:30', method: 'cash'),
-    const _RecentSale(id: '1235', customer: 'عميل نقدي', amount: 89.00, time: '10:15', method: 'cash'),
-    const _RecentSale(id: '1236', customer: 'فاطمة علي', amount: 234.75, time: '09:45', method: 'card'),
-    const _RecentSale(id: '1237', customer: 'عميل نقدي', amount: 45.00, time: '09:30', method: 'cash'),
-    const _RecentSale(id: '1238', customer: 'محمد أحمد', amount: 312.00, time: '09:00', method: 'credit'),
-  ];
+  List<_RecentSale> _getRecentSales(AppLocalizations l10n) {
+    return [
+      _RecentSale(id: '1234', customer: l10n.guestCustomer, amount: 156.50, time: '10:30', method: 'cash'),
+      _RecentSale(id: '1235', customer: l10n.cashCustomer, amount: 89.00, time: '10:15', method: 'cash'),
+      _RecentSale(id: '1236', customer: l10n.guestCustomer, amount: 234.75, time: '09:45', method: 'card'),
+      _RecentSale(id: '1237', customer: l10n.cashCustomer, amount: 45.00, time: '09:30', method: 'cash'),
+      _RecentSale(id: '1238', customer: l10n.guestCustomer, amount: 312.00, time: '09:00', method: 'credit'),
+    ];
+  }
 
-  // Mock low stock items
-  final List<_LowStockItem> _lowStockItems = [
-    const _LowStockItem(name: 'حليب طازج', quantity: 5, minQuantity: 10),
-    const _LowStockItem(name: 'خبز أبيض', quantity: 3, minQuantity: 20),
-    const _LowStockItem(name: 'بيض بلدي', quantity: 0, minQuantity: 15),
-    const _LowStockItem(name: 'زبادي', quantity: 8, minQuantity: 12),
-  ];
+  List<_LowStockItem> _getLowStockItems(AppLocalizations l10n) {
+    return [
+      _LowStockItem(name: l10n.freshMilk, quantity: 5, minQuantity: 10),
+      _LowStockItem(name: l10n.whiteBread, quantity: 3, minQuantity: 20),
+      _LowStockItem(name: l10n.localEggs, quantity: 0, minQuantity: 15),
+      _LowStockItem(name: l10n.yogurt, quantity: 8, minQuantity: 12),
+    ];
+  }
 
   @override
   void initState() {
@@ -73,6 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> _loadSummary() async {
     setState(() => _isLoading = true);
+    final l10n = AppLocalizations.of(context)!;
     try {
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
@@ -83,11 +90,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final count = await db.salesDao.getTodayCount(storeId, userId);
         final pending = await db.syncQueueDao.getPendingItems();
 
-        // حساب عدد المنتجات النافدة ومنخفضة المخزون
-        final outOfStock = _lowStockItems.where((i) => i.quantity <= 0).length;
-        final lowStock = _lowStockItems.where((i) => i.quantity > 0).length;
+        final lowStockItems = _getLowStockItems(l10n);
+        final outOfStock = lowStockItems.where((i) => i.quantity <= 0).length;
+        final lowStock = lowStockItems.where((i) => i.quantity > 0).length;
 
-        // الحصول على اقتراحات AI السريعة
         final insights = AiAnalyticsService.getQuickInsights(
           todaySales: total,
           yesterdaySales: _yesterdaySales,
@@ -99,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           _todaySales = total;
           _todayOrders = count;
           _pendingSync = pending.length;
-          _lowStockCount = _lowStockItems.length;
+          _lowStockCount = lowStockItems.length;
           _averageOrderValue = count > 0 ? total / count : 0;
           _aiInsights = insights;
           _isLoading = false;
@@ -132,6 +138,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _buildWelcomeHeader(user?.name),
 
               SizedBox(height: isDesktop ? AppSpacing.xxl : AppSpacing.xl),
+
+              // Shift Status Banner
+              _ShiftStatusBanner(),
 
               // Stats Cards
               _buildStatsSection(),
@@ -183,15 +192,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildWelcomeHeader(String? userName) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final hour = DateTime.now().hour;
+    final name = userName ?? l10n.cashCustomer;
     String greeting;
     if (hour < 12) {
-      greeting = 'صباح الخير';
-    } else if (hour < 17) {
-      greeting = 'مساء الخير';
+      greeting = l10n.goodMorningName(name);
     } else {
-      greeting = 'مساء الخير';
+      greeting = l10n.goodEveningName(name);
     }
 
     return Row(
@@ -201,7 +210,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '$greeting، ${userName ?? 'المستخدم'} 👋',
+                greeting,
                 style: AppTypography.headlineMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w700,
@@ -243,7 +252,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                _pendingSync > 0 ? '$_pendingSync قيد المزامنة' : 'متصل',
+                _pendingSync > 0 ? l10n.pendingSyncCount(_pendingSync) : l10n.connected,
                 style: AppTypography.labelMedium.copyWith(
                   color: _pendingSync > 0 ? colors.warning : colors.success,
                   fontWeight: FontWeight.w600,
@@ -269,7 +278,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         AppIconButton(
           icon: Icons.refresh,
           onPressed: _loadSummary,
-          tooltip: 'تحديث',
+          tooltip: l10n.refresh,
           variant: AppButtonVariant.soft,
           color: colors.primary,
         ),
@@ -278,8 +287,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildStatsSection() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
-      return const AppLoadingState(message: 'جاري تحميل الإحصائيات...');
+      return AppLoadingState(message: l10n.loading);
     }
 
     return LayoutBuilder(
@@ -296,29 +307,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           childAspectRatio: isWide ? 1.8 : 1.5,
           children: [
             StatCard(
-              title: 'مبيعات اليوم',
-              value: '${_todaySales.toStringAsFixed(0)} ر.س',
+              title: l10n.todaySalesLabel,
+              value: '${_todaySales.toStringAsFixed(0)} ${l10n.currency}',
               icon: Icons.payments,
               iconColor: AppColors.success,
               change: 12.5,
-              changeLabel: 'من الأمس',
+              changeLabel: l10n.comparedToYesterday,
             ),
             StatCard(
-              title: 'عدد الفواتير',
+              title: l10n.totalInvoices,
               value: '$_todayOrders',
               icon: Icons.receipt_long,
               iconColor: AppColors.info,
               change: 8.3,
-              changeLabel: 'من الأمس',
+              changeLabel: l10n.comparedToYesterday,
             ),
             StatCard(
-              title: 'متوسط الفاتورة',
-              value: '${_averageOrderValue.toStringAsFixed(0)} ر.س',
+              title: l10n.averageSale,
+              value: '${_averageOrderValue.toStringAsFixed(0)} ${l10n.currency}',
               icon: Icons.trending_up,
               iconColor: AppColors.primary,
             ),
             StatCard(
-              title: 'تنبيهات المخزون',
+              title: l10n.stockAlertsLabel,
               value: '$_lowStockCount',
               icon: Icons.warning_amber,
               iconColor: _lowStockCount > 0 ? AppColors.warning : AppColors.grey400,
@@ -331,6 +342,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildQuickActionsSection() {
+    final l10n = AppLocalizations.of(context)!;
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,7 +353,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const Icon(Icons.flash_on, color: AppColors.secondary, size: 24),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'إجراءات سريعة',
+                l10n.quickActions,
                 style: AppTypography.titleMedium.copyWith(
                   color: AppColors.textPrimary,
                 ),
@@ -354,44 +367,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 3,
+            crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
             crossAxisSpacing: AppSpacing.md,
             mainAxisSpacing: AppSpacing.md,
             childAspectRatio: 1,
             children: [
               _QuickActionTile(
                 icon: Icons.point_of_sale,
-                label: 'بيع جديد',
+                label: l10n.newSale,
                 color: AppColors.primary,
                 onTap: () => context.push(AppRoutes.pos),
               ),
               _QuickActionTile(
                 icon: Icons.qr_code_scanner,
-                label: 'مسح سريع',
+                label: l10n.scanBarcode,
                 color: AppColors.success,
                 onTap: () => context.push(AppRoutes.quickSale),
               ),
               _QuickActionTile(
                 icon: Icons.person_add,
-                label: 'عميل جديد',
+                label: l10n.newCustomer,
                 color: AppColors.info,
                 onTap: () => context.push(AppRoutes.customers),
               ),
               _QuickActionTile(
                 icon: Icons.add_box,
-                label: 'منتج جديد',
+                label: l10n.newProduct,
                 color: AppColors.secondary,
                 onTap: () => context.push(AppRoutes.products),
               ),
               _QuickActionTile(
                 icon: Icons.inventory,
-                label: 'جرد',
+                label: l10n.inventory,
                 color: AppColors.warning,
                 onTap: () => context.push(AppRoutes.inventory),
               ),
               _QuickActionTile(
                 icon: Icons.bar_chart,
-                label: 'التقارير',
+                label: l10n.reports,
                 color: AppColors.error,
                 onTap: () => context.push('/reports'),
               ),
@@ -403,6 +416,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildRecentSalesSection() {
+    final l10n = AppLocalizations.of(context)!;
+    final recentSales = _getRecentSales(l10n);
+
     return AppCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -416,7 +432,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const Icon(Icons.history, color: AppColors.primary, size: 24),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
-                  'المبيعات الأخيرة',
+                  l10n.recentTransactions,
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.textPrimary,
                   ),
@@ -425,7 +441,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 TextButton(
                   onPressed: () => context.push('/invoices'),
                   child: Text(
-                    'عرض الكل',
+                    l10n.viewAll,
                     style: AppTypography.labelMedium.copyWith(
                       color: AppColors.primary,
                     ),
@@ -438,7 +454,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const Divider(height: 1),
 
           // Sales List
-          if (_recentSales.isEmpty)
+          if (recentSales.isEmpty)
             Padding(
               padding: const EdgeInsets.all(AppSpacing.xl),
               child: AppEmptyState.noInvoices(),
@@ -447,10 +463,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _recentSales.length,
+              itemCount: recentSales.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
-                final sale = _recentSales[index];
+                final sale = recentSales[index];
                 return _RecentSaleTile(sale: sale);
               },
             ),
@@ -460,6 +476,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildLowStockSection() {
+    final l10n = AppLocalizations.of(context)!;
+    final lowStockItems = _getLowStockItems(l10n);
+
     return AppCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -473,15 +492,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const Icon(Icons.warning_amber, color: AppColors.warning, size: 24),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
-                  'تنبيهات المخزون',
+                  l10n.stockAlertsLabel,
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
-                if (_lowStockItems.isNotEmpty)
+                if (lowStockItems.isNotEmpty)
                   AppBadge(
-                    label: '${_lowStockItems.length}',
+                    label: '${lowStockItems.length}',
                     color: AppColors.warning,
                     variant: AppBadgeVariant.soft,
                     size: AppBadgeSize.small,
@@ -493,7 +512,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const Divider(height: 1),
 
           // Items List
-          if (_lowStockItems.isEmpty)
+          if (lowStockItems.isEmpty)
             Padding(
               padding: const EdgeInsets.all(AppSpacing.xl),
               child: Center(
@@ -506,7 +525,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      'المخزون جيد!',
+                      l10n.stockGood,
                       style: AppTypography.titleSmall.copyWith(
                         color: AppColors.success,
                       ),
@@ -519,22 +538,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _lowStockItems.length,
+              itemCount: lowStockItems.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
-                final item = _lowStockItems[index];
+                final item = lowStockItems[index];
                 return _LowStockTile(item: item);
               },
             ),
 
           // Action Button
-          if (_lowStockItems.isNotEmpty)
+          if (lowStockItems.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: SizedBox(
                 width: double.infinity,
                 child: AppButton(
-                  label: 'إدارة المخزون',
+                  label: l10n.manageInventory,
                   icon: Icons.inventory_2,
                   variant: AppButtonVariant.outlined,
                   onPressed: () => context.push(AppRoutes.inventory),
@@ -548,13 +567,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _getFormattedDate() {
     final now = DateTime.now();
-    final days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-    final months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-    return '${days[now.weekday % 7]}، ${now.day} ${months[now.month - 1]} ${now.year}';
+    final locale = Localizations.localeOf(context).toString();
+    final formatter = DateFormat.yMMMMEEEEd(locale);
+    return formatter.format(now);
   }
 
-  /// بناء قسم اقتراحات AI
+  /// Build AI insights section
   Widget _buildAiInsightsSection() {
+    final l10n = AppLocalizations.of(context)!;
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -577,7 +598,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'اقتراحات ذكية',
+                l10n.aiSuggestions,
                 style: AppTypography.titleMedium.copyWith(
                   color: AppColors.textPrimary,
                 ),
@@ -640,6 +661,77 @@ class _LowStockItem {
 // ============================================================================
 // Sub Widgets
 // ============================================================================
+
+class _ShiftStatusBanner extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shiftAsync = ref.watch(openShiftProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return shiftAsync.when(
+      data: (shift) {
+        if (shift != null) {
+          // Shift is open -- no banner needed
+          return const SizedBox.shrink();
+        }
+        // No open shift -- show warning banner
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: colors.warningSurface,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: colors.warning),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: colors.warning, size: 24),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'لا توجد وردية مفتوحة',
+                        style: AppTypography.titleSmall.copyWith(
+                          color: colors.warning,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        'افتح وردية للبدء باستخدام نقطة البيع',
+                        style: AppTypography.bodySmall.copyWith(
+                          color: colors.warning,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                FilledButton.icon(
+                  onPressed: () => context.push(AppRoutes.shiftOpen),
+                  icon: const Icon(Icons.login_rounded, size: 18),
+                  label: Text(l10n.openShift),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colors.warning,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
 
 class _QuickActionTile extends StatefulWidget {
   final IconData icon;
@@ -724,6 +816,8 @@ class _RecentSaleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
@@ -783,13 +877,13 @@ class _RecentSaleTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${sale.amount.toStringAsFixed(2)} ر.س',
+                '${sale.amount.toStringAsFixed(2)} ${l10n.currency}',
                 style: AppTypography.priceSmall.copyWith(
                   color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: AppSpacing.xxs),
-              AppBadge.paymentMethod(sale.method),
+              AppBadge.paymentMethod(context, sale.method),
             ],
           ),
         ],
@@ -805,6 +899,7 @@ class _LowStockTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isOutOfStock = item.quantity <= 0;
 
     return Padding(
@@ -843,7 +938,7 @@ class _LowStockTile extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  'الحد الأدنى: ${item.minQuantity}',
+                  l10n.minQuantityLabel(item.minQuantity),
                   style: AppTypography.labelSmall.copyWith(
                     color: AppColors.textMuted,
                   ),
@@ -853,7 +948,7 @@ class _LowStockTile extends StatelessWidget {
           ),
 
           // Quantity Badge
-          AppBadge.stock(item.quantity, minQuantity: item.minQuantity),
+          AppBadge.stock(context, item.quantity, minQuantity: item.minQuantity),
         ],
       ),
     );
@@ -867,6 +962,7 @@ class _LowStockTile extends StatelessWidget {
 class _DarkModeToggle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeState = ref.watch(themeProvider);
     final colors = context.colors;
     final isDark = themeState.isDarkMode ||
@@ -874,7 +970,7 @@ class _DarkModeToggle extends ConsumerWidget {
             MediaQuery.platformBrightnessOf(context) == Brightness.dark);
 
     return Tooltip(
-      message: isDark ? 'الوضع الفاتح' : 'الوضع المظلم',
+      message: isDark ? l10n.lightMode : l10n.darkMode,
       child: AnimatedContainer(
         duration: AppDurations.fast,
         decoration: BoxDecoration(
@@ -920,12 +1016,13 @@ class _DarkModeToggle extends ConsumerWidget {
 class _NotificationsButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notificationsState = ref.watch(notificationsProvider);
     final unreadCount = notificationsState.unreadCount;
     final colors = context.colors;
 
     return Tooltip(
-      message: 'الإشعارات',
+      message: l10n.notifications,
       child: Stack(
         children: [
           Container(
@@ -998,6 +1095,7 @@ class _NotificationsButton extends ConsumerWidget {
 class _NotificationsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notificationsState = ref.watch(notificationsProvider);
     final notifications = notificationsState.notifications;
 
@@ -1029,8 +1127,8 @@ class _NotificationsPanel extends ConsumerWidget {
               children: [
                 const Icon(Icons.notifications, color: AppColors.primary),
                 const SizedBox(width: AppSpacing.sm),
-                const Text(
-                  'الإشعارات',
+                Text(
+                  l10n.notifications,
                   style: AppTypography.titleLarge,
                 ),
                 const Spacer(),
@@ -1040,7 +1138,7 @@ class _NotificationsPanel extends ConsumerWidget {
                       ref.read(notificationsProvider.notifier).markAllAsRead();
                     },
                     child: Text(
-                      'تعيين الكل كمقروء',
+                      l10n.markAllRead,
                       style: AppTypography.labelMedium.copyWith(
                         color: AppColors.primary,
                       ),
@@ -1066,7 +1164,7 @@ class _NotificationsPanel extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
-                          'لا توجد إشعارات',
+                          l10n.noNotifications,
                           style: AppTypography.titleMedium.copyWith(
                             color: AppColors.textMuted,
                           ),
@@ -1124,8 +1222,8 @@ class _NotificationTile extends StatelessWidget {
       onDismissed: (_) => onDismiss(),
       background: Container(
         color: AppColors.error,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: AppSpacing.lg),
+        alignment: AlignmentDirectional.centerStart,
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.lg),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: ListTile(
@@ -1162,7 +1260,7 @@ class _NotificationTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              _formatTime(notification.createdAt),
+              _formatTime(context, notification.createdAt),
               style: AppTypography.labelSmall.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -1185,14 +1283,15 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime dateTime) {
+  String _formatTime(BuildContext context, DateTime dateTime) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final diff = now.difference(dateTime);
 
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} د';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} س';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 1) return l10n.justNow;
+    if (diff.inMinutes < 60) return l10n.minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.hoursAgo(diff.inHours);
+    if (diff.inDays < 7) return l10n.daysAgo(diff.inDays);
     return '${dateTime.day}/${dateTime.month}';
   }
 }

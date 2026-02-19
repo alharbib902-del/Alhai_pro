@@ -10,12 +10,14 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../core/validators/input_sanitizer.dart';
+import '../../data/local/app_database.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/orders_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 
 /// نموذج بيانات الطلب
 class OrderModel {
@@ -42,6 +44,21 @@ class OrderModel {
     this.itemsCount = 0,
     this.items = const [],
   });
+
+  /// تحويل من بيانات قاعدة البيانات
+  factory OrderModel.fromData(OrdersTableData data) {
+    return OrderModel(
+      id: data.orderNumber,
+      customer: data.customerId ?? 'عميل',
+      customerPhone: null,
+      date: data.createdAt,
+      amount: data.total,
+      status: data.status,
+      channel: data.channel,
+      paymentStatus: data.paymentStatus,
+      itemsCount: 0,
+    );
+  }
 }
 
 /// نموذج صنف في الطلب
@@ -69,65 +86,28 @@ class OrdersScreen extends ConsumerStatefulWidget {
 }
 
 class _OrdersScreenState extends ConsumerState<OrdersScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'orders';
   String _activeTab = 'all';
   String _activeChannel = 'all';
   String _searchQuery = '';
   OrderModel? _selectedOrder;
 
-  // ─── Sample Data ─────────────────────────────────────────────
-  final List<OrderModel> _allOrders = [
-    OrderModel(
-      id: 'ORD-2401',
-      customer: '\u0645\u062d\u0645\u062f \u0627\u0644\u0639\u0644\u064a',
-      customerPhone: '0501234567',
-      date: DateTime(2026, 2, 9, 14, 30),
-      amount: 124.50,
-      status: 'completed',
-      channel: 'online',
-      paymentStatus: 'paid',
-      itemsCount: 5,
-      items: [
-        const OrderItemModel(name: '\u0637\u0645\u0627\u0637\u0645 \u0639\u0636\u0648\u064a\u0629 (\u0643\u062c\u0645)', sku: '8901', quantity: 2, price: 12.50),
-        const OrderItemModel(name: '\u062d\u0644\u064a\u0628 \u0643\u0627\u0645\u0644 \u0627\u0644\u062f\u0633\u0645', sku: '2201', quantity: 1, price: 8.00),
-        const OrderItemModel(name: '\u062e\u0628\u0632 \u0628\u0631\u064a\u0648\u0634', sku: '4402', quantity: 3, price: 5.50),
-      ],
-    ),
-    OrderModel(
-      id: 'ORD-2400',
-      customer: '\u0633\u0627\u0631\u0629 \u0623\u062d\u0645\u062f',
-      customerPhone: '0559876543',
-      date: DateTime(2026, 2, 9, 13, 15),
-      amount: 45.00,
-      status: 'pending',
-      channel: 'pos',
-      paymentStatus: 'paid',
-      itemsCount: 2,
-      items: [
-        const OrderItemModel(name: '\u0634\u0648\u0643\u0648\u0644\u0627\u062a\u0629 \u062f\u0627\u0643\u0646\u0629', sku: '9912', quantity: 1, price: 15.00),
-        const OrderItemModel(name: '\u0639\u0635\u064a\u0631 \u0628\u0631\u062a\u0642\u0627\u0644', sku: '5501', quantity: 2, price: 15.00),
-      ],
-    ),
-    OrderModel(
-      id: 'ORD-2399',
-      customer: '\u0641\u0647\u062f \u0627\u0644\u0639\u062a\u064a\u0628\u064a',
-      customerPhone: '0541112233',
-      date: DateTime(2026, 2, 8, 21, 45),
-      amount: 320.75,
-      status: 'cancelled',
-      channel: 'whatsapp',
-      paymentStatus: 'unpaid',
-      itemsCount: 12,
-      items: [
-        const OrderItemModel(name: '\u0623\u0631\u0632 \u0628\u0633\u0645\u062a\u064a', sku: '3301', quantity: 5, price: 25.00),
-        const OrderItemModel(name: '\u0632\u064a\u062a \u0632\u064a\u062a\u0648\u0646', sku: '4401', quantity: 2, price: 45.00),
-      ],
-    ),
-  ];
+  // Cached filter results
+  List<OrderModel>? _cachedFilteredOrders;
+  String? _lastTab;
+  String? _lastChannel;
+  String? _lastSearch;
+  int? _lastOrdersCount;
 
-  List<OrderModel> get _filteredOrders {
-    var list = _allOrders;
+  List<OrderModel> _filterOrders(List<OrderModel> allOrders) {
+    if (_cachedFilteredOrders != null &&
+        _lastTab == _activeTab &&
+        _lastChannel == _activeChannel &&
+        _lastSearch == _searchQuery &&
+        _lastOrdersCount == allOrders.length) {
+      return _cachedFilteredOrders!;
+    }
+
+    var list = allOrders;
     if (_activeTab != 'all') {
       list = list.where((o) => o.status == _activeTab).toList();
     }
@@ -143,48 +123,15 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
               (o.customerPhone?.contains(q) ?? false))
           .toList();
     }
+
+    _cachedFilteredOrders = list;
+    _lastTab = _activeTab;
+    _lastChannel = _activeChannel;
+    _lastSearch = _searchQuery;
+    _lastOrdersCount = allOrders.length;
+
     return list;
   }
-
-  int get _completedCount =>
-      _allOrders.where((o) => o.status == 'completed').length;
-  int get _pendingCount =>
-      _allOrders.where((o) => o.status == 'pending').length;
-  int get _cancelledCount =>
-      _allOrders.where((o) => o.status == 'cancelled').length;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   // Note: _copyOrderId method removed - can be re-added when needed
 
   void _openOrderPanel(OrderModel order) {
@@ -203,77 +150,84 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
+    final ordersAsync = ref.watch(ordersListProvider);
+
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Stack(
-        children: [
-          Row(
+      body: ordersAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => AppErrorState.general(
+          message: e.toString(),
+          onRetry: () => ref.invalidate(ordersListProvider),
+        ),
+        data: (ordersData) {
+          final allOrders = ordersData.map((o) => OrderModel.fromData(o)).toList();
+          // Single-pass stats computation
+          int completedCount = 0;
+          int pendingCount = 0;
+          int cancelledCount = 0;
+          for (final o in allOrders) {
+            switch (o.status) {
+              case 'completed': completedCount++;
+              case 'pending': pendingCount++;
+              case 'cancelled': cancelledCount++;
+            }
+          }
+
+          return Stack(
             children: [
-              if (isWideScreen)
-                AppSidebar(
-                  storeName: l10n.brandName,
-                  groups: DefaultSidebarItems.getGroups(context),
-                  selectedId: _selectedNavId,
-                  onItemTap: _handleNavigation,
-                  onSettingsTap: () => context.push(AppRoutes.settings),
-                  onSupportTap: () {},
-                  onLogoutTap: () => context.go('/login'),
-                  collapsed: _sidebarCollapsed,
-                  userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
-                ),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildHeader(context, isWideScreen, isDark, l10n),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
-                        child: Column(
-                          children: [
-                            _buildStatsSection(l10n, isDark, isWideScreen),
-                            const SizedBox(height: 24),
-                            _buildFilterSection(isDark, l10n, isWideScreen),
-                            const SizedBox(height: 16),
-                            _buildOrdersList(
-                                isDark, l10n, isWideScreen, isMediumScreen),
-                          ],
+              Row(
+                children: [
+Expanded(
+                    child: Column(
+                      children: [
+                        _buildHeader(context, isWideScreen, isDark, l10n, allOrders.length),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+                            child: Column(
+                              children: [
+                                _buildStatsSection(l10n, isDark, isWideScreen, allOrders.length, completedCount, pendingCount, cancelledCount),
+                                const SizedBox(height: 24),
+                                _buildFilterSection(isDark, l10n, isWideScreen),
+                                const SizedBox(height: 16),
+                                _buildOrdersList(allOrders,
+                                    isDark, l10n, isWideScreen, isMediumScreen),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              // Side Panel Overlay
+              if (_selectedOrder != null) ...[
+                GestureDetector(
+                  onTap: _closeOrderPanel,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    color: Colors.black.withValues(alpha: 0.5),
+                  ),
                 ),
-              ),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: isWideScreen ? 420 : size.width,
+                  child: _buildSidePanel(isDark, l10n, isWideScreen),
+                ),
+              ],
             ],
-          ),
-          // Side Panel Overlay
-          if (_selectedOrder != null) ...[
-            GestureDetector(
-              onTap: _closeOrderPanel,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                color: Colors.black.withValues(alpha: 0.5),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: isWideScreen ? 420 : size.width,
-              child: _buildSidePanel(isDark, l10n, isWideScreen),
-            ),
-          ],
-        ],
+          );
+        },
       ),
     );
   }
 
   // ─── Header ──────────────────────────────────────────────────
   Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark,
-      AppLocalizations l10n) {
+      AppLocalizations l10n, int totalCount) {
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -291,8 +245,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
         children: [
           IconButton(
             onPressed: isWideScreen
-                ? () =>
-                    setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                ? null
                 : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded,
                 color:
@@ -329,7 +282,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                 const Icon(Icons.receipt_long_rounded,
                     size: 14, color: AppColors.primary),
                 const SizedBox(width: 6),
-                Text('${_allOrders.length}',
+                Text('$totalCount',
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -422,19 +375,19 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
   // ─── Stats Section ───────────────────────────────────────────
   Widget _buildStatsSection(
-      AppLocalizations l10n, bool isDark, bool isWideScreen) {
+      AppLocalizations l10n, bool isDark, bool isWideScreen, int totalCount, int completedCount, int pendingCount, int cancelledCount) {
     final stats = [
       _StatData(
-          l10n.totalOrdersLabel, '${_allOrders.length}',
+          l10n.totalOrdersLabel, '$totalCount',
           Icons.receipt_long_rounded, AppColors.primary),
       _StatData(
-          l10n.completedOrders, '$_completedCount',
+          l10n.completedOrders, '$completedCount',
           Icons.check_circle_rounded, AppColors.success),
       _StatData(
-          l10n.pendingOrders, '$_pendingCount',
+          l10n.pendingOrders, '$pendingCount',
           Icons.schedule_rounded, AppColors.warning),
       _StatData(
-          l10n.cancelledOrders, '$_cancelledCount',
+          l10n.cancelledOrders, '$cancelledCount',
           Icons.cancel_rounded, AppColors.error),
     ];
 
@@ -449,7 +402,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
       );
     }
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: getResponsiveGridColumns(context, mobile: 1, desktop: 3),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 12,
@@ -532,8 +485,13 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
         children: [
           // Search Bar
           TextField(
-            onChanged: (v) => setState(() => _searchQuery = v),
+            maxLength: 100,
+            onChanged: (v) {
+              final sanitized = InputSanitizer.sanitize(v);
+              setState(() => _searchQuery = sanitized);
+            },
             decoration: InputDecoration(
+              counterText: '',
               hintText: l10n.searchOrderHint,
               hintStyle: TextStyle(
                   color:
@@ -610,7 +568,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                     isDark ? AppColors.textMutedDark : AppColors.textMuted)),
         const SizedBox(width: 8),
         ...tabs.map((t) => Padding(
-              padding: const EdgeInsets.only(left: 6),
+              padding: const EdgeInsetsDirectional.only(start: 6),
               child: _buildChip(t.$2, _activeTab == t.$1, isDark,
                   () => setState(() => _activeTab = t.$1)),
             )),
@@ -634,7 +592,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                     isDark ? AppColors.textMutedDark : AppColors.textMuted)),
         const SizedBox(width: 8),
         ...channels.map((c) => Padding(
-              padding: const EdgeInsets.only(left: 6),
+              padding: const EdgeInsetsDirectional.only(start: 6),
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
                 onTap: () => setState(() => _activeChannel =
@@ -740,9 +698,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   }
 
   // ─── Orders List ─────────────────────────────────────────────
-  Widget _buildOrdersList(
+  Widget _buildOrdersList(List<OrderModel> allOrders,
       bool isDark, AppLocalizations l10n, bool isWideScreen, bool isMediumScreen) {
-    final orders = _filteredOrders;
+    final orders = _filterOrders(allOrders);
     final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
     final bColor = borderColor(isDark);
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
@@ -783,16 +741,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
             ),
           // Orders
           if (orders.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(48),
-              child: Column(children: [
-                Icon(Icons.receipt_long_rounded,
-                    size: 48, color: mutedColor),
-                const SizedBox(height: 12),
-                Text(l10n.noResults,
-                    style: TextStyle(fontSize: 14, color: mutedColor)),
-              ]),
-            )
+            AppEmptyState.noOrders()
           else
             ...orders.asMap().entries.map((entry) {
               final order = entry.value;
@@ -819,7 +768,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                    l10n.showingResults(1, orders.length, _allOrders.length),
+                    l10n.showingResults(1, orders.length, allOrders.length),
                     style: TextStyle(fontSize: 12, color: mutedColor)),
                 Row(children: [
                   _pageBtn(Icons.chevron_right, isDark, null),
@@ -1577,32 +1526,6 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
   String _formatTime(DateTime dt) {
     return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
   }
 }
 

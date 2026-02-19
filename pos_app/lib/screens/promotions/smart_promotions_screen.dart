@@ -1,13 +1,15 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 
-/// شاشة العروض الذكية
+/// Smart Promotions Screen
 class SmartPromotionsScreen extends ConsumerStatefulWidget {
   const SmartPromotionsScreen({super.key});
 
@@ -17,25 +19,19 @@ class SmartPromotionsScreen extends ConsumerStatefulWidget {
 
 class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     with SingleTickerProviderStateMixin {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'loyalty';
   late TabController _tabController;
 
-  final List<_Promotion> _activePromotions = [
-    _Promotion(id: '1', title: 'عرض نهاية الأسبوع', type: 'percentage', value: 15, status: 'active', startDate: DateTime.now().subtract(const Duration(days: 2)), endDate: DateTime.now().add(const Duration(days: 5)), products: ['حليب طازج', 'جبنة بيضاء'], usageCount: 45),
-    _Promotion(id: '2', title: 'اشتري 2 واحصل على 1 مجاناً', type: 'buyXgetY', value: 1, status: 'active', startDate: DateTime.now(), endDate: DateTime.now().add(const Duration(days: 7)), products: ['عصير برتقال'], usageCount: 23),
-  ];
+  bool _isLoading = true;
+  String? _error;
 
-  final List<_SuggestedPromotion> _suggestions = [
-    _SuggestedPromotion(productName: 'زبادي فواكه', reason: 'حركة بطيئة - 15 يوم بدون بيع', suggestedDiscount: 20, currentStock: 35, expiryDays: 10),
-    _SuggestedPromotion(productName: 'لبن رايب', reason: 'قرب انتهاء الصلاحية', suggestedDiscount: 30, currentStock: 20, expiryDays: 3),
-    _SuggestedPromotion(productName: 'عصير تفاح', reason: 'مخزون زائد', suggestedDiscount: 15, currentStock: 80, expiryDays: 30),
-  ];
+  List<PromotionsTableData> _activePromotions = [];
+  List<ProductsTableData> _lowStockProducts = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadData();
   }
 
   @override
@@ -44,23 +40,34 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     super.dispose();
   }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
+  Future<void> _loadData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final promotions = await db.discountsDao.getActivePromotions(storeId);
+      final lowStock = await db.productsDao.getLowStockProducts(storeId);
+
+      if (mounted) {
+        setState(() {
+          _activePromotions = promotions;
+          _lowStockProducts = lowStock;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -69,36 +76,16 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'العروض الذكية', // TODO: localize
+                  title: l10n.smartPromotionsTitle,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.cashCustomer,
                   userRole: l10n.branchManager,
                 ),
                 // Tab bar
@@ -109,49 +96,31 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
                     labelColor: AppColors.primary,
                     unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
                     indicatorColor: AppColors.primary,
-                    tabs: const [
-                      Tab(icon: Icon(Icons.lightbulb), text: 'اقتراحات AI'),
-                      Tab(icon: Icon(Icons.local_offer), text: 'العروض النشطة'),
-                      Tab(icon: Icon(Icons.history), text: 'السجل'),
+                    tabs: [
+                      Tab(icon: const Icon(Icons.lightbulb), text: l10n.tabAiSuggestions),
+                      Tab(icon: const Icon(Icons.local_offer), text: l10n.tabActivePromotions),
+                      Tab(icon: const Icon(Icons.history), text: l10n.tabHistory),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildSuggestionsTab(isMediumScreen, isDark),
-                      _buildActiveTab(isMediumScreen, isDark),
-                      _buildHistoryTab(isDark),
-                    ],
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _error != null
+                          ? Center(child: Text(_error!, style: const TextStyle(color: AppColors.error)))
+                          : TabBarView(
+                              controller: _tabController,
+                              children: [
+                                _buildSuggestionsTab(isMediumScreen, isDark, l10n),
+                                _buildActiveTab(isMediumScreen, isDark, l10n),
+                                _buildHistoryTab(isDark, l10n),
+                              ],
+                            ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildSuggestionsTab(bool isMediumScreen, bool isDark) {
+  Widget _buildSuggestionsTab(bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
@@ -182,8 +151,8 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('اقتراحات ذكية', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textColor)),
-                      Text('عروض مقترحة بناءً على تحليل المبيعات والمخزون', style: TextStyle(color: subtextColor)),
+                      Text(l10n.smartSuggestions, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textColor)),
+                      Text(l10n.suggestionsBasedOnAnalysis, style: TextStyle(color: subtextColor)),
                     ],
                   ),
                 ),
@@ -191,16 +160,34 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             ),
           ),
           const SizedBox(height: 16),
-          ..._suggestions.map((s) => _buildSuggestionCard(s, isDark)),
+          if (_lowStockProducts.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: [
+                  Icon(Icons.lightbulb_outline, size: 48, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                  const SizedBox(height: 12),
+                  Text(
+                    '\u0644\u0627 \u062a\u0648\u062c\u062f \u0627\u0642\u062a\u0631\u0627\u062d\u0627\u062a \u062d\u0627\u0644\u064a\u0627\u064b',
+                    style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 16),
+                  ),
+                ],
+              ),
+            )
+          else
+            ..._lowStockProducts.map((product) => _buildSuggestionCard(product, isDark, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildSuggestionCard(_SuggestedPromotion suggestion, bool isDark) {
+  Widget _buildSuggestionCard(ProductsTableData product, bool isDark, AppLocalizations l10n) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
+
+    final deficit = product.minQty - product.stockQty;
+    final suggestedDiscount = deficit > 10 ? 30 : (deficit > 5 ? 20 : 15);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -215,14 +202,14 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
         children: [
           Row(
             children: [
-              Expanded(child: Text(suggestion.productName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textColor))),
+              Expanded(child: Text(product.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textColor))),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('${suggestion.suggestedDiscount}% خصم مقترح', style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold, fontSize: 12)),
+                child: Text(l10n.suggestedDiscountPercent(suggestedDiscount), style: const TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
             ],
           ),
@@ -231,28 +218,28 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             children: [
               const Icon(Icons.lightbulb_outline, size: 16, color: AppColors.warning),
               const SizedBox(width: 4),
-              Text(suggestion.reason, style: TextStyle(color: subtextColor)),
+              Flexible(child: Text(l10n.slowMovementReason('${product.stockQty}'), style: TextStyle(color: subtextColor))),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
-              _buildInfoChip(Icons.inventory, 'المخزون: ${suggestion.currentStock}', null, isDark),
+              _buildInfoChip(Icons.inventory, l10n.stockLabelCount(product.stockQty), null, isDark),
               const SizedBox(width: 8),
-              if (suggestion.expiryDays <= 7)
-                _buildInfoChip(Icons.timer, 'الصلاحية: ${suggestion.expiryDays} يوم', AppColors.error, isDark),
+              if (product.stockQty <= 5)
+                _buildInfoChip(Icons.warning, l10n.stockLabelCount(product.minQty), AppColors.error, isDark),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              OutlinedButton(onPressed: () {}, child: const Text('تجاهل')),
+              OutlinedButton(onPressed: () {}, child: Text(l10n.ignore)),
               const SizedBox(width: 8),
               FilledButton.icon(
-                onPressed: () => _applyPromotion(suggestion),
+                onPressed: () => _applyPromotionForProduct(product, l10n),
                 icon: const Icon(Icons.check, size: 18),
-                label: const Text('تطبيق'),
+                label: Text(l10n.applyAction),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
               ),
             ],
@@ -281,10 +268,26 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     );
   }
 
-  Widget _buildActiveTab(bool isMediumScreen, bool isDark) {
+  Widget _buildActiveTab(bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
+
+    if (_activePromotions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.local_offer_outlined, size: 64, color: isDark ? Colors.white38 : AppColors.textTertiary),
+            const SizedBox(height: 16),
+            Text(
+              '\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0631\u0648\u0636 \u0646\u0634\u0637\u0629',
+              style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
@@ -297,25 +300,28 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           ),
           child: ListTile(
-            onTap: () => _showPromotionDetails(p),
+            onTap: () => _showPromotionDetails(p, l10n),
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.local_offer, color: AppColors.success),
+              child: const Icon(Icons.local_offer, color: AppColors.success),
             ),
-            title: Text(p.title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
-            subtitle: Text('استخدام: ${p.usageCount} مرة', style: TextStyle(color: subtextColor, fontSize: 12)),
-            trailing: Icon(Icons.chevron_right, color: subtextColor),
+            title: Text(p.name, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              '${_getTypeName(p.type, l10n)} - ${l10n.validityDays(p.endDate.difference(DateTime.now()).inDays)}',
+              style: TextStyle(color: subtextColor, fontSize: 12),
+            ),
+            trailing: AdaptiveIcon(Icons.chevron_right, color: subtextColor),
           ),
         )).toList(),
       ),
     );
   }
 
-  Widget _buildHistoryTab(bool isDark) {
+  Widget _buildHistoryTab(bool isDark, AppLocalizations l10n) {
     final subtextColor = isDark ? Colors.white54 : AppColors.textSecondary;
     return Center(
       child: Column(
@@ -323,89 +329,53 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
         children: [
           Icon(Icons.history, size: 64, color: subtextColor),
           const SizedBox(height: 16),
-          Text('سجل العروض السابقة', style: TextStyle(color: subtextColor)),
+          Text(l10n.promotionHistory, style: TextStyle(color: subtextColor)),
         ],
       ),
     );
   }
 
-  void _createPromotion() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('إنشاء عرض جديد', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
-              const SizedBox(height: 24),
-              ListTile(leading: const Icon(Icons.percent, color: AppColors.secondary), title: const Text('خصم نسبة مئوية'), subtitle: const Text('خصم 10%، 20%، إلخ'), onTap: () => Navigator.pop(context)),
-              ListTile(leading: Icon(Icons.card_giftcard, color: AppColors.success), title: const Text('اشتري X واحصل على Y'), subtitle: const Text('اشتري 2 واحصل على 1 مجاناً'), onTap: () => Navigator.pop(context)),
-              ListTile(leading: const Icon(Icons.money_off, color: AppColors.info), title: const Text('خصم مبلغ ثابت'), subtitle: const Text('خصم 10 ر.س على المنتج'), onTap: () => Navigator.pop(context)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _applyPromotion(_SuggestedPromotion suggestion) {
+  void _applyPromotionForProduct(ProductsTableData product, AppLocalizations l10n) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('تم تطبيق العرض على ${suggestion.productName}'), backgroundColor: AppColors.success),
+      SnackBar(content: Text(l10n.promotionApplied(product.name)), backgroundColor: AppColors.success),
     );
   }
 
-  void _showPromotionDetails(_Promotion promotion) {
+  void _showPromotionDetails(PromotionsTableData promotion, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(promotion.title),
+        title: Text(promotion.name),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('النوع: ${_getTypeName(promotion.type)}'),
-            Text('القيمة: ${promotion.value}'),
-            Text('الاستخدام: ${promotion.usageCount} مرة'),
-            const SizedBox(height: 8),
-            const Text('المنتجات:', style: TextStyle(fontWeight: FontWeight.bold)),
-            ...promotion.products.map((p) => Text('- $p')),
+            Text(l10n.promotionType(_getTypeName(promotion.type, l10n))),
+            Text('${l10n.startDateLabel}: ${promotion.startDate.toString().split(' ').first}'),
+            Text('${l10n.endDateLabel}: ${promotion.endDate.toString().split(' ').first}'),
+            if (promotion.description != null && promotion.description!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(promotion.description!, style: const TextStyle(fontSize: 13)),
+            ],
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق')),
-          FilledButton(onPressed: () => Navigator.pop(context), child: const Text('تعديل')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.closeAction)),
+          FilledButton(onPressed: () => Navigator.pop(context), child: Text(l10n.edit)),
         ],
       ),
     );
   }
 
-  String _getTypeName(String type) {
+  String _getTypeName(String type, AppLocalizations l10n) {
     switch (type) {
-      case 'percentage': return 'نسبة مئوية';
-      case 'buyXgetY': return 'اشتري واحصل';
-      case 'fixed': return 'مبلغ ثابت';
+      case 'percentage': return l10n.percentageType;
+      case 'buy_x_get_y': return l10n.buyXGetYType;
+      case 'buyXgetY': return l10n.buyXGetYType;
+      case 'fixed': return l10n.fixedAmountType;
+      case 'bundle': return l10n.buyXGetYType;
+      case 'flash_sale': return l10n.percentageType;
       default: return type;
     }
   }
-}
-
-class _Promotion {
-  final String id, title, type, status;
-  final double value;
-  final DateTime startDate, endDate;
-  final List<String> products;
-  final int usageCount;
-  _Promotion({required this.id, required this.title, required this.type, required this.value, required this.status, required this.startDate, required this.endDate, required this.products, required this.usageCount});
-}
-
-class _SuggestedPromotion {
-  final String productName, reason;
-  final int suggestedDiscount, currentStock, expiryDays;
-  _SuggestedPromotion({required this.productName, required this.reason, required this.suggestedDiscount, required this.currentStock, required this.expiryDays});
 }

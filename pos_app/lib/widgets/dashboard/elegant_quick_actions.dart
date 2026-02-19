@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
 
@@ -48,8 +49,8 @@ class ElegantQuickActions extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             AppColors.primary, // #10B981
             Color(0xFF047857), // primary-dark
@@ -92,11 +93,11 @@ class ElegantQuickActions extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: actions.length,
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 1.6,
+                      childAspectRatio: 1.3,
                     ),
                     itemBuilder: (context, index) => _QuickActionButton(
                       action: actions[index],
@@ -159,7 +160,6 @@ class _QuickActionButton extends StatelessWidget {
         splashColor: Colors.white.withValues(alpha: 0.1),
         highlightColor: Colors.white.withValues(alpha: 0.05),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 88),
           decoration: BoxDecoration(
             color: action.isPrimary
                 ? Colors.white.withValues(alpha: 0.2)

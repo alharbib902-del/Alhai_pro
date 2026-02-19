@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نافذة الدفع المقسم
 class SplitPaymentDialog extends StatefulWidget {
@@ -167,8 +168,8 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          begin: AlignmentDirectional.topEnd,
+          end: AlignmentDirectional.bottomStart,
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
       ),
@@ -177,9 +178,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'الإجمالي',
-                style: TextStyle(color: Colors.white70),
+              Text(
+                AppLocalizations.of(context)!.total,
+                style: const TextStyle(color: Colors.white70),
               ),
               Text(
                 '${widget.totalAmount.toStringAsFixed(2)} ر.س',
@@ -194,9 +195,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'المدفوع',
-                style: TextStyle(color: Colors.white70),
+              Text(
+                AppLocalizations.of(context)!.paidLabel,
+                style: const TextStyle(color: Colors.white70),
               ),
               Text(
                 '${_totalPaid.toStringAsFixed(2)} ر.س',
@@ -209,7 +210,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _isComplete ? 'مكتمل' : 'المتبقي',
+                _isComplete ? AppLocalizations.of(context)!.completeLabel : AppLocalizations.of(context)!.remainingLabel,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -269,7 +270,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'المبلغ',
+          AppLocalizations.of(context)!.amount,
           style: AppTypography.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -334,11 +335,12 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
   }
 
   Widget _buildSplitsList() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'الدفعات',
+          l10n.payments,
           style: AppTypography.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -353,7 +355,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 split.method.icon,
                 color: split.method.color,
               ),
-              title: Text(split.method.label),
+              title: Text(split.method.localizedLabel(l10n)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -479,7 +481,7 @@ class _PaymentMethodCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  method.label,
+                  method.localizedLabel(AppLocalizations.of(context)!),
                   style: AppTypography.labelSmall.copyWith(
                     color: isSelected ? method.color : AppColors.textSecondary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -504,16 +506,31 @@ enum PaymentMethod {
 }
 
 extension PaymentMethodExtension on PaymentMethod {
-  String get label {
+  String get label => _fallbackLabel;
+
+  String get _fallbackLabel {
     switch (this) {
       case PaymentMethod.cash:
-        return 'نقد';
+        return 'Cash';
       case PaymentMethod.card:
-        return 'بطاقة';
+        return 'Card';
       case PaymentMethod.credit:
-        return 'آجل';
+        return 'Credit';
       case PaymentMethod.transfer:
-        return 'تحويل';
+        return 'Transfer';
+    }
+  }
+
+  String localizedLabel(AppLocalizations l10n) {
+    switch (this) {
+      case PaymentMethod.cash:
+        return l10n.cash;
+      case PaymentMethod.card:
+        return l10n.card;
+      case PaymentMethod.credit:
+        return l10n.credit;
+      case PaymentMethod.transfer:
+        return l10n.transfer;
     }
   }
 

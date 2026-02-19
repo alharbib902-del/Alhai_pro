@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نافذة إدخال الكمية
 class QuantityInputDialog extends StatefulWidget {
@@ -237,7 +238,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'الإجمالي',
+                    AppLocalizations.of(context)!.total,
                     style: TextStyle(
                       fontSize: 14,
                       color: isDark ? Colors.white70 : AppColors.textSecondary,

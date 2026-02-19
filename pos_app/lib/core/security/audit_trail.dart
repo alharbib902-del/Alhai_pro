@@ -10,6 +10,7 @@ library;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// نوع الحدث
 enum AuditEventType {
@@ -275,9 +276,7 @@ class AuditTrail {
       try {
         await _databaseSink!(entry);
       } catch (e) {
-        if (kDebugMode) {
-          debugPrint('❌ Audit DB sink error: $e');
-        }
+        AppLogger.error('Audit DB sink error: $e', tag: 'AuditTrail');
       }
     }
 
@@ -286,15 +285,11 @@ class AuditTrail {
       try {
         await sink(entry);
       } catch (e) {
-        if (kDebugMode) {
-          debugPrint('❌ Audit sink error: $e');
-        }
+        AppLogger.error('Audit sink error: $e', tag: 'AuditTrail');
       }
     }
 
-    if (kDebugMode) {
-      debugPrint('📝 AUDIT: ${entry.toLogString()}');
-    }
+    AppLogger.debug('AUDIT: ${entry.toLogString()}', tag: 'AuditTrail');
 
     return id;
   }
@@ -512,8 +507,12 @@ class AuditTrail {
   }
 
   /// تنظيف البيانات الحساسة
-  static Map<String, dynamic>? _sanitizeData(Map<String, dynamic>? data) {
+  static Map<String, dynamic>? _sanitizeData(
+    Map<String, dynamic>? data, {
+    int maxDepth = 10,
+  }) {
     if (data == null) return null;
+    if (maxDepth <= 0) return {'_truncated': 'max depth reached'};
 
     const sensitiveKeys = ['password', 'pin', 'token', 'secret', 'key', 'cvv', 'card_number'];
 
@@ -522,7 +521,7 @@ class AuditTrail {
         return MapEntry(key, '***REDACTED***');
       }
       if (value is Map<String, dynamic>) {
-        return MapEntry(key, _sanitizeData(value));
+        return MapEntry(key, _sanitizeData(value, maxDepth: maxDepth - 1));
       }
       return MapEntry(key, value);
     });

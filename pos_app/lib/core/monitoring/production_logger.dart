@@ -340,8 +340,12 @@ class ProductionLogger {
   }
 
   /// تنظيف البيانات الحساسة
-  static Map<String, dynamic>? _sanitizeContext(Map<String, dynamic>? context) {
+  static Map<String, dynamic>? _sanitizeContext(
+    Map<String, dynamic>? context, {
+    int maxDepth = 10,
+  }) {
     if (context == null) return null;
+    if (maxDepth <= 0) return {'_truncated': 'max depth reached'};
 
     return context.map((key, value) {
       final lowerKey = key.toLowerCase();
@@ -349,7 +353,7 @@ class ProductionLogger {
         return MapEntry(key, '***REDACTED***');
       }
       if (value is Map<String, dynamic>) {
-        return MapEntry(key, _sanitizeContext(value));
+        return MapEntry(key, _sanitizeContext(value, maxDepth: maxDepth - 1));
       }
       return MapEntry(key, value);
     });
@@ -383,5 +387,38 @@ extension LoggerExtension on Object {
       stackTrace: stackTrace,
       context: context,
     );
+  }
+}
+
+/// Production-safe logger that suppresses output in release builds.
+///
+/// Drop-in replacement for debugPrint calls. Use this instead of debugPrint
+/// to prevent leaking internal state to logcat in production.
+class AppLogger {
+  AppLogger._();
+
+  static void debug(String message, {String? tag}) {
+    if (kDebugMode) {
+      debugPrint('${tag != null ? '[$tag] ' : ''}$message');
+    }
+  }
+
+  static void info(String message, {String? tag}) {
+    if (kDebugMode) {
+      debugPrint('${tag != null ? '[$tag] ' : ''}$message');
+    }
+  }
+
+  static void warning(String message, {String? tag}) {
+    if (kDebugMode) {
+      debugPrint('${tag != null ? '[$tag] ' : ''}$message');
+    }
+  }
+
+  static void error(String message, {String? tag, Object? error}) {
+    // Errors are always logged (for crashlytics) but only printed in debug
+    if (kDebugMode) {
+      debugPrint('${tag != null ? '[$tag] ' : ''}$message${error != null ? '\n$error' : ''}');
+    }
   }
 }

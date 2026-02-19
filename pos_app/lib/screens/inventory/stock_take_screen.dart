@@ -1,25 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة الجرد
-class StockTakeScreen extends StatefulWidget {
+class StockTakeScreen extends ConsumerStatefulWidget {
   const StockTakeScreen({super.key});
 
   @override
-  State<StockTakeScreen> createState() => _StockTakeScreenState();
+  ConsumerState<StockTakeScreen> createState() => _StockTakeScreenState();
 }
 
-class _StockTakeScreenState extends State<StockTakeScreen> {
+class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   bool _inProgress = false;
-  final List<_StockItem> _items = [
-    _StockItem(name: 'أرز بسمتي 5 كجم', sku: 'R001', systemQty: 50, countedQty: null),
-    _StockItem(name: 'زيت طبخ 1.5 لتر', sku: 'O001', systemQty: 30, countedQty: null),
-    _StockItem(name: 'سكر أبيض 1 كجم', sku: 'S001', systemQty: 100, countedQty: null),
-    _StockItem(name: 'حليب طازج 1 لتر', sku: 'M001', systemQty: 80, countedQty: null),
-    _StockItem(name: 'طحين 2 كجم', sku: 'F001', systemQty: 45, countedQty: null),
-  ];
+  bool _isLoading = true;
+  List<_StockItem> _items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+      final db = getIt<AppDatabase>();
+      final products = await db.productsDao.getAllProducts(storeId);
+      if (mounted) {
+        setState(() {
+          _items = products.map((p) => _StockItem(
+            id: p.id,
+            name: p.name,
+            sku: p.sku ?? '',
+            systemQty: p.stockQty,
+          )).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('الجرد')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final counted = _items.where((i) => i.countedQty != null).length;
     final hasDiscrepancy = _items.any((i) => i.countedQty != null && i.countedQty != i.systemQty);
 
@@ -51,7 +89,7 @@ class _StockTakeScreenState extends State<StockTakeScreen> {
           ),
 
           // التقدم
-          if (_inProgress) Padding(
+          if (_inProgress && _items.isNotEmpty) Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
@@ -74,6 +112,10 @@ class _StockTakeScreenState extends State<StockTakeScreen> {
                         const Text('جرد المخزون', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         Text('قم بعد منتجات المخزون ومقارنتها بالنظام', style: TextStyle(color: Colors.grey.shade600)),
+                        if (_items.isEmpty) ...[
+                          const SizedBox(height: 16),
+                          Text('لا توجد منتجات في المخزون', style: TextStyle(color: Colors.orange.shade700)),
+                        ],
                       ],
                     ),
                   )
@@ -145,9 +187,19 @@ class _StockTakeScreenState extends State<StockTakeScreen> {
     );
   }
 
-  void _startStockTake() => setState(() => _inProgress = true);
+  void _startStockTake() {
+    if (_items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('لا توجد منتجات لبدء الجرد')),
+      );
+      return;
+    }
+    setState(() => _inProgress = true);
+  }
+
   void _scanBarcode() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('مسح الباركود')));
   void _showHistory() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سجل الجرد السابق')));
+
   void _completeStockTake() {
     showDialog(
       context: context,
@@ -156,7 +208,39 @@ class _StockTakeScreenState extends State<StockTakeScreen> {
         content: const Text('هل تريد حفظ نتائج الجرد وتحديث المخزون؟'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
-          FilledButton(onPressed: () { Navigator.pop(context); setState(() => _inProgress = false); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم حفظ الجرد بنجاح ✅'))); }, child: const Text('حفظ')),
+          FilledButton(
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              Navigator.pop(context);
+              try {
+                final db = getIt<AppDatabase>();
+                final updates = <String, int>{};
+                for (final item in _items) {
+                  if (item.countedQty != null) {
+                    updates[item.id] = item.countedQty!;
+                  }
+                }
+                if (updates.isNotEmpty) {
+                  await db.productsDao.batchUpdateStock(updates);
+                }
+                if (mounted) {
+                  setState(() => _inProgress = false);
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('تم حفظ الجرد وتحديث المخزون بنجاح')),
+                  );
+                  // Reload data to reflect updated stock
+                  _loadData();
+                }
+              } catch (e) {
+                if (mounted) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('خطأ في حفظ الجرد: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text('حفظ'),
+          ),
         ],
       ),
     );
@@ -164,10 +248,11 @@ class _StockTakeScreenState extends State<StockTakeScreen> {
 }
 
 class _StockItem {
+  final String id;
   final String name, sku;
   final int systemQty;
   int? countedQty;
-  _StockItem({required this.name, required this.sku, required this.systemQty, this.countedQty});
+  _StockItem({required this.id, required this.name, required this.sku, required this.systemQty});
 }
 
 class _StatCard extends StatelessWidget {

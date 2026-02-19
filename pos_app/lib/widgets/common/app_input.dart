@@ -203,7 +203,7 @@ class AppTextField extends StatefulWidget {
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
       ],
       suffix: Padding(
-        padding: const EdgeInsets.only(left: AppSpacing.md),
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.md),
         child: Text(
           currency,
           style: AppTypography.bodyMedium.copyWith(
@@ -384,6 +384,9 @@ class AppSearchField extends StatefulWidget {
   /// Focus Node
   final FocusNode? focusNode;
 
+  /// الحد الأقصى لطول النص
+  final int? maxLength;
+
   const AppSearchField({
     super.key,
     String hint = 'بحث...',
@@ -395,6 +398,7 @@ class AppSearchField extends StatefulWidget {
     this.fullWidth = false,
     this.controller,
     this.focusNode,
+    this.maxLength,
   }) : hint = hintText ?? hint;
 
   @override
@@ -444,6 +448,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
         autofocus: widget.autofocus,
+        maxLength: widget.maxLength,
         textInputAction: TextInputAction.search,
         style: AppTypography.inputText,
         decoration: InputDecoration(
@@ -451,6 +456,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
           hintStyle: AppTypography.inputHint.copyWith(
             color: AppColors.textMuted,
           ),
+          counterText: '',
           prefixIcon: const Icon(
             Icons.search,
             color: AppColors.textMuted,

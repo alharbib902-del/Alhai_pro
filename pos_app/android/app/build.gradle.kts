@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pos_app"
+    namespace = "com.alhai.pos"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,21 +20,31 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.pos_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.alhai.pos"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Multi-dex support
+        multiDexEnabled = true
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // TODO: Configure release signing before publishing to Play Store
+            // 1. Generate keystore: keytool -genkey -v -keystore ~/alhai-pos.jks -keyalg RSA -keysize 2048 -validity 10000 -alias alhai
+            // 2. Create key.properties file with storeFile, storePassword, keyAlias, keyPassword
+            // 3. Reference signing config here
             signingConfig = signingConfigs.getByName("debug")
+
+            // Enable code shrinking & obfuscation
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

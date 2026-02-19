@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 import '../core/config/whatsapp_config.dart';
 import '../core/network/secure_http_client.dart';
 import '../core/security/secure_storage_service.dart';
@@ -25,6 +25,7 @@ import '../core/security/security_logger.dart';
 class OtpData {
   final String phone;
   final String otpHash;
+  final String otpSalt;
   final DateTime createdAt;
   final DateTime expiresAt;
   int verifyAttempts;
@@ -32,6 +33,7 @@ class OtpData {
   OtpData({
     required this.phone,
     required this.otpHash,
+    this.otpSalt = '',
     required this.createdAt,
     required this.expiresAt,
     this.verifyAttempts = 0,
@@ -47,6 +49,7 @@ class OtpData {
   Map<String, dynamic> toJson() => {
         'phone': phone,
         'otpHash': otpHash,
+        'otpSalt': otpSalt,
         'createdAt': createdAt.toIso8601String(),
         'expiresAt': expiresAt.toIso8601String(),
         'verifyAttempts': verifyAttempts,
@@ -55,6 +58,7 @@ class OtpData {
   factory OtpData.fromJson(Map<String, dynamic> json) => OtpData(
         phone: json['phone'],
         otpHash: json['otpHash'],
+        otpSalt: json['otpSalt'] ?? '',
         createdAt: DateTime.parse(json['createdAt']),
         expiresAt: DateTime.parse(json['expiresAt']),
         verifyAttempts: json['verifyAttempts'] ?? 0,
@@ -73,16 +77,20 @@ class WhatsAppOtpSendResult {
   final Duration? cooldown;
   final String? messageId;
 
+  /// رمز OTP في وضع التطوير (للعرض في UI بدلاً من Console فقط)
+  final String? devOtp;
+
   const WhatsAppOtpSendResult._({
     required this.isSuccess,
     this.error,
     this.blockedUntil,
     this.cooldown,
     this.messageId,
+    this.devOtp,
   });
 
-  factory WhatsAppOtpSendResult.success({String? messageId}) =>
-      WhatsAppOtpSendResult._(isSuccess: true, messageId: messageId);
+  factory WhatsAppOtpSendResult.success({String? messageId, String? devOtp}) =>
+      WhatsAppOtpSendResult._(isSuccess: true, messageId: messageId, devOtp: devOtp);
 
   factory WhatsAppOtpSendResult.error(String message) =>
       WhatsAppOtpSendResult._(isSuccess: false, error: message);
@@ -174,8 +182,11 @@ class WhatsAppOtpService {
   // آخر وقت إرسال لكل رقم
   static final Map<String, DateTime> _lastSendTime = {};
 
-  // Storage key
+  // Storage keys
   static const String _otpStorageKey = 'whatsapp_otp_data';
+  static const String _sendHistoryKey = 'whatsapp_send_history';
+  static const String _lastSendTimeKey = 'whatsapp_last_send_time';
+  static bool _rateLimitLoaded = false;
 
   // ============================================================================
   // SEND OTP
@@ -185,6 +196,9 @@ class WhatsAppOtpService {
   static Future<WhatsAppOtpSendResult> sendOtp({
     required String phone,
   }) async {
+    // تحميل بيانات Rate Limiting
+    await _loadRateLimitData();
+
     // التحقق من الإعدادات
     if (!WhatsAppConfig.isConfigured && !WhatsAppConfig.isDevMode) {
       return WhatsAppOtpSendResult.error(
@@ -208,29 +222,27 @@ class WhatsAppOtpService {
       return WhatsAppOtpSendResult.cooldown(cooldown);
     }
 
-    // توليد OTP
+    // توليد OTP مع salt عشوائي لكل جلسة
     final otp = _generateOtp();
-    final otpHash = _hashOtp(otp);
+    final salt = _generateSalt();
+    final otpHash = _hashOtp(otp, salt);
 
     try {
       // 🔧 وضع التطوير: حفظ OTP بدون إرساله عبر WhatsApp
       // ⚠️ للاختبار فقط - يظهر OTP في Console
       if (WhatsAppConfig.isDevMode) {
-        debugPrint('');
-        debugPrint('╔══════════════════════════════════════════════════╗');
-        debugPrint('║  🔐 DEV MODE - OTP للاختبار                      ║');
-        debugPrint('╠══════════════════════════════════════════════════╣');
-        debugPrint('║  📱 الرقم: $formattedPhone');
-        debugPrint('║  🔑 رمز OTP: $otp');
-        debugPrint('║  ⏱️ صالح لمدة: ${WhatsAppConfig.otpExpiryMinutes} دقائق');
-        debugPrint('╚══════════════════════════════════════════════════╝');
-        debugPrint('');
+        AppLogger.debug(
+          'DEV MODE - OTP: $otp for $formattedPhone '
+          '(valid for ${WhatsAppConfig.otpExpiryMinutes} min)',
+          tag: 'OTP',
+        );
 
         // حفظ OTP
         final now = DateTime.now();
         final otpData = OtpData(
           phone: formattedPhone,
           otpHash: otpHash,
+          otpSalt: salt,
           createdAt: now,
           expiresAt: now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
         );
@@ -240,7 +252,7 @@ class WhatsAppOtpService {
         _recordSend(formattedPhone);
         SecurityLogger.logOtpSent(formattedPhone);
 
-        return WhatsAppOtpSendResult.success(messageId: 'dev-mode');
+        return WhatsAppOtpSendResult.success(messageId: 'dev-mode', devOtp: otp);
       }
 
       // إرسال عبر WaSenderAPI (الإنتاج فقط)
@@ -260,6 +272,7 @@ class WhatsAppOtpService {
         final otpData = OtpData(
           phone: formattedPhone,
           otpHash: otpHash,
+          otpSalt: salt,
           createdAt: now,
           expiresAt:
               now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
@@ -330,9 +343,11 @@ class WhatsAppOtpService {
       return WhatsAppOtpVerifyResult.maxAttemptsExceeded();
     }
 
-    // التحقق من OTP
-    final inputHash = _hashOtp(otp);
-    if (inputHash == otpData.otpHash) {
+    // التحقق من OTP باستخدام salt المخزن ومقارنة ثابتة الوقت
+    final inputHash = _hashOtp(otp, otpData.otpSalt);
+    // ⚠️ تأخير مقاوم للـ brute-force - يبطئ محاولات التخمين
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (_constantTimeEquals(inputHash, otpData.otpHash)) {
       // نجاح - مسح OTP
       SecurityLogger.logOtpVerifySuccess(formattedPhone);
       await _clearOtp(formattedPhone);
@@ -393,11 +408,29 @@ class WhatsAppOtpService {
     return otp;
   }
 
-  /// تشفير OTP
-  static String _hashOtp(String otp) {
-    final bytes = utf8.encode(otp);
-    final digest = sha256.convert(bytes);
+  /// توليد salt عشوائي آمن لكل جلسة OTP
+  static String _generateSalt() {
+    final random = Random.secure();
+    final saltBytes = List<int>.generate(32, (_) => random.nextInt(256));
+    return base64Encode(saltBytes);
+  }
+
+  /// تشفير OTP مع salt باستخدام HMAC-SHA256
+  static String _hashOtp(String otp, String salt) {
+    final key = utf8.encode(salt);
+    final hmac = Hmac(sha256, key);
+    final digest = hmac.convert(utf8.encode(otp));
     return digest.toString();
+  }
+
+  /// مقارنة ثابتة الوقت لمنع هجمات التوقيت
+  static bool _constantTimeEquals(String a, String b) {
+    if (a.length != b.length) return false;
+    int result = 0;
+    for (int i = 0; i < a.length; i++) {
+      result |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
+    }
+    return result == 0;
   }
 
   /// تنسيق رقم الهاتف
@@ -424,6 +457,56 @@ class WhatsAppOtpService {
   // RATE LIMITING
   // ============================================================================
 
+  /// تحميل بيانات Rate Limiting من التخزين الآمن
+  static Future<void> _loadRateLimitData() async {
+    if (_rateLimitLoaded) return;
+    _rateLimitLoaded = true;
+    try {
+      final historyJson = await SecureStorageService.read(_sendHistoryKey);
+      if (historyJson != null) {
+        final historyMap = jsonDecode(historyJson) as Map<String, dynamic>;
+        final oneHourAgo = DateTime.now().subtract(const Duration(hours: 1));
+        for (final entry in historyMap.entries) {
+          final times = (entry.value as List)
+              .map((e) => DateTime.parse(e as String))
+              .where((t) => t.isAfter(oneHourAgo))
+              .toList();
+          if (times.isNotEmpty) {
+            _sendHistory[entry.key] = times;
+          }
+        }
+      }
+      final lastSendJson = await SecureStorageService.read(_lastSendTimeKey);
+      if (lastSendJson != null) {
+        final lastSendMap = jsonDecode(lastSendJson) as Map<String, dynamic>;
+        for (final entry in lastSendMap.entries) {
+          _lastSendTime[entry.key] = DateTime.parse(entry.value as String);
+        }
+      }
+    } catch (e) {
+      AppLogger.debug('Failed to load rate limit data: $e', tag: 'OTP');
+    }
+  }
+
+  /// حفظ بيانات Rate Limiting في التخزين الآمن
+  static Future<void> _persistRateLimitData() async {
+    try {
+      final historyMap = <String, List<String>>{};
+      for (final entry in _sendHistory.entries) {
+        historyMap[entry.key] = entry.value.map((e) => e.toIso8601String()).toList();
+      }
+      await SecureStorageService.write(_sendHistoryKey, jsonEncode(historyMap));
+
+      final lastSendMap = <String, String>{};
+      for (final entry in _lastSendTime.entries) {
+        lastSendMap[entry.key] = entry.value.toIso8601String();
+      }
+      await SecureStorageService.write(_lastSendTimeKey, jsonEncode(lastSendMap));
+    } catch (e) {
+      AppLogger.debug('Failed to persist rate limit data: $e', tag: 'OTP');
+    }
+  }
+
   static void _recordSend(String phone) {
     _sendHistory.putIfAbsent(phone, () => []);
     _sendHistory[phone]!.add(DateTime.now());
@@ -432,6 +515,9 @@ class WhatsAppOtpService {
     // إزالة السجلات القديمة (أكثر من ساعة)
     final oneHourAgo = DateTime.now().subtract(const Duration(hours: 1));
     _sendHistory[phone]!.removeWhere((time) => time.isBefore(oneHourAgo));
+
+    // حفظ بيانات Rate Limiting
+    _persistRateLimitData();
   }
 
   static bool _isRateLimited(String phone) {
@@ -473,8 +559,8 @@ class WhatsAppOtpService {
     try {
       final json = jsonEncode(data.toJson());
       await SecureStorageService.write('${_otpStorageKey}_${data.phone}', json);
-    } catch (_) {
-      // تجاهل أخطاء التخزين
+    } catch (e) {
+      AppLogger.debug('Failed to save OTP to storage: $e', tag: 'OTP');
     }
   }
 
@@ -483,7 +569,8 @@ class WhatsAppOtpService {
       final json = await SecureStorageService.read('${_otpStorageKey}_$phone');
       if (json == null) return null;
       return OtpData.fromJson(jsonDecode(json));
-    } catch (_) {
+    } catch (e) {
+      AppLogger.debug('Failed to load OTP from storage: $e', tag: 'OTP');
       return null;
     }
   }
@@ -492,8 +579,8 @@ class WhatsAppOtpService {
     _otpCache.remove(phone);
     try {
       await SecureStorageService.delete('${_otpStorageKey}_$phone');
-    } catch (_) {
-      // تجاهل
+    } catch (e) {
+      AppLogger.debug('Failed to clear OTP from storage: $e', tag: 'OTP');
     }
   }
 
@@ -507,10 +594,15 @@ class WhatsAppOtpService {
   }
 
   /// مسح كل البيانات (للاختبارات)
-  static void reset() {
+  static Future<void> reset() async {
     _otpCache.clear();
     _sendHistory.clear();
     _lastSendTime.clear();
+    _rateLimitLoaded = false;
+    try {
+      await SecureStorageService.delete(_sendHistoryKey);
+      await SecureStorageService.delete(_lastSendTimeKey);
+    } catch (_) {}
   }
 
   /// الحصول على الوقت المتبقي للـ cooldown

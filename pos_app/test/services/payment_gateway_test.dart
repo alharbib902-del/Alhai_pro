@@ -419,7 +419,7 @@ void main() {
       final result = await service.processPayment(request);
 
       expect(result.success, false);
-      expect(result.errorMessage, contains('غير مدعومة'));
+      expect(result.errorMessage, contains('غير مفعل'));
     });
 
     test('processPayment succeeds for cash', () async {

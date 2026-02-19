@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الديون
 class DebtsReportScreen extends ConsumerStatefulWidget {
@@ -23,21 +29,34 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
 
   Future<void> _loadDebts() async {
     setState(() => _isLoading = true);
-    
-    // Mock data للتطوير - TODO: ربط بقاعدة البيانات
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    setState(() {
-      _debts = [
-        {'id': '1', 'name': 'محمد أحمد', 'phone': '0501234567', 'balance': 1500.0, 'lastPayment': DateTime.now().subtract(const Duration(days: 5))},
-        {'id': '2', 'name': 'علي خالد', 'phone': '0551234567', 'balance': 2000.0, 'lastPayment': DateTime.now().subtract(const Duration(days: 10))},
-        {'id': '3', 'name': 'فهد سعد', 'phone': '0561234567', 'balance': 750.0, 'lastPayment': DateTime.now().subtract(const Duration(days: 3))},
-      ];
-      
-      _totalDebts = _debts.fold(0.0, (sum, d) => sum + (d['balance'] as double));
-      _sortDebts();
-      _isLoading = false;
-    });
+
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final db = getIt<AppDatabase>();
+    final accounts = await db.accountsDao.getReceivableAccounts(storeId);
+
+    if (mounted) {
+      setState(() {
+        _debts = accounts
+            .where((a) => a.balance > 0)
+            .map((a) => {
+              'id': a.id,
+              'name': a.name,
+              'phone': a.phone,
+              'balance': a.balance,
+              'lastPayment': a.lastTransactionAt ?? a.createdAt,
+            })
+            .toList();
+
+        _totalDebts = _debts.fold(0.0, (sum, d) => sum + (d['balance'] as double));
+        _sortDebts();
+        _isLoading = false;
+      });
+    }
   }
 
   void _sortDebts() {
@@ -72,13 +91,14 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
             ],
           ),
           IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: 'مشاركة',
+            onPressed: _shareReport,
+          ),
+          IconButton(
             icon: const Icon(Icons.print),
             tooltip: 'طباعة',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('جاري طباعة التقرير...')),
-              );
-            },
+            onPressed: _printReport,
           ),
         ],
       ),
@@ -226,6 +246,137 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  pw.Document _buildDebtsPdf() {
+    final pdf = pw.Document();
+    pdf.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      textDirection: pw.TextDirection.rtl,
+      build: (context) => pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('تقرير الديون',
+              style: pw.TextStyle(
+                  fontSize: 20, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 10),
+          pw.Text(
+              'التاريخ: ${_formatDate(DateTime.now())}'),
+          pw.Divider(),
+          pw.SizedBox(height: 10),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('إجمالي الديون',
+                    style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold)),
+                pw.Text(
+                    '${_totalDebts.toStringAsFixed(0)} ر.س',
+                    style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold)),
+              ]),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('عدد العملاء'),
+                pw.Text('${_debts.length}'),
+              ]),
+          pw.Divider(),
+          pw.SizedBox(height: 10),
+          pw.Text('تفاصيل الديون:',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 8),
+          // Table header
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(vertical: 4),
+            decoration: const pw.BoxDecoration(
+              border: pw.Border(
+                  bottom: pw.BorderSide(width: 1)),
+            ),
+            child: pw.Row(
+              children: [
+                pw.Expanded(
+                    flex: 3,
+                    child: pw.Text('العميل',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10))),
+                pw.Expanded(
+                    flex: 2,
+                    child: pw.Text('الهاتف',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10))),
+                pw.Expanded(
+                    flex: 2,
+                    child: pw.Text('المبلغ',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10),
+                        textAlign: pw.TextAlign.left)),
+              ],
+            ),
+          ),
+          // Table rows
+          ...List.generate(_debts.length, (index) {
+            final debt = _debts[index];
+            return pw.Container(
+              padding:
+                  const pw.EdgeInsets.symmetric(vertical: 3),
+              decoration: const pw.BoxDecoration(
+                border: pw.Border(
+                    bottom: pw.BorderSide(
+                        width: 0.3,
+                        color: PdfColors.grey400)),
+              ),
+              child: pw.Row(
+                children: [
+                  pw.Expanded(
+                      flex: 3,
+                      child: pw.Text(
+                          debt['name'] as String,
+                          style: const pw.TextStyle(
+                              fontSize: 10))),
+                  pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                          (debt['phone'] as String?) ??
+                              '-',
+                          style: const pw.TextStyle(
+                              fontSize: 10))),
+                  pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                          '${(debt['balance'] as double).toStringAsFixed(0)} ر.س',
+                          style: const pw.TextStyle(
+                              fontSize: 10),
+                          textAlign: pw.TextAlign.left)),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    ));
+    return pdf;
+  }
+
+  void _shareReport() async {
+    final pdf = _buildDebtsPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename:
+          'debts_report_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  void _printReport() async {
+    final pdf = _buildDebtsPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name:
+          'debts_report_${DateTime.now().toIso8601String().split('T').first}',
     );
   }
 

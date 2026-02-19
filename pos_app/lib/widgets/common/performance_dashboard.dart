@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/performance_provider.dart';
 
 /// Widget لعرض لوحة KPIs الأداء
@@ -17,6 +18,7 @@ class PerformanceDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(performanceProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (compact) {
       return _CompactView(stats: stats);
@@ -62,7 +64,7 @@ class PerformanceDashboard extends ConsumerWidget {
                     icon: Icons.timer,
                     label: 'متوسط وقت البيع',
                     value: stats.avgSaleTime.toStringAsFixed(0),
-                    unit: 'ثانية',
+                    unit: l10n.seconds,
                     color: _getTimeColor(stats.avgSaleTime),
                   ),
                 ),

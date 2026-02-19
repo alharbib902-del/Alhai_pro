@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 import 'app_button.dart';
 
 /// حوار موحد
@@ -48,12 +49,15 @@ class AppDialog extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String message,
-    String confirmText = 'تأكيد',
-    String cancelText = 'إلغاء',
+    String? confirmText,
+    String? cancelText,
     Color? confirmColor,
     IconData? icon,
     bool isDangerous = false,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+    final effectiveConfirmText = confirmText ?? l10n.confirm;
+    final effectiveCancelText = cancelText ?? l10n.cancel;
     return showDialog<bool>(
       context: context,
       builder: (context) => AppDialog(
@@ -68,11 +72,11 @@ class AppDialog extends StatelessWidget {
         ),
         actions: [
           AppButton.ghost(
-            label: cancelText,
+            label: effectiveCancelText,
             onPressed: () => Navigator.of(context).pop(false),
           ),
           AppButton(
-            label: confirmText,
+            label: effectiveConfirmText,
             onPressed: () => Navigator.of(context).pop(true),
             color: confirmColor ?? (isDangerous ? AppColors.error : AppColors.primary),
             variant: AppButtonVariant.filled,
@@ -87,9 +91,11 @@ class AppDialog extends StatelessWidget {
     BuildContext context, {
     required String title,
     String? message,
-    String buttonText = 'حسناً',
+    String? buttonText,
     VoidCallback? onDismiss,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+    final effectiveButtonText = buttonText ?? l10n.gotIt;
     return showDialog(
       context: context,
       builder: (context) => AppDialog(
@@ -106,7 +112,7 @@ class AppDialog extends StatelessWidget {
             : const SizedBox.shrink(),
         actions: [
           AppButton.primary(
-            label: buttonText,
+            label: effectiveButtonText,
             onPressed: () {
               Navigator.of(context).pop();
               onDismiss?.call();
@@ -122,9 +128,11 @@ class AppDialog extends StatelessWidget {
     BuildContext context, {
     required String title,
     String? message,
-    String buttonText = 'حسناً',
+    String? buttonText,
     VoidCallback? onRetry,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+    final effectiveButtonText = buttonText ?? l10n.gotIt;
     return showDialog(
       context: context,
       builder: (context) => AppDialog(
@@ -142,11 +150,11 @@ class AppDialog extends StatelessWidget {
         actions: [
           if (onRetry != null)
             AppButton.ghost(
-              label: 'إلغاء',
+              label: l10n.cancel,
               onPressed: () => Navigator.of(context).pop(),
             ),
           AppButton(
-            label: onRetry != null ? 'إعادة المحاولة' : buttonText,
+            label: onRetry != null ? l10n.retry : effectiveButtonText,
             onPressed: () {
               Navigator.of(context).pop();
               onRetry?.call();
@@ -202,12 +210,15 @@ class AppDialog extends StatelessWidget {
     required String title,
     String? hint,
     String? initialValue,
-    String confirmText = 'تأكيد',
-    String cancelText = 'إلغاء',
+    String? confirmText,
+    String? cancelText,
     TextInputType keyboardType = TextInputType.text,
     int? maxLines = 1,
     String? Function(String?)? validator,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+    confirmText ??= l10n.confirm;
+    cancelText ??= l10n.cancel;
     final controller = TextEditingController(text: initialValue);
     final formKey = GlobalKey<FormState>();
 
@@ -233,11 +244,11 @@ class AppDialog extends StatelessWidget {
         ),
         actions: [
           AppButton.ghost(
-            label: cancelText,
+            label: cancelText!,
             onPressed: () => Navigator.of(context).pop(),
           ),
           AppButton.primary(
-            label: confirmText,
+            label: confirmText!,
             onPressed: () {
               if (formKey.currentState?.validate() ?? true) {
                 Navigator.of(context).pop(controller.text);

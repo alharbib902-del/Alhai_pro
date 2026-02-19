@@ -5,10 +5,15 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/validators/input_sanitizer.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/split_view.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_input.dart';
@@ -17,14 +22,14 @@ import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/common/app_dialog.dart';
 
 /// شاشة البيع السريع
-class QuickSaleScreen extends StatefulWidget {
+class QuickSaleScreen extends ConsumerStatefulWidget {
   const QuickSaleScreen({super.key});
 
   @override
-  State<QuickSaleScreen> createState() => _QuickSaleScreenState();
+  ConsumerState<QuickSaleScreen> createState() => _QuickSaleScreenState();
 }
 
-class _QuickSaleScreenState extends State<QuickSaleScreen> {
+class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   final _barcodeController = TextEditingController();
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
@@ -32,39 +37,28 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
   bool _showCart = true;
   String _selectedCategory = 'الكل';
 
-  // Mock categories
-  final List<String> _categories = [
-    'الكل',
-    'فواكه',
-    'خضروات',
-    'ألبان',
-    'مشروبات',
-    'سناكس',
-    'تنظيف',
-  ];
+  // Data loaded from DB
+  List<ProductsTableData> _products = [];
+  List<String> _categories = ['الكل'];
+  bool _isLoading = true;
+  String? _error;
 
-  // Mock products
-  final List<Product> _products = [
-    const Product(id: '1', name: 'تفاح أحمر', price: 12.5, barcode: '123456', category: 'فواكه', quantity: 50),
-    const Product(id: '2', name: 'موز', price: 8.0, barcode: '123457', category: 'فواكه', quantity: 30),
-    const Product(id: '3', name: 'برتقال', price: 10.0, barcode: '123458', category: 'فواكه', quantity: 45),
-    const Product(id: '4', name: 'طماطم', price: 5.5, barcode: '234567', category: 'خضروات', quantity: 100),
-    const Product(id: '5', name: 'خيار', price: 4.0, barcode: '234568', category: 'خضروات', quantity: 80),
-    const Product(id: '6', name: 'حليب طازج', price: 7.5, barcode: '345678', category: 'ألبان', quantity: 25),
-    const Product(id: '7', name: 'لبن', price: 5.0, barcode: '345679', category: 'ألبان', quantity: 40),
-    const Product(id: '8', name: 'ماء معدني', price: 1.5, barcode: '456789', category: 'مشروبات', quantity: 200),
-    const Product(id: '9', name: 'بيبسي', price: 3.0, barcode: '456790', category: 'مشروبات', quantity: 150),
-    const Product(id: '10', name: 'شيبس', price: 4.5, barcode: '567890', category: 'سناكس', quantity: 60),
-    const Product(id: '11', name: 'شوكولاتة', price: 6.0, barcode: '567891', category: 'سناكس', quantity: 45),
-    const Product(id: '12', name: 'صابون', price: 8.5, barcode: '678901', category: 'تنظيف', quantity: 30),
-  ];
+  // Map from categoryId to categoryName for display
+  Map<String, String> _categoryMap = {};
 
-  List<Product> get _filteredProducts {
+  List<ProductsTableData> get _filteredProducts {
     var products = _products;
 
     // Filter by category
     if (_selectedCategory != 'الكل') {
-      products = products.where((p) => p.category == _selectedCategory).toList();
+      // Find the categoryId(s) for the selected category name
+      final selectedCatIds = _categoryMap.entries
+          .where((e) => e.value == _selectedCategory)
+          .map((e) => e.key)
+          .toList();
+      if (selectedCatIds.isNotEmpty) {
+        products = products.where((p) => selectedCatIds.contains(p.categoryId)).toList();
+      }
     }
 
     // Filter by search
@@ -72,7 +66,7 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
     if (search.isNotEmpty) {
       products = products.where((p) =>
         p.name.toLowerCase().contains(search) ||
-        p.barcode.contains(search)
+        (p.barcode?.contains(search) ?? false)
       ).toList();
     }
 
@@ -88,6 +82,70 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
   void initState() {
     super.initState();
     _focusNode.requestFocus();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) {
+          setState(() {
+            _error = 'لم يتم تحديد المتجر';
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      // Load products from DB
+      final products = await db.productsDao.getAllProducts(storeId);
+
+      // Load categories from DB
+      final dbCategories = await db.categoriesDao.getAllCategories(storeId);
+      final categoryNames = <String>['الكل'];
+      final categoryMap = <String, String>{};
+      for (final cat in dbCategories) {
+        categoryNames.add(cat.name);
+        categoryMap[cat.id] = cat.name;
+      }
+
+      // If there are products with categoryIds not in the DB categories,
+      // extract unique categoryIds from products as fallback
+      final productCategoryIds = products
+          .map((p) => p.categoryId)
+          .where((c) => c != null && c.isNotEmpty)
+          .toSet();
+      for (final catId in productCategoryIds) {
+        if (catId != null && !categoryMap.containsKey(catId)) {
+          categoryMap[catId] = catId;
+          categoryNames.add(catId);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _products = products;
+          _categories = categoryNames;
+          _categoryMap = categoryMap;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Get display name for a product's category
+  String _getCategoryDisplayName(ProductsTableData product) {
+    if (product.categoryId == null) return 'أخرى';
+    return _categoryMap[product.categoryId] ?? product.categoryId ?? 'أخرى';
   }
 
   @override
@@ -100,6 +158,37 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const SizedBox(height: 16),
+              Text(_error!, style: AppTypography.bodyLarge),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() { _isLoading = true; _error = null; });
+                  _loadData();
+                },
+                child: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.f1): _focusBarcode,
@@ -214,7 +303,17 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
             child: AppSearchField(
               hint: 'بحث عن منتج (F2)',
               controller: _searchController,
-              onChanged: (_) => setState(() {}),
+              maxLength: 100,
+              onChanged: (v) {
+                final sanitized = InputSanitizer.sanitize(v);
+                if (sanitized != v) {
+                  _searchController.text = sanitized;
+                  _searchController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: sanitized.length),
+                  );
+                }
+                setState(() {});
+              },
               fullWidth: true,
             ),
           ),
@@ -295,6 +394,7 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
         final product = products[index];
         return _ProductTile(
           product: product,
+          categoryName: _getCategoryDisplayName(product),
           onTap: () => _addProduct(product),
         );
       },
@@ -475,27 +575,43 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
     // Focus on search field
   }
 
-  void _addByBarcode(String barcode) {
+  void _addByBarcode(String barcode) async {
     if (barcode.isEmpty) return;
 
-    final product = _products.firstWhere(
-      (p) => p.barcode == barcode,
-      orElse: () => Product(
-        id: DateTime.now().toString(),
-        name: 'منتج #$barcode',
-        price: (barcode.hashCode.abs() % 100 + 10).toDouble(),
-        barcode: barcode,
-        category: 'أخرى',
-        quantity: 100,
-      ),
-    );
+    // Try to find in already-loaded products first
+    final localMatch = _products.where((p) => p.barcode == barcode);
 
-    _addProduct(product);
+    if (localMatch.isNotEmpty) {
+      _addProduct(localMatch.first);
+    } else {
+      // Fallback: query DB directly
+      try {
+        final db = getIt<AppDatabase>();
+        final storeId = ref.read(currentStoreIdProvider);
+        if (storeId != null) {
+          final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+          if (product != null && mounted) {
+            _addProduct(product);
+          } else if (mounted) {
+            final messenger = ScaffoldMessenger.of(context);
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text('لم يتم العثور على منتج بالباركود: $barcode'),
+                backgroundColor: AppColors.warning,
+              ),
+            );
+          }
+        }
+      } catch (_) {
+        // Ignore barcode lookup errors
+      }
+    }
+
     _barcodeController.clear();
     _focusNode.requestFocus();
   }
 
-  void _addProduct(Product product) {
+  void _addProduct(ProductsTableData product) {
     setState(() {
       final existingIndex = _cartItems.indexWhere((e) => e.product.id == product.id);
       if (existingIndex >= 0) {
@@ -560,28 +676,8 @@ class _QuickSaleScreenState extends State<QuickSaleScreen> {
 // Models
 // ============================================================================
 
-class Product {
-  final String id;
-  final String name;
-  final double price;
-  final String barcode;
-  final String category;
-  final int quantity;
-  final String? imageUrl;
-
-  const Product({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.barcode,
-    required this.category,
-    required this.quantity,
-    this.imageUrl,
-  });
-}
-
 class CartItem {
-  final Product product;
+  final ProductsTableData product;
   final int quantity;
 
   const CartItem({
@@ -592,7 +688,7 @@ class CartItem {
   double get total => product.price * quantity;
 
   CartItem copyWith({
-    Product? product,
+    ProductsTableData? product,
     int? quantity,
   }) {
     return CartItem(
@@ -607,11 +703,13 @@ class CartItem {
 // ============================================================================
 
 class _ProductTile extends StatefulWidget {
-  final Product product;
+  final ProductsTableData product;
+  final String categoryName;
   final VoidCallback onTap;
 
   const _ProductTile({
     required this.product,
+    required this.categoryName,
     required this.onTap,
   });
 
@@ -624,7 +722,7 @@ class _ProductTileState extends State<_ProductTile> {
 
   @override
   Widget build(BuildContext context) {
-    final categoryColor = AppColors.getCategoryColor(widget.product.category);
+    final categoryColor = AppColors.getCategoryColor(widget.categoryName);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -663,7 +761,7 @@ class _ProductTileState extends State<_ProductTile> {
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                         child: Text(
-                          widget.product.category,
+                          widget.categoryName,
                           style: AppTypography.labelSmall.copyWith(
                             color: categoryColor,
                             fontWeight: FontWeight.w600,
@@ -672,7 +770,7 @@ class _ProductTileState extends State<_ProductTile> {
                       ),
                       const Spacer(),
                       // Stock indicator
-                      AppBadge.stock(widget.product.quantity),
+                      AppBadge.stock(context, widget.product.stockQty),
                     ],
                   ),
 
@@ -689,7 +787,7 @@ class _ProductTileState extends State<_ProductTile> {
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                       child: Icon(
-                        _getCategoryIcon(widget.product.category),
+                        _getCategoryIcon(widget.categoryName),
                         color: categoryColor,
                         size: _isHovered ? 28 : 24,
                       ),

@@ -128,11 +128,17 @@ class PullStrategy {
     DateTime? since,
     int offset = 0,
   }) async {
-    var query = _client
-        .from(tableName)
-        .select()
-        .eq('org_id', orgId)
-        .eq('store_id', storeId);
+    var query = _client.from(tableName).select();
+
+    // فلترة حسب الأعمدة المتاحة لكل جدول
+    if (_hasOrgId(tableName)) {
+      query = query.eq('org_id', orgId);
+    }
+    if (_hasStoreId(tableName)) {
+      query = query.eq('store_id', storeId);
+    }
+    // stores: filter by org_id only (the store IS the row, no store_id column)
+    // roles, settings: filter by store_id only (no org_id column)
 
     if (since != null) {
       query = query.gte('updated_at', since.toUtc().toIso8601String());
@@ -144,6 +150,20 @@ class PullStrategy {
 
     final records = List<Map<String, dynamic>>.from(response);
     return _jsonConverter.batchToLocal(tableName, records);
+  }
+
+  /// هل يحتوي الجدول على عمود org_id في Supabase؟
+  bool _hasOrgId(String tableName) {
+    // roles و settings ليس لديهم org_id
+    const tablesWithOrgId = {'categories', 'products', 'stores'};
+    return tablesWithOrgId.contains(tableName);
+  }
+
+  /// هل يحتوي الجدول على عمود store_id في Supabase؟
+  bool _hasStoreId(String tableName) {
+    // stores ليس لديه store_id (هو نفسه المتجر)
+    const tablesWithStoreId = {'categories', 'products', 'roles', 'settings'};
+    return tablesWithStoreId.contains(tableName);
   }
 
   /// إدراج/تحديث السجلات محلياً باستخدام SQL مباشر

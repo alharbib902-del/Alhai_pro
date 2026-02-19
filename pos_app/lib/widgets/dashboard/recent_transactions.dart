@@ -172,14 +172,19 @@ class RecentTransactionsList extends StatelessWidget {
               size: 48,
             ),
             const SizedBox(height: 12),
-            Text(
-              'لا توجد معاملات',
-              style: TextStyle(
-                color: isDarkMode
-                    ? Colors.white.withValues(alpha:0.5)
-                    : AppColors.textSecondary,
-                fontSize: 14,
-              ),
+            Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return Text(
+                  l10n.noTransactionsToday,
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha:0.5)
+                        : AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -601,13 +606,13 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
   final difference = now.difference(timestamp);
 
   if (difference.inMinutes < 1) {
-    return 'الآن';
+    return l10n.justNowTime;
   } else if (difference.inMinutes < 60) {
     return l10n.minutesAgo(difference.inMinutes);
   } else if (difference.inHours < 24) {
-    return 'منذ ${difference.inHours} ساعة';
+    return l10n.hoursAgo(difference.inHours);
   } else {
-    return 'منذ ${difference.inDays} يوم';
+    return l10n.daysAgo(difference.inDays);
   }
 }
 

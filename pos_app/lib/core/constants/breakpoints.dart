@@ -95,9 +95,7 @@ DeviceType getDeviceType(double width) {
 
 /// دالة للحصول على عدد أعمدة المنتجات من عرض الشاشة
 int getProductGridColumns(double width) {
-  if (width < Breakpoints.mobileSmall) {
-    return 2;
-  } else if (width < Breakpoints.mobile) {
+  if (width < Breakpoints.mobile) {
     return 2;
   } else if (width < Breakpoints.tablet) {
     return 3;

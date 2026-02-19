@@ -1,3 +1,4 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/products_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../core/validators/input_sanitizer.dart';
 import '../../widgets/common/common.dart';
 
 /// شاشة المخزون - تصميم Web محسّن مع عرض وتعديل كميات المخزون
@@ -18,6 +20,7 @@ class InventoryScreen extends ConsumerStatefulWidget {
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   final _searchController = TextEditingController();
   final _searchFocusNode = FocusNode();
+  final _keyboardFocusNode = FocusNode();
 
   String _filterType = 'all'; // all, low, out, available
   String _sortBy = 'name'; // name, stock, recent
@@ -25,26 +28,47 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   bool _showFilters = true;
   final Set<String> _selectedIds = {};
 
+  // Cached computation results
+  List<dynamic>? _cachedFilteredProducts;
+  String? _lastInventoryFilter;
+  String? _lastInventorySort;
+  bool? _lastInventorySortAsc;
+  String? _lastInventorySearch;
+  int? _lastProductsLength;
+
   @override
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _keyboardFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final products = ref.watch(productsListProvider);
+    final productsState = ref.watch(productsStateProvider);
+    final products = productsState.products;
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
 
-    // Calculate stats
+    // Calculate stats once per build
     final totalProducts = products.length;
-    final lowStockCount = products.where((p) => p.isLowStock && !p.isOutOfStock).length;
-    final outOfStockCount = products.where((p) => p.isOutOfStock).length;
-    final totalValue = products.fold<double>(0, (sum, p) => sum + (p.stockQty * p.price));
+    int lowStockCount = 0;
+    int outOfStockCount = 0;
+    double totalValue = 0;
+    for (final p in products) {
+      if (p.isOutOfStock) {
+        outOfStockCount++;
+      } else if (p.isLowStock) {
+        lowStockCount++;
+      }
+      totalValue += p.stockQty * p.price;
+    }
+
+    // Compute filtered list once and pass down
+    final filteredProducts = _getFilteredProducts(products);
 
     return KeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _keyboardFocusNode,
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
@@ -64,7 +88,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     _buildFiltersSidebar(totalProducts, lowStockCount, outOfStockCount),
                   // Inventory List
                   Expanded(
-                    child: _buildInventoryContent(products),
+                    child: _buildInventoryContent(productsState, filteredProducts),
                   ),
                 ],
               ),
@@ -176,7 +200,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   controller: _searchController,
                   focusNode: _searchFocusNode,
                   hintText: 'بحث بالاسم أو الباركود... (Ctrl+F)',
-                  onChanged: (_) => setState(() {}),
+                  maxLength: 100,
+                  onChanged: (v) {
+                    final sanitized = InputSanitizer.sanitize(v);
+                    if (sanitized != v) {
+                      _searchController.text = sanitized;
+                      _searchController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: sanitized.length),
+                      );
+                    }
+                    setState(() {});
+                  },
                   onClear: () {
                     _searchController.clear();
                     setState(() {});
@@ -475,7 +509,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 ),
               if (isSelected)
                 const Padding(
-                  padding: EdgeInsets.only(right: AppSizes.xs),
+                  padding: EdgeInsetsDirectional.only(end: AppSizes.xs),
                   child: Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
                 ),
             ],
@@ -507,7 +541,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Expanded(
                 child: Text(label, style: const TextStyle(color: AppColors.textPrimary)),
               ),
-              const Icon(Icons.chevron_left_rounded, size: 18, color: AppColors.textSecondary),
+              const AdaptiveIcon(Icons.chevron_left_rounded, size: 18, color: AppColors.textSecondary),
             ],
           ),
         ),
@@ -518,7 +552,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   Widget _buildFilterChip(String label, String value, Color? color) {
     final isSelected = _filterType == value;
     return Padding(
-      padding: const EdgeInsets.only(left: AppSizes.xs),
+      padding: const EdgeInsetsDirectional.only(start: AppSizes.xs),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
@@ -535,32 +569,42 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Widget _buildInventoryContent(List<dynamic> products) {
-    // Filter products
-    var filtered = products.where((p) {
-      // Apply stock filter
-      switch (_filterType) {
-        case 'low':
-          if (!p.isLowStock || p.isOutOfStock) return false;
-          break;
-        case 'out':
-          if (!p.isOutOfStock) return false;
-          break;
-        case 'available':
-          if (p.isLowStock || p.isOutOfStock) return false;
-          break;
-      }
+  List<dynamic> _getFilteredProducts(List<dynamic> products) {
+    final currentSearch = _searchController.text.toLowerCase();
+    if (_cachedFilteredProducts != null &&
+        _lastInventoryFilter == _filterType &&
+        _lastInventorySort == _sortBy &&
+        _lastInventorySortAsc == _sortAscending &&
+        _lastInventorySearch == currentSearch &&
+        _lastProductsLength == products.length) {
+      return _cachedFilteredProducts!;
+    }
 
-      // Apply search
-      final query = _searchController.text.toLowerCase();
-      if (query.isNotEmpty && !p.name.toLowerCase().contains(query)) {
-        return false;
-      }
-      return true;
-    }).toList();
+    var result = List<dynamic>.of(products);
 
-    // Sort products
-    filtered.sort((a, b) {
+    // Apply stock filter
+    switch (_filterType) {
+      case 'low':
+        result = result.where((p) => p.isLowStock && !p.isOutOfStock).toList();
+        break;
+      case 'out':
+        result = result.where((p) => p.isOutOfStock).toList();
+        break;
+      case 'available':
+        result = result.where((p) => !p.isLowStock && !p.isOutOfStock).toList();
+        break;
+    }
+
+    // Apply search
+    if (currentSearch.isNotEmpty) {
+      result = result.where((p) =>
+        p.name.toLowerCase().contains(currentSearch) ||
+        (p.barcode?.toLowerCase().contains(currentSearch) ?? false)
+      ).toList();
+    }
+
+    // Apply sort
+    result.sort((a, b) {
       int comparison;
       switch (_sortBy) {
         case 'stock':
@@ -575,6 +619,46 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       return _sortAscending ? comparison : -comparison;
     });
 
+    _cachedFilteredProducts = result;
+    _lastInventoryFilter = _filterType;
+    _lastInventorySort = _sortBy;
+    _lastInventorySortAsc = _sortAscending;
+    _lastInventorySearch = currentSearch;
+    _lastProductsLength = products.length;
+
+    return result;
+  }
+
+  Widget _buildInventoryContent(ProductsState state, List<dynamic> filtered) {
+    // Loading state
+    if (state.isLoading && state.products.isEmpty) {
+      return ListView.builder(
+        padding: const EdgeInsets.all(AppSizes.md),
+        itemCount: 8,
+        itemBuilder: (_, __) => const Padding(
+          padding: EdgeInsets.only(bottom: AppSizes.sm),
+          child: ListItemSkeleton(),
+        ),
+      );
+    }
+
+    // Error state
+    if (state.error != null && state.products.isEmpty) {
+      return AppErrorState(
+        message: state.error!,
+        onRetry: () {
+          final storeId = ref.read(currentStoreIdProvider);
+          if (storeId != null) {
+            ref.read(productsStateProvider.notifier).loadProducts(
+              storeId: storeId,
+              refresh: true,
+            );
+          }
+        },
+      );
+    }
+
+    // Empty states
     if (filtered.isEmpty) {
       if (_searchController.text.isNotEmpty) {
         return AppEmptyState.noSearchResults(
@@ -585,35 +669,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           },
         );
       }
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppSizes.lg),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.inventory_2_rounded,
-                size: 64,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: AppSizes.md),
-            Text(
-              _filterType == 'low'
-                  ? 'لا يوجد مخزون منخفض'
-                  : _filterType == 'out'
-                      ? 'لا يوجد منتجات نفذت'
-                      : 'لا توجد منتجات',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
+      if (_filterType == 'low') {
+        return AppEmptyState.noLowStock();
+      }
+      if (_filterType == 'out') {
+        return AppEmptyState.noData(
+          title: 'لا يوجد منتجات نفذت',
+          description: 'جميع المنتجات متوفرة في المخزون',
+        );
+      }
+      return AppEmptyState.noProducts(
+        onAdd: () => _showInventoryCountDialog(),
       );
     }
 
@@ -857,7 +923,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      controller.dispose();
+    });
   }
 
   void _showBulkAdjustDialog() {
@@ -1148,7 +1216,7 @@ class _InventoryCardState extends State<_InventoryCard> {
                     onPressed: widget.onTap,
                     tooltip: 'تعديل',
                   ),
-                const Icon(Icons.chevron_left_rounded, color: AppColors.textSecondary),
+                const AdaptiveIcon(Icons.chevron_left_rounded, color: AppColors.textSecondary),
               ],
             ),
           ),

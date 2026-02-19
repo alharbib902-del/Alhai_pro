@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../l10n/generated/app_localizations.dart';
 
 /// ويدجت مؤشر حالة الاتصال (Offline Indicator)
 class OfflineIndicator extends StatefulWidget {
@@ -11,7 +12,7 @@ class OfflineIndicator extends StatefulWidget {
 }
 
 class _OfflineIndicatorState extends State<OfflineIndicator> {
-  final bool _isOnline = true;
+  bool _isOnline = true;
   late Timer _timer;
 
   @override
@@ -34,6 +35,7 @@ class _OfflineIndicatorState extends State<OfflineIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Offline banner
@@ -47,14 +49,14 @@ class _OfflineIndicatorState extends State<OfflineIndicator> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () => _showOfflineDialog(context),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.cloud_off, color: Colors.white, size: 16),
-                          SizedBox(width: 8),
-                          Text('غير متصل - يتم حفظ العمليات محلياً', style: TextStyle(color: Colors.white, fontSize: 13)),
+                          const Icon(Icons.cloud_off, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
+                          Text(l10n.offlineSavingLocally, style: const TextStyle(color: Colors.white, fontSize: 13)),
                         ],
                       ),
                     ),
@@ -68,6 +70,7 @@ class _OfflineIndicatorState extends State<OfflineIndicator> {
   }
 
   void _showOfflineDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -75,24 +78,24 @@ class _OfflineIndicatorState extends State<OfflineIndicator> {
           children: [
             Icon(Icons.cloud_off, color: Colors.red.shade600),
             const SizedBox(width: 12),
-            const Text('الوضع غير المتصل'),
+            Text(l10n.offlineModeTitle),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('يمكنك الاستمرار في استخدام التطبيق:'),
-            SizedBox(height: 12),
-            Text('✓ إجراء عمليات البيع', style: TextStyle(color: Colors.green)),
-            Text('✓ إضافة منتجات للسلة', style: TextStyle(color: Colors.green)),
-            Text('✓ طباعة الإيصالات', style: TextStyle(color: Colors.green)),
-            SizedBox(height: 12),
-            Text('سيتم مزامنة البيانات تلقائياً عند عودة الاتصال.'),
+            Text(l10n.offlineModeDescription),
+            const SizedBox(height: 12),
+            Text('✓ ${l10n.offlineCanSell}', style: const TextStyle(color: Colors.green)),
+            Text('✓ ${l10n.offlineCanAddToCart}', style: const TextStyle(color: Colors.green)),
+            Text('✓ ${l10n.offlineCanPrint}', style: const TextStyle(color: Colors.green)),
+            const SizedBox(height: 12),
+            Text(l10n.offlineAutoSync),
           ],
         ),
         actions: [
-          FilledButton(onPressed: () => Navigator.pop(context), child: const Text('فهمت')),
+          FilledButton(onPressed: () => Navigator.pop(context), child: Text(l10n.gotIt)),
         ],
       ),
     );
@@ -116,6 +119,7 @@ class SyncStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isOnline && pendingCount == 0) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -134,7 +138,7 @@ class SyncStatusBar extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              isOnline ? '$pendingCount معلق' : 'غير متصل',
+              isOnline ? '$pendingCount ${l10n.pending}' : l10n.offline,
               style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
           ],

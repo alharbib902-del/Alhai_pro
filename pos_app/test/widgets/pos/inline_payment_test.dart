@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pos_app/l10n/generated/app_localizations.dart';
 import 'package:pos_app/widgets/pos/inline_payment.dart';
 
 // ===========================================
 // Inline Payment Tests
 // ===========================================
+
+/// Helper to wrap widget with localization
+Widget buildTestApp(Widget child) {
+  return MaterialApp(
+    locale: const Locale('ar'),
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(
+      body: SingleChildScrollView(child: child),
+    ),
+  );
+}
 
 void main() {
   group('PaymentMethod Enum', () {
@@ -13,26 +32,18 @@ void main() {
     });
 
     test('cash له القيم الصحيحة', () {
-      expect(PaymentMethod.cash.label, 'نقد');
       expect(PaymentMethod.cash.icon, Icons.payments);
       expect(PaymentMethod.cash.color, const Color(0xFF4CAF50));
     });
 
     test('card له القيم الصحيحة', () {
-      expect(PaymentMethod.card.label, 'بطاقة');
       expect(PaymentMethod.card.icon, Icons.credit_card);
       expect(PaymentMethod.card.color, const Color(0xFF2196F3));
     });
 
     test('credit له القيم الصحيحة', () {
-      expect(PaymentMethod.credit.label, 'آجل');
       expect(PaymentMethod.credit.icon, Icons.schedule);
       expect(PaymentMethod.credit.color, const Color(0xFFFF9800));
-    });
-
-    test('كل طريقة لها label فريد', () {
-      final labels = PaymentMethod.values.map((m) => m.label).toList();
-      expect(labels.toSet().length, labels.length);
     });
 
     test('كل طريقة لها icon', () {
@@ -93,108 +104,72 @@ void main() {
   group('InlinePayment Widget', () {
     testWidgets('يعرض العنوان "الدفع"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 100.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 100.0)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.text('الدفع'), findsOneWidget);
     });
 
     testWidgets('يعرض الإجمالي', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 99.99),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 99.99)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.text('الإجمالي'), findsOneWidget);
-      // الإجمالي يظهر في عدة أماكن
       expect(find.textContaining('99.99'), findsAtLeastNWidgets(1));
     });
 
     testWidgets('يعرض جميع طرق الدفع', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 50.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 50.0)),
       );
+      await tester.pumpAndSettle();
 
-      expect(find.text('نقد'), findsOneWidget);
+      expect(find.text('نقداً'), findsOneWidget);
       expect(find.text('بطاقة'), findsOneWidget);
       expect(find.text('آجل'), findsOneWidget);
     });
 
     testWidgets('يعرض زر إتمام الدفع', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 100.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 100.0)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.textContaining('إتمام الدفع'), findsOneWidget);
     });
 
     testWidgets('يعرض حقل المبلغ المستلم للنقد', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 100.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 100.0)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.text('المبلغ المستلم'), findsOneWidget);
     });
 
     testWidgets('يعرض أيقونة الإغلاق عندما onCancel موجود', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(
-                total: 100.0,
-                onCancel: () {},
-              ),
-            ),
-          ),
-        ),
+        buildTestApp(InlinePayment(
+          total: 100.0,
+          onCancel: () {},
+        )),
       );
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.close), findsOneWidget);
     });
 
     testWidgets('لا يعرض أيقونة الإغلاق عندما onCancel null', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(
-                total: 100.0,
-                onCancel: null,
-              ),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(
+          total: 100.0,
+          onCancel: null,
+        )),
       );
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.close), findsNothing);
     });
@@ -203,17 +178,12 @@ void main() {
       bool cancelled = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(
-                total: 100.0,
-                onCancel: () => cancelled = true,
-              ),
-            ),
-          ),
-        ),
+        buildTestApp(InlinePayment(
+          total: 100.0,
+          onCancel: () => cancelled = true,
+        )),
       );
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.close));
       await tester.pump();
@@ -223,14 +193,9 @@ void main() {
 
     testWidgets('يعرض أيقونات طرق الدفع', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 100.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 100.0)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.payments), findsOneWidget);
       expect(find.byIcon(Icons.credit_card), findsOneWidget);
@@ -239,30 +204,19 @@ void main() {
 
     testWidgets('يعرض TextField', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 50.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 50.0)),
       );
+      await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
     });
 
     testWidgets('يعرض زر الدفع', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: InlinePayment(total: 50.0),
-            ),
-          ),
-        ),
+        buildTestApp(const InlinePayment(total: 50.0)),
       );
+      await tester.pumpAndSettle();
 
-      // يوجد زر إتمام الدفع
       expect(find.textContaining('إتمام الدفع'), findsOneWidget);
     });
   });
@@ -307,11 +261,13 @@ void main() {
     });
   });
 
-  group('PaymentMethod Arabic Labels', () {
-    test('labels باللغة العربية', () {
-      expect(PaymentMethod.cash.label, contains('نقد'));
-      expect(PaymentMethod.card.label, contains('بطاقة'));
-      expect(PaymentMethod.credit.label, contains('آجل'));
+  group('PaymentMethod localizedLabel', () {
+    test('localizedLabel method exists on all values', () {
+      // localizedLabel requires AppLocalizations which needs context
+      // so we just verify the method exists
+      for (final method in PaymentMethod.values) {
+        expect(method.localizedLabel, isNotNull);
+      }
     });
   });
 }

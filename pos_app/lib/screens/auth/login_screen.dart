@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
@@ -12,6 +13,7 @@ import '../../widgets/branding/feature_badge.dart';
 import '../../widgets/auth/phone_input_field.dart';
 import '../../widgets/auth/otp_input_field.dart';
 import '../../widgets/common/language_selector.dart';
+import '../../providers/auth_providers.dart';
 
 /// شاشة تسجيل الدخول بـ OTP عبر WhatsApp
 ///
@@ -78,6 +80,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
 
+    // Try Supabase OTP first
+    final supabaseSent = await ref.read(authStateProvider.notifier).sendSupabaseOtp(_fullPhoneNumber);
+
+    if (supabaseSent && mounted) {
+      setState(() {
+        _isLoading = false;
+        _otpSent = true;
+        _startCooldownTimer();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n?.otpSentViaWhatsApp ?? 'تم إرسال رمز التحقق'),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Fallback to WhatsApp OTP
     final result = await WhatsAppOtpService.sendOtp(
       phone: _fullPhoneNumber,
     );
@@ -89,16 +114,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (result.isSuccess) {
         _otpSent = true;
         _startCooldownTimer();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n?.otpSentViaWhatsApp ?? 'تم إرسال رمز التحقق عبر WhatsApp'),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+
+        // في وضع التطوير: عرض OTP في SnackBar مع زر نسخ
+        if (result.devOtp != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n?.devOtpMessage(result.devOtp!) ?? 'رمز التطوير: ${result.devOtp}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy_rounded, color: Colors.white),
+                    tooltip: l10n?.copyCode ?? 'نسخ',
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: result.devOtp!));
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    },
+                  ),
+                ],
+              ),
+              backgroundColor: AppColors.primary,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 30),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n?.otpSentViaWhatsApp ?? 'تم إرسال رمز التحقق عبر WhatsApp'),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
       } else {
         _error = result.error;
         if (result.blockedUntil != null) {
@@ -125,10 +186,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
 
+    // Try Supabase verification first
+    final supabaseVerified = await ref.read(authStateProvider.notifier).verifySupabaseOtp(
+      phone: _fullPhoneNumber,
+      otp: otpToVerify,
+    );
+
+    if (supabaseVerified && mounted) {
+      setState(() {
+        _isLoading = false;
+        _otpVerified = true;
+      });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          context.go('/store-select');
+        }
+      });
+      return;
+    }
+
+    // Fallback to WhatsApp OTP verification
     final result = await WhatsAppOtpService.verifyOtp(
       phone: _fullPhoneNumber,
       otp: otpToVerify,
     );
+
+    if (!mounted) return;
+
+    // تحديث حالة المصادقة عبر AuthNotifier
+    if (result.isSuccess) {
+      await ref.read(authStateProvider.notifier).verifyLocalOtp(
+        phone: _fullPhoneNumber,
+        otpResult: result,
+      );
+    }
 
     if (!mounted) return;
 

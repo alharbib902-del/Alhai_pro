@@ -12,6 +12,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// مستوى صرامة الأمان
 enum SecurityLevel {
@@ -390,39 +391,39 @@ class WebSecurityHeaders {
     final headers = getHeaders(level: level);
     final validation = validateHeaders(headers);
 
-    debugPrint('╔══════════════════════════════════════════════════════════════╗');
-    debugPrint('║              Security Headers Report                         ║');
-    debugPrint('╠══════════════════════════════════════════════════════════════╣');
-    debugPrint('║  Security Level: ${level.name.padRight(44)}║');
-    debugPrint('║  Security Score: ${validation.score}/100${' '.padRight(39)}║');
-    debugPrint('╠══════════════════════════════════════════════════════════════╣');
+    AppLogger.debug('╔══════════════════════════════════════════════════════════════╗');
+    AppLogger.debug('║              Security Headers Report                         ║');
+    AppLogger.debug('╠══════════════════════════════════════════════════════════════╣');
+    AppLogger.debug('║  Security Level: ${level.name.padRight(44)}║');
+    AppLogger.debug('║  Security Score: ${validation.score}/100${' '.padRight(39)}║');
+    AppLogger.debug('╠══════════════════════════════════════════════════════════════╣');
 
     for (final entry in headers.entries) {
       final key = entry.key;
       final value = entry.value.length > 50
           ? '${entry.value.substring(0, 50)}...'
           : entry.value;
-      debugPrint('║  $key:');
-      debugPrint('║    $value');
+      AppLogger.debug('║  $key:');
+      AppLogger.debug('║    $value');
     }
 
     if (validation.issues.isNotEmpty) {
-      debugPrint('╠══════════════════════════════════════════════════════════════╣');
-      debugPrint('║  Issues:');
+      AppLogger.debug('╠══════════════════════════════════════════════════════════════╣');
+      AppLogger.debug('║  Issues:');
       for (final issue in validation.issues) {
-        debugPrint('║    ❌ $issue');
+        AppLogger.debug('║    ❌ $issue');
       }
     }
 
     if (validation.warnings.isNotEmpty) {
-      debugPrint('╠══════════════════════════════════════════════════════════════╣');
-      debugPrint('║  Warnings:');
+      AppLogger.debug('╠══════════════════════════════════════════════════════════════╣');
+      AppLogger.debug('║  Warnings:');
       for (final warning in validation.warnings) {
-        debugPrint('║    ⚠️ $warning');
+        AppLogger.debug('║    ⚠️ $warning');
       }
     }
 
-    debugPrint('╚══════════════════════════════════════════════════════════════╝');
+    AppLogger.debug('╚══════════════════════════════════════════════════════════════╝');
   }
 }
 

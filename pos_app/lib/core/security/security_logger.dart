@@ -3,7 +3,7 @@
 /// تسجل جميع الأحداث الأمنية للمراقبة والتحليل
 library;
 
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// أنواع الأحداث الأمنية
 enum SecurityEventType {
@@ -114,10 +114,8 @@ class SecurityLogger {
     }
 
     // طباعة في Debug
-    if (kDebugMode) {
-      final icon = _getIcon(entry.type);
-      debugPrint('🔐 SECURITY $icon ${entry.toString()}');
-    }
+    final icon = _getIcon(entry.type);
+    AppLogger.debug('SECURITY $icon ${entry.toString()}', tag: 'Security');
 
     // إشعار المستمعين
     for (final listener in _listeners) {

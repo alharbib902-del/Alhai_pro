@@ -1,3 +1,4 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +7,7 @@ import '../../core/security/pin_service.dart';
 import '../../core/security/session_manager.dart';
 import '../../core/security/secure_storage_service.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات الأمان
@@ -22,8 +21,6 @@ class SecuritySettingsScreen extends ConsumerStatefulWidget {
 
 class _SecuritySettingsScreenState
     extends ConsumerState<SecuritySettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
 
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
@@ -63,46 +60,6 @@ class _SecuritySettingsScreenState
       }
     }
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -111,39 +68,16 @@ class _SecuritySettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.security,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName:
-                      '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
@@ -156,39 +90,8 @@ class _SecuritySettingsScreenState
                         ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
@@ -196,14 +99,14 @@ class _SecuritySettingsScreenState
       children: [
         // PIN section
         _buildSettingsGroup(
-          '\u0631\u0645\u0632 PIN',
+          l10n.pinSection,
           [
             _buildSettingsTile(
               icon: Icons.pin_rounded,
-              title: '\u0631\u0645\u0632 \u0627\u0644\u0645\u0634\u0631\u0641 (PIN)',
+              title: l10n.createPinDesc,
               subtitle: _pinEnabled
-                  ? '\u0645\u0641\u0639\u0651\u0644'
-                  : '\u063a\u064a\u0631 \u0645\u0641\u0639\u0651\u0644',
+                  ? l10n.enabled
+                  : l10n.disabled,
               trailing: _pinEnabled
                   ? const Icon(Icons.check_circle_rounded,
                       color: AppColors.success)
@@ -220,7 +123,7 @@ class _SecuritySettingsScreenState
 
         // Biometric section
         _buildSettingsGroup(
-          '\u0627\u0644\u0645\u0635\u0627\u062f\u0642\u0629 \u0627\u0644\u0628\u064a\u0648\u0645\u062a\u0631\u064a\u0629',
+          l10n.biometricSection,
           [
             if (_biometricAvailable)
               SwitchListTile(
@@ -237,7 +140,7 @@ class _SecuritySettingsScreenState
                       size: 20),
                 ),
                 title: Text(
-                  '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0628\u0627\u0644\u0628\u0635\u0645\u0629',
+                  l10n.fingerprintOption,
                   style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary,
                     fontWeight: FontWeight.w500,
@@ -245,8 +148,8 @@ class _SecuritySettingsScreenState
                 ),
                 subtitle: Text(
                   _biometricEnabled
-                      ? '\u064a\u0645\u0643\u0646\u0643 \u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0628\u0635\u0645\u062a\u0643 \u0644\u0644\u062f\u062e\u0648\u0644 \u0627\u0644\u0633\u0631\u064a\u0639'
-                      : '\u0642\u0645 \u0628\u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u0628\u0635\u0645\u0629 \u0644\u0644\u062f\u062e\u0648\u0644 \u0628\u0634\u0643\u0644 \u0623\u0633\u0631\u0639',
+                      ? l10n.fingerprintDesc
+                      : l10n.fingerprintDesc,
                   style: TextStyle(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.5)
@@ -260,8 +163,8 @@ class _SecuritySettingsScreenState
             else
               _buildSettingsTile(
                 icon: Icons.fingerprint_rounded,
-                title: '\u0627\u0644\u0628\u0635\u0645\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629',
-                subtitle: '\u062c\u0647\u0627\u0632\u0643 \u0644\u0627 \u064a\u062f\u0639\u0645 \u0627\u0644\u0628\u0635\u0645\u0629 \u0623\u0648 Face ID',
+                title: l10n.fingerprintOption,
+                subtitle: l10n.fingerprintDesc,
                 trailing: const Icon(Icons.info_outline_rounded,
                     color: AppColors.warning),
                 isDark: isDark,
@@ -272,14 +175,14 @@ class _SecuritySettingsScreenState
 
         // Session section
         _buildSettingsGroup(
-          '\u0627\u0644\u062c\u0644\u0633\u0629',
+          l10n.sessionSection,
           [
             _buildSettingsTile(
               icon: Icons.access_time_rounded,
-              title: '\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u062a\u0628\u0642\u064a \u0644\u0644\u062c\u0644\u0633\u0629',
+              title: l10n.autoLockOption,
               subtitle: _sessionRemaining != null
-                  ? '${_sessionRemaining!.inMinutes} \u062f\u0642\u064a\u0642\u0629'
-                  : '\u063a\u064a\u0631 \u0645\u062a\u0627\u062d',
+                  ? l10n.afterMinutes(_sessionRemaining!.inMinutes)
+                  : l10n.disabled,
               trailing: IconButton(
                 icon: Icon(Icons.refresh_rounded,
                     color: isDark
@@ -295,20 +198,20 @@ class _SecuritySettingsScreenState
 
         // Danger zone
         _buildSettingsGroup(
-          '\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u062e\u0637\u0631',
+          l10n.dangerZone,
           [
             _buildSettingsTile(
               icon: Icons.logout_rounded,
-              title: l10n.logout,
-              subtitle: '\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u062c\u0644\u0633\u0629 \u0627\u0644\u062d\u0627\u0644\u064a\u0629',
+              title: l10n.logoutAllDevices,
+              subtitle: l10n.logoutAllDevicesDesc,
               isDark: isDark,
               onTap: _showLogoutConfirmation,
               iconColor: AppColors.error,
             ),
             _buildSettingsTile(
               icon: Icons.delete_forever_rounded,
-              title: '\u0645\u0633\u062d \u0643\u0644 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',
-              subtitle: '\u062d\u0630\u0641 \u062c\u0645\u064a\u0639 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629 \u0648\u0627\u0644\u062e\u0631\u0648\u062c',
+              title: l10n.clearAllData,
+              subtitle: l10n.clearAllDataDesc,
               isDark: isDark,
               onTap: _showClearAllConfirmation,
               iconColor: AppColors.error,
@@ -389,7 +292,7 @@ class _SecuritySettingsScreenState
             )
           : null,
       trailing: trailing ??
-          Icon(Icons.chevron_left_rounded,
+          AdaptiveIcon(Icons.chevron_left_rounded,
               color: isDark
                   ? Colors.white.withValues(alpha: 0.3)
                   : AppColors.textTertiary),
@@ -400,6 +303,7 @@ class _SecuritySettingsScreenState
   // === Business logic methods (preserved from original) ===
 
   void _showPinOptions() {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -409,7 +313,7 @@ class _SecuritySettingsScreenState
             if (_pinEnabled) ...[
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('\u062a\u063a\u064a\u064a\u0631 \u0631\u0645\u0632 PIN'),
+                title: Text(l10n.changePinOption),
                 onTap: () {
                   Navigator.pop(context);
                   _showChangePinDialog();
@@ -417,7 +321,7 @@ class _SecuritySettingsScreenState
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('\u062d\u0630\u0641 \u0631\u0645\u0632 PIN'),
+                title: Text(l10n.removePinOption),
                 onTap: () {
                   Navigator.pop(context);
                   _showRemovePinConfirmation();
@@ -426,7 +330,7 @@ class _SecuritySettingsScreenState
             ] else ...[
               ListTile(
                 leading: const Icon(Icons.add),
-                title: const Text('\u0625\u0646\u0634\u0627\u0621 \u0631\u0645\u0632 PIN'),
+                title: Text(l10n.createPinOption),
                 onTap: () {
                   Navigator.pop(context);
                   _showCreatePinDialog();
@@ -440,6 +344,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showCreatePinDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     String? newPin;
     String? confirmPin;
     String? error;
@@ -447,7 +352,7 @@ class _SecuritySettingsScreenState
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('\u0625\u0646\u0634\u0627\u0621 \u0631\u0645\u0632 PIN'),
+          title: Text(l10n.createPinTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -455,9 +360,9 @@ class _SecuritySettingsScreenState
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '\u0631\u0645\u0632 PIN (4 \u0623\u0631\u0642\u0627\u0645)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.enterNewPin,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (v) => newPin = v,
               ),
@@ -466,9 +371,9 @@ class _SecuritySettingsScreenState
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u0631\u0645\u0632',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.enterNewPinChange,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (v) => confirmPin = v,
               ),
@@ -481,18 +386,18 @@ class _SecuritySettingsScreenState
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
                 if (newPin == null || newPin!.length < 4) {
                   setDialogState(
-                      () => error = '\u0627\u0644\u0631\u0645\u0632 \u0642\u0635\u064a\u0631 \u062c\u062f\u0627\u064b');
+                      () => error = l10n.enterNewPin);
                   return;
                 }
                 if (newPin != confirmPin) {
                   setDialogState(
-                      () => error = '\u0627\u0644\u0631\u0645\u0632\u0627\u0646 \u063a\u064a\u0631 \u0645\u062a\u0637\u0627\u0628\u0642\u064a\u0646');
+                      () => error = l10n.removePinConfirm);
                   return;
                 }
                 final result = await PinService.createPin(newPin!);
@@ -501,15 +406,15 @@ class _SecuritySettingsScreenState
                   _loadSecuritySettings();
                   if (mounted) {
                     ScaffoldMessenger.of(this.context).showSnackBar(
-                      const SnackBar(
-                          content: Text('\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0631\u0645\u0632 PIN')),
+                      SnackBar(
+                          content: Text(l10n.pinCreated)),
                     );
                   }
                 } else {
                   setDialogState(() => error = result.error);
                 }
               },
-              child: const Text('\u0625\u0646\u0634\u0627\u0621'),
+              child: Text(l10n.createPinOption),
             ),
           ],
         ),
@@ -518,6 +423,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showChangePinDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     String? currentPin;
     String? newPin;
     String? error;
@@ -525,7 +431,7 @@ class _SecuritySettingsScreenState
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('\u062a\u063a\u064a\u064a\u0631 \u0631\u0645\u0632 PIN'),
+          title: Text(l10n.changePinTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -533,9 +439,9 @@ class _SecuritySettingsScreenState
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '\u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u062d\u0627\u0644\u064a',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.enterCurrentPin,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (v) => currentPin = v,
               ),
@@ -544,9 +450,9 @@ class _SecuritySettingsScreenState
                 keyboardType: TextInputType.number,
                 maxLength: 4,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '\u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u062c\u062f\u064a\u062f',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.enterNewPinChange,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (v) => newPin = v,
               ),
@@ -559,7 +465,7 @@ class _SecuritySettingsScreenState
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -570,15 +476,15 @@ class _SecuritySettingsScreenState
                   if (context.mounted) Navigator.pop(context);
                   if (mounted) {
                     ScaffoldMessenger.of(this.context).showSnackBar(
-                      const SnackBar(
-                          content: Text('\u062a\u0645 \u062a\u063a\u064a\u064a\u0631 \u0631\u0645\u0632 PIN')),
+                      SnackBar(
+                          content: Text(l10n.pinChangedSuccess)),
                     );
                   }
                 } else {
                   setDialogState(() => error = result.error);
                 }
               },
-              child: const Text('\u062a\u063a\u064a\u064a\u0631'),
+              child: Text(l10n.changePinOption),
             ),
           ],
         ),
@@ -587,21 +493,21 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showRemovePinConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('\u062d\u0630\u0641 \u0631\u0645\u0632 PIN'),
-        content: const Text(
-            '\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u062d\u0630\u0641 \u0631\u0645\u0632 PIN\u061f \u0633\u062a\u062d\u062a\u0627\u062c \u0644\u0625\u0639\u0627\u062f\u0629 \u0625\u0646\u0634\u0627\u0626\u0647 \u0644\u0627\u062d\u0642\u0627\u064b.'),
+        title: Text(l10n.removePinTitle),
+        content: Text(l10n.removePinConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('\u062d\u0630\u0641'),
+            child: Text(l10n.removeAction),
           ),
         ],
       ),
@@ -611,26 +517,27 @@ class _SecuritySettingsScreenState
       _loadSecuritySettings();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('\u062a\u0645 \u062d\u0630\u0641 \u0631\u0645\u0632 PIN')),
+          SnackBar(content: Text(l10n.pinRemovedSuccess)),
         );
       }
     }
   }
 
   Future<void> _toggleBiometric(bool enable) async {
+    final l10n = AppLocalizations.of(context)!;
     if (enable) {
       final success = await BiometricService.enable();
       if (success) {
         setState(() => _biometricEnabled = true);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('\u062a\u0645 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u0628\u0635\u0645\u0629')),
+            SnackBar(content: Text(l10n.fingerprintDesc)),
           );
         }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('\u0641\u0634\u0644 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u0628\u0635\u0645\u0629')),
+            SnackBar(content: Text(l10n.fingerprintDesc)),
           );
         }
       }
@@ -639,27 +546,27 @@ class _SecuritySettingsScreenState
       setState(() => _biometricEnabled = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u0628\u0635\u0645\u0629')),
+          SnackBar(content: Text(l10n.fingerprintDesc)),
         );
       }
     }
   }
 
   Future<void> _showLogoutConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c'),
-        content: const Text(
-            '\u0647\u0644 \u062a\u0631\u064a\u062f \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c \u0645\u0646 \u0627\u0644\u062c\u0644\u0633\u0629 \u0627\u0644\u062d\u0627\u0644\u064a\u0629\u061f'),
+        title: Text(l10n.logoutAllTitle),
+        content: Text(l10n.logoutAllConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c'),
+            child: Text(l10n.logoutAllAction),
           ),
         ],
       ),
@@ -671,26 +578,21 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showClearAllConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('\u0645\u0633\u062d \u0643\u0644 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a'),
-        content: const Text(
-          '\u0633\u064a\u062a\u0645 \u062d\u0630\u0641 \u062c\u0645\u064a\u0639 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629 \u0628\u0645\u0627 \u0641\u064a\u0647\u0627:\n'
-          '\u2022 \u0631\u0645\u0632 PIN\n'
-          '\u2022 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u0628\u0635\u0645\u0629\n'
-          '\u2022 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062c\u0644\u0633\u0629\n\n'
-          '\u0647\u0630\u0627 \u0627\u0644\u0625\u062c\u0631\u0627\u0621 \u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646\u0647!',
-        ),
+        title: Text(l10n.clearDataTitle),
+        content: Text(l10n.clearDataConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('\u0645\u0633\u062d \u0627\u0644\u0643\u0644'),
+            child: Text(l10n.clearDataAction),
           ),
         ],
       ),

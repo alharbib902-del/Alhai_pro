@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pos_app/widgets/common/app_badge.dart';
+import 'package:pos_app/l10n/generated/app_localizations.dart';
 
 // ===========================================
 // App Badge Tests
@@ -9,7 +10,26 @@ import 'package:pos_app/widgets/common/app_badge.dart';
 void main() {
   Widget buildTestWidget(Widget child) {
     return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('ar'),
       home: Scaffold(body: Center(child: child)),
+    );
+  }
+
+  /// Wraps a builder that gets BuildContext to create context-dependent widgets
+  Widget buildContextTestWidget(Widget Function(BuildContext context) builder) {
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('ar'),
+      home: Scaffold(
+        body: Center(
+          child: Builder(
+            builder: (context) => builder(context),
+          ),
+        ),
+      ),
     );
   }
 
@@ -36,6 +56,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppBadge(label: 'جديد'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('جديد'), findsOneWidget);
     });
@@ -47,6 +68,7 @@ void main() {
           icon: Icons.payments,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.payments), findsOneWidget);
     });
@@ -60,6 +82,7 @@ void main() {
           onTap: () => tapped = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('اضغط'));
       expect(tapped, true);
@@ -74,6 +97,7 @@ void main() {
           onDelete: () => deleted = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.close), findsOneWidget);
 
@@ -87,6 +111,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         AppBadge.success('مكتمل'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('مكتمل'), findsOneWidget);
     });
@@ -95,6 +120,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         AppBadge.success('نجاح', size: AppBadgeSize.large),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('نجاح'), findsOneWidget);
     });
@@ -105,6 +131,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         AppBadge.warning('تحذير'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('تحذير'), findsOneWidget);
     });
@@ -115,6 +142,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         AppBadge.error('خطأ'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('خطأ'), findsOneWidget);
     });
@@ -125,40 +153,45 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         AppBadge.info('معلومة'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('معلومة'), findsOneWidget);
     });
   });
 
   group('AppBadge.stock', () {
-    testWidgets('يعرض "نفذ" عندما الكمية 0', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.stock(0),
+    testWidgets('يعرض "نفد" عندما الكمية 0', (tester) async {
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.stock(context, 0),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('نفذ'), findsOneWidget);
+      expect(find.text('نفد'), findsOneWidget);
     });
 
-    testWidgets('يعرض "نفذ" عندما الكمية سالبة', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.stock(-5),
+    testWidgets('يعرض "نفد" عندما الكمية سالبة', (tester) async {
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.stock(context, -5),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('نفذ'), findsOneWidget);
+      expect(find.text('نفد'), findsOneWidget);
     });
 
-    testWidgets('يعرض "قليل" عندما الكمية أقل من الحد الأدنى', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.stock(3, minQuantity: 5),
+    testWidgets('يعرض "منخفض" عندما الكمية أقل من الحد الأدنى', (tester) async {
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.stock(context, 3, minQuantity: 5),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('قليل (3)'), findsOneWidget);
+      expect(find.text('منخفض (3)'), findsOneWidget);
     });
 
     testWidgets('يعرض "متوفر" عندما الكمية كافية', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.stock(10, minQuantity: 5),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.stock(context, 10, minQuantity: 5),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('متوفر (10)'), findsOneWidget);
     });
@@ -166,47 +199,52 @@ void main() {
 
   group('AppBadge.paymentMethod', () {
     testWidgets('يعرض شارة نقد', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.paymentMethod('cash'),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.paymentMethod(context, 'cash'),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('نقد'), findsOneWidget);
+      expect(find.text('نقداً'), findsOneWidget);
       expect(find.byIcon(Icons.payments_outlined), findsOneWidget);
     });
 
     testWidgets('يعرض شارة بطاقة', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.paymentMethod('card'),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.paymentMethod(context, 'card'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('بطاقة'), findsOneWidget);
       expect(find.byIcon(Icons.credit_card), findsOneWidget);
     });
 
     testWidgets('يعرض شارة آجل', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.paymentMethod('credit'),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.paymentMethod(context, 'credit'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('آجل'), findsOneWidget);
       expect(find.byIcon(Icons.access_time), findsOneWidget);
     });
 
     testWidgets('يعرض طريقة دفع مخصصة', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.paymentMethod('other'),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.paymentMethod(context, 'other'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('other'), findsOneWidget);
       expect(find.byIcon(Icons.payment), findsOneWidget);
     });
 
     testWidgets('يدعم الأسماء العربية', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppBadge.paymentMethod('نقد'),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppBadge.paymentMethod(context, 'نقد'),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('نقد'), findsOneWidget);
+      expect(find.text('نقداً'), findsOneWidget);
     });
   });
 
@@ -218,6 +256,7 @@ void main() {
           variant: AppBadgeVariant.filled,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('filled'), findsOneWidget);
     });
@@ -229,6 +268,7 @@ void main() {
           variant: AppBadgeVariant.outlined,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('outlined'), findsOneWidget);
     });
@@ -240,6 +280,7 @@ void main() {
           variant: AppBadgeVariant.soft,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('soft'), findsOneWidget);
     });
@@ -253,6 +294,7 @@ void main() {
           size: AppBadgeSize.small,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('صغير'), findsOneWidget);
     });
@@ -264,6 +306,7 @@ void main() {
           size: AppBadgeSize.medium,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('متوسط'), findsOneWidget);
     });
@@ -275,6 +318,7 @@ void main() {
           size: AppBadgeSize.large,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('كبير'), findsOneWidget);
     });
@@ -285,6 +329,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCountBadge(count: 5),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('5'), findsOneWidget);
     });
@@ -293,6 +338,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCountBadge(count: 0),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.byType(SizedBox), findsWidgets);
     });
@@ -301,6 +347,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCountBadge(count: 0, showZero: true),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('0'), findsOneWidget);
     });
@@ -309,6 +356,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCountBadge(count: 150, maxCount: 99),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('99+'), findsOneWidget);
     });
@@ -317,6 +365,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCountBadge(count: 5, size: 30),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('5'), findsOneWidget);
     });
@@ -330,6 +379,7 @@ void main() {
           label: 'نشط',
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('نشط'), findsOneWidget);
     });
@@ -341,6 +391,7 @@ void main() {
           label: 'غير نشط',
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('غير نشط'), findsOneWidget);
     });
@@ -353,6 +404,7 @@ void main() {
           showLabel: false,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('نشط'), findsNothing);
     });
@@ -360,17 +412,20 @@ void main() {
 
   group('AppStatusBadge.online', () {
     testWidgets('يعرض "متصل" عندما isOnline=true', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppStatusBadge.online(isOnline: true),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppStatusBadge.online(context, isOnline: true),
       ));
+      // Use pump() instead of pumpAndSettle() because the pulse animation never settles
+      await tester.pump();
 
       expect(find.text('متصل'), findsOneWidget);
     });
 
     testWidgets('يعرض "غير متصل" عندما isOnline=false', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppStatusBadge.online(isOnline: false),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppStatusBadge.online(context, isOnline: false),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('غير متصل'), findsOneWidget);
     });
@@ -378,17 +433,19 @@ void main() {
 
   group('AppStatusBadge.active', () {
     testWidgets('يعرض "نشط" عندما isActive=true', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppStatusBadge.active(isActive: true),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppStatusBadge.active(context, isActive: true),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('نشط'), findsOneWidget);
     });
 
     testWidgets('يعرض "غير نشط" عندما isActive=false', (tester) async {
-      await tester.pumpWidget(buildTestWidget(
-        AppStatusBadge.active(isActive: false),
+      await tester.pumpWidget(buildContextTestWidget(
+        (context) => AppStatusBadge.active(context, isActive: false),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('غير نشط'), findsOneWidget);
     });
@@ -399,6 +456,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCategoryBadge(category: 'مشروبات'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('مشروبات'), findsOneWidget);
     });
@@ -412,6 +470,7 @@ void main() {
           onTap: () => tapped = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('مشروبات'));
       expect(tapped, true);
@@ -424,6 +483,7 @@ void main() {
           isSelected: true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('مشروبات'), findsOneWidget);
     });
@@ -435,6 +495,7 @@ void main() {
           color: Colors.purple,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('مشروبات'), findsOneWidget);
     });

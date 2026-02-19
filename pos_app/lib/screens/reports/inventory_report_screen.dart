@@ -1,31 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير المخزون
-class InventoryReportScreen extends StatefulWidget {
+class InventoryReportScreen extends ConsumerStatefulWidget {
   const InventoryReportScreen({super.key});
 
   @override
-  State<InventoryReportScreen> createState() => _InventoryReportScreenState();
+  ConsumerState<InventoryReportScreen> createState() => _InventoryReportScreenState();
 }
 
-class _InventoryReportScreenState extends State<InventoryReportScreen> {
+class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
   String _selectedCategory = 'all';
+  List<ProductsTableData> _products = [];
+  bool _isLoading = true;
 
-  final List<_InventoryItem> _inventory = [
-    _InventoryItem(name: 'أرز بسمتي 5 كجم', category: 'أرز', sku: 'R001', stock: 50, minStock: 20, cost: 35, price: 45, lastUpdated: DateTime.now().subtract(const Duration(days: 2))),
-    _InventoryItem(name: 'زيت طبخ 1.5 لتر', category: 'زيوت', sku: 'O001', stock: 5, minStock: 15, cost: 18, price: 25.5, lastUpdated: DateTime.now().subtract(const Duration(days: 1))),
-    _InventoryItem(name: 'سكر أبيض 1 كجم', category: 'سكر', sku: 'S001', stock: 100, minStock: 30, cost: 5, price: 8, lastUpdated: DateTime.now()),
-    _InventoryItem(name: 'حليب طازج 1 لتر', category: 'ألبان', sku: 'M001', stock: 8, minStock: 20, cost: 4.5, price: 6.5, lastUpdated: DateTime.now().subtract(const Duration(hours: 5))),
-    _InventoryItem(name: 'طحين 2 كجم', category: 'طحين', sku: 'F001', stock: 45, minStock: 25, cost: 8, price: 12, lastUpdated: DateTime.now().subtract(const Duration(days: 3))),
-    _InventoryItem(name: 'شاي 200 جم', category: 'مشروبات', sku: 'T001', stock: 30, minStock: 15, cost: 15, price: 22, lastUpdated: DateTime.now().subtract(const Duration(days: 1))),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+    final db = getIt<AppDatabase>();
+    final products = await db.productsDao.getAllProducts(storeId);
+    if (mounted) {
+      setState(() {
+        _products = products;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _selectedCategory == 'all' ? _inventory : _inventory.where((i) => i.category == _selectedCategory).toList();
-    final lowStock = _inventory.where((i) => i.stock < i.minStock).length;
-    final totalValue = _inventory.fold(0.0, (sum, i) => sum + (i.cost * i.stock));
-    final totalItems = _inventory.fold(0, (sum, i) => sum + i.stock);
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تقرير المخزون')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final inventory = _products.map((p) => _InventoryItem(
+      name: p.name,
+      category: p.categoryId ?? 'غير مصنف',
+      sku: p.sku ?? p.barcode ?? '',
+      stock: p.stockQty,
+      minStock: p.minQty,
+      cost: p.costPrice ?? 0,
+      price: p.price,
+      lastUpdated: p.updatedAt ?? p.createdAt,
+    )).toList();
+
+    final filtered = _selectedCategory == 'all' ? inventory : inventory.where((i) => i.category == _selectedCategory).toList();
+    final lowStock = inventory.where((i) => i.stock < i.minStock).length;
+    final totalValue = inventory.fold(0.0, (sum, i) => sum + (i.cost * i.stock));
+    final totalItems = inventory.fold(0, (sum, i) => sum + i.stock);
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +76,7 @@ class _InventoryReportScreenState extends State<InventoryReportScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _StatCard(icon: Icons.inventory_2, label: 'إجمالي الأصناف', value: '${_inventory.length}', color: Colors.blue),
+                _StatCard(icon: Icons.inventory_2, label: 'إجمالي الأصناف', value: '${inventory.length}', color: Colors.blue),
                 const SizedBox(width: 12),
                 _StatCard(icon: Icons.shopping_bag, label: 'إجمالي الوحدات', value: '$totalItems', color: Colors.green),
                 const SizedBox(width: 12),
@@ -77,7 +111,7 @@ class _InventoryReportScreenState extends State<InventoryReportScreen> {
             child: Row(
               children: [
                 _FilterChip(label: 'الكل', selected: _selectedCategory == 'all', onTap: () => setState(() => _selectedCategory = 'all')),
-                ..._inventory.map((i) => i.category).toSet().map((cat) => _FilterChip(label: cat, selected: _selectedCategory == cat, onTap: () => setState(() => _selectedCategory = cat))),
+                ...inventory.map((i) => i.category).toSet().map((cat) => _FilterChip(label: cat, selected: _selectedCategory == cat, onTap: () => setState(() => _selectedCategory = cat))),
               ],
             ),
           ),
@@ -146,5 +180,5 @@ class _FilterChip extends StatelessWidget {
   final VoidCallback onTap;
   const _FilterChip({required this.label, required this.selected, required this.onTap});
   @override
-  Widget build(BuildContext context) => Padding(padding: const EdgeInsets.only(left: 8), child: FilterChip(label: Text(label), selected: selected, onSelected: (_) => onTap()));
+  Widget build(BuildContext context) => Padding(padding: const EdgeInsetsDirectional.only(start: 8), child: FilterChip(label: Text(label), selected: selected, onSelected: (_) => onTap()));
 }

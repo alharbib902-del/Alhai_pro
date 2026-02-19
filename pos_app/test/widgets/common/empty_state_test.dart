@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pos_app/widgets/common/empty_state.dart';
+import 'package:pos_app/widgets/common/app_empty_state.dart';
 
 // ===========================================
 // Empty State Widget Tests
 // ===========================================
 
 void main() {
-  Widget buildTestWidget(EmptyState emptyState) {
+  Widget buildTestWidget(AppEmptyState emptyState) {
     return MaterialApp(
       home: Scaffold(body: emptyState),
     );
   }
 
-  group('EmptyState - Basic Constructor', () {
+  group('AppEmptyState - Basic Constructor', () {
     testWidgets('يعرض الأيقونة والعنوان', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.shopping_cart,
           title: 'عنوان اختبار',
         ),
@@ -28,7 +28,7 @@ void main() {
 
     testWidgets('يعرض الوصف إذا كان موجوداً', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'عنوان',
           description: 'هذا وصف تجريبي',
@@ -40,24 +40,23 @@ void main() {
 
     testWidgets('لا يعرض الوصف إذا كان null', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'عنوان فقط',
         ),
       ));
 
       expect(find.text('عنوان فقط'), findsOneWidget);
-      // لا يوجد Text آخر غير العنوان
     });
 
-    testWidgets('يعرض الزر إذا كان actionLabel و onAction موجودين', (tester) async {
+    testWidgets('يعرض الزر إذا كان actionText و onAction موجودين', (tester) async {
       bool pressed = false;
 
       await tester.pumpWidget(buildTestWidget(
-        EmptyState(
+        AppEmptyState(
           icon: Icons.refresh,
           title: 'تحديث',
-          actionLabel: 'إعادة المحاولة',
+          actionText: 'إعادة المحاولة',
           onAction: () => pressed = true,
         ),
       ));
@@ -68,72 +67,73 @@ void main() {
       expect(pressed, true);
     });
 
-    testWidgets('لا يعرض الزر إذا كان actionLabel فقط بدون onAction', (tester) async {
+    testWidgets('لا يعرض الزر إذا كان actionText فقط بدون onAction', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'عنوان',
-          actionLabel: 'زر',
+          actionText: 'زر',
           // onAction غير موجود
         ),
       ));
 
-      expect(find.byType(FilledButton), findsNothing);
+      // No button rendered because onAction is null
+      expect(find.text('زر'), findsNothing);
     });
   });
 
-  group('EmptyState.cart', () {
+  group('AppEmptyState.emptyCart', () {
     testWidgets('يعرض محتوى السلة الفارغة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.cart(),
+        AppEmptyState.emptyCart(),
       ));
 
       expect(find.byIcon(Icons.shopping_cart_outlined), findsOneWidget);
       expect(find.text('السلة فارغة'), findsOneWidget);
-      expect(find.text('أضف منتجات للبدء'), findsOneWidget);
+      expect(find.text('أضف منتجات للسلة لبدء البيع'), findsOneWidget);
     });
 
-    testWidgets('يعرض زر تصفح إذا كان onAction موجود', (tester) async {
+    testWidgets('يعرض زر تصفح إذا كان onBrowse موجود', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.cart(onAction: () {}),
+        AppEmptyState.emptyCart(onBrowse: () {}),
       ));
 
       expect(find.text('تصفح المنتجات'), findsOneWidget);
     });
 
-    testWidgets('لا يعرض زر إذا كان onAction = null', (tester) async {
+    testWidgets('لا يعرض زر إذا كان onBrowse = null', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.cart(),
+        AppEmptyState.emptyCart(),
       ));
 
-      expect(find.byType(FilledButton), findsNothing);
+      expect(find.text('تصفح المنتجات'), findsNothing);
     });
   });
 
-  group('EmptyState.products', () {
+  group('AppEmptyState.noProducts', () {
     testWidgets('يعرض محتوى لا توجد منتجات', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.products(),
+        AppEmptyState.noProducts(),
       ));
 
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);
       expect(find.text('لا توجد منتجات'), findsOneWidget);
-      expect(find.text('لم يتم العثور على منتجات'), findsOneWidget);
+      expect(find.text('ابدأ بإضافة منتجاتك الآن'), findsOneWidget);
     });
 
-    testWidgets('يعرض زر تحديث إذا كان onRefresh موجود', (tester) async {
+    testWidgets('يعرض زر إضافة إذا كان onAdd موجود', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.products(onRefresh: () {}),
+        AppEmptyState.noProducts(onAdd: () {}),
       ));
 
-      expect(find.text('تحديث'), findsOneWidget);
+      expect(find.text('إضافة منتج'), findsOneWidget);
     });
   });
 
-  group('EmptyState.search', () {
+  group('AppEmptyState.noSearchResults', () {
     testWidgets('يعرض محتوى لا توجد نتائج', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.search(),
+        AppEmptyState.noSearchResults(),
       ));
 
       expect(find.byIcon(Icons.search_off), findsOneWidget);
@@ -142,45 +142,44 @@ void main() {
 
     testWidgets('يعرض نص البحث إذا كان موجود', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.search(query: 'تفاح'),
+        AppEmptyState.noSearchResults(query: 'تفاح'),
       ));
 
-      expect(find.text('لم يتم العثور على نتائج لـ "تفاح"'), findsOneWidget);
+      expect(find.text('لا توجد نتائج لـ "تفاح"'), findsOneWidget);
     });
 
     testWidgets('يعرض رسالة افتراضية إذا لم يكن هناك query', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.search(),
+        AppEmptyState.noSearchResults(),
       ));
 
       expect(find.text('جرب البحث بكلمات مختلفة'), findsOneWidget);
     });
   });
 
-  group('EmptyState.noData', () {
+  group('AppEmptyState.noData', () {
     testWidgets('يعرض محتوى لا توجد بيانات', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.noData(),
+        AppEmptyState.noData(),
       ));
 
-      expect(find.byIcon(Icons.inbox_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.folder_open), findsOneWidget);
       expect(find.text('لا توجد بيانات'), findsOneWidget);
-      expect(find.text('لم يتم العثور على أي بيانات'), findsOneWidget);
     });
 
-    testWidgets('يعرض رسالة مخصصة', (tester) async {
+    testWidgets('يعرض عنوان مخصص', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.noData(message: 'رسالة مخصصة'),
+        AppEmptyState.noData(title: 'رسالة مخصصة'),
       ));
 
       expect(find.text('رسالة مخصصة'), findsOneWidget);
     });
   });
 
-  group('EmptyState.offline', () {
+  group('AppEmptyState.noConnection', () {
     testWidgets('يعرض محتوى لا يوجد اتصال', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.offline(),
+        AppEmptyState.noConnection(),
       ));
 
       expect(find.byIcon(Icons.wifi_off), findsOneWidget);
@@ -192,7 +191,7 @@ void main() {
       bool retried = false;
 
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.offline(onRetry: () => retried = true),
+        AppEmptyState.noConnection(onRetry: () => retried = true),
       ));
 
       expect(find.text('إعادة المحاولة'), findsOneWidget);
@@ -202,42 +201,42 @@ void main() {
     });
   });
 
-  group('EmptyState.customers', () {
+  group('AppEmptyState.noCustomers', () {
     testWidgets('يعرض محتوى لا يوجد عملاء', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.customers(),
+        AppEmptyState.noCustomers(),
       ));
 
       expect(find.byIcon(Icons.people_outline), findsOneWidget);
       expect(find.text('لا يوجد عملاء'), findsOneWidget);
-      expect(find.text('أضف عملاء جدد للبدء'), findsOneWidget);
+      expect(find.text('ابدأ بإضافة عملائك الآن'), findsOneWidget);
     });
 
     testWidgets('يعرض زر إضافة إذا كان onAdd موجود', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.customers(onAdd: () {}),
+        AppEmptyState.noCustomers(onAdd: () {}),
       ));
 
       expect(find.text('إضافة عميل'), findsOneWidget);
     });
   });
 
-  group('EmptyState.orders', () {
+  group('AppEmptyState.noOrders', () {
     testWidgets('يعرض محتوى لا توجد طلبات', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        EmptyState.orders(),
+        AppEmptyState.noOrders(),
       ));
 
-      expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.shopping_bag_outlined), findsOneWidget);
       expect(find.text('لا توجد طلبات'), findsOneWidget);
-      expect(find.text('لم تقم بأي طلبات بعد'), findsOneWidget);
+      expect(find.text('ستظهر الطلبات الجديدة هنا'), findsOneWidget);
     });
   });
 
-  group('EmptyState - Layout', () {
+  group('AppEmptyState - Layout', () {
     testWidgets('يتمركز في الوسط', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'اختبار',
         ),
@@ -248,7 +247,7 @@ void main() {
 
     testWidgets('يحتوي على padding', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'اختبار',
         ),
@@ -259,7 +258,7 @@ void main() {
 
     testWidgets('يستخدم Column للترتيب', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const EmptyState(
+        const AppEmptyState(
           icon: Icons.inbox,
           title: 'اختبار',
         ),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../data/local/daos/loyalty_dao.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 
 /// شاشة برنامج الولاء
 class LoyaltyProgramScreen extends ConsumerStatefulWidget {
@@ -17,30 +22,44 @@ class LoyaltyProgramScreen extends ConsumerStatefulWidget {
 
 class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     with SingleTickerProviderStateMixin {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'loyalty';
   late TabController _tabController;
   bool _programEnabled = true;
   double _pointsPerRiyal = 1;
   double _redemptionRate = 100;
 
-  final List<_LoyaltyMember> _members = [
-    _LoyaltyMember(id: '1', name: 'أحمد محمد', phone: '0501234567', points: 2500, tier: 'gold', totalSpent: 25000, joinDate: DateTime(2024, 1, 15)),
-    _LoyaltyMember(id: '2', name: 'خالد عمر', phone: '0551234567', points: 1200, tier: 'silver', totalSpent: 12000, joinDate: DateTime(2024, 3, 20)),
-    _LoyaltyMember(id: '3', name: 'محمد علي', phone: '0561234567', points: 450, tier: 'bronze', totalSpent: 4500, joinDate: DateTime(2024, 6, 10)),
-  ];
-
-  final List<_Reward> _rewards = [
-    _Reward(id: '1', name: 'خصم 10%', pointsCost: 500, type: 'discount'),
-    _Reward(id: '2', name: 'خصم 25%', pointsCost: 1000, type: 'discount'),
-    _Reward(id: '3', name: 'منتج مجاني', pointsCost: 2000, type: 'freeProduct'),
-    _Reward(id: '4', name: 'توصيل مجاني', pointsCost: 300, type: 'freeDelivery'),
-  ];
+  List<LoyaltyPointsTableData> _members = [];
+  List<LoyaltyRewardsTableData> _rewards = [];
+  LoyaltyStats? _stats;
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final db = getIt<AppDatabase>();
+      final members = await db.loyaltyDao.getAllLoyaltyAccounts(storeId);
+      final rewards = await db.loyaltyDao.getAvailableRewards(storeId);
+      final stats = await db.loyaltyDao.getStats(storeId);
+      if (mounted) {
+        setState(() {
+          _members = members;
+          _rewards = rewards;
+          _stats = stats;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = e.toString(); });
+    }
   }
 
   @override
@@ -48,24 +67,6 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     _tabController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -74,49 +75,31 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.loyaltyProgram,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                   actions: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsetsDirectional.only(start: 8),
                       child: Switch(
                         value: _programEnabled,
                         onChanged: (v) => setState(() => _programEnabled = v),
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                       ),
                     ),
                   ],
                 ),
-                if (_programEnabled) ...[
+                if (_error != null)
+                  Expanded(child: AppErrorState.general(message: _error, onRetry: _loadData))
+                else if (_programEnabled) ...[
                   Container(
                     color: isDark ? const Color(0xFF1E293B) : Colors.white,
                     child: TabBar(
@@ -124,10 +107,10 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       labelColor: AppColors.primary,
                       unselectedLabelColor: isDark ? Colors.white60 : AppColors.textSecondary,
                       indicatorColor: AppColors.primary,
-                      tabs: const [
-                        Tab(text: 'الأعضاء'),
-                        Tab(text: 'المكافآت'),
-                        Tab(text: 'الإعدادات'),
+                      tabs: [
+                        Tab(text: l10n.loyaltyMembers),
+                        Tab(text: l10n.loyaltyRewards),
+                        Tab(text: l10n.settings),
                       ],
                     ),
                   ),
@@ -157,34 +140,17 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     ),
                   ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildMembersTab(bool isMediumScreen, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
@@ -193,60 +159,68 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
           // Stats
           Row(
             children: [
-              Expanded(child: _buildStatCard(Icons.people, 'الأعضاء', '${_members.length}', AppColors.info, isDark)),
+              Expanded(child: _buildStatCard(Icons.people, l10n.loyaltyMembers, '${_members.length}', AppColors.info, isDark)),
               SizedBox(width: isMediumScreen ? 16 : 12),
-              Expanded(child: _buildStatCard(Icons.stars, 'ذهبي', '${_members.where((m) => m.tier == "gold").length}', AppColors.warning, isDark)),
+              Expanded(child: _buildStatCard(Icons.stars, 'ذهبي', '${_members.where((m) => m.tierLevel == "gold").length}', AppColors.warning, isDark)),
               SizedBox(width: isMediumScreen ? 16 : 12),
-              Expanded(child: _buildStatCard(Icons.monetization_on, 'إجمالي النقاط', '${_members.fold(0, (sum, m) => sum + m.points)}', AppColors.success, isDark)),
+              Expanded(child: _buildStatCard(Icons.monetization_on, l10n.pointsIssued, '${_stats != null ? _stats!.totalEarned : _members.fold<int>(0, (sum, m) => sum + m.currentPoints)}', AppColors.success, isDark)),
             ],
           ),
           const SizedBox(height: 20),
 
           // Members
-          ..._members.map((member) => Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              leading: CircleAvatar(
-                backgroundColor: _getTierColor(member.tier).withValues(alpha: 0.1),
-                child: Icon(Icons.person, color: _getTierColor(member.tier)),
+          if (_members.isEmpty)
+            AppEmptyState.noData(title: 'لا يوجد أعضاء', description: 'سيظهر الأعضاء هنا عند تسجيلهم')
+          else
+            ..._members.map((member) => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               ),
-              title: Row(
-                children: [
-                  Expanded(child: Text(member.name, style: TextStyle(color: textColor, fontWeight: FontWeight.w500))),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: _getTierColor(member.tier).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                leading: CircleAvatar(
+                  backgroundColor: _getTierColor(member.tierLevel).withValues(alpha: 0.1),
+                  child: Icon(Icons.person, color: _getTierColor(member.tierLevel)),
+                ),
+                title: Row(
+                  children: [
+                    Expanded(child: Text(member.customerId, style: TextStyle(color: textColor, fontWeight: FontWeight.w500))),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _getTierColor(member.tierLevel).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(_getTierName(member.tierLevel), style: TextStyle(fontSize: 11, color: _getTierColor(member.tierLevel), fontWeight: FontWeight.w500)),
                     ),
-                    child: Text(_getTierName(member.tier), style: TextStyle(fontSize: 11, color: _getTierColor(member.tier), fontWeight: FontWeight.w500)),
-                  ),
-                ],
+                  ],
+                ),
+                subtitle: Text('${member.currentPoints} نقطة - مكتسب: ${member.totalEarned} نقطة', style: TextStyle(color: subtextColor, fontSize: 12)),
+                trailing: IconButton(
+                  icon: const Icon(Icons.redeem, color: AppColors.primary),
+                  tooltip: 'استبدال نقاط',
+                  onPressed: () => _redeemPoints(member),
+                ),
+                onTap: () => _showMemberDetails(member),
               ),
-              subtitle: Text('${member.points} نقطة - مصروف: ${member.totalSpent.toStringAsFixed(0)} ر.س', style: TextStyle(color: subtextColor, fontSize: 12)),
-              trailing: IconButton(
-                icon: const Icon(Icons.redeem, color: AppColors.primary),
-                tooltip: 'استبدال نقاط',
-                onPressed: () => _redeemPoints(member),
-              ),
-              onTap: () => _showMemberDetails(member),
-            ),
-          )),
+            )),
         ],
       ),
     );
   }
 
   Widget _buildRewardsTab(bool isMediumScreen, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
@@ -264,37 +238,47 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
             ],
           ),
           const SizedBox(height: 16),
-          ..._rewards.map((reward) => Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            ),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: _getRewardColor(reward.type).withValues(alpha: 0.1),
-                child: Icon(_getRewardIcon(reward.type), color: _getRewardColor(reward.type)),
+          if (_rewards.isEmpty)
+            AppEmptyState.noData(title: 'لا توجد مكافآت', description: 'أضف مكافآت لبرنامج الولاء')
+          else
+            ..._rewards.map((reward) => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               ),
-              title: Text(reward.name, style: TextStyle(color: textColor)),
-              subtitle: Text('${reward.pointsCost} نقطة', style: TextStyle(color: subtextColor, fontSize: 12)),
-              trailing: PopupMenuButton(
-                itemBuilder: (context) => [
-                  const PopupMenuItem(value: 'edit', child: Text('تعديل')),
-                  const PopupMenuItem(value: 'delete', child: Text('حذف', style: TextStyle(color: AppColors.error))),
-                ],
-                onSelected: (value) {
-                  if (value == 'delete') setState(() => _rewards.remove(reward));
-                },
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: _getRewardColor(reward.rewardType).withValues(alpha: 0.1),
+                  child: Icon(_getRewardIcon(reward.rewardType), color: _getRewardColor(reward.rewardType)),
+                ),
+                title: Text(reward.name, style: TextStyle(color: textColor)),
+                subtitle: Text('${reward.pointsRequired} نقطة', style: TextStyle(color: subtextColor, fontSize: 12)),
+                trailing: PopupMenuButton(
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
+                    PopupMenuItem(value: 'delete', child: Text(l10n.delete, style: const TextStyle(color: AppColors.error))),
+                  ],
+                  onSelected: (value) async {
+                    if (value == 'delete') {
+                      try {
+                        final db = getIt<AppDatabase>();
+                        await db.loyaltyDao.deactivateReward(reward.id);
+                        await _loadData();
+                      } catch (_) {}
+                    }
+                  },
+                ),
               ),
-            ),
-          )),
+            )),
         ],
       ),
     );
   }
 
   Widget _buildSettingsTab(bool isMediumScreen, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -345,7 +329,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('المستويات', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                Text(l10n.loyaltyTiers, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                 Divider(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
                 _buildTierRow('برونزي', 0, Colors.brown, isDark),
                 _buildTierRow('فضي', 5000, Colors.grey, isDark),
@@ -399,10 +383,10 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
 
   Color _getTierColor(String tier) => {'bronze': Colors.brown, 'silver': Colors.grey, 'gold': Colors.amber, 'platinum': Colors.blueGrey}[tier] ?? Colors.grey;
   String _getTierName(String tier) => {'bronze': 'برونزي', 'silver': 'فضي', 'gold': 'ذهبي', 'platinum': 'بلاتيني'}[tier] ?? tier;
-  Color _getRewardColor(String type) => {'discount': AppColors.success, 'freeProduct': AppColors.info, 'freeDelivery': AppColors.secondary}[type] ?? AppColors.textSecondary;
-  IconData _getRewardIcon(String type) => {'discount': Icons.discount, 'freeProduct': Icons.card_giftcard, 'freeDelivery': Icons.local_shipping}[type] ?? Icons.redeem;
+  Color _getRewardColor(String type) => {'discount_percentage': AppColors.success, 'discount_fixed': AppColors.info, 'free_item': AppColors.secondary}[type] ?? AppColors.textSecondary;
+  IconData _getRewardIcon(String type) => {'discount_percentage': Icons.discount, 'discount_fixed': Icons.money, 'free_item': Icons.card_giftcard}[type] ?? Icons.redeem;
 
-  void _showMemberDetails(_LoyaltyMember member) {
+  void _showMemberDetails(LoyaltyPointsTableData member) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
@@ -412,26 +396,26 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(radius: 40, backgroundColor: _getTierColor(member.tier).withValues(alpha: 0.1), child: Icon(Icons.person, size: 40, color: _getTierColor(member.tier))),
+            CircleAvatar(radius: 40, backgroundColor: _getTierColor(member.tierLevel).withValues(alpha: 0.1), child: Icon(Icons.person, size: 40, color: _getTierColor(member.tierLevel))),
             const SizedBox(height: 16),
-            Text(member.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
+            Text(member.customerId, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
             Container(
               margin: const EdgeInsets.only(top: 8),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(color: _getTierColor(member.tier).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
-              child: Text(_getTierName(member.tier), style: TextStyle(color: _getTierColor(member.tier), fontWeight: FontWeight.w500)),
+              decoration: BoxDecoration(color: _getTierColor(member.tierLevel).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+              child: Text(_getTierName(member.tierLevel), style: TextStyle(color: _getTierColor(member.tierLevel), fontWeight: FontWeight.w500)),
             ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(children: [
-                  Text('${member.points}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.success)),
+                  Text('${member.currentPoints}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.success)),
                   Text('نقطة', style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary)),
                 ]),
                 Column(children: [
-                  Text(member.totalSpent.toStringAsFixed(0), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.info)),
-                  Text('ر.س مصروف', style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary)),
+                  Text('${member.totalEarned}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.info)),
+                  Text('نقطة مكتسبة', style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary)),
                 ]),
               ],
             ),
@@ -448,41 +432,43 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     );
   }
 
-  void _redeemPoints(_LoyaltyMember member) {
+  void _redeemPoints(LoyaltyPointsTableData member) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('استبدال نقاط - ${member.name}'),
+        title: Text('استبدال نقاط - ${member.customerId}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('الرصيد الحالي: ${member.points} نقطة'),
+            Text('${l10n.currentBalance}: ${member.currentPoints} نقطة'),
             const SizedBox(height: 16),
             const Text('اختر مكافأة:'),
             const SizedBox(height: 8),
-            ..._rewards.where((r) => r.pointsCost <= member.points).map((r) => ListTile(
-              leading: Icon(_getRewardIcon(r.type), color: _getRewardColor(r.type)),
+            ..._rewards.where((r) => r.pointsRequired <= member.currentPoints).map((r) => ListTile(
+              leading: Icon(_getRewardIcon(r.rewardType), color: _getRewardColor(r.rewardType)),
               title: Text(r.name),
-              subtitle: Text('${r.pointsCost} نقطة'),
+              subtitle: Text('${r.pointsRequired} نقطة'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم استبدال ${r.pointsCost} نقطة بـ ${r.name}')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم استبدال ${r.pointsRequired} نقطة بـ ${r.name}')));
               },
             )),
-            if (_rewards.where((r) => r.pointsCost <= member.points).isEmpty)
+            if (_rewards.where((r) => r.pointsRequired <= member.currentPoints).isEmpty)
               const Padding(padding: EdgeInsets.all(16), child: Text('لا توجد مكافآت متاحة بهذا الرصيد', style: TextStyle(color: AppColors.textSecondary))),
           ],
         ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق'))],
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close))],
       ),
     );
   }
 
   void _addReward() {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final pointsController = TextEditingController();
-    String type = 'discount';
+    String type = 'discount_percentage';
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -496,45 +482,53 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               TextField(controller: pointsController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'النقاط المطلوبة', prefixIcon: Icon(Icons.stars))),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: type,
+                initialValue: type,
                 decoration: const InputDecoration(labelText: 'النوع', prefixIcon: Icon(Icons.category)),
-                items: const [
-                  DropdownMenuItem(value: 'discount', child: Text('خصم')),
-                  DropdownMenuItem(value: 'freeProduct', child: Text('منتج مجاني')),
-                  DropdownMenuItem(value: 'freeDelivery', child: Text('توصيل مجاني')),
+                items: [
+                  DropdownMenuItem(value: 'discount_percentage', child: Text(l10n.percentageDiscountOption)),
+                  DropdownMenuItem(value: 'discount_fixed', child: Text(l10n.fixedDiscountOption)),
+                  const DropdownMenuItem(value: 'free_item', child: Text('منتج مجاني')),
                 ],
                 onChanged: (v) => setDialogState(() => type = v!),
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
                 if (nameController.text.isNotEmpty && pointsController.text.isNotEmpty) {
-                  setState(() => _rewards.add(_Reward(id: 'new_${_rewards.length}', name: nameController.text, pointsCost: int.tryParse(pointsController.text) ?? 100, type: type)));
+                  try {
+                    final storeId = ref.read(currentStoreIdProvider);
+                    if (storeId == null) return;
+                    final db = getIt<AppDatabase>();
+                    final now = DateTime.now();
+                    await db.loyaltyDao.createReward(LoyaltyRewardsTableCompanion(
+                      id: Value(const Uuid().v4()),
+                      storeId: Value(storeId),
+                      name: Value(nameController.text),
+                      description: const Value(''),
+                      pointsRequired: Value(int.tryParse(pointsController.text) ?? 100),
+                      rewardType: Value(type),
+                      rewardValue: const Value(10),
+                      minPurchase: const Value(0),
+                      isActive: const Value(true),
+                      createdAt: Value(now),
+                    ));
+                    await _loadData();
+                  } catch (_) {}
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         ),
       ),
-    );
+    ).then((_) {
+      nameController.dispose();
+      pointsController.dispose();
+    });
   }
-}
-
-class _LoyaltyMember {
-  final String id, name, phone, tier;
-  final int points;
-  final double totalSpent;
-  final DateTime joinDate;
-  _LoyaltyMember({required this.id, required this.name, required this.phone, required this.points, required this.tier, required this.totalSpent, required this.joinDate});
-}
-
-class _Reward {
-  final String id, name, type;
-  final int pointsCost;
-  _Reward({required this.id, required this.name, required this.pointsCost, required this.type});
 }

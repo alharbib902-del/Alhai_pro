@@ -228,7 +228,7 @@ class _CreateReturnDrawerState extends State<CreateReturnDrawer> {
                 Expanded(
                   child: Container(
                     height: 2,
-                    margin: const EdgeInsets.only(bottom: 18, left: 4, right: 4),
+                    margin: const EdgeInsetsDirectional.only(bottom: 18, start: 4, end: 4),
                     color: isCompleted
                         ? AppColors.success
                         : (isDark ? const Color(0xFF374151) : AppColors.grey200),

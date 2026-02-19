@@ -5,10 +5,14 @@
 library;
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:uuid/uuid.dart';
 import '../core/security/secure_storage_service.dart';
 import '../core/security/session_manager.dart';
+import '../services/whatsapp_otp_service.dart';
 
 // ============================================================================
 // CONSTANTS
@@ -27,6 +31,15 @@ const Duration kTokenRefreshBuffer = Duration(minutes: 5);
 /// مزود مستودع المصادقة
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return getIt<AuthRepository>();
+});
+
+/// مزود عميل Supabase (nullable - قد لا يكون متاحاً في وضع عدم الاتصال)
+final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
+  try {
+    return Supabase.instance.client;
+  } catch (_) {
+    return null;
+  }
 });
 
 // ============================================================================
@@ -103,15 +116,33 @@ class AuthState {
 /// مُدير حالة المصادقة مع SecureStorage
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _authRepository;
+  final SupabaseClient? _supabaseClient;
   Timer? _sessionTimer;
 
-  AuthNotifier(this._authRepository) : super(const AuthState()) {
+  AuthNotifier(this._authRepository, [this._supabaseClient]) : super(const AuthState()) {
     _checkAuthStatus();
   }
 
   /// التحقق من حالة المصادقة عند بدء التطبيق
   Future<void> _checkAuthStatus() async {
     try {
+      // Check Supabase session first
+      if (_supabaseClient != null) {
+        final session = _supabaseClient!.auth.currentSession;
+        if (session != null) {
+          final expiry = session.expiresAt != null
+              ? DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000)
+              : DateTime.now().add(kSessionDuration);
+
+          state = AuthState(
+            status: AuthStatus.authenticated,
+            sessionExpiry: expiry,
+          );
+          _startSessionMonitor();
+          return;
+        }
+      }
+
       // التحقق من الجلسة المحفوظة
       final isSessionValid = await SecureStorageService.isSessionValid();
       
@@ -196,10 +227,152 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// التحقق المحلي من OTP عبر WhatsApp وإنشاء جلسة محلية
+  /// يُستخدم عندما يتم التحقق من OTP محلياً عبر WhatsAppOtpService
+  Future<void> verifyLocalOtp({
+    required String phone,
+    required WhatsAppOtpVerifyResult otpResult,
+  }) async {
+    if (!otpResult.isSuccess) {
+      state = state.copyWith(error: otpResult.error ?? 'فشل التحقق من OTP');
+      return;
+    }
+
+    try {
+      // حساب وقت انتهاء الجلسة
+      final expiry = DateTime.now().add(kSessionDuration);
+
+      // إنشاء tokens محلية للجلسة باستخدام UUID
+      const uuid = Uuid();
+      final localAccessToken = 'session_${uuid.v4()}';
+      final localRefreshToken = 'refresh_${uuid.v4()}';
+
+      // حفظ الـ tokens بشكل آمن
+      await SecureStorageService.saveTokens(
+        accessToken: localAccessToken,
+        refreshToken: localRefreshToken,
+        expiry: expiry,
+      );
+
+      // حفظ بيانات المستخدم
+      await SecureStorageService.saveUserData(
+        userId: phone,
+        storeId: '',
+      );
+
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        sessionExpiry: expiry,
+      );
+
+      // بدء مراقبة الجلسة
+      _startSessionMonitor();
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
   /// تسجيل الخروج
   Future<void> logout() async {
     try {
       _stopSessionMonitor();
+
+      // Sign out from Supabase if available
+      if (_supabaseClient != null) {
+        try {
+          await _supabaseClient!.auth.signOut();
+        } catch (_) {}
+      }
+
+      await _authRepository.logout();
+      await SecureStorageService.clearSession();
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// إرسال OTP عبر Supabase Auth
+  Future<bool> sendSupabaseOtp(String phone) async {
+    try {
+      if (_supabaseClient == null) return false;
+
+      await _supabaseClient!.auth.signInWithOtp(
+        phone: phone,
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Supabase OTP send failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// التحقق من OTP عبر Supabase Auth
+  Future<bool> verifySupabaseOtp({
+    required String phone,
+    required String otp,
+  }) async {
+    try {
+      if (_supabaseClient == null) return false;
+
+      final response = await _supabaseClient!.auth.verifyOTP(
+        phone: phone,
+        token: otp,
+        type: OtpType.sms,
+      );
+
+      if (response.session != null) {
+        final session = response.session!;
+        final expiry = DateTime.now().add(kSessionDuration);
+
+        // حفظ tokens Supabase
+        await SecureStorageService.saveTokens(
+          accessToken: session.accessToken,
+          refreshToken: session.refreshToken ?? '',
+          expiry: expiry,
+        );
+
+        // حفظ بيانات المستخدم
+        await SecureStorageService.saveUserData(
+          userId: response.user?.id ?? phone,
+          storeId: '', // يتم تحديده لاحقاً في store-select
+        );
+
+        state = AuthState(
+          status: AuthStatus.authenticated,
+          sessionExpiry: expiry,
+        );
+
+        _startSessionMonitor();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Supabase OTP verify failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// تسجيل الخروج (مع Supabase)
+  Future<void> logoutWithSupabase() async {
+    try {
+      _stopSessionMonitor();
+
+      // تسجيل الخروج من Supabase
+      if (_supabaseClient != null) {
+        try {
+          await _supabaseClient!.auth.signOut();
+        } catch (_) {
+          // تجاهل أخطاء Supabase عند الخروج
+        }
+      }
+
+      // تسجيل الخروج من المستودع المحلي
       await _authRepository.logout();
       await SecureStorageService.clearSession();
       state = const AuthState(status: AuthStatus.unauthenticated);
@@ -290,7 +463,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 final authStateProvider =
     StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
-  return AuthNotifier(authRepository);
+  final supabase = ref.watch(supabaseClientProvider);
+  return AuthNotifier(authRepository, supabase);
 });
 
 /// مزود المستخدم الحالي (اختصار)

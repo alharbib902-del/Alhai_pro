@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// البطاقة الموحدة
 class AppCard extends StatefulWidget {
@@ -325,7 +326,8 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stockStatus = _getStockStatus();
+    final l10n = AppLocalizations.of(context)!;
+    final stockStatus = _getStockStatus(l10n);
 
     return AppCard(
       onTap: onTap,
@@ -448,7 +450,7 @@ class ProductCard extends StatelessWidget {
                       ? onAddToCart
                       : null,
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
-                  label: const Text('أضف'),
+                  label: Text(l10n.add),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
@@ -494,14 +496,14 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  ({String label, Color color}) _getStockStatus() {
+  ({String label, Color color}) _getStockStatus(AppLocalizations l10n) {
     if (quantity == null || quantity! <= 0) {
-      return (label: 'نفذ', color: AppColors.stockOut);
+      return (label: l10n.soldOut, color: AppColors.stockOut);
     }
     if (quantity! <= 5) {
-      return (label: 'كمية قليلة ($quantity)', color: AppColors.stockLow);
+      return (label: '${l10n.lowStock} ($quantity)', color: AppColors.stockLow);
     }
-    return (label: 'متوفر ($quantity)', color: AppColors.stockAvailable);
+    return (label: '${l10n.inStock} ($quantity)', color: AppColors.stockAvailable);
   }
 }
 
@@ -541,6 +543,7 @@ class CustomerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final displayInitials = initials ?? _getInitials(name);
     final balanceColor = AppColors.getBalanceColor(balance ?? 0);
 
@@ -596,7 +599,7 @@ class CustomerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  balance! > 0 ? 'عليه' : balance! < 0 ? 'له' : 'متوازن',
+                  balance! > 0 ? l10n.owes : balance! < 0 ? l10n.due : l10n.balanced,
                   style: AppTypography.labelSmall.copyWith(
                     color: AppColors.textMuted,
                   ),

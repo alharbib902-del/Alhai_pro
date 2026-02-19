@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Widget موحد لعرض الأخطاء
-class ErrorWidget extends StatelessWidget {
+class AppErrorWidget extends StatelessWidget {
   /// رسالة الخطأ
   final String message;
   
@@ -11,7 +11,7 @@ class ErrorWidget extends StatelessWidget {
   /// أيقونة الخطأ
   final IconData icon;
 
-  const ErrorWidget({
+  const AppErrorWidget({
     super.key,
     required this.message,
     this.onRetry,
@@ -19,8 +19,8 @@ class ErrorWidget extends StatelessWidget {
   });
 
   /// خطأ شبكة
-  factory ErrorWidget.network({VoidCallback? onRetry}) {
-    return ErrorWidget(
+  factory AppErrorWidget.network({VoidCallback? onRetry}) {
+    return AppErrorWidget(
       message: 'خطأ في الاتصال بالخادم',
       icon: Icons.cloud_off,
       onRetry: onRetry,
@@ -28,8 +28,8 @@ class ErrorWidget extends StatelessWidget {
   }
 
   /// خطأ تحميل
-  factory ErrorWidget.loading({String? details, VoidCallback? onRetry}) {
-    return ErrorWidget(
+  factory AppErrorWidget.loading({String? details, VoidCallback? onRetry}) {
+    return AppErrorWidget(
       message: details ?? 'فشل تحميل البيانات',
       icon: Icons.sync_problem,
       onRetry: onRetry,
@@ -37,8 +37,8 @@ class ErrorWidget extends StatelessWidget {
   }
 
   /// خطأ عام
-  factory ErrorWidget.generic({String? message, VoidCallback? onRetry}) {
-    return ErrorWidget(
+  factory AppErrorWidget.generic({String? message, VoidCallback? onRetry}) {
+    return AppErrorWidget(
       message: message ?? 'حدث خطأ غير متوقع',
       icon: Icons.warning_amber,
       onRetry: onRetry,

@@ -1,11 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/sync_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 
 /// شاشة حل التعارضات في المزامنة
 class ConflictResolutionScreen extends ConsumerStatefulWidget {
@@ -16,46 +18,7 @@ class ConflictResolutionScreen extends ConsumerStatefulWidget {
 }
 
 class _ConflictResolutionScreenState extends ConsumerState<ConflictResolutionScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'dashboard';
-
-  final List<_Conflict> _conflicts = [
-    _Conflict(
-      id: '1',
-      type: 'product',
-      description: 'تعارض في سعر المنتج',
-      localValue: '25.00 ر.س',
-      serverValue: '27.50 ر.س',
-      localTime: DateTime.now().subtract(const Duration(hours: 2)),
-      serverTime: DateTime.now().subtract(const Duration(hours: 1)),
-    ),
-    _Conflict(
-      id: '2',
-      type: 'stock',
-      description: 'تعارض في كمية المخزون',
-      localValue: '45 قطعة',
-      serverValue: '42 قطعة',
-      localTime: DateTime.now().subtract(const Duration(hours: 3)),
-      serverTime: DateTime.now().subtract(const Duration(hours: 2)),
-    ),
-  ];
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
+  bool _isResolving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -65,67 +28,78 @@ class _ConflictResolutionScreenState extends ConsumerState<ConflictResolutionScr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد', // TODO: localize
-              userRole: l10n.branchManager,
-              onUserTap: () {},
+    final conflictItemsAsync = ref.watch(conflictSyncItemsProvider);
+
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.conflictResolutionTitle,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.cashCustomer,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh, color: isDark ? Colors.white70 : AppColors.textSecondary),
+              onPressed: () => ref.invalidate(conflictSyncItemsProvider),
             ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'حل التعارضات', // TODO: localize
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد', // TODO: localize
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: _conflicts.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.check_circle, size: 64, color: isDark ? Colors.white24 : AppColors.success),
-                              const SizedBox(height: 16),
-                              Text(
-                                'لا توجد تعارضات', // TODO: localize
-                                style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                        ),
-                ),
-              ],
+          ],
+        ),
+        Expanded(
+          child: conflictItemsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+                  const SizedBox(height: 16),
+                  Text(
+                    error.toString(),
+                    style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: () => ref.invalidate(conflictSyncItemsProvider),
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: Text(l10n.retry),
+                  ),
+                ],
+              ),
             ),
+            data: (conflicts) {
+              if (conflicts.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.check_circle, size: 64, color: isDark ? Colors.white24 : AppColors.success),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.noConflicts,
+                        style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                child: _buildContent(conflicts, isWideScreen, isMediumScreen, isDark, l10n),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(List<SyncQueueTableData> conflicts, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,21 +113,21 @@ class _ConflictResolutionScreenState extends ConsumerState<ConflictResolutionScr
           ),
           child: Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: AppColors.error),
+              const Icon(Icons.warning_amber_rounded, color: AppColors.error),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_conflicts.length} تعارضات تحتاج حل', // TODO: localize
+                      l10n.conflictsNeedResolution(conflicts.length),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
                     Text(
-                      'اختر القيمة الصحيحة لكل تعارض', // TODO: localize
+                      l10n.chooseCorrectValue,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.white54 : AppColors.textSecondary,
@@ -168,141 +142,167 @@ class _ConflictResolutionScreenState extends ConsumerState<ConflictResolutionScr
         const SizedBox(height: 16),
 
         // Conflicts list
-        ...List.generate(_conflicts.length, (index) {
-          final conflict = _conflicts[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      conflict.type == 'product' ? Icons.inventory : Icons.storage,
-                      color: isDark ? Colors.white54 : AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        conflict.description,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Local value
-                _ConflictOption(
-                  title: 'القيمة المحلية', // TODO: localize
-                  value: conflict.localValue,
-                  time: conflict.localTime,
-                  color: AppColors.warning,
-                  isDark: isDark,
-                  onSelect: () => _resolveConflict(conflict, 'local'),
-                ),
-                const SizedBox(height: 8),
-
-                // Server value
-                _ConflictOption(
-                  title: 'القيمة من السيرفر', // TODO: localize
-                  value: conflict.serverValue,
-                  time: conflict.serverTime,
-                  color: AppColors.info,
-                  isDark: isDark,
-                  onSelect: () => _resolveConflict(conflict, 'server'),
-                ),
-              ],
-            ),
+        ...List.generate(conflicts.length, (index) {
+          final conflict = conflicts[index];
+          return _ConflictCard(
+            item: conflict,
+            isDark: isDark,
+            l10n: l10n,
+            isResolving: _isResolving,
+            onAcceptLocal: () => _resolveConflict(conflict, 'local'),
+            onAcceptServer: () => _resolveConflict(conflict, 'server'),
+            onRetry: () => _retryConflict(conflict),
+            onDelete: () => _deleteConflict(conflict),
           );
         }),
 
         const SizedBox(height: 8),
 
         // Quick actions
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => _resolveAll('local'),
-                child: const Text('استخدام الكل المحلي'), // TODO: localize
+        if (conflicts.isNotEmpty)
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _isResolving ? null : () => _resolveAll(conflicts, 'local'),
+                  icon: const Icon(Icons.phone_android, size: 18),
+                  label: Text(l10n.useAllLocal),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: FilledButton(
-                onPressed: () => _resolveAll('server'),
-                child: const Text('استخدام الكل من السيرفر'), // TODO: localize
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _isResolving ? null : () => _resolveAll(conflicts, 'server'),
+                  icon: const Icon(Icons.cloud, size: 18),
+                  label: Text(l10n.useAllServer),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد', // TODO: localize
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
+  Future<void> _resolveConflict(SyncQueueTableData conflict, String choice) async {
+    setState(() => _isResolving = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      final syncService = ref.read(syncServiceProvider);
+
+      if (choice == 'local') {
+        // Accept local: mark as resolved (keep local data, no server push needed)
+        await syncService.markResolved(conflict.id);
+      } else {
+        // Accept server: remove local change and mark resolved
+        // The server version is already the truth, so we just discard the local change
+        await syncService.markResolved(conflict.id);
+      }
+
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(choice == 'local' ? l10n.conflictResolvedLocal : l10n.conflictResolvedServer),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+      );
+    } finally {
+      if (mounted) setState(() => _isResolving = false);
+    }
   }
 
-  void _resolveConflict(_Conflict conflict, String choice) {
-    setState(() => _conflicts.remove(conflict));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('تم حل التعارض باستخدام القيمة ${choice == 'local' ? 'المحلية' : 'من السيرفر'}'), // TODO: localize
-        backgroundColor: Colors.green,
-      ),
-    );
+  Future<void> _retryConflict(SyncQueueTableData conflict) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      final syncService = ref.read(syncServiceProvider);
+      await syncService.retryItem(conflict.id);
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.operationSynced)),
+      );
+      // Trigger a sync attempt
+      final manager = ref.read(syncManagerProvider);
+      manager.syncPending();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+      );
+    }
   }
 
-  void _resolveAll(String choice) {
+  void _deleteConflict(SyncQueueTableData conflict) {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('استخدام ${choice == 'local' ? 'القيم المحلية' : 'قيم السيرفر'}'), // TODO: localize
-        content: Text('سيتم تطبيق ${choice == 'local' ? 'القيم المحلية' : 'قيم السيرفر'} على جميع التعارضات'), // TODO: localize
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deleteOperation),
+        content: Text(l10n.deleteOperationConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() => _conflicts.clear());
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم حل جميع التعارضات'), backgroundColor: Colors.green), // TODO: localize
-              );
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              try {
+                final syncService = ref.read(syncServiceProvider);
+                await syncService.removeItem(conflict.id);
+              } catch (e) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+                );
+              }
             },
-            child: const Text('تأكيد'), // TODO: localize
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _resolveAll(List<SyncQueueTableData> conflicts, String choice) {
+    final l10n = AppLocalizations.of(context)!;
+    final choiceLabel = choice == 'local' ? l10n.useLocalValues : l10n.useServerValues;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(choiceLabel),
+        content: Text(l10n.applyToAllConflicts(choiceLabel)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              setState(() => _isResolving = true);
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                final syncService = ref.read(syncServiceProvider);
+                for (final conflict in conflicts) {
+                  await syncService.markResolved(conflict.id);
+                }
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(content: Text(l10n.allConflictsResolved), backgroundColor: Colors.green),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+                );
+              } finally {
+                if (mounted) setState(() => _isResolving = false);
+              }
+            },
+            child: Text(l10n.confirm),
           ),
         ],
       ),
@@ -310,33 +310,198 @@ class _ConflictResolutionScreenState extends ConsumerState<ConflictResolutionScr
   }
 }
 
-class _Conflict {
-  final String id;
-  final String type;
-  final String description;
-  final String localValue;
-  final String serverValue;
-  final DateTime localTime;
-  final DateTime serverTime;
+/// بطاقة عرض تفاصيل التعارض
+class _ConflictCard extends StatelessWidget {
+  final SyncQueueTableData item;
+  final bool isDark;
+  final AppLocalizations l10n;
+  final bool isResolving;
+  final VoidCallback onAcceptLocal;
+  final VoidCallback onAcceptServer;
+  final VoidCallback onRetry;
+  final VoidCallback onDelete;
 
-  _Conflict({
-    required this.id,
-    required this.type,
-    required this.description,
-    required this.localValue,
-    required this.serverValue,
-    required this.localTime,
-    required this.serverTime,
+  const _ConflictCard({
+    required this.item,
+    required this.isDark,
+    required this.l10n,
+    required this.isResolving,
+    required this.onAcceptLocal,
+    required this.onAcceptServer,
+    required this.onRetry,
+    required this.onDelete,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    final recordIdDisplay = item.recordId.length > 8 ? item.recordId.substring(0, 8) : item.recordId;
+    final payloadPreview = _getPayloadPreview(item.payload);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row
+          Row(
+            children: [
+              Icon(
+                _getTableIcon(item.tableName_),
+                color: isDark ? Colors.white54 : AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${item.tableName_} - ${item.operation}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'ID: $recordIdDisplay',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white54 : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Retry count badge
+              if (item.retryCount > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '${item.retryCount}/${item.maxRetries}',
+                    style: const TextStyle(fontSize: 11, color: AppColors.error, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, size: 20),
+                color: AppColors.error,
+                tooltip: l10n.delete,
+                onPressed: onDelete,
+              ),
+            ],
+          ),
+
+          // Error message
+          if (item.lastError != null && item.lastError!.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                item.lastError!,
+                style: const TextStyle(fontSize: 11, color: AppColors.error),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+
+          // Payload preview (local value)
+          if (payloadPreview.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _ConflictOption(
+              title: l10n.localValueLabel,
+              value: payloadPreview,
+              time: item.createdAt,
+              color: AppColors.warning,
+              isDark: isDark,
+              onSelect: isResolving ? null : onAcceptLocal,
+            ),
+          ],
+
+          const SizedBox(height: 8),
+
+          // Server option
+          _ConflictOption(
+            title: l10n.serverValueLabel,
+            value: l10n.useServerValues,
+            time: item.lastAttemptAt ?? item.createdAt,
+            color: AppColors.info,
+            isDark: isDark,
+            onSelect: isResolving ? null : onAcceptServer,
+          ),
+
+          const SizedBox(height: 8),
+
+          // Retry button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: isResolving ? null : onRetry,
+              icon: const Icon(Icons.sync, size: 16),
+              label: Text(l10n.retry),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getTableIcon(String tableName) {
+    switch (tableName) {
+      case 'products':
+        return Icons.inventory;
+      case 'sales':
+        return Icons.receipt_long;
+      case 'inventory_movements':
+        return Icons.storage;
+      case 'accounts':
+        return Icons.people;
+      case 'orders':
+        return Icons.shopping_cart;
+      default:
+        return Icons.table_chart;
+    }
+  }
+
+  String _getPayloadPreview(String payload) {
+    try {
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+      // Show a readable summary of key fields
+      final entries = data.entries.take(3).map((e) {
+        final value = e.value;
+        final valueStr = value is String ? value : value.toString();
+        final displayValue = valueStr.length > 30 ? '${valueStr.substring(0, 30)}...' : valueStr;
+        return '${e.key}: $displayValue';
+      });
+      return entries.join(', ');
+    } catch (_) {
+      return payload.length > 60 ? '${payload.substring(0, 60)}...' : payload;
+    }
+  }
 }
 
+/// خيار حل التعارض (محلي/سيرفر)
 class _ConflictOption extends StatelessWidget {
   final String title;
   final String value;
-  final DateTime time;
+  final DateTime? time;
   final Color color;
   final bool isDark;
-  final VoidCallback onSelect;
+  final VoidCallback? onSelect;
 
   const _ConflictOption({
     required this.title,
@@ -377,17 +542,20 @@ class _ConflictOption extends StatelessWidget {
                   Text(
                     value,
                     style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Text(
-              '${time.hour}:${time.minute.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                fontSize: 11,
-                color: isDark ? Colors.white38 : AppColors.textTertiary,
+            if (time != null)
+              Text(
+                '${time!.hour}:${time!.minute.toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.white38 : AppColors.textTertiary,
+                ),
               ),
-            ),
           ],
         ),
       ),

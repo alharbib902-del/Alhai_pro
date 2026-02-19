@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// بطاقة منتج عصرية
 class ModernProductCard extends StatefulWidget {
@@ -125,10 +126,11 @@ class _ModernProductCardState extends State<ModernProductCard>
     return AppColors.success;
   }
 
-  String get _stockText {
-    if (_isOutOfStock) return 'نفد';
-    if (_isLowStock) return 'منخفض';
-    return 'متوفر';
+  String _stockText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_isOutOfStock) return l10n.soldOut;
+    if (_isLowStock) return l10n.lowStockLabel;
+    return l10n.available;
   }
 
   @override
@@ -331,7 +333,7 @@ class _ModernProductCardState extends State<ModernProductCard>
           ),
           const SizedBox(width: 4),
           Text(
-            widget.stockQty != null ? '${widget.stockQty}' : _stockText,
+            widget.stockQty != null ? '${widget.stockQty}' : _stockText(context),
             style: AppTypography.labelSmall.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,

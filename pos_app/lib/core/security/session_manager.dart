@@ -89,7 +89,12 @@ class SessionManager {
         refreshToken: refreshToken,
         expiry: expiry,
       );
-      
+
+      // تحديث الـ cache فوراً ⚡ (مطابقة لسلوك startSession)
+      _cachedAccessToken = accessToken;
+      _cachedExpiry = expiry;
+      _cacheInitialized = true;
+
       return true;
     } catch (e) {
       return false;

@@ -11,8 +11,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   local_auth_windows
   permission_handler_windows
   printing
-  sentry_flutter
-  sqlcipher_flutter_libs
   sqlite3_flutter_libs
   url_launcher_windows
 )

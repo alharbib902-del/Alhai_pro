@@ -1,73 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة سجل الطلبات
-class OrderHistoryScreen extends StatefulWidget {
+class OrderHistoryScreen extends ConsumerStatefulWidget {
   const OrderHistoryScreen({super.key});
 
   @override
-  State<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
+  ConsumerState<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
 }
 
-class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
+class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   String _filterStatus = 'all';
   String _filterChannel = 'all';
   DateTimeRange? _dateRange;
   final _searchController = TextEditingController();
-  
-  final List<_Order> _orders = [
-    _Order(
-      id: 'ORD-2024-001',
-      customerName: 'أحمد محمد',
-      date: DateTime.now().subtract(const Duration(hours: 2)),
-      total: 350,
-      items: 5,
-      status: 'completed',
-      paymentMethod: 'cash',
-      channel: 'pos',
-    ),
-    _Order(
-      id: 'ORD-2024-002',
-      customerName: 'عميل زائر',
-      date: DateTime.now().subtract(const Duration(hours: 4)),
-      total: 125,
-      items: 2,
-      status: 'completed',
-      paymentMethod: 'card',
-      channel: 'pos',
-    ),
-    _Order(
-      id: 'ORD-2024-003',
-      customerName: 'خالد عمر',
-      date: DateTime.now().subtract(const Duration(hours: 6)),
-      total: 890,
-      items: 8,
-      status: 'pending',
-      paymentMethod: 'credit',
-      channel: 'whatsapp',
-    ),
-    _Order(
-      id: 'ORD-2024-004',
-      customerName: 'محمد علي',
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      total: 450,
-      items: 4,
-      status: 'cancelled',
-      paymentMethod: 'cash',
-      channel: 'pos',
-    ),
-    _Order(
-      id: 'ORD-2024-005',
-      customerName: 'فهد سعد',
-      date: DateTime.now().subtract(const Duration(days: 1, hours: 3)),
-      total: 1200,
-      items: 12,
-      status: 'completed',
-      paymentMethod: 'mixed',
-      channel: 'app',
-    ),
-  ];
+  List<OrdersTableData> _orders = [];
+  bool _isLoading = true;
 
-  List<_Order> get _filteredOrders {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final db = getIt<AppDatabase>();
+      final orders = await db.ordersDao.getOrders(storeId);
+      if (mounted) {
+        setState(() {
+          _orders = orders;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  List<OrdersTableData> get _filteredOrders {
     var list = _orders;
     if (_filterStatus != 'all') {
       list = list.where((o) => o.status == _filterStatus).toList();
@@ -76,9 +53,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       list = list.where((o) => o.channel == _filterChannel).toList();
     }
     if (_searchController.text.isNotEmpty) {
-      list = list.where((o) => 
-        o.id.contains(_searchController.text) ||
-        o.customerName.contains(_searchController.text)
+      final query = _searchController.text.toLowerCase();
+      list = list.where((o) =>
+        o.orderNumber.toLowerCase().contains(query) ||
+        (o.customerId ?? '').toLowerCase().contains(query)
       ).toList();
     }
     return list;
@@ -86,23 +64,32 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.orderHistory)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final now = DateTime.now();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('سجل الطلبات'),
+        title: Text(l10n.orderHistory),
         actions: [
           IconButton(
             icon: const Icon(Icons.date_range),
-            tooltip: 'تحديد فترة',
+            tooltip: l10n.selectDateRange,
             onPressed: _selectDateRange,
           ),
           IconButton(
             icon: const Icon(Icons.filter_list),
-            tooltip: 'فلترة',
+            tooltip: l10n.filter,
             onPressed: _showFilterSheet,
           ),
           IconButton(
             icon: const Icon(Icons.file_download),
-            tooltip: 'تصدير',
+            tooltip: l10n.exportOrders,
             onPressed: _exportOrders,
           ),
         ],
@@ -115,7 +102,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'بحث برقم الطلب أو اسم العميل...',
+                hintText: l10n.orderSearchHint,
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -125,7 +112,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               onChanged: (_) => setState(() {}),
             ),
           ),
-          
+
           // Filter chips
           if (_filterStatus != 'all' || _filterChannel != 'all')
             Padding(
@@ -134,14 +121,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 children: [
                   if (_filterStatus != 'all')
                     Chip(
-                      label: Text(_getStatusName(_filterStatus)),
+                      label: Text(_getStatusName(_filterStatus, l10n)),
                       onDeleted: () => setState(() => _filterStatus = 'all'),
                       deleteIconColor: Colors.grey,
                     ),
                   if (_filterChannel != 'all') ...[
                     const SizedBox(width: 8),
                     Chip(
-                      label: Text(_getChannelName(_filterChannel)),
+                      label: Text(_getChannelName(_filterChannel, l10n)),
                       onDeleted: () => setState(() => _filterChannel = 'all'),
                       deleteIconColor: Colors.grey,
                     ),
@@ -149,39 +136,39 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 ],
               ),
             ),
-          
+
           // Stats row
           Container(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 _StatBadge(
-                  label: 'اليوم',
-                  value: '${_orders.where((o) => o.date.day == DateTime.now().day).length}',
+                  label: l10n.today,
+                  value: '${_orders.where((o) => o.orderDate.day == now.day && o.orderDate.month == now.month && o.orderDate.year == now.year).length}',
                   color: Colors.blue,
                 ),
                 const SizedBox(width: 8),
                 _StatBadge(
-                  label: 'مكتمل',
-                  value: '${_orders.where((o) => o.status == "completed").length}',
+                  label: l10n.completed,
+                  value: '${_orders.where((o) => o.status == "delivered").length}',
                   color: Colors.green,
                 ),
                 const SizedBox(width: 8),
                 _StatBadge(
-                  label: 'قيد الانتظار',
+                  label: l10n.pending,
                   value: '${_orders.where((o) => o.status == "pending").length}',
                   color: Colors.orange,
                 ),
                 const SizedBox(width: 8),
                 _StatBadge(
-                  label: 'ملغي',
+                  label: l10n.cancelled,
                   value: '${_orders.where((o) => o.status == "cancelled").length}',
                   color: Colors.red,
                 ),
               ],
             ),
           ),
-          
+
           // Orders list
           Expanded(
             child: _filteredOrders.isEmpty
@@ -191,20 +178,23 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       children: [
                         Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade300),
                         const SizedBox(height: 16),
-                        const Text('لا توجد طلبات', style: TextStyle(fontSize: 18)),
+                        Text(l10n.noOrders, style: const TextStyle(fontSize: 18)),
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredOrders.length,
-                    itemBuilder: (context, index) {
-                      final order = _filteredOrders[index];
-                      return _OrderCard(
-                        order: order,
-                        onTap: () => _showOrderDetails(order),
-                      );
-                    },
+                : RefreshIndicator(
+                    onRefresh: _loadData,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: _filteredOrders.length,
+                      itemBuilder: (context, index) {
+                        final order = _filteredOrders[index];
+                        return _OrderCard(
+                          order: order,
+                          onTap: () => _showOrderDetails(order),
+                        );
+                      },
+                    ),
                   ),
           ),
         ],
@@ -212,24 +202,27 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
   
-  String _getStatusName(String status) {
+  String _getStatusName(String status, AppLocalizations l10n) {
     switch (status) {
-      case 'completed': return 'مكتمل';
-      case 'pending': return 'قيد الانتظار';
-      case 'cancelled': return 'ملغي';
+      case 'delivered': return l10n.completed;
+      case 'pending': return l10n.pending;
+      case 'confirmed': return l10n.orderStatusConfirmed;
+      case 'preparing': return l10n.orderStatusPreparing;
+      case 'ready': return l10n.orderStatusReady;
+      case 'delivering': return l10n.orderStatusDelivering;
+      case 'cancelled': return l10n.cancelled;
       default: return status;
     }
   }
-  
-  String _getChannelName(String channel) {
+
+  String _getChannelName(String channel, AppLocalizations l10n) {
     switch (channel) {
-      case 'pos': return 'نقطة البيع';
-      case 'whatsapp': return 'واتساب';
-      case 'app': return 'التطبيق';
+      case 'pos': return l10n.channelPos;
+      case 'app': return l10n.channelApp;
       default: return channel;
     }
   }
-  
+
   void _selectDateRange() async {
     final range = await showDateRangePicker(
       context: context,
@@ -243,6 +236,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }
   
   void _showFilterSheet() {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -252,15 +246,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('فلترة الطلبات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(l10n.filterOrders, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
-              const Text('الحالة'),
+              Text(l10n.status),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('الكل'),
+                    label: Text(l10n.all),
                     selected: _filterStatus == 'all',
                     onSelected: (_) {
                       setSheetState(() => _filterStatus = 'all');
@@ -268,15 +262,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('مكتمل'),
-                    selected: _filterStatus == 'completed',
+                    label: Text(l10n.completed),
+                    selected: _filterStatus == 'delivered',
                     onSelected: (_) {
-                      setSheetState(() => _filterStatus = 'completed');
+                      setSheetState(() => _filterStatus = 'delivered');
                       setState(() {});
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('قيد الانتظار'),
+                    label: Text(l10n.pending),
                     selected: _filterStatus == 'pending',
                     onSelected: (_) {
                       setSheetState(() => _filterStatus = 'pending');
@@ -284,7 +278,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('ملغي'),
+                    label: Text(l10n.cancelled),
                     selected: _filterStatus == 'cancelled',
                     onSelected: (_) {
                       setSheetState(() => _filterStatus = 'cancelled');
@@ -294,13 +288,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const Text('القناة'),
+              Text(l10n.channelLabel),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('الكل'),
+                    label: Text(l10n.all),
                     selected: _filterChannel == 'all',
                     onSelected: (_) {
                       setSheetState(() => _filterChannel = 'all');
@@ -308,7 +302,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('نقطة البيع'),
+                    label: Text(l10n.channelPos),
                     selected: _filterChannel == 'pos',
                     onSelected: (_) {
                       setSheetState(() => _filterChannel = 'pos');
@@ -316,7 +310,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('واتساب'),
+                    label: Text(l10n.channelWhatsapp),
                     selected: _filterChannel == 'whatsapp',
                     onSelected: (_) {
                       setSheetState(() => _filterChannel = 'whatsapp');
@@ -324,7 +318,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     },
                   ),
                   ChoiceChip(
-                    label: const Text('التطبيق'),
+                    label: Text(l10n.channelApp),
                     selected: _filterChannel == 'app',
                     onSelected: (_) {
                       setSheetState(() => _filterChannel = 'app');
@@ -338,7 +332,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('تطبيق'),
+                  child: Text(l10n.confirm),
                 ),
               ),
             ],
@@ -348,7 +342,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
   
-  void _showOrderDetails(_Order order) {
+  void _showOrderDetails(OrdersTableData order) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -375,7 +370,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(order.id, style: Theme.of(context).textTheme.titleLarge),
+                Text(order.orderNumber, style: Theme.of(context).textTheme.titleLarge),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
@@ -383,25 +378,25 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
-                    _getStatusName(order.status),
+                    _getStatusName(order.status, l10n),
                     style: TextStyle(color: _getStatusColor(order.status), fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            _DetailRow(icon: Icons.person, label: 'العميل', value: order.customerName),
-            _DetailRow(icon: Icons.access_time, label: 'التاريخ', value: _formatDateTime(order.date)),
-            _DetailRow(icon: Icons.shopping_bag, label: 'المنتجات', value: '${order.items} منتج'),
-            _DetailRow(icon: Icons.payment, label: 'الدفع', value: _getPaymentName(order.paymentMethod)),
-            _DetailRow(icon: Icons.storefront, label: 'القناة', value: _getChannelName(order.channel)),
+            _DetailRow(icon: Icons.person, label: l10n.customer, value: order.customerId ?? l10n.guestCustomer),
+            _DetailRow(icon: Icons.access_time, label: l10n.date, value: _formatDateTime(order.orderDate, l10n)),
+            _DetailRow(icon: Icons.shopping_bag, label: l10n.products, value: '—'),
+            _DetailRow(icon: Icons.payment, label: l10n.payment, value: _getPaymentName(order.paymentMethod ?? 'cash', l10n)),
+            _DetailRow(icon: Icons.storefront, label: l10n.channelLabel, value: _getChannelName(order.channel, l10n)),
             const Divider(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('الإجمالي', style: TextStyle(fontSize: 18)),
+                Text(l10n.total, style: const TextStyle(fontSize: 18)),
                 Text(
-                  '${order.total.toStringAsFixed(0)} ر.س',
+                  l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
                 ),
               ],
@@ -413,7 +408,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.print),
-                    label: const Text('طباعة'),
+                    label: Text(l10n.printReceipt),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -421,17 +416,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.share),
-                    label: const Text('مشاركة'),
+                    label: Text(l10n.shareAction),
                   ),
                 ),
               ],
             ),
-            if (order.status == 'completed') ...[
+            if (order.status == 'delivered') ...[
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.replay),
-                label: const Text('إرجاع'),
+                label: Text(l10n.returnText),
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.orange,
                   minimumSize: const Size(double.infinity, 48),
@@ -446,45 +441,50 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'completed': return Colors.green;
+      case 'delivered': return Colors.green;
       case 'pending': return Colors.orange;
+      case 'confirmed': return Colors.blue;
+      case 'preparing': return Colors.indigo;
+      case 'ready': return Colors.teal;
+      case 'delivering': return Colors.cyan;
       case 'cancelled': return Colors.red;
       default: return Colors.grey;
     }
   }
-  
-  String _getPaymentName(String method) {
+
+  String _getPaymentName(String method, AppLocalizations l10n) {
     switch (method) {
-      case 'cash': return 'نقدي';
-      case 'card': return 'بطاقة';
-      case 'credit': return 'آجل';
-      case 'mixed': return 'مختلط';
+      case 'cash': return l10n.paymentCashType;
+      case 'card': return l10n.card;
+      case 'credit': return l10n.credit;
+      case 'mixed': return l10n.paymentMixed;
       default: return method;
     }
   }
-  
-  String _formatDateTime(DateTime date) {
+
+  String _formatDateTime(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final diff = now.difference(date);
     if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ساعة';
+      return l10n.hoursAgo(diff.inHours);
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
   
   void _exportOrders() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('تصدير الطلبات'),
-        content: const Text('اختر صيغة التصدير'),
+        title: Text(l10n.exportOrders),
+        content: Text(l10n.selectExportFormat),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم التصدير كـ Excel')),
+                SnackBar(content: Text(l10n.exportedAsExcel)),
               );
             },
             child: const Text('Excel'),
@@ -493,7 +493,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم التصدير كـ PDF')),
+                SnackBar(content: Text(l10n.exportedAsPdf)),
               );
             },
             child: const Text('PDF'),
@@ -504,36 +504,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }
 }
 
-class _Order {
-  final String id;
-  final String customerName;
-  final DateTime date;
-  final double total;
-  final int items;
-  final String status;
-  final String paymentMethod;
-  final String channel;
-  
-  _Order({
-    required this.id,
-    required this.customerName,
-    required this.date,
-    required this.total,
-    required this.items,
-    required this.status,
-    required this.paymentMethod,
-    required this.channel,
-  });
-}
-
 class _OrderCard extends StatelessWidget {
-  final _Order order;
+  final OrdersTableData order;
   final VoidCallback onTap;
-  
+
   const _OrderCard({required this.order, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -562,9 +541,9 @@ class _OrderCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(order.id, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(order.orderNumber, style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                          order.customerName,
+                          order.customerId ?? l10n.guestCustomer,
                           style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                         ),
                       ],
@@ -574,11 +553,11 @@ class _OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '${order.total.toStringAsFixed(0)} ر.س',
+                        l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       Text(
-                        '${order.items} منتج',
+                        _getChannelName(order.channel, l10n),
                         style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                       ),
                     ],
@@ -591,14 +570,14 @@ class _OrderCard extends StatelessWidget {
                   Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
                   const SizedBox(width: 4),
                   Text(
-                    _formatTime(order.date),
+                    _formatTime(order.orderDate, l10n),
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                   const SizedBox(width: 16),
                   Icon(Icons.payment, size: 14, color: Colors.grey.shade600),
                   const SizedBox(width: 4),
                   Text(
-                    _getPaymentName(order.paymentMethod),
+                    _getPaymentName(order.paymentMethod ?? 'cash', l10n),
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                   const Spacer(),
@@ -609,7 +588,7 @@ class _OrderCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      _getStatusName(order.status),
+                      _getStatusName(order.status, l10n),
                       style: TextStyle(
                         fontSize: 11,
                         color: _getStatusColor(order.status),
@@ -625,16 +604,20 @@ class _OrderCard extends StatelessWidget {
       ),
     );
   }
-  
+
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'completed': return Colors.green;
+      case 'delivered': return Colors.green;
       case 'pending': return Colors.orange;
+      case 'confirmed': return Colors.blue;
+      case 'preparing': return Colors.indigo;
+      case 'ready': return Colors.teal;
+      case 'delivering': return Colors.cyan;
       case 'cancelled': return Colors.red;
       default: return Colors.grey;
     }
   }
-  
+
   IconData _getChannelIcon(String channel) {
     switch (channel) {
       case 'pos': return Icons.point_of_sale;
@@ -643,35 +626,48 @@ class _OrderCard extends StatelessWidget {
       default: return Icons.shopping_cart;
     }
   }
-  
-  String _getStatusName(String status) {
+
+  String _getStatusName(String status, AppLocalizations l10n) {
     switch (status) {
-      case 'completed': return 'مكتمل';
-      case 'pending': return 'قيد الانتظار';
-      case 'cancelled': return 'ملغي';
+      case 'delivered': return l10n.completed;
+      case 'pending': return l10n.pending;
+      case 'confirmed': return l10n.orderStatusConfirmed;
+      case 'preparing': return l10n.orderStatusPreparing;
+      case 'ready': return l10n.orderStatusReady;
+      case 'delivering': return l10n.orderStatusDelivering;
+      case 'cancelled': return l10n.cancelled;
       default: return status;
     }
   }
-  
-  String _getPaymentName(String method) {
+
+  String _getPaymentName(String method, AppLocalizations l10n) {
     switch (method) {
-      case 'cash': return 'نقدي';
-      case 'card': return 'بطاقة';
-      case 'credit': return 'آجل';
-      case 'mixed': return 'مختلط';
+      case 'cash': return l10n.paymentCashType;
+      case 'card': return l10n.card;
+      case 'online': return l10n.paymentOnline;
+      case 'credit': return l10n.credit;
+      case 'mixed': return l10n.paymentMixed;
       default: return method;
     }
   }
-  
-  String _formatTime(DateTime date) {
+
+  String _getChannelName(String channel, AppLocalizations l10n) {
+    switch (channel) {
+      case 'pos': return l10n.channelPos;
+      case 'app': return l10n.channelApp;
+      default: return channel;
+    }
+  }
+
+  String _formatTime(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final diff = now.difference(date);
     if (diff.inMinutes < 60) {
-      return 'منذ ${diff.inMinutes} دقيقة';
+      return l10n.minutesAgoTime(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ساعة';
+      return l10n.hoursAgoTime(diff.inHours);
     } else {
-      return 'منذ ${diff.inDays} يوم';
+      return l10n.daysAgoTime(diff.inDays);
     }
   }
 }

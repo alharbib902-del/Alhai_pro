@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// حقل إدخال OTP مكون من 6 خانات منفصلة
 ///
@@ -19,6 +20,7 @@ class OtpInputField extends StatefulWidget {
     this.isSuccess = false,
     this.enabled = true,
     this.autoFocus = true,
+    this.showPasteButton = true,
   });
 
   /// عدد خانات OTP
@@ -41,6 +43,9 @@ class OtpInputField extends StatefulWidget {
 
   /// التركيز التلقائي على الخانة الأولى
   final bool autoFocus;
+
+  /// عرض زر اللصق من الحافظة
+  final bool showPasteButton;
 
   @override
   State<OtpInputField> createState() => OtpInputFieldState();
@@ -154,31 +159,87 @@ class OtpInputFieldState extends State<OtpInputField>
     }
   }
 
+  /// لصق OTP من الحافظة
+  Future<void> _pasteFromClipboard() async {
+    final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboardData?.text == null) return;
+
+    // استخراج الأرقام فقط
+    final digits = clipboardData!.text!.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return;
+
+    // أخذ أول N أرقام حسب طول OTP
+    final otp = digits.length >= widget.length
+        ? digits.substring(0, widget.length)
+        : digits;
+
+    setState(() {
+      setValue(otp);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _shakeAnimation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(_shakeAnimation.value, 0),
-          child: child,
-        );
-      },
-      child: Directionality(
-        // دائماً LTR للأرقام
-        textDirection: TextDirection.ltr,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(widget.length, (index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: index == 0 || index == widget.length - 1 ? 0 : 4,
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // زر اللصق من الحافظة
+        if (widget.showPasteButton && widget.enabled)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: GestureDetector(
+              onTap: _pasteFromClipboard,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.content_paste_rounded,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n?.pasteCode ?? 'لصق الرمز',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-              child: _buildOtpBox(index),
+            ),
+          ),
+
+        // خانات OTP
+        AnimatedBuilder(
+          animation: _shakeAnimation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_shakeAnimation.value, 0),
+              child: child,
             );
-          }),
+          },
+          child: Directionality(
+            // دائماً LTR للأرقام
+            textDirection: TextDirection.ltr,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(widget.length, (index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: index == 0 || index == widget.length - 1 ? 0 : 4,
+                  ),
+                  child: _buildOtpBox(index),
+                );
+              }),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

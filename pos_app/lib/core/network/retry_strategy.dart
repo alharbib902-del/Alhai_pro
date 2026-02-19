@@ -14,7 +14,7 @@ library;
 
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// نوع الـ Jitter
 enum JitterType {
@@ -283,12 +283,11 @@ class RetryStrategy {
 
         onRetry?.call(attempt + 1, delay, e);
 
-        if (kDebugMode) {
-          debugPrint(
-            '🔄 Retry attempt ${attempt + 1}/${config.maxAttempts} '
-            'after ${delay.inMilliseconds}ms (error: $e)',
-          );
-        }
+        AppLogger.debug(
+          'Retry attempt ${attempt + 1}/${config.maxAttempts} '
+          'after ${delay.inMilliseconds}ms (error: $e)',
+          tag: 'RetryStrategy',
+        );
 
         await Future.delayed(delay);
       }

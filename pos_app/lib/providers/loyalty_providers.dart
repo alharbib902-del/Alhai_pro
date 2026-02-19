@@ -14,6 +14,46 @@ import '../services/loyalty_service.dart';
 import '../data/local/daos/loyalty_dao.dart';
 import '../data/local/app_database.dart';
 import 'auth_providers.dart';
+import 'products_providers.dart';
+import '../di/injection.dart';
+
+// ============================================================================
+// DB-BACKED LIST PROVIDERS (for screens)
+// ============================================================================
+
+/// All loyalty members from DB
+final loyaltyMembersListProvider =
+    FutureProvider.autoDispose<List<LoyaltyPointsTableData>>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = getIt<AppDatabase>();
+  return db.loyaltyDao.getAllLoyaltyAccounts(storeId);
+});
+
+/// Available rewards from DB
+final loyaltyRewardsListProvider =
+    FutureProvider.autoDispose<List<LoyaltyRewardsTableData>>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = getIt<AppDatabase>();
+  return db.loyaltyDao.getAvailableRewards(storeId);
+});
+
+/// Loyalty stats from DB (screen-level, uses currentStoreIdProvider)
+final loyaltyScreenStatsProvider =
+    FutureProvider.autoDispose<LoyaltyStats>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) {
+    return const LoyaltyStats(
+      totalEarned: 0,
+      totalRedeemed: 0,
+      activeCustomers: 0,
+      totalTransactions: 0,
+    );
+  }
+  final db = getIt<AppDatabase>();
+  return db.loyaltyDao.getStats(storeId);
+});
 
 // ============================================================================
 // SERVICE PROVIDER

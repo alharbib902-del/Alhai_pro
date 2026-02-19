@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نوع الفرع
 enum BranchType {
@@ -127,14 +128,15 @@ class BranchStatusBadge extends StatelessWidget {
     this.compact = false,
   });
 
-  String get _text {
+  String _text(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case BranchStatus.open:
         return 'مفتوح الآن';
       case BranchStatus.closed:
-        return 'مغلق';
+        return l10n.closed;
       case BranchStatus.comingSoon:
-        return 'قريباً';
+        return l10n.comingSoon;
     }
   }
 
@@ -176,7 +178,7 @@ class BranchStatusBadge extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            _text,
+            _text(context),
             style: TextStyle(
               color: _color,
               fontSize: compact ? 11 : 12,
@@ -208,6 +210,7 @@ class BranchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin: EdgeInsets.only(bottom: compact ? 8 : 12),
@@ -278,9 +281,9 @@ class BranchCard extends StatelessWidget {
                                 color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'افتراضي',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.defaultLabel,
+                                style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,

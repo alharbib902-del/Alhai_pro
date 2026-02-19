@@ -172,6 +172,8 @@ class PushStrategy {
     // إزالة الحقول المحلية
     clean.remove('syncedAt');
     clean.remove('synced_at');
+    // إزالة حقل items المضمّن في sales (عناصر البيع تُزامن عبر sale_items)
+    clean.remove('items');
     return clean;
   }
 

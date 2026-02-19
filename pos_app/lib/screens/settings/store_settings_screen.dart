@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/validators/validators.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات المتجر - بتصميم Sidebar + Header
@@ -17,8 +17,7 @@ class StoreSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
+  final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController(text: 'متجر الإيمان');
   final _addressController = TextEditingController(text: 'الرياض - حي النزهة');
@@ -40,46 +39,6 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     _crController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -88,98 +47,50 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'إعدادات المتجر',
+                  title: l10n.storeSettings,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(
-                        isWideScreen, isMediumScreen, isDark, l10n),
+                    child: Form(
+                      key: _formKey,
+                      child: _buildContent(
+                          isWideScreen, isMediumScreen, isDark, l10n),
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // Store Info
-        _buildSettingsGroup('معلومات المتجر', Icons.store_rounded,
+        _buildSettingsGroup(l10n.storeInfo, Icons.store_rounded,
             AppColors.primary, isDark, [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-            child: TextField(
+            child: TextFormField(
               controller: _nameController,
+              maxLength: 100,
+              validator: FormValidators.requiredField(maxLength: 100),
               decoration: InputDecoration(
-                labelText: 'اسم المتجر',
+                labelText: l10n.storeNameField,
                 prefixIcon: const Icon(Icons.badge),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -188,10 +99,12 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-            child: TextField(
+            child: TextFormField(
               controller: _addressController,
+              maxLength: 200,
+              validator: FormValidators.requiredField(maxLength: 200),
               decoration: InputDecoration(
-                labelText: 'العنوان',
+                labelText: l10n.addressLabel,
                 prefixIcon: const Icon(Icons.location_on),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -200,11 +113,16 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-            child: TextField(
+            child: TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              maxLength: 13,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
+              ],
+              validator: FormValidators.phone(),
               decoration: InputDecoration(
-                labelText: 'رقم الهاتف',
+                labelText: l10n.phoneNumber,
                 prefixIcon: const Icon(Icons.phone),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -214,17 +132,22 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         ]),
 
         // Tax Info
-        _buildSettingsGroup('المعلومات الضريبية', Icons.receipt_long_rounded,
+        _buildSettingsGroup(l10n.taxInfo, Icons.receipt_long_rounded,
             AppColors.success, isDark, [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-            child: TextField(
+            child: TextFormField(
               controller: _vatController,
               keyboardType: TextInputType.number,
+              maxLength: 15,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: FormValidators.vatNumber(),
               decoration: InputDecoration(
-                labelText: 'الرقم الضريبي (VAT)',
+                labelText: l10n.vatNumberFieldLabel,
                 prefixIcon: const Icon(Icons.numbers),
-                helperText: '15 رقم يبدأ بـ 3',
+                helperText: l10n.vatNumberHintText,
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
@@ -232,11 +155,16 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-            child: TextField(
+            child: TextFormField(
               controller: _crController,
               keyboardType: TextInputType.number,
+              maxLength: 10,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: FormValidators.crNumber(),
               decoration: InputDecoration(
-                labelText: 'السجل التجاري',
+                labelText: l10n.commercialRegister,
                 prefixIcon: const Icon(Icons.business),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -244,7 +172,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             ),
           ),
           SwitchListTile(
-            title: Text('تفعيل ضريبة القيمة المضافة',
+            title: Text(l10n.enableVatOption,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             value: _enableVat,
@@ -252,7 +180,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
           if (_enableVat)
             ListTile(
-              title: Text('نسبة الضريبة',
+              title: Text(l10n.taxRateField,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle: Text('${_vatRate.toInt()}%'),
@@ -272,14 +200,15 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         ]),
 
         // Locale
-        _buildSettingsGroup('اللغة والعملة', Icons.language_rounded,
+        _buildSettingsGroup(l10n.languageAndCurrency, Icons.language_rounded,
             const Color(0xFFF97316), isDark, [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
             child: DropdownButtonFormField<String>(
+              // ignore: deprecated_member_use
               value: _language,
               decoration: InputDecoration(
-                labelText: 'اللغة',
+                labelText: l10n.language,
                 prefixIcon: const Icon(Icons.translate),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -294,22 +223,23 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
             child: DropdownButtonFormField<String>(
+              // ignore: deprecated_member_use
               value: _currency,
               decoration: InputDecoration(
-                labelText: 'العملة',
+                labelText: l10n.currencyFieldLabel,
                 prefixIcon: const Icon(Icons.attach_money),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              items: const [
+              items: [
                 DropdownMenuItem(
-                    value: 'SAR', child: Text('ريال سعودي (SAR)')),
-                DropdownMenuItem(
+                    value: 'SAR', child: Text(l10n.saudiRiyal)),
+                const DropdownMenuItem(
                     value: 'AED', child: Text('درهم إماراتي (AED)')),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                     value: 'KWD', child: Text('دينار كويتي (KWD)')),
                 DropdownMenuItem(
-                    value: 'USD', child: Text('دولار أمريكي (USD)')),
+                    value: 'USD', child: Text(l10n.usDollar)),
               ],
               onChanged: (v) => setState(() => _currency = v!),
             ),
@@ -317,7 +247,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         ]),
 
         // Logo
-        _buildSettingsGroup('شعار المتجر', Icons.image_rounded,
+        _buildSettingsGroup(l10n.storeLogoSection, Icons.image_rounded,
             const Color(0xFFEC4899), isDark, [
           ListTile(
             leading: CircleAvatar(
@@ -327,17 +257,17 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
               child: Icon(Icons.image,
                   color: isDark ? Colors.white54 : Colors.grey),
             ),
-            title: Text('شعار المتجر',
+            title: Text(l10n.storeLogoSection,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: Text('يظهر في الفواتير والإيصالات',
+            subtitle: Text(l10n.storeLogoDesc,
                 style: TextStyle(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.5)
                         : AppColors.textSecondary)),
             trailing: TextButton(
               onPressed: () {},
-              child: const Text('تغيير'),
+              child: Text(l10n.changeButton),
             ),
           ),
         ]),
@@ -348,7 +278,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           child: FilledButton.icon(
             onPressed: _saveSettings,
             icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -360,7 +290,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -382,12 +312,12 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إعدادات المتجر',
+            Text(l10n.storeSettings,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('الاسم، العنوان، المعلومات الضريبية',
+            Text(l10n.storeInfo,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark
@@ -444,9 +374,26 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   }
 
   void _saveSettings() {
+    if (!_formKey.currentState!.validate()) return;
+
+    // Sanitize values before saving
+    final name = _nameController.text.sanitized;
+    final address = _addressController.text.sanitized;
+    final phone = _phoneController.text.sanitizedPhone;
+    final vat = _vatController.text.sanitized;
+    final cr = _crController.text.sanitized;
+
+    // Update controllers with sanitized values
+    _nameController.text = name;
+    _addressController.text = address;
+    _phoneController.text = phone;
+    _vatController.text = vat;
+    _crController.text = cr;
+
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم حفظ الإعدادات'),
+      SnackBar(
+        content: Text(l10n.storeSettingsSaved),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
       ),

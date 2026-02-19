@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// عرض خانات PIN
 class PinDisplay extends StatelessWidget {
@@ -478,9 +479,9 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               onPressed: _isVerifying
                   ? null
                   : () => Navigator.of(context).pop(false),
-              child: const Text(
-                'إلغاء',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,
                 ),

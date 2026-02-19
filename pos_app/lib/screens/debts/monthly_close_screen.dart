@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إقفال الشهر وحساب الفوائد
@@ -19,9 +17,6 @@ class MonthlyCloseScreen extends ConsumerStatefulWidget {
 }
 
 class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'reports';
-
   final _db = getIt<AppDatabase>();
   List<_CustomerDebt> _customers = [];
   bool _isLoading = true;
@@ -81,23 +76,6 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     }
   }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -106,94 +84,42 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.monthlyCloseTitle,
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: isWideScreen,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh_rounded, color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary),
+              onPressed: _loadData,
             ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'إقفال الشهر', // TODO: l10n.monthlyClose
-                  subtitle: _getDateSubtitle(l10n),
-                  showSearch: isWideScreen,
-                  searchHint: l10n.searchPlaceholder,
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.refresh_rounded, color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary),
-                      onPressed: _loadData,
+          ],
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                      ),
                     ),
+                    _buildBottomBar(isDark, l10n),
                   ],
-                  onUserTap: () {},
                 ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : Column(
-                          children: [
-                            Expanded(
-                              child: SingleChildScrollView(
-                                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                                child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                              ),
-                            ),
-                            _buildBottomBar(isDark, l10n),
-                          ],
-                        ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
+        ),
+      ],
     );
   }
 
@@ -240,7 +166,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'فترة الإقفال: $_currentPeriod', // TODO: l10n
+                  l10n.closingPeriod(_currentPeriod),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary,
@@ -249,11 +175,11 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
                 ),
                 if (_lastCloseDate != null)
                   Text(
-                    'آخر إقفال: $_lastCloseDate', // TODO: l10n
+                    l10n.lastClosing(_lastCloseDate ?? '-'),
                     style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary, fontSize: 12),
                   ),
                 Text(
-                  'نسبة الفائدة: $_interestRate% | فترة السماح: $_graceDays يوم', // TODO: l10n
+                  l10n.interestRateAndGrace(_interestRate.toString(), _graceDays.toString()),
                   style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary, fontSize: 12),
                 ),
               ],
@@ -271,21 +197,21 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
 
     final cards = [
       _buildSummaryCard(
-        title: 'العملاء المختارين', // TODO: l10n
+        title: l10n.selectedCustomers,
         value: '${selectedCustomers.length}',
         icon: Icons.people_rounded,
         color: AppColors.info,
         isDark: isDark,
       ),
       _buildSummaryCard(
-        title: 'إجمالي الديون', // TODO: l10n
+        title: l10n.totalDebts,
         value: '${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
         icon: Icons.account_balance_rounded,
         color: AppColors.warning,
         isDark: isDark,
       ),
       _buildSummaryCard(
-        title: 'الفوائد المتوقعة', // TODO: l10n
+        title: l10n.expectedInterests,
         value: '${totalInterest.toStringAsFixed(2)} ${l10n.sar}',
         icon: Icons.trending_up_rounded,
         color: AppColors.success,
@@ -357,12 +283,12 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
               Icon(Icons.check_circle_rounded, size: 64, color: AppColors.success.withValues(alpha: 0.6)),
               const SizedBox(height: 16),
               Text(
-                'لا توجد ديون تحتاج إقفال', // TODO: l10n
+                l10n.noDebtsNeedClosing,
                 style: TextStyle(fontSize: 16, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               const SizedBox(height: 4),
               Text(
-                'جميع العملاء ضمن فترة السماح أو تم إقفالهم مسبقاً', // TODO: l10n
+                l10n.allCustomersWithinGrace,
                 style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary, fontSize: 12),
               ),
             ],
@@ -412,11 +338,11 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'الدين: ${customer.account.balance.toStringAsFixed(2)} ${l10n.sar}',
+                      l10n.debtLabel(customer.account.balance.toStringAsFixed(2)),
                       style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary, fontSize: 12),
                     ),
                     Text(
-                      'الفائدة المتوقعة: ${customer.expectedInterest.toStringAsFixed(2)} ${l10n.sar}',
+                      l10n.expectedInterestLabel(customer.expectedInterest.toStringAsFixed(2)),
                       style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                   ],
@@ -451,7 +377,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         children: [
           Expanded(
             child: Text(
-              '$selectedCount عميل مختار', // TODO: l10n
+              l10n.selectedCustomerCount(selectedCount),
               style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary),
             ),
           ),
@@ -460,7 +386,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
             icon: _isProcessing
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.check_rounded),
-            label: Text(_isProcessing ? 'جاري المعالجة...' : 'تنفيذ الإقفال'), // TODO: l10n
+            label: Text(_isProcessing ? l10n.processingClose : l10n.executeClose),
           ),
         ],
       ),
@@ -480,10 +406,10 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('سيتم إضافة فوائد على ${selectedCustomers.length} عميل'), // TODO: l10n
+            Text(l10n.interestWillBeAdded(selectedCustomers.length)),
             const SizedBox(height: 8),
             Text(
-              'إجمالي الفوائد: ${totalInterest.toStringAsFixed(2)} ${l10n.sar}', // TODO: l10n
+              l10n.totalInterestsLabel(totalInterest.toStringAsFixed(2)),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -497,7 +423,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
                 children: [
                   const Icon(Icons.warning_rounded, color: AppColors.warning),
                   const SizedBox(width: 8),
-                  const Expanded(child: Text('هذه العملية لا يمكن التراجع عنها', style: TextStyle(fontSize: 13))), // TODO: l10n
+                  Expanded(child: Text(l10n.cannotUndo, style: const TextStyle(fontSize: 13))),
                 ],
               ),
             ),
@@ -518,6 +444,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
   }
 
   Future<void> _processMonthlyClose() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isProcessing = true);
 
     try {
@@ -546,7 +473,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تم إقفال الشهر لـ ${selectedCustomers.length} عميل'),
+            content: Text(l10n.monthCloseSuccess(selectedCustomers.length)),
             backgroundColor: AppColors.success,
           ),
         );
@@ -556,7 +483,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       setState(() => _isProcessing = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('${l10n.errorOccurred}: $e'), backgroundColor: AppColors.error),
         );
       }
     }

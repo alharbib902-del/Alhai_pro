@@ -1,29 +1,78 @@
-import 'package:url_launcher/url_launcher.dart';
-
 /// خدمة WhatsApp Business للتواصل مع العملاء
-class WhatsAppService {
-  static const String _baseUrl = 'https://wa.me';
+///
+/// الإصدار الجديد: بدلاً من فتح تطبيق واتساب عبر url_launcher،
+/// يتم حفظ الرسائل في قاعدة البيانات المحلية (طابور الإرسال)
+/// ثم يقوم WhatsAppQueueProcessor بإرسالها تلقائياً عبر WaSenderAPI.
+///
+/// هذا يضمن:
+/// - عدم فقدان الرسائل عند انقطاع الاتصال
+/// - إعادة المحاولة تلقائياً عند الفشل
+/// - تتبع حالة كل رسالة (pending → sending → sent → delivered → read)
+/// - إمكانية الإرسال الجماعي بدون تدخل المستخدم
+library;
 
-  /// إرسال رسالة WhatsApp
-  static Future<bool> sendMessage({
+import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:pos_app/data/local/app_database.dart';
+import 'package:pos_app/data/local/daos/whatsapp_messages_dao.dart';
+import 'package:pos_app/services/whatsapp/phone_validation_service.dart';
+
+/// خدمة WhatsApp Business - إصدار طابور قاعدة البيانات
+///
+/// جميع الرسائل تُحفظ في جدول whatsapp_messages ثم تُرسل لاحقاً.
+/// يُرجع كل أسلوب معرف الرسالة (UUID) لتتبعها.
+class WhatsAppService {
+  final WhatsAppMessagesDao _messagesDao;
+  final PhoneValidationService _phoneValidator;
+  final String _storeId;
+  static const _uuid = Uuid();
+
+  WhatsAppService({
+    required WhatsAppMessagesDao messagesDao,
+    required PhoneValidationService phoneValidator,
+    String storeId = 'default',
+  })  : _messagesDao = messagesDao,
+        _phoneValidator = phoneValidator,
+        _storeId = storeId;
+
+  // ═══════════════════════════════════════════════════════
+  // إرسال رسالة عامة
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال رسالة WhatsApp عبر الطابور
+  ///
+  /// يُنشئ سجل رسالة في قاعدة البيانات بحالة "pending".
+  /// يُرجع معرف الرسالة (UUID) لتتبعها.
+  Future<String> sendMessage({
     required String phoneNumber,
     required String message,
-  }) async {
-    final formattedPhone = _formatPhoneNumber(phoneNumber);
-    final encodedMessage = Uri.encodeComponent(message);
-    final url = Uri.parse('$_baseUrl/$formattedPhone?text=$encodedMessage');
-
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-      return true;
-    }
-    return false;
+    String? customerId,
+    String? customerName,
+    String? referenceType,
+    String? referenceId,
+    int priority = 2,
+  }) {
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      customerId: customerId,
+      customerName: customerName,
+      referenceType: referenceType,
+      referenceId: referenceId,
+      priority: priority,
+    );
   }
 
-  /// إرسال تذكير دين
-  static Future<bool> sendDebtReminder({
+  // ═══════════════════════════════════════════════════════
+  // تذكير الديون
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال تذكير دين عبر الطابور
+  Future<String> sendDebtReminder({
     required String phoneNumber,
     required String customerName,
+    required String customerId,
     required double amount,
     required String storeName,
   }) {
@@ -35,13 +84,25 @@ class WhatsAppService {
 نرجو التواصل معنا لتسوية المبلغ.
 شكراً لتعاونكم 🙏
 
-$storeName
-''';
-    return sendMessage(phoneNumber: phoneNumber, message: message);
+$storeName''';
+
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      customerId: customerId,
+      customerName: customerName,
+      referenceType: 'debt_reminder',
+      referenceId: customerId,
+      priority: 2,
+    );
   }
 
-  /// إرسال إيصال
-  static Future<bool> sendReceipt({
+  // ═══════════════════════════════════════════════════════
+  // إيصال الفاتورة
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال إيصال فاتورة عبر الطابور
+  Future<String> sendReceipt({
     required String phoneNumber,
     required String customerName,
     required String receiptNumber,
@@ -54,13 +115,25 @@ $storeName
 رقم الفاتورة: $receiptNumber
 الإجمالي: ${total.toStringAsFixed(2)} ر.س
 
-نتطلع لخدمتكم مرة أخرى! 🌟
-''';
-    return sendMessage(phoneNumber: phoneNumber, message: message);
+نتطلع لخدمتكم مرة أخرى! 🌟''';
+
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      customerId: null,
+      customerName: customerName,
+      referenceType: 'sale',
+      referenceId: receiptNumber,
+      priority: 3,
+    );
   }
 
-  /// إرسال عرض ترويجي
-  static Future<bool> sendPromotion({
+  // ═══════════════════════════════════════════════════════
+  // العروض الترويجية
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال عرض ترويجي عبر الطابور
+  Future<String> sendPromotion({
     required String phoneNumber,
     required String customerName,
     required String promotionTitle,
@@ -77,13 +150,23 @@ $promotionDetails
 
 تفضل بزيارتنا للاستفادة من العرض 🏃‍♂️
 
-$storeName
-''';
-    return sendMessage(phoneNumber: phoneNumber, message: message);
+$storeName''';
+
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      customerName: customerName,
+      referenceType: 'promotion',
+      priority: 1,
+    );
   }
 
-  /// إرسال تحديث طلب
-  static Future<bool> sendOrderUpdate({
+  // ═══════════════════════════════════════════════════════
+  // تحديث الطلبات
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال تحديث حالة طلب عبر الطابور
+  Future<String> sendOrderUpdate({
     required String phoneNumber,
     required String orderNumber,
     required String status,
@@ -96,37 +179,129 @@ $storeName
       'delivering': 'طلبك في الطريق إليك 🚗',
       'delivered': 'تم توصيل طلبك بنجاح ✅',
     };
-    
+
     final statusMessage = statusMessages[status] ?? 'تم تحديث حالة طلبك';
-    
+
     final message = '''
 مرحباً 👋
 
 تحديث الطلب رقم: $orderNumber
 $statusMessage
 
-$storeName
-''';
-    return sendMessage(phoneNumber: phoneNumber, message: message);
+$storeName''';
+
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      referenceType: 'order',
+      referenceId: orderNumber,
+      priority: 2,
+    );
   }
 
-  /// تنسيق رقم الهاتف
-  static String _formatPhoneNumber(String phone) {
-    // إزالة أي مسافات أو رموز
-    var cleaned = phone.replaceAll(RegExp(r'[^\d+]'), '');
-    
-    // إضافة كود السعودية إذا لم يكن موجوداً
-    if (cleaned.startsWith('05')) {
-      cleaned = '966${cleaned.substring(1)}';
-    } else if (cleaned.startsWith('5')) {
-      cleaned = '966$cleaned';
-    } else if (!cleaned.startsWith('+') && !cleaned.startsWith('966')) {
-      cleaned = '966$cleaned';
+  // ═══════════════════════════════════════════════════════
+  // رسالة ترحيب
+  // ═══════════════════════════════════════════════════════
+
+  /// إرسال رسالة ترحيب عبر الطابور
+  Future<String> sendWelcome({
+    required String phoneNumber,
+    required String customerName,
+    required String storeName,
+  }) {
+    final message = '''
+مرحباً $customerName 🎉
+
+يسعدنا انضمامكم لعائلة $storeName!
+نتطلع لخدمتكم وتقديم أفضل المنتجات والعروض.
+
+لا تترددوا في التواصل معنا لأي استفسار 💬
+
+$storeName''';
+
+    return _enqueueMessage(
+      phone: phoneNumber,
+      text: message,
+      customerName: customerName,
+      referenceType: 'welcome',
+      priority: 1,
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // المساعد الداخلي: إضافة رسالة للطابور
+  // ═══════════════════════════════════════════════════════
+
+  /// إنشاء سجل رسالة في قاعدة البيانات بحالة "pending"
+  ///
+  /// يتم تنسيق رقم الهاتف تلقائياً (05x → 9665x).
+  /// يُرجع معرف الرسالة (UUID) لتتبعها لاحقاً.
+  Future<String> _enqueueMessage({
+    required String phone,
+    required String text,
+    String messageType = 'text',
+    String? customerId,
+    String? customerName,
+    String? referenceType,
+    String? referenceId,
+    int priority = 2,
+    String? mediaLocalPath,
+    String? fileName,
+    String? batchId,
+  }) async {
+    final id = _uuid.v4();
+    final formattedPhone = PhoneValidationService.formatPhone(phone);
+
+    // التحقق من وجود رسالة مكررة حديثة (خلال 5 دقائق)
+    if (referenceType != null && referenceId != null) {
+      final duplicate = await _messagesDao.findRecentDuplicate(
+        phone: formattedPhone,
+        referenceType: referenceType,
+        referenceId: referenceId,
+      );
+      if (duplicate != null) {
+        return duplicate.id; // إرجاع معرف الرسالة الموجودة بدلاً من إنشاء مكررة
+      }
     }
-    
-    return cleaned.replaceAll('+', '');
+
+    await _messagesDao.enqueue(
+      WhatsAppMessagesTableCompanion.insert(
+        id: id,
+        storeId: _storeId,
+        phone: formattedPhone,
+        messageType: messageType,
+        textContent: Value(text),
+        customerId: Value(customerId),
+        customerName: Value(customerName),
+        referenceType: Value(referenceType),
+        referenceId: Value(referenceId),
+        mediaLocalPath: Value(mediaLocalPath),
+        fileName: Value(fileName),
+        batchId: Value(batchId),
+        createdAt: DateTime.now(),
+        priority: Value(priority),
+      ),
+    );
+
+    return id;
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // تنسيق رقم الهاتف (للتوافق مع الكود القديم)
+  // ═══════════════════════════════════════════════════════
+
+  /// تنسيق رقم الهاتف السعودي
+  ///
+  /// يحوّل 05x إلى 9665x ويزيل الرموز والمسافات.
+  /// يُفضل استخدام [PhoneValidationService.formatPhone] مباشرة.
+  static String formatPhoneNumber(String phone) {
+    return PhoneValidationService.formatPhone(phone);
   }
 }
+
+// ═══════════════════════════════════════════════════════════
+// قوالب رسائل WhatsApp
+// ═══════════════════════════════════════════════════════════
 
 /// قوالب رسائل WhatsApp
 class WhatsAppTemplates {
@@ -135,12 +310,12 @@ class WhatsAppTemplates {
   static const String promotion = 'promotion';
   static const String orderUpdate = 'order_update';
   static const String welcome = 'welcome';
-  
+
   static Map<String, String> get templates => {
-    debtReminder: 'تذكير بالدين المستحق',
-    receipt: 'إيصال الفاتورة',
-    promotion: 'عرض ترويجي',
-    orderUpdate: 'تحديث الطلب',
-    welcome: 'رسالة ترحيب',
-  };
+        debtReminder: 'تذكير بالدين المستحق',
+        receipt: 'إيصال الفاتورة',
+        promotion: 'عرض ترويجي',
+        orderUpdate: 'تحديث الطلب',
+        welcome: 'رسالة ترحيب',
+      };
 }

@@ -1,10 +1,9 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات الباركود والماسح الضوئي
@@ -17,9 +16,6 @@ class BarcodeSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
-
   bool _enableBarcodeScanner = true;
   bool _enableCameraScanner = true;
   bool _enableBluetoothScanner = false;
@@ -27,45 +23,6 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
   bool _vibrateOnScan = false;
   bool _autoAddToCart = true;
   String _barcodeFormat = 'all';
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,96 +32,41 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'إعدادات الباركود',
-                  onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark),
-                  ),
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.barcodeSettings,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // Scanner activation
-        _buildSettingsGroup('تفعيل الماسح', Icons.qr_code_scanner_rounded,
+        _buildSettingsGroup(l10n.enableScanner, Icons.qr_code_scanner_rounded,
             const Color(0xFFF59E0B), isDark, [
           SwitchListTile(
-            title: Text('الماسح الضوئي',
+            title: Text(l10n.barcodeScanner,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle:
-                const Text('استخدام ماسح الباركود لإضافة المنتجات'),
+            subtitle: Text(l10n.barcodeScannerDesc),
             secondary: const Icon(Icons.qr_code_scanner),
             value: _enableBarcodeScanner,
             onChanged: (v) => setState(() => _enableBarcodeScanner = v),
@@ -172,7 +74,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           if (_enableBarcodeScanner) ...[
             const Divider(indent: 16, endIndent: 16),
             SwitchListTile(
-              title: Text('كاميرا الجهاز',
+              title: Text(l10n.deviceCamera,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               secondary: const Icon(Icons.camera_alt),
@@ -180,10 +82,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               onChanged: (v) => setState(() => _enableCameraScanner = v),
             ),
             SwitchListTile(
-              title: Text('ماسح Bluetooth',
+              title: Text(l10n.bluetoothScanner,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('ماسح خارجي متصل'),
+              subtitle: Text(l10n.externalScannerConnected),
               secondary: const Icon(Icons.bluetooth),
               value: _enableBluetoothScanner,
               onChanged: (v) => setState(() => _enableBluetoothScanner = v),
@@ -194,10 +96,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
 
         // Feedback settings
         _buildSettingsGroup(
-            'التنبيهات', Icons.notifications_active_rounded,
+            l10n.alerts, Icons.notifications_active_rounded,
             AppColors.info, isDark, [
           SwitchListTile(
-            title: Text('صوت عند المسح',
+            title: Text(l10n.beepOnScan,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.volume_up),
@@ -205,7 +107,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             onChanged: (v) => setState(() => _beepOnScan = v),
           ),
           SwitchListTile(
-            title: Text('اهتزاز عند المسح',
+            title: Text(l10n.vibrateOnScan,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.vibration),
@@ -216,13 +118,13 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         ]),
 
         // Behavior settings
-        _buildSettingsGroup('السلوك', Icons.tune_rounded,
+        _buildSettingsGroup(l10n.behavior, Icons.tune_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
-            title: Text('إضافة تلقائية للسلة',
+            title: Text(l10n.autoAddToCart,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('عند مسح منتج موجود'),
+            subtitle: Text(l10n.autoAddToCartDesc),
             secondary: const Icon(Icons.add_shopping_cart),
             value: _autoAddToCart,
             onChanged: (v) => setState(() => _autoAddToCart = v),
@@ -230,26 +132,26 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           const Divider(indent: 16, endIndent: 16),
           ListTile(
             leading: const Icon(Icons.format_list_numbered),
-            title: Text('صيغ الباركود',
+            title: Text(l10n.barcodeFormats,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: Text(_getBarcodeFormatName()),
-            trailing: const Icon(Icons.chevron_right),
+            subtitle: Text(_getBarcodeFormatName(l10n)),
+            trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _showBarcodeFormatPicker,
           ),
           const SizedBox(height: 8),
         ]),
 
         // Test scanner
-        _buildSettingsGroup('الاختبار', Icons.bug_report_rounded,
+        _buildSettingsGroup(l10n.testing, Icons.bug_report_rounded,
             AppColors.primary, isDark, [
           ListTile(
             leading: const Icon(Icons.bug_report, color: AppColors.primary),
-            title: Text('اختبار الماسح',
+            title: Text(l10n.testScanner,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('تجربة مسح باركود'),
-            trailing: const Icon(Icons.chevron_right),
+            subtitle: Text(l10n.testScanBarcode),
+            trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _testScanner,
           ),
           const SizedBox(height: 8),
@@ -258,7 +160,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -280,12 +182,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إعدادات الباركود',
+            Text(l10n.barcodeSettings,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('الماسح الضوئي، التنبيهات، الصيغ',
+            Text(l10n.barcodeSettingsSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark
@@ -341,10 +243,10 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
     );
   }
 
-  String _getBarcodeFormatName() {
+  String _getBarcodeFormatName(AppLocalizations l10n) {
     switch (_barcodeFormat) {
       case 'all':
-        return 'جميع الصيغ';
+        return l10n.allFormats;
       case 'ean':
         return 'EAN-8, EAN-13';
       case 'upc':
@@ -352,22 +254,25 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       case 'qr':
         return 'QR Code';
       default:
-        return 'غير محدد';
+        return l10n.unspecified;
     }
   }
 
   void _showBarcodeFormatPicker() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('صيغ الباركود'),
+        title: Text(l10n.barcodeFormats),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
-              title: const Text('جميع الصيغ'),
+              title: Text(l10n.allFormats),
               value: 'all',
+              // ignore: deprecated_member_use
               groupValue: _barcodeFormat,
+              // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
                 Navigator.pop(ctx);
@@ -376,7 +281,9 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             RadioListTile<String>(
               title: const Text('EAN-8, EAN-13'),
               value: 'ean',
+              // ignore: deprecated_member_use
               groupValue: _barcodeFormat,
+              // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
                 Navigator.pop(ctx);
@@ -385,16 +292,20 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             RadioListTile<String>(
               title: const Text('UPC-A, UPC-E'),
               value: 'upc',
+              // ignore: deprecated_member_use
               groupValue: _barcodeFormat,
+              // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
                 Navigator.pop(ctx);
               },
             ),
             RadioListTile<String>(
-              title: const Text('QR Code فقط'),
+              title: Text(l10n.qrCodeOnly),
               value: 'qr',
+              // ignore: deprecated_member_use
               groupValue: _barcodeFormat,
+              // ignore: deprecated_member_use
               onChanged: (v) {
                 setState(() => _barcodeFormat = v!);
                 Navigator.pop(ctx);
@@ -408,6 +319,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
 
   void _testScanner() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (ctx) => Container(
@@ -424,7 +336,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                 size: 64,
                 color: isDark ? Colors.white70 : AppColors.primary),
             const SizedBox(height: 16),
-            Text('وجه الكاميرا نحو الباركود',
+            Text(l10n.pointCameraAtBarcode,
                 style: TextStyle(
                     fontSize: 18,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
@@ -438,7 +350,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: Text('منطقة المسح',
+                  child: Text(l10n.scanArea,
                       style: TextStyle(
                           color: isDark ? Colors.white38 : Colors.grey)),
                 ),
@@ -449,7 +361,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('إلغاء'),
+                child: Text(l10n.cancel),
               ),
             ),
           ],

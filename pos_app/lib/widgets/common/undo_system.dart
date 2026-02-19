@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نظام Undo للعمليات القابلة للتراجع
 /// 
@@ -98,13 +99,14 @@ void showUndoSnackBar(
   );
 
   // عرض الـ SnackBar
+  final l10n = AppLocalizations.of(context)!;
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
       duration: duration,
       action: SnackBarAction(
-        label: 'تراجع',
+        label: l10n.undo,
         onPressed: () {
           undoCallback();
           ref.read(undoStackProvider.notifier).pop();
@@ -127,6 +129,7 @@ Future<bool> confirmLargeOperation(
     return true;
   }
 
+  final l10n = AppLocalizations.of(context)!;
   final result = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
@@ -171,14 +174,14 @@ Future<bool> confirmLargeOperation(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('إلغاء'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, true),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.orange.shade700,
           ),
-          child: const Text('تأكيد'),
+          child: Text(l10n.confirm),
         ),
       ],
     ),
@@ -193,9 +196,10 @@ class UndoFloatingButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final canUndo = ref.watch(canUndoProvider);
-    final lastAction = ref.watch(undoStackProvider).isEmpty 
-        ? null 
+    final lastAction = ref.watch(undoStackProvider).isEmpty
+        ? null
         : ref.watch(undoStackProvider).last;
 
     if (!canUndo) return const SizedBox.shrink();
@@ -220,7 +224,7 @@ class UndoFloatingButton extends ConsumerWidget {
               );
             }
           },
-          tooltip: lastAction != null ? 'تراجع: ${lastAction.description}' : 'تراجع',
+          tooltip: lastAction != null ? '${l10n.undo}: ${lastAction.description}' : l10n.undo,
           backgroundColor: Colors.orange.shade100,
           foregroundColor: Colors.orange.shade800,
           child: const Icon(Icons.undo),

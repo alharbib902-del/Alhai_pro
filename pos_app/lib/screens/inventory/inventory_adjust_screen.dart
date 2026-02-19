@@ -3,11 +3,13 @@
 /// شاشة لتعديل كميات المخزون يدوياً مع توثيق السبب
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/validators/validators.dart';
 
 /// شاشة تعديل المخزون
 class InventoryAdjustScreen extends StatefulWidget {
@@ -457,8 +459,10 @@ class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
                     style: AppTypography.headlineMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLength: 8,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
                     ],
                     decoration: InputDecoration(
                       hintText: '0',
@@ -574,6 +578,8 @@ class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
             TextFormField(
               controller: _notesController,
               maxLines: 3,
+              maxLength: 500,
+              validator: FormValidators.notes(),
               decoration: InputDecoration(
                 hintText: 'أدخل أي ملاحظات إضافية...',
                 filled: true,
@@ -800,6 +806,7 @@ class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
             Padding(
               padding: const EdgeInsets.all(AppSizes.lg),
               child: TextField(
+                maxLength: 100,
                 decoration: InputDecoration(
                   hintText: 'ابحث بالاسم أو SKU أو الباركود...',
                   prefixIcon: const Icon(Icons.search),
@@ -840,7 +847,7 @@ class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
                           color: AppColors.textMuted,
                         ),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
                         setState(() {
                           _selectedProduct = product;
@@ -984,11 +991,15 @@ class _InventoryAdjustScreenState extends State<InventoryAdjustScreen> {
   void _saveAdjustment() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final sanitizedNotes = InputSanitizer.sanitize(_notesController.text.trim());
+
     setState(() {
       _isLoading = true;
     });
 
     // محاكاة الحفظ
+    // Use sanitizedNotes instead of raw _notesController.text when persisting
+    debugPrint('Notes (sanitized): $sanitizedNotes');
     await Future.delayed(const Duration(seconds: 1));
 
     if (mounted) {

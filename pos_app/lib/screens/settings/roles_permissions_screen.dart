@@ -3,15 +3,17 @@
 /// شاشة لإدارة أدوار المستخدمين وصلاحياتهم
 library;
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة الأدوار والصلاحيات
 class RolesPermissionsScreen extends ConsumerStatefulWidget {
@@ -25,12 +27,14 @@ class RolesPermissionsScreen extends ConsumerStatefulWidget {
 class _RolesPermissionsScreenState
     extends ConsumerState<RolesPermissionsScreen>
     with SingleTickerProviderStateMixin {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
   late TabController _tabController;
+  bool _isLoading = true;
 
-  // بيانات تجريبية للأدوار
-  final List<Role> _roles = [
+  // بيانات الأدوار - يتم تحميلها من قاعدة البيانات
+  List<Role> _roles = [];
+
+  // بيانات تجريبية احتياطية
+  static List<Role> get _defaultRoles => [
     Role(
       id: '1',
       name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
@@ -111,6 +115,79 @@ class _RolesPermissionsScreenState
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadRoles();
+  }
+
+  Future<void> _loadRoles() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final dbRoles = await db.usersDao.getAllRoles(storeId);
+
+      if (dbRoles.isEmpty) {
+        setState(() {
+          _roles = _defaultRoles;
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final mappedRoles = dbRoles.map((r) {
+        // Parse permissions from JSON or comma-separated
+        List<String> permissions = [];
+        try {
+          if (r.permissions.startsWith('[')) {
+            permissions = List<String>.from(jsonDecode(r.permissions));
+          } else if (r.permissions.startsWith('{')) {
+            final map = jsonDecode(r.permissions) as Map<String, dynamic>;
+            permissions = map.keys.where((k) => map[k] == true).toList();
+          } else {
+            permissions = r.permissions.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+          }
+        } catch (_) {
+          permissions = [];
+        }
+
+        return Role(
+          id: r.id,
+          name: r.name,
+          description: r.nameEn ?? '',
+          color: _getRoleColor(r.name),
+          icon: _getRoleIcon(r.name),
+          usersCount: 0,
+          isSystemRole: r.isSystem,
+          permissions: permissions,
+        );
+      }).toList();
+
+      setState(() {
+        _roles = mappedRoles;
+        _isLoading = false;
+      });
+    } catch (_) {
+      setState(() {
+        _roles = _defaultRoles;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Color _getRoleColor(String roleName) {
+    if (roleName.contains('\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') || roleName.toLowerCase().contains('admin')) return Colors.purple;
+    if (roleName.contains('\u0645\u062f\u064a\u0631') || roleName.toLowerCase().contains('manager')) return AppColors.primary;
+    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') || roleName.toLowerCase().contains('cashier')) return AppColors.success;
+    if (roleName.contains('\u0623\u0645\u064a\u0646') || roleName.toLowerCase().contains('warehouse')) return AppColors.warning;
+    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') || roleName.toLowerCase().contains('accountant')) return AppColors.info;
+    return AppColors.primary;
+  }
+
+  IconData _getRoleIcon(String roleName) {
+    if (roleName.contains('\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') || roleName.toLowerCase().contains('admin')) return Icons.admin_panel_settings;
+    if (roleName.contains('\u0645\u062f\u064a\u0631') || roleName.toLowerCase().contains('manager')) return Icons.store;
+    if (roleName.contains('\u0643\u0627\u0634\u064a\u0631') || roleName.toLowerCase().contains('cashier')) return Icons.point_of_sale;
+    if (roleName.contains('\u0623\u0645\u064a\u0646') || roleName.toLowerCase().contains('warehouse')) return Icons.inventory;
+    if (roleName.contains('\u0645\u062d\u0627\u0633\u0628') || roleName.toLowerCase().contains('accountant')) return Icons.account_balance;
+    return Icons.badge;
   }
 
   @override
@@ -118,46 +195,6 @@ class _RolesPermissionsScreenState
     _tabController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -165,39 +202,16 @@ class _RolesPermissionsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.rolesPermissions,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName:
-                      '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 // Tab bar
@@ -210,9 +224,9 @@ class _RolesPermissionsScreenState
                         ? Colors.white.withValues(alpha: 0.5)
                         : AppColors.textSecondary,
                     indicatorColor: AppColors.primary,
-                    tabs: const [
-                      Tab(icon: Icon(Icons.groups), text: '\u0627\u0644\u0623\u062f\u0648\u0627\u0631'),
-                      Tab(icon: Icon(Icons.security), text: '\u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0627\u062a'),
+                    tabs: [
+                      Tab(icon: const Icon(Icons.groups), text: l10n.rolesTab),
+                      Tab(icon: const Icon(Icons.security), text: l10n.permissionsTab),
                     ],
                   ),
                 ),
@@ -226,40 +240,13 @@ class _RolesPermissionsScreenState
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildRolesTab(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -271,7 +258,7 @@ class _RolesPermissionsScreenState
               FilledButton.icon(
                 onPressed: _showAddRoleDialog,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('\u062f\u0648\u0631 \u062c\u062f\u064a\u062f'),
+                label: Text(l10n.newRoleButton),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
@@ -288,6 +275,7 @@ class _RolesPermissionsScreenState
   }
 
   Widget _buildRoleCard(Role role, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -341,7 +329,7 @@ class _RolesPermissionsScreenState
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              '\u0646\u0638\u0627\u0645',
+                              l10n.systemBadge,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: isDark
@@ -372,7 +360,7 @@ class _RolesPermissionsScreenState
                                 : AppColors.textTertiary),
                         const SizedBox(width: 4),
                         Text(
-                          '${role.usersCount} \u0645\u0633\u062a\u062e\u062f\u0645',
+                          l10n.userCountLabel(role.usersCount),
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark
@@ -387,7 +375,7 @@ class _RolesPermissionsScreenState
                                 : AppColors.textTertiary),
                         const SizedBox(width: 4),
                         Text(
-                          '${role.permissions.length} \u0635\u0644\u0627\u062d\u064a\u0629',
+                          l10n.permissionCountLabel(role.permissions.length),
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark
@@ -406,17 +394,20 @@ class _RolesPermissionsScreenState
                         ? Colors.white.withValues(alpha: 0.5)
                         : AppColors.textSecondary),
                 onSelected: (value) => _handleRoleAction(value, role),
-                itemBuilder: (context) => [
-                  const PopupMenuItem(value: 'edit', child: Text('\u062a\u0639\u062f\u064a\u0644')),
-                  const PopupMenuItem(value: 'duplicate', child: Text('\u0646\u0633\u062e')),
-                  const PopupMenuItem(value: 'users', child: Text('\u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646')),
-                  if (!role.isSystemRole)
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text('\u062d\u0630\u0641',
-                          style: TextStyle(color: AppColors.error)),
-                    ),
-                ],
+                itemBuilder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  return [
+                    PopupMenuItem(value: 'edit', child: Text(l10n.editRoleMenu)),
+                    PopupMenuItem(value: 'duplicate', child: Text(l10n.duplicateRoleMenu)),
+                    PopupMenuItem(value: 'users', child: Text(l10n.users)),
+                    if (!role.isSystemRole)
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Text(l10n.deleteRoleMenu,
+                            style: const TextStyle(color: AppColors.error)),
+                      ),
+                  ];
+                },
               ),
             ],
           ),
@@ -437,6 +428,7 @@ class _RolesPermissionsScreenState
   }
 
   Widget _buildPermissionCategory(PermissionCategory category, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final permissions =
         Permission.values.where((p) => p.category == category).toList();
 
@@ -467,7 +459,7 @@ class _RolesPermissionsScreenState
           ),
         ),
         subtitle: Text(
-          '${permissions.length} \u0635\u0644\u0627\u062d\u064a\u0629',
+          l10n.permissionCountLabel(permissions.length),
           style: TextStyle(
             fontSize: 12,
             color: isDark
@@ -516,6 +508,7 @@ class _RolesPermissionsScreenState
 
   void _showRoleDetails(Role role) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -610,8 +603,8 @@ class _RolesPermissionsScreenState
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary)),
-                              Text('\u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646',
-                                  style: TextStyle(
+                              Text(l10n.users,
+                                  style: const TextStyle(
                                       fontSize: 11,
                                       color: AppColors.primary)),
                             ],
@@ -640,8 +633,8 @@ class _RolesPermissionsScreenState
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.success)),
-                              Text('\u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0627\u062a',
-                                  style: TextStyle(
+                              Text(l10n.permissionsTab,
+                                  style: const TextStyle(
                                       fontSize: 11,
                                       color: AppColors.success)),
                             ],
@@ -697,13 +690,14 @@ class _RolesPermissionsScreenState
   }
 
   void _showAddRoleDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => _RoleFormDialog(
         onSave: (name, description) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u062f\u0648\u0631: $name'),
+              content: Text('${l10n.addAction}: $name'),
               backgroundColor: AppColors.success,
             ),
           );
@@ -713,6 +707,7 @@ class _RolesPermissionsScreenState
   }
 
   void _showEditRoleDialog(Role role) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => _RoleFormDialog(
@@ -720,7 +715,7 @@ class _RolesPermissionsScreenState
         onSave: (name, description) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062f\u0648\u0631: $name'),
+              content: Text('${l10n.save}: $name'),
               backgroundColor: AppColors.success,
             ),
           );
@@ -747,10 +742,11 @@ class _RolesPermissionsScreenState
   }
 
   void _duplicateRole(Role role) {
+    final l10n = AppLocalizations.of(context)!;
     HapticFeedback.mediumImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('\u062a\u0645 \u0646\u0633\u062e \u0627\u0644\u062f\u0648\u0631: ${role.name}'),
+        content: Text('${l10n.duplicateRoleMenu}: ${role.name}'),
         backgroundColor: AppColors.success,
       ),
     );
@@ -758,6 +754,7 @@ class _RolesPermissionsScreenState
 
   void _showRoleUsers(Role role) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -768,7 +765,7 @@ class _RolesPermissionsScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '\u0645\u0633\u062a\u062e\u062f\u0645\u0648 \u062f\u0648\u0631 "${role.name}"',
+              '${l10n.users} - "${role.name}"',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -786,7 +783,7 @@ class _RolesPermissionsScreenState
                   child: Text('${index + 1}'),
                 ),
                 title: Text(
-                  '\u0645\u0633\u062a\u062e\u062f\u0645 ${index + 1}',
+                  '${l10n.users} ${index + 1}',
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary),
                 ),
@@ -800,15 +797,16 @@ class _RolesPermissionsScreenState
   }
 
   void _deleteRole(Role role) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('\u062d\u0630\u0641 \u0627\u0644\u062f\u0648\u0631'),
-        content: Text('\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u062d\u0630\u0641 \u0627\u0644\u062f\u0648\u0631 "${role.name}"\u061f'),
+        title: Text(l10n.deleteRoleMenu),
+        content: Text('${l10n.delete} "${role.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -816,13 +814,13 @@ class _RolesPermissionsScreenState
               HapticFeedback.mediumImpact();
               ScaffoldMessenger.of(this.context).showSnackBar(
                 SnackBar(
-                  content: Text('\u062a\u0645 \u062d\u0630\u0641 \u0627\u0644\u062f\u0648\u0631: ${role.name}'),
+                  content: Text('${l10n.delete}: ${role.name}'),
                   backgroundColor: AppColors.error,
                 ),
               );
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('\u062d\u0630\u0641'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -869,6 +867,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       child: Container(
         width: 500,
@@ -883,7 +882,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
               child: Row(
                 children: [
                   Text(
-                    widget.role == null ? '\u062f\u0648\u0631 \u062c\u062f\u064a\u062f' : '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u062f\u0648\u0631',
+                    widget.role == null ? l10n.addRoleTitle : l10n.editRoleTitle,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -904,28 +903,28 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                   children: [
                     TextField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: '\u0627\u0633\u0645 \u0627\u0644\u062f\u0648\u0631',
-                        hintText: '\u0645\u062b\u0627\u0644: \u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a',
-                        prefixIcon: Icon(Icons.badge),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.roleNameField,
+                        hintText: l10n.roleNameField,
+                        prefixIcon: const Icon(Icons.badge),
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _descriptionController,
                       maxLines: 2,
-                      decoration: const InputDecoration(
-                        labelText: '\u0627\u0644\u0648\u0635\u0641',
-                        hintText: '\u0648\u0635\u0641 \u0645\u062e\u062a\u0635\u0631 \u0644\u0644\u062f\u0648\u0631...',
-                        prefixIcon: Icon(Icons.description),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.roleDescField,
+                        hintText: l10n.roleDescField,
+                        prefixIcon: const Icon(Icons.description),
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      '\u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0627\u062a',
-                      style: TextStyle(
+                    Text(
+                      l10n.rolePermissionsLabel,
+                      style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
@@ -954,7 +953,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                             },
                             title: Text(permission.label),
                             subtitle: Text(permission.description,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.textSecondary)),
                             controlAffinity:
@@ -975,7 +974,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('\u0625\u0644\u063a\u0627\u0621'),
+                    child: Text(l10n.cancel),
                   ),
                   const SizedBox(width: 12),
                   FilledButton(
@@ -988,7 +987,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text('\u062d\u0641\u0638'),
+                    child: Text(l10n.save),
                   ),
                 ],
               ),

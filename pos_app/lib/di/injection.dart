@@ -1,4 +1,5 @@
 import 'package:alhai_core/alhai_core.dart' as core;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/local/app_database.dart';
 import '../data/repositories/local_products_repository.dart';
@@ -39,6 +40,16 @@ Future<void> configureDependencies({String? environment}) async {
   getIt.registerLazySingleton<core.CategoriesRepository>(
     () => LocalCategoriesRepository(db),
   );
+
+  // Register Supabase client (if initialized)
+  try {
+    final supabase = Supabase.instance.client;
+    if (!getIt.isRegistered<SupabaseClient>()) {
+      getIt.registerSingleton<SupabaseClient>(supabase);
+    }
+  } catch (_) {
+    // Supabase not initialized - offline mode only
+  }
 
   // Disable reassignment after setup
   getIt.allowReassignment = false;

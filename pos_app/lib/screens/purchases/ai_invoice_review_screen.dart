@@ -1,11 +1,10 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 import '../../services/ai_invoice_service.dart';
 
 /// شاشة مراجعة ومطابقة المنتجات المستخرجة بالـ AI
@@ -24,8 +23,6 @@ class AiInvoiceReviewScreen extends ConsumerStatefulWidget {
 
 class _AiInvoiceReviewScreenState
     extends ConsumerState<AiInvoiceReviewScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'products';
 
   late List<AiInvoiceItem> _items;
   bool _isProcessing = false;
@@ -39,46 +36,6 @@ class _AiInvoiceReviewScreenState
   int get _confirmedCount => _items.where((i) => i.isConfirmed).length;
   int get _needsReviewCount =>
       _items.where((i) => i.needsReview && !i.isConfirmed).length;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -87,34 +44,12 @@ class _AiInvoiceReviewScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: '\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629', // TODO: localize
+                  title: l10n.reviewInvoice,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
@@ -136,39 +71,8 @@ class _AiInvoiceReviewScreenState
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
@@ -185,7 +89,7 @@ class _AiInvoiceReviewScreenState
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629', // TODO: localize
+                l10n.reviewInvoice,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -196,7 +100,7 @@ class _AiInvoiceReviewScreenState
             FilledButton.tonalIcon(
               onPressed: _confirmAll,
               icon: const Icon(Icons.done_all, size: 18),
-              label: const Text('\u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0643\u0644'), // TODO: localize
+              label: Text(l10n.confirmAllItems),
             ),
           ],
         ),
@@ -220,6 +124,7 @@ class _AiInvoiceReviewScreenState
   }
 
   Widget _buildInvoiceHeader(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -227,8 +132,8 @@ class _AiInvoiceReviewScreenState
           colors: isDark
               ? [const Color(0xFF1E3A5F), const Color(0xFF1E293B)]
               : [const Color(0xFFEFF6FF), const Color(0xFFDBEAFE)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -255,7 +160,7 @@ class _AiInvoiceReviewScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.invoiceData.supplierName ?? '\u0645\u0648\u0631\u062F \u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641', // TODO: localize
+                  widget.invoiceData.supplierName ?? l10n.unknownSupplier,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : const Color(0xFF1E3A8A),
@@ -264,7 +169,7 @@ class _AiInvoiceReviewScreenState
                 ),
                 if (widget.invoiceData.invoiceNumber != null)
                   Text(
-                    '\u0631\u0642\u0645 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629: ${widget.invoiceData.invoiceNumber}', // TODO: localize
+                    l10n.invoiceNumberLabel(widget.invoiceData.invoiceNumber!),
                     style: TextStyle(
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.6)
@@ -286,7 +191,7 @@ class _AiInvoiceReviewScreenState
                 ),
               ),
               Text(
-                '${_items.length} \u0635\u0646\u0641', // TODO: localize
+                l10n.itemCount(_items.length),
                 style: TextStyle(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.6)
@@ -301,6 +206,7 @@ class _AiInvoiceReviewScreenState
   }
 
   Widget _buildProgressBar(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final progress = _items.isEmpty ? 0.0 : _confirmedCount / _items.length;
 
     return Container(
@@ -320,7 +226,7 @@ class _AiInvoiceReviewScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '\u0627\u0644\u062A\u0642\u062F\u0645: $_confirmedCount / ${_items.length}', // TODO: localize
+                l10n.progressLabel(_confirmedCount, _items.length),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : AppColors.textPrimary,
@@ -341,7 +247,7 @@ class _AiInvoiceReviewScreenState
                           size: 14, color: AppColors.warning),
                       const SizedBox(width: 4),
                       Text(
-                        '$_needsReviewCount \u064A\u062D\u062A\u0627\u062C \u0645\u0631\u0627\u062C\u0639\u0629', // TODO: localize
+                        l10n.needsReviewCount(_needsReviewCount),
                         style: const TextStyle(
                             color: AppColors.warning, fontSize: 12),
                       ),
@@ -386,6 +292,7 @@ class _AiInvoiceReviewScreenState
   }
 
   Widget _buildItemCard(AiInvoiceItem item, int index, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final needsReview = item.needsReview && !item.isConfirmed;
 
     return Container(
@@ -473,14 +380,14 @@ class _AiInvoiceReviewScreenState
                               size: 16, color: AppColors.success),
                           const SizedBox(width: 4),
                           Text(
-                            item.matchedProductName ?? '\u0645\u0646\u062A\u062C \u0645\u0637\u0627\u0628\u0642',
+                            item.matchedProductName ?? l10n.matchedProductLabel,
                             style:
                                 const TextStyle(color: AppColors.success),
                           ),
                         ],
                       )
                     : Text(
-                        '\u0644\u0645 \u064A\u062A\u0645 \u0627\u0644\u0645\u0637\u0627\u0628\u0642\u0629', // TODO: localize
+                        l10n.notMatchedStatus,
                         style: TextStyle(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.5)
@@ -491,7 +398,7 @@ class _AiInvoiceReviewScreenState
               if (!item.isConfirmed) ...[
                 TextButton(
                   onPressed: () => _showMatchDialog(item, index),
-                  child: const Text('\u0645\u0637\u0627\u0628\u0642\u0629'), // TODO: localize
+                  child: Text(l10n.matchedStatus),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -551,6 +458,7 @@ class _AiInvoiceReviewScreenState
   }
 
   Widget _buildBottomBar(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     final allConfirmed = _confirmedCount == _items.length;
 
     return Container(
@@ -581,7 +489,7 @@ class _AiInvoiceReviewScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A', // TODO: localize
+                    l10n.total,
                     style: TextStyle(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.6)
@@ -612,8 +520,8 @@ class _AiInvoiceReviewScreenState
                     )
                   : const Icon(Icons.save),
               label: Text(_isProcessing
-                  ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0641\u0638...'
-                  : '\u062D\u0641\u0638 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629'), // TODO: localize
+                  ? l10n.savingInvoice
+                  : l10n.saveInvoice),
             ),
           ],
         ),
@@ -675,7 +583,7 @@ class _AiInvoiceReviewScreenState
                       const CircleAvatar(child: Icon(Icons.inventory_2)),
                   title: Text('\u0645\u0646\u062A\u062C \u0645\u0642\u062A\u0631\u062D ${i + 1}'),
                   subtitle: const Text('\u0628\u0627\u0631\u0643\u0648\u062F: 123456789'),
-                  trailing: const Icon(Icons.chevron_left),
+                  trailing: const AdaptiveIcon(Icons.chevron_left),
                   onTap: () {
                     setState(() {
                       _items[index].matchedProductId = 'product_$i';

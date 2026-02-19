@@ -3,14 +3,24 @@
 /// شاشة لإدارة أجهزة الدفع المتصلة
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
+
+// Settings keys for payment devices
+const String _kEnableMada = 'payment_enable_mada';
+const String _kEnableVisa = 'payment_enable_visa';
+const String _kEnableStcPay = 'payment_enable_stc_pay';
+const String _kEnableApplePay = 'payment_enable_apple_pay';
+const String _kTerminalType = 'payment_terminal_type';
+const String _kAutoSettle = 'payment_auto_settle';
 
 /// شاشة إعدادات أجهزة الدفع
 class PaymentDevicesSettingsScreen extends ConsumerStatefulWidget {
@@ -23,52 +33,107 @@ class PaymentDevicesSettingsScreen extends ConsumerStatefulWidget {
 
 class _PaymentDevicesSettingsScreenState
     extends ConsumerState<PaymentDevicesSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
-
   bool _enableMada = true;
   bool _enableVisa = true;
   bool _enableStcPay = false;
   bool _enableApplePay = false;
   String _terminalType = 'ingenico';
   bool _autoSettle = true;
+  bool _isLoading = true;
+  bool _isSaving = false;
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final settings = await (db.select(db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
+
+      final settingsMap = <String, String>{};
+      for (final s in settings) {
+        settingsMap[s.key] = s.value;
+      }
+
+      if (mounted) {
+        setState(() {
+          _enableMada = settingsMap[_kEnableMada] != 'false';
+          _enableVisa = settingsMap[_kEnableVisa] != 'false';
+          _enableStcPay = settingsMap[_kEnableStcPay] == 'true';
+          _enableApplePay = settingsMap[_kEnableApplePay] == 'true';
+          _terminalType = settingsMap[_kTerminalType] ?? 'ingenico';
+          _autoSettle = settingsMap[_kAutoSettle] != 'false';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _saveSetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = getIt<AppDatabase>();
+    final id = 'setting_${storeId}_$key';
+
+    await db.into(db.settingsTable).insertOnConflictUpdate(
+          SettingsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            key: key,
+            value: value,
+            updatedAt: DateTime.now(),
+          ),
+        );
+  }
+
+  Future<void> _saveAllSettings() async {
+    setState(() => _isSaving = true);
+    try {
+      await Future.wait([
+        _saveSetting(_kEnableMada, _enableMada.toString()),
+        _saveSetting(_kEnableVisa, _enableVisa.toString()),
+        _saveSetting(_kEnableStcPay, _enableStcPay.toString()),
+        _saveSetting(_kEnableApplePay, _enableApplePay.toString()),
+        _saveSetting(_kTerminalType, _terminalType),
+        _saveSetting(_kAutoSettle, _autoSettle.toString()),
+      ]);
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.paymentDevicesSettingsSaved),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ في الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
@@ -80,117 +145,94 @@ class _PaymentDevicesSettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
+    if (_isLoading) {
+      return Column(
         children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'أجهزة الدفع',
-                  onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark),
-                  ),
-                ),
-              ],
-            ),
+          AppHeader(
+            title: l10n.paymentDevicesSettings,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
           ),
         ],
-      ),
+      );
+    }
+
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.paymentDevicesSettings,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: _buildContent(isDark, l10n),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // Payment methods
-        _buildSettingsGroup('طرق الدفع المدعومة', Icons.payment_rounded,
+        _buildSettingsGroup(l10n.supportedPaymentMethods, Icons.payment_rounded,
             const Color(0xFF06B6D4), isDark, [
           SwitchListTile(
-            title: Text('مدى (mada)',
+            title: Text('mada',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('بطاقات مدى المحلية'),
+            subtitle: Text(l10n.madaLocalCards),
             secondary: const Icon(Icons.credit_card),
             value: _enableMada,
-            onChanged: (v) => setState(() => _enableMada = v),
+            onChanged: (v) {
+              setState(() => _enableMada = v);
+              _saveSetting(_kEnableMada, v.toString());
+            },
           ),
           SwitchListTile(
             title: Text('Visa / Mastercard',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('البطاقات الدولية'),
+            subtitle: Text(l10n.internationalCards),
             secondary: const Icon(Icons.credit_card),
             value: _enableVisa,
-            onChanged: (v) => setState(() => _enableVisa = v),
+            onChanged: (v) {
+              setState(() => _enableVisa = v);
+              _saveSetting(_kEnableVisa, v.toString());
+            },
           ),
           const Divider(indent: 16, endIndent: 16),
           SwitchListTile(
             title: Text('STC Pay',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('محفظة STC الرقمية'),
+            subtitle: Text(l10n.stcDigitalWallet),
             secondary: const Icon(Icons.phone_android),
             value: _enableStcPay,
-            onChanged: (v) => setState(() => _enableStcPay = v),
+            onChanged: (v) {
+              setState(() => _enableStcPay = v);
+              _saveSetting(_kEnableStcPay, v.toString());
+            },
           ),
           SwitchListTile(
             title: Text('Apple Pay',
@@ -198,65 +240,86 @@ class _PaymentDevicesSettingsScreenState
                     color: isDark ? Colors.white : AppColors.textPrimary)),
             secondary: const Icon(Icons.apple),
             value: _enableApplePay,
-            onChanged: (v) => setState(() => _enableApplePay = v),
+            onChanged: (v) {
+              setState(() => _enableApplePay = v);
+              _saveSetting(_kEnableApplePay, v.toString());
+            },
           ),
           const SizedBox(height: 8),
         ]),
 
         // Terminal
-        _buildSettingsGroup('جهاز الدفع', Icons.contactless_rounded,
+        _buildSettingsGroup(l10n.paymentTerminal, Icons.contactless_rounded,
             AppColors.primary, isDark, [
           RadioListTile<String>(
             title: Text('Ingenico',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('أجهزة Ingenico'),
+            subtitle: Text(l10n.ingenicoDevices),
             value: 'ingenico',
+            // ignore: deprecated_member_use
             groupValue: _terminalType,
-            onChanged: (v) => setState(() => _terminalType = v!),
+            // ignore: deprecated_member_use
+            onChanged: (v) {
+              setState(() => _terminalType = v!);
+              _saveSetting(_kTerminalType, v!);
+            },
           ),
           RadioListTile<String>(
             title: Text('Verifone',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('أجهزة Verifone'),
+            subtitle: Text(l10n.verifoneDevices),
             value: 'verifone',
+            // ignore: deprecated_member_use
             groupValue: _terminalType,
-            onChanged: (v) => setState(() => _terminalType = v!),
+            // ignore: deprecated_member_use
+            onChanged: (v) {
+              setState(() => _terminalType = v!);
+              _saveSetting(_kTerminalType, v!);
+            },
           ),
           RadioListTile<String>(
             title: Text('PAX',
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('أجهزة PAX'),
+            subtitle: Text(l10n.paxDevices),
             value: 'pax',
+            // ignore: deprecated_member_use
             groupValue: _terminalType,
-            onChanged: (v) => setState(() => _terminalType = v!),
+            // ignore: deprecated_member_use
+            onChanged: (v) {
+              setState(() => _terminalType = v!);
+              _saveSetting(_kTerminalType, v!);
+            },
           ),
           const SizedBox(height: 8),
         ]),
 
         // Settlement
-        _buildSettingsGroup('التسوية', Icons.account_balance_rounded,
+        _buildSettingsGroup(l10n.settlement, Icons.account_balance_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
-            title: Text('التسوية التلقائية',
+            title: Text(l10n.autoSettlement,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('تسوية نهاية اليوم تلقائياً'),
+            subtitle: Text(l10n.autoSettlementDesc),
             value: _autoSettle,
-            onChanged: (v) => setState(() => _autoSettle = v),
+            onChanged: (v) {
+              setState(() => _autoSettle = v);
+              _saveSetting(_kAutoSettle, v.toString());
+            },
           ),
           ListTile(
             leading: const Icon(Icons.sync, color: AppColors.info),
-            title: Text('تسوية يدوية',
+            title: Text(l10n.manualSettlement,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('تنفيذ التسوية الآن'),
-            trailing: const Icon(Icons.chevron_right),
+            subtitle: Text(l10n.executeSettlementNow),
+            trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('جاري التسوية...')),
+                SnackBar(content: Text(l10n.settlingInProgress)),
               );
             },
           ),
@@ -267,17 +330,18 @@ class _PaymentDevicesSettingsScreenState
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم حفظ إعدادات أجهزة الدفع'),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            onPressed: _isSaving ? null : _saveAllSettings,
+            icon: _isSaving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.save_rounded),
+            label: Text(_isSaving ? 'جاري الحفظ...' : l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -289,7 +353,7 @@ class _PaymentDevicesSettingsScreenState
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -311,12 +375,12 @@ class _PaymentDevicesSettingsScreenState
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('أجهزة الدفع',
+            Text(l10n.paymentDevicesSettings,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('mada, STC Pay, Apple Pay',
+            Text(l10n.paymentDevicesSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark

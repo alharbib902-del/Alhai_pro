@@ -35,12 +35,14 @@ class BarcodeListener extends StatefulWidget {
 
 class _BarcodeListenerState extends State<BarcodeListener> {
   final StringBuffer _buffer = StringBuffer();
+  final FocusNode _focusNode = FocusNode();
   DateTime? _lastKeyTime;
   Timer? _resetTimer;
 
   @override
   void dispose() {
     _resetTimer?.cancel();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -70,6 +72,13 @@ class _BarcodeListenerState extends State<BarcodeListener> {
       }
     }
 
+    // Buffer overflow protection
+    if (_buffer.length > 50) {
+      _buffer.clear();
+      _lastKeyTime = null;
+      return;
+    }
+
     _buffer.write(character);
     _lastKeyTime = now;
 
@@ -82,9 +91,12 @@ class _BarcodeListenerState extends State<BarcodeListener> {
 
   void _processBuffer() {
     _resetTimer?.cancel();
-    final barcode = _buffer.toString().trim();
+    final raw = _buffer.toString().trim();
     _buffer.clear();
     _lastKeyTime = null;
+
+    // Sanitize: only allow alphanumeric and hyphens
+    final barcode = raw.replaceAll(RegExp(r'[^a-zA-Z0-9\-]'), '');
 
     if (barcode.length >= widget.minBarcodeLength) {
       widget.onBarcodeScanned(barcode);
@@ -94,7 +106,7 @@ class _BarcodeListenerState extends State<BarcodeListener> {
   @override
   Widget build(BuildContext context) {
     return KeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _focusNode,
       autofocus: false,
       onKeyEvent: _handleKeyEvent,
       child: widget.child,

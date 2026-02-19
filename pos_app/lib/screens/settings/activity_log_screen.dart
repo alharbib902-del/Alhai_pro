@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة سجل النشاطات
@@ -16,91 +17,77 @@ class ActivityLogScreen extends ConsumerStatefulWidget {
 }
 
 class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
   String _selectedFilter = 'all';
 
-  final List<_ActivityItem> _activities = [
-    _ActivityItem(
-      user: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-      action: '\u062a\u0633\u062c\u064a\u0644 \u062f\u062e\u0648\u0644',
-      details: '\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0628\u0646\u062c\u0627\u062d',
-      time: '\u0645\u0646\u0630 5 \u062f\u0642\u0627\u0626\u0642',
-      icon: Icons.login_rounded,
-      color: AppColors.success,
-      type: 'auth',
-    ),
-    _ActivityItem(
-      user: '\u062e\u0627\u0644\u062f \u0639\u0644\u064a',
-      action: '\u0628\u064a\u0639 \u0641\u0627\u062a\u0648\u0631\u0629',
-      details: '\u0641\u0627\u062a\u0648\u0631\u0629 #1234 - 450.00 \u0631.\u0633',
-      time: '\u0645\u0646\u0630 15 \u062f\u0642\u064a\u0642\u0629',
-      icon: Icons.receipt_long_rounded,
-      color: AppColors.primary,
-      type: 'sales',
-    ),
-    _ActivityItem(
-      user: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-      action: '\u062a\u0639\u062f\u064a\u0644 \u0645\u0646\u062a\u062c',
-      details: '\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u0633\u0639\u0631 "\u0623\u0631\u0632 \u0628\u0633\u0645\u062a\u064a"',
-      time: '\u0645\u0646\u0630 30 \u062f\u0642\u064a\u0642\u0629',
-      icon: Icons.edit_rounded,
-      color: AppColors.warning,
-      type: 'products',
-    ),
-    _ActivityItem(
-      user: '\u0645\u062d\u0645\u062f \u0633\u0639\u062f',
-      action: '\u0627\u0633\u062a\u0631\u062c\u0627\u0639',
-      details: '\u0627\u0633\u062a\u0631\u062c\u0627\u0639 \u0641\u0627\u062a\u0648\u0631\u0629 #1230 - 120.00 \u0631.\u0633',
-      time: '\u0645\u0646\u0630 \u0633\u0627\u0639\u0629',
-      icon: Icons.assignment_return_rounded,
-      color: AppColors.error,
-      type: 'sales',
-    ),
-    _ActivityItem(
-      user: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-      action: '\u0625\u0636\u0627\u0641\u0629 \u0645\u0633\u062a\u062e\u062f\u0645',
-      details: '\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 "\u0641\u0647\u062f \u0639\u0645\u0631"',
-      time: '\u0645\u0646\u0630 2 \u0633\u0627\u0639\u0629',
-      icon: Icons.person_add_rounded,
-      color: AppColors.info,
-      type: 'users',
-    ),
-    _ActivityItem(
-      user: '\u062e\u0627\u0644\u062f \u0639\u0644\u064a',
-      action: '\u062a\u0633\u062c\u064a\u0644 \u062e\u0631\u0648\u062c',
-      details: '\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c',
-      time: '\u0645\u0646\u0630 3 \u0633\u0627\u0639\u0627\u062a',
-      icon: Icons.logout_rounded,
-      color: AppColors.textSecondary,
-      type: 'auth',
-    ),
-    _ActivityItem(
-      user: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-      action: '\u0646\u0633\u062e \u0627\u062d\u062a\u064a\u0627\u0637\u064a',
-      details: '\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0646\u0633\u062e\u0629 \u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629 \u064a\u062f\u0648\u064a\u0629',
-      time: '\u0645\u0646\u0630 5 \u0633\u0627\u0639\u0627\u062a',
-      icon: Icons.backup_rounded,
-      color: AppColors.success,
-      type: 'system',
-    ),
-  ];
+  List<_ActivityItem> _activities = [];
+  bool _isLoading = true;
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
+  @override
+  void initState() {
+    super.initState();
+    _loadActivities();
+  }
+
+  Future<void> _loadActivities() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      setState(() => _isLoading = false);
+      return;
     }
+    final db = getIt<AppDatabase>();
+    final logs = await db.auditLogDao.getLogs(storeId, limit: 100);
+    if (mounted) {
+      setState(() {
+        _activities = logs.map((log) => _ActivityItem(
+          user: log.userName,
+          action: log.action,
+          details: log.description ?? '',
+          time: _formatTimeAgo(log.createdAt),
+          icon: _getActionIcon(log.action),
+          color: _getActionColor(log.action),
+          type: _getActionType(log.action),
+        )).toList();
+        _isLoading = false;
+      });
+    }
+  }
+
+  static IconData _getActionIcon(String action) {
+    if (action.contains('login')) return Icons.login_rounded;
+    if (action.contains('logout')) return Icons.logout_rounded;
+    if (action.contains('sale')) return Icons.receipt_long_rounded;
+    if (action.contains('product') || action.contains('price')) return Icons.edit_rounded;
+    if (action.contains('refund')) return Icons.assignment_return_rounded;
+    if (action.contains('stock')) return Icons.inventory_rounded;
+    if (action.contains('shift')) return Icons.schedule_rounded;
+    if (action.contains('order')) return Icons.shopping_cart_rounded;
+    if (action.contains('customer')) return Icons.person_add_rounded;
+    return Icons.history_rounded;
+  }
+
+  static Color _getActionColor(String action) {
+    if (action.contains('login') || action.contains('backup')) return AppColors.success;
+    if (action.contains('logout')) return AppColors.textSecondary;
+    if (action.contains('sale') && !action.contains('refund')) return AppColors.primary;
+    if (action.contains('edit') || action.contains('price') || action.contains('stock')) return AppColors.warning;
+    if (action.contains('refund') || action.contains('cancel') || action.contains('delete')) return AppColors.error;
+    return AppColors.info;
+  }
+
+  static String _getActionType(String action) {
+    if (action.contains('login') || action.contains('logout')) return 'auth';
+    if (action.contains('sale') || action.contains('refund')) return 'sales';
+    if (action.contains('product') || action.contains('price') || action.contains('stock')) return 'products';
+    if (action.contains('shift') || action.contains('cash')) return 'system';
+    return 'system';
+  }
+
+  static String _formatTimeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'الآن';
+    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
+    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
+    return 'منذ ${diff.inDays} يوم';
   }
 
   @override
@@ -111,66 +98,25 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: l10n.activityLog,
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-                  userRole: l10n.branchManager,
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.activityLog,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+        ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
+        ),
+      ],
     );
   }
 
@@ -186,22 +132,23 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(children: [
-            _buildFilterChip('all', '\u0627\u0644\u0643\u0644', isDark),
+            _buildFilterChip('all', l10n.allFilter, isDark),
             const SizedBox(width: 8),
-            _buildFilterChip('auth', '\u0627\u0644\u062f\u062e\u0648\u0644/\u0627\u0644\u062e\u0631\u0648\u062c', isDark),
+            _buildFilterChip('auth', l10n.loginLogoutFilter, isDark),
             const SizedBox(width: 8),
-            _buildFilterChip('sales', '\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a', isDark),
+            _buildFilterChip('sales', l10n.salesFilter, isDark),
             const SizedBox(width: 8),
-            _buildFilterChip('products', '\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a', isDark),
+            _buildFilterChip('products', l10n.productsFilter, isDark),
             const SizedBox(width: 8),
-            _buildFilterChip('users', '\u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646', isDark),
+            _buildFilterChip('users', l10n.usersFilter, isDark),
             const SizedBox(width: 8),
-            _buildFilterChip('system', '\u0627\u0644\u0646\u0638\u0627\u0645', isDark),
+            _buildFilterChip('system', l10n.systemFilter, isDark),
           ]),
         ),
         const SizedBox(height: 20),
         _buildGroup('${l10n.activityLog} (${filtered.length})',
-            filtered.map((a) => _buildActivityTile(a, isDark)).toList(), isDark),
+            filtered.map((a) => _buildActivityTile(a, isDark)).toList(), isDark,
+            noItemsText: l10n.noActivities),
       ],
     );
   }
@@ -221,7 +168,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     );
   }
 
-  Widget _buildGroup(String title, List<Widget> children, bool isDark) {
+  Widget _buildGroup(String title, List<Widget> children, bool isDark, {String noItemsText = ''}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -237,7 +184,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         ),
         if (children.isEmpty)
           Padding(padding: const EdgeInsets.all(32), child: Center(
-            child: Text('\u0644\u0627 \u062a\u0648\u062c\u062f \u0646\u0634\u0627\u0637\u0627\u062a', style: TextStyle(
+            child: Text(noItemsText, style: TextStyle(
                 color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary))))
         else ...children,
       ]),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../core/router/routes.dart';
 import '../../core/constants/breakpoints.dart';
@@ -21,12 +22,13 @@ import '../../widgets/pos/customer_search_dialog.dart';
 import '../../widgets/pos/quantity_input_dialog.dart';
 import '../../widgets/pos/barcode_listener.dart';
 import '../../widgets/pos/payment_success_dialog.dart';
+import '../../widgets/pos/sale_note_dialog.dart';
 import '../../providers/sale_providers.dart';
 import '../../providers/sync_providers.dart';
 import 'hold_invoices_screen.dart';
 import '../../widgets/orders/orders_widgets.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../services/manager_approval_service.dart';
 
 /// شاشة نقطة البيع الرئيسية - التصميم الجديد
 ///
@@ -43,10 +45,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   String? _selectedCategoryId;
   final _searchFocusNode = FocusNode();
   final _keyboardFocusNode = FocusNode();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _showOrdersPanel = false;
-  bool _sidebarCollapsed = false;
-  final String _selectedNavId = 'pos';
   int _orderCounter = 1;
 
   @override
@@ -225,7 +224,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         receiptNumber = sale.receiptNo;
       }
     } catch (e) {
-      debugPrint('خطأ في حفظ البيع: $e');
+      debugPrint('Save sale error: $e');
     }
 
     // 2. مسح السلة
@@ -239,7 +238,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       context: context,
       receiptNumber: receiptNumber,
       amount: result.amountPaid,
-      paymentMethodLabel: result.method.label,
+      paymentMethodLabel: result.method.localizedLabel(AppLocalizations.of(context)!),
       customerPhone: result.customerPhone,
       customerName: result.customerName,
       saleId: saleId,
@@ -262,9 +261,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         ),
       );
     } else {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('لم يتم العثور على منتج بالباركود: $barcode'),
+          content: Text('${l10n.productNotFound}: $barcode'),
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.orange,
@@ -273,44 +273,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     }
   }
 
-  void _handleNavigation(AppSidebarItem item) {
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.home);
-        break;
-      case 'pos':
-        break; // already here
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push('/sales');
-        break;
-      case 'reports':
-        context.push('/reports');
-        break;
-      case 'employees':
-        context.push('/employees');
-        break;
-      case 'loyalty':
-        context.push('/loyalty');
-        break;
-    }
-  }
-
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
-    final months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
-    ];
-    return '${now.day} ${months[now.month - 1]} ${now.year} • ${l10n.mainBranch}';
+    final locale = Localizations.localeOf(context).toString();
+    final dateStr = DateFormat('d MMMM yyyy', locale).format(now);
+    return '$dateStr • ${l10n.mainBranch}';
   }
 
   @override
@@ -318,7 +285,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final cartItemCount = ref.watch(cartItemCountProvider);
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 900;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
     return BarcodeListener(
@@ -347,110 +313,89 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       onQuickAdd: _addQuickProduct,
       onQuantityChange: (increase) {},
       child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-        drawer: isWideScreen ? null : _buildDrawer(l10n),
+        // Mobile FAB
+        floatingActionButton: context.isMobile
+            ? _PosFab(
+                itemCount: cartItemCount,
+                onTap: _showCartBottomSheet,
+              )
+            : null,
         body: CashierModeWrapper(
-          child: Row(
+          child: Column(
             children: [
-              // Sidebar (desktop only)
-              if (isWideScreen)
-                AppSidebar(
-                  storeName: l10n.brandName,
-                  groups: DefaultSidebarItems.getGroups(context),
-                  selectedId: _selectedNavId,
-                  onItemTap: _handleNavigation,
-                  onSettingsTap: () => context.push(AppRoutes.settings),
-                  onSupportTap: () {},
-                  onLogoutTap: () => context.go('/login'),
-                  collapsed: _sidebarCollapsed,
-                  userName: 'أحمد محمد',
-                  userRole: l10n.branchManager,
-                  onUserTap: () {},
-                ),
+              // Header
+              AppHeader(
+                title: l10n.pos,
+                subtitle: _getDateSubtitle(l10n),
+                showSearch: isWideScreen,
+                searchHint: l10n.searchPlaceholder,
+                onMenuTap: isWideScreen
+                    ? null
+                    : () => Scaffold.of(context).openDrawer(),
+                onNotificationsTap: () {},
+                notificationsCount: 0,
+                userName: l10n.cashCustomer,
+                userRole: l10n.branchManager,
+                onUserTap: () {},
+              ),
 
-              // Main content
+              // Offline banner
+              const OfflineBanner(),
+
+              // Orders panel + main content
               Expanded(
-                child: Column(
+                child: Row(
                   children: [
-                    // Header
-                    AppHeader(
-                      title: l10n.pos,
-                      subtitle: _getDateSubtitle(l10n),
-                      showSearch: isWideScreen,
-                      searchHint: l10n.searchPlaceholder,
-                      onMenuTap: isWideScreen
-                          ? () => setState(
-                              () => _sidebarCollapsed = !_sidebarCollapsed)
-                          : () => _scaffoldKey.currentState?.openDrawer(),
-                      onNotificationsTap: () {},
-                      notificationsCount: 0,
-                      userName: 'أحمد محمد',
-                      userRole: l10n.branchManager,
-                      onUserTap: () {},
-                    ),
+                    if (_showOrdersPanel)
+                      OrdersPanel(
+                        onClose: () =>
+                            setState(() => _showOrdersPanel = false),
+                      ),
 
-                    // Offline banner
-                    const OfflineBanner(),
-
-                    // Orders panel + main content
+                    // Main POS content
                     Expanded(
-                      child: Row(
-                        children: [
-                          if (_showOrdersPanel)
-                            OrdersPanel(
-                              onClose: () =>
-                                  setState(() => _showOrdersPanel = false),
-                            ),
+                      child: ResponsiveBuilder(
+                        builder: (context, deviceType, screenWidth) {
+                          if (deviceType.isMobile) {
+                            return _ProductsPanel(
+                              selectedCategoryId: _selectedCategoryId,
+                              onCategorySelected: _onCategorySelected,
+                              columns: 3,
+                              showShortcutsBar: false,
+                              onHoldInvoice: _holdCurrentInvoice,
+                              onShowHeldInvoices: _showHeldInvoices,
+                            );
+                          }
 
-                          // Main POS content
-                          Expanded(
-                            child: ResponsiveBuilder(
-                              builder: (context, deviceType, screenWidth) {
-                                if (deviceType.isMobile) {
-                                  return _ProductsPanel(
-                                    selectedCategoryId: _selectedCategoryId,
-                                    onCategorySelected: _onCategorySelected,
-                                    columns: 3,
-                                    showShortcutsBar: false,
-                                    onHoldInvoice: _holdCurrentInvoice,
-                                    onShowHeldInvoices: _showHeldInvoices,
-                                  );
-                                }
-
-                                return Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 65,
-                                      child: _ProductsPanel(
-                                        selectedCategoryId:
-                                            _selectedCategoryId,
-                                        onCategorySelected:
-                                            _onCategorySelected,
-                                        columns:
-                                            deviceType.isTablet ? 4 : 4,
-                                        showShortcutsBar: true,
-                                        onHoldInvoice: _holdCurrentInvoice,
-                                        onShowHeldInvoices: _showHeldInvoices,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 35,
-                                      child: _CartPanel(
-                                        orderNumber:
-                                            'ORD-${DateTime.now().year}-${_orderCounter.toString().padLeft(3, '0')}',
-                                        onPayTap: _showPaymentDialog,
-                                        onHoldInvoice: _holdCurrentInvoice,
-                                        onShowHeldInvoices: _showHeldInvoices,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                          return Row(
+                            children: [
+                              Expanded(
+                                flex: 65,
+                                child: _ProductsPanel(
+                                  selectedCategoryId:
+                                      _selectedCategoryId,
+                                  onCategorySelected:
+                                      _onCategorySelected,
+                                  columns:
+                                      deviceType.isTablet ? 4 : 4,
+                                  showShortcutsBar: true,
+                                  onHoldInvoice: _holdCurrentInvoice,
+                                  onShowHeldInvoices: _showHeldInvoices,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 35,
+                                child: _CartPanel(
+                                  orderNumber:
+                                      'ORD-${DateTime.now().year}-${_orderCounter.toString().padLeft(3, '0')}',
+                                  onPayTap: _showPaymentDialog,
+                                  onHoldInvoice: _holdCurrentInvoice,
+                                  onShowHeldInvoices: _showHeldInvoices,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -459,41 +404,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             ],
           ),
         ),
-        // Mobile FAB
-        floatingActionButton: context.isMobile
-            ? _PosFab(
-                itemCount: cartItemCount,
-                onTap: _showCartBottomSheet,
-              )
-            : null,
       ),
     ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
     );
   }
 
@@ -506,19 +418,20 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     String? note;
 
     // حوار إدخال ملاحظة
+    final controller = TextEditingController();
     note = await showDialog<String>(
       context: context,
       builder: (ctx) {
-        final controller = TextEditingController();
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final dialogL10n = AppLocalizations.of(ctx)!;
         return AlertDialog(
-          title: const Text('تعليق الفاتورة'),
+          title: Text(dialogL10n.suspendInvoice),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${cartState.itemCount} عنصر • ${cartState.total.toStringAsFixed(2)} ر.س',
+                '${dialogL10n.nItems(cartState.itemCount)} • ${cartState.total.toStringAsFixed(2)} ${dialogL10n.sar}',
                 style: TextStyle(
                   color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: 14,
@@ -528,10 +441,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               TextField(
                 controller: controller,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'ملاحظة (اختياري)',
-                  prefixIcon: Icon(Icons.note_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: dialogL10n.noteOptional,
+                  prefixIcon: const Icon(Icons.note_outlined),
+                  border: const OutlineInputBorder(),
                 ),
                 onSubmitted: (value) => Navigator.pop(ctx, value),
               ),
@@ -540,12 +453,12 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
+              child: Text(dialogL10n.cancel),
             ),
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(ctx, controller.text),
               icon: const Icon(Icons.pause_rounded, size: 18),
-              label: const Text('تعليق'),
+              label: Text(dialogL10n.suspend),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.warning,
                 foregroundColor: Colors.white,
@@ -555,6 +468,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         );
       },
     );
+    controller.dispose();
 
     // إذا ضغط المستخدم إلغاء
     if (note == null) return;
@@ -568,7 +482,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('📋 تم تعليق الفاتورة (${l10n.draft})'),
+        content: Text(l10n.invoiceSuspended),
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.warning,
       ),
@@ -1148,7 +1062,7 @@ class _CategoryPill extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsetsDirectional.only(end: 8),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -1543,29 +1457,133 @@ class _CartPanel extends ConsumerWidget {
                   ),
           ),
 
-          // Coupon link
+          // Discount + Coupon links
           if (items.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                  onPressed: () {
-                    // TODO: coupon dialog
-                  },
-                  icon: const Text('🏷️', style: TextStyle(fontSize: 14)),
-                  label: Text(
-                    l10n.haveCoupon,
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+              child: Row(
+                children: [
+                  // زر تطبيق خصم
+                  TextButton.icon(
+                    onPressed: () => _showDiscountDialog(context, ref, subtotal),
+                    icon: const Icon(Icons.percent_rounded, size: 16, color: AppColors.success),
+                    label: Text(
+                      l10n.discount,
+                      style: const TextStyle(
+                        color: AppColors.success,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 32),
                     ),
                   ),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(0, 32),
+                  const SizedBox(width: 16),
+                  // كوبون
+                  TextButton.icon(
+                    onPressed: () {
+                      // TODO: coupon dialog
+                    },
+                    icon: const Text('\uD83C\uDFF7\uFE0F', style: TextStyle(fontSize: 14)),
+                    label: Text(
+                      l10n.haveCoupon,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 32),
+                    ),
                   ),
+                  const SizedBox(width: 16),
+                  // ملاحظة
+                  TextButton.icon(
+                    onPressed: () async {
+                      final result = await SaleNoteDialog.show(
+                        context,
+                        initialNote: cartState.notes,
+                      );
+                      if (result != null) {
+                        ref.read(cartStateProvider.notifier).setNotes(
+                              result.isEmpty ? null : result,
+                            );
+                      }
+                    },
+                    icon: Icon(
+                      cartState.notes != null && cartState.notes!.isNotEmpty
+                          ? Icons.note_rounded
+                          : Icons.note_add_outlined,
+                      size: 16,
+                      color: cartState.notes != null && cartState.notes!.isNotEmpty
+                          ? AppColors.warning
+                          : AppColors.info,
+                    ),
+                    label: Text(
+                      cartState.notes != null && cartState.notes!.isNotEmpty
+                          ? 'ملاحظة'
+                          : 'ملاحظة',
+                      style: TextStyle(
+                        color: cartState.notes != null && cartState.notes!.isNotEmpty
+                            ? AppColors.warning
+                            : AppColors.info,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 32),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          // Note indicator chip
+          if (cartState.notes != null && cartState.notes!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.warning.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.note_rounded,
+                        size: 16, color: AppColors.warning),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        cartState.notes!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => ref
+                          .read(cartStateProvider.notifier)
+                          .setNotes(null),
+                      child: const Icon(Icons.close,
+                          size: 16, color: AppColors.warning),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -1931,6 +1949,86 @@ class _CartPanel extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// حوار إدخال خصم مع حماية PIN للخصومات > 20%
+  void _showDiscountDialog(BuildContext context, WidgetRef ref, double subtotal) {
+    final discountController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.percent_rounded, color: AppColors.success, size: 22),
+              const SizedBox(width: 8),
+              Text(l10n.discount),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: discountController,
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                decoration: InputDecoration(
+                  labelText: l10n.discount,
+                  hintText: '0 - 100',
+                  suffixText: '%',
+                  prefixIcon: const Icon(Icons.percent),
+                  border: const OutlineInputBorder(),
+                ),
+                onSubmitted: (_) => _applyDiscount(
+                  dialogContext, context, ref, discountController, subtotal,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => _applyDiscount(
+                dialogContext, context, ref, discountController, subtotal,
+              ),
+              child: Text(l10n.confirm),
+            ),
+          ],
+        );
+      },
+    ).then((_) => discountController.dispose());
+  }
+
+  /// تطبيق الخصم مع التحقق من PIN إذا تجاوز 20%
+  Future<void> _applyDiscount(
+    BuildContext dialogContext,
+    BuildContext parentContext,
+    WidgetRef ref,
+    TextEditingController controller,
+    double subtotal,
+  ) async {
+    final percent = double.tryParse(controller.text);
+    if (percent == null || percent < 0 || percent > 100) return;
+
+    Navigator.pop(dialogContext);
+
+    // إذا الخصم أكثر من 20%: طلب موافقة المشرف
+    if (percent > 20) {
+      if (!parentContext.mounted) return;
+      final approved = await ManagerApprovalService.requestPinApproval(
+        context: parentContext,
+        action: 'discount_over_20',
+      );
+      if (!approved) return;
+    }
+
+    final discountAmount = subtotal * (percent / 100);
+    ref.read(cartStateProvider.notifier).setDiscount(discountAmount);
   }
 }
 

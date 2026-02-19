@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// شاشة إدارة فئات المنتجات
 class ProductCategoriesScreen extends StatefulWidget {
@@ -20,9 +21,10 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('فئات المنتجات'),
+        title: Text(l10n.categories),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -33,7 +35,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addCategory,
         icon: const Icon(Icons.add),
-        label: const Text('فئة جديدة'),
+        label: Text(l10n.newCategory),
       ),
       body: ReorderableListView.builder(
         padding: const EdgeInsets.all(16),
@@ -61,7 +63,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                 child: Icon(category.icon, color: category.color),
               ),
               title: Text(category.name, style: const TextStyle(fontWeight: FontWeight.w500)),
-              subtitle: Text('${category.productCount} منتج'),
+              subtitle: Text(l10n.productCountUnit(category.productCount)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -84,29 +86,30 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
   }
   
   void _addCategory() {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     IconData selectedIcon = Icons.category;
     Color selectedColor = Colors.blue;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('فئة جديدة'),
+          title: Text(l10n.newCategory),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'اسم الفئة',
-                  prefixIcon: Icon(Icons.label),
+                decoration: InputDecoration(
+                  labelText: l10n.categoryName,
+                  prefixIcon: const Icon(Icons.label),
                 ),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Text('الأيقونة: '),
+                  Text(l10n.iconLabel),
                   const SizedBox(width: 8),
                   Wrap(
                     spacing: 8,
@@ -130,7 +133,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Text('اللون: '),
+                  Text(l10n.colorLabel),
                   const SizedBox(width: 8),
                   Wrap(
                     spacing: 8,
@@ -157,7 +160,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -174,7 +177,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         ),
@@ -183,20 +186,21 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
   }
   
   void _editCategory(_Category category) {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: category.name);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('تعديل الفئة'),
+        title: Text(l10n.editCategory),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'اسم الفئة',
-                prefixIcon: Icon(Icons.label),
+              decoration: InputDecoration(
+                labelText: l10n.categoryName,
+                prefixIcon: const Icon(Icons.label),
               ),
             ),
           ],
@@ -207,11 +211,11 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
               Navigator.pop(context);
               _deleteCategory(category);
             },
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -227,7 +231,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
               });
               Navigator.pop(context);
             },
-            child: const Text('حفظ'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -235,15 +239,16 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
   }
   
   void _deleteCategory(_Category category) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('حذف الفئة'),
-        content: Text('هل تريد حذف فئة "${category.name}"؟\nسيتم نقل ${category.productCount} منتج إلى "بدون فئة".'),
+        title: Text(l10n.deleteCategory),
+        content: Text(l10n.deleteCategoryMessage(category.name, category.productCount)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -251,7 +256,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
               Navigator.pop(context);
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('حذف'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -259,6 +264,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
   }
   
   void _showCategoryProducts(_Category category) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -285,7 +291,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(category.name, style: Theme.of(context).textTheme.titleMedium),
-                      Text('${category.productCount} منتج'),
+                      Text(l10n.productCountUnit(category.productCount)),
                     ],
                   ),
                 ],
@@ -306,8 +312,8 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                     ),
                     child: const Icon(Icons.inventory_2, color: Colors.grey),
                   ),
-                  title: Text('منتج ${index + 1}'),
-                  subtitle: Text('${(index + 1) * 15} ر.س'),
+                  title: Text(l10n.productNumber(index + 1)),
+                  subtitle: Text(l10n.priceWithCurrency('${(index + 1) * 15}')),
                 ),
               ),
             ),

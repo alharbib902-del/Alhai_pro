@@ -1,117 +1,135 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تتبع تاريخ انتهاء الصلاحية
-class ExpiryTrackingScreen extends StatefulWidget {
+class ExpiryTrackingScreen extends ConsumerStatefulWidget {
   const ExpiryTrackingScreen({super.key});
 
   @override
-  State<ExpiryTrackingScreen> createState() => _ExpiryTrackingScreenState();
+  ConsumerState<ExpiryTrackingScreen> createState() =>
+      _ExpiryTrackingScreenState();
 }
 
-class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
+class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _filterCategory = 'الكل';
+  bool _isLoading = true;
 
-  // Mock data
-  final List<Map<String, dynamic>> _products = [
-    {
-      'name': 'حليب طازج 1 لتر',
-      'barcode': '6281100123456',
-      'category': 'ألبان',
-      'quantity': 25,
-      'expiryDate': DateTime.now().add(const Duration(days: 5)),
-      'batchNumber': 'B2026-001',
-    },
-    {
-      'name': 'زبادي فواكه',
-      'barcode': '6281100123457',
-      'category': 'ألبان',
-      'quantity': 40,
-      'expiryDate': DateTime.now().add(const Duration(days: 3)),
-      'batchNumber': 'B2026-002',
-    },
-    {
-      'name': 'جبنة بيضاء',
-      'barcode': '6281100123458',
-      'category': 'ألبان',
-      'quantity': 15,
-      'expiryDate': DateTime.now().add(const Duration(days: 12)),
-      'batchNumber': 'B2026-003',
-    },
-    {
-      'name': 'عصير برتقال',
-      'barcode': '6281100123459',
-      'category': 'مشروبات',
-      'quantity': 30,
-      'expiryDate': DateTime.now().add(const Duration(days: 25)),
-      'batchNumber': 'B2026-004',
-    },
-    {
-      'name': 'رقائق بطاطس',
-      'barcode': '6281100123460',
-      'category': 'سناكس',
-      'quantity': 50,
-      'expiryDate': DateTime.now().add(const Duration(days: 45)),
-      'batchNumber': 'B2026-005',
-    },
-    {
-      'name': 'لحم مفروم',
-      'barcode': '6281100123461',
-      'category': 'لحوم',
-      'quantity': 10,
-      'expiryDate': DateTime.now().add(const Duration(days: 2)),
-      'batchNumber': 'B2026-006',
-    },
-  ];
+  List<_ExpiryItemData> _expiringIn7Days = [];
+  List<_ExpiryItemData> _expiringIn30Days = [];
+  List<_ExpiryItemData> _expired = [];
 
-  final List<String> _categories = ['الكل', 'ألبان', 'مشروبات', 'سناكس', 'لحوم'];
+  // Dialog controllers
+  final _barcodeController = TextEditingController();
+  final _batchController = TextEditingController();
+  final _quantityController = TextEditingController(text: '1');
+  final _notesController = TextEditingController();
+  DateTime? _selectedExpiryDate;
+  String? _selectedProductId;
+  String? _selectedProductName;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final db = getIt<AppDatabase>();
+      final now = DateTime.now();
+      final in7Days = now.add(const Duration(days: 7));
+      final in30Days = now.add(const Duration(days: 30));
+
+      // Query all expiry records for this store
+      final allExpiry = await (db.select(db.productExpiryTable)
+            ..where((e) => e.storeId.equals(storeId))
+            ..orderBy([(e) => OrderingTerm.asc(e.expiryDate)]))
+          .get();
+
+      // Build a map of product IDs to names
+      final productIds =
+          allExpiry.map((e) => e.productId).toSet().toList();
+      final Map<String, String> productNames = {};
+      if (productIds.isNotEmpty) {
+        for (final pid in productIds) {
+          try {
+            final product = await (db.select(db.productsTable)
+                  ..where((p) => p.id.equals(pid)))
+                .getSingleOrNull();
+            if (product != null) {
+              productNames[pid] = product.name;
+            }
+          } catch (_) {
+            // Product not found
+          }
+        }
+      }
+
+      // Categorize
+      final expired = <_ExpiryItemData>[];
+      final within7 = <_ExpiryItemData>[];
+      final within30 = <_ExpiryItemData>[];
+
+      for (final e in allExpiry) {
+        final item = _ExpiryItemData(
+          expiry: e,
+          productName: productNames[e.productId] ?? 'منتج غير معروف',
+        );
+        if (e.expiryDate.isBefore(now)) {
+          expired.add(item);
+        } else if (e.expiryDate.isBefore(in7Days)) {
+          within7.add(item);
+        } else if (e.expiryDate.isBefore(in30Days)) {
+          within30.add(item);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _expired = expired;
+          _expiringIn7Days = within7;
+          _expiringIn30Days = within30;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _barcodeController.dispose();
+    _batchController.dispose();
+    _quantityController.dispose();
+    _notesController.dispose();
     super.dispose();
-  }
-
-  List<Map<String, dynamic>> get _filteredProducts {
-    var products = _products;
-    if (_filterCategory != 'الكل') {
-      products = products.where((p) => p['category'] == _filterCategory).toList();
-    }
-    return products;
-  }
-
-  List<Map<String, dynamic>> get _expiringSoon {
-    return _filteredProducts.where((p) {
-      final daysLeft = (p['expiryDate'] as DateTime).difference(DateTime.now()).inDays;
-      return daysLeft <= 7 && daysLeft >= 0;
-    }).toList()
-      ..sort((a, b) => (a['expiryDate'] as DateTime).compareTo(b['expiryDate'] as DateTime));
-  }
-
-  List<Map<String, dynamic>> get _expiringLater {
-    return _filteredProducts.where((p) {
-      final daysLeft = (p['expiryDate'] as DateTime).difference(DateTime.now()).inDays;
-      return daysLeft > 7 && daysLeft <= 30;
-    }).toList()
-      ..sort((a, b) => (a['expiryDate'] as DateTime).compareTo(b['expiryDate'] as DateTime));
-  }
-
-  List<Map<String, dynamic>> get _expired {
-    return _filteredProducts.where((p) {
-      final daysLeft = (p['expiryDate'] as DateTime).difference(DateTime.now()).inDays;
-      return daysLeft < 0;
-    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تتبع الصلاحية')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تتبع الصلاحية'),
@@ -120,7 +138,7 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
           tabs: [
             Tab(
               icon: Badge(
-                label: Text('${_expiringSoon.length}'),
+                label: Text('${_expiringIn7Days.length}'),
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.warning_amber),
               ),
@@ -128,7 +146,7 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
             ),
             Tab(
               icon: Badge(
-                label: Text('${_expiringLater.length}'),
+                label: Text('${_expiringIn30Days.length}'),
                 backgroundColor: Colors.orange,
                 child: const Icon(Icons.schedule),
               ),
@@ -145,31 +163,22 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
           ],
         ),
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            onSelected: (category) {
-              setState(() => _filterCategory = category);
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              setState(() => _isLoading = true);
+              _loadData();
             },
-            itemBuilder: (context) => _categories.map((c) => PopupMenuItem(
-              value: c,
-              child: Row(
-                children: [
-                  if (c == _filterCategory)
-                    const Icon(Icons.check, size: 18),
-                  const SizedBox(width: 8),
-                  Text(c),
-                ],
-              ),
-            )).toList(),
+            tooltip: 'تحديث',
           ),
         ],
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildProductList(_expiringSoon, Colors.red),
-          _buildProductList(_expiringLater, Colors.orange),
-          _buildProductList(_expired, Colors.grey),
+          _buildExpiryList(_expiringIn7Days, Colors.red, 'لا توجد منتجات تنتهي خلال 7 أيام'),
+          _buildExpiryList(_expiringIn30Days, Colors.orange, 'لا توجد منتجات تنتهي خلال شهر'),
+          _buildExpiryList(_expired, Colors.grey, 'لا توجد منتجات منتهية الصلاحية'),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -180,129 +189,158 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
     );
   }
 
-  Widget _buildProductList(List<Map<String, dynamic>> products, Color alertColor) {
-    if (products.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle, size: 64, color: Colors.green.shade300),
-            const SizedBox(height: 16),
-            const Text('لا توجد منتجات في هذه الفئة'),
-          ],
-        ),
-      );
+  Widget _buildExpiryList(
+      List<_ExpiryItemData> items, Color statusColor, String emptyMessage) {
+    if (items.isEmpty) {
+      return _buildEmptyState(emptyMessage);
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        final product = products[index];
-        final expiryDate = product['expiryDate'] as DateTime;
-        final daysLeft = expiryDate.difference(DateTime.now()).inDays;
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            leading: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: alertColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  daysLeft < 0 ? '!' : '$daysLeft',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: alertColor,
-                  ),
-                ),
-              ),
-            ),
-            title: Text(product['name'] as String),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('الكمية: ${product['quantity']} | الباتش: ${product['batchNumber']}'),
-                Text(
-                  daysLeft < 0
-                      ? 'منتهي منذ ${-daysLeft} يوم'
-                      : daysLeft == 0
-                          ? 'ينتهي اليوم!'
-                          : 'ينتهي بعد $daysLeft يوم',
-                  style: TextStyle(color: alertColor, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            trailing: PopupMenuButton<String>(
-              onSelected: (action) => _handleAction(action, product),
-              itemBuilder: (context) => [
-                const PopupMenuItem(value: 'discount', child: Text('إنشاء خصم')),
-                const PopupMenuItem(value: 'remove', child: Text('إزالة من المخزون')),
-                const PopupMenuItem(value: 'notify', child: Text('إرسال تنبيه')),
-              ],
-            ),
-            isThreeLine: true,
-          ),
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return _buildExpiryCard(item, statusColor);
+        },
+      ),
     );
   }
 
-  void _handleAction(String action, Map<String, dynamic> product) {
-    switch (action) {
-      case 'discount':
-        _showDiscountDialog(product);
-        break;
-      case 'remove':
-        _confirmRemove(product);
-        break;
-      case 'notify':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تم إرسال تنبيه لـ ${product['name']}')),
-        );
-        break;
-    }
-  }
+  Widget _buildExpiryCard(_ExpiryItemData item, Color statusColor) {
+    final daysLeft = item.expiry.expiryDate.difference(DateTime.now()).inDays;
+    final dateFormatter = DateFormat('yyyy/MM/dd');
+    final isExpired = daysLeft < 0;
 
-  void _showDiscountDialog(Map<String, dynamic> product) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('خصم على ${product['name']}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: statusColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(
-              title: const Text('خصم 20%'),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('تم تطبيق خصم 20% على ${product['name']}')),
-                );
-              },
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    isExpired ? Icons.dangerous : Icons.schedule,
+                    color: statusColor,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.productName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          if (item.expiry.batchNumber != null) ...[
+                            Icon(Icons.inventory,
+                                size: 14, color: Colors.grey.shade600),
+                            const SizedBox(width: 4),
+                            Text(
+                              'باتش: ${item.expiry.batchNumber}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                          Icon(Icons.inventory_2,
+                              size: 14, color: Colors.grey.shade600),
+                          const SizedBox(width: 4),
+                          Text(
+                            'الكمية: ${item.expiry.quantity}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    isExpired
+                        ? 'منتهي منذ ${-daysLeft} يوم'
+                        : 'باقي $daysLeft يوم',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('خصم 30%'),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('تم تطبيق خصم 30% على ${product['name']}')),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('خصم 50%'),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('تم تطبيق خصم 50% على ${product['name']}')),
-                );
-              },
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.calendar_today,
+                    size: 14, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Text(
+                  'تاريخ الانتهاء: ${dateFormatter.format(item.expiry.expiryDate)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const Spacer(),
+                // Action buttons
+                TextButton.icon(
+                  onPressed: () => _showDiscountDialog(item),
+                  icon: const Icon(Icons.local_offer, size: 16),
+                  label: const Text('خصم', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                TextButton.icon(
+                  onPressed: () => _confirmRemove(item),
+                  icon: const Icon(Icons.delete_outline, size: 16),
+                  label: const Text('إزالة', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -310,26 +348,61 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
     );
   }
 
-  void _confirmRemove(Map<String, dynamic> product) {
+  Widget _buildEmptyState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle_outline, size: 64, color: Colors.green.shade300),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'اضغط + لإضافة تتبع صلاحية جديد',
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDiscountDialog(_ExpiryItemData item) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('تطبيق خصم على "${item.productName}" - قريباً'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+  void _confirmRemove(_ExpiryItemData item) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('تأكيد الإزالة'),
-        content: Text('هل تريد إزالة ${product['name']} من المخزون؟'),
+        content: Text(
+            'هل تريد إزالة تتبع صلاحية "${item.productName}"?\n'
+            'باتش: ${item.expiry.batchNumber ?? "-"}\n'
+            'الكمية: ${item.expiry.quantity}'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx),
             child: const Text('إلغاء'),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _products.removeWhere((p) => p['barcode'] == product['barcode']);
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تمت إزالة ${product['name']}')),
-              );
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await _removeExpiry(item);
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('إزالة'),
@@ -339,52 +412,287 @@ class _ExpiryTrackingScreenState extends State<ExpiryTrackingScreen>
     );
   }
 
+  Future<void> _removeExpiry(_ExpiryItemData item) async {
+    try {
+      final db = getIt<AppDatabase>();
+      await (db.delete(db.productExpiryTable)
+            ..where((e) => e.id.equals(item.expiry.id)))
+          .go();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم إزالة تتبع الصلاحية'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   void _showAddExpiryDialog() {
+    _barcodeController.clear();
+    _batchController.clear();
+    _quantityController.text = '1';
+    _notesController.clear();
+    _selectedExpiryDate = null;
+    _selectedProductId = null;
+    _selectedProductName = null;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('إضافة تاريخ صلاحية'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'الباركود',
-                prefixIcon: Icon(Icons.qr_code_scanner),
-              ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('إضافة تاريخ صلاحية'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Product search by barcode
+                TextField(
+                  controller: _barcodeController,
+                  decoration: InputDecoration(
+                    labelText: 'الباركود أو اسم المنتج',
+                    prefixIcon: const Icon(Icons.qr_code_scanner),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () async {
+                        await _searchProduct(
+                            _barcodeController.text, setDialogState);
+                      },
+                    ),
+                    border: const OutlineInputBorder(),
+                  ),
+                  onSubmitted: (value) =>
+                      _searchProduct(value, setDialogState),
+                ),
+                if (_selectedProductName != null) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle,
+                            size: 16, color: Colors.green.shade700),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _selectedProductName!,
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16),
+                // Expiry date
+                InkWell(
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: ctx,
+                      initialDate:
+                          DateTime.now().add(const Duration(days: 30)),
+                      firstDate: DateTime.now(),
+                      lastDate:
+                          DateTime.now().add(const Duration(days: 365 * 5)),
+                    );
+                    if (date != null) {
+                      setDialogState(() => _selectedExpiryDate = date);
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'تاريخ الانتهاء',
+                      prefixIcon: Icon(Icons.calendar_today),
+                      border: OutlineInputBorder(),
+                    ),
+                    child: Text(
+                      _selectedExpiryDate != null
+                          ? DateFormat('yyyy/MM/dd')
+                              .format(_selectedExpiryDate!)
+                          : 'اختر التاريخ',
+                      style: TextStyle(
+                        color: _selectedExpiryDate != null
+                            ? null
+                            : Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _batchController,
+                  decoration: const InputDecoration(
+                    labelText: 'رقم الباتش (اختياري)',
+                    prefixIcon: Icon(Icons.inventory),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'الكمية',
+                    prefixIcon: Icon(Icons.format_list_numbered),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _notesController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'ملاحظات (اختياري)',
+                    prefixIcon: Icon(Icons.notes),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'تاريخ الانتهاء',
-                prefixIcon: Icon(Icons.calendar_today),
-              ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('إلغاء'),
             ),
-            SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'رقم الباتش',
-                prefixIcon: Icon(Icons.inventory),
-              ),
+            FilledButton(
+              onPressed: (_selectedProductId != null &&
+                      _selectedExpiryDate != null)
+                  ? () async {
+                      Navigator.pop(ctx);
+                      await _addExpiry();
+                    }
+                  : null,
+              child: const Text('إضافة'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تمت الإضافة بنجاح ✅')),
-              );
-            },
-            child: const Text('إضافة'),
-          ),
-        ],
       ),
     );
   }
+
+  Future<void> _searchProduct(
+      String query, void Function(void Function()) setDialogState) async {
+    if (query.isEmpty) return;
+
+    final db = getIt<AppDatabase>();
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    // Try barcode first
+    final byBarcode = await (db.select(db.productsTable)
+          ..where((p) =>
+              p.barcode.equals(query) & p.storeId.equals(storeId)))
+        .getSingleOrNull();
+
+    if (byBarcode != null) {
+      setDialogState(() {
+        _selectedProductId = byBarcode.id;
+        _selectedProductName = byBarcode.name;
+      });
+      return;
+    }
+
+    // Try name search
+    final byName = await (db.select(db.productsTable)
+          ..where(
+              (p) => p.name.contains(query) & p.storeId.equals(storeId))
+          ..limit(1))
+        .getSingleOrNull();
+
+    if (byName != null) {
+      setDialogState(() {
+        _selectedProductId = byName.id;
+        _selectedProductName = byName.name;
+      });
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('لم يتم العثور على المنتج'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _addExpiry() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null || _selectedProductId == null || _selectedExpiryDate == null) return;
+
+      final id =
+          'exp_${DateTime.now().millisecondsSinceEpoch}_$_selectedProductId';
+      final quantity = int.tryParse(_quantityController.text) ?? 1;
+
+      await db.into(db.productExpiryTable).insert(
+            ProductExpiryTableCompanion.insert(
+              id: id,
+              productId: _selectedProductId!,
+              storeId: storeId,
+              batchNumber: Value(_batchController.text.isEmpty
+                  ? null
+                  : _batchController.text),
+              expiryDate: _selectedExpiryDate!,
+              quantity: quantity,
+              notes: Value(_notesController.text.isEmpty
+                  ? null
+                  : _notesController.text),
+              createdAt: DateTime.now(),
+            ),
+          );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم إضافة تتبع الصلاحية بنجاح'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+}
+
+/// Data model combining expiry record with product name
+class _ExpiryItemData {
+  final ProductExpiryTableData expiry;
+  final String productName;
+
+  const _ExpiryItemData({
+    required this.expiry,
+    required this.productName,
+  });
 }

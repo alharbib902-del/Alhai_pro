@@ -9,7 +9,7 @@ library;
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// CSRF Token Manager
 class CsrfProtection {
@@ -38,9 +38,7 @@ class CsrfProtection {
     _currentToken = base64Url.encode(digest.bytes);
     _tokenCreatedAt = DateTime.now();
 
-    if (kDebugMode) {
-      debugPrint('🔐 CSRF Token generated (expires in ${_tokenValidity.inMinutes} min)');
-    }
+    AppLogger.debug('CSRF Token generated (expires in ${_tokenValidity.inMinutes} min)', tag: 'CSRF');
 
     return _currentToken!;
   }
@@ -56,24 +54,20 @@ class CsrfProtection {
   /// التحقق من صحة token
   static bool validateToken(String token) {
     if (_currentToken == null) {
-      if (kDebugMode) {
-        debugPrint('⚠️ CSRF validation failed: No token stored');
-      }
+      AppLogger.warning('CSRF validation failed: No token stored', tag: 'CSRF');
       return false;
     }
 
     if (_isTokenExpired()) {
-      if (kDebugMode) {
-        debugPrint('⚠️ CSRF validation failed: Token expired');
-      }
+      AppLogger.warning('CSRF validation failed: Token expired', tag: 'CSRF');
       return false;
     }
 
     // مقارنة آمنة ضد timing attacks
     final isValid = _constantTimeEquals(token, _currentToken!);
 
-    if (kDebugMode && !isValid) {
-      debugPrint('⚠️ CSRF validation failed: Token mismatch');
+    if (!isValid) {
+      AppLogger.warning('CSRF validation failed: Token mismatch', tag: 'CSRF');
     }
 
     return isValid;
@@ -101,9 +95,7 @@ class CsrfProtection {
     _currentToken = null;
     _tokenCreatedAt = null;
 
-    if (kDebugMode) {
-      debugPrint('🔐 CSRF Token invalidated');
-    }
+    AppLogger.debug('CSRF Token invalidated', tag: 'CSRF');
   }
 
   /// الحصول على header للـ CSRF

@@ -278,11 +278,23 @@ class BidirectionalStrategy {
       return _ApplyResult.pulled;
     }
 
+    // تحديد عمود الوقت المتاح
+    final timeCol = _getOrderColumn(tableName);
+
     // التحقق من وجود سجل محلي
-    final localRows = await _db.customSelect(
-      'SELECT synced_at, updated_at FROM $tableName WHERE id = ?',
-      variables: [Variable.withString(recordId)],
-    ).get();
+    final List<QueryRow> localRows;
+    if (timeCol != null) {
+      localRows = await _db.customSelect(
+        'SELECT synced_at, $timeCol as time_col FROM $tableName WHERE id = ?',
+        variables: [Variable.withString(recordId)],
+      ).get();
+    } else {
+      // جداول بدون أعمدة زمنية: نتحقق فقط من الوجود
+      localRows = await _db.customSelect(
+        'SELECT id FROM $tableName WHERE id = ?',
+        variables: [Variable.withString(recordId)],
+      ).get();
+    }
 
     if (localRows.isEmpty) {
       // سجل جديد: إدراج مباشر
@@ -290,16 +302,25 @@ class BidirectionalStrategy {
       return _ApplyResult.pulled;
     }
 
+    // جداول بدون أعمدة زمنية: تحديث مباشر (لا يمكن كشف التعارض)
+    if (timeCol == null) {
+      if (conflictResolution == ConflictResolution.localWins) {
+        return _ApplyResult.conflict;
+      }
+      await _upsertRecord(tableName, serverRecord);
+      return _ApplyResult.pulled;
+    }
+
     // كشف التعارض: مقارنة الأوقات
     final localRow = localRows.first;
     final localSyncedAt = localRow.data['synced_at'] as String?;
-    final localUpdatedAt = localRow.data['updated_at'] as String?;
-    final serverUpdatedAt = serverRecord['updated_at'] as String?;
+    final localTimeCol = localRow.data['time_col'] as String?;
+    final serverTimeCol = serverRecord[timeCol] as String?;
 
     // إذا لم يُعدل محلياً منذ آخر مزامنة، لا تعارض
-    if (localSyncedAt != null && localUpdatedAt != null) {
+    if (localSyncedAt != null && localTimeCol != null) {
       final syncTime = DateTime.parse(localSyncedAt);
-      final updateTime = DateTime.parse(localUpdatedAt);
+      final updateTime = DateTime.parse(localTimeCol);
       if (!updateTime.isAfter(syncTime)) {
         // لم يُعدل محلياً، تحديث مباشر
         await _upsertRecord(tableName, serverRecord);
@@ -310,10 +331,10 @@ class BidirectionalStrategy {
     // يوجد تعارض: حل حسب السياسة
     switch (conflictResolution) {
       case ConflictResolution.lastWriteWins:
-        // مقارنة updated_at
-        if (serverUpdatedAt != null && localUpdatedAt != null) {
-          final serverTime = DateTime.parse(serverUpdatedAt);
-          final localTime = DateTime.parse(localUpdatedAt);
+        // مقارنة الأوقات
+        if (serverTimeCol != null && localTimeCol != null) {
+          final serverTime = DateTime.parse(serverTimeCol);
+          final localTime = DateTime.parse(localTimeCol);
           if (serverTime.isAfter(localTime)) {
             await _upsertRecord(tableName, serverRecord);
             return _ApplyResult.pulled;
@@ -339,22 +360,64 @@ class BidirectionalStrategy {
     DateTime? since,
     int offset = 0,
   }) async {
-    var query = _client
-        .from(tableName)
-        .select()
-        .eq('org_id', orgId)
-        .eq('store_id', storeId);
+    var query = _client.from(tableName).select();
 
-    if (since != null) {
-      query = query.gte('updated_at', since.toUtc().toIso8601String());
+    // فلترة حسب الأعمدة المتاحة لكل جدول
+    if (_hasOrgId(tableName)) {
+      query = query.eq('org_id', orgId);
+    }
+    if (_hasStoreId(tableName)) {
+      query = query.eq('store_id', storeId);
     }
 
-    final response = await query
-        .order('updated_at', ascending: true)
-        .range(offset, offset + pageSize - 1);
+    final orderCol = _getOrderColumn(tableName);
 
-    final records = List<Map<String, dynamic>>.from(response);
-    return _jsonConverter.batchToLocal(tableName, records);
+    if (since != null && orderCol != null) {
+      query = query.gte(orderCol, since.toUtc().toIso8601String());
+    }
+
+    if (orderCol != null) {
+      final response = await query
+          .order(orderCol, ascending: true)
+          .range(offset, offset + pageSize - 1);
+      final records = List<Map<String, dynamic>>.from(response);
+      return _jsonConverter.batchToLocal(tableName, records);
+    } else {
+      // جداول بدون أعمدة زمنية (return_items, purchase_items)
+      final response = await query.range(offset, offset + pageSize - 1);
+      final records = List<Map<String, dynamic>>.from(response);
+      return _jsonConverter.batchToLocal(tableName, records);
+    }
+  }
+
+  /// هل يحتوي الجدول على عمود org_id في Supabase؟
+  bool _hasOrgId(String tableName) {
+    // فقط هذه الجداول لديها org_id فعلياً في Supabase
+    const tablesWithOrgId = {
+      'customers', 'expenses', 'returns', 'purchases',
+    };
+    return tablesWithOrgId.contains(tableName);
+  }
+
+  /// هل يحتوي الجدول على عمود store_id في Supabase؟
+  bool _hasStoreId(String tableName) {
+    // return_items و purchase_items ليس لديهم store_id
+    const tablesWithStoreId = {
+      'customers', 'expenses', 'returns', 'purchases',
+    };
+    return tablesWithStoreId.contains(tableName);
+  }
+
+  /// عمود الترتيب الزمني المتاح لكل جدول
+  String? _getOrderColumn(String tableName) {
+    const tablesWithUpdatedAt = {
+      'customers', 'expenses', 'purchases',
+    };
+    const tablesWithCreatedAtOnly = {'returns'};
+    if (tablesWithUpdatedAt.contains(tableName)) return 'updated_at';
+    if (tablesWithCreatedAtOnly.contains(tableName)) return 'created_at';
+    // return_items و purchase_items ليس لديهم أعمدة زمنية
+    return null;
   }
 
   /// إدراج/تحديث سجل محلياً
@@ -379,6 +442,7 @@ class BidirectionalStrategy {
     final clean = Map<String, dynamic>.from(payload);
     clean.remove('syncedAt');
     clean.remove('synced_at');
+    clean.remove('items');
     return clean;
   }
 }

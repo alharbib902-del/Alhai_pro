@@ -155,5 +155,43 @@ export 'settings/notifications_settings_screen.dart';
 export 'settings/zatca_compliance_screen.dart';
 export 'settings/help_support_screen.dart';
 
+// AI Screens
+export 'ai/ai_assistant_screen.dart';
+export 'ai/ai_sales_forecasting_screen.dart';
+export 'ai/ai_smart_pricing_screen.dart';
+export 'ai/ai_fraud_detection_screen.dart';
+export 'ai/ai_basket_analysis_screen.dart';
+export 'ai/ai_customer_recommendations_screen.dart';
+export 'ai/ai_smart_inventory_screen.dart';
+export 'ai/ai_competitor_analysis_screen.dart';
+export 'ai/ai_smart_reports_screen.dart';
+export 'ai/ai_staff_analytics_screen.dart';
+export 'ai/ai_product_recognition_screen.dart';
+export 'ai/ai_sentiment_analysis_screen.dart';
+export 'ai/ai_return_prediction_screen.dart';
+export 'ai/ai_promotion_designer_screen.dart';
+export 'ai/ai_chat_with_data_screen.dart';
+
+// Ecommerce
+export 'ecommerce/ecommerce_screen.dart';
+
+// Wallet
+export 'wallet/wallet_screen.dart';
+
+// Subscription
+export 'subscription/subscription_screen.dart';
+
+// Complaints
+export 'reports/complaints_report_screen.dart';
+
+// Media Library
+export 'media/media_library_screen.dart';
+
+// Device Log
+export 'devices/device_log_screen.dart';
+
+// Shipping Gateways
+export 'settings/shipping_gateways_screen.dart';
+
 // Onboarding
 export 'onboarding/onboarding_screen.dart';

@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
@@ -127,8 +128,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   child: GridView.builder(
                     padding: const EdgeInsets.all(AppSizes.md),
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
                       crossAxisSpacing: AppSizes.md,
                       mainAxisSpacing: AppSizes.md,
                       childAspectRatio: 0.85,

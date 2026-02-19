@@ -1,25 +1,58 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الضريبة VAT
-class VatReportScreen extends StatefulWidget {
+class VatReportScreen extends ConsumerStatefulWidget {
   const VatReportScreen({super.key});
 
   @override
-  State<VatReportScreen> createState() => _VatReportScreenState();
+  ConsumerState<VatReportScreen> createState() => _VatReportScreenState();
 }
 
-class _VatReportScreenState extends State<VatReportScreen> {
+class _VatReportScreenState extends ConsumerState<VatReportScreen> {
   DateTimeRange? _dateRange;
-  bool _isLoading = false;
-  
-  // Mock data
-  final double _totalSales = 125000;
-  final double _vatCollected = 18750;
-  final double _totalPurchases = 75000;
-  final double _vatPaid = 11250;
-  
+  bool _isLoading = true;
+
+  double _totalSales = 0;
+  double _vatCollected = 0;
+  double _totalPurchases = 0;
+  double _vatPaid = 0;
+
   double get _netVat => _vatCollected - _vatPaid;
-  
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVatData();
+  }
+
+  Future<void> _loadVatData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+
+      final now = DateTime.now();
+      final startDate = _dateRange?.start ?? DateTime(now.year, now.month, 1);
+      final endDate = _dateRange?.end ?? now;
+
+      final salesStats = await db.salesDao.getSalesStats(storeId, startDate: startDate, endDate: endDate);
+      _totalSales = salesStats.total;
+      _vatCollected = _totalSales * 0.15;
+
+      // Purchases not readily available, set to 0
+      _totalPurchases = 0;
+      _vatPaid = _totalPurchases * 0.15;
+
+      setState(() => _isLoading = false);
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +78,7 @@ class _VatReportScreenState extends State<VatReportScreen> {
                     title: Text(_dateRange == null 
                       ? 'اختر الفترة'
                       : '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: const AdaptiveIcon(Icons.chevron_right),
                     onTap: _selectDateRange,
                   ),
                 ),
@@ -120,7 +153,7 @@ class _VatReportScreenState extends State<VatReportScreen> {
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.send),
+                        icon: const AdaptiveIcon(Icons.send),
                         label: const Text('إرسال للهيئة'),
                       ),
                     ),
@@ -147,9 +180,7 @@ class _VatReportScreenState extends State<VatReportScreen> {
         _dateRange = range;
         _isLoading = true;
       });
-      // Simulate loading
-      await Future.delayed(const Duration(seconds: 1));
-      setState(() => _isLoading = false);
+      _loadVatData();
     }
   }
   

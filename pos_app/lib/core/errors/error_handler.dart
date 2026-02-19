@@ -1,17 +1,17 @@
 /// Error Handler - معالجة الأخطاء الشاملة
 ///
 /// يوفر:
-/// - تصنيف الأخطاء حسب النوع
-/// - رسائل خطأ عربية ودية
-/// - تسجيل الأخطاء
-/// - Retry logic
+/// - تصنيف الأخطاء حسب النوع (ErrorConverter)
+/// - تسجيل الأخطاء (ErrorLogger)
+/// - عرض الأخطاء للمستخدم (ErrorPresenter)
 /// - ErrorBoundary للـ widgets
 library error_handler;
 
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
+import '../theme/app_sizes.dart';
 
 // ============================================================================
 // ERROR TYPES
@@ -258,15 +258,15 @@ class AppError implements Exception {
 }
 
 // ============================================================================
-// ERROR HANDLER
+// ERROR CONVERTER - تحويل الأخطاء
 // ============================================================================
 
-/// معالج الأخطاء المركزي
-class ErrorHandler {
-  ErrorHandler._();
+/// تحويل أي خطأ لـ AppError
+class ErrorConverter {
+  ErrorConverter._();
 
   /// تحويل أي خطأ لـ AppError
-  static AppError handle(Object error, [StackTrace? stackTrace]) {
+  static AppError convert(Object error, [StackTrace? stackTrace]) {
     if (error is AppError) {
       return error;
     }
@@ -301,29 +301,44 @@ class ErrorHandler {
       stackTrace: stackTrace,
     );
   }
+}
+
+// ============================================================================
+// ERROR LOGGER - تسجيل الأخطاء
+// ============================================================================
+
+/// تسجيل الأخطاء للتشخيص
+class ErrorLogger {
+  ErrorLogger._();
 
   /// تسجيل الخطأ
   static void log(AppError error) {
-    if (kDebugMode) {
-      debugPrint('═══════════════════════════════════════');
-      debugPrint('❌ ERROR: ${error.type}');
-      debugPrint('Message: ${error.message}');
-      debugPrint('User Message: ${error.userMessage}');
-      if (error.code != null) {
-        debugPrint('Code: ${error.code}');
-      }
-      if (error.originalError != null) {
-        debugPrint('Original: ${error.originalError}');
-      }
-      if (error.stackTrace != null) {
-        debugPrint('Stack: ${error.stackTrace}');
-      }
-      debugPrint('═══════════════════════════════════════');
-    }
+    final details = StringBuffer();
+    details.write('${error.type} - ${error.message}');
+    if (error.code != null) details.write(' [${error.code}]');
+    if (error.originalError != null) details.write(' | Original: ${error.originalError}');
+
+    AppLogger.error(
+      details.toString(),
+      tag: 'ErrorHandler',
+      error: error.stackTrace,
+    );
 
     // TODO: إرسال للـ Crashlytics في Production
     // CrashlyticsService.logError(error);
   }
+}
+
+// ============================================================================
+// ERROR PRESENTER - عرض الأخطاء
+// ============================================================================
+
+/// عرض الأخطاء للمستخدم
+class ErrorPresenter {
+  ErrorPresenter._();
+
+  /// مدة عرض الـ SnackBar
+  static const _snackBarDuration = Duration(seconds: 4);
 
   /// عرض رسالة خطأ للمستخدم
   static void showError(
@@ -334,9 +349,9 @@ class ErrorHandler {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(error.userMessage),
-        backgroundColor: Colors.red[700],
+        backgroundColor: Theme.of(context).colorScheme.error,
         behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
+        duration: _snackBarDuration,
         action: error.canRetry && onRetry != null
             ? SnackBarAction(
                 label: 'إعادة المحاولة',
@@ -358,11 +373,11 @@ class ErrorHandler {
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(
-          _getErrorIcon(error.type),
-          color: Colors.red[700],
-          size: 48,
+          getErrorIcon(error.type),
+          color: Theme.of(context).colorScheme.error,
+          size: AppIconSize.xl,
         ),
-        title: Text(_getErrorTitle(error.type)),
+        title: Text(getErrorTitle(error.type)),
         content: Text(
           error.userMessage,
           textAlign: TextAlign.center,
@@ -385,7 +400,8 @@ class ErrorHandler {
     );
   }
 
-  static IconData _getErrorIcon(ErrorType type) {
+  /// أيقونة الخطأ حسب النوع
+  static IconData getErrorIcon(ErrorType type) {
     switch (type) {
       case ErrorType.network:
       case ErrorType.noConnection:
@@ -411,7 +427,8 @@ class ErrorHandler {
     }
   }
 
-  static String _getErrorTitle(ErrorType type) {
+  /// عنوان الخطأ حسب النوع
+  static String getErrorTitle(ErrorType type) {
     switch (type) {
       case ErrorType.network:
       case ErrorType.noConnection:
@@ -436,6 +453,38 @@ class ErrorHandler {
         return 'خطأ';
     }
   }
+}
+
+// ============================================================================
+// ERROR HANDLER (Facade) - واجهة موحدة
+// ============================================================================
+
+/// معالج الأخطاء المركزي - واجهة موحدة تفوض للفئات المتخصصة
+class ErrorHandler {
+  ErrorHandler._();
+
+  /// تحويل أي خطأ لـ AppError
+  static AppError handle(Object error, [StackTrace? stackTrace]) =>
+      ErrorConverter.convert(error, stackTrace);
+
+  /// تسجيل الخطأ
+  static void log(AppError error) => ErrorLogger.log(error);
+
+  /// عرض رسالة خطأ للمستخدم
+  static void showError(
+    BuildContext context,
+    AppError error, {
+    VoidCallback? onRetry,
+  }) =>
+      ErrorPresenter.showError(context, error, onRetry: onRetry);
+
+  /// عرض dialog للخطأ
+  static Future<bool?> showErrorDialog(
+    BuildContext context,
+    AppError error, {
+    VoidCallback? onRetry,
+  }) =>
+      ErrorPresenter.showErrorDialog(context, error, onRetry: onRetry);
 }
 
 // ============================================================================
@@ -502,23 +551,23 @@ class _DefaultErrorWidget extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 64,
+              size: AppIconSize.xxl,
               color: theme.colorScheme.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               error.userMessage,
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
             if (error.canRetry) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xxl),
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),

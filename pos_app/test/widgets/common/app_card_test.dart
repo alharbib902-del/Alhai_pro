@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pos_app/widgets/common/app_card.dart';
+import 'package:pos_app/l10n/generated/app_localizations.dart';
 
 // ===========================================
 // App Card Tests
@@ -9,6 +10,9 @@ import 'package:pos_app/widgets/common/app_card.dart';
 void main() {
   Widget buildTestWidget(Widget child, {double? width, double? height}) {
     return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('ar'),
       home: Scaffold(
         body: SingleChildScrollView(
           child: Center(
@@ -28,6 +32,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const AppCard(child: Text('محتوى البطاقة')),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى البطاقة'), findsOneWidget);
     });
@@ -41,6 +46,7 @@ void main() {
           child: const Text('اضغط'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('اضغط'));
       expect(tapped, true);
@@ -55,6 +61,7 @@ void main() {
           child: const Text('اضغط مطولاً'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.longPress(find.text('اضغط مطولاً'));
       expect(longPressed, true);
@@ -67,6 +74,7 @@ void main() {
           child: Text('بطاقة'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
@@ -78,6 +86,7 @@ void main() {
           child: Text('محدد'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محدد'), findsOneWidget);
     });
@@ -89,6 +98,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -100,6 +110,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -111,6 +122,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -122,6 +134,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -133,6 +146,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -144,6 +158,7 @@ void main() {
           child: Text('محتوى'),
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('محتوى'), findsOneWidget);
     });
@@ -158,6 +173,7 @@ void main() {
           icon: Icons.shopping_cart,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('المبيعات'), findsOneWidget);
       expect(find.text('1,500'), findsOneWidget);
@@ -173,6 +189,7 @@ void main() {
           change: 15.5,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('+15.5%'), findsOneWidget);
       expect(find.byIcon(Icons.trending_up), findsOneWidget);
@@ -187,6 +204,7 @@ void main() {
           change: -10.2,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('-10.2%'), findsOneWidget);
       expect(find.byIcon(Icons.trending_down), findsOneWidget);
@@ -203,6 +221,7 @@ void main() {
         ),
         width: 400,
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('سابق'), findsOneWidget);
     });
@@ -218,6 +237,7 @@ void main() {
           onTap: () => tapped = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('المبيعات'));
       expect(tapped, true);
@@ -232,6 +252,7 @@ void main() {
           iconColor: Colors.green,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.shopping_cart), findsOneWidget);
     });
@@ -245,6 +266,7 @@ void main() {
           price: 5.50,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('حليب طازج'), findsOneWidget);
       expect(find.text('5.50 ر.س'), findsOneWidget);
@@ -258,11 +280,12 @@ void main() {
           oldPrice: 7.00,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('7.00'), findsOneWidget);
     });
 
-    testWidgets('يعرض حالة المخزون - نفذ', (tester) async {
+    testWidgets('يعرض حالة المخزون - نفد', (tester) async {
       await tester.pumpWidget(buildTestWidget(
         const ProductCard(
           name: 'حليب طازج',
@@ -270,11 +293,12 @@ void main() {
           quantity: 0,
         ),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('نفذ'), findsOneWidget);
+      expect(find.text('نفد'), findsOneWidget);
     });
 
-    testWidgets('يعرض حالة المخزون - قليل', (tester) async {
+    testWidgets('يعرض حالة المخزون - مخزون منخفض', (tester) async {
       await tester.pumpWidget(buildTestWidget(
         const ProductCard(
           name: 'حليب طازج',
@@ -282,8 +306,9 @@ void main() {
           quantity: 3,
         ),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('كمية قليلة (3)'), findsOneWidget);
+      expect(find.text('مخزون منخفض (3)'), findsOneWidget);
     });
 
     testWidgets('يعرض حالة المخزون - متوفر', (tester) async {
@@ -294,6 +319,7 @@ void main() {
           quantity: 10,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('متوفر (10)'), findsOneWidget);
     });
@@ -309,10 +335,11 @@ void main() {
           onAddToCart: () => added = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
-      expect(find.text('أضف'), findsOneWidget);
+      expect(find.text('إضافة'), findsOneWidget);
 
-      await tester.tap(find.text('أضف'));
+      await tester.tap(find.text('إضافة'));
       expect(added, true);
     });
 
@@ -327,8 +354,9 @@ void main() {
           onAddToCart: () => added = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.text('أضف'));
+      await tester.tap(find.text('إضافة'));
       expect(added, false);
     });
 
@@ -342,6 +370,7 @@ void main() {
           onTap: () => tapped = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('حليب طازج'));
       expect(tapped, true);
@@ -355,6 +384,7 @@ void main() {
           isSelected: true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('حليب طازج'), findsOneWidget);
     });
@@ -367,6 +397,7 @@ void main() {
           currency: '\$',
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('5.50 \$'), findsOneWidget);
     });
@@ -377,6 +408,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const CustomerCard(name: 'أحمد محمد'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('أحمد محمد'), findsOneWidget);
       expect(find.text('أم'), findsOneWidget); // الأحرف الأولى
@@ -389,6 +421,7 @@ void main() {
           phone: '0501234567',
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('0501234567'), findsOneWidget);
     });
@@ -400,6 +433,7 @@ void main() {
           balance: 500,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('عليه'), findsOneWidget);
       expect(find.text('500.00 ر.س'), findsOneWidget);
@@ -412,6 +446,7 @@ void main() {
           balance: -200,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('له'), findsOneWidget);
       expect(find.text('200.00 ر.س'), findsOneWidget);
@@ -424,6 +459,7 @@ void main() {
           balance: 0,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('متوازن'), findsOneWidget);
     });
@@ -437,6 +473,7 @@ void main() {
           onTap: () => tapped = true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('أحمد محمد'));
       expect(tapped, true);
@@ -449,6 +486,7 @@ void main() {
           isSelected: true,
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('أحمد محمد'), findsOneWidget);
     });
@@ -460,6 +498,7 @@ void main() {
           initials: 'XX',
         ),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('XX'), findsOneWidget);
     });
@@ -468,6 +507,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(
         const CustomerCard(name: 'أحمد'),
       ));
+      await tester.pumpAndSettle();
 
       expect(find.text('أ'), findsOneWidget);
     });

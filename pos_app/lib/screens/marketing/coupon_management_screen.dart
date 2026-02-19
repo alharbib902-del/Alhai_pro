@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
-/// شاشة إدارة الكوبونات
+/// Coupon Management Screen
 class CouponManagementScreen extends ConsumerStatefulWidget {
   const CouponManagementScreen({super.key});
 
@@ -16,33 +19,34 @@ class CouponManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'loyalty';
 
-  final List<_Coupon> _coupons = [
-    _Coupon(id: '1', code: 'WELCOME10', type: 'percentage', value: 10, minOrder: 100, maxUses: 100, usedCount: 45, active: true, expiryDate: DateTime.now().add(const Duration(days: 30))),
-    _Coupon(id: '2', code: 'SAVE50', type: 'fixed', value: 50, minOrder: 200, maxUses: 50, usedCount: 20, active: true, expiryDate: DateTime.now().add(const Duration(days: 15))),
-    _Coupon(id: '3', code: 'FREESHIP', type: 'freeDelivery', value: 0, minOrder: 150, maxUses: 200, usedCount: 180, active: true, expiryDate: DateTime.now().add(const Duration(days: 7))),
-    _Coupon(id: '4', code: 'OLD25', type: 'percentage', value: 25, minOrder: 0, maxUses: 30, usedCount: 30, active: false, expiryDate: DateTime.now().subtract(const Duration(days: 5))),
-  ];
+  List<CouponsTableData> _coupons = [];
+  bool _isLoading = true;
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
   }
 
+  Future<void> _loadData() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+      final db = getIt<AppDatabase>();
+      final results = await db.discountsDao.getAllCoupons(storeId);
+      if (mounted) {
+        setState(() {
+          _coupons = results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+      debugPrint('Error loading coupons: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -51,69 +55,29 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'إدارة الكوبونات', // TODO: localize
+                  title: l10n.manageCoupons,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.cashCustomer,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                        ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
@@ -126,11 +90,11 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('الكوبونات', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)), // TODO: localize
+            Text(l10n.couponsTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
             FilledButton.icon(
               onPressed: _addCoupon,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('كوبون جديد'), // TODO: localize
+              label: Text(l10n.newCoupon),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
             ),
           ],
@@ -140,22 +104,22 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
         // Stats
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.confirmation_number, 'الكوبونات', '${_coupons.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(Icons.confirmation_number, l10n.couponsTitle, '${_coupons.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.check_circle, 'نشط', '${_coupons.where((c) => c.active).length}', AppColors.success, isDark)),
+            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${_coupons.where((c) => c.isActive).length}', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.analytics, 'الاستخدامات', '${_coupons.fold(0, (sum, c) => sum + c.usedCount)}', AppColors.secondary, isDark)),
+            Expanded(child: _buildStatCard(Icons.analytics, l10n.usages, '${_coupons.fold(0, (sum, c) => sum + c.currentUses)}', AppColors.secondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
 
         // Coupons list
         ..._coupons.map((coupon) {
-          final isExpired = coupon.expiryDate.isBefore(DateTime.now());
+          final isExpired = coupon.expiresAt?.isBefore(DateTime.now()) ?? false;
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: !coupon.active || isExpired ? (isDark ? const Color(0xFF1E293B).withValues(alpha: 0.5) : Colors.grey.shade100) : cardColor,
+              color: !coupon.isActive || isExpired ? (isDark ? const Color(0xFF1E293B).withValues(alpha: 0.5) : Colors.grey.shade100) : cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
             ),
@@ -173,22 +137,22 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
                 children: [
                   Text(coupon.code, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace', color: textColor)),
                   const SizedBox(width: 8),
-                  if (!coupon.active || isExpired)
+                  if (!coupon.isActive || isExpired)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(color: AppColors.textSecondary, borderRadius: BorderRadius.circular(4)),
-                      child: Text(isExpired ? 'منتهي' : 'معطل', style: const TextStyle(color: Colors.white, fontSize: 10)),
+                      child: Text(isExpired ? l10n.expired : l10n.deactivated, style: const TextStyle(color: Colors.white, fontSize: 10)),
                     ),
                 ],
               ),
               subtitle: Text(
-                '${_getTypeLabel(coupon)} - ${coupon.usedCount}/${coupon.maxUses} استخدام', // TODO: localize
+                '${_getTypeLabel(coupon, l10n)} - ${l10n.usageCount(coupon.currentUses, coupon.maxUses)}',
                 style: TextStyle(color: subtextColor, fontSize: 12),
               ),
               trailing: Switch(
-                value: coupon.active && !isExpired,
-                onChanged: isExpired ? null : (v) => setState(() => coupon.active = v),
-                activeColor: AppColors.primary,
+                value: coupon.isActive && !isExpired,
+                onChanged: isExpired ? null : (v) => _toggleActive(coupon, v),
+                activeThumbColor: AppColors.primary,
               ),
               onTap: () => _showDetails(coupon),
             ),
@@ -217,11 +181,11 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     );
   }
 
-  String _getTypeLabel(_Coupon c) {
+  String _getTypeLabel(CouponsTableData c, AppLocalizations l10n) {
     switch (c.type) {
-      case 'percentage': return 'خصم ${c.value.toInt()}%';
-      case 'fixed': return 'خصم ${c.value.toInt()} ر.س';
-      case 'freeDelivery': return 'توصيل مجاني';
+      case 'percentage': return l10n.percentageDiscountLabel(c.value.toInt());
+      case 'fixed': return l10n.fixedDiscountLabel(c.value.toInt());
+      case 'freeDelivery': return l10n.freeDelivery;
       default: return '';
     }
   }
@@ -244,33 +208,69 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     }
   }
 
+  Future<void> _toggleActive(CouponsTableData coupon, bool value) async {
+    try {
+      final db = getIt<AppDatabase>();
+      final updated = CouponsTableData(
+        id: coupon.id,
+        storeId: coupon.storeId,
+        code: coupon.code,
+        discountId: coupon.discountId,
+        type: coupon.type,
+        value: coupon.value,
+        maxUses: coupon.maxUses,
+        currentUses: coupon.currentUses,
+        minPurchase: coupon.minPurchase,
+        isActive: value,
+        expiresAt: coupon.expiresAt,
+        createdAt: coupon.createdAt,
+        syncedAt: coupon.syncedAt,
+      );
+      await db.discountsDao.updateCoupon(updated);
+      await _loadData();
+    } catch (e) {
+      debugPrint('Error toggling coupon: $e');
+    }
+  }
+
+  Future<void> _deleteCoupon(CouponsTableData coupon) async {
+    try {
+      final db = getIt<AppDatabase>();
+      await db.discountsDao.deleteCoupon(coupon.id);
+      await _loadData();
+    } catch (e) {
+      debugPrint('Error deleting coupon: $e');
+    }
+  }
+
   void _addCoupon() {
     final codeController = TextEditingController();
     final valueController = TextEditingController();
     String type = 'percentage';
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('كوبون جديد'),
+          title: Text(l10n.newCoupon),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: codeController,
-                  decoration: const InputDecoration(labelText: 'كود الكوبون', prefixIcon: Icon(Icons.confirmation_number)),
+                  decoration: InputDecoration(labelText: l10n.couponCode, prefixIcon: const Icon(Icons.confirmation_number)),
                   textCapitalization: TextCapitalization.characters,
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: type,
-                  decoration: const InputDecoration(labelText: 'النوع', prefixIcon: Icon(Icons.category)),
-                  items: const [
-                    DropdownMenuItem(value: 'percentage', child: Text('خصم نسبة')),
-                    DropdownMenuItem(value: 'fixed', child: Text('خصم ثابت')),
-                    DropdownMenuItem(value: 'freeDelivery', child: Text('توصيل مجاني')),
+                  initialValue: type,
+                  decoration: InputDecoration(labelText: l10n.couponTypeLabel, prefixIcon: const Icon(Icons.category)),
+                  items: [
+                    DropdownMenuItem(value: 'percentage', child: Text(l10n.percentageDiscountOption)),
+                    DropdownMenuItem(value: 'fixed', child: Text(l10n.fixedDiscountOption)),
+                    DropdownMenuItem(value: 'freeDelivery', child: Text(l10n.freeDeliveryOption)),
                   ],
                   onChanged: (v) => setDialogState(() => type = v!),
                 ),
@@ -280,7 +280,7 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
                     controller: valueController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: type == 'percentage' ? 'النسبة %' : 'المبلغ',
+                      labelText: type == 'percentage' ? l10n.percentageField : l10n.theAmount,
                       prefixIcon: Icon(type == 'percentage' ? Icons.percent : Icons.attach_money),
                     ),
                   ),
@@ -289,27 +289,38 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
                 if (codeController.text.isNotEmpty) {
-                  setState(() {
-                    _coupons.add(_Coupon(
-                      id: 'new_${_coupons.length}',
-                      code: codeController.text.toUpperCase(),
-                      type: type,
-                      value: double.tryParse(valueController.text) ?? 0,
-                      minOrder: 0,
-                      maxUses: 100,
-                      usedCount: 0,
-                      active: true,
-                      expiryDate: DateTime.now().add(const Duration(days: 30)),
-                    ));
-                  });
+                  try {
+                    final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+                    final db = getIt<AppDatabase>();
+                    final now = DateTime.now();
+                    final companion = CouponsTableCompanion(
+                      id: Value(const Uuid().v4()),
+                      storeId: Value(storeId),
+                      code: Value(codeController.text.toUpperCase()),
+                      discountId: const Value(null),
+                      type: Value(type),
+                      value: Value(double.tryParse(valueController.text) ?? 0),
+                      maxUses: const Value(100),
+                      currentUses: const Value(0),
+                      minPurchase: const Value(0),
+                      isActive: const Value(true),
+                      expiresAt: Value(now.add(const Duration(days: 30))),
+                      createdAt: Value(now),
+                    );
+                    await db.discountsDao.insertCoupon(companion);
+                    await _loadData();
+                  } catch (e) {
+                    debugPrint('Error adding coupon: $e');
+                  }
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         ),
@@ -317,8 +328,9 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
     );
   }
 
-  void _showDetails(_Coupon c) {
+  void _showDetails(CouponsTableData c) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -330,25 +342,25 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
           children: [
             Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: isDark ? Colors.white : AppColors.textPrimary)),
             const SizedBox(height: 16),
-            _DetailRow(label: 'النوع', value: _getTypeLabel(c), isDark: isDark),
-            _DetailRow(label: 'الحد الأدنى للطلب', value: '${c.minOrder.toInt()} ر.س', isDark: isDark),
-            _DetailRow(label: 'الاستخدامات', value: '${c.usedCount}/${c.maxUses}', isDark: isDark),
-            _DetailRow(label: 'تاريخ الانتهاء', value: '${c.expiryDate.day}/${c.expiryDate.month}/${c.expiryDate.year}', isDark: isDark),
+            _DetailRow(label: l10n.couponTypeLabel, value: _getTypeLabel(c, l10n), isDark: isDark),
+            _DetailRow(label: l10n.minimumOrder, value: '${c.minPurchase.toInt()} ${l10n.currency}', isDark: isDark),
+            _DetailRow(label: l10n.usages, value: '${c.currentUses}/${c.maxUses}', isDark: isDark),
+            _DetailRow(label: l10n.expiryDate, value: c.expiresAt != null ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}' : '-', isDark: isDark),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () { Navigator.pop(context); setState(() => _coupons.remove(c)); },
+                    onPressed: () { Navigator.pop(context); _deleteCoupon(c); },
                     icon: const Icon(Icons.delete, color: AppColors.error),
-                    label: const Text('حذف', style: TextStyle(color: AppColors.error)),
+                    label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: FilledButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.copy),
-                  label: const Text('نسخ الكود'),
+                  label: Text(l10n.copyCode),
                   style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
                 )),
               ],
@@ -358,20 +370,6 @@ class _CouponManagementScreenState extends ConsumerState<CouponManagementScreen>
       ),
     );
   }
-}
-
-class _Coupon {
-  final String id;
-  final String code;
-  final String type;
-  final double value;
-  final double minOrder;
-  final int maxUses;
-  final int usedCount;
-  bool active;
-  final DateTime expiryDate;
-
-  _Coupon({required this.id, required this.code, required this.type, required this.value, required this.minOrder, required this.maxUses, required this.usedCount, required this.active, required this.expiryDate});
 }
 
 class _DetailRow extends StatelessWidget {

@@ -41,10 +41,10 @@ class AppRoutes {
   
   /// Product search
   static const String posSearch = '/pos/search';
-  
+
   /// Cart screen
   static const String posCart = '/pos/cart';
-  
+
   /// Quick sale
   static const String quickSale = '/pos/quick-sale';
 
@@ -80,6 +80,9 @@ class AppRoutes {
   /// Inventory list
   static const String inventory = '/inventory';
 
+  /// Expiry tracking
+  static const String expiryTracking = '/inventory/expiry-tracking';
+
   // ============================================================================
   // CUSTOMERS ROUTES
   // ============================================================================
@@ -106,6 +109,18 @@ class AppRoutes {
   /// Returns list
   static const String returns = '/returns';
 
+  /// Refund request (select items from sale)
+  static const String refundRequest = '/returns/request';
+
+  /// Refund reason selection
+  static const String refundReason = '/returns/reason';
+
+  /// Refund receipt - use refundReceiptPath(id)
+  static const String refundReceipt = '/returns/receipt/:id';
+
+  /// Helper to build refund receipt route
+  static String refundReceiptPath(String id) => '/returns/receipt/$id';
+
   /// Void Transaction
   static const String voidTransaction = '/void-transaction';
 
@@ -115,6 +130,9 @@ class AppRoutes {
 
   /// Orders history list
   static const String orders = '/orders';
+
+  /// Sales list (alias for invoices)
+  static const String sales = '/sales';
 
   // ============================================================================
   // INVOICES ROUTES
@@ -297,6 +315,13 @@ class AppRoutes {
   static const String branches = '/branches';
 
   // ============================================================================
+  // EMPLOYEES ROUTES
+  // ============================================================================
+
+  /// Employees management
+  static const String employees = '/employees';
+
+  // ============================================================================
   // PROFILE ROUTES
   // ============================================================================
 
@@ -354,6 +379,104 @@ class AppRoutes {
 
   /// Help & support
   static const String settingsHelp = '/settings/help';
+
+  // ============================================================================
+  // AI ROUTES
+  // ============================================================================
+
+  /// AI Assistant - المساعد الذكي
+  static const String aiAssistant = '/ai/assistant';
+
+  /// AI Sales Forecasting - التنبؤ بالمبيعات
+  static const String aiSalesForecasting = '/ai/sales-forecasting';
+
+  /// AI Smart Pricing - التسعير الذكي
+  static const String aiSmartPricing = '/ai/smart-pricing';
+
+  /// AI Fraud Detection - كشف الاحتيال
+  static const String aiFraudDetection = '/ai/fraud-detection';
+
+  /// AI Basket Analysis - تحليل سلة المشتريات
+  static const String aiBasketAnalysis = '/ai/basket-analysis';
+
+  /// AI Customer Recommendations - توصيات العملاء
+  static const String aiCustomerRecommendations = '/ai/customer-recommendations';
+
+  /// AI Smart Inventory - المخزون الذكي
+  static const String aiSmartInventory = '/ai/smart-inventory';
+
+  /// AI Competitor Analysis - تحليل المنافسين
+  static const String aiCompetitorAnalysis = '/ai/competitor-analysis';
+
+  /// AI Smart Reports - التقارير الذكية
+  static const String aiSmartReports = '/ai/smart-reports';
+
+  /// AI Staff Analytics - تحليل الموظفين
+  static const String aiStaffAnalytics = '/ai/staff-analytics';
+
+  /// AI Product Recognition - التعرف على المنتجات
+  static const String aiProductRecognition = '/ai/product-recognition';
+
+  /// AI Sentiment Analysis - تحليل المشاعر
+  static const String aiSentimentAnalysis = '/ai/sentiment-analysis';
+
+  /// AI Return Prediction - التنبؤ بالمرتجعات
+  static const String aiReturnPrediction = '/ai/return-prediction';
+
+  /// AI Promotion Designer - تصميم العروض
+  static const String aiPromotionDesigner = '/ai/promotion-designer';
+
+  /// AI Chat with Data - الدردشة مع البيانات
+  static const String aiChatWithData = '/ai/chat-with-data';
+
+  // ============================================================================
+  // ECOMMERCE ROUTES
+  // ============================================================================
+
+  /// E-Commerce / Online Store management
+  static const String ecommerce = '/ecommerce';
+
+  // ============================================================================
+  // WALLET ROUTES
+  // ============================================================================
+
+  /// E-Wallet
+  static const String wallet = '/wallet';
+
+  // ============================================================================
+  // SUBSCRIPTION ROUTES
+  // ============================================================================
+
+  /// Subscription management
+  static const String subscription = '/subscription';
+
+  // ============================================================================
+  // COMPLAINTS ROUTES
+  // ============================================================================
+
+  /// Complaints report
+  static const String complaintsReport = '/reports/complaints';
+
+  // ============================================================================
+  // MEDIA ROUTES
+  // ============================================================================
+
+  /// Media library
+  static const String mediaLibrary = '/media';
+
+  // ============================================================================
+  // DEVICES ROUTES
+  // ============================================================================
+
+  /// Device log
+  static const String deviceLog = '/devices';
+
+  // ============================================================================
+  // SHIPPING ROUTES
+  // ============================================================================
+
+  /// Shipping gateways settings
+  static const String settingsShipping = '/settings/shipping';
 
   // ============================================================================
   // ONBOARDING ROUTES

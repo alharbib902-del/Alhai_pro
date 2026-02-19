@@ -1,11 +1,13 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../widgets/common/app_empty_state.dart';
 
 /// شاشة إدارة الفروع
 class BranchManagementScreen extends ConsumerStatefulWidget {
@@ -16,29 +18,24 @@ class BranchManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'dashboard';
+  List<StoresTableData> _stores = [];
+  bool _isLoading = true;
+  String? _error;
 
-  final List<_Branch> _branches = [
-    _Branch(id: '1', name: 'الفرع الرئيسي', address: 'حي النزهة، شارع الملك فهد', phone: '0112345678', manager: 'أحمد محمد', employees: 8, isActive: true, todaySales: 15000),
-    _Branch(id: '2', name: 'فرع الروضة', address: 'حي الروضة، شارع الأمير سلطان', phone: '0112345679', manager: 'خالد عمر', employees: 5, isActive: true, todaySales: 8500),
-    _Branch(id: '3', name: 'فرع السلامة', address: 'حي السلامة، شارع التحلية', phone: '0112345680', manager: 'محمد علي', employees: 4, isActive: false, todaySales: 0),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
+  Future<void> _loadData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final db = getIt<AppDatabase>();
+      final stores = await db.storesDao.getAllStores();
+      if (mounted) setState(() { _stores = stores; _isLoading = false; });
+    } catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = e.toString(); });
     }
   }
 
@@ -50,62 +47,39 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد', // TODO: localize
-              userRole: l10n.branchManager,
-              onUserTap: () {},
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.branchesTitle,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            FilledButton.icon(
+              onPressed: _addBranch,
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(l10n.addBranchAction),
             ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'إدارة الفروع', // TODO: localize
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد', // TODO: localize
-                  userRole: l10n.branchManager,
-                  actions: [
-                    FilledButton.icon(
-                      onPressed: _addBranch,
-                      icon: const Icon(Icons.add, size: 18),
-                      label: const Text('فرع جديد'), // TODO: localize
-                    ),
-                  ],
+          ],
+        ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+              ? AppErrorState.general(message: _error, onRetry: _loadData)
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final activeCount = _branches.where((b) => b.isActive).length;
-    final totalSales = _branches.fold(0.0, (sum, b) => sum + b.todaySales);
+    final activeCount = _stores.where((s) => s.isActive).length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,121 +87,149 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
         // Stats row
         Row(
           children: [
-            Expanded(child: _buildStatCard(icon: Icons.store, label: 'الفروع', value: '${_branches.length}', color: AppColors.info, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.store, label: l10n.branchesTitle, value: '${_stores.length}', color: AppColors.info, isDark: isDark)),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(icon: Icons.check_circle, label: 'نشط', value: '$activeCount', color: AppColors.success, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.check_circle, label: l10n.active, value: '$activeCount', color: AppColors.success, isDark: isDark)),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(icon: Icons.attach_money, label: 'مبيعات اليوم', value: totalSales.toStringAsFixed(0), color: AppColors.warning, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.attach_money, label: l10n.todaySales, value: '—', color: AppColors.warning, isDark: isDark)),
           ],
         ),
         const SizedBox(height: 16),
 
-        // Branch list
-        ...List.generate(_branches.length, (index) {
-          final branch = _branches[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? (branch.isActive ? const Color(0xFF1E293B) : const Color(0xFF1E293B).withValues(alpha: 0.5))
-                  : (branch.isActive ? Colors.white : Colors.grey.shade100),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            ),
-            child: InkWell(
-              onTap: () => _showBranchDetails(branch),
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.info.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(Icons.store, color: AppColors.info),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    branch.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: isDark ? Colors.white : AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  if (!branch.isActive)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.textSecondary,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: const Text('مغلق', style: TextStyle(color: Colors.white, fontSize: 10)), // TODO: localize
-                                    ),
-                                ],
-                              ),
-                              Text(
-                                branch.address,
-                                style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Switch(
-                          value: branch.isActive,
-                          onChanged: (v) => setState(() => branch.isActive = v),
-                          activeColor: AppColors.primary,
-                        ),
-                      ],
-                    ),
-                    Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-                    Row(
-                      children: [
-                        Icon(Icons.person, size: 16, color: isDark ? Colors.white38 : AppColors.textTertiary),
-                        const SizedBox(width: 4),
-                        Text(
-                          branch.manager,
-                          style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
-                        ),
-                        const Spacer(),
-                        Icon(Icons.people, size: 16, color: isDark ? Colors.white38 : AppColors.textTertiary),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${branch.employees} موظفين', // TODO: localize
-                          style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          '${branch.todaySales.toStringAsFixed(0)} ر.س',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: branch.isActive ? AppColors.success : AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        if (_stores.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(48),
+              child: Column(
+                children: [
+                  Icon(Icons.store_mall_directory_outlined, size: 64, color: isDark ? Colors.white24 : Colors.grey.shade400),
+                  const SizedBox(height: 16),
+                  Text(
+                    'لا توجد فروع مسجلة', // TODO: localize
+                    style: TextStyle(color: isDark ? Colors.white54 : Colors.grey.shade600, fontSize: 16),
+                  ),
+                ],
               ),
             ),
-          );
-        }),
+          )
+        else
+          // Branch list
+          ...List.generate(_stores.length, (index) {
+            final store = _stores[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? (store.isActive ? const Color(0xFF1E293B) : const Color(0xFF1E293B).withValues(alpha: 0.5))
+                    : (store.isActive ? Colors.white : Colors.grey.shade100),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              ),
+              child: InkWell(
+                onTap: () => _showBranchDetails(store),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.info.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.store, color: AppColors.info),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      store.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: isDark ? Colors.white : AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    if (!store.isActive)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.textSecondary,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(l10n.close, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                      ),
+                                  ],
+                                ),
+                                Text(
+                                  store.address ?? '',
+                                  style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            value: store.isActive,
+                            onChanged: (v) => _toggleStoreActive(store, v),
+                            activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
+                          ),
+                        ],
+                      ),
+                      Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+                      Row(
+                        children: [
+                          Icon(Icons.person, size: 16, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                          const SizedBox(width: 4),
+                          Text(
+                            '—',
+                            style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                          ),
+                          const Spacer(),
+                          Icon(Icons.phone, size: 16, color: isDark ? Colors.white38 : AppColors.textTertiary),
+                          const SizedBox(width: 4),
+                          Text(
+                            store.phone ?? '—',
+                            style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            '— ر.س',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: store.isActive ? AppColors.success : AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
       ],
     );
+  }
+
+  Future<void> _toggleStoreActive(StoresTableData store, bool isActive) async {
+    try {
+      final db = getIt<AppDatabase>();
+      final updated = store.copyWith(isActive: isActive, updatedAt: Value(DateTime.now()));
+      await db.storesDao.updateStore(updated);
+      await _loadData();
+    } catch (e) {
+      // ignore
+    }
   }
 
   Widget _buildStatCard({
@@ -255,79 +257,63 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد', // TODO: localize
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
-
   void _addBranch() {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final addressController = TextEditingController();
     final phoneController = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('فرع جديد'), // TODO: localize
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.addBranchAction),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: nameController, decoration: const InputDecoration(labelText: 'اسم الفرع', prefixIcon: Icon(Icons.store))), // TODO: localize
+              TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.branchName, prefixIcon: const Icon(Icons.store))),
               const SizedBox(height: 12),
-              TextField(controller: addressController, decoration: const InputDecoration(labelText: 'العنوان', prefixIcon: Icon(Icons.location_on))), // TODO: localize
+              TextField(controller: addressController, decoration: InputDecoration(labelText: l10n.addressField, prefixIcon: const Icon(Icons.location_on))),
               const SizedBox(height: 12),
-              TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'الهاتف', prefixIcon: Icon(Icons.phone))), // TODO: localize
+              TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l10n.phone, prefixIcon: const Icon(Icons.phone))),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               if (nameController.text.isNotEmpty) {
-                setState(() => _branches.add(_Branch(
-                  id: 'new_${_branches.length}',
-                  name: nameController.text,
-                  address: addressController.text,
-                  phone: phoneController.text,
-                  manager: '-',
-                  employees: 0,
-                  isActive: true,
-                  todaySales: 0,
-                )));
+                try {
+                  final db = getIt<AppDatabase>();
+                  await db.storesDao.insertStore(StoresTableCompanion(
+                    id: Value('store_${DateTime.now().millisecondsSinceEpoch}'),
+                    name: Value(nameController.text),
+                    address: Value(addressController.text.isEmpty ? null : addressController.text),
+                    phone: Value(phoneController.text.isEmpty ? null : phoneController.text),
+                    isActive: const Value(true),
+                    createdAt: Value(DateTime.now()),
+                  ));
+                  await _loadData();
+                } catch (e) {
+                  // ignore
+                }
               }
-              Navigator.pop(context);
+              if (ctx.mounted) Navigator.pop(ctx);
             },
-            child: const Text('إضافة'), // TODO: localize
+            child: Text(l10n.add),
           ),
         ],
       ),
-    );
+    ).then((_) {
+      nameController.dispose();
+      addressController.dispose();
+      phoneController.dispose();
+    });
   }
 
-  void _showBranchDetails(_Branch branch) {
+  void _showBranchDetails(StoresTableData store) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -346,17 +332,17 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-                    child: Icon(Icons.store, size: 32, color: AppColors.info),
+                    child: const Icon(Icons.store, size: 32, color: AppColors.info),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(branch.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
+                        Text(store.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
                         Text(
-                          branch.isActive ? 'مفتوح' : 'مغلق', // TODO: localize
-                          style: TextStyle(color: branch.isActive ? AppColors.success : AppColors.textSecondary),
+                          store.isActive ? l10n.active : l10n.close,
+                          style: TextStyle(color: store.isActive ? AppColors.success : AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -364,10 +350,11 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                 ],
               ),
               const SizedBox(height: 24),
-              _DetailTile(icon: Icons.location_on, label: 'العنوان', value: branch.address, isDark: isDark), // TODO: localize
-              _DetailTile(icon: Icons.phone, label: 'الهاتف', value: branch.phone, isDark: isDark), // TODO: localize
-              _DetailTile(icon: Icons.person, label: 'المدير', value: branch.manager, isDark: isDark), // TODO: localize
-              _DetailTile(icon: Icons.people, label: 'الموظفين', value: '${branch.employees}', isDark: isDark), // TODO: localize
+              _DetailTile(icon: Icons.location_on, label: l10n.addressField, value: store.address ?? '—', isDark: isDark),
+              _DetailTile(icon: Icons.phone, label: l10n.phone, value: store.phone ?? '—', isDark: isDark),
+              _DetailTile(icon: Icons.email, label: 'البريد', value: store.email ?? '—', isDark: isDark), // TODO: localize - no ARB key
+              _DetailTile(icon: Icons.location_city, label: 'المدينة', value: store.city ?? '—', isDark: isDark), // TODO: localize - no ARB key
+              _DetailTile(icon: Icons.receipt_long, label: l10n.taxNumber, value: store.taxNumber ?? '—', isDark: isDark),
               Divider(height: 32, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -377,12 +364,12 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.attach_money, color: AppColors.success),
+                    const Icon(Icons.attach_money, color: AppColors.success),
                     const SizedBox(width: 12),
-                    Text('مبيعات اليوم', style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)), // TODO: localize
+                    Text(l10n.todaySales, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)),
                     const Spacer(),
-                    Text(
-                      '${branch.todaySales.toStringAsFixed(0)} ر.س',
+                    const Text(
+                      '— ر.س',
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.success),
                     ),
                   ],
@@ -391,9 +378,19 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
               const SizedBox(height: 24),
               Row(
                 children: [
-                  Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: const Text('تعديل'))), // TODO: localize
+                  Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit))),
                   const SizedBox(width: 12),
-                  Expanded(child: FilledButton.icon(onPressed: () {}, icon: const Icon(Icons.analytics), label: const Text('التقارير'))), // TODO: localize
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        await _deleteStore(store);
+                      },
+                      style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+                      icon: const Icon(Icons.delete),
+                      label: Text(l10n.delete),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -402,14 +399,34 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
       ),
     );
   }
-}
 
-class _Branch {
-  final String id, name, address, phone, manager;
-  final int employees;
-  bool isActive;
-  final double todaySales;
-  _Branch({required this.id, required this.name, required this.address, required this.phone, required this.manager, required this.employees, required this.isActive, required this.todaySales});
+  Future<void> _deleteStore(StoresTableData store) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteConfirmTitle),
+        content: Text(l10n.deleteConfirmMessage),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      try {
+        final db = getIt<AppDatabase>();
+        await db.storesDao.deleteStore(store.id);
+        await _loadData();
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
 }
 
 class _DetailTile extends StatelessWidget {

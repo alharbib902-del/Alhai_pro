@@ -9,7 +9,7 @@
 library;
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// نوع التنظيف
 enum SanitizeMode {
@@ -194,9 +194,7 @@ class InputSanitizer {
       return ValidationResult.valid(input);
     }
 
-    if (kDebugMode) {
-      debugPrint('⚠️ InputSanitizer: ${issues.join(", ")} in "$input"');
-    }
+    AppLogger.warning('InputSanitizer: ${issues.join(", ")} in "$input"', tag: 'InputSanitizer');
 
     return ValidationResult.invalid(issues);
   }

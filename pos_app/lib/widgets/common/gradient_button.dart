@@ -95,8 +95,8 @@ class GradientButton extends StatefulWidget {
       width: width,
       gradient: LinearGradient(
         colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       ),
     );
   }
@@ -121,8 +121,8 @@ class GradientButton extends StatefulWidget {
       width: width,
       gradient: LinearGradient(
         colors: [AppColors.secondary, AppColors.secondary.withValues(alpha: 0.8)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       ),
     );
   }
@@ -147,8 +147,8 @@ class GradientButton extends StatefulWidget {
       width: width,
       gradient: const LinearGradient(
         colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       ),
     );
   }
@@ -173,8 +173,8 @@ class GradientButton extends StatefulWidget {
       width: width,
       gradient: const LinearGradient(
         colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       ),
     );
   }
@@ -200,8 +200,8 @@ class GradientButton extends StatefulWidget {
       width: width,
       gradient: LinearGradient(
         colors: colors,
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       ),
     );
   }
@@ -243,8 +243,8 @@ class _GradientButtonState extends State<GradientButton>
           AppColors.primary,
           AppColors.primary.withValues(alpha: 0.8),
         ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
       );
 
   double get _height {

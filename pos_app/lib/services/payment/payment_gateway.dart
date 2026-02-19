@@ -308,19 +308,31 @@ class MadaPaymentGateway implements PaymentGateway {
 
   @override
   Future<bool> isAvailable() async {
-    // في الإنتاج: التحقق من اتصال الجهاز
-    return true;
+    // البوابة غير متاحة حتى يتم تكامل SDK الجهاز
+    // TODO: التحقق من اتصال الجهاز عند تكامل SDK
+    if (kReleaseMode) return false;
+    return isTestMode;
   }
 
   @override
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[Mada] Processing payment: ${request.amount} SAR');
 
-    // محاكاة وقت المعالجة
+    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    if (kReleaseMode) {
+      return PaymentResult.failed(
+        errorType: PaymentErrorType.terminalError,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+      );
+    }
+
+    // محاكاة وقت المعالجة (وضع التطوير فقط)
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
-      // في وضع الاختبار: نجاح دائماً
+      // في وضع الاختبار: نجاح دائماً (للتطوير فقط)
+      debugPrint('[Mada] ⚠ SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'MADA-${DateTime.now().millisecondsSinceEpoch}',
         authCode: '123456',
@@ -329,21 +341,32 @@ class MadaPaymentGateway implements PaymentGateway {
           'merchant_id': merchantId,
           'terminal_id': terminalId,
           'amount': request.amount,
+          '_simulated': true,
         },
       );
     }
 
-    // في الإنتاج: الاتصال بالـ Terminal
     // TODO: تكامل مع SDK الجهاز
     return PaymentResult.failed(
       errorType: PaymentErrorType.terminalError,
-      errorMessage: 'يرجى إعداد جهاز الدفع',
+      errorMessage:
+          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
     );
   }
 
   @override
   Future<RefundResult> refund(RefundRequest request) async {
     debugPrint('[Mada] Processing refund: ${request.amount} SAR');
+
+    if (kReleaseMode) {
+      return RefundResult(
+        success: false,
+        refundedAmount: 0,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        timestamp: DateTime.now(),
+      );
+    }
 
     await Future.delayed(const Duration(seconds: 1));
 
@@ -390,11 +413,25 @@ class StcPayGateway implements PaymentGateway {
   List<PaymentMethod> get supportedMethods => [PaymentMethod.stcPay];
 
   @override
-  Future<bool> isAvailable() async => true;
+  Future<bool> isAvailable() async {
+    // البوابة غير متاحة حتى يتم تكامل STC Pay API
+    // TODO: التحقق من إعداد API عند التكامل
+    if (kReleaseMode) return false;
+    return isTestMode;
+  }
 
   @override
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[STC Pay] Processing payment: ${request.amount} SAR');
+
+    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    if (kReleaseMode) {
+      return PaymentResult.failed(
+        errorType: PaymentErrorType.terminalError,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+      );
+    }
 
     if (request.customerPhone == null) {
       return PaymentResult.failed(
@@ -403,25 +440,41 @@ class StcPayGateway implements PaymentGateway {
       );
     }
 
+    // محاكاة وقت المعالجة (وضع التطوير فقط)
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
+      debugPrint('[STC Pay] ⚠ SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'STC-${DateTime.now().millisecondsSinceEpoch}',
         authCode: 'STC123',
         referenceNumber: request.orderId,
+        rawResponse: {
+          '_simulated': true,
+        },
       );
     }
 
     // TODO: تكامل مع STC Pay API
     return PaymentResult.failed(
       errorType: PaymentErrorType.unknown,
-      errorMessage: 'STC Pay API غير مُهيأ',
+      errorMessage:
+          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
     );
   }
 
   @override
   Future<RefundResult> refund(RefundRequest request) async {
+    if (kReleaseMode) {
+      return RefundResult(
+        success: false,
+        refundedAmount: 0,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        timestamp: DateTime.now(),
+      );
+    }
+
     return RefundResult(
       success: true,
       refundId: 'STC-REF-${DateTime.now().millisecondsSinceEpoch}',
@@ -462,7 +515,12 @@ class TamaraGateway implements PaymentGateway {
   List<PaymentMethod> get supportedMethods => [PaymentMethod.tamara];
 
   @override
-  Future<bool> isAvailable() async => true;
+  Future<bool> isAvailable() async {
+    // البوابة غير متاحة حتى يتم تكامل Tamara API
+    // TODO: التحقق من إعداد API عند التكامل
+    if (kReleaseMode) return false;
+    return isTestMode;
+  }
 
   /// الحد الأدنى للطلب
   double get minOrderAmount => 100;
@@ -473,6 +531,15 @@ class TamaraGateway implements PaymentGateway {
   @override
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[Tamara] Processing payment: ${request.amount} SAR');
+
+    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    if (kReleaseMode) {
+      return PaymentResult.failed(
+        errorType: PaymentErrorType.terminalError,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+      );
+    }
 
     // التحقق من الحدود
     if (request.amount < minOrderAmount) {
@@ -496,15 +563,18 @@ class TamaraGateway implements PaymentGateway {
       );
     }
 
+    // محاكاة وقت المعالجة (وضع التطوير فقط)
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
+      debugPrint('[Tamara] ⚠ SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'TAMARA-${DateTime.now().millisecondsSinceEpoch}',
         referenceNumber: request.orderId,
         rawResponse: {
           'installments': 4,
           'first_payment': request.amount / 4,
+          '_simulated': true,
         },
       );
     }
@@ -512,12 +582,23 @@ class TamaraGateway implements PaymentGateway {
     // TODO: تكامل مع Tamara API
     return PaymentResult.failed(
       errorType: PaymentErrorType.unknown,
-      errorMessage: 'Tamara API غير مُهيأ',
+      errorMessage:
+          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
     );
   }
 
   @override
   Future<RefundResult> refund(RefundRequest request) async {
+    if (kReleaseMode) {
+      return RefundResult(
+        success: false,
+        refundedAmount: 0,
+        errorMessage:
+            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        timestamp: DateTime.now(),
+      );
+    }
+
     return RefundResult(
       success: true,
       refundId: 'TAMARA-REF-${DateTime.now().millisecondsSinceEpoch}',
@@ -541,11 +622,22 @@ class TamaraGateway implements PaymentGateway {
 
 /// خدمة الدفع الموحدة
 class PaymentService {
+  /// رسالة الدفع الإلكتروني غير المفعل
+  static const String _electronicPaymentUnavailableMessage =
+      'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي';
+
   final Map<PaymentMethod, PaymentGateway> _gateways = {};
 
   PaymentService() {
     // تسجيل البوابات الافتراضية
     registerGateway(PaymentMethod.cash, CashPaymentGateway());
+  }
+
+  /// التحقق من توفر طريقة الدفع
+  /// في الإصدار الحالي، النقد فقط متاح
+  // TODO: Enable electronic payments when terminal SDK is integrated
+  static bool isMethodAvailable(PaymentMethod method) {
+    return method == PaymentMethod.cash;
   }
 
   /// تسجيل بوابة دفع
@@ -562,6 +654,17 @@ class PaymentService {
 
   /// معالجة الدفع
   Future<PaymentResult> processPayment(PaymentRequest request) async {
+    // في وضع الإنتاج: رفض طرق الدفع الإلكترونية غير المفعلة
+    if (!isMethodAvailable(request.method)) {
+      debugPrint(
+        '[PaymentService] Rejected unavailable method: ${request.method.arabicName}',
+      );
+      return PaymentResult.failed(
+        errorType: PaymentErrorType.terminalError,
+        errorMessage: _electronicPaymentUnavailableMessage,
+      );
+    }
+
     final gateway = _gateways[request.method];
 
     if (gateway == null) {

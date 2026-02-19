@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../core/utils/image_utils.dart';
+import '../../core/validators/validators.dart';
 import '../../data/local/app_database.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/products_providers.dart';
@@ -43,6 +50,15 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   bool _isSaving = false;
   bool _isLoadingProduct = false;
 
+  // Image State
+  File? _selectedImageFile;
+  Uint8List? _selectedImageBytes; // for web
+  bool _isUploadingImage = false;
+  String? _existingThumbnailUrl;
+  String? _existingMediumUrl;
+  String? _existingLargeUrl;
+  String? _existingImageHash;
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +86,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           _selectedCategoryId = product.categoryId;
           _isActive = product.isActive;
           _trackInventory = product.trackInventory;
+          _existingThumbnailUrl = product.imageThumbnail;
+          _existingMediumUrl = product.imageMedium;
+          _existingLargeUrl = product.imageLarge;
+          _existingImageHash = product.imageHash;
           _isLoadingProduct = false;
         });
       }
@@ -162,7 +182,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                         label: '${l10n.productName} *',
                         icon: Icons.shopping_bag_rounded,
                         isDark: isDark,
-                        validator: (v) => v!.isEmpty ? l10n.requiredField : null,
+                        maxLength: 150,
+                        validator: FormValidators.requiredField(maxLength: 150),
                       ),
                       const SizedBox(height: AppSizes.md),
 
@@ -175,12 +196,18 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             label: l10n.sku,
                             icon: Icons.tag_rounded,
                             isDark: isDark,
+                            maxLength: 50,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-_]'))],
+                            validator: FormValidators.sku(),
                           ),
                           _buildTextField(
                             controller: _barcodeController,
                             label: l10n.barcode,
                             icon: Icons.qr_code_rounded,
                             isDark: isDark,
+                            maxLength: 50,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-]'))],
+                            validator: FormValidators.barcode(required: false),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 Icons.qr_code_scanner_rounded,
@@ -214,11 +241,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             isDark: isDark,
                             keyboardType: TextInputType.number,
                             suffixText: l10n.sar,
-                            validator: (v) {
-                              if (v == null || v.isEmpty) return l10n.requiredField;
-                              if (double.tryParse(v) == null) return l10n.invalidFormat;
-                              return null;
-                            },
+                            maxLength: 12,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
+                            validator: FormValidators.price(allowZero: false),
                           ),
                           _buildTextField(
                             controller: _costController,
@@ -227,6 +252,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             isDark: isDark,
                             keyboardType: TextInputType.number,
                             suffixText: l10n.sar,
+                            maxLength: 12,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
+                            validator: FormValidators.price(required: false),
                           ),
                         ],
                       ),
@@ -245,6 +273,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             icon: Icons.inventory_2_rounded,
                             isDark: isDark,
                             keyboardType: TextInputType.number,
+                            maxLength: 8,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            validator: FormValidators.numeric(isRequired: false, max: 99999999, allowZero: true),
                           ),
                           _buildTextField(
                             controller: _minQtyController,
@@ -252,6 +283,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                             icon: Icons.warning_amber_rounded,
                             isDark: isDark,
                             keyboardType: TextInputType.number,
+                            maxLength: 6,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            validator: FormValidators.numeric(isRequired: false, max: 999999, allowZero: true),
                           ),
                         ],
                       ),
@@ -263,6 +297,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                         label: l10n.unit,
                         icon: Icons.straighten_rounded,
                         isDark: isDark,
+                        maxLength: 30,
+                        validator: FormValidators.notes(maxLength: 30),
                       ),
                       const SizedBox(height: AppSizes.xl),
 
@@ -276,6 +312,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                         icon: Icons.notes_rounded,
                         isDark: isDark,
                         maxLines: 4,
+                        maxLength: 500,
+                        validator: FormValidators.notes(),
                       ),
                       const SizedBox(height: AppSizes.xl),
 
@@ -342,48 +380,74 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   // ─────────────────────────────────────────────────────────────────────
 
   Widget _buildImageSection(bool isDark, AppLocalizations l10n) {
+    final hasImage = _selectedImageFile != null ||
+        _selectedImageBytes != null ||
+        (_existingThumbnailUrl != null && _existingThumbnailUrl!.isNotEmpty);
+
     return Center(
       child: Column(
         children: [
-          Stack(
-            children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                  border: Border.all(
-                    color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
-                  ),
-                ),
-                child: Icon(
-                  Icons.image_rounded,
-                  size: 48,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : AppColors.textSecondary.withValues(alpha: 0.3),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
+          GestureDetector(
+            onTap: _isUploadingImage ? null : _pickImage,
+            child: Stack(
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
+                    color: isDark ? const Color(0xFF0F172A) : AppColors.surfaceVariant,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                      width: 3,
+                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
                     ),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 18),
+                  clipBehavior: Clip.antiAlias,
+                  child: _isUploadingImage
+                      ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+                      : _buildImagePreview(isDark),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                        width: 3,
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 18),
+                    ),
                   ),
                 ),
-              ),
-            ],
+                if (hasImage)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: GestureDetector(
+                      onTap: _removeImage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Icon(Icons.close, color: Colors.white, size: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
           const SizedBox(height: AppSizes.sm),
           Text(
@@ -396,6 +460,83 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildImagePreview(bool isDark) {
+    // Local file selected
+    if (_selectedImageFile != null) {
+      return Image.file(
+        _selectedImageFile!,
+        width: 120,
+        height: 120,
+        fit: BoxFit.cover,
+      );
+    }
+
+    // Bytes selected (web)
+    if (_selectedImageBytes != null) {
+      return Image.memory(
+        _selectedImageBytes!,
+        width: 120,
+        height: 120,
+        fit: BoxFit.cover,
+      );
+    }
+
+    // Existing URL from database
+    if (_existingThumbnailUrl != null && _existingThumbnailUrl!.isNotEmpty) {
+      return OptimizedProductImage(
+        imageUrl: _existingThumbnailUrl,
+        width: 120,
+        height: 120,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+      );
+    }
+
+    // Placeholder
+    return Icon(
+      Icons.image_rounded,
+      size: 48,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.2)
+          : AppColors.textSecondary.withValues(alpha: 0.3),
+    );
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 90,
+    );
+
+    if (picked == null) return;
+
+    if (kIsWeb) {
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        _selectedImageBytes = bytes;
+        _selectedImageFile = null;
+      });
+    } else {
+      setState(() {
+        _selectedImageFile = File(picked.path);
+        _selectedImageBytes = null;
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImageFile = null;
+      _selectedImageBytes = null;
+      _existingThumbnailUrl = null;
+      _existingMediumUrl = null;
+      _existingLargeUrl = null;
+      _existingImageHash = null;
+    });
   }
 
   Widget _buildSectionTitle(IconData icon, String title, bool isDark) {
@@ -434,12 +575,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     String? suffixText,
     Widget? suffixIcon,
     int maxLines = 1,
+    int? maxLength,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      maxLength: maxLength,
+      inputFormatters: inputFormatters,
       validator: validator,
       style: TextStyle(
         color: isDark ? Colors.white : AppColors.textPrimary,
@@ -635,6 +780,45 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   // Save Logic
   // ─────────────────────────────────────────────────────────────────────
 
+  /// Upload image and return URLs, or return existing URLs
+  Future<ProductImageUrls?> _uploadImageIfNeeded(String storeId, String productId) async {
+    // New image selected
+    if (_selectedImageFile != null || _selectedImageBytes != null) {
+      setState(() => _isUploadingImage = true);
+      try {
+        final imageService = ImageService();
+        if (_selectedImageFile != null) {
+          return await imageService.uploadProductImage(
+            storeId: storeId,
+            productId: productId,
+            imageFile: _selectedImageFile!,
+          );
+        } else if (_selectedImageBytes != null) {
+          return await imageService.uploadProductImageFromBytes(
+            storeId: storeId,
+            productId: productId,
+            imageBytes: _selectedImageBytes!,
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isUploadingImage = false);
+      }
+    }
+
+    // Existing image (not changed)
+    if (_existingThumbnailUrl != null) {
+      return ProductImageUrls(
+        thumbnail: _existingThumbnailUrl!,
+        medium: _existingMediumUrl ?? _existingThumbnailUrl!,
+        large: _existingLargeUrl ?? _existingThumbnailUrl!,
+        hash: _existingImageHash ?? '',
+      );
+    }
+
+    // No image (removed or never set)
+    return null;
+  }
+
   Future<void> _saveProduct() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -649,24 +833,44 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         throw Exception('Store ID is null');
       }
 
+      // Sanitize all text inputs before saving
+      final name = InputSanitizer.sanitize(_nameController.text.trim());
+      final sku = InputSanitizer.sanitize(_skuController.text.trim());
+      final barcode = InputSanitizer.sanitize(_barcodeController.text.trim());
+      final priceText = _priceController.text.trim();
+      final costText = _costController.text.trim();
+      final stockText = _stockController.text.trim();
+      final minQtyText = _minQtyController.text.trim();
+      final unit = InputSanitizer.sanitize(_unitController.text.trim());
+      final description = InputSanitizer.sanitize(_descriptionController.text.trim());
+
+      final productId = widget.isEditing ? widget.productId! : const Uuid().v4();
+
+      // Upload image if selected
+      final imageUrls = await _uploadImageIfNeeded(storeId, productId);
+
       if (widget.isEditing) {
         // ── Update existing product ──
         final existing = await db.productsDao.getProductById(widget.productId!);
         if (existing == null) throw Exception('Product not found');
 
         final updated = existing.copyWith(
-          name: _nameController.text.trim(),
-          sku: drift.Value(_skuController.text.trim().isEmpty ? null : _skuController.text.trim()),
-          barcode: drift.Value(_barcodeController.text.trim().isEmpty ? null : _barcodeController.text.trim()),
-          price: double.parse(_priceController.text.trim()),
-          costPrice: drift.Value(_costController.text.trim().isEmpty ? null : double.tryParse(_costController.text.trim())),
-          stockQty: int.tryParse(_stockController.text.trim()) ?? 0,
-          minQty: int.tryParse(_minQtyController.text.trim()) ?? 1,
-          unit: drift.Value(_unitController.text.trim().isEmpty ? null : _unitController.text.trim()),
-          description: drift.Value(_descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim()),
+          name: name,
+          sku: drift.Value(sku.isEmpty ? null : sku),
+          barcode: drift.Value(barcode.isEmpty ? null : barcode),
+          price: double.parse(priceText),
+          costPrice: drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
+          stockQty: int.tryParse(stockText) ?? 0,
+          minQty: int.tryParse(minQtyText) ?? 1,
+          unit: drift.Value(unit.isEmpty ? null : unit),
+          description: drift.Value(description.isEmpty ? null : description),
           categoryId: drift.Value(_selectedCategoryId),
           isActive: _isActive,
           trackInventory: _trackInventory,
+          imageThumbnail: drift.Value(imageUrls?.thumbnail),
+          imageMedium: drift.Value(imageUrls?.medium),
+          imageLarge: drift.Value(imageUrls?.large),
+          imageHash: drift.Value(imageUrls?.hash),
           updatedAt: drift.Value(DateTime.now()),
         );
 
@@ -682,22 +886,25 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         }
       } else {
         // ── Insert new product ──
-        const uuid = Uuid();
         final companion = ProductsTableCompanion(
-          id: drift.Value(uuid.v4()),
+          id: drift.Value(productId),
           storeId: drift.Value(storeId),
-          name: drift.Value(_nameController.text.trim()),
-          sku: drift.Value(_skuController.text.trim().isEmpty ? null : _skuController.text.trim()),
-          barcode: drift.Value(_barcodeController.text.trim().isEmpty ? null : _barcodeController.text.trim()),
-          price: drift.Value(double.parse(_priceController.text.trim())),
-          costPrice: drift.Value(_costController.text.trim().isEmpty ? null : double.tryParse(_costController.text.trim())),
-          stockQty: drift.Value(int.tryParse(_stockController.text.trim()) ?? 0),
-          minQty: drift.Value(int.tryParse(_minQtyController.text.trim()) ?? 1),
-          unit: drift.Value(_unitController.text.trim().isEmpty ? null : _unitController.text.trim()),
-          description: drift.Value(_descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim()),
+          name: drift.Value(name),
+          sku: drift.Value(sku.isEmpty ? null : sku),
+          barcode: drift.Value(barcode.isEmpty ? null : barcode),
+          price: drift.Value(double.parse(priceText)),
+          costPrice: drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
+          stockQty: drift.Value(int.tryParse(stockText) ?? 0),
+          minQty: drift.Value(int.tryParse(minQtyText) ?? 1),
+          unit: drift.Value(unit.isEmpty ? null : unit),
+          description: drift.Value(description.isEmpty ? null : description),
           categoryId: drift.Value(_selectedCategoryId),
           isActive: drift.Value(_isActive),
           trackInventory: drift.Value(_trackInventory),
+          imageThumbnail: drift.Value(imageUrls?.thumbnail),
+          imageMedium: drift.Value(imageUrls?.medium),
+          imageLarge: drift.Value(imageUrls?.large),
+          imageHash: drift.Value(imageUrls?.hash),
           createdAt: drift.Value(DateTime.now()),
         );
 

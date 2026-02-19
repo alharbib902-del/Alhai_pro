@@ -4,8 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
 import '../../providers/auth_providers.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/shifts_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إغلاق الوردية
@@ -17,43 +18,36 @@ class ShiftCloseScreen extends ConsumerStatefulWidget {
 }
 
 class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'pos';
 
   final _actualCashController = TextEditingController();
   bool _isLoading = false;
-
-  // بيانات الوردية (mock)
-  final double _openingCash = 500;
-  final double _cashSales = 2350;
-  final double _cardSales = 1850;
-  final double _refunds = 150;
-  final double _cashIn = 200;
-  final double _cashOut = 100;
-
-  double get _expectedCash => _openingCash + _cashSales - _refunds + _cashIn - _cashOut;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
-  }
-
   @override
   void dispose() {
     _actualCashController.dispose();
     super.dispose();
+  }
+
+  /// Format shift open time from DateTime
+  String _formatTime(DateTime dt) {
+    final hour = dt.hour;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'م' : 'ص';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    return '$displayHour:$minute $period';
+  }
+
+  /// Compute shift duration string
+  String _formatDuration(DateTime openedAt) {
+    final duration = DateTime.now().difference(openedAt);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    if (hours > 0 && minutes > 0) {
+      return '$hours ساعات $minutes دقيقة';
+    } else if (hours > 0) {
+      return '$hours ساعات';
+    } else {
+      return '$minutes دقيقة';
+    }
   }
 
   @override
@@ -63,28 +57,10 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+    final userName = user?.name ?? l10n.defaultUserName;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
                   title: l10n.closeShift,
@@ -92,64 +68,99 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                   showSearch: false,
                   searchHint: l10n.searchPlaceholder,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: userName,
                   userRole: l10n.branchManager,
                   onUserTap: () {},
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                  child: ref.watch(openShiftProvider).when(
+                    data: (shift) {
+                      if (shift == null) {
+                        return _buildNoShiftMessage(isDark, l10n);
+                      }
+                      return ref.watch(shiftMovementsProvider(shift.id)).when(
+                        data: (movements) => SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: _buildContent(
+                            shift, movements,
+                            isWideScreen, isMediumScreen, isDark, l10n,
+                          ),
+                        ),
+                        loading: () => const Center(child: CircularProgressIndicator()),
+                        error: (e, _) => Center(child: Text('$e')),
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('$e')),
                   ),
                 ),
               ],
+            );
+  }
+
+  Widget _buildNoShiftMessage(bool isDark, AppLocalizations l10n) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.timer_off_rounded,
+            size: 64,
+            color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'لا توجد وردية مفتوحة',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
             ),
+          ),
+          const SizedBox(height: 24),
+          FilledButton.icon(
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back_rounded),
+            label: const Text('العودة'),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final dateStr = '${now.day}/${now.month}/${now.year}';
     return '$dateStr • ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(
+    ShiftsTableData shift,
+    List<CashMovementsTableData> movements,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final user = ref.watch(currentUserProvider);
+
+    // Compute values from shift and movements
+    final openingCash = shift.openingCash;
+    final cashIn = movements
+        .where((m) => m.type == 'cash_in')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final cashOut = movements
+        .where((m) => m.type == 'cash_out')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final totalSalesAmount = shift.totalSalesAmount;
+    final totalRefundsAmount = shift.totalRefundsAmount;
+    final expectedCash = openingCash + cashIn - cashOut + totalSalesAmount - totalRefundsAmount;
+
     final actualCash = double.tryParse(_actualCashController.text) ?? 0;
-    final difference = actualCash - _expectedCash;
+    final difference = actualCash - expectedCash;
 
     if (isWideScreen) {
       return Row(
@@ -159,9 +170,12 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
             flex: 3,
             child: Column(
               children: [
-                _buildShiftInfoCard(user, isDark, l10n),
+                _buildShiftInfoCard(user, shift, isDark, l10n),
                 const SizedBox(height: 24),
-                _buildSalesSummaryCard(isDark, l10n),
+                _buildSalesSummaryCard(
+                  openingCash, totalSalesAmount, totalRefundsAmount,
+                  cashIn, cashOut, expectedCash, isDark, l10n,
+                ),
               ],
             ),
           ),
@@ -172,7 +186,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               children: [
                 _buildActualCashCard(actualCash, difference, isDark, l10n),
                 const SizedBox(height: 24),
-                _buildCloseButton(isDark, l10n),
+                _buildCloseButton(shift, expectedCash, isDark, l10n),
               ],
             ),
           ),
@@ -183,18 +197,21 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildShiftInfoCard(user, isDark, l10n),
+        _buildShiftInfoCard(user, shift, isDark, l10n),
         SizedBox(height: isMediumScreen ? 24 : 16),
-        _buildSalesSummaryCard(isDark, l10n),
+        _buildSalesSummaryCard(
+          openingCash, totalSalesAmount, totalRefundsAmount,
+          cashIn, cashOut, expectedCash, isDark, l10n,
+        ),
         SizedBox(height: isMediumScreen ? 24 : 16),
         _buildActualCashCard(actualCash, difference, isDark, l10n),
         const SizedBox(height: 24),
-        _buildCloseButton(isDark, l10n),
+        _buildCloseButton(shift, expectedCash, isDark, l10n),
       ],
     );
   }
 
-  Widget _buildShiftInfoCard(dynamic user, bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftInfoCard(dynamic user, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -229,21 +246,21 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           const SizedBox(height: 16),
           _InfoRow(
             label: 'الكاشير',
-            value: user?.name ?? 'غير معروف',
+            value: shift.cashierName,
             icon: Icons.person_rounded,
             isDark: isDark,
           ),
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _InfoRow(
             label: 'وقت الفتح',
-            value: '09:00 ص',
+            value: _formatTime(shift.openedAt),
             icon: Icons.login_rounded,
             isDark: isDark,
           ),
           Divider(height: 20, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           _InfoRow(
             label: 'المدة',
-            value: '8 ساعات 30 دقيقة',
+            value: _formatDuration(shift.openedAt),
             icon: Icons.timer_rounded,
             isDark: isDark,
           ),
@@ -252,7 +269,16 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     );
   }
 
-  Widget _buildSalesSummaryCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildSalesSummaryCard(
+    double openingCash,
+    double totalSalesAmount,
+    double totalRefundsAmount,
+    double cashIn,
+    double cashOut,
+    double expectedCash,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -285,12 +311,11 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          _SummaryRow(label: l10n.openingBalance, value: _openingCash, color: AppColors.info, isDark: isDark),
-          _SummaryRow(label: 'مبيعات نقدية', value: _cashSales, color: AppColors.success, prefix: '+', isDark: isDark),
-          _SummaryRow(label: 'مبيعات بطاقة', value: _cardSales, color: AppColors.card, isDark: isDark),
-          _SummaryRow(label: 'مرتجعات نقدية', value: _refunds, color: AppColors.error, prefix: '-', isDark: isDark),
-          _SummaryRow(label: 'إدخال نقدي', value: _cashIn, color: AppColors.success, prefix: '+', isDark: isDark),
-          _SummaryRow(label: 'سحب نقدي', value: _cashOut, color: AppColors.secondary, prefix: '-', isDark: isDark),
+          _SummaryRow(label: l10n.openingBalance, value: openingCash, color: AppColors.info, isDark: isDark),
+          _SummaryRow(label: 'إجمالي المبيعات', value: totalSalesAmount, color: AppColors.success, prefix: '+', isDark: isDark),
+          _SummaryRow(label: 'مرتجعات نقدية', value: totalRefundsAmount, color: AppColors.error, prefix: '-', isDark: isDark),
+          _SummaryRow(label: 'إدخال نقدي', value: cashIn, color: AppColors.success, prefix: '+', isDark: isDark),
+          _SummaryRow(label: 'سحب نقدي', value: cashOut, color: AppColors.secondary, prefix: '-', isDark: isDark),
           Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -319,7 +344,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                   ],
                 ),
                 Text(
-                  '${_expectedCash.toStringAsFixed(0)} ${l10n.sar}',
+                  '${expectedCash.toStringAsFixed(0)} ${l10n.sar}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primary),
                 ),
               ],
@@ -470,11 +495,13 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     );
   }
 
-  Widget _buildCloseButton(bool isDark, AppLocalizations l10n) {
+  Widget _buildCloseButton(ShiftsTableData shift, double expectedCash, bool isDark, AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _isLoading || _actualCashController.text.isEmpty ? null : _closeShift,
+        onPressed: _isLoading || _actualCashController.text.isEmpty
+            ? null
+            : () => _closeShift(shift, expectedCash),
         icon: _isLoading
             ? const SizedBox(
                 width: 20,
@@ -493,19 +520,88 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     );
   }
 
-  Future<void> _closeShift() async {
+  Future<void> _closeShift(ShiftsTableData shift, double expectedCash) async {
+    final l10n = AppLocalizations.of(context)!;
+    final actualCash = double.tryParse(_actualCashController.text) ?? 0;
+    final difference = actualCash - expectedCash;
+
+    // Show confirmation dialog with shortage/excess info
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.closeShift),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('المتوقع: ${expectedCash.toStringAsFixed(0)} ${l10n.sar}'),
+            Text('الفعلي: ${actualCash.toStringAsFixed(0)} ${l10n.sar}'),
+            const SizedBox(height: 8),
+            Text(
+              difference == 0
+                  ? 'الصندوق متطابق'
+                  : difference > 0
+                      ? 'فائض: +${difference.toStringAsFixed(0)} ${l10n.sar}'
+                      : 'عجز: ${difference.toStringAsFixed(0)} ${l10n.sar}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: difference == 0
+                    ? AppColors.success
+                    : (difference > 0 ? AppColors.warning : AppColors.error),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('هل تريد إغلاق الوردية؟'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Save shift closing to database
-      await Future.delayed(const Duration(seconds: 1));
+      final closeShift = ref.read(closeShiftActionProvider);
+      await closeShift(
+        shiftId: shift.id,
+        closingCash: actualCash,
+        expectedCash: expectedCash,
+        difference: difference,
+        totalSales: shift.totalSales,
+        totalSalesAmount: shift.totalSalesAmount,
+        totalRefunds: shift.totalRefunds,
+        totalRefundsAmount: shift.totalRefundsAmount,
+        notes: null,
+      );
 
       if (!mounted) return;
       context.push(AppRoutes.shiftSummary);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('خطأ في إغلاق الوردية'),
+          content: Text('$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -1,11 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/router/routes.dart';
+import '../../services/ai_invoice_service.dart';
 
 /// شاشة استيراد الفاتورة بالذكاء الاصطناعي
 class AiInvoiceImportScreen extends ConsumerStatefulWidget {
@@ -18,51 +19,9 @@ class AiInvoiceImportScreen extends ConsumerStatefulWidget {
 
 class _AiInvoiceImportScreenState
     extends ConsumerState<AiInvoiceImportScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'products';
 
   bool _isProcessing = false;
   String? _imagePath;
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,34 +30,12 @@ class _AiInvoiceImportScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: '\u0627\u0633\u062A\u064A\u0631\u0627\u062F \u0641\u0627\u062A\u0648\u0631\u0629 AI', // TODO: localize
+                  title: l10n.aiInvoiceImport,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
@@ -114,40 +51,10 @@ class _AiInvoiceImportScreenState
                           : _buildPreviewView(isDark),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildUploadView(bool isWideScreen, bool isMediumScreen, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
       child: Column(
@@ -199,7 +106,7 @@ class _AiInvoiceImportScreenState
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  '\u0627\u0633\u062A\u064A\u0631\u0627\u062F \u0641\u0627\u062A\u0648\u0631\u0629 \u0627\u0644\u0645\u0648\u0631\u062F', // TODO: localize
+                  l10n.importSupplierInvoice,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -208,7 +115,7 @@ class _AiInvoiceImportScreenState
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '\u0627\u0644\u062A\u0642\u0637 \u0635\u0648\u0631\u0629 \u0623\u0648 \u0627\u062E\u062A\u0631 \u0645\u0646 \u0627\u0644\u0645\u0639\u0631\u0636\n\u0633\u064A\u062A\u0645 \u0627\u0633\u062A\u062E\u0631\u0627\u062C \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B', // TODO: localize
+                  l10n.captureOrSelectPhoto,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -225,7 +132,7 @@ class _AiInvoiceImportScreenState
                     FilledButton.icon(
                       onPressed: _captureImage,
                       icon: const Icon(Icons.camera_alt),
-                      label: const Text('\u0627\u0644\u062A\u0642\u0627\u0637 \u0635\u0648\u0631\u0629'), // TODO: localize
+                      label: Text(l10n.captureImage),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 14),
@@ -235,7 +142,7 @@ class _AiInvoiceImportScreenState
                     OutlinedButton.icon(
                       onPressed: _pickFromGallery,
                       icon: const Icon(Icons.photo_library),
-                      label: const Text('\u0627\u0644\u0645\u0639\u0631\u0636'), // TODO: localize
+                      label: Text(l10n.galleryPick),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 14),
@@ -252,6 +159,7 @@ class _AiInvoiceImportScreenState
   }
 
   Widget _buildPreviewView(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Expanded(
@@ -297,7 +205,7 @@ class _AiInvoiceImportScreenState
                 child: OutlinedButton.icon(
                   onPressed: () => setState(() => _imagePath = null),
                   icon: const Icon(Icons.refresh),
-                  label: const Text('\u0635\u0648\u0631\u0629 \u0623\u062E\u0631\u0649'), // TODO: localize
+                  label: Text(l10n.anotherImage),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
@@ -308,7 +216,7 @@ class _AiInvoiceImportScreenState
                 child: FilledButton.icon(
                   onPressed: _processImage,
                   icon: const Icon(Icons.auto_awesome),
-                  label: const Text('\u0645\u0639\u0627\u0644\u062C\u0629 AI'), // TODO: localize
+                  label: Text(l10n.aiProcessingBtn),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
@@ -322,6 +230,7 @@ class _AiInvoiceImportScreenState
   }
 
   Widget _buildProcessingView(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Container(
         padding: const EdgeInsets.all(48),
@@ -345,7 +254,7 @@ class _AiInvoiceImportScreenState
             ),
             const SizedBox(height: 24),
             Text(
-              '\u062C\u0627\u0631\u064A \u0645\u0639\u0627\u0644\u062C\u0629 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629...', // TODO: localize
+              l10n.processingInvoice,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -354,7 +263,7 @@ class _AiInvoiceImportScreenState
             ),
             const SizedBox(height: 8),
             Text(
-              '\u064A\u062A\u0645 \u0627\u0633\u062A\u062E\u0631\u0627\u062C \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A', // TODO: localize
+              l10n.extractingDataWithAi,
               style: TextStyle(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.6)
@@ -378,50 +287,43 @@ class _AiInvoiceImportScreenState
   }
 
   void _processImage() async {
+    if (_imagePath == null) return;
+
     setState(() => _isProcessing = true);
 
-    // Simulate AI processing
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final imageFile = File(_imagePath!);
+      final result = await AiInvoiceService.extractInvoiceData(imageFile);
 
-    if (!mounted) return;
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
 
-    setState(() => _isProcessing = false);
+      // Navigate to review screen with extracted data
+      context.push(AppRoutes.aiInvoiceReview, extra: result);
+    } on AiInvoiceException catch (e) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
 
-    // Show results
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('\u062A\u0645 \u0627\u0633\u062A\u062E\u0631\u0627\u062C \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('\u0627\u0644\u0645\u0648\u0631\u062F: \u0634\u0631\u0643\u0629 \u0627\u0644\u0623\u063A\u0630\u064A\u0629 \u0627\u0644\u0645\u062A\u062D\u062F\u0629'),
-            Text('\u0631\u0642\u0645 \u0627\u0644\u0641\u0627\u062A\u0648\u0631\u0629: INV-2024-001'),
-            Text('\u0627\u0644\u062A\u0627\u0631\u064A\u062E: 2024-01-15'),
-            Text('\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A: 5,750 \u0631.\u0633'),
-            Divider(),
-            Text('\u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A \u0627\u0644\u0645\u0633\u062A\u062E\u0631\u062C\u0629: 12 \u0635\u0646\u0641'),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('\u062A\u0639\u062F\u064A\u0644'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 \u0641\u0627\u062A\u0648\u0631\u0629 \u0627\u0644\u0634\u0631\u0627\u0621')),
-              );
-            },
-            child: const Text('\u062A\u0623\u0643\u064A\u062F'),
-          ),
-        ],
-      ),
-    );
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('فشل في معالجة الفاتورة: $e'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 }

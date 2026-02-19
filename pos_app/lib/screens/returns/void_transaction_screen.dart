@@ -13,11 +13,9 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../services/manager_approval_service.dart';
 
 // ============================================================================
 // DEMO DATA MODELS
@@ -72,8 +70,6 @@ class VoidTransactionScreen extends ConsumerStatefulWidget {
 }
 
 class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
-  bool _sidebarCollapsed = false;
-  final String _selectedNavId = 'returns';
 
   // Search state
   final _invoiceController = TextEditingController();
@@ -158,12 +154,20 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   }
 
   bool get _isFormValid {
-    return _selectedReason != null && _pinController.text.length >= 4 && _confirmed;
+    return _selectedReason != null && _confirmed;
   }
 
-  void _confirmVoid() {
+  Future<void> _confirmVoid() async {
     if (!_isFormValid) return;
     final l10n = AppLocalizations.of(context)!;
+
+    // طلب موافقة المشرف عبر PIN قبل تنفيذ الإلغاء
+    final approved = await ManagerApprovalService.requestPinApproval(
+      context: context,
+      action: 'void_sale',
+    );
+
+    if (!approved || !mounted) return;
 
     // Show success
     ScaffoldMessenger.of(context).showSnackBar(
@@ -221,53 +225,6 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   }
 
   // ============================================================================
-  // NAVIGATION
-  // ============================================================================
-
-  void _handleNavigation(AppSidebarItem item) {
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-      case 'pos':
-        context.go(AppRoutes.pos);
-      case 'products':
-        context.push(AppRoutes.products);
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-      case 'customers':
-        context.push(AppRoutes.customers);
-      case 'sales':
-        context.push(AppRoutes.invoices);
-      case 'returns':
-        context.push(AppRoutes.returns);
-      case 'reports':
-        context.push(AppRoutes.reports);
-      case 'suppliers':
-        context.push(AppRoutes.suppliers);
-    }
-  }
-
-  List<SidebarGroup> _getSidebarGroups(AppLocalizations l10n) {
-    return [
-      SidebarGroup(items: [
-        AppSidebarItem(id: 'dashboard', title: l10n.dashboard, icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard_rounded),
-        AppSidebarItem(id: 'pos', title: l10n.pos, icon: Icons.point_of_sale_outlined, activeIcon: Icons.point_of_sale_rounded),
-      ]),
-      SidebarGroup(title: l10n.storeManagement, items: [
-        AppSidebarItem(id: 'products', title: l10n.products, icon: Icons.inventory_2_outlined, activeIcon: Icons.inventory_2_rounded),
-        AppSidebarItem(id: 'inventory', title: l10n.inventory, icon: Icons.warehouse_outlined, activeIcon: Icons.warehouse_rounded),
-        AppSidebarItem(id: 'customers', title: l10n.customers, icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded),
-        AppSidebarItem(id: 'suppliers', title: l10n.supplier, icon: Icons.local_shipping_outlined, activeIcon: Icons.local_shipping_rounded),
-      ]),
-      SidebarGroup(title: l10n.finance, items: [
-        AppSidebarItem(id: 'sales', title: l10n.invoices, icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long_rounded),
-        AppSidebarItem(id: 'returns', title: l10n.returns, icon: Icons.assignment_return_outlined, activeIcon: Icons.assignment_return_rounded),
-        AppSidebarItem(id: 'reports', title: l10n.reports, icon: Icons.analytics_outlined, activeIcon: Icons.analytics_rounded),
-      ]),
-    ];
-  }
-
-  // ============================================================================
   // BUILD
   // ============================================================================
 
@@ -279,27 +236,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: _getSidebarGroups(l10n),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'كريم محمود',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 _buildHeader(context, isWideScreen, isDark, l10n),
                 Expanded(
@@ -332,15 +269,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-      // Mobile bottom action bar
-      bottomNavigationBar: (!isWideScreen && _invoiceData != null)
-          ? _buildMobileBottomBar(isDark, l10n)
-          : null,
-    );
+            );
   }
 
   // ============================================================================
@@ -358,7 +287,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
         children: [
           IconButton(
             onPressed: isWideScreen
-                ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                ? null
                 : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
@@ -1270,60 +1199,41 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            l10n.amountExceedsLimit('200', l10n.sar),
+            l10n.operationRequiresApproval,
             style: TextStyle(
               fontSize: 12,
               color: isDark ? const Color(0xFF93C5FD).withValues(alpha: 0.8) : const Color(0xFF1E3A8A),
             ),
           ),
           const SizedBox(height: 16),
-          // PIN input
-          TextField(
-            controller: _pinController,
-            obscureText: true,
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 12,
-              fontFamily: 'Courier',
-              color: isDark ? Colors.white : AppColors.textPrimary,
-            ),
-            decoration: InputDecoration(
-              hintText: '••••',
-              hintStyle: TextStyle(
-                fontSize: 28,
-                letterSpacing: 12,
-                color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted,
-              ),
-              filled: true,
-              fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+          // إشعار: سيُطلب PIN عند الضغط على زر التأكيد
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE),
               ),
             ),
-            onChanged: (_) => setState(() {}),
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: Text(
-              l10n.pinSentToManager,
-              style: TextStyle(
-                fontSize: 11,
-                color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.lock_rounded,
+                  size: 20,
+                  color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.pinRequired,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1431,81 +1341,6 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   }
 
   // ============================================================================
-  // MOBILE BOTTOM BAR
-  // ============================================================================
-
-  Widget _buildMobileBottomBar(bool isDark, AppLocalizations l10n) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2)),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _resetForm,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border),
-                foregroundColor: isDark ? Colors.white70 : AppColors.textSecondary,
-              ),
-              child: Text(l10n.cancelAction, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: _isFormValid ? _confirmVoid : null,
-              icon: const Icon(Icons.block, size: 18),
-              label: Text(l10n.confirmFinalVoid, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.error,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: isDark ? AppColors.error.withValues(alpha: 0.3) : AppColors.error.withValues(alpha: 0.4),
-                disabledForegroundColor: Colors.white.withValues(alpha: 0.5),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================================
   // DRAWER (mobile)
   // ============================================================================
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: _getSidebarGroups(l10n),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'كريم محمود',
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
 }

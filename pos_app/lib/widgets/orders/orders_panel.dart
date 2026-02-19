@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/online_order.dart';
 import '../../providers/online_orders_provider.dart';
 import 'order_card.dart';
@@ -60,7 +61,8 @@ class OrdersPanel extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, WidgetRef ref, OnlineOrdersState state) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -100,13 +102,13 @@ class OrdersPanel extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(onlineOrdersProvider.notifier).refreshOrders(),
-            tooltip: 'تحديث',
+            tooltip: l10n.refresh,
           ),
           if (onClose != null)
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: onClose,
-              tooltip: 'إغلاق',
+              tooltip: l10n.close,
             ),
         ],
       ),
@@ -114,6 +116,8 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   Widget _buildStatusTabs(BuildContext context, OnlineOrdersState state) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: SingleChildScrollView(
@@ -121,14 +125,14 @@ class OrdersPanel extends ConsumerWidget {
         child: Row(
           children: [
             _StatusChip(
-              label: 'الكل',
+              label: l10n.all,
               count: state.orders.length,
               isSelected: true,
               color: Colors.grey,
             ),
             const SizedBox(width: 8),
             _StatusChip(
-              label: 'جديد',
+              label: l10n.newLabel,
               count: state.pendingOrders.length,
               color: Colors.orange,
             ),
@@ -213,6 +217,8 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   void _showRejectDialog(BuildContext context, WidgetRef ref, OnlineOrder order) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -221,7 +227,7 @@ class OrdersPanel extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -231,7 +237,7 @@ class OrdersPanel extends ConsumerWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('رفض'),
+            child: Text(l10n.reject),
           ),
         ],
       ),
@@ -239,12 +245,14 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   void _printOrder(BuildContext context, OnlineOrder order) {
+    final l10n = AppLocalizations.of(context)!;
+
     // TODO: طباعة الفاتورة
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('طباعة الطلب ${order.id}...'),
         action: SnackBarAction(
-          label: 'تم',
+          label: l10n.done,
           onPressed: () {},
         ),
       ),

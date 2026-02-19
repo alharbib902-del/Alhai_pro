@@ -1,18 +1,73 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الضرائب
-class TaxReportScreen extends StatefulWidget {
+class TaxReportScreen extends ConsumerStatefulWidget {
   const TaxReportScreen({super.key});
 
   @override
-  State<TaxReportScreen> createState() => _TaxReportScreenState();
+  ConsumerState<TaxReportScreen> createState() => _TaxReportScreenState();
 }
 
-class _TaxReportScreenState extends State<TaxReportScreen> {
+class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
   String _period = 'month';
+  bool _isLoading = true;
+
+  double _totalSales = 0;
+  double _salesTax = 0;
+  double _totalPurchases = 0;
+  double _purchasesTax = 0;
+  double _netTax = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTaxData();
+  }
+
+  Future<void> _loadTaxData() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? kDemoStoreId;
+      final now = DateTime.now();
+      DateTime startDate;
+      switch (_period) {
+        case 'quarter':
+          startDate = DateTime(now.year, now.month - 3, 1);
+          break;
+        case 'year':
+          startDate = DateTime(now.year, 1, 1);
+          break;
+        default:
+          startDate = DateTime(now.year, now.month, 1);
+      }
+
+      final salesStats = await db.salesDao.getSalesStats(storeId, startDate: startDate, endDate: now);
+      _totalSales = salesStats.total;
+      _salesTax = _totalSales * 0.15;
+      // Purchases not readily available from salesDao, set to 0
+      _totalPurchases = 0;
+      _purchasesTax = _totalPurchases * 0.15;
+      _netTax = _salesTax - _purchasesTax;
+
+      setState(() => _isLoading = false);
+    } catch (_) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تقرير الضرائب')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('تقرير الضرائب'),
@@ -34,7 +89,13 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                 ButtonSegment(value: 'year', label: Text('سنوي')),
               ],
               selected: {_period},
-              onSelectionChanged: (v) => setState(() => _period = v.first),
+              onSelectionChanged: (v) {
+                setState(() {
+                  _period = v.first;
+                  _isLoading = true;
+                });
+                _loadTaxData();
+              },
             ),
             const SizedBox(height: 24),
 
@@ -47,14 +108,14 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                   gradient: LinearGradient(colors: [Colors.green.shade600, Colors.green.shade400]),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('صافي الضريبة المستحقة', style: TextStyle(color: Colors.white70)),
-                    SizedBox(height: 8),
-                    Text('12,450.00 ر.س', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('يناير 2026', style: TextStyle(color: Colors.white70)),
+                    const Text('صافي الضريبة المستحقة', style: TextStyle(color: Colors.white70)),
+                    const SizedBox(height: 8),
+                    Text('${_netTax.toStringAsFixed(2)} ر.س', style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Text('${DateTime.now().month}/${DateTime.now().year}', style: const TextStyle(color: Colors.white70)),
                   ],
                 ),
               ),
@@ -63,11 +124,11 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
             const SizedBox(height: 24),
 
             // تفاصيل
-            const Row(
+            Row(
               children: [
-                Expanded(child: _DetailCard(title: 'ضريبة المبيعات', subtitle: 'المحصلة', value: '18,750.00', color: Colors.blue)),
-                SizedBox(width: 12),
-                Expanded(child: _DetailCard(title: 'ضريبة المشتريات', subtitle: 'المدفوعة', value: '6,300.00', color: Colors.orange)),
+                Expanded(child: _DetailCard(title: 'ضريبة المبيعات', subtitle: 'المحصلة', value: _salesTax.toStringAsFixed(2), color: Colors.blue)),
+                const SizedBox(width: 12),
+                Expanded(child: _DetailCard(title: 'ضريبة المشتريات', subtitle: 'المدفوعة', value: _purchasesTax.toStringAsFixed(2), color: Colors.orange)),
               ],
             ),
 
@@ -76,18 +137,18 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
             // جدول التفاصيل
             Text('تفاصيل الضريبة', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            const Card(
+            Card(
               child: Column(
                 children: [
-                  _TaxRow(label: 'إجمالي المبيعات', value: '125,000.00'),
-                  _TaxRow(label: 'المبيعات الخاضعة للضريبة', value: '125,000.00'),
-                  _TaxRow(label: 'ضريبة المبيعات (15%)', value: '18,750.00', highlight: true),
-                  Divider(height: 1),
-                  _TaxRow(label: 'إجمالي المشتريات', value: '42,000.00'),
-                  _TaxRow(label: 'المشتريات الخاضعة للضريبة', value: '42,000.00'),
-                  _TaxRow(label: 'ضريبة المشتريات (15%)', value: '6,300.00', highlight: true),
-                  Divider(height: 1),
-                  _TaxRow(label: 'صافي الضريبة', value: '12,450.00', highlight: true, isTotal: true),
+                  _TaxRow(label: 'إجمالي المبيعات', value: _totalSales.toStringAsFixed(2)),
+                  _TaxRow(label: 'المبيعات الخاضعة للضريبة', value: _totalSales.toStringAsFixed(2)),
+                  _TaxRow(label: 'ضريبة المبيعات (15%)', value: _salesTax.toStringAsFixed(2), highlight: true),
+                  const Divider(height: 1),
+                  _TaxRow(label: 'إجمالي المشتريات', value: _totalPurchases.toStringAsFixed(2)),
+                  _TaxRow(label: 'المشتريات الخاضعة للضريبة', value: _totalPurchases.toStringAsFixed(2)),
+                  _TaxRow(label: 'ضريبة المشتريات (15%)', value: _purchasesTax.toStringAsFixed(2), highlight: true),
+                  const Divider(height: 1),
+                  _TaxRow(label: 'صافي الضريبة', value: _netTax.toStringAsFixed(2), highlight: true, isTotal: true),
                 ],
               ),
             ),
@@ -124,7 +185,7 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
               children: [
                 Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.history), label: const Text('السجل'))),
                 const SizedBox(width: 12),
-                Expanded(child: FilledButton.icon(onPressed: () {}, icon: const Icon(Icons.send), label: const Text('إرسال للهيئة'))),
+                Expanded(child: FilledButton.icon(onPressed: () {}, icon: const AdaptiveIcon(Icons.send), label: const Text('إرسال للهيئة'))),
               ],
             ),
           ],

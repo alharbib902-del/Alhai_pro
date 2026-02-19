@@ -1,16 +1,40 @@
 /// Manager Approval Service - خدمة موافقة المدير
 ///
 /// خدمة للتحقق من صلاحيات المدير عبر PIN
+/// تستخدم PinService للتحقق الآمن (PBKDF2 + lockout)
 library;
 
 import 'package:flutter/material.dart';
+import '../screens/auth/manager_approval_screen.dart';
 import '../widgets/auth/pin_numpad.dart';
 
 /// خدمة موافقة المدير
 class ManagerApprovalService {
   ManagerApprovalService._();
 
-  /// طلب موافقة المدير
+  /// طلب موافقة المدير باستخدام PinService (الطريقة المفضلة)
+  ///
+  /// يعرض حوار إدخال PIN المشرف مع التحقق عبر PinService
+  /// (PBKDF2 + lockout بعد 5 محاولات فاشلة لمدة 15 دقيقة)
+  ///
+  /// إذا لم يكن PIN مُعداً بعد، يعرض شاشة الإعداد أولاً.
+  ///
+  /// [context] - BuildContext للعرض
+  /// [action] - رمز الإجراء (مثل: 'void_sale', 'cash_out')
+  ///
+  /// Returns: true إذا تم التحقق بنجاح، false إذا أُلغيت أو فشلت
+  static Future<bool> requestPinApproval({
+    required BuildContext context,
+    String? action,
+  }) async {
+    final description = action != null ? getActionDescription(action) : null;
+    return ManagerApprovalScreen.showApprovalDialog(
+      context,
+      action: description,
+    );
+  }
+
+  /// طلب موافقة المدير (واجهة قديمة - تستخدم callback)
   ///
   /// يعرض dialog لإدخال PIN المدير والتحقق منه
   /// [context] - BuildContext للعرض
@@ -35,22 +59,26 @@ class ManagerApprovalService {
 
   /// طلب موافقة المدير مع التحقق المحلي
   ///
-  /// يستخدم PIN ثابت للتحقق (للاختبار فقط)
-  /// في الإنتاج يجب استخدام [requestApproval] مع تحقق من الخادم
+  /// [expectedPin] مطلوب - يجب الحصول عليه من مصدر آمن (خادم أو تخزين آمن)
+  /// في الإنتاج يُفضل استخدام [requestPinApproval] مع PinService
   static Future<bool> requestApprovalWithLocalVerification({
     required BuildContext context,
     required String action,
     String? description,
-    String expectedPin = '1234', // PIN افتراضي للاختبار
+    required String expectedPin,
   }) async {
     return await ManagerApprovalDialog.show(
       context: context,
       action: action,
       description: description,
       onVerify: (pin) async {
-        // محاكاة تأخير الشبكة
-        await Future.delayed(const Duration(milliseconds: 500));
-        return pin == expectedPin;
+        // مقارنة ثابتة الوقت لمنع هجمات التوقيت
+        if (pin.length != expectedPin.length) return false;
+        int result = 0;
+        for (int i = 0; i < pin.length; i++) {
+          result |= pin.codeUnitAt(i) ^ expectedPin.codeUnitAt(i);
+        }
+        return result == 0;
       },
     );
   }
@@ -63,6 +91,8 @@ class ManagerApprovalService {
     'refund',             // استرجاع
     'modify_price',       // تعديل السعر
     'apply_discount',     // تطبيق خصم
+    'discount_over_20',   // خصم أكثر من 20%
+    'cash_out',           // سحب نقدي من الصندوق
     'close_day',          // إغلاق اليوم
     'view_reports',       // عرض التقارير المالية
     'export_data',        // تصدير البيانات
@@ -89,6 +119,10 @@ class ManagerApprovalService {
         return 'تعديل سعر منتج';
       case 'apply_discount':
         return 'تطبيق خصم على الفاتورة';
+      case 'discount_over_20':
+        return 'تطبيق خصم أكثر من 20% يتطلب موافقة المشرف';
+      case 'cash_out':
+        return 'سحب نقدي من درج الصندوق';
       case 'close_day':
         return 'إغلاق اليوم وتسوية الصندوق';
       case 'view_reports':
@@ -117,6 +151,10 @@ class ManagerApprovalService {
         return 'تعديل السعر';
       case 'apply_discount':
         return 'تطبيق خصم';
+      case 'discount_over_20':
+        return 'خصم أكثر من 20%';
+      case 'cash_out':
+        return 'سحب نقدي';
       case 'close_day':
         return 'إغلاق اليوم';
       case 'view_reports':
@@ -133,7 +171,15 @@ class ManagerApprovalService {
 
 /// Extension لتسهيل طلب الموافقة
 extension ManagerApprovalExtension on BuildContext {
-  /// طلب موافقة المدير
+  /// طلب موافقة المدير باستخدام PinService (الطريقة المفضلة)
+  Future<bool> requestPinApproval({String? action}) {
+    return ManagerApprovalService.requestPinApproval(
+      context: this,
+      action: action,
+    );
+  }
+
+  /// طلب موافقة المدير (واجهة قديمة مع callback)
   Future<bool> requestManagerApproval({
     required String action,
     String? description,
@@ -148,11 +194,14 @@ extension ManagerApprovalExtension on BuildContext {
   }
 
   /// طلب موافقة المدير بالاسم
-  Future<bool> requestManagerApprovalFor(String actionCode) {
+  ///
+  /// [expectedPin] مطلوب - يجب الحصول عليه من مصدر آمن
+  Future<bool> requestManagerApprovalFor(String actionCode, {required String expectedPin}) {
     return ManagerApprovalService.requestApprovalWithLocalVerification(
       context: this,
       action: ManagerApprovalService.getActionName(actionCode),
       description: ManagerApprovalService.getActionDescription(actionCode),
+      expectedPin: expectedPin,
     );
   }
 }

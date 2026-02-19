@@ -106,6 +106,10 @@ $$;
 
 -- ─── دالة جلب التغييرات منذ وقت معين ───
 -- تُستخدم للمزامنة التزايدية (incremental sync)
+-- إزالة النسخة القديمة (4 معاملات) من migration 001 لتجنب التعارض
+DROP FUNCTION IF EXISTS get_changes_since(TEXT, TEXT, TIMESTAMPTZ, INTEGER);
+DROP FUNCTION IF EXISTS get_changes_since(TEXT, TEXT, TIMESTAMPTZ);
+
 CREATE OR REPLACE FUNCTION get_changes_since(
     p_table TEXT,
     p_org_id TEXT,
@@ -127,24 +131,35 @@ $$;
 ALTER TABLE stock_deltas ENABLE ROW LEVEL SECURITY;
 
 -- السماح للمستخدمين المصادقين بقراءة وكتابة دلتا المخزون لمؤسستهم فقط
+-- ملاحظة: auth.uid() يرجع UUID لذا نحوله لـ TEXT للمقارنة مع user_id
 CREATE POLICY "Users can read own org stock deltas"
     ON stock_deltas FOR SELECT
     USING (org_id IN (
         SELECT om.org_id FROM org_members om
-        WHERE om.user_id = auth.uid()
+        WHERE om.user_id = auth.uid()::TEXT
     ));
 
 CREATE POLICY "Users can insert own org stock deltas"
     ON stock_deltas FOR INSERT
     WITH CHECK (org_id IN (
         SELECT om.org_id FROM org_members om
-        WHERE om.user_id = auth.uid()
+        WHERE om.user_id = auth.uid()::TEXT
     ));
 
 -- ─── منح الصلاحيات ───
-GRANT EXECUTE ON FUNCTION apply_stock_deltas TO authenticated;
-GRANT EXECUTE ON FUNCTION get_changes_since TO authenticated;
+GRANT EXECUTE ON FUNCTION apply_stock_deltas(TEXT, TEXT, JSONB) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_changes_since(TEXT, TEXT, TIMESTAMPTZ) TO authenticated;
 
 -- ─── تفعيل Realtime على الجداول المهمة ───
-ALTER PUBLICATION supabase_realtime ADD TABLE products;
-ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+-- products قد تكون مضافة مسبقاً، نتجاهل الخطأ
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE products;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;

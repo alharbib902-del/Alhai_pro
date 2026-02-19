@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:drift/drift.dart' show Value;
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/router/routes.dart';
+import '../../core/validators/validators.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/suppliers_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة نموذج المورد
@@ -31,8 +34,6 @@ class SupplierFormScreen extends ConsumerStatefulWidget {
 }
 
 class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'suppliers';
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -63,17 +64,23 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     }
   }
 
-  void _loadSupplierData() {
-    // محاكاة تحميل البيانات
-    _nameController.text = 'محمد العلي';
-    _companyNameController.text = 'شركة الأغذية المتحدة';
-    _phoneController.text = '0501234567';
-    _emailController.text = 'supplier@food.com';
-    _addressController.text = 'الرياض، حي الملز';
-    _vatNumberController.text = '300000000000003';
-    _crNumberController.text = '1234567890';
-    _bankNameController.text = 'بنك الراجحي';
-    _ibanController.text = 'SA0380000000608010167519';
+  Future<void> _loadSupplierData() async {
+    final db = getIt<AppDatabase>();
+    final supplier = await db.suppliersDao.getSupplierById(widget.supplierId!);
+    if (supplier != null && mounted) {
+      setState(() {
+        _nameController.text = supplier.name;
+        _phoneController.text = supplier.phone ?? '';
+        _emailController.text = supplier.email ?? '';
+        _addressController.text = supplier.address ?? '';
+        _vatNumberController.text = supplier.taxNumber ?? '';
+        _notesController.text = supplier.notes ?? '';
+        _isActive = supplier.isActive;
+        if (supplier.paymentTerms != null) {
+          _paymentTerms = supplier.paymentTerms!;
+        }
+      });
+    }
   }
 
   @override
@@ -91,67 +98,6 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     _notesController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.go(AppRoutes.products);
-        break;
-      case 'categories':
-        context.go(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.go(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.go(AppRoutes.customers);
-        break;
-      case 'suppliers':
-        context.go(AppRoutes.suppliers);
-        break;
-      case 'invoices':
-        context.go(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.go(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.go(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.go(AppRoutes.returns);
-        break;
-      case 'void-transaction':
-        context.go(AppRoutes.voidTransaction);
-        break;
-      case 'reports':
-        context.go(AppRoutes.reports);
-        break;
-      case 'employees':
-        context.go(AppRoutes.settings);
-        break;
-      case 'loyalty':
-        context.go(AppRoutes.loyalty);
-        break;
-      case 'expenses':
-        context.go(AppRoutes.expenses);
-        break;
-      case 'shifts':
-        context.go(AppRoutes.shifts);
-        break;
-      case 'purchases':
-        context.go(AppRoutes.purchaseForm);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -160,39 +106,15 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          // Sidebar - only on wide screens
-          if (isWideScreen)
-            AppSidebar(
-              storeName: 'Al-Hai POS',
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.dashboard,
-              onSettingsTap: () => context.go(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go(AppRoutes.login),
-            ),
-
-          // Main content
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 // Header
                 AppHeader(
                   title: widget.isEditing
-                      ? 'تعديل المورد' // TODO: localize
-                      : 'إضافة مورد جديد', // TODO: localize
+                      ? l10n.editSupplier
+                      : l10n.addNewSupplier,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () {},
                   notificationsCount: 3,
@@ -210,11 +132,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 
   Widget _buildWideLayout(
@@ -229,11 +147,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                _buildBasicInfoSection(isDark),
+                _buildBasicInfoSection(isDark, l10n),
                 const SizedBox(height: 20),
-                _buildContactSection(isDark),
+                _buildContactSection(isDark, l10n),
                 const SizedBox(height: 20),
-                _buildBusinessSection(isDark),
+                _buildBusinessSection(isDark, l10n),
               ],
             ),
           ),
@@ -245,7 +163,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
             padding: const EdgeInsets.fromLTRB(0, 24, 24, 24),
             child: Column(
               children: [
-                _buildFinancialSection(isDark),
+                _buildFinancialSection(isDark, l10n),
                 const SizedBox(height: 20),
                 _buildAdditionalSection(isDark),
                 const SizedBox(height: 24),
@@ -267,13 +185,13 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildBasicInfoSection(isDark),
+          _buildBasicInfoSection(isDark, l10n),
           const SizedBox(height: 16),
-          _buildContactSection(isDark),
+          _buildContactSection(isDark, l10n),
           const SizedBox(height: 16),
-          _buildBusinessSection(isDark),
+          _buildBusinessSection(isDark, l10n),
           const SizedBox(height: 16),
-          _buildFinancialSection(isDark),
+          _buildFinancialSection(isDark, l10n),
           const SizedBox(height: 16),
           _buildAdditionalSection(isDark),
           const SizedBox(height: 24),
@@ -344,60 +262,52 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     );
   }
 
-  Widget _buildBasicInfoSection(bool isDark) {
+  Widget _buildBasicInfoSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
-      title: 'المعلومات الأساسية', // TODO: localize
+      title: l10n.basicInfo,
       icon: Icons.person,
       color: AppColors.primary,
       children: [
         // اسم المورد
         _buildTextField(
           controller: _nameController,
-          label: 'اسم المورد / جهة الاتصال *', // TODO: localize
-          hint: 'مثال: محمد العلي', // TODO: localize
+          label: l10n.supplierContactName,
+          hint: 'مثال: محمد العلي',
           icon: Icons.person_outline,
           isDark: isDark,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'يرجى إدخال اسم المورد'; // TODO: localize
-            }
-            return null;
-          },
+          maxLength: 100,
+          validator: FormValidators.name(maxLength: 100),
         ),
         const SizedBox(height: AppSizes.md),
 
         // اسم الشركة
         _buildTextField(
           controller: _companyNameController,
-          label: 'اسم الشركة *', // TODO: localize
-          hint: 'مثال: شركة الأغذية المتحدة', // TODO: localize
+          label: l10n.companyNameRequired,
+          hint: 'مثال: شركة الأغذية المتحدة',
           icon: Icons.business,
           isDark: isDark,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'يرجى إدخال اسم الشركة'; // TODO: localize
-            }
-            return null;
-          },
+          maxLength: 150,
+          validator: FormValidators.requiredField(maxLength: 150),
         ),
         const SizedBox(height: AppSizes.md),
 
         // التصنيف
         _buildDropdown(
-          label: 'التصنيف', // TODO: localize
+          label: l10n.categoryLabel,
           icon: Icons.category,
           value: _category,
           isDark: isDark,
-          items: const [
-            DropdownMenuItem(value: 'general', child: Text('عام')),
-            DropdownMenuItem(value: 'food', child: Text('مواد غذائية')),
-            DropdownMenuItem(value: 'beverages', child: Text('مشروبات')),
-            DropdownMenuItem(value: 'dairy', child: Text('ألبان')),
-            DropdownMenuItem(value: 'meat', child: Text('لحوم')),
+          items: [
+            DropdownMenuItem(value: 'general', child: Text(l10n.generalCategory)),
+            DropdownMenuItem(value: 'food', child: Text(l10n.foodMaterials)),
+            DropdownMenuItem(value: 'beverages', child: Text(l10n.beverages)),
+            DropdownMenuItem(value: 'dairy', child: Text(l10n.dairy)),
+            DropdownMenuItem(value: 'meat', child: Text(l10n.meat)),
             DropdownMenuItem(
-                value: 'vegetables', child: Text('خضروات وفواكه')),
-            DropdownMenuItem(value: 'equipment', child: Text('معدات')),
+                value: 'vegetables', child: Text(l10n.vegetablesFruits)),
+            DropdownMenuItem(value: 'equipment', child: Text(l10n.equipment)),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -409,146 +319,136 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     );
   }
 
-  Widget _buildContactSection(bool isDark) {
+  Widget _buildContactSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
-      title: 'معلومات التواصل', // TODO: localize
+      title: l10n.contactInfo,
       icon: Icons.contact_phone,
       color: AppColors.info,
       children: [
         // رقم الهاتف
         _buildTextField(
           controller: _phoneController,
-          label: 'رقم الهاتف الأساسي *', // TODO: localize
+          label: l10n.primaryPhoneRequired,
           hint: '05xxxxxxxx',
           icon: Icons.phone,
           isDark: isDark,
           keyboardType: TextInputType.phone,
+          maxLength: 13,
           inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
+            FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
           ],
           prefixText: '+966 ',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'يرجى إدخال رقم الهاتف'; // TODO: localize
-            }
-            if (value.length != 10 || !value.startsWith('05')) {
-              return 'رقم هاتف غير صحيح'; // TODO: localize
-            }
-            return null;
-          },
+          validator: FormValidators.phone(),
         ),
         const SizedBox(height: AppSizes.md),
 
         // رقم هاتف ثانوي
         _buildTextField(
           controller: _phone2Controller,
-          label: 'رقم هاتف ثانوي (اختياري)', // TODO: localize
+          label: l10n.secondaryPhoneOptional,
           hint: '05xxxxxxxx',
           icon: Icons.phone_android,
           isDark: isDark,
           keyboardType: TextInputType.phone,
+          maxLength: 13,
           inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
+            FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
           ],
           prefixText: '+966 ',
+          validator: FormValidators.phone(required: false),
         ),
         const SizedBox(height: AppSizes.md),
 
         // البريد الإلكتروني
         _buildTextField(
           controller: _emailController,
-          label: 'البريد الإلكتروني', // TODO: localize
+          label: l10n.emailField,
           hint: 'example@company.com',
           icon: Icons.email,
           isDark: isDark,
           keyboardType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                  .hasMatch(value)) {
-                return 'بريد إلكتروني غير صحيح'; // TODO: localize
-              }
-            }
-            return null;
-          },
+          maxLength: 254,
+          validator: FormValidators.email(required: false),
         ),
         const SizedBox(height: AppSizes.md),
 
         // العنوان
         _buildTextField(
           controller: _addressController,
-          label: 'العنوان', // TODO: localize
-          hint: 'المدينة، الحي، الشارع', // TODO: localize
+          label: l10n.addressField2,
+          hint: 'المدينة، الحي، الشارع',
           icon: Icons.location_on,
           isDark: isDark,
           maxLines: 2,
+          maxLength: 300,
+          validator: FormValidators.notes(maxLength: 300),
         ),
       ],
     );
   }
 
-  Widget _buildBusinessSection(bool isDark) {
+  Widget _buildBusinessSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
-      title: 'المعلومات التجارية', // TODO: localize
+      title: l10n.commercialInfo,
       icon: Icons.business_center,
       color: AppColors.warning,
       children: [
         // الرقم الضريبي
         _buildTextField(
           controller: _vatNumberController,
-          label: 'الرقم الضريبي (VAT)', // TODO: localize
-          hint: '15 رقم', // TODO: localize
+          label: l10n.taxNumberVat,
+          hint: '15 رقم',
           icon: Icons.receipt_long,
           isDark: isDark,
           keyboardType: TextInputType.number,
+          maxLength: 15,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(15),
           ],
+          validator: FormValidators.vatNumber(),
         ),
         const SizedBox(height: AppSizes.md),
 
         // السجل التجاري
         _buildTextField(
           controller: _crNumberController,
-          label: 'رقم السجل التجاري (CR)', // TODO: localize
-          hint: '10 أرقام', // TODO: localize
+          label: l10n.commercialRegNumber,
+          hint: '10 أرقام',
           icon: Icons.article,
           isDark: isDark,
           keyboardType: TextInputType.number,
+          maxLength: 10,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
           ],
+          validator: FormValidators.crNumber(),
         ),
       ],
     );
   }
 
-  Widget _buildFinancialSection(bool isDark) {
+  Widget _buildFinancialSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
-      title: 'المعلومات المالية', // TODO: localize
+      title: l10n.financialInfo,
       icon: Icons.account_balance,
       color: AppColors.success,
       children: [
         // شروط الدفع
         _buildDropdown(
-          label: 'شروط الدفع', // TODO: localize
+          label: l10n.paymentTerms,
           icon: Icons.calendar_today,
           value: _paymentTerms,
           isDark: isDark,
-          items: const [
-            DropdownMenuItem(value: 'cod', child: Text('الدفع عند الاستلام')),
-            DropdownMenuItem(value: '7', child: Text('7 أيام')),
-            DropdownMenuItem(value: '14', child: Text('14 يوم')),
-            DropdownMenuItem(value: '30', child: Text('30 يوم')),
+          items: [
+            DropdownMenuItem(value: 'cod', child: Text(l10n.payOnDelivery)),
+            DropdownMenuItem(value: '7', child: Text(l10n.sevenDays)),
+            DropdownMenuItem(value: '14', child: Text(l10n.fourteenDays)),
+            DropdownMenuItem(value: '30', child: Text(l10n.thirtyDays)),
             DropdownMenuItem(value: '45', child: Text('45 يوم')),
-            DropdownMenuItem(value: '60', child: Text('60 يوم')),
+            DropdownMenuItem(value: '60', child: Text(l10n.sixtyDays)),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -561,10 +461,12 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // اسم البنك
         _buildTextField(
           controller: _bankNameController,
-          label: 'اسم البنك', // TODO: localize
-          hint: 'مثال: بنك الراجحي', // TODO: localize
+          label: l10n.bankName,
+          hint: 'مثال: بنك الراجحي',
           icon: Icons.account_balance,
           isDark: isDark,
+          maxLength: 100,
+          validator: FormValidators.name(isRequired: false),
         ),
         const SizedBox(height: AppSizes.md),
 
@@ -576,18 +478,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           icon: Icons.credit_card,
           isDark: isDark,
           textCapitalization: TextCapitalization.characters,
+          maxLength: 24,
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
-            LengthLimitingTextInputFormatter(24),
           ],
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              if (value.length != 24 || !value.startsWith('SA')) {
-                return 'رقم IBAN غير صحيح'; // TODO: localize
-              }
-            }
-            return null;
-          },
+          validator: FormValidators.iban(required: false),
         ),
       ],
     );
@@ -628,7 +523,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               ),
             ),
             value: _isActive,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             onChanged: (value) {
               setState(() => _isActive = value);
             },
@@ -644,6 +539,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           icon: Icons.note,
           isDark: isDark,
           maxLines: 3,
+          maxLength: 500,
+          validator: FormValidators.notes(),
         ),
       ],
     );
@@ -660,6 +557,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     String? prefixText,
     TextCapitalization textCapitalization = TextCapitalization.none,
     int maxLines = 1,
+    int? maxLength,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
@@ -668,6 +566,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       inputFormatters: inputFormatters,
       textCapitalization: textCapitalization,
       maxLines: maxLines,
+      maxLength: maxLength,
       style: TextStyle(
         color: isDark ? Colors.white : AppColors.textPrimary,
       ),
@@ -740,7 +639,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     required ValueChanged<String?> onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
@@ -839,32 +738,6 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       ),
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: 'Al-Hai POS',
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.dashboard,
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.go(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go(AppRoutes.login);
-        },
-      ),
-    );
-  }
-
   void _saveSupplier() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -874,31 +747,86 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       _isLoading = true;
     });
 
-    // محاكاة الحفظ
-    await Future.delayed(const Duration(seconds: 1));
+    // Sanitize values before saving
+    final sanitizedName = InputSanitizer.sanitizeName(_nameController.text);
+    final sanitizedPhone = InputSanitizer.sanitizePhone(_phoneController.text);
+    final sanitizedEmail = InputSanitizer.sanitizeEmail(_emailController.text);
+    final sanitizedAddress = InputSanitizer.sanitize(_addressController.text);
+    final sanitizedVat = InputSanitizer.sanitizeNumeric(_vatNumberController.text);
+    final sanitizedNotes = InputSanitizer.sanitize(_notesController.text);
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+    try {
+      final db = getIt<AppDatabase>();
+      if (widget.isEditing) {
+        // Update existing supplier
+        final existing = await db.suppliersDao.getSupplierById(widget.supplierId!);
+        if (existing != null) {
+          await db.suppliersDao.updateSupplier(existing.copyWith(
+            name: sanitizedName,
+            phone: Value(sanitizedPhone.isEmpty ? null : sanitizedPhone),
+            email: Value(sanitizedEmail.isEmpty ? null : sanitizedEmail),
+            address: Value(sanitizedAddress.isEmpty ? null : sanitizedAddress),
+            taxNumber: Value(sanitizedVat.isEmpty ? null : sanitizedVat),
+            notes: Value(sanitizedNotes.isEmpty ? null : sanitizedNotes),
+            paymentTerms: Value(_paymentTerms),
+            isActive: _isActive,
+            updatedAt: Value(DateTime.now()),
+          ));
+          ref.invalidate(suppliersListProvider);
+          ref.invalidate(activeSuppliersProvider);
+          ref.invalidate(supplierDetailProvider(widget.supplierId!));
+        }
+      } else {
+        // Create new supplier
+        await addSupplier(
+          ref,
+          name: sanitizedName,
+          phone: sanitizedPhone.isEmpty ? null : sanitizedPhone,
+          email: sanitizedEmail.isEmpty ? null : sanitizedEmail,
+          address: sanitizedAddress.isEmpty ? null : sanitizedAddress,
+          taxNumber: sanitizedVat.isEmpty ? null : sanitizedVat,
+          notes: sanitizedNotes.isEmpty ? null : sanitizedNotes,
+        );
+      }
 
-      HapticFeedback.heavyImpact();
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.isEditing
-                ? 'تم تحديث بيانات المورد' // TODO: localize
-                : 'تم إضافة المورد بنجاح', // TODO: localize
+        HapticFeedback.heavyImpact();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.isEditing
+                  ? 'تم تحديث بيانات المورد' // TODO: localize
+                  : 'تم إضافة المورد بنجاح', // TODO: localize
+            ),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+        );
 
-      context.pop();
+        context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
     }
   }
 
@@ -958,22 +886,39 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       _isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      await deleteSupplier(ref, widget.supplierId!);
 
-    if (mounted) {
-      HapticFeedback.mediumImpact();
+      if (mounted) {
+        HapticFeedback.mediumImpact();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('تم حذف المورد'), // TODO: localize
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('تم حذف المورد'), // TODO: localize
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
 
-      context.pop();
+        context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ أثناء الحذف: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
     }
   }
 }

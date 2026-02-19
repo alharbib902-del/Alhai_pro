@@ -97,7 +97,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
           children: [
             const Icon(Icons.check_circle_rounded, color: Colors.white),
             const SizedBox(width: 12),
-            Text('تم اختيار ${store.name}'),
+            Text(AppLocalizations.of(context)?.branchSelectedMessage(store.name) ?? 'تم اختيار ${store.name}'),
           ],
         ),
         backgroundColor: AppColors.success,
@@ -464,7 +464,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'اختر فرعك للمتابعة',
+                  AppLocalizations.of(context)?.selectYourBranchToContinue ?? 'اختر فرعك للمتابعة',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
@@ -909,7 +909,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
                         ? (l10n?.openNow ?? 'مفتوح الآن')
                         : (store.closedUntil != null 
                             ? (l10n?.closedOpensAt(store.closedUntil!) ?? 'مغلق (يفتح ${store.closedUntil})')
-                            : 'مغلق'),
+                            : (l10n?.branchClosed ?? 'مغلق')),
                     style: TextStyle(
                       color: isOpen ? AppColors.success : Colors.grey,
                       fontSize: 11,
@@ -1037,7 +1037,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            'لا توجد نتائج',
+            AppLocalizations.of(context)?.noResultsFoundSearch ?? 'لا توجد نتائج',
             style: TextStyle(
               color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
               fontSize: 18,

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../common/smart_offline_banner.dart';
 
 /// عنصر القائمة الجانبية
 class SidebarItem {
@@ -169,6 +171,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
       return widget.header!;
     }
 
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       height: AppTopBarSize.height,
       padding: EdgeInsets.symmetric(
@@ -200,7 +203,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'بقالتي',
+                    l10n.myGrocery,
                     style: AppTypography.titleMedium.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
@@ -236,57 +239,81 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
       return widget.footer!;
     }
 
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.all(
         widget.isCollapsed ? AppSpacing.sm : AppSpacing.md,
       ),
       child: widget.isCollapsed
-          ? IconButton(
-              onPressed: widget.onToggleCollapse,
-              icon: const Icon(Icons.menu),
-              color: AppColors.textMuted,
-              tooltip: 'توسيع القائمة',
-            )
-          : Row(
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // User Avatar
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AppColors.primarySurface,
-                  child: Icon(
-                    Icons.person,
-                    size: 20,
-                    color: AppColors.primary,
-                  ),
+                // Connection Status (dot only when collapsed)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: ConnectionStatusIndicator(size: 10),
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                // User Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'أحمد محمد',
-                        style: AppTypography.labelMedium.copyWith(
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        'كاشير',
-                        style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Settings
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.settings_outlined),
-                  iconSize: 20,
+                  onPressed: widget.onToggleCollapse,
+                  icon: const Icon(Icons.menu),
                   color: AppColors.textMuted,
+                  tooltip: 'توسيع القائمة',
+                ),
+              ],
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Connection Status (with label when expanded)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: ConnectionStatusIndicator(
+                    size: 10,
+                    showLabel: true,
+                  ),
+                ),
+                Row(
+                  children: [
+                    // User Avatar
+                    const CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppColors.primarySurface,
+                      child: Icon(
+                        Icons.person,
+                        size: 20,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    // User Info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'أحمد محمد',
+                            style: AppTypography.labelMedium.copyWith(
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            l10n.cashier,
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Settings
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.settings_outlined),
+                      iconSize: 20,
+                      color: AppColors.textMuted,
+                    ),
+                  ],
                 ),
               ],
             ),

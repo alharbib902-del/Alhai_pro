@@ -9,6 +9,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// أنواع الملفات المدعومة
 enum FileCategory {
@@ -438,36 +439,36 @@ class FileUploadValidator {
   static void printValidationReport(FileValidationResult result) {
     if (!kDebugMode) return;
 
-    debugPrint('╔═══════════════════════════════════════════════════════════════╗');
-    debugPrint('║              File Validation Report                           ║');
-    debugPrint('╠═══════════════════════════════════════════════════════════════╣');
-    debugPrint('║  Status: ${result.isValid ? "✅ VALID" : "❌ INVALID"}${" " * 43}║');
+    AppLogger.debug('╔═══════════════════════════════════════════════════════════════╗');
+    AppLogger.debug('║              File Validation Report                           ║');
+    AppLogger.debug('╠═══════════════════════════════════════════════════════════════╣');
+    AppLogger.debug('║  Status: ${result.isValid ? "✅ VALID" : "❌ INVALID"}${" " * 43}║');
     if (result.sanitizedFileName != null) {
-      debugPrint('║  File: ${result.sanitizedFileName?.padRight(52)}║');
+      AppLogger.debug('║  File: ${result.sanitizedFileName?.padRight(52)}║');
     }
     if (result.detectedMimeType != null) {
-      debugPrint('║  MIME: ${result.detectedMimeType?.padRight(52)}║');
+      AppLogger.debug('║  MIME: ${result.detectedMimeType?.padRight(52)}║');
     }
     if (result.category != null) {
-      debugPrint('║  Category: ${result.category!.name.padRight(49)}║');
+      AppLogger.debug('║  Category: ${result.category!.name.padRight(49)}║');
     }
 
     if (result.issues.isNotEmpty) {
-      debugPrint('╠═══════════════════════════════════════════════════════════════╣');
-      debugPrint('║  Issues:');
+      AppLogger.debug('╠═══════════════════════════════════════════════════════════════╣');
+      AppLogger.debug('║  Issues:');
       for (final issue in result.issues) {
-        debugPrint('║    ❌ $issue');
+        AppLogger.debug('║    ❌ $issue');
       }
     }
 
     if (result.warnings.isNotEmpty) {
-      debugPrint('╠═══════════════════════════════════════════════════════════════╣');
-      debugPrint('║  Warnings:');
+      AppLogger.debug('╠═══════════════════════════════════════════════════════════════╣');
+      AppLogger.debug('║  Warnings:');
       for (final warning in result.warnings) {
-        debugPrint('║    ⚠️ $warning');
+        AppLogger.debug('║    ⚠️ $warning');
       }
     }
 
-    debugPrint('╚═══════════════════════════════════════════════════════════════╝');
+    AppLogger.debug('╚═══════════════════════════════════════════════════════════════╝');
   }
 }

@@ -16,3 +16,4 @@ export 'barcode_validator.dart';
 export 'iban_validator.dart';
 export 'input_sanitizer.dart';
 export 'validation_result.dart';
+export 'form_validators.dart';

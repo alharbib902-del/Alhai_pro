@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'customer_search_dialog.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// طرق الدفع المتاحة
 enum PaymentMethod {
-  cash('نقد', Icons.payments, Color(0xFF4CAF50)),
-  card('بطاقة', Icons.credit_card, Color(0xFF2196F3)),
-  mixed('مختلط', Icons.call_split, Colors.purple),
-  credit('آجل', Icons.schedule, Color(0xFFFF9800));
+  cash(Icons.payments, Color(0xFF4CAF50)),
+  card(Icons.credit_card, Color(0xFF2196F3)),
+  mixed(Icons.call_split, Colors.purple),
+  credit(Icons.schedule, Color(0xFFFF9800));
 
-  const PaymentMethod(this.label, this.icon, this.color);
-  final String label;
+  const PaymentMethod(this.icon, this.color);
   final IconData icon;
   final Color color;
+
+  String localizedLabel(AppLocalizations l10n) {
+    switch (this) {
+      case PaymentMethod.cash:
+        return l10n.cash;
+      case PaymentMethod.card:
+        return l10n.card;
+      case PaymentMethod.mixed:
+        return l10n.mixed;
+      case PaymentMethod.credit:
+        return l10n.credit;
+    }
+  }
 }
 
 /// تقسيم الدفع
@@ -143,6 +157,12 @@ class _InlinePaymentState extends State<InlinePayment> {
       );
       return;
     }
+    if (amount > 999999.99) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('المبلغ يجب أن لا يتجاوز 999,999.99'), backgroundColor: Colors.red),
+      );
+      return;
+    }
     if (amount > _splitRemaining + 0.01) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('المبلغ أكبر من المتبقي'), backgroundColor: Colors.red),
@@ -176,6 +196,15 @@ class _InlinePaymentState extends State<InlinePayment> {
   void _completePayment() {
     if (_selectedMethod == PaymentMethod.cash) {
       final paid = double.tryParse(_amountController.text) ?? 0;
+      if (paid < 0 || paid > 999999.99) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('المبلغ يجب أن يكون بين 0 و 999,999.99'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       if (paid < widget.total) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -253,6 +282,7 @@ class _InlinePaymentState extends State<InlinePayment> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -273,7 +303,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               Icon(Icons.payment, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                'الدفع',
+                l10n.payment,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -299,7 +329,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('الإجمالي', style: theme.textTheme.bodyLarge),
+                Text(l10n.total, style: theme.textTheme.bodyLarge),
                 Text(
                   'ر.س ${widget.total.toStringAsFixed(2)}',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -375,6 +405,10 @@ class _InlinePaymentState extends State<InlinePayment> {
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+            LengthLimitingTextInputFormatter(12),
+          ],
           decoration: InputDecoration(
             labelText: 'المبلغ المستلم',
             prefixText: 'ر.س ',
@@ -410,11 +444,11 @@ class _InlinePaymentState extends State<InlinePayment> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.currency_exchange, color: Colors.green),
-                    SizedBox(width: 8),
-                    Text('الباقي'),
+                    const Icon(Icons.currency_exchange, color: Colors.green),
+                    const SizedBox(width: 8),
+                    Text(AppLocalizations.of(context)!.remainingLabel),
                   ],
                 ),
                 Text(
@@ -591,7 +625,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('المدفوع', style: TextStyle(color: Colors.white70)),
+                  Text(AppLocalizations.of(context)!.paidLabel, style: const TextStyle(color: Colors.white70)),
                   Text(
                     '${_splitTotalPaid.toStringAsFixed(2)} ر.س',
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -603,7 +637,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _splitRemaining <= 0.01 ? 'مكتمل ✓' : 'المتبقي',
+                    _splitRemaining <= 0.01 ? AppLocalizations.of(context)!.completeLabel : AppLocalizations.of(context)!.remainingLabel,
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -634,7 +668,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 children: [
                   Icon(split.method.icon, color: split.method.color, size: 20),
                   const SizedBox(width: 8),
-                  Text(split.method.label),
+                  Text(split.method.localizedLabel(AppLocalizations.of(context)!)),
                   const Spacer(),
                   Text(
                     '${split.amount.toStringAsFixed(2)} ر.س',
@@ -682,7 +716,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                             Icon(m.icon, color: isSelected ? m.color : Colors.grey, size: 20),
                             const SizedBox(height: 2),
                             Text(
-                              m.label,
+                              m.localizedLabel(AppLocalizations.of(context)!),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isSelected ? m.color : Colors.grey,
@@ -708,8 +742,12 @@ class _InlinePaymentState extends State<InlinePayment> {
                   controller: _splitAmountController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   textAlign: TextAlign.center,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                    LengthLimitingTextInputFormatter(12),
+                  ],
                   decoration: InputDecoration(
-                    hintText: 'المبلغ',
+                    hintText: AppLocalizations.of(context)!.amount,
                     suffixText: 'ر.س',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -722,7 +760,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               FilledButton.icon(
                 onPressed: _addSplit,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('إضافة'),
+                label: Text(AppLocalizations.of(context)!.addPayment),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   backgroundColor: AppColors.primary,
@@ -788,7 +826,7 @@ class _PaymentMethodButton extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                method.label,
+                method.localizedLabel(AppLocalizations.of(context)!),
                 style: TextStyle(
                   color: isSelected ? method.color : Colors.grey,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

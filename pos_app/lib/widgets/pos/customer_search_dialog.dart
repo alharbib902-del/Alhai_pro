@@ -3,11 +3,14 @@
 /// نافذة للبحث واختيار عميل في POS
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/validators/input_sanitizer.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// نافذة البحث عن عميل
 class CustomerSearchDialog extends StatefulWidget {
@@ -52,7 +55,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       phone: '0501234567',
       balance: -250.00,
       loyaltyPoints: 1250,
-      tier: 'ذهبي',
+      tier: 'gold',
     ),
     CustomerSearchResult(
       id: '2',
@@ -60,7 +63,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       phone: '0559876543',
       balance: 500.00,
       loyaltyPoints: 800,
-      tier: 'فضي',
+      tier: 'silver',
     ),
     CustomerSearchResult(
       id: '3',
@@ -68,7 +71,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       phone: '0541112222',
       balance: 0.00,
       loyaltyPoints: 2500,
-      tier: 'ماسي',
+      tier: 'diamond',
     ),
     CustomerSearchResult(
       id: '4',
@@ -76,7 +79,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       phone: '0563334444',
       balance: -1200.00,
       loyaltyPoints: 350,
-      tier: 'برونزي',
+      tier: 'bronze',
     ),
     CustomerSearchResult(
       id: '5',
@@ -84,7 +87,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       phone: '0525556666',
       balance: 150.00,
       loyaltyPoints: 600,
-      tier: 'فضي',
+      tier: 'silver',
     ),
   ];
 
@@ -108,7 +111,15 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
   }
 
   void _filterCustomers() {
-    final query = _searchController.text.toLowerCase();
+    final sanitized = InputSanitizer.sanitize(_searchController.text);
+    if (sanitized != _searchController.text) {
+      _searchController.text = sanitized;
+      _searchController.selection = TextSelection.fromPosition(
+        TextPosition(offset: sanitized.length),
+      );
+      return; // listener will re-fire after text update
+    }
+    final query = sanitized.toLowerCase();
     setState(() {
       if (query.isEmpty) {
         _filteredCustomers = _allCustomers;
@@ -170,7 +181,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             child: TextField(
               controller: _searchController,
               focusNode: _focusNode,
+              maxLength: 100,
               decoration: InputDecoration(
+                counterText: '',
                 hintText: 'البحث بالاسم أو رقم الهاتف...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
@@ -203,7 +216,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 ),
                 title: const Text('عميل عابر'),
                 subtitle: const Text('متابعة بدون تحديد عميل'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   widget.onSelect(CustomerSearchResult(
                     id: 'walk-in',
@@ -253,9 +266,25 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
     );
   }
 
+  String _localizedTier(AppLocalizations l10n, String? tier) {
+    switch (tier) {
+      case 'gold':
+        return l10n.gold;
+      case 'silver':
+        return l10n.silver;
+      case 'diamond':
+        return l10n.diamond;
+      case 'bronze':
+        return l10n.bronze;
+      default:
+        return tier ?? '';
+    }
+  }
+
   Widget _buildCustomerCard(CustomerSearchResult customer) {
     final hasDebt = customer.balance < 0;
     final hasCredit = customer.balance > 0;
+    final l10n = AppLocalizations.of(context)!;
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.sm),
@@ -308,7 +337,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                                   BorderRadius.circular(AppSizes.radiusSm),
                             ),
                             child: Text(
-                              customer.tier!,
+                              _localizedTier(l10n, customer.tier),
                               style: AppTypography.labelSmall.copyWith(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -357,7 +386,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'الرصيد',
+                    l10n.balanceLabel,
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textMuted,
                     ),
@@ -373,14 +402,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                   ),
                   if (hasDebt)
                     Text(
-                      'مدين',
+                      l10n.debtor,
                       style: AppTypography.labelSmall.copyWith(
                         color: AppColors.error,
                       ),
                     ),
                   if (hasCredit)
                     Text(
-                      'دائن',
+                      l10n.creditor,
                       style: AppTypography.labelSmall.copyWith(
                         color: AppColors.success,
                       ),
@@ -425,13 +454,13 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
 
   Color _getTierColor(String? tier) {
     switch (tier) {
-      case 'ماسي':
+      case 'diamond':
         return Colors.purple;
-      case 'ذهبي':
+      case 'gold':
         return AppColors.warning;
-      case 'فضي':
+      case 'silver':
         return AppColors.grey500;
-      case 'برونزي':
+      case 'bronze':
         return Colors.brown;
       default:
         return AppColors.grey400;

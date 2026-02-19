@@ -1,3 +1,4 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,11 +8,10 @@ import '../../di/injection.dart';
 import '../../providers/products_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../core/validators/input_sanitizer.dart';
 import '../../core/router/routes.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/common/common.dart';
-import '../../widgets/layout/app_sidebar.dart';
-
 /// شاشة العملاء - تصميم Web محسّن مع DataTable
 class CustomersScreen extends ConsumerStatefulWidget {
   const CustomersScreen({super.key});
@@ -23,20 +23,25 @@ class CustomersScreen extends ConsumerStatefulWidget {
 class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   final _searchController = TextEditingController();
   final _searchFocusNode = FocusNode();
+  final _keyboardFocusNode = FocusNode();
 
   String _filterType = 'all'; // all, debtors, creditors
   String _sortBy = 'name'; // name, balance, recent
   bool _sortAscending = true;
   bool _showFilters = true;
 
-  // Sidebar state
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'customers';
-
   List<AccountsTableData> _accounts = [];
   final Set<String> _selectedIds = {};
   bool _isLoading = true;
   String? _error;
+
+  // Cached filtered results
+  List<AccountsTableData>? _cachedFiltered;
+  String? _lastFilterType;
+  String? _lastSearchQuery;
+  String? _lastSortBy;
+  bool? _lastSortAscending;
+  int? _lastAccountsHash;
 
   @override
   void initState() {
@@ -48,6 +53,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _keyboardFocusNode.dispose();
     super.dispose();
   }
 
@@ -78,7 +84,19 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   }
 
   List<AccountsTableData> get _filteredCustomers {
-    var result = _accounts;
+    final currentQuery = _searchController.text.toLowerCase();
+    final accountsHash = _accounts.length;
+
+    if (_cachedFiltered != null &&
+        _lastFilterType == _filterType &&
+        _lastSearchQuery == currentQuery &&
+        _lastSortBy == _sortBy &&
+        _lastSortAscending == _sortAscending &&
+        _lastAccountsHash == accountsHash) {
+      return _cachedFiltered!;
+    }
+
+    var result = List<AccountsTableData>.of(_accounts);
 
     // Apply filter
     if (_filterType == 'debtors') {
@@ -88,11 +106,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
     }
 
     // Apply search
-    final query = _searchController.text.toLowerCase();
-    if (query.isNotEmpty) {
+    if (currentQuery.isNotEmpty) {
       result = result.where((c) =>
-          c.name.toLowerCase().contains(query) ||
-          (c.phone?.contains(query) ?? false)).toList();
+          c.name.toLowerCase().contains(currentQuery) ||
+          (c.phone?.contains(currentQuery) ?? false)).toList();
     }
 
     // Apply sort
@@ -111,6 +128,13 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       return _sortAscending ? comparison : -comparison;
     });
 
+    _cachedFiltered = result;
+    _lastFilterType = _filterType;
+    _lastSearchQuery = currentQuery;
+    _lastSortBy = _sortBy;
+    _lastSortAscending = _sortAscending;
+    _lastAccountsHash = accountsHash;
+
     return result;
   }
 
@@ -126,117 +150,34 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       .where((c) => c.balance > 0 && c.type == 'receivable')
       .length;
 
-  void _handleSidebarNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        break; // Already on this screen
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
-  Widget _buildSidebarDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleSidebarNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
-    final isWideScreen = MediaQuery.of(context).size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
     return KeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _keyboardFocusNode,
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
-      child: Scaffold(
-        backgroundColor: AppColors.getBackground(isDark),
-        drawer: isWideScreen ? null : _buildSidebarDrawer(l10n),
-        body: Row(
-          children: [
-            if (isWideScreen)
-              AppSidebar(
-                storeName: l10n.brandName,
-                groups: DefaultSidebarItems.getGroups(context),
-                selectedId: _selectedNavId,
-                onItemTap: _handleSidebarNavigation,
-                onSettingsTap: () => context.push(AppRoutes.settings),
-                onSupportTap: () {},
-                onLogoutTap: () => context.go('/login'),
-                collapsed: _sidebarCollapsed,
-                userName: 'أحمد محمد',
-                userRole: l10n.branchManager,
-                onUserTap: () {},
-              ),
-            Expanded(
-              child: Column(
-                children: [
-                  // Header
-                  _buildHeader(context, isDark, l10n),
-                  // Stats Cards
-                  _buildStatsRow(isDark, l10n),
-                  // Content
-                  Expanded(
-                    child: Row(
-                      children: [
-                        // Filters Sidebar (Desktop only)
-                        if (isDesktop && _showFilters) _buildFiltersSidebar(isDark, l10n),
-                        // Customers List/Table
-                        Expanded(child: _buildCustomersContent(isDark, l10n)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      child: Column(
+        children: [
+          // Header
+          _buildHeader(context, isDark, l10n),
+          // Stats Cards
+          _buildStatsRow(isDark, l10n),
+          // Content
+          Expanded(
+            child: Row(
+              children: [
+                // Filters Sidebar (Desktop only)
+                if (isDesktop && _showFilters) _buildFiltersSidebar(isDark, l10n),
+                // Customers List/Table
+                Expanded(child: _buildCustomersContent(isDark, l10n)),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -329,7 +270,17 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   controller: _searchController,
                   focusNode: _searchFocusNode,
                   hintText: l10n.searchByNameOrPhone,
-                  onChanged: (_) => setState(() {}),
+                  maxLength: 100,
+                  onChanged: (v) {
+                    final sanitized = InputSanitizer.sanitize(v);
+                    if (sanitized != v) {
+                      _searchController.text = sanitized;
+                      _searchController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: sanitized.length),
+                      );
+                    }
+                    setState(() {});
+                  },
                   onClear: () {
                     _searchController.clear();
                     setState(() {});
@@ -630,7 +581,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                 ),
               ),
-              Icon(Icons.chevron_left_rounded, size: 18, color: AppColors.getTextSecondary(isDark)),
+              AdaptiveIcon(Icons.chevron_left_rounded, size: 18, color: AppColors.getTextSecondary(isDark)),
             ],
           ),
         ),
@@ -641,7 +592,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   Widget _buildFilterChip(String label, String value, Color? color, bool isDark) {
     final isSelected = _filterType == value;
     return Padding(
-      padding: const EdgeInsets.only(left: AppSizes.xs),
+      padding: const EdgeInsetsDirectional.only(start: AppSizes.xs),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
@@ -846,6 +797,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 Navigator.pop(context);
                 _loadCustomers();
 
+                if (!mounted) return;
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(
                     content: Row(
@@ -869,7 +821,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      nameController.dispose();
+      phoneController.dispose();
+    });
   }
 
   void _showCustomerDetails(AccountsTableData account) {
@@ -1017,6 +972,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               Navigator.pop(context);
               _loadCustomers();
 
+              if (!mounted) return;
               ScaffoldMessenger.of(this.context).showSnackBar(
                 SnackBar(
                   content: Row(
@@ -1039,7 +995,9 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      controller.dispose();
+    });
   }
 }
 
@@ -1196,8 +1154,8 @@ class _CustomerCardState extends State<_CustomerCard> {
                           : hasCredit
                               ? [AppColors.success.withValues(alpha: 0.7), AppColors.success]
                               : [AppColors.textSecondary.withValues(alpha: 0.7), AppColors.textSecondary],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: AlignmentDirectional.topStart,
+                      end: AlignmentDirectional.bottomEnd,
                     ),
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
@@ -1283,7 +1241,7 @@ class _CustomerCardState extends State<_CustomerCard> {
                     onPressed: widget.onPayment,
                     tooltip: widget.l10n.payAction,
                   ),
-                Icon(Icons.chevron_left_rounded, color: AppColors.getTextSecondary(isDark)),
+                AdaptiveIcon(Icons.chevron_left_rounded, color: AppColors.getTextSecondary(isDark)),
               ],
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/common/common.dart';
 
 /// شاشة التقارير - تصميم Web محسّن مع بطاقات تقارير احترافية
@@ -14,16 +15,24 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
+  final FocusNode _keyboardFocusNode = FocusNode();
   String _selectedPeriod = 'today'; // today, week, month, custom
   DateTime? _startDate;
   DateTime? _endDate;
 
   @override
+  void dispose() {
+    _keyboardFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
+    final l10n = AppLocalizations.of(context)!;
 
     return KeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _keyboardFocusNode,
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
@@ -31,12 +40,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
         body: Column(
           children: [
             // Header
-            _buildHeader(context),
+            _buildHeader(context, l10n),
             // Period Selector
-            _buildPeriodSelector(),
+            _buildPeriodSelector(l10n),
             // Reports Grid
             Expanded(
-              child: _buildReportsGrid(isDesktop),
+              child: _buildReportsGrid(isDesktop, l10n),
             ),
           ],
         ),
@@ -44,7 +53,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
 
     return Container(
@@ -75,7 +84,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     const SizedBox(width: AppSizes.sm),
                     Text(
-                      'التقارير',
+                      l10n.reports,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -84,7 +93,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
                 const SizedBox(height: AppSizes.xs),
                 Text(
-                  'تحليل الأداء والمبيعات',
+                  l10n.reportsAnalysis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -97,41 +106,41 @@ class _ReportsScreenState extends State<ReportsScreen> {
             AppButton.secondary(
               onPressed: () {},
               icon: Icons.download_rounded,
-              label: 'تصدير الكل',
+              label: l10n.exportAll,
             ),
             const SizedBox(width: AppSizes.sm),
           ],
           AppButton.primary(
             onPressed: () => _showCustomDateDialog(),
             icon: Icons.calendar_today_rounded,
-            label: isDesktop ? 'فترة مخصصة' : '',
+            label: isDesktop ? l10n.customPeriod : '',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPeriodSelector() {
+  Widget _buildPeriodSelector(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
       child: Row(
         children: [
           _PeriodChip(
-            label: 'اليوم',
+            label: l10n.today,
             icon: Icons.today_rounded,
             isSelected: _selectedPeriod == 'today',
             onTap: () => setState(() => _selectedPeriod = 'today'),
           ),
           const SizedBox(width: AppSizes.sm),
           _PeriodChip(
-            label: 'هذا الأسبوع',
+            label: l10n.thisWeek,
             icon: Icons.date_range_rounded,
             isSelected: _selectedPeriod == 'week',
             onTap: () => setState(() => _selectedPeriod = 'week'),
           ),
           const SizedBox(width: AppSizes.sm),
           _PeriodChip(
-            label: 'هذا الشهر',
+            label: l10n.thisMonth,
             icon: Icons.calendar_month_rounded,
             isSelected: _selectedPeriod == 'month',
             onTap: () => setState(() => _selectedPeriod = 'month'),
@@ -150,81 +159,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildReportsGrid(bool isDesktop) {
-    final reports = [
-      const _ReportData(
-        id: 'sales',
-        icon: Icons.point_of_sale_rounded,
-        title: 'تقرير المبيعات',
-        subtitle: 'تفاصيل المبيعات والفواتير',
-        color: AppColors.primary,
-        stats: [
-          _ReportStat('المبيعات', '12,450 ر.س'),
-          _ReportStat('الفواتير', '85'),
-          _ReportStat('المتوسط', '146 ر.س'),
-        ],
-      ),
-      const _ReportData(
-        id: 'profit',
-        icon: Icons.trending_up_rounded,
-        title: 'تقرير الأرباح',
-        subtitle: 'صافي الربح والخسائر',
-        color: AppColors.success,
-        stats: [
-          _ReportStat('الإيرادات', '12,450 ر.س'),
-          _ReportStat('التكاليف', '8,200 ر.س'),
-          _ReportStat('صافي الربح', '4,250 ر.س'),
-        ],
-      ),
-      const _ReportData(
-        id: 'inventory',
-        icon: Icons.inventory_2_rounded,
-        title: 'تقرير المخزون',
-        subtitle: 'حركات المخزون والجرد',
-        color: AppColors.info,
-        stats: [
-          _ReportStat('المنتجات', '156'),
-          _ReportStat('مخزون منخفض', '12'),
-          _ReportStat('نفذ', '3'),
-        ],
-      ),
-      const _ReportData(
-        id: 'vat',
-        icon: Icons.percent_rounded,
-        title: 'تقرير الضريبة (VAT)',
-        subtitle: 'ضريبة القيمة المضافة 15%',
-        color: AppColors.secondary,
-        stats: [
-          _ReportStat('ضريبة المبيعات', '1,867 ر.س'),
-          _ReportStat('ضريبة المشتريات', '1,230 ر.س'),
-          _ReportStat('المستحق', '637 ر.س'),
-        ],
-      ),
-      const _ReportData(
-        id: 'customers',
-        icon: Icons.people_rounded,
-        title: 'تقرير العملاء',
-        subtitle: 'نشاط العملاء والديون',
-        color: Colors.indigo,
-        stats: [
-          _ReportStat('العملاء', '45'),
-          _ReportStat('الديون', '3,200 ر.س'),
-          _ReportStat('المسددة', '1,800 ر.س'),
-        ],
-      ),
-      const _ReportData(
-        id: 'purchases',
-        icon: Icons.shopping_cart_rounded,
-        title: 'تقرير المشتريات',
-        subtitle: 'فواتير الشراء والموردين',
-        color: Colors.orange,
-        stats: [
-          _ReportStat('المشتريات', '8,200 ر.س'),
-          _ReportStat('الفواتير', '12'),
-          _ReportStat('الموردين', '5'),
-        ],
-      ),
-    ];
+  Widget _buildReportsGrid(bool isDesktop, AppLocalizations l10n) {
+    final reports = _getReports(l10n);
 
     return GridView.builder(
       padding: const EdgeInsets.all(AppSizes.md),
@@ -246,6 +182,83 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
+  List<_ReportData> _getReports(AppLocalizations l10n) {
+    return [
+      _ReportData(
+        id: 'sales',
+        icon: Icons.point_of_sale_rounded,
+        title: l10n.salesReport,
+        subtitle: l10n.salesReportDesc,
+        color: AppColors.primary,
+        stats: [
+          _ReportStat(l10n.totalSales, '12,450 ${l10n.sar}'),
+          _ReportStat(l10n.invoices, '85'),
+          _ReportStat(l10n.averageAmount, '146 ${l10n.sar}'),
+        ],
+      ),
+      _ReportData(
+        id: 'profit',
+        icon: Icons.trending_up_rounded,
+        title: l10n.profitReport,
+        subtitle: l10n.profitReportDesc,
+        color: AppColors.success,
+        stats: [
+          _ReportStat(l10n.revenue, '12,450 ${l10n.sar}'),
+          _ReportStat(l10n.costs, '8,200 ${l10n.sar}'),
+          _ReportStat(l10n.netProfit, '4,250 ${l10n.sar}'),
+        ],
+      ),
+      _ReportData(
+        id: 'inventory',
+        icon: Icons.inventory_2_rounded,
+        title: l10n.inventoryReport,
+        subtitle: l10n.inventoryReportDesc,
+        color: AppColors.info,
+        stats: [
+          _ReportStat(l10n.products, '156'),
+          _ReportStat(l10n.lowStock, '12'),
+          _ReportStat(l10n.outOfStock, '3'),
+        ],
+      ),
+      _ReportData(
+        id: 'vat',
+        icon: Icons.percent_rounded,
+        title: l10n.vatReport,
+        subtitle: l10n.vatReportDesc,
+        color: AppColors.secondary,
+        stats: [
+          _ReportStat(l10n.salesTax, '1,867 ${l10n.sar}'),
+          _ReportStat(l10n.purchasesTax, '1,230 ${l10n.sar}'),
+          _ReportStat(l10n.taxDue, '637 ${l10n.sar}'),
+        ],
+      ),
+      _ReportData(
+        id: 'customers',
+        icon: Icons.people_rounded,
+        title: l10n.customerReport,
+        subtitle: l10n.customerReportDesc,
+        color: Colors.indigo,
+        stats: [
+          _ReportStat(l10n.customers, '45'),
+          _ReportStat(l10n.debts, '3,200 ${l10n.sar}'),
+          _ReportStat(l10n.paidDebts, '1,800 ${l10n.sar}'),
+        ],
+      ),
+      _ReportData(
+        id: 'purchases',
+        icon: Icons.shopping_cart_rounded,
+        title: l10n.purchasesReport,
+        subtitle: l10n.purchasesReportDesc,
+        color: Colors.orange,
+        stats: [
+          _ReportStat(l10n.purchases, '8,200 ${l10n.sar}'),
+          _ReportStat(l10n.invoices, '12'),
+          _ReportStat(l10n.suppliers, '5'),
+        ],
+      ),
+    ];
+  }
+
   void _handleKeyEvent(KeyEvent event) {
     if (event is! KeyDownEvent) return;
 
@@ -260,6 +273,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   void _showReportDialog(_ReportData report) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -318,13 +332,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   AppIconButton(
                     icon: Icons.download_rounded,
                     onPressed: () => _exportReport(report.id),
-                    tooltip: 'تصدير',
+                    tooltip: l10n.exportAction,
                   ),
                   const SizedBox(width: AppSizes.xs),
                   AppIconButton(
                     icon: Icons.print_rounded,
                     onPressed: () {},
-                    tooltip: 'طباعة',
+                    tooltip: l10n.printAction,
                   ),
                 ],
               ),
@@ -373,9 +387,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       color: AppColors.textSecondary.withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: AppSizes.md),
-                    const Text(
-                      'الرسوم البيانية قيد التطوير...',
-                      style: TextStyle(color: AppColors.textSecondary),
+                    Text(
+                      l10n.chartsUnderDev,
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -389,7 +403,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   Expanded(
                     child: AppButton.secondary(
                       onPressed: () => Navigator.pop(context),
-                      label: 'إغلاق',
+                      label: l10n.close,
                       isFullWidth: true,
                     ),
                   ),
@@ -401,7 +415,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         _exportReport(report.id);
                       },
                       icon: Icons.download_rounded,
-                      label: 'تصدير PDF',
+                      label: l10n.exportPdf,
                       isFullWidth: true,
                     ),
                   ),
@@ -445,13 +459,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   void _exportReport(String reportId) {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.download_rounded, color: Colors.white),
-            SizedBox(width: AppSizes.sm),
-            Text('جاري تصدير التقرير...'),
+            const Icon(Icons.download_rounded, color: Colors.white),
+            const SizedBox(width: AppSizes.sm),
+            Text(l10n.exportingReport),
           ],
         ),
         backgroundColor: AppColors.primary,
@@ -464,18 +479,19 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   String _getPeriodLabel() {
+    final l10n = AppLocalizations.of(context)!;
     switch (_selectedPeriod) {
       case 'today':
-        return 'اليوم';
+        return l10n.today;
       case 'week':
-        return 'هذا الأسبوع';
+        return l10n.thisWeek;
       case 'month':
-        return 'هذا الشهر';
+        return l10n.thisMonth;
       case 'custom':
         if (_startDate != null && _endDate != null) {
           return '${_formatDate(_startDate!)} - ${_formatDate(_endDate!)}';
         }
-        return 'فترة مخصصة';
+        return l10n.customPeriod;
       default:
         return '';
     }
@@ -651,7 +667,7 @@ class _ReportCardState extends State<_ReportCard> {
                       AppIconButton(
                         icon: Icons.download_rounded,
                         onPressed: widget.onExport,
-                        tooltip: 'تصدير',
+                        tooltip: AppLocalizations.of(context)!.exportAction,
                       ),
                   ],
                 ),
@@ -697,7 +713,7 @@ class _ReportCardState extends State<_ReportCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'عرض التقرير',
+                        AppLocalizations.of(context)!.viewReport,
                         style: TextStyle(
                           color: widget.report.color,
                           fontWeight: FontWeight.w600,

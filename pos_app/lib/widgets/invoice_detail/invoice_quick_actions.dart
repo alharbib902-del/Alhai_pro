@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../core/responsive/responsive_utils.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 class InvoiceQuickActions extends StatelessWidget {
   final bool isDark;
+  final VoidCallback? onWhatsApp;
+  final VoidCallback? onEmail;
+  final VoidCallback? onDownloadPdf;
+  final VoidCallback? onShareLink;
 
-  const InvoiceQuickActions({super.key, required this.isDark});
+  const InvoiceQuickActions({
+    super.key,
+    required this.isDark,
+    this.onWhatsApp,
+    this.onEmail,
+    this.onDownloadPdf,
+    this.onShareLink,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +36,17 @@ class InvoiceQuickActions extends StatelessWidget {
           Text(l10n.quickActions, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
           const SizedBox(height: 16),
           GridView.count(
-            crossAxisCount: 2,
+            crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 3),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 1.6,
             children: [
-              _actionTile(Icons.message_rounded, l10n.sendWhatsappAction, const Color(0xFF25D366), isDark),
-              _actionTile(Icons.email_outlined, l10n.sendEmailAction, AppColors.info, isDark),
-              _actionTile(Icons.picture_as_pdf_rounded, l10n.downloadPdfAction, AppColors.error, isDark),
-              _actionTile(Icons.share_rounded, l10n.shareLinkAction, const Color(0xFF8B5CF6), isDark),
+              _actionTile(Icons.message_rounded, l10n.sendWhatsappAction, const Color(0xFF25D366), isDark, onWhatsApp),
+              _actionTile(Icons.email_outlined, l10n.sendEmailAction, AppColors.info, isDark, onEmail),
+              _actionTile(Icons.picture_as_pdf_rounded, l10n.downloadPdfAction, AppColors.error, isDark, onDownloadPdf),
+              _actionTile(Icons.share_rounded, l10n.shareLinkAction, const Color(0xFF8B5CF6), isDark, onShareLink),
             ],
           ),
         ],
@@ -42,11 +54,11 @@ class InvoiceQuickActions extends StatelessWidget {
     );
   }
 
-  Widget _actionTile(IconData icon, String label, Color iconColor, bool isDark) {
+  Widget _actionTile(IconData icon, String label, Color iconColor, bool isDark, VoidCallback? onTap) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(12),

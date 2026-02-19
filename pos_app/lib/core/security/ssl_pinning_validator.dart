@@ -10,6 +10,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// حالة SSL Pinning
 enum SSLPinningStatus {
@@ -298,12 +299,11 @@ class SSLPinningValidator {
     bool isProduction = false,
   }) {
     if (kIsWeb) {
-      if (kDebugMode) {
-        debugPrint(
-          '⚠️ SSL Pinning is not supported on Web platform. '
-          'Consider using HSTS and other web security measures.',
-        );
-      }
+      AppLogger.warning(
+        'SSL Pinning is not supported on Web platform. '
+        'Consider using HSTS and other web security measures.',
+        tag: 'SSL',
+      );
       return;
     }
 
@@ -314,9 +314,7 @@ class SSLPinningValidator {
           : '⚠️ SSL Pinning is disabled. '
               'Enable it before deploying to production.';
 
-      if (kDebugMode) {
-        debugPrint(message);
-      }
+      AppLogger.warning(message, tag: 'SSL');
 
       // في production، يمكن إرسال alert للـ monitoring
       if (isProduction) {

@@ -12,6 +12,8 @@ import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/config/whatsapp_config.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// Certificate fingerprints للـ APIs المعتمدة
 /// ⚠️ يجب تحديث هذه القيم عند تجديد الشهادات
@@ -57,8 +59,15 @@ class SecureHttpClient {
     ));
 
     // إضافة Certificate Pinning (للـ native platforms فقط)
-    if (!kIsWeb && certificateFingerprint != null && certificateFingerprint.isNotEmpty) {
-      _applyCertificatePinning(dio, certificateFingerprint);
+    if (!kIsWeb) {
+      if (certificateFingerprint != null && certificateFingerprint.isNotEmpty) {
+        _applyCertificatePinning(dio, certificateFingerprint);
+      } else if (kReleaseMode) {
+        // في Release mode بدون fingerprint، نرفض الشهادات غير الموثوقة
+        // بدلاً من قبولها جميعاً (CVE-mitigation)
+        _rejectBadCertificates(dio);
+      }
+      // في Debug mode بدون fingerprint، نستخدم السلوك الافتراضي (permissive)
     }
 
     // إضافة Interceptors للـ logging والـ retry
@@ -84,15 +93,33 @@ class SecureHttpClient {
             fingerprint.toLowerCase().replaceAll(':', '');
 
         if (!isValid) {
-          debugPrint(
-            '⚠️ Certificate Pinning Failed!\n'
-            'Host: $host:$port\n'
-            'Expected: $fingerprint\n'
-            'Got: $certFingerprint',
+          AppLogger.error(
+            'Certificate Pinning Failed! Host: $host:$port',
+            tag: 'SSL',
           );
         }
 
         return isValid;
+      };
+
+      return client;
+    };
+  }
+
+  /// رفض جميع الشهادات غير الموثوقة في Release mode
+  /// عندما لا يتوفر fingerprint للـ pinning
+  static void _rejectBadCertificates(Dio dio) {
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+
+      client.badCertificateCallback = (cert, host, port) {
+        // في Release mode بدون fingerprint مُعد، نرفض الشهادات غير الموثوقة
+        AppLogger.warning(
+          'SSL: Rejected untrusted certificate for $host:$port '
+          '(no pinning fingerprint configured)',
+          tag: 'SSL',
+        );
+        return false;
       };
 
       return client;
@@ -116,8 +143,9 @@ class SecureHttpClient {
           try {
             // انتظار قبل إعادة المحاولة (exponential backoff)
             final retryCount = _getRetryCount(error);
+            final delayMs = 1000 * (1 << retryCount); // 1s, 2s, 4s
             await Future.delayed(
-              Duration(milliseconds: 1000 * (retryCount + 1)),
+              Duration(milliseconds: delayMs),
             );
 
             // إعادة المحاولة
@@ -152,19 +180,20 @@ class SecureHttpClient {
   static Interceptor _createLoggingInterceptor() {
     return InterceptorsWrapper(
       onRequest: (options, handler) {
-        debugPrint('🌐 REQUEST: ${options.method} ${options.uri}');
+        AppLogger.debug('REQUEST: ${options.method} ${options.uri}', tag: 'HTTP');
         return handler.next(options);
       },
       onResponse: (response, handler) {
-        debugPrint(
-          '✅ RESPONSE: ${response.statusCode} ${response.requestOptions.uri}',
+        AppLogger.debug(
+          'RESPONSE: ${response.statusCode} ${response.requestOptions.uri}',
+          tag: 'HTTP',
         );
         return handler.next(response);
       },
       onError: (error, handler) {
-        debugPrint(
-          '❌ ERROR: ${error.type} ${error.requestOptions.uri}\n'
-          'Message: ${error.message}',
+        AppLogger.error(
+          'ERROR: ${error.type} ${error.requestOptions.uri} - ${error.message}',
+          tag: 'HTTP',
         );
         return handler.next(error);
       },
@@ -191,16 +220,11 @@ extension SecureDioExtensions on SecureHttpClient {
   }
 
   /// إنشاء Dio client لـ WaSender
-  static Dio createWaSenderClient({
-    required String apiToken,
-  }) {
+  /// يستخدم WhatsAppConfig للحصول على الـ URL والـ headers
+  static Dio createWaSenderClient() {
     return SecureHttpClient.create(
-      baseUrl: 'https://api.wasenderapi.com/api/v1',
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+      baseUrl: WhatsAppConfig.baseUrl,
+      headers: WhatsAppConfig.headers,
       certificateFingerprint: CertificateFingerprints.wasender,
     );
   }

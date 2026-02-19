@@ -244,7 +244,7 @@ class InitialSync {
     }
 
     final response = await query
-        .order('created_at', ascending: true)
+        .order(_getOrderColumn(tableName), ascending: true)
         .range(offset, offset + pageSize - 1);
 
     final records = List<Map<String, dynamic>>.from(response);
@@ -298,15 +298,27 @@ class InitialSync {
   }
 
   bool _hasOrgIdColumn(String tableName) {
-    return tableName != 'organizations' && tableName != 'settings';
+    // هذه الجداول لديها org_id فعلياً في Supabase
+    const tablesWithOrgId = {
+      'stores', 'users', 'categories', 'products',
+      'customers', 'suppliers', 'expenses',
+    };
+    return tablesWithOrgId.contains(tableName);
   }
 
   bool _hasStoreIdColumn(String tableName) {
     const tablesWithStoreId = {
       'products', 'categories', 'customers', 'settings',
-      'suppliers', 'expense_categories',
+      'suppliers', 'expense_categories', 'roles',
     };
     return tablesWithStoreId.contains(tableName);
+  }
+
+  /// عمود الترتيب الزمني المتاح لكل جدول
+  String _getOrderColumn(String tableName) {
+    // settings ليس لديه created_at، فقط updated_at
+    if (tableName == 'settings') return 'updated_at';
+    return 'created_at';
   }
 
   void _emitProgress(InitialSyncProgress progress) {

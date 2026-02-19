@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// بيانات الدولة
 class CountryData {
@@ -359,6 +360,19 @@ class _CountryPickerSheet extends StatelessWidget {
     required this.onSelect,
   });
 
+  String _localizedCountryName(BuildContext context, CountryData country) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (country.code) {
+      case 'SA': return l10n.saudiArabia;
+      case 'AE': return l10n.uae;
+      case 'KW': return l10n.kuwait;
+      case 'BH': return l10n.bahrain;
+      case 'QA': return l10n.qatar;
+      case 'OM': return l10n.oman;
+      default: return country.nameAr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -409,7 +423,7 @@ class _CountryPickerSheet extends StatelessWidget {
                 style: const TextStyle(fontSize: 32),
               ),
               title: Text(
-                country.nameAr,
+                _localizedCountryName(context, country),
                 style: TextStyle(
                   color: titleColor,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

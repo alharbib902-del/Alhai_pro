@@ -9,15 +9,14 @@
 /// - إلغاء الفاتورة (Void)
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 
 /// نموذج بيانات تفاصيل الفاتورة
 class InvoiceDetailData {
@@ -92,24 +91,27 @@ class InvoiceDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'sales';
 
   late InvoiceDetailData _invoice;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    _invoice = _getSampleInvoice();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _invoice = _getSampleInvoice();
+      _initialized = true;
+    }
   }
 
   InvoiceDetailData _getSampleInvoice() {
+    final l10n = AppLocalizations.of(context)!;
     return InvoiceDetailData(
       number: 'INV-2024-001',
       date: '09/02/2026',
       time: '14:30',
       status: 'paid',
-      cashier: 'أحمد محمد',
+      cashier: l10n.defaultUserName,
       customerName: 'محمد العلي',
       customerPhone: '0501234567',
       customerId: '99281',
@@ -152,40 +154,6 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       vatNumber: '300000000000003',
     );
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
     final l10n = AppLocalizations.of(context)!;
@@ -273,30 +241,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      bottomNavigationBar:
-          !isMediumScreen ? _buildMobileBottomBar(isDark) : null,
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 _buildHeader(context, isWideScreen, isDark, l10n),
                 Expanded(
@@ -307,11 +252,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 
   Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark,
@@ -335,10 +276,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             children: [
               IconButton(
                 onPressed: isWideScreen
-                    ? () =>
-                        setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                    ? null
                     : () => Scaffold.of(context).openDrawer(),
-                icon: Icon(Icons.arrow_forward_ios_rounded,
+                icon: AdaptiveIcon(Icons.arrow_forward_ios_rounded,
                     size: 20,
                     color: isDark
                         ? AppColors.textMutedDark
@@ -1065,7 +1005,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios_rounded,
+          AdaptiveIcon(Icons.arrow_forward_ios_rounded,
               size: 14, color: mutedColor),
         ]),
       ),
@@ -1249,83 +1189,6 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     );
   }
 
-  Widget _buildMobileBottomBar(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        border: Border(
-            top: BorderSide(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : AppColors.border)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _mobileAction(Icons.print_rounded, l10n.mobileActionPrint, isDark, () {}),
-          _mobileAction(Icons.message_rounded, l10n.mobileActionWhatsapp, isDark, () {}),
-          _mobileAction(Icons.email_outlined, l10n.mobileActionEmail, isDark, () {}),
-          _mobileAction(Icons.more_horiz, l10n.mobileActionMore, isDark, () {}),
-        ],
-      ),
-    );
-  }
-
-  Widget _mobileAction(
-      IconData icon, String label, bool isDark, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon,
-                size: 22,
-                color:
-                    isDark ? AppColors.textMutedDark : AppColors.textMuted),
-            const SizedBox(height: 4),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: isDark
-                        ? AppColors.textMutedDark
-                        : AppColors.textMuted)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
 }
 
 class _TimelineEvent {

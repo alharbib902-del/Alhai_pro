@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة إضافة فاتورة شراء
 class PurchaseFormScreen extends ConsumerStatefulWidget {
@@ -16,61 +17,38 @@ class PurchaseFormScreen extends ConsumerStatefulWidget {
 }
 
 class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'products';
 
   String? _selectedSupplierId;
   final List<_PurchaseItem> _items = [];
   String _paymentStatus = 'paid';
   final _invoiceNoController = TextEditingController();
 
+  List<SuppliersTableData> _suppliers = [];
+  final String _userName = 'المستخدم';
+
   double get _subtotal => _items.fold(0, (sum, item) => sum + item.total);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSuppliers();
+  }
+
+  Future<void> _loadSuppliers() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final db = getIt<AppDatabase>();
+      final suppliers = await db.suppliersDao.getActiveSuppliers(storeId);
+      if (mounted) setState(() => _suppliers = suppliers);
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
     _invoiceNoController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -79,38 +57,16 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: '\u0641\u0627\u062A\u0648\u0631\u0629 \u0634\u0631\u0627\u0621 \u062C\u062F\u064A\u062F\u0629', // TODO: localize
+                  title: l10n.newPurchaseInvoice,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
+                  userName: _userName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
@@ -121,39 +77,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(
       bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(
@@ -170,7 +95,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '\u0641\u0627\u062A\u0648\u0631\u0629 \u0634\u0631\u0627\u0621 \u062C\u062F\u064A\u062F\u0629', // TODO: localize
+                l10n.newPurchaseInvoice,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -232,6 +157,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildSupplierCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -259,7 +185,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                '\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0645\u0648\u0631\u062F', // TODO: localize
+                l10n.supplierData,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -271,25 +197,26 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              labelText: '\u0627\u062E\u062A\u0631 \u0627\u0644\u0645\u0648\u0631\u062F *', // TODO: localize
+              labelText: l10n.selectSupplierRequired,
               prefixIcon: const Icon(Icons.store),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            value: _selectedSupplierId,
-            items: const [
-              DropdownMenuItem(value: '1', child: Text('\u0645\u0648\u0631\u062F 1')),
-              DropdownMenuItem(value: '2', child: Text('\u0645\u0648\u0631\u062F 2')),
-              DropdownMenuItem(value: '3', child: Text('\u0645\u0648\u0631\u062F 3')),
-            ],
+            initialValue: _selectedSupplierId,
+            items: _suppliers
+                .map((s) => DropdownMenuItem(
+                      value: s.id,
+                      child: Text(s.name),
+                    ))
+                .toList(),
             onChanged: (v) => setState(() => _selectedSupplierId = v),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _invoiceNoController,
             decoration: InputDecoration(
-              labelText: '\u0631\u0642\u0645 \u0641\u0627\u062A\u0648\u0631\u0629 \u0627\u0644\u0645\u0648\u0631\u062F', // TODO: localize
+              labelText: l10n.supplierInvoiceNumber,
               prefixIcon: const Icon(Icons.receipt),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -302,6 +229,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildItemsCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -367,7 +295,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                             : AppColors.textTertiary),
                     const SizedBox(height: 12),
                     Text(
-                      '\u0644\u0645 \u064A\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0645\u0646\u062A\u062C\u0627\u062A \u0628\u0639\u062F', // TODO: localize
+                      l10n.noProductsAddedYet,
                       style: TextStyle(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.5)
@@ -434,6 +362,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildPaymentCard(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -461,7 +390,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                '\u062D\u0627\u0644\u0629 \u0627\u0644\u062F\u0641\u0639', // TODO: localize
+                l10n.paymentStatus,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -472,15 +401,15 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           ),
           const SizedBox(height: 16),
           SegmentedButton<String>(
-            segments: const [
+            segments: [
               ButtonSegment(
                   value: 'paid',
-                  label: Text('\u0645\u062F\u0641\u0648\u0639\u0629'),
-                  icon: Icon(Icons.check_circle)),
+                  label: Text(AppLocalizations.of(context)!.paidStatus),
+                  icon: const Icon(Icons.check_circle)),
               ButtonSegment(
                   value: 'credit',
-                  label: Text('\u0622\u062C\u0644'),
-                  icon: Icon(Icons.schedule)),
+                  label: Text(AppLocalizations.of(context)!.deferredPayment),
+                  icon: const Icon(Icons.schedule)),
             ],
             selected: {_paymentStatus},
             onSelectionChanged: (s) =>
@@ -502,8 +431,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   AppColors.primary.withValues(alpha: 0.1),
                   AppColors.primary.withValues(alpha: 0.05)
                 ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -614,13 +543,26 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
       return;
     }
 
-    // TODO: Save purchase via service
+    // TODO(purchase): STUB - This does NOT actually save to the database.
+    // Implement real persistence via a PurchaseService that:
+    //   1. Creates a purchase record in the purchases table
+    //   2. Creates purchase_items for each _items entry
+    //   3. Updates product stock quantities (inventory movements)
+    //   4. Records a transaction in the transactions table
+    //   5. Queues a sync entry if offline
+    // Until implemented, show a warning instead of a fake success message.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(
-              '\u062A\u0645 \u062D\u0641\u0638 \u0641\u0627\u062A\u0648\u0631\u0629 \u0627\u0644\u0634\u0631\u0627\u0621 \u0628\u0625\u062C\u0645\u0627\u0644\u064A ${_subtotal.toStringAsFixed(2)} \u0631.\u0633')),
+        content: Text(
+          '\u26A0 \u062D\u0641\u0638 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A \u063A\u064A\u0631 \u0645\u064F\u0641\u0639\u0651\u0644 \u0628\u0639\u062F - \u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A: ${_subtotal.toStringAsFixed(2)} \u0631.\u0633',
+        ),
+        backgroundColor: Colors.orange.shade800,
+        duration: const Duration(seconds: 3),
+      ),
     );
-    context.pop();
+    // Do NOT pop - the user should know the save did not persist.
+    // Once real save logic is implemented, uncomment:
+    // context.pop();
   }
 }
 

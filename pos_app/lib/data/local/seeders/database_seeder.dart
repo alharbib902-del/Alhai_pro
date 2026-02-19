@@ -33,6 +33,7 @@ class DatabaseSeeder {
 
   /// تشغيل جميع الـ Seeders
   Future<void> seedAll() async {
+    if (kReleaseMode) return;
     // التحقق من وجود بيانات
     final existingProducts = await _db.productsDao.getAllProducts(defaultStoreId);
     if (existingProducts.isNotEmpty) {

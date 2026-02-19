@@ -3,10 +3,12 @@
 /// شريط علوي احترافي للتطبيقات الويب والتابلت
 library;
 
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// الشريط العلوي
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -97,7 +99,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   else if (showBackButton)
                     _buildBackButton(context)
                   else if (onMenuTap != null)
-                    _buildMenuButton(),
+                    _buildMenuButton(context),
 
                   const SizedBox(width: AppSpacing.md),
 
@@ -110,7 +112,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   if (actions != null) ...[
                     const SizedBox(width: AppSpacing.md),
                     ...actions!.map((action) => Padding(
-                          padding: const EdgeInsets.only(right: AppSpacing.xs),
+                          padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
                           child: action,
                         )),
                   ],
@@ -134,22 +136,24 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildBackButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return IconButton(
       onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
-      icon: const Icon(Icons.arrow_forward),
+      icon: const AdaptiveIcon(Icons.arrow_forward),
       iconSize: AppIconSize.md,
       color: AppColors.textPrimary,
-      tooltip: 'رجوع',
+      tooltip: l10n.goBack,
     );
   }
 
-  Widget _buildMenuButton() {
+  Widget _buildMenuButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return IconButton(
       onPressed: onMenuTap,
       icon: const Icon(Icons.menu),
       iconSize: AppIconSize.md,
       color: AppColors.textPrimary,
-      tooltip: 'القائمة',
+      tooltip: l10n.menuLabel,
     );
   }
 
@@ -196,6 +200,7 @@ class TopBarNotificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Stack(
       children: [
         IconButton(
@@ -203,7 +208,7 @@ class TopBarNotificationButton extends StatelessWidget {
           icon: const Icon(Icons.notifications_outlined),
           iconSize: AppIconSize.md,
           color: AppColors.textSecondary,
-          tooltip: 'الإشعارات',
+          tooltip: l10n.notifications,
         ),
         if (count > 0)
           Positioned(
@@ -251,7 +256,7 @@ class TopBarSearchButton extends StatelessWidget {
       icon: const Icon(Icons.search),
       iconSize: AppIconSize.md,
       color: AppColors.textSecondary,
-      tooltip: tooltip ?? 'بحث',
+      tooltip: tooltip ?? AppLocalizations.of(context)!.search,
     );
   }
 }
@@ -272,7 +277,7 @@ class TopBarHelpButton extends StatelessWidget {
       icon: const Icon(Icons.help_outline),
       iconSize: AppIconSize.md,
       color: AppColors.textSecondary,
-      tooltip: 'مساعدة',
+      tooltip: AppLocalizations.of(context)!.help,
     );
   }
 }
@@ -409,7 +414,7 @@ class TopBarStatusIndicator extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
-            customText ?? (isOnline ? 'متصل' : 'غير متصل'),
+            customText ?? (isOnline ? AppLocalizations.of(context)!.online : AppLocalizations.of(context)!.offline),
             style: AppTypography.labelSmall.copyWith(
               color: isOnline ? AppColors.success : AppColors.warning,
               fontWeight: FontWeight.w600,

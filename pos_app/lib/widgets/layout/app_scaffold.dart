@@ -9,6 +9,8 @@ library;
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../common/offline_banner.dart';
 import 'sidebar.dart';
 import 'top_bar.dart';
 
@@ -203,6 +205,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                     searchWidget: widget.searchWidget,
                   ),
 
+                  // Offline / Sync Status Banners
+                  const StatusBanners(),
+
                   // Page Content
                   Expanded(
                     child: widget.body ?? _getCurrentPage(),
@@ -227,7 +232,14 @@ class _AppScaffoldState extends State<AppScaffold> {
         centerTitle: true,
         actions: widget.actions,
       ),
-      body: widget.body ?? _getCurrentPage(),
+      body: Column(
+        children: [
+          // Offline / Sync Status Banners
+          const StatusBanners(),
+          // Page Content
+          Expanded(child: widget.body ?? _getCurrentPage()),
+        ],
+      ),
       bottomNavigationBar: _buildBottomNavigation(),
       floatingActionButton: widget.floatingActionButton,
       floatingActionButtonLocation: widget.floatingActionButtonLocation,
@@ -260,6 +272,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   }
 
   Widget _buildMobileDrawer() {
+    final l10n = AppLocalizations.of(context)!;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -283,9 +296,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                const Text(
-                  'بقالتي',
-                  style: TextStyle(
+                Text(
+                  l10n.myGrocery,
+                  style: const TextStyle(
                     color: AppColors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -408,6 +421,8 @@ class SubPageScaffold extends StatelessWidget {
             onBackPressed: onBack ?? () => Navigator.of(context).pop(),
             actions: actions,
           ),
+          // Offline / Sync Status Banners
+          const StatusBanners(),
           Expanded(child: body),
         ],
       ),

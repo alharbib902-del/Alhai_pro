@@ -1,9 +1,9 @@
-/// شاشة الفواتير المعلقة - Hold Invoices Screen
+/// Hold Invoices Screen
 ///
-/// تعرض قائمة الفواتير المعلقة الحقيقية من [heldInvoicesProvider] مع إمكانية:
-/// - استئناف الفاتورة (تُستعاد في السلة)
-/// - حذف الفاتورة المعلقة
-/// - عرض تفاصيل الفاتورة (عدد العناصر، الإجمالي، الوقت)
+/// Shows list of actual held invoices from [heldInvoicesProvider] with ability to:
+/// - Resume invoice (restore to cart)
+/// - Delete held invoice
+/// - View invoice details (item count, total, time)
 library;
 
 import 'package:flutter/material.dart';
@@ -12,22 +12,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../providers/cart_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 
-/// شاشة الفواتير المعلقة
+/// Hold Invoices Screen
 class HoldInvoicesScreen extends ConsumerWidget {
   const HoldInvoicesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final heldInvoices = ref.watch(heldInvoicesProvider);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('الفواتير المعلقة'),
+            Text(l10n.holdInvoices),
             if (heldInvoices.isNotEmpty) ...[
               const SizedBox(width: 8),
               Container(
@@ -52,9 +54,9 @@ class HoldInvoicesScreen extends ConsumerWidget {
         actions: [
           if (heldInvoices.isNotEmpty)
             TextButton.icon(
-              onPressed: () => _showClearAllDialog(context, ref),
+              onPressed: () => _showClearAllDialog(context, ref, l10n),
               icon: const Icon(Icons.delete_sweep, size: 20),
-              label: const Text('مسح الكل'),
+              label: Text(l10n.clearAll),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.error,
               ),
@@ -62,10 +64,10 @@ class HoldInvoicesScreen extends ConsumerWidget {
         ],
       ),
       body: heldInvoices.isEmpty
-          ? const AppEmptyState(
+          ? AppEmptyState(
               icon: Icons.pause_circle_outline,
-              title: 'لا توجد فواتير معلقة',
-              description: 'عند تعليق فاتورة من نقطة البيع ستظهر هنا\nيمكنك تعليق عدة فواتير واستئنافها لاحقاً',
+              title: l10n.noHoldInvoices,
+              description: l10n.holdInvoicesDesc,
             )
           : ListView.builder(
               padding: const EdgeInsets.all(AppSizes.md),
@@ -74,19 +76,19 @@ class HoldInvoicesScreen extends ConsumerWidget {
                 final invoice = heldInvoices[index];
                 return _HoldInvoiceCard(
                   invoice: invoice,
-                  onResume: () => _resumeInvoice(context, ref, invoice),
-                  onDelete: () => _deleteInvoice(context, ref, invoice),
+                  onResume: () => _resumeInvoice(context, ref, invoice, l10n),
+                  onDelete: () => _deleteInvoice(context, ref, invoice, l10n),
                 );
               },
             ),
     );
   }
 
-  void _resumeInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice) {
+  void _resumeInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice, AppLocalizations l10n) {
     HapticFeedback.mediumImpact();
-    // استعادة الفاتورة المعلقة إلى السلة
+    // Restore held invoice to cart
     ref.read(cartStateProvider.notifier).restoreInvoice(invoice);
-    // تحديث قائمة الفواتير المعلقة
+    // Refresh held invoices list
     ref.read(heldInvoicesProvider.notifier).refresh();
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -95,34 +97,34 @@ class HoldInvoicesScreen extends ConsumerWidget {
           children: [
             const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 8),
-            Text('تم استئناف: ${invoice.description}'),
+            Text(l10n.resumedInvoice(invoice.description)),
           ],
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.success,
       ),
     );
-    Navigator.pop(context, true); // true = تم استعادة فاتورة
+    Navigator.pop(context, true); // true = invoice was restored
   }
 
-  void _deleteInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice) {
+  void _deleteInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('حذف الفاتورة'),
-        content: Text('هل تريد حذف "${invoice.description}"?\nهذا الإجراء لا يمكن التراجع عنه.'),
+        title: Text(l10n.deleteInvoiceTitle),
+        content: Text(l10n.deleteInvoiceConfirmMsg(invoice.description)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               ref.read(heldInvoicesProvider.notifier).delete(invoice.id);
               Navigator.pop(dialogCtx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم حذف الفاتورة'),
+                SnackBar(
+                  content: Text(l10n.invoiceDeletedMsg),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -131,24 +133,24 @@ class HoldInvoicesScreen extends ConsumerWidget {
               backgroundColor: AppColors.error,
               foregroundColor: Colors.white,
             ),
-            child: const Text('حذف'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
     );
   }
 
-  void _showClearAllDialog(BuildContext context, WidgetRef ref) {
+  void _showClearAllDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     final count = ref.read(heldInvoicesProvider).length;
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('حذف جميع الفواتير'),
-        content: Text('هل تريد حذف جميع الفواتير المعلقة ($count فاتورة)?\nهذا الإجراء لا يمكن التراجع عنه.'),
+        title: Text(l10n.deleteAllInvoices),
+        content: Text(l10n.deleteAllInvoicesConfirm(count)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -159,8 +161,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
               if (dialogCtx.mounted) Navigator.pop(dialogCtx);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('تم حذف جميع الفواتير'),
+                  SnackBar(
+                    content: Text(l10n.allInvoicesDeleted),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
@@ -170,7 +172,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
               backgroundColor: AppColors.error,
               foregroundColor: Colors.white,
             ),
-            child: const Text('حذف الكل'),
+            child: Text(l10n.deleteAllLabel),
           ),
         ],
       ),
@@ -195,8 +197,9 @@ class _HoldInvoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final timeDiff = DateTime.now().difference(invoice.createdAt);
-    final timeText = _formatTimeDiff(timeDiff);
+    final timeText = _formatTimeDiff(timeDiff, l10n);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cart = invoice.cart;
 
@@ -255,7 +258,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '${cart.total.toStringAsFixed(2)} ر.س',
+                        l10n.debtAmountWithCurrency(cart.total.toStringAsFixed(2)),
                         style: AppTypography.titleMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -263,7 +266,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${cart.itemCount} عنصر',
+                        l10n.itemLabel(cart.itemCount),
                         style: AppTypography.labelSmall.copyWith(
                           color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
                         ),
@@ -273,7 +276,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                 ],
               ),
 
-              // عناصر الفاتورة (أول 3 فقط)
+              // Invoice items (first 3 only)
               if (cart.items.isNotEmpty) ...[
                 const Divider(height: AppSizes.xl),
                 ...cart.items.take(3).map((item) => Padding(
@@ -301,7 +304,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '×${item.quantity}',
+                            '\u00d7${item.quantity}',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -323,7 +326,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '+${cart.items.length - 3} عناصر أخرى',
+                      l10n.moreItems(cart.items.length - 3),
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
@@ -333,7 +336,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                   ),
               ],
 
-              // ملاحظة (اسم مخصص)
+              // Note (custom name)
               if (invoice.name != null && invoice.name!.isNotEmpty) ...[
                 const SizedBox(height: AppSizes.sm),
                 Container(
@@ -363,7 +366,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                 ),
               ],
 
-              // معلومات العميل
+              // Customer info
               if (cart.customerName != null) ...[
                 const SizedBox(height: AppSizes.sm),
                 Row(
@@ -392,7 +395,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                     child: OutlinedButton.icon(
                       onPressed: onDelete,
                       icon: const Icon(Icons.delete_outline, size: 18),
-                      label: const Text('حذف'),
+                      label: Text(l10n.delete),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.error,
                         side: const BorderSide(color: AppColors.error),
@@ -405,7 +408,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                     child: ElevatedButton.icon(
                       onPressed: onResume,
                       icon: const Icon(Icons.play_arrow, size: 18),
-                      label: const Text('استئناف'),
+                      label: Text(l10n.resume),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
@@ -421,15 +424,15 @@ class _HoldInvoiceCard extends StatelessWidget {
     );
   }
 
-  String _formatTimeDiff(Duration diff) {
+  String _formatTimeDiff(Duration diff, AppLocalizations l10n) {
     if (diff.inMinutes < 1) {
-      return 'الآن';
+      return l10n.justNowTime;
     } else if (diff.inMinutes < 60) {
-      return 'منذ ${diff.inMinutes} دقيقة';
+      return l10n.minutesAgoTime(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ساعة';
+      return l10n.hoursAgoTime(diff.inHours);
     } else {
-      return 'منذ ${diff.inDays} يوم';
+      return l10n.daysAgoTime(diff.inDays);
     }
   }
 }

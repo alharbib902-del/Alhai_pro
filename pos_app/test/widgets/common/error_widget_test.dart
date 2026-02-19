@@ -13,10 +13,10 @@ void main() {
     );
   }
 
-  group('ErrorWidget - Basic Constructor', () {
+  group('AppErrorWidget - Basic Constructor', () {
     testWidgets('يعرض الرسالة والأيقونة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const app.ErrorWidget(message: 'حدث خطأ'),
+        const app.AppErrorWidget(message: 'حدث خطأ'),
       ));
 
       expect(find.text('حدث خطأ'), findsOneWidget);
@@ -25,7 +25,7 @@ void main() {
 
     testWidgets('يعرض أيقونة مخصصة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const app.ErrorWidget(
+        const app.AppErrorWidget(
           message: 'خطأ',
           icon: Icons.warning,
         ),
@@ -38,7 +38,7 @@ void main() {
       bool retried = false;
 
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget(
+        app.AppErrorWidget(
           message: 'خطأ',
           onRetry: () => retried = true,
         ),
@@ -52,7 +52,7 @@ void main() {
 
     testWidgets('لا يعرض زر إعادة المحاولة عندما onRetry غير موجود', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const app.ErrorWidget(message: 'خطأ'),
+        const app.AppErrorWidget(message: 'خطأ'),
       ));
 
       expect(find.text('إعادة المحاولة'), findsNothing);
@@ -60,7 +60,7 @@ void main() {
 
     testWidgets('يتمركز في الوسط', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        const app.ErrorWidget(message: 'خطأ'),
+        const app.AppErrorWidget(message: 'خطأ'),
       ));
 
       // التحقق من وجود Center widget
@@ -68,10 +68,10 @@ void main() {
     });
   });
 
-  group('ErrorWidget.network', () {
+  group('AppErrorWidget.network', () {
     testWidgets('يعرض رسالة خطأ الشبكة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.network(),
+        app.AppErrorWidget.network(),
       ));
 
       expect(find.text('خطأ في الاتصال بالخادم'), findsOneWidget);
@@ -82,7 +82,7 @@ void main() {
       bool retried = false;
 
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.network(onRetry: () => retried = true),
+        app.AppErrorWidget.network(onRetry: () => retried = true),
       ));
 
       await tester.tap(find.text('إعادة المحاولة'));
@@ -90,10 +90,10 @@ void main() {
     });
   });
 
-  group('ErrorWidget.loading', () {
+  group('AppErrorWidget.loading', () {
     testWidgets('يعرض رسالة فشل التحميل الافتراضية', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.loading(),
+        app.AppErrorWidget.loading(),
       ));
 
       expect(find.text('فشل تحميل البيانات'), findsOneWidget);
@@ -102,17 +102,17 @@ void main() {
 
     testWidgets('يعرض رسالة مخصصة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.loading(details: 'فشل تحميل المنتجات'),
+        app.AppErrorWidget.loading(details: 'فشل تحميل المنتجات'),
       ));
 
       expect(find.text('فشل تحميل المنتجات'), findsOneWidget);
     });
   });
 
-  group('ErrorWidget.generic', () {
+  group('AppErrorWidget.generic', () {
     testWidgets('يعرض رسالة الخطأ العام الافتراضية', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.generic(),
+        app.AppErrorWidget.generic(),
       ));
 
       expect(find.text('حدث خطأ غير متوقع'), findsOneWidget);
@@ -121,7 +121,7 @@ void main() {
 
     testWidgets('يعرض رسالة مخصصة', (tester) async {
       await tester.pumpWidget(buildTestWidget(
-        app.ErrorWidget.generic(message: 'خطأ مخصص'),
+        app.AppErrorWidget.generic(message: 'خطأ مخصص'),
       ));
 
       expect(find.text('خطأ مخصص'), findsOneWidget);

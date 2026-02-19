@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/online_order.dart';
 import '../../providers/online_orders_provider.dart';
 
@@ -80,6 +81,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return SlideTransition(
       position: _slideAnimation,
@@ -130,7 +132,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                             ),
                           ),
                           Text(
-                            'الآن',
+                            l10n.now,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.outline,
                             ),
@@ -230,7 +232,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                         ),
-                        child: const Text('رفض'),
+                        child: Text(l10n.reject),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -240,7 +242,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                           _dismiss();
                           widget.onDetails?.call();
                         },
-                        child: const Text('تفاصيل'),
+                        child: Text(l10n.details),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -252,7 +254,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                           widget.onAccept?.call();
                         },
                         icon: const Icon(Icons.check, size: 18),
-                        label: const Text('قبول'),
+                        label: Text(l10n.accept),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.green,
                         ),

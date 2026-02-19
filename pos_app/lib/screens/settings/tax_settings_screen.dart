@@ -6,10 +6,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة إعدادات الضرائب
@@ -22,8 +20,6 @@ class TaxSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'settings';
 
   bool _enableVat = true;
   double _vatRate = 15.0;
@@ -38,46 +34,6 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     _taxNumberController.dispose();
     super.dispose();
   }
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'categories':
-        context.push(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'invoices':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -86,103 +42,50 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'إعدادات الضرائب',
+                  title: l10n.taxSettings,
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.defaultUserName,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark),
+                    child: _buildContent(isDark, l10n),
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPageHeader(isDark),
+        _buildPageHeader(isDark, l10n),
         const SizedBox(height: 20),
 
         // VAT settings
         _buildSettingsGroup(
-            'ضريبة القيمة المضافة', Icons.percent_rounded,
+            l10n.vatSettings, Icons.percent_rounded,
             AppColors.success, isDark, [
           SwitchListTile(
-            title: Text('تفعيل ضريبة القيمة المضافة',
+            title: Text(l10n.enableVat,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('تطبيق VAT على جميع المبيعات'),
+            subtitle: Text(l10n.enableVatDesc),
             value: _enableVat,
             onChanged: (v) => setState(() => _enableVat = v),
           ),
           if (_enableVat) ...[
             const Divider(indent: 16, endIndent: 16),
             ListTile(
-              title: Text('نسبة الضريبة',
+              title: Text(l10n.taxRate,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle: Text('${_vatRate.toInt()}%'),
@@ -204,9 +107,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 controller: _taxNumberController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'الرقم الضريبي',
+                  labelText: l10n.taxNumber,
                   prefixIcon: const Icon(Icons.numbers),
-                  helperText: '15 رقم يبدأ بـ 3',
+                  helperText: l10n.taxNumberHint,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -214,19 +117,19 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             ),
             const Divider(indent: 16, endIndent: 16),
             SwitchListTile(
-              title: Text('الأسعار شاملة الضريبة',
+              title: Text(l10n.pricesIncludeTax,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
               subtitle:
-                  const Text('الأسعار المعروضة تتضمن الضريبة'),
+                  Text(l10n.pricesIncludeTaxDesc),
               value: _priceIncludesTax,
               onChanged: (v) => setState(() => _priceIncludesTax = v),
             ),
             SwitchListTile(
-              title: Text('إظهار الضريبة في الإيصال',
+              title: Text(l10n.showTaxOnReceipt,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('عرض تفاصيل الضريبة'),
+              subtitle: Text(l10n.showTaxOnReceiptDesc),
               value: _showTaxOnReceipt,
               onChanged: (v) => setState(() => _showTaxOnReceipt = v),
             ),
@@ -235,34 +138,38 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         ]),
 
         // ZATCA
-        _buildSettingsGroup('ZATCA - الفوترة الإلكترونية',
+        _buildSettingsGroup(l10n.zatcaEInvoicing,
             Icons.verified_rounded, AppColors.primary, isDark, [
           SwitchListTile(
-            title: Text('تفعيل ZATCA',
+            title: Text(l10n.enableZatca,
                 style: TextStyle(
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            subtitle: const Text('الامتثال لنظام الفوترة الإلكترونية'),
+            subtitle: Text(l10n.enableZatcaDesc),
             value: _enableZatca,
             onChanged: (v) => setState(() => _enableZatca = v),
           ),
           if (_enableZatca) ...[
             const Divider(indent: 16, endIndent: 16),
             RadioListTile<String>(
-              title: Text('المرحلة الأولى',
+              title: Text(l10n.phaseOne,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('إصدار الفاتورة'),
+              subtitle: Text(l10n.phaseOneDesc),
               value: 'phase1',
+              // ignore: deprecated_member_use
               groupValue: _zatcaPhase,
+              // ignore: deprecated_member_use
               onChanged: (v) => setState(() => _zatcaPhase = v!),
             ),
             RadioListTile<String>(
-              title: Text('المرحلة الثانية',
+              title: Text(l10n.phaseTwo,
                   style: TextStyle(
                       color: isDark ? Colors.white : AppColors.textPrimary)),
-              subtitle: const Text('الربط والتكامل'),
+              subtitle: Text(l10n.phaseTwoDesc),
               value: 'phase2',
+              // ignore: deprecated_member_use
               groupValue: _zatcaPhase,
+              // ignore: deprecated_member_use
               onChanged: (v) => setState(() => _zatcaPhase = v!),
             ),
           ],
@@ -275,15 +182,15 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           child: FilledButton.icon(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم حفظ إعدادات الضرائب'),
+                SnackBar(
+                  content: Text(l10n.taxSettingsSaved),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             icon: const Icon(Icons.save_rounded),
-            label: const Text('حفظ الإعدادات'),
+            label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -295,7 +202,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     );
   }
 
-  Widget _buildPageHeader(bool isDark) {
+  Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
         IconButton(
@@ -317,12 +224,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إعدادات الضرائب',
+            Text(l10n.taxSettings,
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : AppColors.textPrimary)),
-            Text('VAT, ZATCA, الفوترة الإلكترونية',
+            Text(l10n.taxSettingsSubtitle,
                 style: TextStyle(
                     fontSize: 13,
                     color: isDark

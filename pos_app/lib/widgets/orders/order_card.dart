@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/online_order.dart';
 
 /// بطاقة الطلب الأونلاين
@@ -58,10 +59,11 @@ class OrderCard extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(12),
-      color: order.status == OrderStatus.pending 
+      color: order.status == OrderStatus.pending
           ? Colors.orange.withValues(alpha: 0.1)
           : null,
       child: Row(
@@ -87,9 +89,9 @@ class OrderCard extends StatelessWidget {
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          'جديد',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.newLabel,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -100,7 +102,7 @@ class OrderCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _formatTime(order.createdAt),
+                  _formatTime(order.createdAt, l10n),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.outline,
                   ),
@@ -260,7 +262,8 @@ class OrderCard extends StatelessWidget {
 
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -273,7 +276,7 @@ class OrderCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: order.isPaid 
+                  color: order.isPaid
                       ? Colors.green.withValues(alpha: 0.1)
                       : Colors.amber.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -294,13 +297,13 @@ class OrderCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Total
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'الإجمالي',
+                    l10n.total,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.outline,
                     ),
@@ -327,6 +330,8 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     switch (order.status) {
       case OrderStatus.pending:
         return Row(
@@ -335,7 +340,7 @@ class OrderCard extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onReject,
                 icon: const Icon(Icons.close, size: 18),
-                label: const Text('رفض'),
+                label: Text(l10n.reject),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
                 ),
@@ -367,7 +372,7 @@ class OrderCard extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onPrint,
                 icon: const Icon(Icons.print, size: 18),
-                label: const Text('طباعة'),
+                label: Text(l10n.print),
               ),
             ),
             const SizedBox(width: 8),
@@ -445,9 +450,9 @@ class OrderCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'ملغي',
-                    style: TextStyle(
+                  Text(
+                    l10n.cancelled,
+                    style: const TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
@@ -485,12 +490,12 @@ class OrderCard extends StatelessWidget {
     }
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(DateTime time, AppLocalizations l10n) {
     final now = DateTime.now();
     final diff = now.difference(time);
-    
+
     if (diff.inMinutes < 1) {
-      return 'الآن';
+      return l10n.now;
     } else if (diff.inMinutes < 60) {
       return 'منذ ${diff.inMinutes} دقيقة';
     } else if (diff.inHours < 24) {

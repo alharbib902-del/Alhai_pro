@@ -22,6 +22,8 @@ const { buildReport } = require('./reporter/htmlBuilder');
 
 // ─── Agent Registry ───
 const AGENTS = {
+  core: require('./agents/core.agent'),
+  productsInventory: require('./agents/productsInventory.agent'),
   finance: require('./agents/finance.agent'),
   shifts: require('./agents/shifts.agent'),
   purchasesSuppliers: require('./agents/purchasesSuppliers.agent'),
@@ -571,11 +573,16 @@ async function main() {
       const page = await context.newPage();
       const themeManager = new ThemeManager(page, baseURL);
 
-      // Initial load — wait for Flutter to fully boot
+      // Initial load — wait for Flutter to fully boot (past splash screen)
       console.log('  Waiting for Flutter to boot...');
       try {
         await page.goto(`${baseURL}/#/dashboard`, { waitUntil: 'domcontentloaded', timeout: 30000 });
         await waitForFlutterReady(page, 30000);
+        // Wait extra for splash screen + DB init + seeding to finish
+        await page.waitForTimeout(5000);
+        // Re-navigate to dashboard to ensure router is ready
+        await page.goto(`${baseURL}/#/dashboard`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+        await page.waitForTimeout(3000);
         console.log('  Flutter ready.');
       } catch (e) {
         console.error(`  Flutter boot failed: ${e.message}. Continuing anyway...`);

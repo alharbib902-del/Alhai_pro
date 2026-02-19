@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../providers/suppliers_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة تفاصيل المورد
@@ -18,102 +21,40 @@ class SupplierDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'suppliers';
 
-  // Mock supplier data
-  final Map<String, dynamic> _supplier = {
-    'id': 'SUP-001',
-    'name': 'شركة الأمل للتوزيع',
-    'phone': '0512345678',
-    'email': 'info@alamal.com',
-    'address': 'الرياض - حي العليا',
-    'balance': -15000.0,
-    'totalPurchases': 250000.0,
-    'lastPurchase': DateTime.now().subtract(const Duration(days: 5)),
-  };
+  SuppliersTableData? _supplier;
+  List<PurchasesTableData> _recentPurchases = [];
+  bool _isLoading = true;
 
-  final List<Map<String, dynamic>> _recentPurchases = [
-    {
-      'id': 'PO-001',
-      'date': DateTime.now().subtract(const Duration(days: 5)),
-      'amount': 12500.0,
-      'status': 'completed',
-    },
-    {
-      'id': 'PO-002',
-      'date': DateTime.now().subtract(const Duration(days: 15)),
-      'amount': 8750.0,
-      'status': 'completed',
-    },
-    {
-      'id': 'PO-003',
-      'date': DateTime.now().subtract(const Duration(days: 30)),
-      'amount': 15000.0,
-      'status': 'pending',
-    },
-  ];
-
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.go(AppRoutes.products);
-        break;
-      case 'categories':
-        context.go(AppRoutes.categories);
-        break;
-      case 'inventory':
-        context.go(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.go(AppRoutes.customers);
-        break;
-      case 'suppliers':
-        context.go(AppRoutes.suppliers);
-        break;
-      case 'invoices':
-        context.go(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.go(AppRoutes.orders);
-        break;
-      case 'sales':
-        context.go(AppRoutes.invoices);
-        break;
-      case 'returns':
-        context.go(AppRoutes.returns);
-        break;
-      case 'void-transaction':
-        context.go(AppRoutes.voidTransaction);
-        break;
-      case 'reports':
-        context.go(AppRoutes.reports);
-        break;
-      case 'employees':
-        context.go(AppRoutes.settings);
-        break;
-      case 'loyalty':
-        context.go(AppRoutes.loyalty);
-        break;
-      case 'expenses':
-        context.go(AppRoutes.expenses);
-        break;
-      case 'shifts':
-        context.go(AppRoutes.shifts);
-        break;
-      case 'purchases':
-        context.go(AppRoutes.purchaseForm);
-        break;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
   }
 
+  Future<void> _loadData() async {
+    if (widget.supplierId == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    final db = getIt<AppDatabase>();
+    final supplier = await db.suppliersDao.getSupplierById(widget.supplierId!);
+    List<PurchasesTableData> purchases = [];
+    try {
+      // Query purchases for this supplier
+      final allPurchases = await db.purchasesDao.getAllPurchases(supplier?.storeId ?? '');
+      purchases = allPurchases
+          .where((p) => p.supplierId == widget.supplierId)
+          .toList();
+    } catch (_) {}
+    if (mounted) {
+      setState(() {
+        _supplier = supplier;
+        _recentPurchases = purchases;
+        _isLoading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -122,38 +63,14 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          // Sidebar - only on wide screens
-          if (isWideScreen)
-            AppSidebar(
-              storeName: 'Al-Hai POS',
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.dashboard,
-              onSettingsTap: () => context.go(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go(AppRoutes.login),
-            ),
-
-          // Main content
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 // Header
                 AppHeader(
                   title: 'تفاصيل المورد', // TODO: localize
-                  subtitle: _supplier['name'] as String,
+                  subtitle: _supplier?.name ?? '',
                   onMenuTap: isWideScreen
-                      ? () => setState(
-                          () => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () {},
                   notificationsCount: 3,
@@ -163,17 +80,28 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
 
                 // Content
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isDark, isMediumScreen, l10n),
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _supplier == null
+                          ? Center(
+                              child: Text(
+                                'لم يتم العثور على المورد',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.6)
+                                      : AppColors.textSecondary,
+                                ),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                              child:
+                                  _buildContent(isDark, isMediumScreen, l10n),
+                            ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 
   Widget _buildContent(
@@ -286,8 +214,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 height: 56,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: AlignmentDirectional.topStart,
+                    end: AlignmentDirectional.bottomEnd,
                     colors: [
                       AppColors.primary,
                       AppColors.primary.withValues(alpha: 0.7),
@@ -297,7 +225,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  (_supplier['name'] as String)[0],
+                  _supplier!.name.isNotEmpty ? _supplier!.name[0] : '?',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -311,7 +239,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _supplier['name'] as String,
+                      _supplier!.name,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -327,7 +255,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        _supplier['id'] as String,
+                        _supplier!.id,
                         style: const TextStyle(
                           color: AppColors.primary,
                           fontSize: 12,
@@ -353,21 +281,21 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           _InfoRow(
             icon: Icons.phone_outlined,
             label: 'الهاتف', // TODO: localize
-            value: _supplier['phone'] as String,
+            value: _supplier!.phone ?? '-',
             isDark: isDark,
           ),
           const SizedBox(height: 12),
           _InfoRow(
             icon: Icons.email_outlined,
             label: 'البريد', // TODO: localize
-            value: _supplier['email'] as String,
+            value: _supplier!.email ?? '-',
             isDark: isDark,
           ),
           const SizedBox(height: 12),
           _InfoRow(
             icon: Icons.location_on_outlined,
             label: 'العنوان', // TODO: localize
-            value: _supplier['address'] as String,
+            value: _supplier!.address ?? '-',
             isDark: isDark,
           ),
         ],
@@ -376,7 +304,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildBalanceCard(bool isDark) {
-    final balance = _supplier['balance'] as double;
+    final balance = _supplier!.balance;
     final isNegative = balance < 0;
     final balanceColor = isNegative ? AppColors.error : AppColors.success;
 
@@ -469,14 +397,21 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
   }
 
   Widget _buildStatsCards(bool isDark) {
+    final totalPurchases = _recentPurchases.fold<double>(
+      0.0,
+      (sum, p) => sum + p.total,
+    );
+    final lastPurchaseDate = _recentPurchases.isNotEmpty
+        ? _recentPurchases.first.createdAt
+        : null;
+
     return Row(
       children: [
         Expanded(
           child: _StatCard(
             icon: Icons.shopping_cart_outlined,
             label: 'إجمالي المشتريات', // TODO: localize
-            value:
-                '${(_supplier['totalPurchases'] as double).toStringAsFixed(0)} ر.س',
+            value: '${totalPurchases.toStringAsFixed(0)} ر.س',
             color: AppColors.info,
             isDark: isDark,
           ),
@@ -486,7 +421,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           child: _StatCard(
             icon: Icons.calendar_today_outlined,
             label: 'آخر شراء', // TODO: localize
-            value: _formatDate(_supplier['lastPurchase'] as DateTime),
+            value: lastPurchaseDate != null
+                ? _formatDate(lastPurchaseDate)
+                : '-',
             color: AppColors.primary,
             isDark: isDark,
           ),
@@ -512,9 +449,18 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               ),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('\u0639\u0631\u0636 \u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A'), // عرض جميع المشتريات
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                );
+              },
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
-              label: const Text('عرض الكل'), // TODO: localize
+              label: const Text('\u0639\u0631\u0636 \u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u0634\u062A\u0631\u064A\u0627\u062A'), // عرض جميع المشتريات
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primary,
               ),
@@ -524,143 +470,143 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         const SizedBox(height: 12),
 
         // Purchase list
-        ...List.generate(_recentPurchases.length, (index) {
-          final purchase = _recentPurchases[index];
-          final isCompleted = purchase['status'] == 'completed';
-          final statusColor =
-              isCompleted ? AppColors.success : AppColors.warning;
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : AppColors.border,
-              ),
-            ),
-            child: Row(
-              children: [
-                // Status icon
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+        if (_recentPurchases.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(32),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 48,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textSecondary.withValues(alpha: 0.4),
                   ),
-                  child: Icon(
-                    isCompleted ? Icons.check_rounded : Icons.schedule_rounded,
-                    color: statusColor,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 14),
-
-                // Purchase info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        purchase['id'] as String,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _formatDate(purchase['date'] as DateTime),
-                        style: TextStyle(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.5)
-                              : AppColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Status badge
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    isCompleted
-                        ? 'مكتمل' // TODO: localize
-                        : 'معلق', // TODO: localize
+                  const SizedBox(height: 12),
+                  Text(
+                    '\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0634\u062A\u0631\u064A\u0627\u062A', // لا توجد مشتريات
                     style: TextStyle(
-                      color: statusColor,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : AppColors.textSecondary,
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-
-                // Amount
-                Text(
-                  '${(purchase['amount'] as double).toStringAsFixed(0)} ر.س',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          );
-        }),
+          )
+        else
+          ...List.generate(_recentPurchases.length, (index) {
+            final purchase = _recentPurchases[index];
+            final isCompleted = purchase.status == 'received' ||
+                purchase.status == 'completed';
+            final statusColor =
+                isCompleted ? AppColors.success : AppColors.warning;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : AppColors.border,
+                ),
+              ),
+              child: Row(
+                children: [
+                  // Status icon
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      isCompleted
+                          ? Icons.check_rounded
+                          : Icons.schedule_rounded,
+                      color: statusColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // Purchase info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          purchase.purchaseNumber,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatDate(purchase.createdAt),
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Status badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      isCompleted
+                          ? 'مكتمل' // TODO: localize
+                          : 'معلق', // TODO: localize
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Amount
+                  Text(
+                    '${purchase.total.toStringAsFixed(0)} ر.س',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
       ],
     );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: 'Al-Hai POS',
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.dashboard,
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.go(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go(AppRoutes.login);
-        },
-      ),
-    );
-  }
-
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
 
   void _editSupplier() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('تعديل بيانات المورد'), // TODO: localize
-        backgroundColor: isDark ? const Color(0xFF334155) : null,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+    if (widget.supplierId != null) {
+      context.push('/suppliers/${widget.supplierId}/edit');
+    }
   }
 
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
@@ -699,9 +645,38 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             ),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              context.go(AppRoutes.suppliers);
+              if (widget.supplierId != null) {
+                try {
+                  await deleteSupplier(ref, widget.supplierId!);
+                  if (mounted) {
+                    HapticFeedback.mediumImpact();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('تم حذف المورد'), // TODO: localize
+                        backgroundColor: AppColors.error,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    );
+                    context.go(AppRoutes.suppliers);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('حدث خطأ أثناء الحذف: $e'),
+                        backgroundColor: AppColors.error,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    );
+                  }
+                }
+              }
             },
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.error,

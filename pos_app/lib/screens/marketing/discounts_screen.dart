@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:uuid/uuid.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
+import '../../widgets/common/app_empty_state.dart';
 
-/// شاشة الخصومات
+/// Discounts Screen
 class DiscountsScreen extends ConsumerStatefulWidget {
   const DiscountsScreen({super.key});
 
@@ -16,32 +20,33 @@ class DiscountsScreen extends ConsumerStatefulWidget {
 }
 
 class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'loyalty';
 
-  final List<_Discount> _discounts = [
-    _Discount(id: '1', name: 'خصم نهاية الأسبوع', type: 'percentage', value: 15, appliesTo: 'all', isActive: true, startDate: DateTime.now(), endDate: DateTime.now().add(const Duration(days: 2))),
-    _Discount(id: '2', name: 'خصم منتجات الألبان', type: 'percentage', value: 10, appliesTo: 'category', isActive: true, startDate: DateTime.now().subtract(const Duration(days: 5)), endDate: DateTime.now().add(const Duration(days: 10))),
-    _Discount(id: '3', name: 'خصم ثابت 5 ر.س', type: 'fixed', value: 5, appliesTo: 'all', isActive: false, startDate: DateTime.now().subtract(const Duration(days: 30)), endDate: DateTime.now().subtract(const Duration(days: 15))),
-  ];
+  List<DiscountsTableData> _discounts = [];
+  bool _isLoading = true;
+  String? _error;
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
   }
 
+  Future<void> _loadData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+      final db = getIt<AppDatabase>();
+      final results = await db.discountsDao.getAllDiscounts(storeId);
+      if (mounted) {
+        setState(() {
+          _discounts = results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = e.toString(); });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -50,69 +55,31 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: Column(
+    return Column(
               children: [
                 AppHeader(
-                  title: 'الخصومات', // TODO: localize
+                  title: l10n.discountsTitle,
                   onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                      ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: 'أحمد محمد',
+                  userName: l10n.cashCustomer,
                   userRole: l10n.branchManager,
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _error != null
+                      ? AppErrorState.general(message: _error, onRetry: _loadData)
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                        ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
-
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) { Navigator.pop(context); _handleNavigation(item); },
-        onSettingsTap: () { Navigator.pop(context); context.push(AppRoutes.settings); },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () { Navigator.pop(context); context.go('/login'); },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     final active = _discounts.where((d) => d.isActive).length;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
@@ -127,13 +94,13 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'إدارة الخصومات', // TODO: localize
+              l10n.manageDiscounts,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
             ),
             FilledButton.icon(
               onPressed: _addDiscount,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('خصم جديد'), // TODO: localize
+              label: Text(l10n.newDiscount),
               style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
             ),
           ],
@@ -143,16 +110,19 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
         // Stats cards
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.local_offer, 'إجمالي', '${_discounts.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${_discounts.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.check_circle, 'نشط', '$active', AppColors.success, isDark)),
+            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '$active', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.pause_circle, 'متوقف', '${_discounts.length - active}', AppColors.textSecondary, isDark)),
+            Expanded(child: _buildStatCard(Icons.pause_circle, l10n.stopped, '${_discounts.length - active}', AppColors.textSecondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
 
         // Discounts list
+        if (_discounts.isEmpty)
+          AppEmptyState.noOffers()
+        else
         ..._discounts.map((discount) => Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
@@ -182,13 +152,21 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
                         children: [
                           Text(discount.name, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                           Text(
-                            discount.type == 'percentage' ? '${discount.value.toInt()}% خصم' : '${discount.value.toStringAsFixed(0)} ر.س خصم',
-                            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500),
+                            discount.type == 'percentage' ? l10n.discountOff('${discount.value.toInt()}') : l10n.sarDiscountOff(discount.value.toStringAsFixed(0)),
+                            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
                     ),
-                    Switch(value: discount.isActive, onChanged: (v) => setState(() => discount.isActive = v), activeColor: AppColors.primary),
+                    Switch(
+                      value: discount.isActive,
+                      onChanged: (v) => _toggleActive(discount, v),
+                      activeThumbColor: AppColors.primary,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                      onPressed: () => _deleteDiscount(discount),
+                    ),
                   ],
                 ),
                 Divider(height: 24, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
@@ -196,11 +174,12 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
                   children: [
                     Icon(Icons.category, size: 14, color: subtextColor),
                     const SizedBox(width: 4),
-                    Text(discount.appliesTo == 'all' ? 'جميع المنتجات' : 'تصنيف محدد', style: TextStyle(fontSize: 12, color: subtextColor)),
+                    Text(discount.appliesTo == 'all' ? l10n.allProducts : l10n.specificCategory, style: TextStyle(fontSize: 12, color: subtextColor)),
                     const Spacer(),
                     Icon(Icons.calendar_today, size: 14, color: subtextColor),
                     const SizedBox(width: 4),
                     Text('${_formatDate(discount.startDate)} - ${_formatDate(discount.endDate)}', style: TextStyle(fontSize: 11, color: subtextColor)),
+
                   ],
                 ),
               ],
@@ -230,77 +209,130 @@ class _DiscountsScreenState extends ConsumerState<DiscountsScreen> {
     );
   }
 
-  String _formatDate(DateTime d) => '${d.day}/${d.month}';
+  String _formatDate(DateTime? d) => d != null ? '${d.day}/${d.month}' : '-';
+
+  Future<void> _toggleActive(DiscountsTableData discount, bool value) async {
+    try {
+      final db = getIt<AppDatabase>();
+      final updated = DiscountsTableData(
+        id: discount.id,
+        storeId: discount.storeId,
+        name: discount.name,
+        nameEn: discount.nameEn,
+        type: discount.type,
+        value: discount.value,
+        minPurchase: discount.minPurchase,
+        maxDiscount: discount.maxDiscount,
+        appliesTo: discount.appliesTo,
+        productIds: discount.productIds,
+        categoryIds: discount.categoryIds,
+        startDate: discount.startDate,
+        endDate: discount.endDate,
+        isActive: value,
+        createdAt: discount.createdAt,
+        updatedAt: DateTime.now(),
+        syncedAt: discount.syncedAt,
+      );
+      await db.discountsDao.updateDiscount(updated);
+      await _loadData();
+    } catch (e) {
+      debugPrint('Error toggling discount: $e');
+    }
+  }
+
+  Future<void> _deleteDiscount(DiscountsTableData discount) async {
+    try {
+      final db = getIt<AppDatabase>();
+      await db.discountsDao.deleteDiscount(discount.id);
+      await _loadData();
+    } catch (e) {
+      debugPrint('Error deleting discount: $e');
+    }
+  }
 
   void _addDiscount() {
     final nameController = TextEditingController();
     final valueController = TextEditingController();
     String type = 'percentage';
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('خصم جديد'),
+          title: Text(l10n.newDiscount),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(controller: nameController, decoration: const InputDecoration(labelText: 'اسم الخصم', prefixIcon: Icon(Icons.local_offer))),
+                TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.discountName, prefixIcon: const Icon(Icons.local_offer))),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: ListTile(
-                        title: const Text('نسبة %'),
+                        title: Text(l10n.percentageLabel),
                         leading: Icon(type == 'percentage' ? Icons.radio_button_checked : Icons.radio_button_off, color: AppColors.primary),
                         onTap: () => setDialogState(() => type = 'percentage'),
                       ),
                     ),
                     Expanded(
                       child: ListTile(
-                        title: const Text('مبلغ ثابت'),
+                        title: Text(l10n.fixedAmount),
                         leading: Icon(type == 'fixed' ? Icons.radio_button_checked : Icons.radio_button_off, color: AppColors.primary),
                         onTap: () => setDialogState(() => type = 'fixed'),
                       ),
                     ),
                   ],
                 ),
-                TextField(controller: valueController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: type == 'percentage' ? 'النسبة' : 'المبلغ', prefixIcon: Icon(type == 'percentage' ? Icons.percent : Icons.attach_money))),
+                TextField(controller: valueController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: type == 'percentage' ? l10n.thePercentage : l10n.theAmount, prefixIcon: Icon(type == 'percentage' ? Icons.percent : Icons.attach_money))),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
                 if (nameController.text.isNotEmpty && valueController.text.isNotEmpty) {
-                  setState(() => _discounts.add(_Discount(
-                    id: 'new_${_discounts.length}',
-                    name: nameController.text,
-                    type: type,
-                    value: double.tryParse(valueController.text) ?? 0,
-                    appliesTo: 'all',
-                    isActive: true,
-                    startDate: DateTime.now(),
-                    endDate: DateTime.now().add(const Duration(days: 30)),
-                  )));
+                  try {
+                    final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+                    final db = getIt<AppDatabase>();
+                    final now = DateTime.now();
+                    final companion = DiscountsTableCompanion(
+                      id: Value(const Uuid().v4()),
+                      storeId: Value(storeId),
+                      name: Value(nameController.text),
+                      nameEn: Value(nameController.text),
+                      type: Value(type),
+                      value: Value(double.tryParse(valueController.text) ?? 0),
+                      minPurchase: const Value(0),
+                      maxDiscount: const Value(null),
+                      appliesTo: const Value('all'),
+                      productIds: const Value(null),
+                      categoryIds: const Value(null),
+                      startDate: Value(now),
+                      endDate: Value(now.add(const Duration(days: 30))),
+                      isActive: const Value(true),
+                      createdAt: Value(now),
+                      updatedAt: Value(now),
+                    );
+                    await db.discountsDao.insertDiscount(companion);
+                    await _loadData();
+                  } catch (e) {
+                    debugPrint('Error adding discount: $e');
+                  }
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         ),
       ),
-    );
+    ).then((_) {
+      nameController.dispose();
+      valueController.dispose();
+    });
   }
-}
-
-class _Discount {
-  final String id, name, type, appliesTo;
-  final double value;
-  bool isActive;
-  final DateTime startDate, endDate;
-  _Discount({required this.id, required this.name, required this.type, required this.value, required this.appliesTo, required this.isActive, required this.startDate, required this.endDate});
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// شاشة تحليل العملاء
 class CustomerAnalyticsScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('تحليل العملاء'),
@@ -60,18 +62,18 @@ class _CustomerAnalyticsScreenState extends State<CustomerAnalyticsScreen> {
             // أفضل العملاء
             Text('أفضل العملاء', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            const Card(
+            Card(
               child: Column(
                 children: [
-                  _CustomerTile(rank: 1, name: 'أحمد محمد', orders: 45, spent: 12500),
-                  Divider(height: 1),
-                  _CustomerTile(rank: 2, name: 'خالد عمر', orders: 38, spent: 9800),
-                  Divider(height: 1),
-                  _CustomerTile(rank: 3, name: 'محمد علي', orders: 32, spent: 8200),
-                  Divider(height: 1),
-                  _CustomerTile(rank: 4, name: 'سعد العمري', orders: 28, spent: 7500),
-                  Divider(height: 1),
-                  _CustomerTile(rank: 5, name: 'فهد عبدالله', orders: 25, spent: 6800),
+                  _CustomerTile(rank: 1, name: l10n.defaultUserName, orders: 45, spent: 12500),
+                  const Divider(height: 1),
+                  const _CustomerTile(rank: 2, name: 'خالد عمر', orders: 38, spent: 9800),
+                  const Divider(height: 1),
+                  const _CustomerTile(rank: 3, name: 'محمد علي', orders: 32, spent: 8200),
+                  const Divider(height: 1),
+                  const _CustomerTile(rank: 4, name: 'سعد العمري', orders: 28, spent: 7500),
+                  const Divider(height: 1),
+                  const _CustomerTile(rank: 5, name: 'فهد عبدالله', orders: 25, spent: 6800),
                 ],
               ),
             ),

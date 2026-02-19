@@ -317,6 +317,20 @@ class SaleException extends AppException {
       details: {'reason': reason},
     );
   }
+
+  /// المخزون غير كافٍ
+  factory SaleException.insufficientStock(String productName, int available, int requested) {
+    return SaleException(
+      message: 'Insufficient stock for "$productName": available=$available, requested=$requested',
+      userMessage: 'المنتج "$productName" لا يتوفر بالكمية المطلوبة. المتاح: $available، المطلوب: $requested',
+      code: 'INSUFFICIENT_STOCK',
+      details: {
+        'productName': productName,
+        'available': available,
+        'requested': requested,
+      },
+    );
+  }
 }
 
 // ============================================================================

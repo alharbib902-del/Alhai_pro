@@ -1,3 +1,4 @@
+import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,11 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../core/validators/validators.dart';
 import '../../data/local/app_database.dart';
 import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../widgets/layout/app_sidebar.dart';
-
+import '../../providers/whatsapp_queue_providers.dart';
 /// Customer Detail Screen - multi-tab screen with profile, purchases,
 /// account ledger, debts, analytics, and internal notes.
 class CustomerDetailScreen extends ConsumerStatefulWidget {
@@ -26,164 +27,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   late TabController _tabController;
   bool _isLoading = true;
 
-  // Sidebar state
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'customers';
-
-  // Account from DB (nullable)
+  // Real data from DB
   AccountsTableData? _account;
+  List<TransactionsTableData> _transactions = [];
 
-  // Mock customer data used when no DB record
-  final Map<String, dynamic> _mockCustomer = {
-    'id': 'CUST-001',
-    'name': 'Mohammed Ahmed',
-    'nameAr': '\u0645\u062d\u0645\u062f \u0623\u062d\u0645\u062f',
-    'phone': '+966 50 123 4567',
-    'email': 'mohammed@email.com',
-    'joinedDate': '2024-01-15',
-    'isVip': true,
-    'isActive': true,
-    'totalPurchases': 25750.0,
-    'balance': 1250.0,
-    'creditLimit': 5000.0,
-    'loyaltyPoints': 2450,
-    'lastVisit': '2026-02-07',
-    'avatarColor': const Color(0xFF3B82F6),
-  };
-
-  // Mock purchases
-  final List<Map<String, dynamic>> _mockPurchases = [
-    {
-      'date': '2026-02-07',
-      'invoice': 'INV-2024-0156',
-      'amount': 450.00,
-      'status': 'completed',
-      'items': 5,
-    },
-    {
-      'date': '2026-02-03',
-      'invoice': 'INV-2024-0148',
-      'amount': 280.00,
-      'status': 'completed',
-      'items': 3,
-    },
-    {
-      'date': '2026-01-28',
-      'invoice': 'INV-2024-0139',
-      'amount': 750.00,
-      'status': 'returned',
-      'items': 8,
-    },
-    {
-      'date': '2026-01-20',
-      'invoice': 'INV-2024-0125',
-      'amount': 320.00,
-      'status': 'completed',
-      'items': 4,
-    },
-    {
-      'date': '2026-01-15',
-      'invoice': 'INV-2024-0118',
-      'amount': 1200.00,
-      'status': 'completed',
-      'items': 12,
-    },
-    {
-      'date': '2026-01-10',
-      'invoice': 'INV-2024-0110',
-      'amount': 95.00,
-      'status': 'completed',
-      'items': 2,
-    },
-  ];
-
-  // Mock ledger entries
-  final List<Map<String, dynamic>> _mockLedger = [
-    {
-      'date': '2026-02-07',
-      'type': 'payment',
-      'description': 'Cash Payment',
-      'amount': -500.0,
-      'balance': 1250.0,
-      'icon': Icons.payments_outlined,
-      'color': const Color(0xFF22C55E),
-    },
-    {
-      'date': '2026-02-03',
-      'type': 'invoice',
-      'description': 'Invoice INV-0148',
-      'amount': 280.0,
-      'balance': 1750.0,
-      'icon': Icons.receipt_long_outlined,
-      'color': const Color(0xFF3B82F6),
-    },
-    {
-      'date': '2026-01-28',
-      'type': 'topup',
-      'description': 'Wallet Top-up',
-      'amount': -1000.0,
-      'balance': 1470.0,
-      'icon': Icons.account_balance_wallet_outlined,
-      'color': const Color(0xFF8B5CF6),
-    },
-    {
-      'date': '2026-01-20',
-      'type': 'deduction',
-      'description': 'Loyalty Points Deduction',
-      'amount': -150.0,
-      'balance': 2470.0,
-      'icon': Icons.star_outline_rounded,
-      'color': const Color(0xFFF59E0B),
-    },
-  ];
-
-  // Mock debts
-  final List<Map<String, dynamic>> _mockDebts = [
-    {
-      'id': 'DEBT-001',
-      'invoice': 'INV-2024-0125',
-      'amount': 320.0,
-      'dueDate': '2026-01-30',
-      'isOverdue': true,
-      'daysOverdue': 10,
-    },
-    {
-      'id': 'DEBT-002',
-      'invoice': 'INV-2024-0148',
-      'amount': 280.0,
-      'dueDate': '2026-02-15',
-      'isOverdue': false,
-      'daysOverdue': 0,
-    },
-    {
-      'id': 'DEBT-003',
-      'invoice': 'INV-2024-0156',
-      'amount': 450.0,
-      'dueDate': '2026-03-01',
-      'isOverdue': false,
-      'daysOverdue': 0,
-    },
-  ];
-
-  // Mock notes
-  final List<Map<String, dynamic>> _mockNotes = [
-    {
-      'author': 'Ahmed',
-      'initials': 'A',
-      'color': const Color(0xFF3B82F6),
-      'date': '2026-02-07 14:30',
-      'text':
-          'Customer requested delivery for the next order. Preferred time: morning.',
-    },
-    {
-      'author': 'Sara',
-      'initials': 'S',
-      'color': const Color(0xFF8B5CF6),
-      'date': '2026-02-01 10:15',
-      'text':
-          'VIP customer - always give priority. Prefers organic products.',
-    },
-  ];
+  // Local notes (stored in-memory, no notes table in DB)
+  final List<Map<String, dynamic>> _notes = [];
 
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
@@ -191,30 +40,76 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   static const int _pageSize = 5;
 
   // =====================================================
-  // Customer getters (from DB or mock)
+  // Customer getters (from DB data)
   // =====================================================
-  String get _customerName =>
-      _account?.name ?? _mockCustomer['nameAr'] as String;
-  String get _customerPhone =>
-      _account?.phone ?? _mockCustomer['phone'] as String;
-  String get _customerEmail => _mockCustomer['email'] as String;
-  bool get _isVip => _mockCustomer['isVip'] as bool;
-  bool get _isActive => _account?.isActive ?? _mockCustomer['isActive'] as bool;
-  double get _totalPurchases => _mockCustomer['totalPurchases'] as double;
-  double get _balance =>
-      _account?.balance ?? _mockCustomer['balance'] as double;
-  double get _creditLimit =>
-      _account?.creditLimit ?? _mockCustomer['creditLimit'] as double;
-  int get _loyaltyPoints => _mockCustomer['loyaltyPoints'] as int;
-  String get _lastVisit => _mockCustomer['lastVisit'] as String;
-  String get _joinedDate => _mockCustomer['joinedDate'] as String;
-  Color get _avatarColor => _mockCustomer['avatarColor'] as Color;
+  String get _customerName => _account?.name ?? '';
+  String get _customerPhone => _account?.phone ?? '';
+  String get _customerEmail => ''; // No email in accounts table
+  bool get _isVip => false; // No VIP flag in accounts table
+  bool get _isActive => _account?.isActive ?? true;
+  double get _totalPurchases {
+    // Sum of positive (debit) transactions = total invoiced
+    return _transactions
+        .where((t) => t.type == 'invoice')
+        .fold(0.0, (sum, t) => sum + t.amount.abs());
+  }
+
+  double get _balance => _account?.balance ?? 0.0;
+  double get _creditLimit => _account?.creditLimit ?? 0.0;
+  int get _loyaltyPoints => 0; // No loyalty points in accounts table
+  String get _lastVisit {
+    if (_account?.lastTransactionAt != null) {
+      final d = _account!.lastTransactionAt!;
+      return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    }
+    return '-';
+  }
+
+  String get _joinedDate {
+    final d = _account?.createdAt;
+    if (d == null) return '-';
+    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  }
+
+  Color get _avatarColor => const Color(0xFF3B82F6);
   String get _initials {
     final parts = _customerName.trim().split(' ');
     if (parts.length >= 2) {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
     return _customerName.isNotEmpty ? _customerName[0].toUpperCase() : '?';
+  }
+
+  // Derived data from transactions
+  List<TransactionsTableData> get _invoiceTransactions =>
+      _transactions.where((t) => t.type == 'invoice').toList();
+
+  List<Map<String, dynamic>> get _debtEntries {
+    // Derive debts from unpaid invoice transactions
+    // If account has positive balance, show recent invoices as debt entries
+    if (_balance <= 0) return [];
+    final invoices = _invoiceTransactions;
+    double remaining = _balance;
+    final debts = <Map<String, dynamic>>[];
+    for (final inv in invoices) {
+      if (remaining <= 0) break;
+      final amount = inv.amount.abs().clamp(0, remaining);
+      final dueDate = inv.createdAt.add(const Duration(days: 30));
+      final isOverdue = dueDate.isBefore(DateTime.now());
+      final daysOverdue =
+          isOverdue ? DateTime.now().difference(dueDate).inDays : 0;
+      debts.add({
+        'id': inv.id,
+        'invoice': inv.referenceId ?? inv.id,
+        'amount': amount,
+        'dueDate':
+            '${dueDate.year}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}',
+        'isOverdue': isOverdue,
+        'daysOverdue': daysOverdue,
+      });
+      remaining -= amount;
+    }
+    return debts;
   }
 
   @override
@@ -232,39 +127,6 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     super.dispose();
   }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard':
-        context.go(AppRoutes.dashboard);
-        break;
-      case 'pos':
-        context.go(AppRoutes.pos);
-        break;
-      case 'products':
-        context.push(AppRoutes.products);
-        break;
-      case 'inventory':
-        context.push(AppRoutes.inventory);
-        break;
-      case 'customers':
-        context.push(AppRoutes.customers);
-        break;
-      case 'sales':
-        context.push(AppRoutes.invoices);
-        break;
-      case 'orders':
-        context.push(AppRoutes.orders);
-        break;
-      case 'returns':
-        context.push(AppRoutes.returns);
-        break;
-      case 'reports':
-        context.push(AppRoutes.reports);
-        break;
-    }
-  }
-
   Future<void> _loadCustomerData() async {
     setState(() => _isLoading = true);
     try {
@@ -272,127 +134,112 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         final db = getIt<AppDatabase>();
         final account =
             await db.accountsDao.getAccountById(widget.customerId!);
-        if (account != null) {
-          setState(() => _account = account);
+        final transactions = await db.transactionsDao
+            .getAccountTransactions(widget.customerId!);
+        if (mounted) {
+          setState(() {
+            _account = account;
+            _transactions = transactions;
+            _isLoading = false;
+          });
         }
+      } else {
+        if (mounted) setState(() => _isLoading = false);
       }
-    } catch (_) {
-      // fallback to mock data
-    } finally {
-      setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   // =====================================================
   // BUILD
   // =====================================================
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد',
-        userRole: l10n.branchManager,
-        onUserTap: () {},
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWideScreen = screenWidth > 900;
     final isDesktop = screenWidth >= AppBreakpoints.laptop;
     final isMobile = screenWidth < AppBreakpoints.tablet;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد',
-              userRole: l10n.branchManager,
-              onUserTap: () {},
-            ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : CustomScrollView(
-                    slivers: [
-                      // Top bar
-                      SliverToBoxAdapter(child: _buildTopBar(isDark, l10n)),
-                      // Profile card
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 32 : 16,
-                            vertical: 8,
-                          ),
-                          child: _buildProfileCard(isDark, l10n, isMobile),
-                        ),
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _account == null
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.person_off_outlined,
+                        size: 64,
+                        color: AppColors.getTextMuted(isDark)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Customer not found',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.getTextSecondary(isDark),
                       ),
-                      // Tabs
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 32 : 16,
-                          ),
-                          child: _buildTabBar(isDark, l10n),
-                        ),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton(
+                      onPressed: () => context.pop(),
+                      child: Text(l10n.back),
+                    ),
+                  ],
+                ),
+              )
+            : CustomScrollView(
+                slivers: [
+                  // Top bar
+                  SliverToBoxAdapter(
+                      child: _buildTopBar(isDark, l10n)),
+                  // Profile card
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 32 : 16,
+                        vertical: 8,
                       ),
-                      const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                      // Tab content
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 32 : 16,
-                          ),
-                          child: _buildTabContent(isDark, l10n, isMobile, isDesktop),
-                        ),
-                      ),
-                      const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                      // Internal notes (always visible)
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 32 : 16,
-                          ),
-                          child: _buildNotesSection(isDark, l10n),
-                        ),
-                      ),
-                      const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                    ],
+                      child: _buildProfileCard(
+                          isDark, l10n, isMobile),
+                    ),
                   ),
-          ),
-        ],
-      ),
-    );
+                  // Tabs
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 32 : 16,
+                      ),
+                      child: _buildTabBar(isDark, l10n),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: 16)),
+                  // Tab content
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 32 : 16,
+                      ),
+                      child: _buildTabContent(
+                          isDark, l10n, isMobile, isDesktop),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: 24)),
+                  // Internal notes (always visible)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 32 : 16,
+                      ),
+                      child: _buildNotesSection(isDark, l10n),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: 32)),
+                ],
+              );
   }
 
   // =====================================================
@@ -448,7 +295,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: _loadCustomerData,
               icon: Icon(
                 Icons.refresh_rounded,
                 color: AppColors.getTextSecondary(isDark),
@@ -532,8 +379,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 _avatarColor,
                 _avatarColor.withValues(alpha: 0.7),
               ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
             ),
             borderRadius: BorderRadius.circular(AppSizes.radiusXl),
           ),
@@ -595,12 +442,14 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                   gradient: const LinearGradient(
                     colors: [Color(0xFFF59E0B), Color(0xFFEA580C)],
                   ),
-                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                  borderRadius:
+                      BorderRadius.circular(AppSizes.radiusFull),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.star_rounded, size: 12, color: Colors.white),
+                    Icon(Icons.star_rounded,
+                        size: 12, color: Colors.white),
                     SizedBox(width: 2),
                     Text(
                       'VIP',
@@ -619,19 +468,21 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         ),
         const SizedBox(height: 6),
         // Phone
-        _buildInfoChip(
-          Icons.phone_outlined,
-          _customerPhone,
-          isDark,
-        ),
-        const SizedBox(height: 4),
+        if (_customerPhone.isNotEmpty)
+          _buildInfoChip(
+            Icons.phone_outlined,
+            _customerPhone,
+            isDark,
+          ),
+        if (_customerPhone.isNotEmpty) const SizedBox(height: 4),
         // Email
-        _buildInfoChip(
-          Icons.email_outlined,
-          _customerEmail,
-          isDark,
-        ),
-        const SizedBox(height: 4),
+        if (_customerEmail.isNotEmpty)
+          _buildInfoChip(
+            Icons.email_outlined,
+            _customerEmail,
+            isDark,
+          ),
+        if (_customerEmail.isNotEmpty) const SizedBox(height: 4),
         // Joined
         _buildInfoChip(
           Icons.calendar_today_outlined,
@@ -674,7 +525,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
             ),
@@ -694,7 +546,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               child: Row(
                 children: [
                   Icon(Icons.edit_outlined,
-                      size: 18, color: AppColors.getTextSecondary(isDark)),
+                      size: 18,
+                      color: AppColors.getTextSecondary(isDark)),
                   const SizedBox(width: 8),
                   Text(l10n.edit),
                 ],
@@ -728,7 +581,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             ),
           ],
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -738,7 +592,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.more_horiz_rounded,
-                    size: 18, color: AppColors.getTextSecondary(isDark)),
+                    size: 18,
+                    color: AppColors.getTextSecondary(isDark)),
                 const SizedBox(width: 4),
                 Text(
                   l10n.more,
@@ -756,17 +611,39 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  void _handleMoreAction(String action) {
+  Future<void> _handleMoreAction(String action) async {
     switch (action) {
       case 'edit':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.edit}...')),
+          SnackBar(
+              content: Text('${AppLocalizations.of(context)!.edit}...')),
         );
         break;
       case 'whatsapp':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Opening WhatsApp...')),
-        );
+        if (_customerPhone.isNotEmpty) {
+          try {
+            final service = ref.read(whatsappServiceProvider);
+            await service.sendMessage(
+              phoneNumber: _customerPhone,
+              message: 'مرحباً $_customerName 👋\nكيف يمكننا مساعدتك؟',
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم إضافة الرسالة لطابور الإرسال')),
+              );
+            }
+          } catch (_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تعذر إرسال الرسالة')),
+              );
+            }
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('لا يوجد رقم هاتف للعميل')),
+          );
+        }
         break;
       case 'block':
         ScaffoldMessenger.of(context).showSnackBar(
@@ -873,7 +750,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.account_balance_wallet_outlined, size: 16),
+                const Icon(Icons.account_balance_wallet_outlined,
+                    size: 16),
                 const SizedBox(width: 6),
                 Text(l10n.balance),
               ],
@@ -937,12 +815,17 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   // =====================================================
   Widget _buildPurchasesTab(
       bool isDark, AppLocalizations l10n, bool isMobile, bool isDesktop) {
+    final invoiceTxns = _invoiceTransactions;
     final filteredPurchases = _searchController.text.isEmpty
-        ? _mockPurchases
-        : _mockPurchases
-            .where((p) => (p['invoice'] as String)
-                .toLowerCase()
-                .contains(_searchController.text.toLowerCase()))
+        ? invoiceTxns
+        : invoiceTxns
+            .where((t) =>
+                (t.referenceId ?? t.id)
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()) ||
+                (t.description ?? '')
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()))
             .toList();
 
     final totalPages = (filteredPurchases.length / _pageSize).ceil();
@@ -984,7 +867,17 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                   height: 36,
                   child: TextField(
                     controller: _searchController,
-                    onChanged: (_) => setState(() => _currentPage = 0),
+                    maxLength: 100,
+                    onChanged: (value) {
+                      final sanitized = InputSanitizer.sanitize(value);
+                      setState(() => _currentPage = 0);
+                      if (sanitized != value) {
+                        _searchController.text = sanitized;
+                        _searchController.selection = TextSelection.fromPosition(
+                          TextPosition(offset: sanitized.length),
+                        );
+                      }
+                    },
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColors.getTextPrimary(isDark),
@@ -996,7 +889,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                         color: AppColors.getTextMuted(isDark),
                       ),
                       prefixIcon: Icon(Icons.search_rounded,
-                          size: 18, color: AppColors.getTextMuted(isDark)),
+                          size: 18,
+                          color: AppColors.getTextMuted(isDark)),
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
@@ -1006,6 +900,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                             BorderRadius.circular(AppSizes.radiusMd),
                         borderSide: BorderSide.none,
                       ),
+                      counterText: '',
                     ),
                   ),
                 ),
@@ -1016,8 +911,10 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                     icon: const Icon(Icons.download_outlined, size: 16),
                     label: const Text('CSV'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.getTextSecondary(isDark),
-                      side: BorderSide(color: AppColors.getBorder(isDark)),
+                      foregroundColor:
+                          AppColors.getTextSecondary(isDark),
+                      side: BorderSide(
+                          color: AppColors.getBorder(isDark)),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       shape: RoundedRectangleBorder(
@@ -1033,20 +930,32 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           Divider(height: 1, color: AppColors.getBorder(isDark)),
 
           // Content: DataTable on desktop, cards on mobile
-          if (isMobile)
+          if (filteredPurchases.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Text(
+                  l10n.noTransactions,
+                  style: TextStyle(
+                      color: AppColors.getTextMuted(isDark)),
+                ),
+              ),
+            )
+          else if (isMobile)
             _buildPurchaseCards(pagedPurchases, isDark, l10n)
           else
             _buildPurchaseTable(pagedPurchases, isDark, l10n),
 
           // Pagination
           if (totalPages > 1)
-            _buildPagination(isDark, totalPages, filteredPurchases.length),
+            _buildPagination(
+                isDark, totalPages, filteredPurchases.length),
         ],
       ),
     );
   }
 
-  Widget _buildPurchaseTable(List<Map<String, dynamic>> purchases,
+  Widget _buildPurchaseTable(List<TransactionsTableData> purchases,
       bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -1074,17 +983,17 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             DataColumn(label: Text(l10n.invoiceNumber)),
             DataColumn(label: Text(l10n.amount), numeric: true),
             DataColumn(label: Text(l10n.status)),
-            DataColumn(label: Text(l10n.quantity)),
             DataColumn(label: Text(l10n.action)),
           ],
-          rows: purchases.map((p) {
-            final isReturned = p['status'] == 'returned';
+          rows: purchases.map((t) {
+            final dateStr = _formatDate(t.createdAt);
+            final invoiceRef = t.referenceId ?? t.id;
             return DataRow(
               cells: [
-                DataCell(Text(p['date'] as String)),
+                DataCell(Text(dateStr)),
                 DataCell(
                   Text(
-                    p['invoice'] as String,
+                    invoiceRef,
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       color: AppColors.info,
@@ -1092,11 +1001,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                   ),
                 ),
                 DataCell(Text(
-                    '${(p['amount'] as double).toStringAsFixed(2)} ${l10n.sar}')),
-                DataCell(_buildStatusBadge(
-                    isReturned ? l10n.returned : l10n.completed,
-                    isReturned, isDark)),
-                DataCell(Text('${p['items']}')),
+                    '${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}')),
+                DataCell(
+                    _buildStatusBadge(l10n.completed, false, isDark)),
                 DataCell(Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1106,8 +1013,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                           size: 18, color: AppColors.info),
                       tooltip: l10n.viewAll,
                       padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 32, minHeight: 32),
+                      constraints: const BoxConstraints(
+                          minWidth: 32, minHeight: 32),
                     ),
                     IconButton(
                       onPressed: () {},
@@ -1116,8 +1023,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                           color: AppColors.getTextSecondary(isDark)),
                       tooltip: l10n.printReceipt,
                       padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 32, minHeight: 32),
+                      constraints: const BoxConstraints(
+                          minWidth: 32, minHeight: 32),
                     ),
                   ],
                 )),
@@ -1129,7 +1036,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  Widget _buildPurchaseCards(List<Map<String, dynamic>> purchases,
+  Widget _buildPurchaseCards(List<TransactionsTableData> purchases,
       bool isDark, AppLocalizations l10n) {
     return ListView.separated(
       shrinkWrap: true,
@@ -1138,8 +1045,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
       itemCount: purchases.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final p = purchases[index];
-        final isReturned = p['status'] == 'returned';
+        final t = purchases[index];
+        final dateStr = _formatDate(t.createdAt);
+        final invoiceRef = t.referenceId ?? t.id;
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -1153,40 +1061,32 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    p['invoice'] as String,
+                    invoiceRef,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppColors.info,
                       fontSize: 14,
                     ),
                   ),
-                  _buildStatusBadge(
-                      isReturned ? l10n.returned : l10n.completed,
-                      isReturned, isDark),
+                  _buildStatusBadge(l10n.completed, false, isDark),
                 ],
               ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(p['date'] as String,
+                  Text(dateStr,
                       style: TextStyle(
                           fontSize: 12,
                           color: AppColors.getTextMuted(isDark))),
                   Text(
-                    '${(p['amount'] as double).toStringAsFixed(2)} ${l10n.sar}',
+                    '${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       color: AppColors.getTextPrimary(isDark),
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${p['items']} ${l10n.products}',
-                style: TextStyle(
-                    fontSize: 12, color: AppColors.getTextMuted(isDark)),
               ),
             ],
           ),
@@ -1195,7 +1095,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  Widget _buildStatusBadge(String label, bool isReturned, bool isDark) {
+  Widget _buildStatusBadge(
+      String label, bool isReturned, bool isDark) {
     final color = isReturned ? AppColors.warning : AppColors.success;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -1214,7 +1115,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  Widget _buildPagination(bool isDark, int totalPages, int totalItems) {
+  Widget _buildPagination(
+      bool isDark, int totalPages, int totalItems) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -1259,8 +1161,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                         '${i + 1}',
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                           color: isSelected
                               ? Colors.white
                               : AppColors.getTextSecondary(isDark),
@@ -1306,7 +1209,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         Expanded(flex: 3, child: _buildLedgerList(isDark, l10n)),
         const SizedBox(width: 16),
         // Right: Balance summary card
-        Expanded(flex: 2, child: _buildBalanceSummaryCard(isDark, l10n)),
+        Expanded(
+            flex: 2, child: _buildBalanceSummaryCard(isDark, l10n)),
       ],
     );
   }
@@ -1353,108 +1257,163 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             ),
           ),
           Divider(height: 1, color: AppColors.getBorder(isDark)),
-          // Entries
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(12),
-            itemCount: _mockLedger.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final entry = _mockLedger[index];
-              final amount = entry['amount'] as double;
-              final isCredit = amount < 0;
-              return Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.getSurfaceVariant(isDark),
-                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+          // Entries from real transactions
+          if (_transactions.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Text(
+                  l10n.noTransactions,
+                  style: TextStyle(
+                      color: AppColors.getTextMuted(isDark)),
                 ),
-                child: Row(
-                  children: [
-                    // Icon
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color:
-                            (entry['color'] as Color).withValues(alpha: 0.12),
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusMd),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(12),
+              itemCount:
+                  _transactions.length > 4 ? 4 : _transactions.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final entry = _transactions[index];
+                final isCredit = entry.amount < 0;
+                final typeColor = _getLedgerTypeColor(entry.type);
+                final typeIcon = _getLedgerTypeIcon(entry.type);
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.getSurfaceVariant(isDark),
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusLg),
+                  ),
+                  child: Row(
+                    children: [
+                      // Icon
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color:
+                              typeColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd),
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          typeIcon,
+                          size: 20,
+                          color: typeColor,
+                        ),
                       ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        entry['icon'] as IconData,
-                        size: 20,
-                        color: entry['color'] as Color,
+                      const SizedBox(width: 12),
+                      // Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.description ??
+                                  entry.type,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.getTextPrimary(
+                                    isDark),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _formatDate(entry.createdAt),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color:
+                                    AppColors.getTextMuted(isDark),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Details
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      // Amount
+                      Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.end,
                         children: [
                           Text(
-                            entry['description'] as String,
+                            '${isCredit ? '-' : '+'}${entry.amount.abs().toStringAsFixed(0)} ${l10n.sar}',
                             style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.getTextPrimary(isDark),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isCredit
+                                  ? AppColors.success
+                                  : AppColors.error,
                             ),
                           ),
-                          const SizedBox(height: 2),
                           Text(
-                            entry['date'] as String,
+                            '${l10n.balance}: ${entry.balanceAfter.toStringAsFixed(0)}',
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.getTextMuted(isDark),
+                              color:
+                                  AppColors.getTextMuted(isDark),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    // Amount
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '${isCredit ? '-' : '+'}${amount.abs().toStringAsFixed(0)} ${l10n.sar}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color:
-                                isCredit ? AppColors.success : AppColors.error,
-                          ),
-                        ),
-                        Text(
-                          '${l10n.balance}: ${(entry['balance'] as double).toStringAsFixed(0)}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.getTextMuted(isDark),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildBalanceSummaryCard(bool isDark, AppLocalizations l10n) {
-    final usedPercent =
-        _creditLimit > 0 ? (_balance / _creditLimit * 100).clamp(0, 100) : 0.0;
+  Color _getLedgerTypeColor(String type) {
+    switch (type) {
+      case 'payment':
+        return const Color(0xFF22C55E);
+      case 'invoice':
+        return const Color(0xFF3B82F6);
+      case 'interest':
+        return const Color(0xFFF59E0B);
+      case 'adjustment':
+        return const Color(0xFF8B5CF6);
+      default:
+        return AppColors.grey400;
+    }
+  }
+
+  IconData _getLedgerTypeIcon(String type) {
+    switch (type) {
+      case 'payment':
+        return Icons.payments_outlined;
+      case 'invoice':
+        return Icons.receipt_long_outlined;
+      case 'interest':
+        return Icons.percent_rounded;
+      case 'adjustment':
+        return Icons.tune_rounded;
+      default:
+        return Icons.swap_horiz_rounded;
+    }
+  }
+
+  Widget _buildBalanceSummaryCard(
+      bool isDark, AppLocalizations l10n) {
+    final usedPercent = _creditLimit > 0
+        ? (_balance / _creditLimit * 100).clamp(0, 100)
+        : 0.0;
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF10B981), Color(0xFF059669)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
         boxShadow: [
@@ -1478,10 +1437,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
             ),
             alignment: Alignment.center,
-            child: const Icon(
-                Icons.account_balance_wallet_rounded,
-                size: 24,
-                color: Colors.white),
+            child: const Icon(Icons.account_balance_wallet_rounded,
+                size: 24, color: Colors.white),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -1526,11 +1483,14 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           const SizedBox(height: 8),
           // Progress bar
           ClipRRect(
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            borderRadius:
+                BorderRadius.circular(AppSizes.radiusFull),
             child: LinearProgressIndicator(
               value: usedPercent / 100,
-              backgroundColor: Colors.white.withValues(alpha: 0.2),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+              backgroundColor:
+                  Colors.white.withValues(alpha: 0.2),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                  Colors.white),
               minHeight: 8,
             ),
           ),
@@ -1553,9 +1513,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: AppColors.primaryDark,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                  borderRadius:
+                      BorderRadius.circular(AppSizes.radiusLg),
                 ),
                 elevation: 0,
               ),
@@ -1571,6 +1533,33 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   // =====================================================
   Widget _buildDebtsTab(
       bool isDark, AppLocalizations l10n, bool isMobile, bool isDesktop) {
+    final debts = _debtEntries;
+    if (debts.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(48),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+          border: Border.all(color: AppColors.getBorder(isDark)),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle_outline_rounded,
+                  size: 64,
+                  color: AppColors.success.withValues(alpha: 0.5)),
+              const SizedBox(height: 16),
+              Text(
+                l10n.noTransactions,
+                style: TextStyle(
+                    color: AppColors.getTextMuted(isDark)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     final crossAxisCount = isMobile ? 1 : (isDesktop ? 3 : 2);
     return GridView.builder(
       shrinkWrap: true,
@@ -1581,9 +1570,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         mainAxisSpacing: 12,
         childAspectRatio: isMobile ? 2.2 : 1.6,
       ),
-      itemCount: _mockDebts.length,
+      itemCount: debts.length,
       itemBuilder: (context, index) {
-        final debt = _mockDebts[index];
+        final debt = debts[index];
         final isOverdue = debt['isOverdue'] as bool;
         return _buildDebtCard(debt, isOverdue, isDark, l10n);
       },
@@ -1592,7 +1581,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
 
   Widget _buildDebtCard(Map<String, dynamic> debt, bool isOverdue,
       bool isDark, AppLocalizations l10n) {
-    final accentColor = isOverdue ? AppColors.error : AppColors.warning;
+    final accentColor =
+        isOverdue ? AppColors.error : AppColors.warning;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
@@ -1611,8 +1601,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             child: Container(width: 4, color: accentColor),
           ),
           Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 12, top: 16, bottom: 12),
+            padding: const EdgeInsets.only(
+                left: 16, right: 12, top: 16, bottom: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1642,9 +1632,10 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.12),
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusFull),
+                          color: AppColors.error
+                              .withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(
+                              AppSizes.radiusFull),
                         ),
                         child: Text(
                           '${debt['daysOverdue']}d',
@@ -1699,10 +1690,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.zero,
                             textStyle: const TextStyle(
-                                fontSize: 11, fontWeight: FontWeight.w600),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusMd),
+                              borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusMd),
                             ),
                           ),
                           child: Text(l10n.pay),
@@ -1718,13 +1710,16 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                             onPressed: () {},
                             style: OutlinedButton.styleFrom(
                               foregroundColor: accentColor,
-                              side: BorderSide(color: accentColor),
+                              side:
+                                  BorderSide(color: accentColor),
                               padding: EdgeInsets.zero,
                               textStyle: const TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.w600),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600),
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusMd),
+                                    BorderRadius.circular(
+                                        AppSizes.radiusMd),
                               ),
                             ),
                             child: Text(l10n.reminder),
@@ -1868,7 +1863,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 400 + i * 100),
+                  duration:
+                      Duration(milliseconds: 400 + i * 100),
                   height: 120 * values[i],
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -1901,10 +1897,18 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
 
   Widget _buildPieChartPlaceholder(bool isDark) {
     final items = [
-      {'label': 'Groceries', 'pct': 45, 'color': AppColors.primary},
+      {
+        'label': 'Groceries',
+        'pct': 45,
+        'color': AppColors.primary
+      },
       {'label': 'Dairy', 'pct': 25, 'color': AppColors.info},
       {'label': 'Meat', 'pct': 18, 'color': AppColors.warning},
-      {'label': 'Other', 'pct': 12, 'color': const Color(0xFF8B5CF6)},
+      {
+        'label': 'Other',
+        'pct': 12,
+        'color': const Color(0xFF8B5CF6)
+      },
     ];
     return Row(
       children: [
@@ -1918,7 +1922,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 painter: _PieChartPainter(
                   items
                       .map((e) => _PieSegment(
-                            value: (e['pct'] as int).toDouble(),
+                            value:
+                                (e['pct'] as int).toDouble(),
                             color: e['color'] as Color,
                           ))
                       .toList(),
@@ -1950,7 +1955,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                     '${item['label']} ${item['pct']}%',
                     style: TextStyle(
                       fontSize: 11,
-                      color: AppColors.getTextSecondary(isDark),
+                      color:
+                          AppColors.getTextSecondary(isDark),
                     ),
                   ),
                 ],
@@ -1965,36 +1971,42 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
 
   Widget _buildAnalyticsStatsGrid(
       bool isDark, AppLocalizations l10n, bool isMobile) {
+    // Compute real analytics from transactions
+    final invoiceCount = _invoiceTransactions.length;
+    final avgSale = invoiceCount > 0
+        ? (_totalPurchases / invoiceCount).toStringAsFixed(0)
+        : '0';
+
     final stats = [
       {
         'icon': Icons.receipt_outlined,
         'label': l10n.averageSale,
-        'value': '285 ${l10n.sar}',
-        'change': '+12%',
+        'value': '$avgSale ${l10n.sar}',
+        'change': '$invoiceCount txns',
         'color': AppColors.primary,
         'isPositive': true,
       },
       {
         'icon': Icons.calendar_month_outlined,
         'label': l10n.monthly,
-        'value': '3.2x',
-        'change': '+0.5',
+        'value': '${(invoiceCount / 3).toStringAsFixed(1)}x',
+        'change': '',
         'color': AppColors.info,
         'isPositive': true,
       },
       {
         'icon': Icons.trending_up_rounded,
         'label': l10n.salesAnalytics,
-        'value': '+18%',
-        'change': 'vs last quarter',
+        'value': '${_totalPurchases.toStringAsFixed(0)} ${l10n.sar}',
+        'change': 'total',
         'color': AppColors.success,
         'isPositive': true,
       },
       {
         'icon': Icons.favorite_outline_rounded,
         'label': l10n.topSelling,
-        'value': 'Organic Milk',
-        'change': '42 purchases',
+        'value': '-',
+        'change': '',
         'color': const Color(0xFF8B5CF6),
         'isPositive': true,
       },
@@ -2044,10 +2056,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             height: 36,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+              borderRadius:
+                  BorderRadius.circular(AppSizes.radiusMd),
             ),
             alignment: Alignment.center,
-            child: Icon(stat['icon'] as IconData, size: 18, color: color),
+            child: Icon(stat['icon'] as IconData,
+                size: 18, color: color),
           ),
           const SizedBox(height: 12),
           Text(
@@ -2114,19 +2128,20 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius:
                         BorderRadius.circular(AppSizes.radiusFull),
                   ),
                   child: Text(
-                    '${_mockNotes.length}',
+                    '${_notes.length}',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.getTextSecondary(isDark),
+                      color:
+                          AppColors.getTextSecondary(isDark),
                     ),
                   ),
                 ),
@@ -2135,17 +2150,30 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           ),
           Divider(height: 1, color: AppColors.getBorder(isDark)),
           // Notes list
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(12),
-            itemCount: _mockNotes.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              final note = _mockNotes[index];
-              return _buildNoteItem(note, isDark);
-            },
-          ),
+          if (_notes.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Text(
+                  'No notes yet',
+                  style: TextStyle(
+                      color: AppColors.getTextMuted(isDark)),
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(12),
+              itemCount: _notes.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final note = _notes[index];
+                return _buildNoteItem(note, isDark);
+              },
+            ),
           // Add note input
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -2154,6 +2182,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 Expanded(
                   child: TextField(
                     controller: _noteController,
+                    maxLength: 500,
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColors.getTextPrimary(isDark),
@@ -2165,14 +2194,17 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                         color: AppColors.getTextMuted(isDark),
                       ),
                       filled: true,
-                      fillColor: AppColors.getSurfaceVariant(isDark),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                      fillColor:
+                          AppColors.getSurfaceVariant(isDark),
+                      contentPadding:
+                          const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusLg),
+                        borderRadius: BorderRadius.circular(
+                            AppSizes.radiusLg),
                         borderSide: BorderSide.none,
                       ),
+                      counterText: '',
                     ),
                     onSubmitted: (_) => _addNote(),
                   ),
@@ -2180,14 +2212,15 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: _addNote,
-                  icon: const Icon(Icons.send_rounded, size: 20),
+                  icon:
+                      const AdaptiveIcon(Icons.send_rounded, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(10),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppSizes.radiusLg),
+                      borderRadius: BorderRadius.circular(
+                          AppSizes.radiusLg),
                     ),
                   ),
                 ),
@@ -2199,7 +2232,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  Widget _buildNoteItem(Map<String, dynamic> note, bool isDark) {
+  Widget _buildNoteItem(
+      Map<String, dynamic> note, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2208,8 +2242,10 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: (note['color'] as Color).withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+            color:
+                (note['color'] as Color).withValues(alpha: 0.15),
+            borderRadius:
+                BorderRadius.circular(AppSizes.radiusMd),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -2228,27 +2264,31 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
-              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              borderRadius:
+                  BorderRadius.circular(AppSizes.radiusLg),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       note['author'] as String,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.getTextPrimary(isDark),
+                        color:
+                            AppColors.getTextPrimary(isDark),
                       ),
                     ),
                     Text(
                       note['date'] as String,
                       style: TextStyle(
                         fontSize: 10,
-                        color: AppColors.getTextMuted(isDark),
+                        color:
+                            AppColors.getTextMuted(isDark),
                       ),
                     ),
                   ],
@@ -2258,7 +2298,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                   note['text'] as String,
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.getTextSecondary(isDark),
+                    color:
+                        AppColors.getTextSecondary(isDark),
                     height: 1.4,
                   ),
                 ),
@@ -2271,10 +2312,20 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   }
 
   void _addNote() {
-    final text = _noteController.text.trim();
-    if (text.isEmpty) return;
+    final raw = _noteController.text.trim();
+    if (raw.isEmpty) return;
+    final text = InputSanitizer.sanitize(raw);
+    if (InputSanitizer.containsDangerousContent(text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('المدخل يحتوي على محتوى غير مسموح'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     setState(() {
-      _mockNotes.insert(0, {
+      _notes.insert(0, {
         'author': 'You',
         'initials': 'Y',
         'color': AppColors.primary,
@@ -2289,6 +2340,10 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     final now = DateTime.now();
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
 
@@ -2315,7 +2370,8 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -2419,12 +2475,14 @@ class _PieChartPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     final innerRadius = radius * 0.55;
-    final total = segments.fold<double>(0, (s, e) => s + e.value);
+    final total =
+        segments.fold<double>(0, (s, e) => s + e.value);
 
     double startAngle = -1.5708; // -pi/2 (start from top)
 
     for (final segment in segments) {
-      final sweepAngle = (segment.value / total) * 6.2832; // 2*pi
+      final sweepAngle =
+          (segment.value / total) * 6.2832; // 2*pi
       final paint = Paint()
         ..color = segment.color
         ..style = PaintingStyle.stroke
@@ -2432,7 +2490,9 @@ class _PieChartPainter extends CustomPainter {
         ..strokeCap = StrokeCap.butt;
 
       canvas.drawArc(
-        Rect.fromCircle(center: center, radius: (radius + innerRadius) / 2),
+        Rect.fromCircle(
+            center: center,
+            radius: (radius + innerRadius) / 2),
         startAngle,
         sweepAngle,
         false,
@@ -2443,5 +2503,6 @@ class _PieChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _PieChartPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _PieChartPainter oldDelegate) =>
+      false;
 }

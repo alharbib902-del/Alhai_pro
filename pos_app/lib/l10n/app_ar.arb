@@ -1368,5 +1368,1876 @@
   "csidCertificate": "شهادة CSID",
   "valid": "صالحة",
   "privateKey": "المفتاح الخاص",
-  "configured": "مهيأ"
+  "configured": "مهيأ",
+
+  "aiSection": "الذكاء الاصطناعي",
+  "aiAssistantTitle": "المساعد الذكي",
+  "aiAssistantSubtitle": "اسأل مساعدك الذكي أي شيء عن متجرك",
+  "aiSalesForecastingTitle": "التنبؤ بالمبيعات",
+  "aiSalesForecastingSubtitle": "توقع المبيعات المستقبلية باستخدام البيانات التاريخية",
+  "aiSmartPricingTitle": "التسعير الذكي",
+  "aiSmartPricingSubtitle": "اقتراحات تحسين الأسعار بالذكاء الاصطناعي",
+  "aiFraudDetectionTitle": "كشف الاحتيال",
+  "aiFraudDetectionSubtitle": "كشف الأنماط المشبوهة وحماية أعمالك",
+  "aiBasketAnalysisTitle": "تحليل السلة",
+  "aiBasketAnalysisSubtitle": "اكتشف المنتجات المُشتراة معاً بشكل متكرر",
+  "aiCustomerRecommendationsTitle": "توصيات العملاء",
+  "aiCustomerRecommendationsSubtitle": "اقتراحات منتجات مخصصة لكل عميل",
+  "aiSmartInventoryTitle": "المخزون الذكي",
+  "aiSmartInventorySubtitle": "مستويات المخزون المثالية والتنبؤ بالهدر",
+  "aiCompetitorAnalysisTitle": "تحليل المنافسين",
+  "aiCompetitorAnalysisSubtitle": "قارن أسعارك مع المنافسين",
+  "aiSmartReportsTitle": "التقارير الذكية",
+  "aiSmartReportsSubtitle": "أنشئ تقارير باستخدام اللغة الطبيعية",
+  "aiStaffAnalyticsTitle": "تحليل الموظفين",
+  "aiStaffAnalyticsSubtitle": "تحليل أداء الموظفين وتحسين الجدولة",
+  "aiProductRecognitionTitle": "التعرف على المنتجات",
+  "aiProductRecognitionSubtitle": "تعرّف على المنتجات باستخدام الكاميرا",
+  "aiSentimentAnalysisTitle": "تحليل المشاعر",
+  "aiSentimentAnalysisSubtitle": "تحليل ملاحظات العملاء ومستوى الرضا",
+  "aiReturnPredictionTitle": "التنبؤ بالمرتجعات",
+  "aiReturnPredictionSubtitle": "توقع ومنع إرجاع المنتجات",
+  "aiPromotionDesignerTitle": "مصمم العروض",
+  "aiPromotionDesignerSubtitle": "عروض مولّدة بالذكاء الاصطناعي مع توقع العائد",
+  "aiChatWithDataTitle": "الدردشة مع البيانات",
+  "aiChatWithDataSubtitle": "استعلم عن بياناتك باللغة الطبيعية",
+  "aiConfidence": "الثقة",
+  "aiHighConfidence": "ثقة عالية",
+  "aiMediumConfidence": "ثقة متوسطة",
+  "aiLowConfidence": "ثقة منخفضة",
+  "aiAnalyzing": "جاري التحليل...",
+  "aiGenerating": "جاري الإنشاء...",
+  "aiNoData": "لا توجد بيانات كافية للتحليل",
+  "aiRefresh": "تحديث التحليل",
+  "aiExport": "تصدير النتائج",
+  "aiApply": "تطبيق الاقتراحات",
+  "aiDismiss": "تجاهل",
+  "aiViewDetails": "عرض التفاصيل",
+  "aiSuggestions": "اقتراحات AI",
+  "aiInsights": "رؤى AI",
+  "aiPrediction": "تنبؤ",
+  "aiRecommendation": "توصية",
+  "aiAlert": "تنبيه",
+  "aiWarning": "تحذير",
+  "aiTrend": "اتجاه",
+  "aiPositive": "إيجابي",
+  "aiNegative": "سلبي",
+  "aiNeutral": "محايد",
+  "aiSendMessage": "اكتب رسالتك...",
+  "aiQuickTemplates": "قوالب سريعة",
+  "aiForecastPeriod": "فترة التنبؤ",
+  "aiWeekly": "أسبوعي",
+  "aiMonthly": "شهري",
+  "aiQuarterly": "ربع سنوي",
+  "aiWhatIfScenario": "سيناريو ماذا لو",
+  "aiSeasonalPatterns": "الأنماط الموسمية",
+  "aiPriceSuggestion": "اقتراح السعر",
+  "aiCurrentPrice": "السعر الحالي",
+  "aiSuggestedPrice": "السعر المقترح",
+  "aiPriceImpact": "تأثير السعر",
+  "aiDemandElasticity": "مرونة الطلب",
+  "aiFraudAlerts": "تنبيهات الاحتيال",
+  "aiFraudRiskScore": "درجة الخطورة",
+  "aiBehaviorScore": "درجة السلوك",
+  "aiInvestigation": "التحقيق",
+  "aiAssociationRules": "قواعد الارتباط",
+  "aiBundleSuggestions": "اقتراحات الحزم",
+  "aiRepurchaseReminder": "تذكير إعادة الشراء",
+  "aiCustomerSegment": "شريحة العميل",
+  "aiEoqCalculator": "حاسبة الكمية المثالية",
+  "aiAbcAnalysis": "تحليل ABC",
+  "aiWastePrediction": "التنبؤ بالهدر",
+  "aiReorderPoint": "نقطة إعادة الطلب",
+  "aiCompetitorPrices": "أسعار المنافسين",
+  "aiMarketPosition": "التموضع السوقي",
+  "aiQueryInput": "اسأل أي شيء عن بياناتك...",
+  "aiReportTemplate": "قالب التقرير",
+  "aiStaffPerformance": "أداء الموظفين",
+  "aiShiftOptimization": "تحسين الورديات",
+  "aiProductScan": "مسح المنتج",
+  "aiOcrResults": "نتائج OCR",
+  "aiSentimentScore": "مؤشر المشاعر",
+  "aiKeywords": "الكلمات المفتاحية",
+  "aiReturnRisk": "خطر الإرجاع",
+  "aiPreventiveActions": "إجراءات وقائية",
+  "aiRoiForecast": "توقع العائد",
+  "aiAbTesting": "اختبار A/B",
+  "aiQueryHistory": "سجل الاستعلامات",
+  "aiApplied": "مُطبّق",
+  "aiPending": "قيد الانتظار",
+  "aiHighPriority": "أولوية عالية",
+  "aiMediumPriority": "أولوية متوسطة",
+  "aiLowPriority": "أولوية منخفضة",
+  "aiCritical": "حرج",
+  "aiSar": "ر.س",
+  "aiPercentChange": "{percent}% تغيير",
+  "@aiPercentChange": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "aiItemsCount": "{count} عنصر",
+  "@aiItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiLastUpdated": "آخر تحديث: {time}",
+  "@aiLastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+
+  "connectedToServer": "متصل بالسيرفر",
+  "lastSyncAt": "آخر مزامنة: {time}",
+  "@lastSyncAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingOperations": "العمليات المعلقة",
+  "nPendingOperations": "{count} عملية تنتظر المزامنة",
+  "@nPendingOperations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noPendingOperations": "لا توجد عمليات معلقة",
+  "syncInfo": "معلومات المزامنة",
+  "device": "الجهاز",
+  "appVersion": "إصدار التطبيق",
+  "lastFullSync": "آخر مزامنة كاملة",
+  "databaseStatus": "حالة قاعدة البيانات",
+  "healthy": "سليمة",
+  "syncSuccessful": "تمت المزامنة بنجاح",
+  "justNow": "الآن",
+  "allOperationsSynced": "جميع العمليات متزامنة",
+  "willSyncWhenOnline": "سيتم مزامنتها عند الاتصال بالإنترنت",
+  "syncAll": "مزامنة الكل",
+  "operationSynced": "تمت مزامنة العملية",
+  "deleteOperation": "حذف العملية",
+  "deleteOperationConfirm": "هل تريد حذف هذه العملية من قائمة الانتظار؟",
+  "insertOperation": "إضافة",
+  "updateOperation": "تعديل",
+  "operationLabel": "عملية",
+  "nPendingCount": "{count} عملية معلقة",
+  "@nPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictsNeedResolution": "{count} تعارضات تحتاج حل",
+  "@conflictsNeedResolution": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseCorrectValue": "اختر القيمة الصحيحة لكل تعارض",
+  "noConflicts": "لا توجد تعارضات",
+  "productPriceConflict": "تعارض في سعر المنتج",
+  "stockQuantityConflict": "تعارض في كمية المخزون",
+  "useAllLocal": "استخدام الكل المحلي",
+  "useAllServer": "استخدام الكل من السيرفر",
+  "conflictResolvedLocal": "تم حل التعارض باستخدام القيمة المحلية",
+  "conflictResolvedServer": "تم حل التعارض باستخدام القيمة من السيرفر",
+  "useLocalValues": "القيم المحلية",
+  "useServerValues": "قيم السيرفر",
+  "applyToAllConflicts": "سيتم تطبيق {choice} على جميع التعارضات",
+  "@applyToAllConflicts": {
+    "placeholders": {
+      "choice": {
+        "type": "String"
+      }
+    }
+  },
+  "allConflictsResolved": "تم حل جميع التعارضات",
+  "localValueLabel": "القيمة المحلية",
+  "serverValueLabel": "القيمة من السيرفر",
+  "noteOptional": "ملاحظة (اختياري)",
+  "suspendInvoice": "تعليق الفاتورة",
+  "invoiceSuspended": "تم تعليق الفاتورة",
+  "nItems": "{count} عنصر",
+  "@nItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveSaleError": "خطأ في حفظ البيع: {error}",
+  "@saveSaleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "refresh": "تحديث",
+  "stockGood": "المخزون جيد!",
+  "manageInventory": "إدارة المخزون",
+  "pendingSyncCount": "{count} قيد المزامنة",
+  "@pendingSyncCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "freshMilk": "حليب طازج",
+  "whiteBread": "خبز أبيض",
+  "localEggs": "بيض بلدي",
+  "yogurt": "زبادي",
+  "minQuantityLabel": "الحد الأدنى: {count}",
+  "@minQuantityLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "manageDiscounts": "إدارة الخصومات",
+  "newDiscount": "خصم جديد",
+  "totalLabel": "إجمالي",
+  "stopped": "متوقف",
+  "allProducts": "جميع المنتجات",
+  "specificCategory": "تصنيف محدد",
+  "percentageLabel": "نسبة %",
+  "fixedAmount": "مبلغ ثابت",
+  "thePercentage": "النسبة",
+  "theAmount": "المبلغ",
+  "discountOff": "{value}% خصم",
+  "@discountOff": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "sarDiscountOff": "{value} ر.س خصم",
+  "@sarDiscountOff": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "manageCoupons": "إدارة الكوبونات",
+  "newCoupon": "كوبون جديد",
+  "expired": "منتهي",
+  "deactivated": "معطل",
+  "usageCount": "{used}/{max} استخدام",
+  "@usageCount": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "freeDelivery": "توصيل مجاني",
+  "percentageDiscountLabel": "خصم {value}%",
+  "@percentageDiscountLabel": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "fixedDiscountLabel": "خصم {value} ر.س",
+  "@fixedDiscountLabel": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "couponTypeLabel": "النوع",
+  "percentageRate": "النسبة %",
+  "minimumOrder": "الحد الأدنى للطلب",
+  "expiryDate": "تاريخ الانتهاء",
+  "copyCode": "نسخ الكود",
+  "usages": "الاستخدامات",
+  "percentageDiscountOption": "خصم نسبة",
+  "fixedDiscountOption": "خصم ثابت",
+  "freeDeliveryOption": "توصيل مجاني",
+  "percentageField": "النسبة %",
+
+  "manageSpecialOffers": "إدارة العروض الخاصة",
+  "newOffer": "عرض جديد",
+  "expiringSoon": "ينتهي قريباً",
+  "offerExpired": "منتهي",
+  "bundleDiscount": "باقة - خصم {discount}%",
+  "@bundleDiscount": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "buyAndGetFree": "اشتري واحصل مجاناً",
+  "offerDiscountPercent": "خصم {discount}%",
+  "@offerDiscountPercent": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "offerDiscountFixed": "خصم {discount} ر.س",
+  "@offerDiscountFixed": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "bundleLabel": "باقة",
+  "buyAndGet": "اشتري واحصل",
+  "startDateLabel": "البداية",
+  "endDateLabel": "النهاية",
+  "productsLabel": "المنتجات",
+  "offerType": "النوع",
+  "theDiscount": "الخصم:",
+
+  "smartSuggestions": "اقتراحات ذكية",
+  "suggestionsBasedOnAnalysis": "عروض مقترحة بناءً على تحليل المبيعات والمخزون",
+  "suggestedDiscountPercent": "{percent}% خصم مقترح",
+  "@suggestedDiscountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "stockLabelCount": "المخزون: {count}",
+  "@stockLabelCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "validityDays": "الصلاحية: {days} يوم",
+  "@validityDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "ignore": "تجاهل",
+  "applyAction": "تطبيق",
+  "usageCountTimes": "استخدام: {count} مرة",
+  "@usageCountTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promotionHistory": "سجل العروض السابقة",
+  "createNewPromotion": "إنشاء عرض جديد",
+  "percentageDiscountType": "خصم نسبة مئوية",
+  "percentageDiscountDesc": "خصم 10%، 20%، إلخ",
+  "buyXGetY": "اشتري X واحصل على Y",
+  "buyXGetYDesc": "اشتري 2 واحصل على 1 مجاناً",
+  "fixedAmountDiscount": "خصم مبلغ ثابت",
+  "fixedAmountDiscountDesc": "خصم 10 ر.س على المنتج",
+  "promotionApplied": "تم تطبيق العرض على {product}",
+  "@promotionApplied": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionType": "النوع: {type}",
+  "@promotionType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionValue": "القيمة: {value}",
+  "@promotionValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionUsage": "الاستخدام: {count} مرة",
+  "@promotionUsage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "percentageType": "نسبة مئوية",
+  "buyXGetYType": "اشتري واحصل",
+  "fixedAmountType": "مبلغ ثابت",
+  "closeAction": "إغلاق",
+
+  "holdInvoices": "الفواتير المعلقة",
+  "clearAll": "مسح الكل",
+  "noHoldInvoices": "لا توجد فواتير معلقة",
+  "holdInvoicesDesc": "عند تعليق فاتورة من نقطة البيع ستظهر هنا\nيمكنك تعليق عدة فواتير واستئنافها لاحقاً",
+  "deleteInvoiceTitle": "حذف الفاتورة",
+  "deleteInvoiceConfirmMsg": "هل تريد حذف \"{name}\"?\nهذا الإجراء لا يمكن التراجع عنه.",
+  "@deleteInvoiceConfirmMsg": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotUndo": "هذا الإجراء لا يمكن التراجع عنه.",
+  "deleteAllLabel": "حذف الكل",
+  "deleteAllInvoices": "حذف جميع الفواتير",
+  "deleteAllInvoicesConfirm": "هل تريد حذف جميع الفواتير المعلقة ({count} فاتورة)?\nهذا الإجراء لا يمكن التراجع عنه.",
+  "@deleteAllInvoicesConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceDeletedMsg": "تم حذف الفاتورة",
+  "allInvoicesDeleted": "تم حذف جميع الفواتير",
+  "resumedInvoice": "تم استئناف: {name}",
+  "@resumedInvoice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemLabel": "{count} عنصر",
+  "@itemLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moreItems": "+{count} عناصر أخرى",
+  "@moreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resume": "استئناف",
+  "justNowTime": "الآن",
+  "minutesAgoTime": "منذ {count} دقيقة",
+  "@minutesAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoTime": "منذ {count} ساعة",
+  "@hoursAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgoTime": "منذ {count} يوم",
+  "@daysAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "debtManagement": "إدارة الديون",
+  "sortLabel": "ترتيب",
+  "sortByAmount": "حسب المبلغ",
+  "sortByDate": "حسب التاريخ",
+  "sortByName": "حسب الاسم",
+  "sendReminders": "إرسال تذكيرات",
+  "allTab": "الكل",
+  "overdueTab": "متأخرة",
+  "upcomingTab": "قادمة",
+  "totalDebts": "إجمالي الديون",
+  "overdueDebts": "ديون متأخرة",
+  "debtorCustomers": "عملاء مدينون",
+  "noDebts": "لا توجد ديون",
+  "customerLabel2": "{count} عميل",
+  "@customerLabel2": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdueDays": "متأخر {days} يوم",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingDays": "متبقي {days} يوم",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lastPaymentDate": "آخر دفعة: {date}",
+  "@lastPaymentDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recordPayment": "تسجيل دفعة",
+  "amountDue": "المبلغ المستحق",
+  "currentDebt": "الدين الحالي: {amount} ر.س",
+  "@currentDebt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paidAmount": "المبلغ المدفوع",
+  "cashMethod": "نقدي",
+  "cardMethod": "بطاقة",
+  "transferMethod": "تحويل",
+  "paymentRecordedSuccess": "تم تسجيل الدفعة بنجاح",
+  "sendRemindersTitle": "إرسال تذكيرات",
+  "sendRemindersConfirm": "سيتم إرسال تذكير لـ {count} عميل لديهم ديون متأخرة",
+  "@sendRemindersConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendAction": "إرسال",
+  "remindersSent": "تم إرسال {count} تذكير",
+  "@remindersSent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordPaymentFor": "تسجيل دفعة - {name}",
+  "@recordPaymentFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sendReminder": "إرسال تذكير",
+  "tabAiSuggestions": "اقتراحات AI",
+  "tabActivePromotions": "العروض النشطة",
+  "tabHistory": "السجل",
+
+  "fruitYogurt": "زبادي فواكه",
+  "buttermilk": "لبن رايب",
+  "appleJuice": "عصير تفاح",
+  "whiteCheese": "جبنة بيضاء",
+  "orangeJuice": "عصير برتقال",
+  "slowMovementReason": "حركة بطيئة - {days} يوم بدون بيع",
+  "@slowMovementReason": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "nearExpiryReason": "قرب انتهاء الصلاحية",
+  "excessStockReason": "مخزون زائد",
+  "weekendOffer": "عرض نهاية الأسبوع",
+  "buy2Get1Free": "اشتري 2 واحصل على 1 مجاناً",
+  "productsListLabel": "المنتجات:",
+  "paymentMethodLabel2": "طريقة الدفع",
+  "lastPaymentLabel": "آخر دفعة",
+  "currencySAR": "ر.س",
+  "debtAmountWithCurrency": "{amount} ر.س",
+  "@debtAmountWithCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUserName": "أحمد محمد",
+  "saveSettings": "حفظ الإعدادات",
+  "settingsSaved": "تم حفظ الإعدادات",
+  "settingsReset": "تم إعادة ضبط الإعدادات",
+  "resetSettings": "إعادة ضبط الإعدادات",
+  "resetSettingsDesc": "إعادة جميع الإعدادات للقيم الافتراضية",
+  "resetSettingsConfirm": "هل أنت متأكد من إعادة جميع إعدادات نقطة البيع للقيم الافتراضية؟",
+  "resetAction": "إعادة ضبط",
+  "posSettingsSubtitle": "العرض، السلة، الدفع، الإيصال",
+  "displaySettings": "إعدادات العرض",
+  "productDisplayMode": "طريقة عرض المنتجات",
+  "productDisplayModeDesc": "كيفية عرض المنتجات في شاشة POS",
+  "gridColumns": "عدد الأعمدة",
+  "nColumns": "{count} أعمدة",
+  "@nColumns": { "placeholders": { "count": { "type": "int" } } },
+  "showProductImages": "عرض صور المنتجات",
+  "showProductImagesDesc": "إظهار الصور في بطاقات المنتجات",
+  "showPrices": "عرض الأسعار",
+  "showPricesDesc": "إظهار السعر على بطاقة المنتج",
+  "showStockLevel": "عرض مستوى المخزون",
+  "showStockLevelDesc": "إظهار الكمية المتاحة",
+  "cartSettings": "إعدادات السلة",
+  "autoFocusBarcode": "التركيز التلقائي على الباركود",
+  "autoFocusBarcodeDesc": "التركيز على حقل الباركود عند فتح الشاشة",
+  "allowNegativeStock": "السماح بالمخزون السالب",
+  "allowNegativeStockDesc": "البيع حتى لو كان المخزون صفر",
+  "confirmBeforeDelete": "تأكيد قبل الحذف",
+  "confirmBeforeDeleteDesc": "طلب تأكيد عند حذف منتج من السلة",
+  "showItemNotes": "عرض ملاحظات المنتج",
+  "showItemNotesDesc": "إمكانية إضافة ملاحظات لكل منتج",
+  "paymentMethods": "طرق الدفع",
+  "cashPaymentOption": "الدفع نقداً",
+  "cardPaymentOption": "الدفع بالبطاقة",
+  "creditPaymentOption": "الدفع الآجل",
+  "bankTransferOption": "التحويل البنكي",
+  "allowSplitPayment": "السماح بتقسيم الدفع",
+  "allowSplitPaymentDesc": "الدفع بأكثر من طريقة",
+  "requireCustomerForCredit": "اشتراط العميل للدفع الآجل",
+  "requireCustomerForCreditDesc": "يجب تحديد عميل للدفع الآجل",
+  "receiptSettings": "إعدادات الإيصال",
+  "autoPrintReceipt": "طباعة الإيصال تلقائياً",
+  "autoPrintReceiptDesc": "طباعة فور إتمام العملية",
+  "receiptCopies": "عدد نسخ الإيصال",
+  "emailReceiptOption": "إرسال الإيصال بالإيميل",
+  "emailReceiptDesc": "إرسال نسخة للعميل",
+  "smsReceiptOption": "إرسال الإيصال برسالة SMS",
+  "smsReceiptDesc": "رسالة نصية للعميل",
+  "printerSettingsDesc": "اختيار الطابعة وإعداداتها",
+  "receiptDesign": "تصميم الإيصال",
+  "receiptDesignDesc": "تخصيص شكل الإيصال",
+  "advancedSettings": "إعدادات متقدمة",
+  "allowHoldInvoices": "السماح بتعليق الفواتير",
+  "allowHoldInvoicesDesc": "حفظ الفاتورة مؤقتاً",
+  "maxHoldInvoices": "الحد الأقصى للفواتير المعلقة",
+  "quickSaleMode": "وضع البيع السريع",
+  "quickSaleModeDesc": "شاشة مبسطة للبيع السريع",
+  "soundEffects": "المؤثرات الصوتية",
+  "soundEffectsDesc": "أصوات عند المسح والإضافة",
+  "hapticFeedback": "اهتزاز اللمس",
+  "hapticFeedbackDesc": "اهتزاز عند الضغط على الأزرار",
+  "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+  "customizeShortcuts": "تخصيص الاختصارات",
+  "shortcutSearchProduct": "البحث عن منتج",
+  "shortcutSearchCustomer": "البحث عن عميل",
+  "shortcutHoldInvoice": "تعليق الفاتورة",
+  "shortcutFavorites": "المفضلة",
+  "shortcutApplyDiscount": "تطبيق خصم",
+  "shortcutPayment": "الدفع",
+  "shortcutCancelBack": "إلغاء / رجوع",
+  "shortcutDeleteProduct": "حذف منتج",
+  "paymentDevicesSubtitle": "mada, STC Pay, Apple Pay",
+  "supportedPaymentMethods": "طرق الدفع المدعومة",
+  "madaLocalCards": "بطاقات مدى المحلية",
+  "internationalCards": "البطاقات الدولية",
+  "stcDigitalWallet": "محفظة STC الرقمية",
+  "paymentTerminal": "جهاز الدفع",
+  "ingenicoDevices": "أجهزة Ingenico",
+  "verifoneDevices": "أجهزة Verifone",
+  "paxDevices": "أجهزة PAX",
+  "settlement": "التسوية",
+  "autoSettlement": "التسوية التلقائية",
+  "autoSettlementDesc": "تسوية نهاية اليوم تلقائياً",
+  "manualSettlement": "تسوية يدوية",
+  "executeSettlementNow": "تنفيذ التسوية الآن",
+  "settlingInProgress": "جاري التسوية...",
+  "paymentDevicesSettingsSaved": "تم حفظ إعدادات أجهزة الدفع",
+  "printerType": "نوع الطابعة",
+  "thermalUsbPrinter": "طابعة حرارية USB",
+  "bluetoothPortablePrinter": "طابعة بلوتوث محمولة",
+  "saveAsPdf": "حفظ كملف PDF",
+  "receiptTemplate": "قالب الإيصال",
+  "compactTemplate": "مختصر",
+  "basicInfoOnly": "معلومات أساسية فقط",
+  "detailedTemplate": "تفصيلي",
+  "allDetails": "كل التفاصيل",
+  "printOptions": "خيارات الطباعة",
+  "autoPrinting": "الطباعة التلقائية",
+  "autoPrintAfterSale": "طباعة الإيصال تلقائياً بعد كل عملية بيع",
+  "testPrintInProgress": "جاري الطباعة التجريبية...",
+  "testPrint": "طباعة تجريبية",
+  "printerSettingsSaved": "تم حفظ إعدادات الطابعة",
+  "printerSettingsSubtitle": "نوع الطابعة، القالب، الطباعة التلقائية",
+  "enableScanner": "تفعيل الماسح",
+  "barcodeScanner": "الماسح الضوئي",
+  "barcodeScannerDesc": "استخدام ماسح الباركود لإضافة المنتجات",
+  "deviceCamera": "كاميرا الجهاز",
+  "bluetoothScanner": "ماسح Bluetooth",
+  "externalScannerConnected": "ماسح خارجي متصل",
+  "alerts": "التنبيهات",
+  "beepOnScan": "صوت عند المسح",
+  "vibrateOnScan": "اهتزاز عند المسح",
+  "behavior": "السلوك",
+  "autoAddToCart": "إضافة تلقائية للسلة",
+  "autoAddToCartDesc": "عند مسح منتج موجود",
+  "barcodeFormats": "صيغ الباركود",
+  "allFormats": "جميع الصيغ",
+  "unspecified": "غير محدد",
+  "qrCodeOnly": "QR Code فقط",
+  "testing": "الاختبار",
+  "testScanner": "اختبار الماسح",
+  "testScanBarcode": "تجربة مسح باركود",
+  "pointCameraAtBarcode": "وجه الكاميرا نحو الباركود",
+  "scanArea": "منطقة المسح",
+  "barcodeSettingsSubtitle": "الماسح الضوئي، التنبيهات، الصيغ",
+  "taxSettings": "إعدادات الضرائب",
+  "taxSettingsSubtitle": "VAT, ZATCA, الفوترة الإلكترونية",
+  "vatSettings": "ضريبة القيمة المضافة",
+  "enableVat": "تفعيل ضريبة القيمة المضافة",
+  "enableVatDesc": "تطبيق VAT على جميع المبيعات",
+  "taxRate": "نسبة الضريبة",
+  "taxNumber": "الرقم الضريبي",
+  "taxNumberHint": "15 رقم يبدأ بـ 3",
+  "pricesIncludeTax": "الأسعار شاملة الضريبة",
+  "pricesIncludeTaxDesc": "الأسعار المعروضة تتضمن الضريبة",
+  "showTaxOnReceipt": "إظهار الضريبة في الإيصال",
+  "showTaxOnReceiptDesc": "عرض تفاصيل الضريبة",
+  "zatcaEInvoicing": "ZATCA - الفوترة الإلكترونية",
+  "enableZatca": "تفعيل ZATCA",
+  "enableZatcaDesc": "الامتثال لنظام الفوترة الإلكترونية",
+  "phaseOne": "المرحلة الأولى",
+  "phaseOneDesc": "إصدار الفاتورة",
+  "phaseTwo": "المرحلة الثانية",
+  "phaseTwoDesc": "الربط والتكامل",
+  "taxSettingsSaved": "تم حفظ إعدادات الضرائب",
+  "discountSettingsTitle": "إعدادات الخصومات",
+  "discountSettingsSubtitle": "الخصم اليدوي، VIP، الكمية، الكوبونات",
+  "generalDiscounts": "الخصومات العامة",
+  "enableDiscountsOption": "تفعيل الخصومات",
+  "enableDiscountsDesc": "السماح بتطبيق الخصومات",
+  "manualDiscount": "الخصم اليدوي",
+  "manualDiscountDesc": "السماح للكاشير بإدخال خصم يدوي",
+  "maxDiscountLimit": "الحد الأقصى للخصم",
+  "requireApproval": "اشتراط الموافقة",
+  "requireApprovalDesc": "طلب موافقة المدير للخصم",
+  "vipCustomerDiscount": "خصم العملاء المميزين",
+  "vipDiscount": "خصم VIP",
+  "vipDiscountDesc": "خصم تلقائي للعملاء المميزين",
+  "vipDiscountRate": "نسبة خصم VIP",
+  "otherDiscounts": "خصومات أخرى",
+  "volumeDiscount": "خصم الكمية",
+  "volumeDiscountDesc": "خصم تلقائي عند شراء كمية معينة",
+  "couponsOption": "الكوبونات",
+  "couponsDesc": "دعم كوبونات الخصم",
+  "discountSettingsSaved": "تم حفظ إعدادات الخصومات",
+  "interestSettingsTitle": "إعدادات الفوائد",
+  "interestSettingsSubtitle": "النسبة، فترة السماح، الحساب التلقائي",
+  "monthlyInterest": "الفوائد الشهرية",
+  "enableInterest": "تفعيل الفوائد",
+  "enableInterestDesc": "تطبيق فوائد على الديون الآجلة",
+  "monthlyInterestRate": "نسبة الفائدة الشهرية",
+  "maxInterestRateLabel": "الحد الأقصى للفائدة",
+  "gracePeriod": "فترة السماح",
+  "graceDays": "أيام السماح",
+  "graceDaysLabel": "{days} يوم قبل احتساب الفائدة",
+  "@graceDaysLabel": { "placeholders": { "days": { "type": "int" } } },
+  "compoundInterest": "الفائدة المركبة",
+  "compoundInterestDesc": "احتساب فائدة على الفائدة",
+  "calculationAndAlerts": "الحساب والتنبيهات",
+  "autoCalculation": "الحساب التلقائي",
+  "autoCalculationDesc": "احتساب الفوائد تلقائياً نهاية كل شهر",
+  "customerNotification": "إشعار العميل",
+  "customerNotificationDesc": "إرسال إشعار عند احتساب الفائدة",
+  "interestSettingsSaved": "تم حفظ إعدادات الفوائد",
+  "receiptTemplateTitle": "قالب الإيصال",
+  "receiptTemplateSubtitle": "الرأس، التذييل، الحقول، حجم الورق",
+  "headerAndFooter": "الرأس والتذييل",
+  "receiptTitleField": "عنوان الإيصال",
+  "footerText": "نص التذييل",
+  "displayedFields": "الحقول المعروضة",
+  "storeLogo": "شعار المتجر",
+  "storeName": "اسم المتجر",
+  "addressField": "العنوان",
+  "phoneNumberField": "رقم الهاتف",
+  "vatNumberField": "الرقم الضريبي",
+  "dateAndTime": "التاريخ والوقت",
+  "cashierName": "اسم الكاشير",
+  "invoiceBarcode": "باركود الفاتورة",
+  "qrCodeField": "رمز QR",
+  "qrCodeEInvoice": "رمز QR للفاتورة الإلكترونية",
+  "paperSize": "حجم الورق",
+  "standardSize": "الحجم القياسي",
+  "smallSize": "حجم صغير",
+  "normalPrint": "طباعة عادية",
+  "receiptTemplateSaved": "تم حفظ قالب الإيصال",
+  "instantNotifications": "إشعارات فورية على الجهاز",
+  "emailNotificationsDesc": "إرسال إشعارات عبر البريد",
+  "smsNotificationsDesc": "إشعارات عبر الرسائل النصية",
+  "salesAlertsDesc": "تنبيهات المبيعات والفواتير",
+  "inventoryAlertsDesc": "تنبيهات المخزون المنخفض",
+  "securityAlertsDesc": "تنبيهات الأمان وتسجيل الدخول",
+  "reportAlertsDesc": "تقارير يومية وأسبوعية",
+  "contactSupportDesc": "متاح 24/7",
+  "systemGuide": "دليل استخدام النظام",
+  "videoTutorials": "فيديوهات تعليمية",
+  "changeLog": "سجل التحديثات",
+  "faqQuestion1": "كيف أضيف منتج جديد؟",
+  "faqAnswer1": "اذهب إلى المنتجات > إضافة منتج واملأ التفاصيل",
+  "faqQuestion2": "كيف أطبع الفواتير؟",
+  "faqAnswer2": "بعد إتمام البيع، اضغط على طباعة الإيصال",
+  "faqQuestion3": "كيف أضبط الخصومات؟",
+  "faqAnswer3": "من الإعدادات > إعدادات الخصومات يمكنك ضبط الخصومات",
+  "faqQuestion4": "كيف أضيف مستخدم جديد؟",
+  "faqAnswer4": "من الإعدادات > إدارة المستخدمين > إضافة مستخدم",
+  "faqQuestion5": "كيف أشاهد التقارير؟",
+  "faqAnswer5": "من القائمة الرئيسية > التقارير، اختر نوع التقرير المطلوب",
+  "businessNameValue": "مؤسسة الهاي",
+  "qrCodeOnInvoice": "يظهر رمز QR على كل فاتورة",
+  "disabledLabel": "معطل",
+  "allFilter": "الكل",
+  "loginLogoutFilter": "الدخول/الخروج",
+  "salesFilter": "المبيعات",
+  "productsFilter": "المنتجات",
+  "usersFilter": "المستخدمين",
+  "systemFilter": "النظام",
+  "noActivities": "لا توجد نشاطات",
+  "pinSection": "رمز PIN",
+  "createPinOption": "إنشاء رمز PIN",
+  "createPinDesc": "تعيين رمز PIN من 4 أرقام للدخول السريع",
+  "changePinOption": "تغيير رمز PIN",
+  "changePinDesc": "تحديث رمز PIN الحالي",
+  "removePinOption": "إزالة رمز PIN",
+  "removePinDesc": "حذف PIN واستخدام دخول OTP",
+  "biometricSection": "تسجيل الدخول البيومتري",
+  "fingerprintOption": "بصمة الإصبع",
+  "fingerprintDesc": "الدخول باستخدام بصمة الإصبع",
+  "faceIdOption": "التعرف على الوجه",
+  "faceIdDesc": "الدخول باستخدام التعرف على الوجه",
+  "sessionSection": "الجلسة",
+  "autoLockOption": "القفل التلقائي",
+  "autoLockDesc": "قفل الشاشة بعد عدم النشاط",
+  "autoLockTimeout": "مدة القفل التلقائي",
+  "dangerZone": "منطقة الخطر",
+  "logoutAllDevices": "تسجيل الخروج من كل الأجهزة",
+  "logoutAllDevicesDesc": "إنهاء جميع الجلسات النشطة",
+  "clearAllData": "مسح جميع البيانات",
+  "clearAllDataDesc": "حذف جميع البيانات المحلية",
+  "createPinTitle": "إنشاء رمز PIN",
+  "enterNewPin": "أدخل رمز PIN جديد من 4 أرقام",
+  "changePinTitle": "تغيير رمز PIN",
+  "enterCurrentPin": "أدخل رمز PIN الحالي",
+  "enterNewPinChange": "أدخل رمز PIN الجديد",
+  "removePinTitle": "إزالة رمز PIN",
+  "removePinConfirm": "هل أنت متأكد من إزالة تسجيل الدخول بـ PIN؟",
+  "removeAction": "إزالة",
+  "pinCreated": "تم إنشاء رمز PIN بنجاح",
+  "pinChangedSuccess": "تم تغيير رمز PIN بنجاح",
+  "pinRemovedSuccess": "تم إزالة رمز PIN",
+  "logoutAllTitle": "تسجيل الخروج من كل الأجهزة",
+  "logoutAllConfirm": "سيتم إنهاء جميع الجلسات النشطة. ستحتاج لتسجيل الدخول مرة أخرى.",
+  "logoutAllAction": "تسجيل الخروج من الكل",
+  "loggedOutAll": "تم تسجيل الخروج من جميع الأجهزة",
+  "clearDataTitle": "مسح جميع البيانات",
+  "clearDataConfirm": "سيتم حذف جميع البيانات المحلية. هذا الإجراء لا يمكن التراجع عنه.",
+  "clearDataAction": "مسح البيانات",
+  "dataCleared": "تم مسح جميع البيانات",
+  "afterMinutes": "بعد {count} دقيقة",
+  "@afterMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "storeInfo": "معلومات المتجر",
+  "storeNameField": "اسم المتجر",
+  "addressLabel": "العنوان",
+  "taxInfo": "المعلومات الضريبية",
+  "vatNumberFieldLabel": "الرقم الضريبي (VAT)",
+  "vatNumberHintText": "15 رقم يبدأ بـ 3",
+  "commercialRegister": "السجل التجاري",
+  "enableVatOption": "تفعيل ضريبة القيمة المضافة",
+  "taxRateField": "نسبة الضريبة",
+  "languageAndCurrency": "اللغة والعملة",
+  "currencyFieldLabel": "العملة",
+  "saudiRiyal": "ريال سعودي (SAR)",
+  "usDollar": "دولار أمريكي (USD)",
+  "storeLogoSection": "شعار المتجر",
+  "storeLogoDesc": "يظهر في الفواتير والإيصالات",
+  "changeButton": "تغيير",
+  "storeSettingsSaved": "تم حفظ إعدادات المتجر",
+  "ownerRole": "مالك",
+  "managerRole": "مدير",
+  "supervisorRole": "مشرف",
+  "cashierRole": "كاشير",
+  "disabledStatus": "معطل",
+  "editMenuAction": "تعديل",
+  "disableMenuAction": "تعطيل",
+  "enableMenuAction": "تفعيل",
+  "addUserTitle": "إضافة مستخدم",
+  "editUserTitle": "تعديل المستخدم",
+  "nameRequired": "الاسم *",
+  "roleLabel": "الصلاحية",
+  "userDetailsTitle": "تفاصيل المستخدم",
+  "rolesTab": "الأدوار",
+  "permissionsTab": "الصلاحيات",
+  "newRoleButton": "دور جديد",
+  "systemBadge": "نظام",
+  "userCountLabel": "{count} مستخدم",
+  "@userCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "permissionCountLabel": "{count} صلاحية",
+  "@permissionCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "editRoleMenu": "تعديل",
+  "duplicateRoleMenu": "نسخ",
+  "deleteRoleMenu": "حذف",
+  "addRoleTitle": "إضافة دور",
+  "editRoleTitle": "تعديل الدور",
+  "roleNameField": "اسم الدور",
+  "roleDescField": "الوصف",
+  "rolePermissionsLabel": "الصلاحيات",
+  "permViewSales": "عرض المبيعات",
+  "permViewSalesDesc": "عرض المبيعات والفواتير",
+  "permCreateSale": "إنشاء بيع",
+  "permCreateSaleDesc": "إنشاء عمليات بيع جديدة",
+  "permApplyDiscount": "تطبيق خصم",
+  "permApplyDiscountDesc": "تطبيق خصومات على الفواتير",
+  "permVoidSale": "إلغاء بيع",
+  "permVoidSaleDesc": "إلغاء وحذف عمليات البيع",
+  "permViewProducts": "عرض المنتجات",
+  "permViewProductsDesc": "عرض قائمة المنتجات",
+  "permEditProducts": "تعديل المنتجات",
+  "permEditProductsDesc": "تعديل تفاصيل وأسعار المنتجات",
+  "permManageInventory": "إدارة المخزون",
+  "permManageInventoryDesc": "إدارة المخزون والجرد",
+  "permViewReports": "عرض التقارير",
+  "permViewReportsDesc": "عرض جميع التقارير",
+  "permExportReports": "تصدير التقارير",
+  "permExportReportsDesc": "تصدير التقارير كـ PDF/Excel",
+  "permViewCustomers": "عرض العملاء",
+  "permViewCustomersDesc": "عرض قائمة العملاء",
+  "permManageCustomers": "إدارة العملاء",
+  "permManageCustomersDesc": "إضافة وتعديل العملاء",
+  "permManageDebts": "إدارة الديون",
+  "permManageDebtsDesc": "إدارة ديون العملاء",
+  "permOpenCloseShift": "فتح/إغلاق الوردية",
+  "permOpenCloseShiftDesc": "فتح وإغلاق ورديات العمل",
+  "permManageCashDrawer": "إدارة درج النقد",
+  "permManageCashDrawerDesc": "إضافة وسحب النقد",
+  "permManageUsers": "إدارة المستخدمين",
+  "permManageUsersDesc": "إضافة وتعديل المستخدمين",
+  "permManageRoles": "إدارة الأدوار",
+  "permManageRolesDesc": "إدارة الأدوار والصلاحيات",
+  "permViewSettings": "عرض الإعدادات",
+  "permViewSettingsDesc": "عرض إعدادات النظام",
+  "permEditSettings": "تعديل الإعدادات",
+  "permEditSettingsDesc": "تعديل إعدادات النظام",
+  "permViewAuditLog": "عرض سجل النشاطات",
+  "permViewAuditLogDesc": "عرض سجل النشاطات",
+  "permManageBackup": "إدارة النسخ الاحتياطي",
+  "permManageBackupDesc": "النسخ الاحتياطي والاستعادة",
+  "permCategorySales": "المبيعات",
+  "permCategoryProducts": "المنتجات",
+  "permCategoryReports": "التقارير",
+  "permCategoryCustomers": "العملاء",
+  "permCategoryShifts": "الورديات",
+  "permCategoryUsers": "المستخدمين",
+  "permCategorySettings": "الإعدادات",
+  "permCategorySecurity": "الأمان",
+  "autoBackupEnabled": "يتم النسخ تلقائياً",
+  "autoBackupDisabledLabel": "معطل",
+  "backupFrequency": "تكرار النسخ",
+  "everyHour": "كل ساعة",
+  "dailyBackup": "يومياً",
+  "weeklyBackup": "أسبوعياً",
+  "manualBackupSection": "النسخ اليدوي",
+  "createBackupNow": "إنشاء نسخة احتياطية الآن",
+  "lastBackupTime": "آخر نسخة: منذ 3 ساعات",
+  "restoreSection": "الاستعادة",
+  "restoreFromBackup": "استعادة من نسخة احتياطية",
+  "restoreFromBackupDesc": "استرجاع البيانات من نسخة سابقة",
+  "backupHistoryLabel": "سجل النسخ الاحتياطي",
+  "backupInProgress": "جاري إنشاء النسخة الاحتياطية...",
+  "backupCreated": "تم إنشاء النسخة الاحتياطية بنجاح",
+  "restoreConfirmTitle": "استعادة من نسخة احتياطية",
+  "restoreConfirmMessage": "سيتم استبدال جميع البيانات الحالية. هذا الإجراء لا يمكن التراجع عنه.",
+  "restoreAction": "استعادة",
+  "restoreInProgress": "جاري الاستعادة...",
+  "restoreComplete": "تمت الاستعادة بنجاح",
+  "pasteCode": "لصق الرمز",
+  "devOtpMessage": "رمز التطوير: {otp}",
+  "@devOtpMessage": {
+    "placeholders": {
+      "otp": {
+        "type": "String"
+      }
+    }
+  },
+  "copyCode": "نسخ",
+
+  "orderHistory": "سجل الطلبات",
+  "selectDateRange": "تحديد فترة",
+  "orderSearchHint": "بحث برقم الطلب أو معرف العميل...",
+  "noOrders": "لا توجد طلبات",
+  "orderStatusConfirmed": "مؤكد",
+  "orderStatusPreparing": "قيد التحضير",
+  "orderStatusReady": "جاهز",
+  "orderStatusDelivering": "قيد التوصيل",
+  "filterOrders": "فلترة الطلبات",
+  "channelApp": "التطبيق",
+  "channelWhatsapp": "واتساب",
+  "channelPos": "نقطة البيع",
+  "paymentCashType": "نقدي",
+  "paymentMixed": "مختلط",
+  "paymentOnline": "إلكتروني",
+  "shareAction": "مشاركة",
+  "exportOrders": "تصدير الطلبات",
+  "selectExportFormat": "اختر صيغة التصدير",
+  "exportedAsExcel": "تم التصدير كـ Excel",
+  "exportedAsPdf": "تم التصدير كـ PDF",
+  "alertSettings": "إعدادات التنبيهات",
+  "acknowledgeAll": "تأكيد الكل",
+  "allWithCount": "الكل ({count})",
+  "@allWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "lowStockWithCount": "نفاد مخزون ({count})",
+  "@lowStockWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "expiryWithCount": "انتهاء صلاحية ({count})",
+  "@expiryWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "urgentAlerts": "تنبيهات عاجلة",
+  "nearExpiry": "قريب الانتهاء",
+  "noAlerts": "لا توجد تنبيهات",
+  "alertDismissed": "تم إخفاء التنبيه",
+  "undo": "تراجع",
+  "criticalPriority": "حرج",
+  "highPriority": "عاجل",
+  "stockAlertMessage": "الكمية: {current} (الحد الأدنى: {threshold})",
+  "@stockAlertMessage": { "placeholders": { "current": { "type": "int" }, "threshold": { "type": "int" } } },
+  "expiryAlertLabel": "تنبيه صلاحية",
+  "currentQuantity": "الكمية الحالية",
+  "minimumThreshold": "الحد الأدنى",
+  "dismissAction": "تجاهل",
+  "lowStockNotifications": "تنبيهات نفاد المخزون",
+  "expiryNotifications": "تنبيهات انتهاء الصلاحية",
+  "minimumStockLevel": "الحد الأدنى للمخزون",
+  "thresholdUnits": "{count} وحدة",
+  "@thresholdUnits": { "placeholders": { "count": { "type": "int" } } },
+  "acknowledgeAllAlerts": "تأكيد جميع التنبيهات",
+  "willDismissAlerts": "سيتم إخفاء {count} تنبيه",
+  "@willDismissAlerts": { "placeholders": { "count": { "type": "int" } } },
+  "allAlertsAcknowledged": "تم تأكيد جميع التنبيهات",
+  "createPurchaseOrder": "إنشاء طلب شراء",
+  "productLabelName": "المنتج: {name}",
+  "@productLabelName": { "placeholders": { "name": { "type": "String" } } },
+  "requiredQuantity": "الكمية المطلوبة",
+  "createAction": "إنشاء",
+  "purchaseOrderCreated": "تم إنشاء طلب الشراء",
+  "newCategory": "فئة جديدة",
+  "productCountUnit": "{count} منتج",
+  "@productCountUnit": { "placeholders": { "count": { "type": "int" } } },
+  "iconLabel": "الأيقونة:",
+  "colorLabel": "اللون:",
+  "deleteCategoryMessage": "هل تريد حذف فئة \"{name}\"؟\nسيتم نقل {count} منتج إلى \"بدون فئة\".",
+  "@deleteCategoryMessage": { "placeholders": { "name": { "type": "String" }, "count": { "type": "int" } } },
+  "productNumber": "منتج {number}",
+  "@productNumber": { "placeholders": { "number": { "type": "int" } } },
+  "priceWithCurrency": "{price} ر.س",
+  "@priceWithCurrency": { "placeholders": { "price": { "type": "String" } } },
+
+  "currentlyOpenShift": "وردية مفتوحة حالياً",
+  "since": "منذ",
+  "transaction": "عملية",
+  "totalTransactions": "إجمالي العمليات",
+  "openShifts": "ورديات مفتوحة",
+  "closedShifts": "ورديات مغلقة",
+  "shiftsLog": "سجل الورديات",
+  "noShiftsToday": "لا توجد ورديات اليوم",
+  "open": "مفتوحة",
+
+  "customPeriod": "فترة مخصصة",
+  "salesReport": "تقرير المبيعات",
+  "salesReportDesc": "تفاصيل المبيعات والفواتير",
+  "profitReport": "تقرير الأرباح",
+  "profitReportDesc": "صافي الربح والخسائر",
+  "inventoryReport": "تقرير المخزون",
+  "inventoryReportDesc": "حركات المخزون والجرد",
+  "vatReport": "تقرير الضريبة (VAT)",
+  "vatReportDesc": "ضريبة القيمة المضافة 15%",
+  "customerReport": "تقرير العملاء",
+  "customerReportDesc": "نشاط العملاء والديون",
+  "purchasesReport": "تقرير المشتريات",
+  "purchasesReportDesc": "فواتير الشراء والموردين",
+  "revenue": "الإيرادات",
+  "costs": "التكاليف",
+  "netProfit": "صافي الربح",
+  "lowStock": "مخزون منخفض",
+  "outOfStock": "نفذ",
+  "salesTax": "ضريبة المبيعات",
+  "purchasesTax": "ضريبة المشتريات",
+  "taxDue": "المستحق",
+  "debts": "الديون",
+  "paidDebts": "المسددة",
+  "averageAmount": "المتوسط",
+  "suppliers": "الموردين",
+
+  "todayExpenses": "مصروفات اليوم",
+  "transactionCount": "عدد العمليات",
+  "salaries": "رواتب",
+  "rent": "إيجار",
+  "purchases": "المشتريات",
+
+  "noDriversRegistered": "لا يوجد سائقون مسجلون",
+  "addDriversForDelivery": "أضف سائقين لإدارة التوصيل",
+  "onDelivery": "في توصيلة",
+  "unavailable": "غير متاح",
+  "totalDrivers": "إجمالي السائقين",
+  "availableDrivers": "سائقون متاحون",
+  "inDelivery": "في التوصيل",
+  "excellentRating": "تقييم ممتاز",
+  "delivery": "توصيلة",
+  "track": "تتبع",
+
+  "percentage": "نسبة مئوية",
+  "buyAndGet": "اشترِ واحصل",
+  "totalSavings": "إجمالي التوفير",
+
+  "totalUsage": "إجمالي الاستخدام",
+  "times": "مرات",
+
+  "activeOffers": "عروض فعالة",
+  "upcomingOffers": "عروض قادمة",
+  "expiredOffers": "عروض منتهية",
+  "bundle": "باقة",
+
+  "dueDebts": "ديون مستحقة",
+  "collected": "تم التحصيل",
+
+  "newNotification": "إشعار جديد",
+  "oneHourAgo": "قبل ساعة",
+  "twoHoursAgo": "قبل ساعتين",
+
+  "trackingMap": "خريطة التتبع",
+  "deliveriesToday": "{count} توصيلة اليوم",
+  "@deliveriesToday": { "placeholders": { "count": { "type": "int" } } },
+  "assignOrder": "تعيين طلب",
+  "driversTrackingMap": "خريطة تتبع السائقين",
+  "gpsSubscriptionRequired": "(يتطلب اشتراك GPS)",
+  "vehicleLabel": "المركبة",
+  "vehicleHint": "مثال: هايلكس - أبيض",
+  "plateNumberLabel": "رقم اللوحة",
+  "assignOrderTo": "تعيين طلب لـ {name}",
+  "@assignOrderTo": { "placeholders": { "name": { "type": "String" } } },
+  "orderLabel": "طلب",
+  "orderAssignedTo": "تم تعيين الطلب لـ {name}",
+  "@orderAssignedTo": { "placeholders": { "name": { "type": "String" } } },
+
+  "closingPeriod": "فترة الإقفال: {period}",
+  "@closingPeriod": { "placeholders": { "period": { "type": "String" } } },
+  "lastClosing": "آخر إقفال: {date}",
+  "@lastClosing": { "placeholders": { "date": { "type": "String" } } },
+  "interestRateAndGrace": "نسبة الفائدة: {rate}% | فترة السماح: {days} يوم",
+  "@interestRateAndGrace": { "placeholders": { "rate": { "type": "String" }, "days": { "type": "String" } } },
+  "selectedCustomers": "العملاء المختارين",
+  "expectedInterests": "الفوائد المتوقعة",
+  "noDebtsNeedClosing": "لا توجد ديون تحتاج إقفال",
+  "allCustomersWithinGrace": "جميع العملاء ضمن فترة السماح",
+  "debtLabel": "الدين: {amount} ر.س",
+  "@debtLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "expectedInterestLabel": "الفائدة المتوقعة: {amount} ر.س",
+  "@expectedInterestLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "selectedCustomerCount": "{count} عميل مختار",
+  "@selectedCustomerCount": { "placeholders": { "count": { "type": "int" } } },
+  "processingClose": "جاري المعالجة...",
+  "executeClose": "تنفيذ الإقفال",
+  "interestWillBeAdded": "سيتم إضافة فوائد على {count} عميل",
+  "@interestWillBeAdded": { "placeholders": { "count": { "type": "int" } } },
+  "totalInterestsLabel": "إجمالي الفوائد: {amount} ر.س",
+  "@totalInterestsLabel": { "placeholders": { "amount": { "type": "String" } } },
+  "monthCloseSuccess": "تم إقفال الشهر لـ {count} عميل",
+  "@monthCloseSuccess": { "placeholders": { "count": { "type": "int" } } },
+
+  "readAll": "قراءة الكل",
+  "averageExpense": "متوسط المصروف",
+  "expensesList": "قائمة المصروفات",
+  "electricity": "كهرباء",
+  "maintenance": "صيانة",
+  "services": "خدمات",
+  "expense": "مصروف",
+  "filterExpenses": "تصفية المصروفات",
+  "openedNotification": "مفتوحة",
+  "openTime": "وقت الفتح",
+  "closeTime": "وقت الإغلاق",
+  "expectedCash": "الصندوق المتوقع",
+  "closingCash": "صندوق الإغلاق",
+  "printAction": "طباعة",
+  "exportAction": "تصدير",
+  "viewReport": "عرض التقرير",
+  "exportingReport": "جاري تصدير التقرير...",
+  "chartsUnderDev": "الرسوم البيانية قيد التطوير...",
+  "reportsAnalysis": "تحليل الأداء والمبيعات",
+
+  "aiAssociationFrequency": "{productA} + {productB}: تكرار {frequency} مرة",
+  "@aiAssociationFrequency": {
+    "placeholders": {
+      "productA": {"type": "String"},
+      "productB": {"type": "String"},
+      "frequency": {"type": "int"}
+    }
+  },
+  "aiBundleActivated": "تم تفعيل حزمة: {name}",
+  "@aiBundleActivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "aiPromotionsGeneratedCount": "تم توليد {count} عرض ترويجي بناءً على تحليل بيانات المتجر",
+  "@aiPromotionsGeneratedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "aiPromotionApplied": "تم تطبيق: {title}",
+  "@aiPromotionApplied": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "aiConfidencePercent": "ثقة: {percent}%",
+  "@aiConfidencePercent": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "aiAlertsWithCount": "التنبيهات ({count})",
+  "@aiAlertsWithCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "aiStaffCurrentSuggested": "{current} موظف حالياً → {suggested} مقترح",
+  "@aiStaffCurrentSuggested": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "suggested": {"type": "int"}
+    }
+  },
+  "aiMinutesAgo": "منذ {minutes} دقيقة",
+  "@aiMinutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "aiHoursAgo": "منذ {hours} ساعة",
+  "@aiHoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "aiDaysAgo": "منذ {days} يوم",
+  "@aiDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "aiDetectedCount": "تم الكشف: {count}",
+  "@aiDetectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "aiMatchedCount": "مطابق: {count}",
+  "@aiMatchedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "aiAccuracyPercent": "دقة: {percent}%",
+  "@aiAccuracyPercent": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "aiProductAccepted": "تم قبول {name}",
+  "@aiProductAccepted": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "aiErrorOccurred": "حدث خطأ: {error}",
+  "@aiErrorOccurred": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "aiErrorWithMessage": "خطأ: {error}",
+  "@aiErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "aiBasketAnalysis": "تحليل السلة بالذكاء الاصطناعي",
+  "aiAssociations": "الارتباطات",
+  "aiBundleSuggestions": "اقتراحات الحزم",
+  "aiCrossSell": "البيع المتقاطع",
+  "aiAvgBasketSize": "متوسط حجم السلة",
+  "aiProductUnit": "منتج",
+  "aiAvgBasketValue": "متوسط قيمة السلة",
+  "aiSaudiRiyal": "ريال سعودي",
+  "aiStrongestAssociation": "أقوى ارتباط",
+  "aiConversionRate": "معدل التحويل",
+  "aiFromSuggestions": "من الاقتراحات",
+  "aiAssistant": "المساعد الذكي",
+  "aiAskAboutStore": "اسأل أي سؤال عن متجرك",
+  "aiClearChat": "مسح المحادثة",
+  "aiAssistantReady": "المساعد الذكي جاهز لمساعدتك!",
+  "aiAskAboutSalesStock": "اسأل عن المبيعات، المخزون، العملاء، أو أي شيء عن متجرك",
+  "aiCompetitorAnalysis": "تحليل المنافسين",
+  "aiPriceComparison": "مقارنة الأسعار",
+  "aiMarketPosition": "الموقع السوقي",
+  "aiTrackedProducts": "منتجات تحت المراقبة",
+  "aiCheaperThanCompetitors": "أرخص من المنافسين",
+  "aiMoreExpensive": "أغلى من المنافسين",
+  "aiAvgPriceDiff": "متوسط فرق السعر",
+  "aiSortByName": "ترتيب بالاسم",
+  "aiSortByPriceDiff": "ترتيب بفرق السعر",
+  "aiSortByOurPrice": "ترتيب بسعرنا",
+  "aiSortByCategory": "ترتيب بالتصنيف",
+  "aiSortLabel": "ترتيب",
+  "aiPriceIndex": "مؤشر السعر",
+  "aiQuality": "الجودة",
+  "aiBranches": "الفروع",
+  "aiMarkAllRead": "تحديد الكل كمقروء",
+  "aiNoAlertsCurrently": "لا توجد تنبيهات حالياً",
+  "aiFraudDetection": "كشف الاحتيال بالذكاء الاصطناعي",
+  "aiTotalAlerts": "إجمالي التنبيهات",
+  "aiCriticalAlerts": "تنبيهات حرجة",
+  "aiNeedsReview": "بحاجة مراجعة",
+  "aiRiskLevel": "مستوى المخاطر",
+  "aiBehaviorScores": "درجات السلوك",
+  "aiInvestigation": "التحقيق",
+  "aiRiskMeter": "مقياس المخاطر",
+  "aiHighRisk": "مخاطر عالية",
+  "aiLowRisk": "مخاطر منخفضة",
+  "aiPatternRefund": "استرجاع",
+  "aiPatternAfterHours": "بعد الدوام",
+  "aiPatternVoid": "إلغاء",
+  "aiPatternDiscount": "خصم",
+  "aiPatternSplit": "تقسيم",
+  "aiPatternCashDrawer": "درج نقد",
+  "aiNoFraudAlerts": "لا توجد تنبيهات",
+  "aiSelectAlertToInvestigate": "اختر تنبيهاً من القائمة للتحقيق",
+  "aiStaffAnalytics": "تحليلات الموظفين",
+  "aiLeaderboard": "لوحة الترتيب",
+  "aiIndividualPerformance": "أداء فردي",
+  "aiShiftOptimization": "تحسين الورديات",
+  "aiAvgPerformance": "متوسط الأداء",
+  "aiTotalSalesLabel": "إجمالي المبيعات",
+  "aiTotalTransactions": "إجمالي العمليات",
+  "aiAvgVoidRate": "متوسط الإلغاء",
+  "aiTeamGrowth": "نمو الفريق",
+  "aiLeaderboardThisWeek": "لوحة الترتيب - هذا الأسبوع",
+  "aiSalesForecasting": "توقع المبيعات",
+  "aiSmartForecastSubtitle": "تحليل ذكي لتوقع المبيعات المستقبلية",
+  "aiForecastAccuracy": "دقة التوقع",
+  "aiTrend": "الاتجاه",
+  "aiTrendUp": "صاعد",
+  "aiTrendDown": "هابط",
+  "aiTrendStable": "مستقر",
+  "aiNextWeekForecast": "توقع الأسبوع القادم",
+  "aiMonthForecast": "توقع الشهر",
+  "aiForecastSummary": "ملخص التوقعات",
+  "aiSalesTrendingUp": "المبيعات في اتجاه صاعد - استمر!",
+  "aiSalesDeclining": "المبيعات في انخفاض - فعّل العروض",
+  "aiSalesStable": "المبيعات مستقرة - حافظ على الأداء",
+  "aiProductRecognition": "التعرف على المنتجات",
+  "aiSingleProduct": "منتج واحد",
+  "aiShelfScan": "مسح الرف",
+  "aiBarcodeOcr": "باركود OCR",
+  "aiPriceTag": "بطاقة سعر",
+  "aiCameraArea": "منطقة الكاميرا",
+  "aiPointCameraAtProduct": "وجه الكاميرا نحو المنتج أو الرف",
+  "aiStartScan": "بدء المسح",
+  "aiAnalyzingImage": "جاري تحليل الصورة...",
+  "aiStartScanToSeeResults": "ابدأ المسح لرؤية النتائج",
+  "aiScanResults": "نتائج المسح",
+  "aiProductSaved": "تم حفظ المنتج بنجاح",
+  "aiPromotionDesigner": "مصمم العروض الذكي - AI",
+  "aiSuggestedPromotions": "عروض مقترحة",
+  "aiRoiAnalysis": "تحليل ROI",
+  "aiAbTest": "اختبار A/B",
+  "aiSmartPromotionDesigner": "مصمم العروض الذكي",
+  "aiProjectedRevenue": "الإيرادات المتوقعة",
+  "aiAiConfidence": "ثقة AI",
+  "aiSelectPromotionForRoi": "اختر عرضاً من التبويب الأول لعرض تحليل ROI",
+  "aiRevenueLabel": "الإيراد",
+  "aiCostLabel": "التكلفة",
+  "aiDiscountLabel": "الخصم",
+  "aiAbTestDescription": "اختبار A/B يقسم عملاءك لمجموعتين ويعرض كل مجموعة عرضاً مختلفاً لتحديد الأفضل أداءً.",
+  "aiAbTestLaunched": "تم إطلاق اختبار A/B بنجاح!",
+  "aiChatWithData": "محادثة مع البيانات - AI",
+  "aiChatWithYourData": "محادثة مع بياناتك",
+  "aiAskAboutDataInArabic": "اسأل أي سؤال عن مبيعاتك ومخزونك وعملائك بالعربي",
+  "aiTrySampleQuestions": "جرّب أحد هذه الأسئلة",
+  "aiTip": "نصيحة",
+  "aiTipDescription": "يمكنك السؤال بالعربي أو الإنجليزي. AI يفهم السياق ويختار أفضل طريقة لعرض النتائج: أرقام، جداول، أو رسوم بيانية.",
+
+  "loadingApp": "جاري التحميل...",
+  "initializingSearch": "تهيئة البحث...",
+  "loadingData": "تحميل البيانات...",
+  "initializingDemoData": "تهيئة البيانات التجريبية...",
+  "pointOfSale": "نقاط البيع",
+
+  "managerPinSetup": "إعداد رمز المشرف",
+  "confirmPin": "تأكيد الرمز",
+  "createNewPin": "إنشاء رمز جديد",
+  "reenterPinToConfirm": "أعد إدخال الرمز للتأكيد",
+  "enterFourDigitPin": "أدخل رمز PIN من 4 أرقام",
+  "pinsMismatch": "الرمزان غير متطابقين",
+  "managerPinCreatedSuccess": "تم إنشاء رمز المشرف بنجاح",
+  "enterManagerPin": "أدخل رمز المشرف",
+  "operationRequiresApproval": "هذه العملية تتطلب موافقة المشرف",
+  "approvalGranted": "تمت الموافقة",
+  "accountLockedWaitMinutes": "تم قفل الحساب. انتظر {minutes} دقيقة",
+  "@accountLockedWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "wrongPinAttemptsRemaining": "رمز خاطئ. المحاولات المتبقية: {remaining}",
+  "@wrongPinAttemptsRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+
+  "selectYourBranchToContinue": "اختر فرعك للمتابعة",
+  "branchClosed": "مغلق",
+  "noResultsFoundSearch": "لا توجد نتائج",
+  "branchSelectedMessage": "تم اختيار {branchName}",
+  "@branchSelectedMessage": {
+    "placeholders": {
+      "branchName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "shiftIsClosed": "الوردية مغلقة",
+  "noOpenShiftCurrently": "لا توجد وردية مفتوحة حالياً",
+  "shiftIsOpen": "الوردية مفتوحة",
+  "shiftOpenSince": "منذ: {time}",
+  "@shiftOpenSince": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceSummary": "ملخص الرصيد",
+  "cashIncoming": "النقد الوارد",
+  "cashOutgoing": "النقد الصادر",
+  "expectedBalance": "الرصيد المتوقع",
+  "noCashMovementsYet": "لا توجد حركات نقدية بعد",
+  "noteLabel": "ملاحظة",
+  "depositDone": "تم الإيداع",
+  "withdrawalDone": "تم السحب",
+  "amPeriod": "ص",
+  "pmPeriod": "م",
+
+  "newPurchaseInvoice": "فاتورة شراء جديدة",
+  "supplierData": "بيانات المورد",
+  "selectSupplierRequired": "اختر المورد *",
+  "supplierInvoiceNumber": "رقم فاتورة المورد",
+  "noProductsAddedYet": "لم يتم إضافة منتجات بعد",
+  "paymentStatus": "حالة الدفع",
+  "paidStatus": "مدفوعة",
+  "deferredPayment": "آجل",
+  "productNameRequired": "اسم المنتج *",
+  "purchasePrice": "سعر الشراء",
+  "pleaseSelectSupplier": "يرجى اختيار المورد",
+  "purchaseInvoiceSavedTotal": "تم حفظ فاتورة الشراء بإجمالي {total} ر.س",
+  "@purchaseInvoiceSavedTotal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+
+  "smartReorderAi": "الطلب الذكي بالـ AI",
+  "smartReorderDescription": "حدد ميزانيتك ودع الذكاء الاصطناعي يوزع المشتريات بأفضل طريقة",
+  "orderSettings": "إعدادات الطلب",
+  "availableBudget": "الميزانية المتاحة",
+  "enterAvailableAmount": "أدخل المبلغ المتاح للشراء",
+  "supplierLabel": "المورد",
+  "calculating": "جاري الحساب...",
+  "calculateSmartDistribution": "حساب التوزيع الذكي",
+  "setBudgetAndCalculate": "حدد الميزانية واضغط حساب",
+  "numberOfProducts": "عدد المنتجات",
+  "suggestedProducts": "المنتجات المقترحة",
+  "sendOrder": "إرسال الطلب",
+  "emailLabel": "البريد",
+  "confirmSending": "تأكيد الإرسال",
+  "sendOrderToSupplier": "إرسال الطلب إلى {supplier}؟",
+  "@sendOrderToSupplier": {
+    "placeholders": {
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
+  "orderSentSuccess": "تم إرسال الطلب بنجاح",
+  "turnoverRate": "الدوران: {rate}%",
+  "@turnoverRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+
+  "editSupplier": "تعديل المورد",
+  "addNewSupplier": "إضافة مورد جديد",
+  "basicInfo": "المعلومات الأساسية",
+  "supplierContactName": "اسم المورد / جهة الاتصال *",
+  "companyNameRequired": "اسم الشركة *",
+  "generalCategory": "عام",
+  "foodMaterials": "مواد غذائية",
+  "beverages": "مشروبات",
+  "vegetablesFruits": "خضروات وفواكه",
+  "equipment": "معدات",
+  "contactInfo": "معلومات التواصل",
+  "primaryPhoneRequired": "رقم الهاتف الأساسي *",
+  "secondaryPhoneOptional": "رقم هاتف ثانوي (اختياري)",
+  "emailField": "البريد الإلكتروني",
+  "addressField2": "العنوان",
+  "commercialInfo": "المعلومات التجارية",
+  "taxNumberVat": "الرقم الضريبي (VAT)",
+  "commercialRegNumber": "رقم السجل التجاري (CR)",
+  "financialInfo": "المعلومات المالية",
+  "paymentTerms": "شروط الدفع",
+  "payOnDelivery": "الدفع عند الاستلام",
+  "sevenDays": "7 أيام",
+  "fourteenDays": "14 يوم",
+  "thirtyDays": "30 يوم",
+  "sixtyDays": "60 يوم",
+  "bankName": "اسم البنك",
+  "ibanNumber": "رقم الحساب IBAN",
+  "additionalSettings": "إعدادات إضافية",
+  "supplierIsActive": "المورد نشط",
+  "notesField": "ملاحظات",
+  "savingData": "جاري الحفظ...",
+  "updateSupplier": "تحديث المورد",
+  "addSupplierBtn": "إضافة المورد",
+  "deleteSupplier": "حذف المورد",
+  "supplierUpdatedSuccess": "تم تحديث بيانات المورد",
+  "supplierAddedSuccess": "تم إضافة المورد بنجاح",
+  "supplierDeletedSuccess": "تم حذف المورد",
+  "deleteSupplierConfirmTitle": "حذف المورد",
+  "deleteSupplierConfirmMessage": "هل أنت متأكد من حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.",
+
+  "supplierDetailsTitle": "تفاصيل المورد",
+  "backButton": "رجوع",
+  "editButton": "تعديل",
+  "newPurchaseOrder": "طلب شراء جديد",
+  "deleteButton": "حذف",
+  "phoneLabel": "الهاتف",
+  "supplierEmailLabel": "البريد",
+  "supplierAddressLabel": "العنوان",
+  "dueToSupplier": "مستحق للمورد",
+  "balanceInOurFavor": "رصيد لصالحنا",
+  "paymentBtn": "سداد",
+  "totalPurchasesLabel": "إجمالي المشتريات",
+  "lastPurchaseDate": "آخر شراء",
+  "recentPurchases": "آخر المشتريات",
+  "noPurchasesYet": "لا توجد مشتريات",
+  "pendingLabel": "معلق",
+  "deleteSupplierDialogTitle": "حذف المورد",
+  "deleteSupplierDialogMessage": "سيتم حذف جميع بيانات المورد. هل تريد المتابعة؟",
+
+  "unknownUser": "غير معروف",
+  "employeeRole": "موظف",
+  "operationCount": "عملية",
+  "dayCount": "يوم",
+  "personalInfoSection": "المعلومات الشخصية",
+  "emailInfoLabel": "البريد الإلكتروني",
+  "phoneInfoLabel": "الهاتف",
+  "branchInfoLabel": "الفرع",
+  "employeeIdLabel": "الرقم الوظيفي",
+  "notSpecified": "غير محدد",
+  "mainBranchDefault": "الفرع الرئيسي",
+  "changePassword": "تغيير كلمة المرور",
+  "activityLogLink": "سجل النشاط",
+  "logoutButton": "تسجيل الخروج",
+  "systemAdminRole": "مدير النظام",
+
+  "noBranchesRegistered": "لا توجد فروع مسجلة",
+  "branchEmailLabel": "البريد",
+  "branchCityLabel": "المدينة",
+
+  "importSupplierInvoice": "استيراد فاتورة المورد",
+  "captureOrSelectPhoto": "التقط صورة أو اختر من المعرض\nسيتم استخراج البيانات تلقائياً",
+  "captureImage": "التقاط صورة",
+  "galleryPick": "المعرض",
+  "anotherImage": "صورة أخرى",
+  "aiProcessingBtn": "معالجة AI",
+  "processingInvoice": "جاري معالجة الفاتورة...",
+  "extractingDataWithAi": "يتم استخراج البيانات بالذكاء الاصطناعي",
+  "dataExtracted": "تم استخراج البيانات",
+  "purchaseInvoiceCreated": "تم إنشاء فاتورة الشراء",
+
+  "reviewInvoice": "مراجعة الفاتورة",
+  "confirmAllItems": "تأكيد الكل",
+  "unknownSupplier": "مورد غير معروف",
+  "@invoiceNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "itemCount": "{count} صنف",
+  "@itemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "progressLabel": "التقدم: {confirmed} / {total}",
+  "@progressLabel": {
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "needsReviewCount": "{count} يحتاج مراجعة",
+  "@needsReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notMatchedStatus": "لم يتم المطابقة",
+  "matchedStatus": "مطابقة",
+  "matchedProductLabel": "منتج مطابق",
+  "matchedWithName": "مطابقة: {name}",
+  "@matchedWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchForProduct": "بحث عن منتج...",
+  "createNewProduct": "إنشاء منتج جديد",
+  "savingInvoice": "جاري الحفظ...",
+  "invoiceSavedSuccess": "تم حفظ فاتورة الشراء بنجاح",
+
+  "customerAnalytics": "تحليل العملاء",
+  "weekPeriod": "أسبوع",
+  "monthPeriod": "شهر",
+  "yearPeriod": "سنة",
+  "totalCustomers": "إجمالي العملاء",
+  "newCustomers": "عملاء جدد",
+  "returningCustomers": "عملاء متكررون",
+  "averageSpending": "متوسط الإنفاق",
+  "topCustomers": "أفضل العملاء",
+  "orderCount": "{count} طلب",
+  "@orderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "customerDistribution": "توزيع العملاء",
+  "vipCustomers": "VIP (أكثر من 5000 ر.س)",
+  "regularCustomers": "منتظمين (1000-5000 ر.س)",
+  "normalCustomers": "عاديين (أقل من 1000 ر.س)",
+  "customerActivity": "نشاط العملاء",
+  "activeLabel": "نشط",
+  "dormantLabel": "خامل",
+  "inactiveLabel": "غير نشط",
+
+  "noPrintJobsPending": "لا توجد مهام طباعة معلقة",
+  "printerConnected": "الطابعة متصلة",
+  "totalPrintLabel": "إجمالي",
+  "waitingPrintLabel": "في الانتظار",
+  "failedPrintLabel": "فشلت",
+  "pendingJobsCount": "{count} مهام معلقة",
+  "@pendingJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "printingInProgress": "جاري الطباعة...",
+  "failedRetry": "فشل - حاول مرة أخرى",
+  "waitingStatus": "في الانتظار",
+  "printingOrderId": "جاري طباعة {orderId}...",
+  "@printingOrderId": {
+    "placeholders": {
+      "orderId": {
+        "type": "String"
+      }
+    }
+  },
+  "allJobsPrinted": "تم طباعة جميع المهام",
+  "clearPrintQueueTitle": "مسح قائمة الطباعة",
+  "clearPrintQueueConfirm": "هل تريد مسح جميع مهام الطباعة المعلقة؟",
+  "clearBtn": "مسح",
+
+  "gotIt": "فهمت",
+  "print": "طباعة",
+  "display": "عرض",
+  "item": "عنصر",
+  "invoice": "فاتورة",
+  "accept": "قبول",
+  "details": "تفاصيل",
+  "newLabel": "جديد",
+  "mixed": "مختلط",
+  "lowStockLabel": "منخفض",
+  "debtor": "مدين",
+  "creditor": "دائن",
+  "balanceLabel": "الرصيد",
+  "returnLabel": "استرجاع",
+  "skip": "تخطي",
+  "send": "إرسال",
+  "cloud": "سحابي",
+  "defaultLabel": "افتراضي",
+  "closed": "مغلق",
+  "owes": "عليه",
+  "due": "له",
+  "balanced": "متوازن",
+  "offlineModeTitle": "الوضع غير المتصل",
+  "offlineModeDescription": "يمكنك الاستمرار في استخدام التطبيق:",
+  "offlineCanSell": "إجراء عمليات البيع",
+  "offlineCanAddToCart": "إضافة منتجات للسلة",
+  "offlineCanPrint": "طباعة الإيصالات",
+  "offlineAutoSync": "سيتم مزامنة البيانات تلقائياً عند عودة الاتصال.",
+  "offlineSavingLocally": "غير متصل - يتم حفظ العمليات محلياً",
+  "seconds": "ثانية",
+  "errors": "أخطاء",
+  "syncLabel": "مزامنة",
+  "slow": "بطيئة",
+  "myGrocery": "بقالتي",
+  "cashier": "كاشير",
+  "goBack": "رجوع",
+  "menuLabel": "القائمة",
+  "gold": "ذهبي",
+  "silver": "فضي",
+  "diamond": "ماسي",
+  "bronze": "برونزي",
+  "saudiArabia": "السعودية",
+  "uae": "الإمارات",
+  "kuwait": "الكويت",
+  "bahrain": "البحرين",
+  "qatar": "قطر",
+  "oman": "عُمان",
+  "control": "تحكم",
+  "strong": "قوي",
+  "medium": "متوسط",
+  "weak": "ضعيف",
+  "good": "جيد",
+  "danger": "خطر",
+  "currentLabel": "الحالي",
+  "suggested": "المقترح",
+  "actual": "الفعلي",
+  "forecast": "المتوقع",
+  "critical": "حرج",
+  "high": "عالي",
+  "low": "منخفض",
+  "investigation": "التحقيق",
+  "apply": "تطبيق",
+  "run": "تشغيل",
+  "positive": "إيجابي",
+  "neutral": "محايد",
+  "negative": "سلبي",
+  "elastic": "مرن",
+  "demand": "الطلب",
+  "quality": "الجودة",
+  "luxury": "فاخر",
+  "economic": "اقتصادي",
+  "ourStore": "متجرنا",
+  "upcoming": "قادم",
+  "cost": "التكلفة",
+  "duration": "المدة",
+  "quiet": "هادئ",
+  "busy": "مزدحم",
+  "outstanding": "متميز",
+  "donate": "تبرع",
+  "day": "يوم",
+  "days": "أيام",
+  "projected": "المتوقع",
+  "analysis": "تحليل",
+  "review": "مراجعة",
+  "productCategory": "التصنيف",
+  "ourPrice": "سعرنا",
+  "position": "الموقف",
+  "cheapest": "الأرخص",
+  "mostExpensive": "الأغلى",
+  "soldOut": "نفد",
+  "noDataAvailable": "لا توجد بيانات",
+  "noDataFoundMessage": "لم يتم العثور على أي بيانات",
+  "noSearchResultsFound": "لا توجد نتائج",
+  "noProductsFound": "لم يتم العثور على منتجات",
+  "noCustomers": "لا يوجد عملاء",
+  "addCustomersToStart": "أضف عملاء جدد للبدء",
+  "noOrdersYet": "لم تقم بأي طلبات بعد",
+  "noConnection": "لا يوجد اتصال",
+  "checkInternet": "تحقق من اتصالك بالإنترنت",
+  "cartIsEmpty": "السلة فارغة",
+  "browseProducts": "تصفح المنتجات",
+  "noResultsFor": "لم يتم العثور على نتائج لـ \"{query}\"",
+  "@noResultsFor": { "placeholders": { "query": { "type": "String" } } },
+  "paidLabel": "المدفوع",
+  "remainingLabel": "المتبقي",
+  "completeLabel": "مكتمل ✓",
+  "addPayment": "إضافة",
+  "payments": "الدفعات",
+  "now": "الآن",
+
+  "ecommerce": "المتجر الإلكتروني",
+  "ecommerceSection": "التجارة الإلكترونية",
+  "wallet": "المحفظة",
+  "subscription": "الاشتراك",
+  "complaintsReport": "تقرير الشكاوى",
+  "mediaLibrary": "مكتبة الوسائط",
+  "deviceLog": "سجل الأجهزة",
+  "shippingGateways": "بوابات الشحن",
+  "systemSection": "النظام"
 }

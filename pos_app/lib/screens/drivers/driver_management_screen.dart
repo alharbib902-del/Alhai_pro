@@ -1,11 +1,14 @@
+import 'package:drift/drift.dart' show Variable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/layout/app_sidebar.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/router/routes.dart';
+import '../../widgets/common/app_empty_state.dart';
 
 /// شاشة إدارة السائقين
 class DriverManagementScreen extends ConsumerStatefulWidget {
@@ -16,29 +19,48 @@ class DriverManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen> {
-  bool _sidebarCollapsed = false;
-  String _selectedNavId = 'employees';
+  List<_Driver> _drivers = [];
+  bool _isLoading = true;
+  String? _error;
 
-  final List<_Driver> _drivers = [
-    _Driver(id: '1', name: 'سعد محمد', phone: '0501234567', vehicle: 'هايلكس - أبيض', plateNumber: 'أ ب ج 1234', status: 'active', todayDeliveries: 12, totalDeliveries: 450, rating: 4.8),
-    _Driver(id: '2', name: 'فهد عبدالله', phone: '0551234567', vehicle: 'دباب - أزرق', plateNumber: 'س ع د 5678', status: 'delivering', todayDeliveries: 8, totalDeliveries: 320, rating: 4.6),
-    _Driver(id: '3', name: 'خالد عمر', phone: '0561234567', vehicle: 'ستارا - رمادي', plateNumber: 'م ن و 9012', status: 'offline', todayDeliveries: 0, totalDeliveries: 185, rating: 4.5),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-  void _handleNavigation(AppSidebarItem item) {
-    setState(() => _selectedNavId = item.id);
-    switch (item.id) {
-      case 'dashboard': context.go(AppRoutes.dashboard); break;
-      case 'pos': context.go(AppRoutes.pos); break;
-      case 'products': context.push(AppRoutes.products); break;
-      case 'categories': context.push(AppRoutes.categories); break;
-      case 'inventory': context.push(AppRoutes.inventory); break;
-      case 'customers': context.push(AppRoutes.customers); break;
-      case 'invoices': context.push(AppRoutes.invoices); break;
-      case 'orders': context.push(AppRoutes.orders); break;
-      case 'sales': context.push(AppRoutes.invoices); break;
-      case 'returns': context.push(AppRoutes.returns); break;
-      case 'reports': context.push(AppRoutes.reports); break;
+  Future<void> _loadData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+      final db = getIt<AppDatabase>();
+      // DriversTable exists but no DAO, try direct query
+      final results = await db.customSelect(
+        'SELECT * FROM drivers WHERE store_id = ? AND is_active = 1 ORDER BY name',
+        variables: [Variable.withString(storeId)],
+      ).get();
+      if (mounted) {
+        setState(() {
+          _drivers = results.map((r) => _Driver(
+            id: r.data['id'] as String,
+            name: r.data['name'] as String,
+            phone: r.data['phone'] as String? ?? '',
+            vehicle: '${r.data['vehicle_type'] ?? ''}',
+            plateNumber: r.data['vehicle_plate'] as String? ?? '',
+            status: r.data['status'] as String? ?? 'available',
+            todayDeliveries: 0,
+            totalDeliveries: 0,
+            rating: 0.0,
+          )).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = e.toString(); });
     }
   }
 
@@ -50,67 +72,45 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-      drawer: isWideScreen ? null : _buildDrawer(l10n),
-      body: Row(
-        children: [
-          if (isWideScreen)
-            AppSidebar(
-              storeName: l10n.brandName,
-              groups: DefaultSidebarItems.getGroups(context),
-              selectedId: _selectedNavId,
-              onItemTap: _handleNavigation,
-              onSettingsTap: () => context.push(AppRoutes.settings),
-              onSupportTap: () {},
-              onLogoutTap: () => context.go('/login'),
-              collapsed: _sidebarCollapsed,
-              userName: 'أحمد محمد', // TODO: localize
-              userRole: l10n.branchManager,
-              onUserTap: () {},
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.driversTitle,
+          onMenuTap: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: l10n.defaultUserName,
+          userRole: l10n.branchManager,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.map, color: isDark ? Colors.white70 : AppColors.textSecondary),
+              tooltip: l10n.trackingMap,
+              onPressed: _showTrackingMap,
             ),
-          Expanded(
-            child: Column(
-              children: [
-                AppHeader(
-                  title: 'إدارة السائقين', // TODO: localize
-                  onMenuTap: isWideScreen
-                      ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
-                      : () => Scaffold.of(context).openDrawer(),
-                  onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName: 'أحمد محمد', // TODO: localize
-                  userRole: l10n.branchManager,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.map, color: isDark ? Colors.white70 : AppColors.textSecondary),
-                      tooltip: 'خريطة التتبع', // TODO: localize
-                      onPressed: _showTrackingMap,
-                    ),
-                    const SizedBox(width: 8),
-                    FilledButton.icon(
-                      onPressed: _addDriver,
-                      icon: const Icon(Icons.person_add, size: 18),
-                      label: const Text('إضافة سائق'), // TODO: localize
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                    child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                  ),
-                ),
-              ],
+            const SizedBox(width: 8),
+            FilledButton.icon(
+              onPressed: _addDriver,
+              icon: const Icon(Icons.person_add, size: 18),
+              label: Text(l10n.addDriver),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+              ? AppErrorState.general(message: _error, onRetry: _loadData)
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                ),
+        ),
+      ],
     );
   }
 
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final activeCount = _drivers.where((d) => d.status == 'active').length;
+    final activeCount = _drivers.where((d) => d.status == 'active' || d.status == 'available').length;
     final deliveringCount = _drivers.where((d) => d.status == 'delivering').length;
     final todayTotal = _drivers.fold(0, (sum, d) => sum + d.todayDeliveries);
 
@@ -120,125 +120,128 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
         // Stats row
         Row(
           children: [
-            Expanded(child: _buildStatCard(icon: Icons.people, label: 'إجمالي', value: '${_drivers.length}', color: AppColors.info, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.people, label: l10n.total, value: '${_drivers.length}', color: AppColors.info, isDark: isDark)),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(icon: Icons.check_circle, label: 'متاح', value: '$activeCount', color: AppColors.success, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.check_circle, label: l10n.available, value: '$activeCount', color: AppColors.success, isDark: isDark)),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(icon: Icons.delivery_dining, label: 'في توصيل', value: '$deliveringCount', color: AppColors.warning, isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.delivery_dining, label: l10n.delivering, value: '$deliveringCount', color: AppColors.warning, isDark: isDark)),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(icon: Icons.local_shipping, label: 'توصيلات اليوم', value: '$todayTotal', color: const Color(0xFF8B5CF6), isDark: isDark)), // TODO: localize
+            Expanded(child: _buildStatCard(icon: Icons.local_shipping, label: l10n.totalDeliveries, value: '$todayTotal', color: const Color(0xFF8B5CF6), isDark: isDark)),
           ],
         ),
         const SizedBox(height: 16),
 
-        // Drivers list
-        ...List.generate(_drivers.length, (index) {
-          final driver = _drivers[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
-            ),
-            child: InkWell(
-              onTap: () => _showDriverDetails(driver),
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundColor: AppColors.info.withValues(alpha: 0.1),
-                          child: Text(
-                            driver.name[0],
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.info),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(driver.status),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        if (_drivers.isEmpty)
+          AppEmptyState.noData(title: l10n.noDriversRegistered, description: l10n.addDriversForDelivery)
+        else
+          // Drivers list
+          ...List.generate(_drivers.length, (index) {
+            final driver = _drivers[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              ),
+              child: InkWell(
+                onTap: () => _showDriverDetails(driver),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Stack(
                         children: [
-                          Text(
-                            driver.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : AppColors.textPrimary,
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundColor: AppColors.info.withValues(alpha: 0.1),
+                            child: Text(
+                              driver.name.isNotEmpty ? driver.name[0] : '?',
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.info),
                             ),
                           ),
-                          Text(
-                            driver.vehicle,
-                            style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : AppColors.textSecondary),
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.star, size: 14, color: AppColors.warning),
-                              const SizedBox(width: 2),
-                              Text(
-                                driver.rating.toStringAsFixed(1),
-                                style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(driver.status),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                  width: 2,
+                                ),
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '${driver.todayDeliveries} توصيلة اليوم', // TODO: localize
-                                style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
-                              ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(driver.status).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            _getStatusName(driver.status),
-                            style: TextStyle(fontSize: 11, color: _getStatusColor(driver.status), fontWeight: FontWeight.w500),
-                          ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              driver.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              driver.vehicle.isNotEmpty ? driver.vehicle : '—',
+                              style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.star, size: 14, color: AppColors.warning),
+                                const SizedBox(width: 2),
+                                Text(
+                                  driver.rating.toStringAsFixed(1),
+                                  style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.deliveriesToday(driver.todayDeliveries),
+                                  style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        if (driver.status == 'active') ...[
-                          const SizedBox(height: 8),
-                          IconButton(
-                            icon: Icon(Icons.add_box_outlined, color: AppColors.info),
-                            onPressed: () => _assignOrder(driver),
-                            tooltip: 'تعيين طلب', // TODO: localize
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(driver.status).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _getStatusName(driver.status, l10n),
+                              style: TextStyle(fontSize: 11, color: _getStatusColor(driver.status), fontWeight: FontWeight.w500),
+                            ),
                           ),
+                          if (driver.status == 'active' || driver.status == 'available') ...[
+                            const SizedBox(height: 8),
+                            IconButton(
+                              icon: const Icon(Icons.add_box_outlined, color: AppColors.info),
+                              onPressed: () => _assignOrder(driver),
+                              tooltip: l10n.assignOrder,
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
       ],
     );
   }
@@ -268,38 +271,13 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
     );
   }
 
-  Widget _buildDrawer(AppLocalizations l10n) {
-    return Drawer(
-      child: AppSidebar(
-        storeName: l10n.brandName,
-        groups: DefaultSidebarItems.getGroups(context),
-        selectedId: _selectedNavId,
-        onItemTap: (item) {
-          Navigator.pop(context);
-          _handleNavigation(item);
-        },
-        onSettingsTap: () {
-          Navigator.pop(context);
-          context.push(AppRoutes.settings);
-        },
-        onSupportTap: () => Navigator.pop(context),
-        onLogoutTap: () {
-          Navigator.pop(context);
-          context.go('/login');
-        },
-        userName: 'أحمد محمد', // TODO: localize
-        userRole: l10n.branchManager,
-        onUserTap: () => Navigator.pop(context),
-      ),
-    );
-  }
-
   void _showTrackingMap() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('خريطة التتبع'), // TODO: localize
+        title: Text(l10n.trackingMap),
         content: SizedBox(
           width: 400,
           height: 300,
@@ -314,21 +292,22 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                 children: [
                   Icon(Icons.map, size: 64, color: isDark ? Colors.white24 : Colors.grey),
                   const SizedBox(height: 16),
-                  Text('خريطة تتبع السائقين', style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)), // TODO: localize
-                  Text('(يتطلب اشتراك GPS)', style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary)), // TODO: localize
+                  Text(l10n.driversTrackingMap, style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary)),
+                  Text(l10n.gpsSubscriptionRequired, style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary)),
                 ],
               ),
             ),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
         ],
       ),
     );
   }
 
   void _addDriver() {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final vehicleController = TextEditingController();
@@ -336,24 +315,24 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('إضافة سائق'), // TODO: localize
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.addDriver),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: nameController, decoration: const InputDecoration(labelText: 'الاسم *', prefixIcon: Icon(Icons.person))), // TODO: localize
+              TextField(controller: nameController, decoration: InputDecoration(labelText: '${l10n.driverName} *', prefixIcon: const Icon(Icons.person))),
               const SizedBox(height: 12),
-              TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'الهاتف *', prefixIcon: Icon(Icons.phone))), // TODO: localize
+              TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: '${l10n.phone} *', prefixIcon: const Icon(Icons.phone))),
               const SizedBox(height: 12),
-              TextField(controller: vehicleController, decoration: const InputDecoration(labelText: 'المركبة', prefixIcon: Icon(Icons.directions_car), hintText: 'مثال: هايلكس - أبيض')), // TODO: localize
+              TextField(controller: vehicleController, decoration: InputDecoration(labelText: l10n.vehicleLabel, prefixIcon: const Icon(Icons.directions_car), hintText: l10n.vehicleHint)),
               const SizedBox(height: 12),
-              TextField(controller: plateController, decoration: const InputDecoration(labelText: 'رقم اللوحة', prefixIcon: Icon(Icons.confirmation_number))), // TODO: localize
+              TextField(controller: plateController, decoration: InputDecoration(labelText: l10n.plateNumberLabel, prefixIcon: const Icon(Icons.confirmation_number))),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               if (nameController.text.isNotEmpty && phoneController.text.isNotEmpty) {
@@ -371,17 +350,23 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                   ));
                 });
               }
-              Navigator.pop(context);
+              Navigator.pop(ctx);
             },
-            child: const Text('إضافة'), // TODO: localize
+            child: Text(l10n.add),
           ),
         ],
       ),
-    );
+    ).then((_) {
+      nameController.dispose();
+      phoneController.dispose();
+      vehicleController.dispose();
+      plateController.dispose();
+    });
   }
 
   void _showDriverDetails(_Driver driver) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -411,7 +396,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                   CircleAvatar(
                     radius: 32,
                     backgroundColor: AppColors.info.withValues(alpha: 0.1),
-                    child: Text(driver.name[0], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.info)),
+                    child: Text(driver.name.isNotEmpty ? driver.name[0] : '?', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.info)),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -427,13 +412,13 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                                 color: _getStatusColor(driver.status).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(_getStatusName(driver.status), style: TextStyle(color: _getStatusColor(driver.status), fontWeight: FontWeight.w500)),
+                              child: Text(_getStatusName(driver.status, l10n), style: TextStyle(color: _getStatusColor(driver.status), fontWeight: FontWeight.w500)),
                             ),
                           ],
                         ),
                         Row(
                           children: [
-                            Icon(Icons.star, size: 16, color: AppColors.warning),
+                            const Icon(Icons.star, size: 16, color: AppColors.warning),
                             const SizedBox(width: 4),
                             Text(driver.rating.toStringAsFixed(1), style: TextStyle(color: isDark ? Colors.white54 : AppColors.textSecondary)),
                           ],
@@ -444,21 +429,21 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                 ],
               ),
               const SizedBox(height: 24),
-              _DetailTile(icon: Icons.phone, label: 'الهاتف', value: driver.phone, isDark: isDark), // TODO: localize
-              _DetailTile(icon: Icons.directions_car, label: 'المركبة', value: driver.vehicle, isDark: isDark), // TODO: localize
-              _DetailTile(icon: Icons.confirmation_number, label: 'اللوحة', value: driver.plateNumber, isDark: isDark), // TODO: localize
+              _DetailTile(icon: Icons.phone, label: l10n.phone, value: driver.phone, isDark: isDark),
+              _DetailTile(icon: Icons.directions_car, label: l10n.vehicleLabel, value: driver.vehicle.isNotEmpty ? driver.vehicle : '—', isDark: isDark),
+              _DetailTile(icon: Icons.confirmation_number, label: l10n.plateNumberLabel, value: driver.plateNumber.isNotEmpty ? driver.plateNumber : '—', isDark: isDark),
               Divider(height: 32, color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
               Row(
                 children: [
-                  Expanded(child: _buildDetailCard(icon: Icons.today, label: 'توصيلات اليوم', value: '${driver.todayDeliveries}', color: AppColors.info, isDark: isDark)), // TODO: localize
+                  Expanded(child: _buildDetailCard(icon: Icons.today, label: l10n.totalDeliveries, value: '${driver.todayDeliveries}', color: AppColors.info, isDark: isDark)),
                   const SizedBox(width: 12),
-                  Expanded(child: _buildDetailCard(icon: Icons.all_inclusive, label: 'الإجمالي', value: '${driver.totalDeliveries}', color: AppColors.success, isDark: isDark)), // TODO: localize
+                  Expanded(child: _buildDetailCard(icon: Icons.all_inclusive, label: l10n.total, value: '${driver.totalDeliveries}', color: AppColors.success, isDark: isDark)),
                 ],
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
-                  Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: const Text('تعديل'))), // TODO: localize
+                  Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit))),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton.icon(
@@ -467,7 +452,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                         _assignOrder(driver);
                       },
                       icon: const Icon(Icons.add_box),
-                      label: const Text('تعيين طلب'), // TODO: localize
+                      label: Text(l10n.assignOrder),
                     ),
                   ),
                 ],
@@ -505,44 +490,49 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'active': return AppColors.success;
+      case 'active':
+      case 'available':
+        return AppColors.success;
       case 'delivering': return AppColors.warning;
       case 'offline': return AppColors.textSecondary;
       default: return AppColors.textSecondary;
     }
   }
 
-  String _getStatusName(String status) {
+  String _getStatusName(String status, AppLocalizations l10n) {
     switch (status) {
-      case 'active': return 'متاح'; // TODO: localize
-      case 'delivering': return 'في توصيل'; // TODO: localize
-      case 'offline': return 'غير متصل'; // TODO: localize
+      case 'active':
+      case 'available':
+        return l10n.available;
+      case 'delivering': return l10n.delivering;
+      case 'offline': return l10n.offline;
       default: return status;
     }
   }
 
   void _assignOrder(_Driver driver) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('تعيين طلب - ${driver.name}'), // TODO: localize
-        content: const Column(
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.assignOrderTo(driver.name)),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(leading: Icon(Icons.receipt_long), title: Text('طلب #2024-003'), subtitle: Text('خالد عمر - حي النزهة'), trailing: Icon(Icons.radio_button_checked, color: AppColors.info)),
-            ListTile(leading: Icon(Icons.receipt_long), title: Text('طلب #2024-008'), subtitle: Text('محمد علي - حي الروضة'), trailing: Icon(Icons.radio_button_unchecked)),
+            ListTile(leading: const Icon(Icons.receipt_long), title: Text('${l10n.orderLabel} #2024-003'), subtitle: const Text('Sample Customer 1'), trailing: const Icon(Icons.radio_button_checked, color: AppColors.info)),
+            ListTile(leading: const Icon(Icons.receipt_long), title: Text('${l10n.orderLabel} #2024-008'), subtitle: const Text('Sample Customer 2'), trailing: const Icon(Icons.radio_button_unchecked)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), // TODO: localize
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تم تعيين الطلب لـ ${driver.name}')), // TODO: localize
+                SnackBar(content: Text(l10n.orderAssignedTo(driver.name))),
               );
             },
-            child: const Text('تعيين'), // TODO: localize
+            child: Text(l10n.confirm),
           ),
         ],
       ),

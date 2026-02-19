@@ -87,6 +87,7 @@ class MemoryMonitor {
   void stopMonitoring() {
     _monitorTimer?.cancel();
     _monitorTimer = null;
+    SystemChannels.lifecycle.setMessageHandler(null);
     _isMonitoring = false;
     debugPrint('[MemoryMonitor] Stopped monitoring');
   }
@@ -182,6 +183,7 @@ class MemoryMonitor {
 
   /// مراقب للـ Widget
   Widget wrapWithMemoryMonitor(Widget child) {
+    if (kReleaseMode) return child; // No-op in production
     return _MemoryMonitorWidget(child: child);
   }
 }

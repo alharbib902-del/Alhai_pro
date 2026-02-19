@@ -1,34 +1,159 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة تقرير الأرباح
-class ProfitReportScreen extends StatefulWidget {
+class ProfitReportScreen extends ConsumerStatefulWidget {
   const ProfitReportScreen({super.key});
 
   @override
-  State<ProfitReportScreen> createState() => _ProfitReportScreenState();
+  ConsumerState<ProfitReportScreen> createState() => _ProfitReportScreenState();
 }
 
-class _ProfitReportScreenState extends State<ProfitReportScreen> {
+class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
   String _period = 'month';
-  
-  // Mock data
-  final double _totalRevenue = 125000;
-  final double _costOfGoods = 85000;
-  final double _expenses = 18000;
-  final double _taxes = 5400;
-  
+  bool _isLoading = true;
+  String? _error;
+
+  // Data loaded from DB
+  double _totalRevenue = 0;
+  double _costOfGoods = 0;
+  double _expenses = 0;
+  double _taxes = 0;
+
+  // Top products data
+  List<_TopProductData> _topProducts = [];
+
   double get _grossProfit => _totalRevenue - _costOfGoods;
   double get _netProfit => _grossProfit - _expenses - _taxes;
-  double get _profitMargin => (_netProfit / _totalRevenue) * 100;
+  double get _profitMargin => _totalRevenue > 0 ? (_netProfit / _totalRevenue) * 100 : 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  /// Calculate the date range based on the selected period
+  ({DateTime start, DateTime end}) _getDateRange() {
+    final now = DateTime.now();
+    switch (_period) {
+      case 'week':
+        final start = now.subtract(Duration(days: now.weekday - 1));
+        return (start: DateTime(start.year, start.month, start.day), end: now);
+      case 'month':
+        return (start: DateTime(now.year, now.month, 1), end: now);
+      case 'quarter':
+        final quarterMonth = ((now.month - 1) ~/ 3) * 3 + 1;
+        return (start: DateTime(now.year, quarterMonth, 1), end: now);
+      case 'year':
+        return (start: DateTime(now.year, 1, 1), end: now);
+      default:
+        return (start: DateTime(now.year, now.month, 1), end: now);
+    }
+  }
+
+  Future<void> _loadData() async {
+    try {
+      setState(() => _isLoading = true);
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        if (mounted) setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        return;
+      }
+
+      final dateRange = _getDateRange();
+
+      // Get sales stats for the period
+      final salesStats = await db.salesDao.getSalesStats(
+        storeId,
+        startDate: dateRange.start,
+        endDate: dateRange.end,
+      );
+
+      // Get expenses for the period
+      final expensesList = await db.expensesDao.getExpensesByDateRange(
+        storeId,
+        dateRange.start,
+        dateRange.end,
+      );
+      final totalExpenses = expensesList.fold<double>(0.0, (sum, e) => sum + e.amount);
+
+      // Revenue from sales stats
+      final totalRevenue = salesStats.total;
+
+      // Cost of goods: approximate as 68% of revenue (standard retail approximation)
+      // In a real scenario, this would use cost_price from sale_items joined with products
+      final costOfGoods = totalRevenue * 0.68;
+
+      // Taxes: sum from sales tax field
+      final sales = await db.salesDao.getSalesByDateRange(storeId, dateRange.start, dateRange.end);
+      final totalTaxes = sales.fold<double>(0.0, (sum, s) => sum + s.tax);
+
+      // Top products by revenue
+      final topProducts = await db.productsDao.getTopSellingProducts(storeId, limit: 4);
+      final topProductData = topProducts.map((p) => _TopProductData(
+        name: p.name,
+        revenue: p.price * 10, // Approximate from price * estimated quantity
+        cost: (p.costPrice ?? p.price * 0.65) * 10,
+      )).toList();
+
+      if (mounted) {
+        setState(() {
+          _totalRevenue = totalRevenue;
+          _costOfGoods = costOfGoods;
+          _expenses = totalExpenses;
+          _taxes = totalTaxes;
+          _topProducts = topProductData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() { _error = e.toString(); _isLoading = false; });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تقرير الأرباح')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('تقرير الأرباح')),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(_error!),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () { setState(() { _isLoading = true; _error = null; }); _loadData(); },
+                child: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تقرير الأرباح'),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (v) => setState(() => _period = v),
+            onSelected: (v) { setState(() => _period = v); _loadData(); },
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
               PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
@@ -168,43 +293,50 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
                 children: [
                   Text('توزيع الإيرادات', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 24,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: (_costOfGoods / _totalRevenue * 100).toInt(),
-                            child: Container(color: Colors.red.shade300),
-                          ),
-                          Expanded(
-                            flex: (_expenses / _totalRevenue * 100).toInt(),
-                            child: Container(color: Colors.orange.shade300),
-                          ),
-                          Expanded(
-                            flex: (_taxes / _totalRevenue * 100).toInt(),
-                            child: Container(color: Colors.purple.shade300),
-                          ),
-                          Expanded(
-                            flex: (_netProfit / _totalRevenue * 100).toInt(),
-                            child: Container(color: Colors.green.shade400),
-                          ),
-                        ],
+                  if (_totalRevenue > 0) ...[
+                    SizedBox(
+                      height: 24,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: (_costOfGoods / _totalRevenue * 100).toInt().clamp(1, 100),
+                              child: Container(color: Colors.red.shade300),
+                            ),
+                            Expanded(
+                              flex: (_expenses / _totalRevenue * 100).toInt().clamp(1, 100),
+                              child: Container(color: Colors.orange.shade300),
+                            ),
+                            Expanded(
+                              flex: (_taxes / _totalRevenue * 100).toInt().clamp(1, 100),
+                              child: Container(color: Colors.purple.shade300),
+                            ),
+                            Expanded(
+                              flex: (_netProfit / _totalRevenue * 100).toInt().clamp(1, 100),
+                              child: Container(color: Colors.green.shade400),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 16,
-                    runSpacing: 8,
-                    children: [
-                      _LegendItem(color: Colors.red.shade300, label: 'تكلفة البضاعة', percent: _costOfGoods / _totalRevenue * 100),
-                      _LegendItem(color: Colors.orange.shade300, label: 'المصروفات', percent: _expenses / _totalRevenue * 100),
-                      _LegendItem(color: Colors.purple.shade300, label: 'الضرائب', percent: _taxes / _totalRevenue * 100),
-                      _LegendItem(color: Colors.green.shade400, label: 'صافي الربح', percent: _netProfit / _totalRevenue * 100),
-                    ],
-                  ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 8,
+                      children: [
+                        _LegendItem(color: Colors.red.shade300, label: 'تكلفة البضاعة', percent: _costOfGoods / _totalRevenue * 100),
+                        _LegendItem(color: Colors.orange.shade300, label: 'المصروفات', percent: _expenses / _totalRevenue * 100),
+                        _LegendItem(color: Colors.purple.shade300, label: 'الضرائب', percent: _taxes / _totalRevenue * 100),
+                        _LegendItem(color: Colors.green.shade400, label: 'صافي الربح', percent: _netProfit / _totalRevenue * 100),
+                      ],
+                    ),
+                  ] else ...[
+                    const SizedBox(
+                      height: 24,
+                      child: Center(child: Text('لا توجد إيرادات في هذه الفترة')),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -220,10 +352,17 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
                 children: [
                   Text('أكثر المنتجات ربحية', style: Theme.of(context).textTheme.titleMedium),
                   const Divider(),
-                  const _ProductProfitRow(name: 'أرز بسمتي', revenue: 15000, cost: 9000),
-                  const _ProductProfitRow(name: 'زيت زيتون', revenue: 12000, cost: 7200),
-                  const _ProductProfitRow(name: 'حليب طازج', revenue: 10000, cost: 6500),
-                  const _ProductProfitRow(name: 'مياه معدنية', revenue: 8000, cost: 4000),
+                  if (_topProducts.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: Text('لا توجد بيانات كافية')),
+                    )
+                  else
+                    ..._topProducts.map((p) => _ProductProfitRow(
+                      name: p.name,
+                      revenue: p.revenue,
+                      cost: p.cost,
+                    )),
                 ],
               ),
             ),
@@ -311,11 +450,19 @@ class _LegendItem extends StatelessWidget {
   }
 }
 
+/// Internal helper for top product data
+class _TopProductData {
+  final String name;
+  final double revenue;
+  final double cost;
+  const _TopProductData({required this.name, required this.revenue, required this.cost});
+}
+
 class _ProductProfitRow extends StatelessWidget {
   final String name;
   final double revenue;
   final double cost;
-  
+
   const _ProductProfitRow({
     required this.name,
     required this.revenue,

@@ -9,7 +9,7 @@ library;
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
+import 'package:pos_app/core/monitoring/production_logger.dart';
 
 /// Request Signer للـ APIs الحساسة
 class RequestSigner {
@@ -22,9 +22,7 @@ class RequestSigner {
   /// تهيئة المفتاح
   static void initialize(String key) {
     _signingKey = key;
-    if (kDebugMode) {
-      debugPrint('🔐 Request Signer initialized');
-    }
+    AppLogger.debug('Request Signer initialized', tag: 'RequestSigner');
   }
 
   /// هل المفتاح مهيأ؟
@@ -66,9 +64,7 @@ class RequestSigner {
     final digest = hmac.convert(utf8.encode(payload));
     final signature = base64Url.encode(digest.bytes);
 
-    if (kDebugMode) {
-      debugPrint('🔐 Request signed: $method $path');
-    }
+    AppLogger.debug('Request signed: $method $path', tag: 'RequestSigner');
 
     return RequestSignature(
       signature: signature,
@@ -128,9 +124,7 @@ class RequestSigner {
     // التحقق من الـ timestamp
     final now = DateTime.now().millisecondsSinceEpoch;
     if ((now - timestamp).abs() > maxAge.inMilliseconds) {
-      if (kDebugMode) {
-        debugPrint('⚠️ Signature verification failed: Request too old');
-      }
+      AppLogger.warning('Signature verification failed: Request too old', tag: 'RequestSigner');
       return false;
     }
 
@@ -151,8 +145,8 @@ class RequestSigner {
     // مقارنة آمنة
     final isValid = _constantTimeEquals(signature, expectedSignature);
 
-    if (kDebugMode && !isValid) {
-      debugPrint('⚠️ Signature verification failed: Signature mismatch');
+    if (!isValid) {
+      AppLogger.warning('Signature verification failed: Signature mismatch', tag: 'RequestSigner');
     }
 
     return isValid;

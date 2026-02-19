@@ -504,8 +504,8 @@ class _AppShimmerState extends State<AppShimmer>
           blendMode: BlendMode.srcATop,
           shaderCallback: (bounds) {
             return LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
+              begin: AlignmentDirectional.centerEnd,
+              end: AlignmentDirectional.centerStart,
               colors: const [
                 AppColors.shimmerBase,
                 AppColors.shimmerHighlight,
