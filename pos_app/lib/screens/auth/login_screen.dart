@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/products_providers.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/whatsapp_otp_service.dart';
 import '../../widgets/branding/mascot_widget.dart';
@@ -13,7 +18,6 @@ import '../../widgets/branding/feature_badge.dart';
 import '../../widgets/auth/phone_input_field.dart';
 import '../../widgets/auth/otp_input_field.dart';
 import '../../widgets/common/language_selector.dart';
-import '../../providers/auth_providers.dart';
 
 /// شاشة تسجيل الدخول بـ OTP عبر WhatsApp
 ///
@@ -65,6 +69,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   String get _fullPhoneNumber {
     return '${_selectedCountry.dialCode}${_phoneController.text.replaceAll(' ', '')}';
+  }
+
+  /// تحديث بيانات المستخدم في قاعدة البيانات المحلية بعد نجاح التحقق
+  Future<void> _updateLocalUserOnLogin(String phone) async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      final user = await db.usersDao.getUserByPhone(phone);
+      if (user != null) {
+        await db.usersDao.updateLastLogin(user.id);
+        if (storeId != null) {
+          await db.auditLogDao.logLogin(storeId, user.id, user.name);
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('خطأ في تحديث بيانات المستخدم المحلي: $e');
+      }
+    }
   }
 
   Future<void> _sendOtp() async {
@@ -193,6 +216,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
 
     if (supabaseVerified && mounted) {
+      // تحديث بيانات المستخدم في قاعدة البيانات المحلية
+      await _updateLocalUserOnLogin(_fullPhoneNumber);
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _otpVerified = true;
@@ -219,6 +245,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         phone: _fullPhoneNumber,
         otpResult: result,
       );
+      // تحديث بيانات المستخدم في قاعدة البيانات المحلية
+      await _updateLocalUserOnLogin(_fullPhoneNumber);
     }
 
     if (!mounted) return;

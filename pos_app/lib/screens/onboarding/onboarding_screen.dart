@@ -6,6 +6,7 @@
 /// - 4 slides مع animations
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,12 +15,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 
 /// مفتاح تخزين حالة عرض Onboarding
 const String _kOnboardingSeenKey = 'onboarding_seen';
+const String _kOnboardingDbKey = 'onboarding_completed';
 
 /// التحقق من عرض Onboarding سابقاً
 Future<bool> hasSeenOnboarding() async {
+  // تحقق من قاعدة البيانات أولاً
+  try {
+    final db = getIt<AppDatabase>();
+    final completed = await getSettingValue(db, kDemoStoreId, _kOnboardingDbKey);
+    if (completed == 'true') return true;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('خطأ في قراءة حالة Onboarding من DB: $e');
+    }
+  }
+  // احتياطي: SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   return prefs.getBool(_kOnboardingSeenKey) ?? false;
 }
@@ -86,6 +103,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int _currentPage = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _checkIfAlreadyCompleted();
+  }
+
+  /// التحقق من إتمام Onboarding مسبقاً - إذا تم الإكمال يتم التخطي مباشرة
+  Future<void> _checkIfAlreadyCompleted() async {
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? 'default';
+      final completed = await getSettingValue(db, storeId, _kOnboardingDbKey);
+      if (completed == 'true' && mounted) {
+        context.go('/login');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('خطأ في التحقق من حالة Onboarding: $e');
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -113,7 +152,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    // حفظ في SharedPreferences (احتياطي)
     await setOnboardingSeen();
+
+    // حفظ في قاعدة البيانات مع المزامنة
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider) ?? 'default';
+      await saveSettingWithSync(
+        db: db,
+        storeId: storeId,
+        key: _kOnboardingDbKey,
+        value: 'true',
+        ref: ref,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('خطأ في حفظ حالة Onboarding في DB: $e');
+      }
+    }
+
     if (mounted) {
       context.go('/login');
     }

@@ -5,6 +5,24 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../di/injection.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/products_providers.dart';
+
+/// Provider for store info
+final _storeInfoProvider = FutureProvider.autoDispose<StoresTableData?>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return null;
+  final db = getIt<AppDatabase>();
+  return db.storesDao.getStoreById(storeId);
+});
+
+/// Provider for pending sync count
+final _syncPendingCountProvider = FutureProvider.autoDispose<int>((ref) async {
+  final db = getIt<AppDatabase>();
+  return db.syncQueueDao.getPendingCount();
+});
 
 /// شاشة الإعدادات الرئيسية - بتصميم Sidebar + Header
 class SettingsScreen extends ConsumerWidget {
@@ -18,18 +36,30 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
+    // Get real user data from auth state
+    final authState = ref.watch(authStateProvider);
+    final user = authState.user;
+    final userName = user?.name ?? l10n.defaultUserName;
+    final userRole = (user?.role ?? l10n.branchManager).toString();
+
+    // Get store info
+    final storeAsync = ref.watch(_storeInfoProvider);
+    final storeName = storeAsync.valueOrNull?.name;
+
+    // Get sync pending count
+    final syncCount = ref.watch(_syncPendingCountProvider).valueOrNull ?? 0;
+
     return Column(
               children: [
                 AppHeader(
-                  title: l10n.settings,
+                  title: storeName ?? l10n.settings,
                   onMenuTap: isWideScreen
                       ? null
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
-                  notificationsCount: 3,
-                  userName:
-                      '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
-                  userRole: l10n.branchManager,
+                  notificationsCount: syncCount,
+                  userName: userName,
+                  userRole: userRole,
                 ),
                 Expanded(
                   child: SingleChildScrollView(

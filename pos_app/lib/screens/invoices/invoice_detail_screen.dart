@@ -17,69 +17,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
-
-/// نموذج بيانات تفاصيل الفاتورة
-class InvoiceDetailData {
-  final String number;
-  final String date;
-  final String time;
-  String status; // paid, pending, voided
-  final String cashier;
-  final String customerName;
-  final String? customerPhone;
-  final String customerId;
-  final String customerSince;
-  final bool isVip;
-  final List<InvoiceDetailItem> items;
-  final double subtotal;
-  final double discount;
-  final String discountLabel;
-  final double vat;
-  final double total;
-  final String paymentMethod;
-  final String paymentDetails;
-  final double amountPaid;
-  final String vatNumber;
-
-  InvoiceDetailData({
-    required this.number,
-    required this.date,
-    required this.time,
-    required this.status,
-    required this.cashier,
-    required this.customerName,
-    this.customerPhone,
-    required this.customerId,
-    required this.customerSince,
-    this.isVip = false,
-    required this.items,
-    required this.subtotal,
-    required this.discount,
-    this.discountLabel = '',
-    required this.vat,
-    required this.total,
-    required this.paymentMethod,
-    required this.paymentDetails,
-    required this.amountPaid,
-    required this.vatNumber,
-  });
-}
-
-class InvoiceDetailItem {
-  final String name;
-  final String sku;
-  final int quantity;
-  final double price;
-  final double total;
-
-  const InvoiceDetailItem({
-    required this.name,
-    required this.sku,
-    required this.quantity,
-    required this.price,
-    required this.total,
-  });
-}
+import '../../di/injection.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/invoices_providers.dart';
+import '../../providers/sync_providers.dart';
 
 class InvoiceDetailScreen extends ConsumerStatefulWidget {
   final String invoiceId;
@@ -92,68 +33,6 @@ class InvoiceDetailScreen extends ConsumerStatefulWidget {
 
 class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
 
-  late InvoiceDetailData _invoice;
-  bool _initialized = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      _invoice = _getSampleInvoice();
-      _initialized = true;
-    }
-  }
-
-  InvoiceDetailData _getSampleInvoice() {
-    final l10n = AppLocalizations.of(context)!;
-    return InvoiceDetailData(
-      number: 'INV-2024-001',
-      date: '09/02/2026',
-      time: '14:30',
-      status: 'paid',
-      cashier: l10n.defaultUserName,
-      customerName: 'محمد العلي',
-      customerPhone: '0501234567',
-      customerId: '99281',
-      customerSince: '2022',
-      isVip: true,
-      items: [
-        const InvoiceDetailItem(
-            name: 'طماطم عضوية',
-            sku: '8901',
-            quantity: 2,
-            price: 12.50,
-            total: 25.00),
-        const InvoiceDetailItem(
-            name: 'حليب كامل الدسم',
-            sku: '2201',
-            quantity: 1,
-            price: 8.00,
-            total: 8.00),
-        const InvoiceDetailItem(
-            name: 'خبز بريوش',
-            sku: '4402',
-            quantity: 3,
-            price: 5.50,
-            total: 16.50),
-        const InvoiceDetailItem(
-            name: 'شوكولاتة داكنة',
-            sku: '9912',
-            quantity: 1,
-            price: 15.00,
-            total: 15.00),
-      ],
-      subtotal: 64.50,
-      discount: 4.50,
-      discountLabel: 'VIP',
-      vat: 9.00,
-      total: 69.00,
-      paymentMethod: 'card',
-      paymentDetails: '4242',
-      amountPaid: 69.00,
-      vatNumber: '300000000000003',
-    );
-  }
   void _copyInvoiceId(String id) {
     Clipboard.setData(ClipboardData(text: id));
     final l10n = AppLocalizations.of(context)!;
@@ -167,7 +46,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     );
   }
 
-  void _showVoidDialog() {
+  void _showVoidDialog(SalesTableData sale) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
     showDialog(
@@ -210,17 +89,48 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                         : AppColors.textMuted)),
           ),
           FilledButton(
-            onPressed: () {
-              setState(() => _invoice.status = 'voided');
+            onPressed: () async {
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.invoiceVoided),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-              );
+              try {
+                final db = getIt<AppDatabase>();
+                await db.salesDao.voidSale(sale.id);
+                // Enqueue to SyncQueue
+                try {
+                  ref.read(syncServiceProvider).enqueueUpdate(
+                    tableName: 'sales',
+                    recordId: sale.id,
+                    changes: {
+                      'id': sale.id,
+                      'status': 'voided',
+                      'updatedAt': DateTime.now().toIso8601String(),
+                    },
+                  );
+                } catch (_) {}
+                // Refresh the provider
+                ref.invalidate(invoiceDetailProvider(widget.invoiceId));
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.invoiceVoided),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('حدث خطأ أثناء إلغاء الفاتورة'),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: AppColors.error,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  );
+                }
+              }
             },
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.error,
@@ -233,6 +143,30 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     );
   }
 
+  /// Map status from DB to display status
+  String _mapStatus(String dbStatus) {
+    switch (dbStatus) {
+      case 'completed':
+        return 'paid';
+      case 'voided':
+        return 'voided';
+      case 'pending':
+        return 'pending';
+      default:
+        return dbStatus;
+    }
+  }
+
+  /// Format date from DateTime
+  String _formatDate(DateTime dt) {
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
+  }
+
+  /// Format time from DateTime
+  String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -241,22 +175,72 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Column(
+    final invoiceAsync = ref.watch(invoiceDetailProvider(widget.invoiceId));
+
+    return invoiceAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              'حدث خطأ في تحميل الفاتورة',
+              style: TextStyle(
+                fontSize: 16,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => ref.invalidate(invoiceDetailProvider(widget.invoiceId)),
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
+      ),
+      data: (data) {
+        if (data == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildHeader(context, isWideScreen, isDark, l10n),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
-                    child:
-                        _buildContent(isDark, isWideScreen, isMediumScreen, l10n),
+                Icon(Icons.receipt_long_rounded, size: 48,
+                    color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                const SizedBox(height: 16),
+                Text(
+                  'لم يتم العثور على الفاتورة',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
               ],
-            );
+            ),
+          );
+        }
+
+        final sale = data.sale;
+        final items = data.items;
+
+        return Column(
+          children: [
+            _buildHeader(context, isWideScreen, isDark, l10n, sale),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+                child: _buildContent(isDark, isWideScreen, isMediumScreen, l10n, sale, items),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark,
-      AppLocalizations l10n) {
+      AppLocalizations l10n, SalesTableData sale) {
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -321,7 +305,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                               color: isDark
                                   ? AppColors.textMutedDark
                                   : AppColors.textMuted)),
-                      Text('#${_invoice.number}',
+                      Text('#${sale.receiptNo}',
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -339,7 +323,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
           if (isWideScreen) ...[
             PopupMenuButton<String>(
               onSelected: (value) {
-                if (value == 'void') _showVoidDialog();
+                if (value == 'void') _showVoidDialog(sale);
               },
               offset: const Offset(0, 48),
               shape: RoundedRectangleBorder(
@@ -468,7 +452,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   Widget _buildContent(
-      bool isDark, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n) {
+      bool isDark, bool isWideScreen, bool isMediumScreen, AppLocalizations l10n,
+      SalesTableData sale, List<SaleItemsTableData> items) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,7 +462,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
-                child: _buildReceiptCard(isDark, l10n),
+                child: _buildReceiptCard(isDark, l10n, sale, items),
               ),
             ),
           ),
@@ -486,13 +471,13 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             width: 380,
             child: Column(
               children: [
-                _buildCustomerCard(isDark, l10n),
+                _buildCustomerCard(isDark, l10n, sale),
                 const SizedBox(height: 24),
                 _buildQuickActions(isDark, l10n),
                 const SizedBox(height: 24),
-                _buildTimeline(isDark),
+                _buildTimeline(isDark, sale),
                 const SizedBox(height: 24),
-                _buildTechnicalData(isDark),
+                _buildTechnicalData(isDark, sale),
               ],
             ),
           ),
@@ -501,15 +486,15 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     } else {
       return Column(
         children: [
-          _buildReceiptCard(isDark, l10n),
+          _buildReceiptCard(isDark, l10n, sale, items),
           const SizedBox(height: 24),
-          _buildCustomerCard(isDark, l10n),
+          _buildCustomerCard(isDark, l10n, sale),
           const SizedBox(height: 24),
           _buildQuickActions(isDark, l10n),
           const SizedBox(height: 24),
-          _buildTimeline(isDark),
+          _buildTimeline(isDark, sale),
           const SizedBox(height: 24),
-          _buildTechnicalData(isDark),
+          _buildTechnicalData(isDark, sale),
           const SizedBox(height: 24),
         ],
       );
@@ -517,13 +502,15 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   // ─── Receipt Card ────────────────────────────────────────────
-  Widget _buildReceiptCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildReceiptCard(bool isDark, AppLocalizations l10n,
+      SalesTableData sale, List<SaleItemsTableData> items) {
     final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
     final borderColor =
         isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border;
     final mutedColor =
         isDark ? AppColors.textMutedDark : AppColors.textMuted;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
+    final status = _mapStatus(sale.status);
 
     return Container(
       decoration: BoxDecoration(
@@ -559,7 +546,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                           fontWeight: FontWeight.bold,
                           color: textColor)),
                 ]),
-                _buildStatusBadge(_invoice.status, isDark),
+                _buildStatusBadge(status, isDark),
               ],
             ),
           ),
@@ -570,14 +557,14 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('#${_invoice.number}',
+                    Text('#${sale.receiptNo}',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: textColor,
                             fontFamily: 'Source Code Pro')),
                     IconButton(
-                      onPressed: () => _copyInvoiceId(_invoice.number),
+                      onPressed: () => _copyInvoiceId(sale.receiptNo),
                       icon: Icon(Icons.copy_rounded,
                           size: 16, color: mutedColor),
                       tooltip: l10n.copied,
@@ -589,23 +576,23 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   Icon(Icons.calendar_today_rounded,
                       size: 14, color: mutedColor),
                   const SizedBox(width: 6),
-                  Text(_invoice.date,
+                  Text(_formatDate(sale.createdAt),
                       style: TextStyle(fontSize: 13, color: mutedColor)),
                   const SizedBox(width: 16),
                   Icon(Icons.access_time_rounded,
                       size: 14, color: mutedColor),
                   const SizedBox(width: 6),
-                  Text(_invoice.time,
+                  Text(_formatTime(sale.createdAt),
                       style: TextStyle(fontSize: 13, color: mutedColor)),
                   const SizedBox(width: 16),
                   Icon(Icons.person_outline_rounded,
                       size: 14, color: mutedColor),
                   const SizedBox(width: 6),
-                  Text(_invoice.cashier,
+                  Text(sale.cashierId,
                       style: TextStyle(fontSize: 13, color: mutedColor)),
                 ]),
                 const Divider(height: 32),
-                ..._invoice.items.map((item) => Padding(
+                ...items.map((item) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
                         children: [
@@ -613,23 +600,23 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(item.name,
+                                Text(item.productName,
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: textColor)),
-                                Text('SKU: ${item.sku}',
+                                Text('SKU: ${item.productSku ?? '-'}',
                                     style: TextStyle(
                                         fontSize: 11, color: mutedColor)),
                               ],
                             ),
                           ),
-                          Text('×${item.quantity}',
+                          Text('\u00d7${item.qty}',
                               style: TextStyle(
                                   fontSize: 13, color: mutedColor)),
                           const SizedBox(width: 24),
                           Text(
-                              '${item.price.toStringAsFixed(2)} ${l10n.currency}',
+                              '${item.unitPrice.toStringAsFixed(2)} ${l10n.currency}',
                               style: TextStyle(
                                   fontSize: 13, color: mutedColor)),
                           const SizedBox(width: 24),
@@ -647,16 +634,16 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       ),
                     )),
                 const Divider(height: 24),
-                _totalRow(l10n.subtotalLabel, _invoice.subtotal, isDark, l10n),
-                if (_invoice.discount > 0)
+                _totalRow(l10n.subtotalLabel, sale.subtotal, isDark, l10n),
+                if (sale.discount > 0)
                   _totalRow(
-                      l10n.discountVip, -_invoice.discount,
+                      l10n.discountVip, -sale.discount,
                       isDark, l10n,
                       isDiscount: true),
-                _totalRow(l10n.vatLabel, _invoice.vat, isDark,
+                _totalRow(l10n.vatLabel, sale.tax, isDark,
                     l10n),
                 const Divider(height: 16),
-                _totalRow(l10n.grandTotalLabel, _invoice.total, isDark, l10n,
+                _totalRow(l10n.grandTotalLabel, sale.total, isDark, l10n,
                     isBold: true),
                 const SizedBox(height: 16),
                 Container(
@@ -673,21 +660,21 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     children: [
                       Row(children: [
                         Icon(
-                            _invoice.paymentMethod == 'card'
+                            sale.paymentMethod == 'card'
                                 ? Icons.credit_card
                                 : Icons.payments_rounded,
                             size: 18,
                             color: AppColors.primary),
                         const SizedBox(width: 8),
                         Text(
-                            _invoice.paymentMethod == 'card'
-                                ? l10n.visaEnding(_invoice.paymentDetails)
+                            sale.paymentMethod == 'card'
+                                ? l10n.visaEnding('****')
                                 : l10n.cashPayment,
                             style:
                                 TextStyle(fontSize: 13, color: textColor)),
                       ]),
                       Text(
-                          '${_invoice.amountPaid.toStringAsFixed(2)} ${l10n.currency}',
+                          '${(sale.amountReceived ?? sale.total).toStringAsFixed(2)} ${l10n.currency}',
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -789,13 +776,17 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   // ─── Customer Card ────────────────────────────────────────────
-  Widget _buildCustomerCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildCustomerCard(bool isDark, AppLocalizations l10n, SalesTableData sale) {
     final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
     final borderColor =
         isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border;
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final mutedColor =
         isDark ? AppColors.textMutedDark : AppColors.textMuted;
+
+    final customerName = sale.customerName ?? 'عميل نقدي';
+    final customerPhone = sale.customerPhone;
+    final customerId = sale.customerId ?? '-';
 
     return Container(
       decoration: BoxDecoration(
@@ -832,8 +823,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     backgroundColor:
                         AppColors.primary.withValues(alpha: 0.1),
                     child: Text(
-                        _invoice.customerName.isNotEmpty
-                            ? _invoice.customerName[0]
+                        customerName.isNotEmpty
+                            ? customerName[0]
                             : '?',
                         style: const TextStyle(
                             fontSize: 18,
@@ -845,30 +836,12 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
-                          Text(_invoice.customerName,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor)),
-                          if (_invoice.isVip) ...[
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                  color: const Color(0xFFFBBF24)
-                                      .withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: const Text('VIP',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFFBBF24))),
-                            ),
-                          ],
-                        ]),
-                        Text('${l10n.customer}: ${_invoice.customerId}',
+                        Text(customerName,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: textColor)),
+                        Text('${l10n.customer}: $customerId',
                             style: TextStyle(
                                 fontSize: 12, color: mutedColor)),
                       ],
@@ -876,11 +849,11 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   ),
                 ]),
                 const Divider(height: 24),
-                if (_invoice.customerPhone != null)
+                if (customerPhone != null && customerPhone.isNotEmpty)
                   _infoRow(Icons.phone_rounded, l10n.phone,
-                      _invoice.customerPhone!, isDark),
+                      customerPhone, isDark),
                 _infoRow(Icons.calendar_today_rounded, l10n.lastVisit,
-                    _invoice.customerSince, isDark),
+                    _formatDate(sale.createdAt), isDark),
               ],
             ),
           ),
@@ -1013,7 +986,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   // ─── Timeline ────────────────────────────────────────────
-  Widget _buildTimeline(bool isDark) {
+  Widget _buildTimeline(bool isDark, SalesTableData sale) {
     final l10n = AppLocalizations.of(context)!;
     final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
     final borderColor =
@@ -1022,16 +995,16 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final mutedColor =
         isDark ? AppColors.textMutedDark : AppColors.textMuted;
 
+    final timeStr = _formatTime(sale.createdAt);
     final events = [
-      _TimelineEvent(l10n.invoiceCreated, l10n.todayAt(_invoice.time),
+      _TimelineEvent(l10n.invoiceCreated, l10n.todayAt(timeStr),
           Icons.receipt_long_rounded, AppColors.primary),
-      _TimelineEvent(l10n.paymentCompleted, l10n.minutesAgoDetail(5),
-          Icons.credit_card, AppColors.success),
-      _TimelineEvent(l10n.printReceipt, l10n.minutesAgoDetail(3),
-          Icons.print_rounded, AppColors.info),
+      if (sale.isPaid)
+        _TimelineEvent(l10n.paymentCompleted, l10n.todayAt(timeStr),
+            Icons.credit_card, AppColors.success),
     ];
 
-    if (_invoice.status == 'voided') {
+    if (_mapStatus(sale.status) == 'voided') {
       events.add(_TimelineEvent(l10n.invoiceVoided, l10n.today,
           Icons.block_rounded, AppColors.error));
     }
@@ -1117,7 +1090,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   // ─── Technical Data ────────────────────────────────────────────
-  Widget _buildTechnicalData(bool isDark) {
+  Widget _buildTechnicalData(bool isDark, SalesTableData sale) {
     final l10n = AppLocalizations.of(context)!;
     final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
     final borderColor =
@@ -1156,12 +1129,12 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             child: Column(
               children: [
                 _techRow(
-                    l10n.vat, _invoice.vatNumber, mutedColor, textColor),
+                    l10n.vat, sale.storeId, mutedColor, textColor),
                 const SizedBox(height: 8),
-                _techRow(l10n.deviceIdLabel, 'TXN-${_invoice.number}',
+                _techRow(l10n.deviceIdLabel, 'TXN-${sale.receiptNo}',
                     mutedColor, textColor),
                 const SizedBox(height: 8),
-                _techRow(l10n.terminalLabel, 'POS-01', mutedColor, textColor),
+                _techRow(l10n.terminalLabel, sale.terminalId ?? 'POS-01', mutedColor, textColor),
                 const SizedBox(height: 8),
                 _techRow(
                     l10n.softwareVersion, 'v2.1.0', mutedColor, textColor),

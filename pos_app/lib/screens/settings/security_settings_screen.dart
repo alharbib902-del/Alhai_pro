@@ -9,6 +9,11 @@ import '../../core/security/secure_storage_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../di/injection.dart';
+import '../../data/local/app_database.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/settings_db_providers.dart';
 
 /// شاشة إعدادات الأمان
 class SecuritySettingsScreen extends ConsumerStatefulWidget {
@@ -28,6 +33,9 @@ class _SecuritySettingsScreenState
   Duration? _sessionRemaining;
   bool _isLoading = true;
 
+  // Settings from DB
+  String? _autoLockMinutes;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +45,7 @@ class _SecuritySettingsScreenState
   Future<void> _loadSecuritySettings() async {
     setState(() => _isLoading = true);
     try {
+      // Load from local security services
       final biometricAvailable = await BiometricService.isAvailable()
           .timeout(const Duration(seconds: 2), onTimeout: () => false);
       final biometricEnabled = await BiometricService.isEnabled()
@@ -45,14 +54,36 @@ class _SecuritySettingsScreenState
           .timeout(const Duration(seconds: 2), onTimeout: () => false);
       final sessionRemaining = await SessionManager.getRemainingTime()
           .timeout(const Duration(seconds: 2), onTimeout: () => null);
-      if (mounted) {
-        setState(() {
-          _biometricAvailable = biometricAvailable;
-          _biometricEnabled = biometricEnabled;
-          _pinEnabled = pinEnabled;
-          _sessionRemaining = sessionRemaining;
-          _isLoading = false;
-        });
+
+      // Load settings from DB
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId != null) {
+        final db = getIt<AppDatabase>();
+        final dbPinEnabled = await getSettingValue(db, storeId, 'security_pin_enabled');
+        final dbBiometricEnabled = await getSettingValue(db, storeId, 'security_biometric_enabled');
+        final dbAutoLockMinutes = await getSettingValue(db, storeId, 'security_auto_lock_minutes');
+
+        if (mounted) {
+          setState(() {
+            _biometricAvailable = biometricAvailable;
+            // Prefer DB setting if available, otherwise use local service value
+            _biometricEnabled = dbBiometricEnabled == 'true' ? true : (dbBiometricEnabled == 'false' ? false : biometricEnabled);
+            _pinEnabled = dbPinEnabled == 'true' ? true : (dbPinEnabled == 'false' ? false : pinEnabled);
+            _sessionRemaining = sessionRemaining;
+            _autoLockMinutes = dbAutoLockMinutes;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _biometricAvailable = biometricAvailable;
+            _biometricEnabled = biometricEnabled;
+            _pinEnabled = pinEnabled;
+            _sessionRemaining = sessionRemaining;
+            _isLoading = false;
+          });
+        }
       }
     } catch (_) {
       if (mounted) {
@@ -60,6 +91,21 @@ class _SecuritySettingsScreenState
       }
     }
   }
+
+  /// Save a security setting to DB with sync
+  Future<void> _saveSecuritySetting(String key, String value) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+    final db = getIt<AppDatabase>();
+    await saveSettingWithSync(
+      db: db,
+      storeId: storeId,
+      key: key,
+      value: value,
+      ref: ref,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -67,6 +113,11 @@ class _SecuritySettingsScreenState
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    // Get real user data
+    final user = ref.watch(currentUserProvider);
+    final userName = user?.name ?? l10n.defaultUserName;
+    final userRole = (user?.role ?? l10n.branchManager).toString();
 
     return Column(
               children: [
@@ -77,8 +128,8 @@ class _SecuritySettingsScreenState
                       : () => Scaffold.of(context).openDrawer(),
                   onNotificationsTap: () => context.push('/notifications'),
                   notificationsCount: 3,
-                  userName: l10n.defaultUserName,
-                  userRole: l10n.branchManager,
+                  userName: userName,
+                  userRole: userRole,
                 ),
                 Expanded(
                   child: _isLoading
@@ -180,9 +231,11 @@ class _SecuritySettingsScreenState
             _buildSettingsTile(
               icon: Icons.access_time_rounded,
               title: l10n.autoLockOption,
-              subtitle: _sessionRemaining != null
-                  ? l10n.afterMinutes(_sessionRemaining!.inMinutes)
-                  : l10n.disabled,
+              subtitle: _autoLockMinutes != null
+                  ? l10n.afterMinutes(int.tryParse(_autoLockMinutes!) ?? 30)
+                  : (_sessionRemaining != null
+                      ? l10n.afterMinutes(_sessionRemaining!.inMinutes)
+                      : l10n.disabled),
               trailing: IconButton(
                 icon: Icon(Icons.refresh_rounded,
                     color: isDark
@@ -403,6 +456,8 @@ class _SecuritySettingsScreenState
                 final result = await PinService.createPin(newPin!);
                 if (result.isSuccess) {
                   if (context.mounted) Navigator.pop(context);
+                  // Save to DB with sync
+                  await _saveSecuritySetting('security_pin_enabled', 'true');
                   _loadSecuritySettings();
                   if (mounted) {
                     ScaffoldMessenger.of(this.context).showSnackBar(
@@ -514,6 +569,8 @@ class _SecuritySettingsScreenState
     );
     if (confirmed == true) {
       await PinService.removePin();
+      // Save to DB with sync
+      await _saveSecuritySetting('security_pin_enabled', 'false');
       _loadSecuritySettings();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -529,6 +586,8 @@ class _SecuritySettingsScreenState
       final success = await BiometricService.enable();
       if (success) {
         setState(() => _biometricEnabled = true);
+        // Save to DB with sync
+        await _saveSecuritySetting('security_biometric_enabled', 'true');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.fingerprintDesc)),
@@ -544,6 +603,8 @@ class _SecuritySettingsScreenState
     } else {
       await BiometricService.disable();
       setState(() => _biometricEnabled = false);
+      // Save to DB with sync
+      await _saveSecuritySetting('security_biometric_enabled', 'false');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.fingerprintDesc)),

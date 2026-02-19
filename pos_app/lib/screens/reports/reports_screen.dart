@@ -6,6 +6,82 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/common/common.dart';
+import '../../di/injection.dart';
+import '../../data/local/app_database.dart';
+import '../../data/local/daos/sales_dao.dart';
+import '../../providers/products_providers.dart';
+
+// ============================================================================
+// LOCAL PROVIDER: fallback for when reportsServiceProvider is not initialized
+// ============================================================================
+
+/// Provider for today's sales stats, querying DB directly
+final _reportsTodayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return null;
+  final db = getIt<AppDatabase>();
+  final today = DateTime.now();
+  final startOfDay = DateTime(today.year, today.month, today.day);
+  final endOfDay = startOfDay.add(const Duration(days: 1));
+  return db.salesDao.getSalesStats(storeId, startDate: startOfDay, endDate: endOfDay);
+});
+
+/// Provider for this week's sales stats
+final _reportsWeekStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return null;
+  final db = getIt<AppDatabase>();
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final startOfWeek = today.subtract(Duration(days: today.weekday % 7));
+  return db.salesDao.getSalesStats(storeId, startDate: startOfWeek, endDate: now);
+});
+
+/// Provider for this month's sales stats
+final _reportsMonthStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return null;
+  final db = getIt<AppDatabase>();
+  final now = DateTime.now();
+  final startOfMonth = DateTime(now.year, now.month, 1);
+  return db.salesDao.getSalesStats(storeId, startDate: startOfMonth, endDate: now);
+});
+
+/// Provider for custom date range stats
+final _reportsCustomStatsProvider = FutureProvider.autoDispose
+    .family<SalesStats?, ({DateTime start, DateTime end})>((ref, range) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return null;
+  final db = getIt<AppDatabase>();
+  return db.salesDao.getSalesStats(storeId, startDate: range.start, endDate: range.end);
+});
+
+/// Provider for payment method stats for the period
+final _reportsPeriodPaymentStatsProvider = FutureProvider.autoDispose
+    .family<List<PaymentMethodStats>, ({DateTime start, DateTime end})>((ref, range) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = getIt<AppDatabase>();
+  return db.salesDao.getPaymentMethodStats(storeId, startDate: range.start, endDate: range.end);
+});
+
+/// Provider for inventory summary
+final _reportsInventorySummaryProvider = FutureProvider.autoDispose<({int total, int lowStock, int outOfStock})>((ref) async {
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return (total: 0, lowStock: 0, outOfStock: 0);
+  final db = getIt<AppDatabase>();
+  final products = await db.productsDao.getAllProducts(storeId);
+  int lowStock = 0;
+  int outOfStock = 0;
+  for (final p in products) {
+    if (p.stockQty <= 0) {
+      outOfStock++;
+    } else if (p.stockQty <= p.minQty) {
+      lowStock++;
+    }
+  }
+  return (total: products.length, lowStock: lowStock, outOfStock: outOfStock);
+});
 
 /// شاشة التقارير - تصميم Web محسّن مع بطاقات تقارير احترافية
 class ReportsScreen extends ConsumerStatefulWidget {
@@ -25,6 +101,48 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   void dispose() {
     _keyboardFocusNode.dispose();
     super.dispose();
+  }
+
+  /// Get the date range for the current period
+  ({DateTime start, DateTime end}) _getDateRange() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    switch (_selectedPeriod) {
+      case 'week':
+        final startOfWeek = today.subtract(Duration(days: today.weekday % 7));
+        return (start: startOfWeek, end: now);
+      case 'month':
+        final startOfMonth = DateTime(now.year, now.month, 1);
+        return (start: startOfMonth, end: now);
+      case 'custom':
+        if (_startDate != null && _endDate != null) {
+          return (start: _startDate!, end: _endDate!.add(const Duration(days: 1)));
+        }
+        return (start: today, end: today.add(const Duration(days: 1)));
+      case 'today':
+      default:
+        return (start: today, end: today.add(const Duration(days: 1)));
+    }
+  }
+
+  /// Get the active stats provider based on the selected period
+  AsyncValue<SalesStats?> _getActiveStats() {
+    switch (_selectedPeriod) {
+      case 'today':
+        return ref.watch(_reportsTodayStatsProvider);
+      case 'week':
+        return ref.watch(_reportsWeekStatsProvider);
+      case 'month':
+        return ref.watch(_reportsMonthStatsProvider);
+      case 'custom':
+        if (_startDate != null && _endDate != null) {
+          return ref.watch(_reportsCustomStatsProvider(
+              (start: _startDate!, end: _endDate!.add(const Duration(days: 1)))));
+        }
+        return ref.watch(_reportsTodayStatsProvider);
+      default:
+        return ref.watch(_reportsTodayStatsProvider);
+    }
   }
 
   @override
@@ -161,103 +279,146 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
 
   Widget _buildReportsGrid(bool isDesktop, AppLocalizations l10n) {
-    final reports = _getReports(l10n);
+    final statsAsync = _getActiveStats();
+    final inventoryAsync = ref.watch(_reportsInventorySummaryProvider);
+    final dateRange = _getDateRange();
+    final paymentAsync = ref.watch(_reportsPeriodPaymentStatsProvider(dateRange));
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(AppSizes.md),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: isDesktop ? 400 : 500,
-        childAspectRatio: isDesktop ? 1.4 : 1.2,
-        crossAxisSpacing: AppSizes.md,
-        mainAxisSpacing: AppSizes.md,
+    // Derive sales data from the stats provider
+    return statsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text('حدث خطأ في تحميل التقارير',
+                style: Theme.of(context).textTheme.bodyLarge),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () {
+                ref.invalidate(_reportsTodayStatsProvider);
+                ref.invalidate(_reportsWeekStatsProvider);
+                ref.invalidate(_reportsMonthStatsProvider);
+              },
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
       ),
-      itemCount: reports.length,
-      itemBuilder: (context, index) {
-        final report = reports[index];
-        return _ReportCard(
-          report: report,
-          onTap: () => _showReportDialog(report),
-          onExport: () => _exportReport(report.id),
+      data: (stats) {
+        final salesTotal = stats?.total ?? 0.0;
+        final salesCount = stats?.count ?? 0;
+        final salesAvg = stats?.average ?? 0.0;
+
+        // Inventory data
+        final inv = inventoryAsync.valueOrNull;
+        final invTotal = inv?.total ?? 0;
+        final invLowStock = inv?.lowStock ?? 0;
+        final invOutOfStock = inv?.outOfStock ?? 0;
+
+        // Payment stats (used in purchase reports when available)
+        final _ = paymentAsync.valueOrNull ?? [];
+
+        // Tax estimate (15% VAT from total)
+        final taxEstimate = salesTotal * 0.15 / 1.15;
+
+        final reports = [
+          _ReportData(
+            id: 'sales',
+            icon: Icons.point_of_sale_rounded,
+            title: l10n.salesReport,
+            subtitle: l10n.salesReportDesc,
+            color: AppColors.primary,
+            stats: [
+              _ReportStat(l10n.totalSales, '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.invoices, '$salesCount'),
+              _ReportStat(l10n.averageAmount, '${salesAvg.toStringAsFixed(0)} ${l10n.sar}'),
+            ],
+          ),
+          _ReportData(
+            id: 'profit',
+            icon: Icons.trending_up_rounded,
+            title: l10n.profitReport,
+            subtitle: l10n.profitReportDesc,
+            color: AppColors.success,
+            stats: [
+              _ReportStat(l10n.revenue, '${salesTotal.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.costs, '-'),
+              _ReportStat(l10n.netProfit, '-'),
+            ],
+          ),
+          _ReportData(
+            id: 'inventory',
+            icon: Icons.inventory_2_rounded,
+            title: l10n.inventoryReport,
+            subtitle: l10n.inventoryReportDesc,
+            color: AppColors.info,
+            stats: [
+              _ReportStat(l10n.products, '$invTotal'),
+              _ReportStat(l10n.lowStock, '$invLowStock'),
+              _ReportStat(l10n.outOfStock, '$invOutOfStock'),
+            ],
+          ),
+          _ReportData(
+            id: 'vat',
+            icon: Icons.percent_rounded,
+            title: l10n.vatReport,
+            subtitle: l10n.vatReportDesc,
+            color: AppColors.secondary,
+            stats: [
+              _ReportStat(l10n.salesTax, '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
+              _ReportStat(l10n.purchasesTax, '-'),
+              _ReportStat(l10n.taxDue, '${taxEstimate.toStringAsFixed(0)} ${l10n.sar}'),
+            ],
+          ),
+          _ReportData(
+            id: 'customers',
+            icon: Icons.people_rounded,
+            title: l10n.customerReport,
+            subtitle: l10n.customerReportDesc,
+            color: Colors.indigo,
+            stats: [
+              _ReportStat(l10n.customers, '-'),
+              _ReportStat(l10n.debts, '-'),
+              _ReportStat(l10n.paidDebts, '-'),
+            ],
+          ),
+          _ReportData(
+            id: 'purchases',
+            icon: Icons.shopping_cart_rounded,
+            title: l10n.purchasesReport,
+            subtitle: l10n.purchasesReportDesc,
+            color: Colors.orange,
+            stats: [
+              _ReportStat(l10n.purchases, '-'),
+              _ReportStat(l10n.invoices, '-'),
+              _ReportStat(l10n.suppliers, '-'),
+            ],
+          ),
+        ];
+
+        return GridView.builder(
+          padding: const EdgeInsets.all(AppSizes.md),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: isDesktop ? 400 : 500,
+            childAspectRatio: isDesktop ? 1.4 : 1.2,
+            crossAxisSpacing: AppSizes.md,
+            mainAxisSpacing: AppSizes.md,
+          ),
+          itemCount: reports.length,
+          itemBuilder: (context, index) {
+            final report = reports[index];
+            return _ReportCard(
+              report: report,
+              onTap: () => _showReportDialog(report),
+              onExport: () => _exportReport(report.id),
+            );
+          },
         );
       },
     );
-  }
-
-  List<_ReportData> _getReports(AppLocalizations l10n) {
-    return [
-      _ReportData(
-        id: 'sales',
-        icon: Icons.point_of_sale_rounded,
-        title: l10n.salesReport,
-        subtitle: l10n.salesReportDesc,
-        color: AppColors.primary,
-        stats: [
-          _ReportStat(l10n.totalSales, '12,450 ${l10n.sar}'),
-          _ReportStat(l10n.invoices, '85'),
-          _ReportStat(l10n.averageAmount, '146 ${l10n.sar}'),
-        ],
-      ),
-      _ReportData(
-        id: 'profit',
-        icon: Icons.trending_up_rounded,
-        title: l10n.profitReport,
-        subtitle: l10n.profitReportDesc,
-        color: AppColors.success,
-        stats: [
-          _ReportStat(l10n.revenue, '12,450 ${l10n.sar}'),
-          _ReportStat(l10n.costs, '8,200 ${l10n.sar}'),
-          _ReportStat(l10n.netProfit, '4,250 ${l10n.sar}'),
-        ],
-      ),
-      _ReportData(
-        id: 'inventory',
-        icon: Icons.inventory_2_rounded,
-        title: l10n.inventoryReport,
-        subtitle: l10n.inventoryReportDesc,
-        color: AppColors.info,
-        stats: [
-          _ReportStat(l10n.products, '156'),
-          _ReportStat(l10n.lowStock, '12'),
-          _ReportStat(l10n.outOfStock, '3'),
-        ],
-      ),
-      _ReportData(
-        id: 'vat',
-        icon: Icons.percent_rounded,
-        title: l10n.vatReport,
-        subtitle: l10n.vatReportDesc,
-        color: AppColors.secondary,
-        stats: [
-          _ReportStat(l10n.salesTax, '1,867 ${l10n.sar}'),
-          _ReportStat(l10n.purchasesTax, '1,230 ${l10n.sar}'),
-          _ReportStat(l10n.taxDue, '637 ${l10n.sar}'),
-        ],
-      ),
-      _ReportData(
-        id: 'customers',
-        icon: Icons.people_rounded,
-        title: l10n.customerReport,
-        subtitle: l10n.customerReportDesc,
-        color: Colors.indigo,
-        stats: [
-          _ReportStat(l10n.customers, '45'),
-          _ReportStat(l10n.debts, '3,200 ${l10n.sar}'),
-          _ReportStat(l10n.paidDebts, '1,800 ${l10n.sar}'),
-        ],
-      ),
-      _ReportData(
-        id: 'purchases',
-        icon: Icons.shopping_cart_rounded,
-        title: l10n.purchasesReport,
-        subtitle: l10n.purchasesReportDesc,
-        color: Colors.orange,
-        stats: [
-          _ReportStat(l10n.purchases, '8,200 ${l10n.sar}'),
-          _ReportStat(l10n.invoices, '12'),
-          _ReportStat(l10n.suppliers, '5'),
-        ],
-      ),
-    ];
   }
 
   void _handleKeyEvent(KeyEvent event) {

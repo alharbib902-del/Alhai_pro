@@ -7,10 +7,17 @@ import 'package:pos_app/widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/validators/validators.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
+import '../../providers/sync_providers.dart';
+
+const _uuid = Uuid();
 
 /// شاشة تعديل المخزون
 class InventoryAdjustScreen extends ConsumerStatefulWidget {
@@ -37,58 +44,62 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
   ProductForAdjust? _selectedProduct;
   bool _isLoading = false;
 
-  // بيانات تجريبية للمنتجات
-  final List<ProductForAdjust> _products = [
-    ProductForAdjust(
-      id: '1',
-      name: 'حليب المراعي كامل الدسم 1 لتر',
-      sku: 'MLK001',
-      barcode: '6281001234567',
-      currentStock: 150,
-      unit: 'كرتون',
-    ),
-    ProductForAdjust(
-      id: '2',
-      name: 'أرز بسمتي أبو كاس 5 كجم',
-      sku: 'RIC001',
-      barcode: '6281007654321',
-      currentStock: 75,
-      unit: 'كيس',
-    ),
-    ProductForAdjust(
-      id: '3',
-      name: 'زيت عافية نباتي 1.8 لتر',
-      sku: 'OIL001',
-      barcode: '6281009876543',
-      currentStock: 45,
-      unit: 'علبة',
-    ),
-    ProductForAdjust(
-      id: '4',
-      name: 'سكر أبيض 1 كجم',
-      sku: 'SUG001',
-      barcode: '6281005432167',
-      currentStock: 200,
-      unit: 'كيس',
-    ),
-    ProductForAdjust(
-      id: '5',
-      name: 'شاي ربيع 100 كيس',
-      sku: 'TEA001',
-      barcode: '6281003216549',
-      currentStock: 120,
-      unit: 'علبة',
-    ),
-  ];
+  /// قائمة المنتجات المحملة من قاعدة البيانات
+  List<ProductForAdjust> _products = [];
+  bool _isLoadingProducts = true;
+  String? _loadError;
 
   @override
   void initState() {
     super.initState();
-    if (widget.productId != null) {
-      _selectedProduct = _products.firstWhere(
-        (p) => p.id == widget.productId,
-        orElse: () => _products.first,
-      );
+    _loadProducts();
+  }
+
+  /// تحميل المنتجات من قاعدة البيانات
+  Future<void> _loadProducts() async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      setState(() {
+        _isLoadingProducts = false;
+        _loadError = 'لم يتم تحديد المتجر';
+      });
+      return;
+    }
+
+    try {
+      final db = getIt<AppDatabase>();
+      final productsData = await db.productsDao.getAllProducts(storeId);
+
+      if (mounted) {
+        setState(() {
+          _products = productsData.map((p) => ProductForAdjust(
+            id: p.id,
+            name: p.name,
+            sku: p.sku ?? '',
+            barcode: p.barcode ?? '',
+            currentStock: p.stockQty,
+            unit: p.unit ?? 'وحدة',
+          )).toList();
+          _isLoadingProducts = false;
+        });
+
+        // إذا تم تمرير معرف المنتج، اختره تلقائياً
+        if (widget.productId != null) {
+          final match = _products.where((p) => p.id == widget.productId);
+          if (match.isNotEmpty) {
+            setState(() {
+              _selectedProduct = match.first;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingProducts = false;
+          _loadError = e.toString();
+        });
+      }
     }
   }
 
@@ -113,47 +124,74 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSizes.lg),
-          children: [
-            // اختيار المنتج
-            _buildProductSelector(),
-            const SizedBox(height: AppSizes.lg),
+      body: _isLoadingProducts
+          ? const Center(child: CircularProgressIndicator())
+          : _loadError != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const SizedBox(height: 16),
+                      const Text('حدث خطأ أثناء تحميل المنتجات'),
+                      const SizedBox(height: 8),
+                      Text(_loadError!, style: const TextStyle(color: Colors.grey)),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _isLoadingProducts = true;
+                            _loadError = null;
+                          });
+                          _loadProducts();
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('إعادة المحاولة'),
+                      ),
+                    ],
+                  ),
+                )
+              : Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: const EdgeInsets.all(AppSizes.lg),
+                    children: [
+                      // اختيار المنتج
+                      _buildProductSelector(),
+                      const SizedBox(height: AppSizes.lg),
 
-            // معلومات المخزون الحالي
-            if (_selectedProduct != null) ...[
-              _buildCurrentStockCard(),
-              const SizedBox(height: AppSizes.lg),
-            ],
+                      // معلومات المخزون الحالي
+                      if (_selectedProduct != null) ...[
+                        _buildCurrentStockCard(),
+                        const SizedBox(height: AppSizes.lg),
+                      ],
 
-            // نوع التعديل
-            _buildAdjustmentTypeSelector(),
-            const SizedBox(height: AppSizes.lg),
+                      // نوع التعديل
+                      _buildAdjustmentTypeSelector(),
+                      const SizedBox(height: AppSizes.lg),
 
-            // الكمية
-            _buildQuantityField(),
-            const SizedBox(height: AppSizes.lg),
+                      // الكمية
+                      _buildQuantityField(),
+                      const SizedBox(height: AppSizes.lg),
 
-            // سبب التعديل
-            _buildReasonSelector(),
-            const SizedBox(height: AppSizes.lg),
+                      // سبب التعديل
+                      _buildReasonSelector(),
+                      const SizedBox(height: AppSizes.lg),
 
-            // ملاحظات
-            _buildNotesField(),
-            const SizedBox(height: AppSizes.lg),
+                      // ملاحظات
+                      _buildNotesField(),
+                      const SizedBox(height: AppSizes.lg),
 
-            // ملخص التعديل
-            if (_selectedProduct != null && _quantityController.text.isNotEmpty)
-              _buildAdjustmentSummary(),
-            const SizedBox(height: AppSizes.xl),
+                      // ملخص التعديل
+                      if (_selectedProduct != null && _quantityController.text.isNotEmpty)
+                        _buildAdjustmentSummary(),
+                      const SizedBox(height: AppSizes.xl),
 
-            // زر الحفظ
-            _buildSaveButton(),
-          ],
-        ),
-      ),
+                      // زر الحفظ
+                      _buildSaveButton(),
+                    ],
+                  ),
+                ),
     );
   }
 
@@ -758,121 +796,169 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
   }
 
   void _showProductSearch() {
+    final searchController = TextEditingController();
+    List<ProductForAdjust> filteredProducts = List.from(_products);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.75,
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(AppSizes.radiusXl),
+      builder: (context) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) => Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(AppSizes.radiusXl),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            // Handle
-            Padding(
-              padding: const EdgeInsets.all(AppSizes.md),
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.grey300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
-              child: Row(
-                children: [
-                  const Text(
-                    'اختيار المنتج',
-                    style: AppTypography.headlineSmall,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-            ),
-
-            // Search
-            Padding(
-              padding: const EdgeInsets.all(AppSizes.lg),
-              child: TextField(
-                maxLength: 100,
-                decoration: InputDecoration(
-                  hintText: 'ابحث بالاسم أو SKU أو الباركود...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: AppColors.grey100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    borderSide: BorderSide.none,
+          child: Column(
+            children: [
+              // Handle
+              Padding(
+                padding: const EdgeInsets.all(AppSizes.md),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.grey300,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-            ),
 
-            // Products List
-            Expanded(
-              child: ListView.builder(
+              // Header
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
-                itemCount: _products.length,
-                itemBuilder: (context, index) {
-                  final product = _products[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: AppSizes.sm),
-                    child: ListTile(
-                      leading: const CircleAvatar(
-                        backgroundColor: AppColors.grey100,
-                        child: Icon(
-                          Icons.inventory_2,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      title: Text(
-                        product.name,
-                        style: AppTypography.titleSmall,
-                      ),
-                      subtitle: Text(
-                        'SKU: ${product.sku} | المخزون: ${product.currentStock}',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        setState(() {
-                          _selectedProduct = product;
-                        });
-                        Navigator.pop(context);
-                      },
+                child: Row(
+                  children: [
+                    const Text(
+                      'اختيار المنتج',
+                      style: AppTypography.headlineSmall,
                     ),
-                  );
-                },
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // Search
+              Padding(
+                padding: const EdgeInsets.all(AppSizes.lg),
+                child: TextField(
+                  controller: searchController,
+                  maxLength: 100,
+                  decoration: InputDecoration(
+                    hintText: 'ابحث بالاسم أو SKU أو الباركود...',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: AppColors.grey100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (query) async {
+                    if (query.isEmpty) {
+                      setSheetState(() {
+                        filteredProducts = List.from(_products);
+                      });
+                    } else {
+                      // البحث في قاعدة البيانات
+                      final storeId = ref.read(currentStoreIdProvider);
+                      if (storeId != null) {
+                        final db = getIt<AppDatabase>();
+                        final results = await db.productsDao.searchProducts(query, storeId);
+                        setSheetState(() {
+                          filteredProducts = results.map((p) => ProductForAdjust(
+                            id: p.id,
+                            name: p.name,
+                            sku: p.sku ?? '',
+                            barcode: p.barcode ?? '',
+                            currentStock: p.stockQty,
+                            unit: p.unit ?? 'وحدة',
+                          )).toList();
+                        });
+                      }
+                    }
+                  },
+                ),
+              ),
+
+              // Products List
+              Expanded(
+                child: filteredProducts.isEmpty
+                    ? const Center(
+                        child: Text('لا توجد منتجات مطابقة', style: TextStyle(color: Colors.grey)),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = filteredProducts[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: AppSizes.sm),
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                backgroundColor: AppColors.grey100,
+                                child: Icon(
+                                  Icons.inventory_2,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                              title: Text(
+                                product.name,
+                                style: AppTypography.titleSmall,
+                              ),
+                              subtitle: Text(
+                                'SKU: ${product.sku} | المخزون: ${product.currentStock}',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                              trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
+                              onTap: () {
+                                setState(() {
+                                  _selectedProduct = product;
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _scanBarcode() {
-    // TODO: فتح ماسح الباركود
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('سيتم فتح ماسح الباركود...'),
+  void _scanBarcode() async {
+    // فتح ماسح الباركود والحصول على النتيجة
+    final result = await Navigator.push<ProductsTableData>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const _BarcodeScannerForAdjust(),
       ),
     );
+
+    if (result != null && mounted) {
+      setState(() {
+        _selectedProduct = ProductForAdjust(
+          id: result.id,
+          name: result.name,
+          sku: result.sku ?? '',
+          barcode: result.barcode ?? '',
+          currentStock: result.stockQty,
+          unit: result.unit ?? 'وحدة',
+        );
+      });
+    }
   }
 
   void _showAdjustmentHistory() {
@@ -923,15 +1009,9 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
 
             const Divider(),
 
-            // History List
+            // History List - تحميل من قاعدة البيانات
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(AppSizes.lg),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return _buildHistoryItem(index);
-                },
-              ),
+              child: _buildHistoryList(),
             ),
           ],
         ),
@@ -939,8 +1019,52 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
     );
   }
 
-  Widget _buildHistoryItem(int index) {
-    final isAddition = index % 2 == 0;
+  Widget _buildHistoryList() {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      return const Center(child: Text('لم يتم تحديد المتجر'));
+    }
+
+    final db = getIt<AppDatabase>();
+    return FutureBuilder<List<InventoryMovementsTableData>>(
+      future: _selectedProduct != null
+          ? db.inventoryDao.getMovementsByProduct(_selectedProduct!.id)
+          : db.inventoryDao.getTodayMovements(storeId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red),
+                const SizedBox(height: 8),
+                Text('حدث خطأ: ${snapshot.error}'),
+              ],
+            ),
+          );
+        }
+        final movements = snapshot.data ?? [];
+        if (movements.isEmpty) {
+          return const Center(
+            child: Text('لا توجد حركات مخزون', style: TextStyle(color: Colors.grey)),
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(AppSizes.lg),
+          itemCount: movements.length,
+          itemBuilder: (context, index) {
+            return _buildHistoryItem(movements[index]);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildHistoryItem(InventoryMovementsTableData movement) {
+    final isAddition = movement.qty > 0;
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.sm),
       child: Padding(
@@ -964,18 +1088,18 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'حليب المراعي كامل الدسم',
+                  Text(
+                    '${movement.type} - ${movement.reason ?? ''}',
                     style: AppTypography.titleSmall,
                   ),
                   Text(
-                    '${isAddition ? '+' : '-'}${(index + 1) * 10} وحدة • جرد',
+                    '${isAddition ? '+' : ''}${movement.qty} وحدة (${movement.previousQty} -> ${movement.newQty})',
                     style: AppTypography.bodySmall.copyWith(
                       color: isAddition ? AppColors.success : AppColors.error,
                     ),
                   ),
                   Text(
-                    'أحمد محمد • ${DateTime.now().subtract(Duration(hours: index)).toString().substring(0, 16)}',
+                    movement.createdAt.toString().substring(0, 16),
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textMuted,
                     ),
@@ -998,28 +1122,159 @@ class _InventoryAdjustScreenState extends ConsumerState<InventoryAdjustScreen> {
       _isLoading = true;
     });
 
-    // محاكاة الحفظ
-    // Use sanitizedNotes instead of raw _notesController.text when persisting
-    debugPrint('Notes (sanitized): $sanitizedNotes');
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      final product = _selectedProduct!;
+      final quantity = int.parse(_quantityController.text);
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+      // حساب المخزون الجديد
+      int newStock;
+      switch (_adjustmentType) {
+        case AdjustmentType.add:
+          newStock = product.currentStock + quantity;
+          break;
+        case AdjustmentType.subtract:
+          newStock = product.currentStock - quantity;
+          break;
+        case AdjustmentType.set:
+          newStock = quantity;
+          break;
+      }
 
-      HapticFeedback.heavyImpact();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم حفظ التعديل بنجاح'),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-        ),
+      // إنشاء حركة مخزون
+      final movementId = _uuid.v4();
+      await db.inventoryDao.recordAdjustment(
+        id: movementId,
+        productId: product.id,
+        storeId: storeId!,
+        newQty: newStock,
+        previousQty: product.currentStock,
+        reason: '${_selectedReason.label}: $sanitizedNotes',
+        userId: null, // سيتم تعيينه من المستخدم الحالي لاحقاً
       );
 
-      Navigator.pop(context, true);
+      // تحديث المخزون في المنتج
+      await db.productsDao.updateStock(product.id, newStock);
+
+      // مزامنة حركة المخزون
+      ref.read(syncServiceProvider).enqueueCreate(
+        tableName: 'inventory_movements',
+        recordId: movementId,
+        data: {
+          'id': movementId,
+          'product_id': product.id,
+          'store_id': storeId,
+          'type': 'adjustment',
+          'qty': newStock - product.currentStock,
+          'previous_qty': product.currentStock,
+          'new_qty': newStock,
+          'reason': '${_selectedReason.label}: $sanitizedNotes',
+          'created_at': DateTime.now().toIso8601String(),
+        },
+      );
+
+      // مزامنة تحديث المنتج
+      ref.read(syncServiceProvider).enqueueUpdate(
+        tableName: 'products',
+        recordId: product.id,
+        changes: {
+          'stock_qty': newStock,
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+      );
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        HapticFeedback.heavyImpact();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم حفظ التعديل بنجاح'),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ أثناء الحفظ: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
+  }
+}
+
+/// ماسح باركود داخلي لشاشة التعديل
+class _BarcodeScannerForAdjust extends ConsumerWidget {
+  const _BarcodeScannerForAdjust();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final barcodeController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('مسح الباركود')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.qr_code_scanner, size: 80, color: AppColors.primary),
+            const SizedBox(height: 24),
+            TextField(
+              controller: barcodeController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'أدخل الباركود',
+                prefixIcon: Icon(Icons.keyboard),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () async {
+                final barcode = barcodeController.text.trim();
+                if (barcode.isEmpty) return;
+
+                final storeId = ref.read(currentStoreIdProvider);
+                if (storeId == null) return;
+
+                final db = getIt<AppDatabase>();
+                final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+
+                if (product != null) {
+                  if (context.mounted) Navigator.pop(context, product);
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('لم يتم العثور على المنتج'),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('بحث'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

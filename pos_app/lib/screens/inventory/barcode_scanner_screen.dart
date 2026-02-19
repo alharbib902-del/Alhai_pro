@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/local/app_database.dart';
+import '../../di/injection.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة ماسح الباركود
 class BarcodeScannerScreen extends ConsumerStatefulWidget {
@@ -13,13 +16,6 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   bool _isScanning = false;
   final List<_ScannedProduct> _scannedProducts = [];
   final _barcodeController = TextEditingController();
-
-  final Map<String, _ScannedProduct> _productDatabase = {
-    '690012345678': _ScannedProduct(barcode: '690012345678', name: 'أرز بسمتي 5 كجم', price: 45.00, stock: 50),
-    '590012345678': _ScannedProduct(barcode: '590012345678', name: 'زيت طبخ 1.5 لتر', price: 25.50, stock: 30),
-    '490012345678': _ScannedProduct(barcode: '490012345678', name: 'سكر أبيض 1 كجم', price: 8.00, stock: 100),
-    '390012345678': _ScannedProduct(barcode: '390012345678', name: 'حليب كامل الدسم 1 لتر', price: 6.50, stock: 80),
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +83,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                         const SizedBox(height: 16),
                         Text('لم يتم مسح أي منتج', style: TextStyle(color: Colors.grey.shade600)),
                         const SizedBox(height: 8),
-                        const Text('باركودات للتجربة: 690012345678، 590012345678', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        const Text('أدخل باركود للبحث في قاعدة البيانات', style: TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ),
                   )
@@ -142,35 +138,53 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   void _toggleScanning() {
     setState(() => _isScanning = !_isScanning);
     if (_isScanning) {
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted && _isScanning) {
-          _simulateScan();
-        }
-      });
+      // في بيئة حقيقية سيتم استخدام كاميرا الجهاز
+      // حالياً نعرض رسالة للمستخدم
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('استخدم الإدخال اليدوي للبحث عن المنتجات')),
+      );
+      setState(() => _isScanning = false);
     }
-  }
-
-  void _simulateScan() {
-    final barcodes = _productDatabase.keys.toList();
-    final randomBarcode = barcodes[DateTime.now().millisecond % barcodes.length];
-    _handleBarcode(randomBarcode);
-    setState(() => _isScanning = false);
   }
 
   void _manualSearch() {
     if (_barcodeController.text.isNotEmpty) {
-      _handleBarcode(_barcodeController.text);
+      _handleBarcode(_barcodeController.text.trim());
       _barcodeController.clear();
     }
   }
 
-  void _handleBarcode(String barcode) {
-    final product = _productDatabase[barcode];
+  /// البحث عن المنتج في قاعدة البيانات بالباركود
+  Future<void> _handleBarcode(String barcode) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('لم يتم تحديد المتجر')),
+      );
+      return;
+    }
+
+    final db = getIt<AppDatabase>();
+    final product = await db.productsDao.getProductByBarcode(barcode, storeId);
+
     if (product != null) {
-      setState(() => _scannedProducts.add(product));
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم العثور على: ${product.name}')));
+      setState(() => _scannedProducts.add(_ScannedProduct(
+        id: product.id,
+        barcode: product.barcode ?? barcode,
+        name: product.name,
+        price: product.price,
+        stock: product.stockQty,
+      )));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تم العثور على: ${product.name}')),
+        );
+      }
+
+      // إرجاع المنتج للشاشة المستدعية إذا لزم الأمر
+      // Navigator.pop(context, product);
     } else {
-      _showNotFoundDialog(barcode);
+      if (mounted) _showNotFoundDialog(barcode);
     }
   }
 
@@ -180,7 +194,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
       builder: (context) => AlertDialog(
         icon: const Icon(Icons.error_outline, color: Colors.orange, size: 48),
         title: const Text('منتج غير موجود'),
-        content: Text('لم يتم العثور على منتج بالباركود:\n$barcode'),
+        content: Text('لم يتم العثور على المنتج\nالباركود: $barcode'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق')),
           FilledButton(onPressed: () { Navigator.pop(context); _addNewProduct(barcode); }, child: const Text('إضافة منتج جديد')),
@@ -203,8 +217,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 }
 
 class _ScannedProduct {
+  final String id;
   final String barcode, name;
   final double price;
   final int stock;
-  _ScannedProduct({required this.barcode, required this.name, required this.price, required this.stock});
+  _ScannedProduct({required this.id, required this.barcode, required this.name, required this.price, required this.stock});
 }

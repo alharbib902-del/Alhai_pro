@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../core/security/pin_service.dart';
+import '../../data/local/app_database.dart';
+import '../../data/local/daos/audit_log_dao.dart';
+import '../../di/injection.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/products_providers.dart';
 
 /// وضع الشاشة: إعداد أو تحقق أو حوار موافقة
 enum ManagerApprovalMode { setup, verify, dialog }
@@ -446,15 +451,94 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
     final l10n = AppLocalizations.of(context)!;
     setState(() => _isLoading = true);
 
-    final result = await PinService.verifyPin(_pin);
+    try {
+      final db = getIt<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
 
-    if (!mounted) return;
+      if (storeId == null) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _pin = '';
+          _error = 'لم يتم تحديد المتجر';
+        });
+        return;
+      }
 
-    setState(() => _isLoading = false);
+      // التحقق من PIN في قاعدة البيانات
+      final manager = await db.usersDao.verifyPin(storeId, _pin);
 
-    if (result.isSuccess) {
+      if (!mounted) return;
+
+      if (manager == null) {
+        // PIN غير صحيح - نجرب PinService كاحتياط
+        final result = await PinService.verifyPin(_pin);
+        if (!mounted) return;
+
+        setState(() => _isLoading = false);
+
+        if (result.isSuccess) {
+          // نجح التحقق عبر PinService
+          if (_isDialogMode) {
+            Navigator.of(context).pop(true);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.approvalGranted),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.pop(true);
+          }
+        } else {
+          setState(() {
+            _pin = '';
+            if (result.errorType == PinError.lockedOut && result.lockedUntil != null) {
+              final remaining = result.lockedUntil!.difference(DateTime.now());
+              _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
+            } else if (result.remainingAttempts != null) {
+              _error = l10n.wrongPinAttemptsRemaining(result.remainingAttempts!);
+            } else {
+              _error = 'رمز PIN غير صحيح أو المستخدم ليس مديراً';
+            }
+          });
+        }
+        return;
+      }
+
+      // التحقق من أن المستخدم مدير أو مالك
+      final role = manager.role.toLowerCase();
+      final isManager = role == 'manager' || role == 'admin' || role == 'owner' || role == 'superadmin' || role == 'store_owner';
+
+      if (!isManager) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _pin = '';
+          _error = 'هذا المستخدم ليس لديه صلاحيات المدير';
+        });
+        return;
+      }
+
+      // تسجيل الموافقة في سجل التدقيق
+      try {
+        await db.auditLogDao.log(
+          storeId: storeId,
+          userId: manager.id,
+          userName: manager.name,
+          action: AuditAction.settingsChange,
+          description: 'موافقة المدير على: ${widget.action ?? 'عملية تتطلب موافقة'}',
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('خطأ في تسجيل الموافقة: $e');
+        }
+      }
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
       if (_isDialogMode) {
-        // في وضع الحوار: نعود بـ true مباشرة
         Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -463,21 +547,18 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        context.pop(true); // Return success
+        context.pop(true);
       }
-    } else {
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
+        _isLoading = false;
         _pin = '';
-
-        if (result.errorType == PinError.lockedOut && result.lockedUntil != null) {
-          final remaining = result.lockedUntil!.difference(DateTime.now());
-          _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
-        } else if (result.remainingAttempts != null) {
-          _error = l10n.wrongPinAttemptsRemaining(result.remainingAttempts!);
-        } else {
-          _error = result.error;
-        }
+        _error = 'حدث خطأ أثناء التحقق. يرجى المحاولة مرة أخرى';
       });
+      if (kDebugMode) {
+        debugPrint('خطأ في التحقق من PIN المدير: $e');
+      }
     }
   }
 }
