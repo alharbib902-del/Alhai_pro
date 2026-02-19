@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
 import '../data/local/app_database.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_smart_pricing_service.dart';
 import 'products_providers.dart';
 
@@ -83,4 +84,16 @@ final bulkPricingOptionsProvider =
   final service = ref.read(aiSmartPricingServiceProvider);
   final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
   return service.getBulkPricingOptions(storeId);
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات التسعير من خادم AI
+final pricingApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.getSmartPricing(orgId: 'default', storeId: storeId);
 });

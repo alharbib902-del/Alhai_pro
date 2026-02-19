@@ -6,7 +6,9 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_fraud_detection_service.dart';
+import 'products_providers.dart';
 
 /// مزود خدمة كشف الاحتيال - Fraud Detection Service Provider
 final aiFraudDetectionServiceProvider = Provider<AiFraudDetectionService>((ref) {
@@ -63,4 +65,16 @@ final selectedFraudAlertProvider = StateProvider<FraudAlert?>((ref) => null);
 final fraudInvestigationProvider = FutureProvider.family<Investigation, String>((ref, alertId) async {
   final service = ref.watch(aiFraudDetectionServiceProvider);
   return service.getInvestigation(alertId);
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات كشف الاحتيال من خادم AI
+final fraudApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.detectFraud(orgId: 'default', storeId: storeId);
 });

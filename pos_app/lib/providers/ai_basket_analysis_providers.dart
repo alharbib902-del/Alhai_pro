@@ -6,7 +6,9 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_basket_analysis_service.dart';
+import 'products_providers.dart';
 
 /// مزود خدمة تحليل السلة - Basket Analysis Service Provider
 final aiBasketAnalysisServiceProvider = Provider<AiBasketAnalysisService>((ref) {
@@ -44,4 +46,16 @@ final filteredAssociationsProvider = Provider<AsyncValue<List<ProductAssociation
     return associations.where((a) => a.confidence >= minConfidence).toList()
       ..sort((a, b) => b.confidence.compareTo(a.confidence));
   });
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات تحليل السلة من خادم AI
+final basketApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.analyzeBasket(orgId: 'default', storeId: storeId);
 });

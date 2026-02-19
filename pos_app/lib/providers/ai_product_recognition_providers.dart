@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_product_recognition_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // PROVIDERS
@@ -156,3 +158,26 @@ class ShelfScanNotifier extends StateNotifier<AsyncValue<ShelfScanResult?>> {
     state = const AsyncValue.data(null);
   }
 }
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود التعرف على المنتج من خادم AI
+final recognitionApiProvider = Provider<
+    Future<Map<String, dynamic>> Function({
+      String? barcode,
+      String? description,
+      String? imageBase64,
+    })>((ref) {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return ({String? barcode, String? description, String? imageBase64}) =>
+      api.recognizeProduct(
+        orgId: 'default',
+        storeId: storeId,
+        barcode: barcode,
+        description: description,
+        imageBase64: imageBase64,
+      );
+});

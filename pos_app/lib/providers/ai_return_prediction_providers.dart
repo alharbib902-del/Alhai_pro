@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_return_prediction_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // SERVICE PROVIDER
@@ -72,4 +74,16 @@ final filteredProbabilitiesProvider = FutureProvider<List<ReturnProbability>>((r
   final filter = ref.watch(selectedRiskFilterProvider);
   if (filter == null) return probabilities;
   return probabilities.where((p) => p.riskLevel == filter).toList();
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات التنبؤ بالمرتجعات من خادم AI
+final returnsApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.predictReturns(orgId: 'default', storeId: storeId);
 });

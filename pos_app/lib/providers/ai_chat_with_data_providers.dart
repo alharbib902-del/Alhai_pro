@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_chat_with_data_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // SERVICE PROVIDER
@@ -72,4 +74,19 @@ final clearHistoryActionProvider = Provider<void Function()>((ref) {
     ref.read(queryHistoryProvider.notifier).state = [];
     ref.read(currentQueryResultProvider.notifier).state = null;
   };
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود الدردشة مع البيانات عبر خادم AI
+final chatApiProvider = Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return (String message) => api.chatWithData(
+        orgId: 'default',
+        storeId: storeId,
+        message: message,
+      );
 });

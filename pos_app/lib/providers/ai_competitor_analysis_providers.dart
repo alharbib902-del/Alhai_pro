@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_competitor_analysis_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // PROVIDERS
@@ -132,3 +134,15 @@ class CompetitorAlertsNotifier extends StateNotifier<List<CompetitorAlert>> {
 
   int get unreadCount => state.where((a) => !a.isRead).length;
 }
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات تحليل المنافسين من خادم AI
+final competitorApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.analyzeCompetitors(orgId: 'default', storeId: storeId);
+});

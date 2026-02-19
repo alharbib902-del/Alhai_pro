@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
 import '../data/local/app_database.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_assistant_service.dart';
 import 'products_providers.dart';
 
@@ -127,4 +128,19 @@ final isProcessingProvider = StateProvider<bool>((ref) => false);
 final quickTemplatesProvider = Provider<List<QuickTemplate>>((ref) {
   final service = ref.read(aiAssistantServiceProvider);
   return service.getQuickTemplates();
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود المساعد الذكي عبر خادم AI
+final assistantApiProvider = Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return (String query) => api.askAssistant(
+        orgId: 'default',
+        storeId: storeId,
+        query: query,
+      );
 });

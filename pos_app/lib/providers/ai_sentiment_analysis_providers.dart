@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_sentiment_analysis_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // PROVIDERS
@@ -61,3 +63,15 @@ class FeedbackNotifier extends StateNotifier<List<CustomerFeedback>> {
     state = [...state]..sort((a, b) => b.sentimentValue.compareTo(a.sentimentValue));
   }
 }
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات تحليل المشاعر من خادم AI
+final sentimentApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.analyzeSentiment(orgId: 'default', storeId: storeId);
+});

@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_promotion_designer_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // SERVICE PROVIDER
@@ -87,4 +89,16 @@ final averageConfidenceProvider = FutureProvider<double>((ref) async {
   final promotions = await ref.watch(generatedPromotionsProvider.future);
   if (promotions.isEmpty) return 0;
   return promotions.fold<double>(0, (sum, p) => sum + p.confidence) / promotions.length;
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات تصميم العروض من خادم AI
+final promotionsApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.designPromotions(orgId: 'default', storeId: storeId);
 });

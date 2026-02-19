@@ -6,7 +6,9 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_customer_recommendations_service.dart';
+import 'products_providers.dart';
 
 /// مزود خدمة التوصيات - Recommendations Service Provider
 final aiCustomerRecommendationsServiceProvider = Provider<AiCustomerRecommendationsService>((ref) {
@@ -48,3 +50,15 @@ final filteredCustomerRecommendationsProvider = Provider<AsyncValue<List<Custome
 
 /// مزود العميل المحدد - Selected Customer Provider
 final selectedCustomerProvider = StateProvider<CustomerRecommendation?>((ref) => null);
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات التوصيات من خادم AI
+final recommendationsApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.getRecommendations(orgId: 'default', storeId: storeId);
+});

@@ -6,7 +6,9 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/local/app_database.dart';
 import '../di/injection.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_smart_inventory_service.dart';
+import 'products_providers.dart';
 
 /// مزود خدمة المخزون الذكي - Smart Inventory Service Provider
 final aiSmartInventoryServiceProvider = Provider<AiSmartInventoryService>((ref) {
@@ -56,4 +58,16 @@ final filteredAbcItemsProvider = Provider<AsyncValue<List<AbcItem>>>((ref) {
     if (filter == null) return items;
     return items.where((i) => i.category == filter).toList();
   });
+});
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات المخزون الذكي من خادم AI
+final inventoryApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.analyzeInventory(orgId: 'default', storeId: storeId);
 });

@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_smart_reports_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // PROVIDERS
@@ -101,3 +103,15 @@ class ReportHistoryNotifier extends StateNotifier<List<GeneratedReport>> {
     state = state.where((r) => r.id != reportId).toList();
   }
 }
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات التقارير من خادم AI
+final reportsApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.getSmartReport(orgId: 'default', storeId: storeId);
+});

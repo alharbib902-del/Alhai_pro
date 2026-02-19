@@ -4,7 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/ai_api_service.dart';
 import '../services/ai_staff_analytics_service.dart';
+import 'products_providers.dart';
 
 // ============================================================================
 // PROVIDERS
@@ -49,3 +51,15 @@ enum StaffPeriod {
   thisMonth,
   lastMonth,
 }
+
+// ============================================================================
+// REMOTE API PROVIDER - مزود API البعيد
+// ============================================================================
+
+/// مزود بيانات تحليل الموظفين من خادم AI
+final staffApiProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final api = ref.read(aiApiServiceProvider);
+  final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+  return api.analyzeStaff(orgId: 'default', storeId: storeId);
+});
