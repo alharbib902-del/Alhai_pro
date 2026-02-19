@@ -58,7 +58,7 @@ class ElegantQuickActions extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -68,21 +68,7 @@ class ElegantQuickActions extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // Decorative blur circle in top-right corner
-            Positioned(
-              top: -30,
-              right: -30,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                ),
-              ),
-            ),
-
-            // Main content
+            // Main content — MUST be first (non-Positioned) to give Stack its size
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -117,6 +103,20 @@ class ElegantQuickActions extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // Decorative blur circle in top-right corner (Positioned — after non-Positioned)
+            Positioned(
+              top: -30,
+              right: -30,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.1),
+                ),
               ),
             ),
           ],
@@ -156,19 +156,19 @@ class _QuickActionButton extends StatelessWidget {
       child: InkWell(
         onTap: action.onTap,
         borderRadius: BorderRadius.circular(16),
-        splashColor: Colors.white.withOpacity(0.1),
-        highlightColor: Colors.white.withOpacity(0.05),
+        splashColor: Colors.white.withValues(alpha: 0.1),
+        highlightColor: Colors.white.withValues(alpha: 0.05),
         child: Container(
           constraints: const BoxConstraints(minHeight: 88),
           decoration: BoxDecoration(
             color: action.isPrimary
-                ? Colors.white.withOpacity(0.2)
-                : Colors.white.withOpacity(0.1),
+                ? Colors.white.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: action.isPrimary
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.white.withOpacity(0.05),
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.05),
             ),
           ),
           child: Column(

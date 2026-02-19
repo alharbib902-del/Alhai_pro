@@ -92,12 +92,12 @@ class RecentTransactionsList extends StatelessWidget {
         borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
         border: Border.all(
           color: isDarkMode
-              ? Colors.white.withOpacity(0.05)
-              : AppColors.border.withOpacity(0.5),
+              ? Colors.white.withValues(alpha:0.05)
+              : AppColors.border.withValues(alpha:0.5),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDarkMode ? 0.2 : 0.04),
+            color: Colors.black.withValues(alpha:isDarkMode ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -132,7 +132,7 @@ class RecentTransactionsList extends StatelessWidget {
                     onTap: onViewAll,
                     child: Text(
                       l10n.viewAll,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -167,7 +167,7 @@ class RecentTransactionsList extends StatelessWidget {
             Icon(
               Icons.receipt_long_rounded,
               color: isDarkMode
-                  ? Colors.white.withOpacity(0.2)
+                  ? Colors.white.withValues(alpha:0.2)
                   : AppColors.textTertiary,
               size: 48,
             ),
@@ -176,7 +176,7 @@ class RecentTransactionsList extends StatelessWidget {
               'لا توجد معاملات',
               style: TextStyle(
                 color: isDarkMode
-                    ? Colors.white.withOpacity(0.5)
+                    ? Colors.white.withValues(alpha:0.5)
                     : AppColors.textSecondary,
                 fontSize: 14,
               ),
@@ -241,7 +241,7 @@ class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final headerColor = isDarkMode
-        ? Colors.white.withOpacity(0.4)
+        ? Colors.white.withValues(alpha:0.4)
         : AppColors.textTertiary;
 
     final headerStyle = TextStyle(
@@ -260,8 +260,8 @@ class _TableHeader extends StatelessWidget {
         border: Border(
           bottom: BorderSide(
             color: isDarkMode
-                ? Colors.white.withOpacity(0.06)
-                : AppColors.border.withOpacity(0.7),
+                ? Colors.white.withValues(alpha:0.06)
+                : AppColors.border.withValues(alpha:0.7),
           ),
         ),
       ),
@@ -366,16 +366,16 @@ class _TransactionRowState extends State<_TransactionRow> {
         decoration: BoxDecoration(
           color: _isHovered
               ? (isDark
-                  ? Colors.white.withOpacity(0.03)
-                  : AppColors.backgroundSecondary.withOpacity(0.5))
+                  ? Colors.white.withValues(alpha:0.03)
+                  : AppColors.backgroundSecondary.withValues(alpha:0.5))
               : Colors.transparent,
           border: widget.isLast
               ? null
               : Border(
                   bottom: BorderSide(
                     color: isDark
-                        ? Colors.white.withOpacity(0.04)
-                        : AppColors.border.withOpacity(0.5),
+                        ? Colors.white.withValues(alpha:0.04)
+                        : AppColors.border.withValues(alpha:0.5),
                   ),
                 ),
         ),
@@ -450,7 +450,7 @@ class _TransactionRowState extends State<_TransactionRow> {
         widget.l10n.guestCustomer,
         style: TextStyle(
           color: isDark
-              ? Colors.white.withOpacity(0.4)
+              ? Colors.white.withValues(alpha:0.4)
               : AppColors.textTertiary,
           fontSize: 13,
           fontStyle: FontStyle.italic,
@@ -471,7 +471,7 @@ class _TransactionRowState extends State<_TransactionRow> {
           width: isMobile ? 28 : 32,
           height: isMobile ? 28 : 32,
           decoration: BoxDecoration(
-            color: avatarColor.withOpacity(0.15),
+            color: avatarColor.withValues(alpha:0.15),
             borderRadius: BorderRadius.circular(isMobile ? 8 : 10),
           ),
           alignment: Alignment.center,
@@ -489,7 +489,7 @@ class _TransactionRowState extends State<_TransactionRow> {
           child: Text(
             tx.customerName,
             style: TextStyle(
-              color: isDark ? Colors.white.withOpacity(0.9) : AppColors.textPrimary,
+              color: isDark ? Colors.white.withValues(alpha:0.9) : AppColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -509,7 +509,7 @@ class _TransactionRowState extends State<_TransactionRow> {
       timeText,
       style: TextStyle(
         color: isDark
-            ? Colors.white.withOpacity(0.4)
+            ? Colors.white.withValues(alpha:0.4)
             : AppColors.textTertiary,
         fontSize: 13,
       ),
@@ -580,7 +580,7 @@ class _TransactionRowState extends State<_TransactionRow> {
           icon: Icon(
             Icons.visibility_outlined,
             color: isDark
-                ? Colors.white.withOpacity(0.4)
+                ? Colors.white.withValues(alpha:0.4)
                 : AppColors.textTertiary,
             size: 18,
           ),
@@ -622,9 +622,9 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
     case TransactionType.sale:
       return (
         l10n.completed,
-        AppColors.success.withOpacity(0.12),
+        AppColors.success.withValues(alpha:0.12),
         AppColors.success,
-        AppColors.success.withOpacity(0.3),
+        AppColors.success.withValues(alpha:0.3),
       );
 
     case TransactionType.refund:
@@ -638,9 +638,9 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
     case TransactionType.cancelled:
       return (
         l10n.cancelled,
-        AppColors.error.withOpacity(0.12),
+        AppColors.error.withValues(alpha:0.12),
         AppColors.error,
-        AppColors.error.withOpacity(0.3),
+        AppColors.error.withValues(alpha:0.3),
       );
   }
 }

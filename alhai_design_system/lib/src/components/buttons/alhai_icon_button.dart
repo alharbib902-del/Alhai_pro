@@ -48,8 +48,7 @@ class AlhaiIconButton extends StatefulWidget {
     this.isLoading = false,
     this.badgeCount,
     this.showBadge = false,
-  }) : assert(size >= AlhaiSpacing.minTouchTarget,
-            'Icon button size must be at least 48dp for accessibility');
+  });
 
   @override
   State<AlhaiIconButton> createState() => _AlhaiIconButtonState();

@@ -1,17 +1,14 @@
 {
   "@@locale": "fil",
-
   "appTitle": "Point of Sale System",
   "login": "Mag-login",
   "logout": "Mag-logout",
   "welcome": "Maligayang pagdating",
   "welcomeBack": "Maligayang pagbabalik",
-
   "phone": "Numero ng Telepono",
   "phoneHint": "05xxxxxxxx",
   "phoneRequired": "Kailangan ang numero ng telepono",
   "phoneInvalid": "Hindi wastong numero ng telepono",
-
   "otp": "Verification Code",
   "otpHint": "Ilagay ang verification code",
   "otpSent": "Naipadala na ang verification code",
@@ -19,14 +16,12 @@
   "otpExpired": "Nag-expire na ang verification code",
   "otpInvalid": "Hindi wastong verification code",
   "otpResendIn": "Ipadala muli sa {seconds} segundo",
-
   "pin": "PIN Code",
   "pinHint": "Ilagay ang PIN code",
   "pinRequired": "Kailangan ang PIN code",
   "pinInvalid": "Hindi wastong PIN code",
   "pinAttemptsRemaining": "Natitirang pagtatangka: {count}",
   "pinLocked": "Naka-lock ang account. Subukan pagkatapos ng {minutes} minuto",
-
   "home": "Home",
   "dashboard": "Dashboard",
   "pos": "Point of Sale",
@@ -38,21 +33,18 @@
   "invoices": "Mga Invoice",
   "reports": "Mga Ulat",
   "settings": "Mga Setting",
-
   "sales": "Mga Benta",
   "salesAnalytics": "Pagsusuri ng Mga Benta",
   "refund": "Refund",
   "todaySales": "Benta Ngayong Araw",
   "totalSales": "Kabuuang Benta",
   "averageSale": "Average na Benta",
-
   "cart": "Cart",
   "cartEmpty": "Walang laman ang cart",
   "addToCart": "Idagdag sa Cart",
   "removeFromCart": "Alisin sa Cart",
   "clearCart": "I-clear ang Cart",
   "checkout": "Checkout",
-
   "payment": "Pagbabayad",
   "paymentMethod": "Paraan ng Pagbabayad",
   "cash": "Cash",
@@ -61,7 +53,6 @@
   "transfer": "Transfer",
   "paymentSuccess": "Matagumpay ang pagbabayad",
   "paymentFailed": "Nabigo ang pagbabayad",
-
   "price": "Presyo",
   "quantity": "Dami",
   "total": "Kabuuan",
@@ -70,7 +61,6 @@
   "tax": "Buwis",
   "vat": "VAT",
   "grandTotal": "Grand Total",
-
   "product": "Produkto",
   "productName": "Pangalan ng Produkto",
   "productCode": "Product Code",
@@ -80,19 +70,16 @@
   "lowStock": "Mababang Stock",
   "outOfStock": "Wala nang Stock",
   "inStock": "May Stock",
-
   "customer": "Customer",
   "customerName": "Pangalan ng Customer",
   "customerPhone": "Telepono ng Customer",
   "debt": "Utang",
   "balance": "Balanse",
-
   "search": "Maghanap",
   "searchHint": "Maghanap dito...",
   "filter": "Filter",
   "sort": "Ayusin",
   "all": "Lahat",
-
   "add": "Idagdag",
   "edit": "I-edit",
   "delete": "Tanggalin",
@@ -105,7 +92,6 @@
   "done": "Tapos na",
   "submit": "Isumite",
   "retry": "Subukan Muli",
-
   "loading": "Nag-loload...",
   "noData": "Walang data",
   "noResults": "Walang mga resulta",
@@ -116,35 +102,28 @@
   "noInternet": "Walang koneksyon sa internet",
   "offline": "Offline",
   "online": "Online",
-
   "success": "Tagumpay",
   "warning": "Babala",
   "info": "Impormasyon",
-
   "yes": "Oo",
   "no": "Hindi",
-
   "today": "Ngayon",
   "yesterday": "Kahapon",
   "thisWeek": "Ngayong Linggo",
   "thisMonth": "Ngayong Buwan",
-
   "shift": "Shift",
   "openShift": "Buksan ang Shift",
   "closeShift": "Isara ang Shift",
   "shiftSummary": "Buod ng Shift",
   "cashDrawer": "Cash Drawer",
-
   "receipt": "Resibo",
   "printReceipt": "I-print ang Resibo",
   "shareReceipt": "I-share ang Resibo",
-
   "sync": "Sync",
   "syncing": "Nagsi-sync...",
   "syncComplete": "Kumpleto na ang sync",
   "syncFailed": "Nabigo ang sync",
   "lastSync": "Huling sync",
-
   "language": "Wika",
   "arabic": "العربية",
   "english": "English",
@@ -153,32 +132,26 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "Tema",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
   "systemMode": "System Mode",
-
   "notifications": "Mga Notification",
   "security": "Seguridad",
   "printer": "Printer",
   "backup": "Backup",
   "help": "Tulong",
   "about": "Tungkol sa",
-
   "version": "Bersyon",
   "copyright": "Lahat ng karapatan ay nakalaan",
-
   "deleteConfirmTitle": "Kumpirmahin ang Pagtanggal",
   "deleteConfirmMessage": "Sigurado ka bang gusto mong tanggalin?",
   "logoutConfirmTitle": "Kumpirmahin ang Logout",
   "logoutConfirmMessage": "Sigurado ka bang gusto mong mag-logout?",
-
   "requiredField": "Kailangan ang field na ito",
   "invalidFormat": "Hindi wastong format",
   "minLength": "Dapat ay hindi bababa sa {min} na character",
   "maxLength": "Dapat ay mas mababa sa {max} na character",
-
   "welcomeTitle": "Maligayang Pagbabalik! 👋",
   "welcomeSubtitle": "Mag-sign in upang pamahalaan ang iyong tindahan nang madali at mabilis",
   "welcomeSubtitleShort": "Mag-sign in upang pamahalaan ang iyong tindahan",
@@ -197,13 +170,12 @@
   "changeNumber": "Palitan ang numero",
   "verificationCode": "Verification Code",
   "remainingAttempts": "Natitirang pagtatangka: {count}",
-  "technicalSupport": "Technical Support",
+  "technicalSupport": "Teknikal na Suporta",
   "privacyPolicy": "Patakaran sa Privacy",
   "termsAndConditions": "Mga Tuntunin at Kundisyon",
   "allRightsReserved": "© 2026 Al-Hal System. Lahat ng karapatan ay nakalaan.",
   "dayMode": "Day Mode",
   "nightMode": "Night Mode",
-
   "selectBranch": "Pumili ng Branch",
   "selectBranchDesc": "Piliin ang branch na gusto mong pagtrabahuan",
   "availableBranches": "Mga Available na Branch",
@@ -212,13 +184,10 @@
   "addBranch": "Magdagdag ng Bagong Branch",
   "comingSoon": "Darating na ang feature na ito",
   "tryDifferentSearch": "Subukan ang ibang salita sa paghahanap",
-
   "selectLanguage": "Pumili ng Wika",
   "languageChangeInfo": "Piliin ang iyong gustong wika sa pagpapakita. Ang mga pagbabago ay ilalapat kaagad.",
-
   "centralManagement": "Sentral na Pamamahala",
   "centralManagementDesc": "Kontrolin ang lahat ng iyong mga branch at warehouse mula sa isang lugar. Makakuha ng mga instant na ulat at inventory sync sa lahat ng POS points.",
-  
   "selectBranchToContinue": "Pumili ng Branch para Magpatuloy",
   "youHaveAccessToBranches": "May access ka sa mga sumusunod na branch. Pumili ng isa para magsimula.",
   "searchForBranch": "Maghanap ng branch...",
@@ -226,16 +195,15 @@
   "closedOpensAt": "Sarado (Magbubukas {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "Naka-login bilang",
   "support247": "24/7 Suporta",
   "analyticsTools": "Mga Analytics Tool",
   "uptime": "Uptime",
-  "technicalSupport": "Teknikal na Suporta",
-  "privacyPolicy": "Patakaran sa Privacy",
-
   "dashboardTitle": "Dashboard",
   "searchPlaceholder": "Pangkalahatang paghahanap...",
   "mainBranch": "Pangunahing Branch (Riyadh)",
@@ -257,11 +225,16 @@
   "closeDay": "Isara ang Araw",
   "topSelling": "Pinakabenta",
   "ordersToday": "{count} order ngayon",
-  "@ordersToday": {"placeholders": {"count": {"type": "int"}}},
+  "@ordersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "recentTransactions": "Kamakailang mga Transaksyon",
   "viewAll": "Tingnan Lahat",
   "orderNumber": "Order #",
-  "customer": "Customer",
   "time": "Oras",
   "status": "Status",
   "amount": "Halaga",
@@ -272,12 +245,17 @@
   "cancelled": "Kinansela",
   "guestCustomer": "Guest Customer",
   "minutesAgo": "{count} minuto ang nakalipas",
-  "@minutesAgo": {"placeholders": {"count": {"type": "int"}}},
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "posSystem": "POS System",
   "branchManager": "Branch Manager",
   "settingsSection": "Mga Setting",
   "systemSettings": "Mga Setting ng System",
-  "notifications": "Mga Notification",
   "sar": "SAR",
   "daily": "Araw-araw",
   "goodMorning": "Magandang Umaga",
@@ -293,13 +271,716 @@
   "goodMorningName": "Magandang Umaga, {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "Magandang Gabi, {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "Shopping Cart",
+  "selectOrSearchCustomer": "Pumili o maghanap ng customer",
+  "newCustomer": "Bago",
+  "draft": "Draft",
+  "pay": "Bayaran",
+  "haveCoupon": "May discount coupon ka ba?",
+  "discountPercent": "Discount {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "Buksan Drawer",
+  "suspend": "I-suspend",
+  "quantitySoldOut": "Sold Out",
+  "noProducts": "Walang produkto",
+  "addProductsToStart": "Magdagdag ng produkto para magsimula",
+  "undoComingSoon": "I-undo (malapit na)",
+  "employees": "Empleyado",
+  "loyaltyProgram": "Loyalty Program",
+  "newBadge": "Bago",
+  "technicalSupportShort": "Technical Support",
+  "productDetails": "Detalye ng Produkto",
+  "stockMovements": "Galaw ng Stock",
+  "priceHistory": "Kasaysayan ng Presyo",
+  "salesHistory": "Kasaysayan ng Benta",
+  "available": "Available",
+  "alertLevel": "Alert Level",
+  "reorderPoint": "Reorder Point",
+  "revenue": "Kita",
+  "supplier": "Supplier",
+  "lastSale": "Huling Benta",
+  "printLabel": "I-print ang Label",
+  "copied": "Nakopya",
+  "copiedToClipboard": "Nakopya ang {label}",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "Aktibo",
+  "inactive": "Hindi Aktibo",
+  "profitMargin": "Margin ng Kita",
+  "sellingPrice": "Presyo ng Benta",
+  "costPrice": "Presyo ng Gastos",
+  "description": "Paglalarawan",
+  "noDescription": "Walang paglalarawan",
+  "productNotFound": "Hindi natagpuan ang produkto",
+  "stockStatus": "Status ng Stock",
+  "currentStock": "Kasalukuyang Stock",
+  "unit": "yunit",
+  "units": "mga yunit",
+  "date": "Petsa",
+  "type": "Uri",
+  "reference": "Sanggunian",
+  "newBalance": "Bagong Balanse",
+  "oldPrice": "Lumang Presyo",
+  "newPrice": "Bagong Presyo",
+  "reason": "Dahilan",
+  "invoiceNumber": "Invoice #",
+  "categoryLabel": "Kategorya",
+  "uncategorized": "Walang kategorya",
+  "noSupplier": "Walang supplier",
+  "moreOptions": "Higit Pang Opsyon",
+  "noStockMovements": "Walang galaw ng stock",
+  "noPriceHistory": "Walang kasaysayan ng presyo",
+  "noSalesHistory": "Walang kasaysayan ng benta",
+  "sale": "Benta",
+  "purchase": "Binili",
+  "adjustment": "Pag-aayos",
+  "returnText": "Ibalik",
+  "waste": "Basura",
+  "initialStock": "Paunang Stock",
+  "searchByNameOrBarcode": "Maghanap sa pangalan o barcode...",
+  "hideFilters": "Itago ang Mga Filter",
+  "showFilters": "Ipakita ang Mga Filter",
+  "sortByName": "Pangalan",
+  "sortByPrice": "Presyo",
+  "sortByStock": "Stock",
+  "sortByRecent": "Kamakailan",
+  "allItems": "Lahat",
+  "clearFilters": "I-clear ang Mga Filter",
+  "noBarcode": "Walang barcode",
+  "stockCount": "Stock: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "I-save ang Mga Pagbabago",
+  "addTheProduct": "Idagdag ang Produkto",
+  "editProduct": "I-edit ang Produkto",
+  "newProduct": "Bagong Produkto",
+  "minimumQuantity": "Minimum na Dami",
+  "selectCategory": "Pumili ng Kategorya",
+  "productImage": "Larawan ng Produkto",
+  "trackInventory": "I-track ang Imbentaryo",
+  "productSavedSuccess": "Matagumpay na na-save ang produkto",
+  "productAddedSuccess": "Matagumpay na naidagdag ang produkto",
+  "scanBarcode": "I-scan ang Barcode",
+  "activeProduct": "Aktibong Produkto",
+  "currency": "SAR",
+  "hoursAgo": "{count} oras ang nakalipas",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} araw ang nakalipas",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "Update sa presyo ng supplier",
+  "costIncrease": "Pagtaas ng gastos",
+  "duplicateProduct": "I-duplicate ang Produkto",
+  "categoriesManagement": "Pamamahala ng Kategorya",
+  "categoriesCount": "{count} kategorya",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "Magdagdag ng Kategorya",
+  "editCategory": "I-edit ang Kategorya",
+  "deleteCategory": "I-delete ang Kategorya",
+  "categoryName": "Pangalan ng Kategorya",
+  "categoryNameAr": "Pangalan (Arabic)",
+  "categoryNameEn": "Pangalan (English)",
+  "parentCategory": "Pangunahing Kategorya",
+  "noParentCategory": "Walang pangunahing kategorya (Root)",
+  "sortOrder": "Pagkakasunod",
+  "categoryColor": "Kulay",
+  "categoryIcon": "Icon",
+  "categoryDetails": "Detalye ng Kategorya",
+  "categoryCreatedAt": "Petsa ng Paglikha",
+  "categoryProducts": "Mga Produkto ng Kategorya",
+  "noCategorySelected": "Pumili ng kategorya para makita ang detalye",
+  "deleteCategoryConfirm": "Sigurado ka bang gusto mong i-delete ang kategoryang ito?",
+  "categoryDeletedSuccess": "Matagumpay na na-delete ang kategorya",
+  "categorySavedSuccess": "Matagumpay na na-save ang kategorya",
+  "searchCategories": "Maghanap ng kategorya...",
+  "reorderCategories": "Ayusin ang pagkakasunod",
+  "noCategories": "Walang nahanap na kategorya",
+  "subcategories": "Mga sub-kategorya",
+  "activeStatus": "Aktibo",
+  "inactiveStatus": "Hindi Aktibo",
+  "invoicesTitle": "Mga Invoice",
+  "totalInvoices": "Kabuuang Invoice",
+  "totalPaid": "Kabuuang Nabayaran",
+  "totalPending": "Kabuuang Pending",
+  "totalOverdue": "Kabuuang Overdue",
+  "comparedToLastMonth": "Kumpara sa nakaraang buwan",
+  "ofTotalDue": "{percent}% ng kabuuang dapat bayaran",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} invoice naghihintay ng bayad",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "Magpadala ng Paalala",
+  "revenueAnalysis": "Pagsusuri ng Kita",
+  "last7Days": "Huling 7 Araw",
+  "thisMonthPeriod": "Ngayong Buwan",
+  "thisYearPeriod": "Ngayong Taon",
+  "paymentMethods": "Paraan ng Pagbayad",
+  "cashPayment": "Cash",
+  "cardPayment": "Card",
+  "walletPayment": "Wallet",
+  "saveCurrentFilter": "I-save ang Kasalukuyang Filter",
+  "statusAll": "Status: Lahat",
+  "statusPaid": "Nabayaran",
+  "statusPending": "Pending",
+  "statusOverdue": "Overdue",
+  "statusCancelled": "Kinansela",
+  "resetFilters": "I-reset",
+  "createInvoice": "Gumawa ng Invoice",
+  "invoiceNumberCol": "Invoice #",
+  "customerNameCol": "Pangalan ng Customer",
+  "dateCol": "Petsa",
+  "amountCol": "Halaga",
+  "statusCol": "Status",
+  "paymentCol": "Bayad",
+  "actionsCol": "Aksyon",
+  "viewInvoice": "Tingnan",
+  "printInvoice": "I-print",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "WhatsApp",
+  "deleteInvoice": "Tanggalin",
+  "reminder": "Paalala",
+  "exportAll": "I-export Lahat",
+  "printReport": "I-print Report",
+  "more": "Higit pa",
+  "showingResults": "Nagpapakita ng {from} hanggang {to} mula sa {total} resulta",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "Bagong Invoice",
+  "selectCustomer": "Pumili ng Customer",
+  "cashCustomerGeneral": "Cash Customer (General)",
+  "addNewCustomer": "+ Magdagdag ng Bagong Customer",
+  "productsSection": "Mga Produkto",
+  "addProductToInvoice": "+ Magdagdag ng Produkto",
+  "productCol": "Produkto",
+  "quantityCol": "Qty",
+  "priceCol": "Presyo",
+  "dueDate": "Takdang Petsa",
+  "invoiceTotal": "Kabuuan:",
+  "saveInvoice": "I-save ang Invoice",
+  "deleteConfirm": "Sigurado ka ba?",
+  "deleteInvoiceMsg": "Gusto mo bang tanggalin ang invoice na ito? Hindi na ito maibabalik.",
+  "yesDelete": "Oo, Tanggalin",
+  "copiedSuccess": "Matagumpay na nakopya",
+  "invoiceDeleted": "Matagumpay na natanggal ang invoice",
+  "sat": "Sab",
+  "sun": "Lin",
+  "mon": "Lun",
+  "tue": "Mar",
+  "wed": "Miy",
+  "thu": "Huw",
+  "fri": "Biy",
+  "selected": "{count} napili",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "I-print",
+  "bulkExportPdf": "I-export PDF",
+  "allRightsReservedFooter": "© 2026 Alhai POS. Lahat ng karapatan ay nakalaan.",
+  "privacyPolicyFooter": "Patakaran sa Privacy",
+  "termsFooter": "Mga Tuntunin at Kundisyon",
+  "supportFooter": "Technical Support",
+  "paid": "Nabayaran",
+  "overdue": "Overdue",
+  "creditCard": "Credit Card",
+  "electronicWallet": "E-Wallet",
+  "searchInvoiceHint": "Maghanap sa invoice number, customer...",
+  "customerDetails": "Detalye ng Customer",
+  "customerProfileAndTransactions": "Pangkalahatang-tanaw ng profile at transaksyon",
+  "customerDetailTitle": "Detalye ng Customer",
+  "totalPurchases": "Kabuuang Binili",
+  "loyaltyPoints": "Loyalty Points",
+  "lastVisit": "Huling Bisita",
+  "newSaleAction": "Bagong Benta",
+  "editInfo": "I-edit ang Info",
+  "whatsapp": "WhatsApp",
+  "blockCustomer": "I-block ang Customer",
+  "purchasesTab": "Mga Binili",
+  "accountTab": "Account",
+  "debtsTab": "Mga Utang",
+  "analyticsTab": "Analytics",
+  "recentOrdersLog": "Kamakailang Log ng Order",
+  "exportCsv": "I-export CSV",
+  "searchByInvoiceNumber": "Maghanap sa invoice number...",
+  "items": "Items",
+  "viewDetails": "Tingnan ang Detalye",
+  "financialLedger": "Financial Ledger",
+  "cashPaymentEntry": "Cash Payment",
+  "walletTopup": "Wallet Top-up",
+  "loyaltyPointsDeduction": "Loyalty Points Deduction",
+  "redeemPoints": "I-redeem {count} points",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "Tingnan Lahat",
+  "currentBalance": "Kasalukuyang Balanse",
+  "creditLimit": "Credit Limit",
+  "used": "Nagamit",
+  "topUpBalance": "Top Up Balanse",
+  "overdueDebt": "Overdue",
+  "upcomingDebt": "Paparating",
+  "payNow": "Bayaran Ngayon",
+  "remind": "Ipaalala",
+  "monthlySpending": "Buwanang Gastusin",
+  "purchaseDistribution": "Distribusyon ng Mga Binili ayon sa Kategorya",
+  "last6Months": "Huling 6 na Buwan",
+  "thisYear": "Ngayong Taon",
+  "averageOrder": "Average na Order",
+  "purchaseFrequency": "Dalas ng Pagbili",
+  "everyNDays": "Tuwing {count} araw",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "Paglaki ng Gastusin",
+  "favoriteProduct": "Paboritong Produkto",
+  "internalNotes": "Mga Panloob na Nota (nakikita lamang ng staff)",
+  "addNote": "Idagdag",
+  "addNewNote": "Magdagdag ng bagong nota...",
+  "joinedDate": "Sumali: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "Huling na-update: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "Nagpapakita ng {from}-{to} mula sa {total} order",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "Gulay",
+  "dairy": "Dairy",
+  "meat": "Karne",
+  "bakery": "Bakery",
+  "other": "Iba pa",
+  "returns": "Mga Return",
+  "salesReturns": "Sales Returns",
+  "purchaseReturns": "Purchase Returns",
+  "totalReturns": "Kabuuang Returns",
+  "totalRefundedAmount": "Kabuuang Na-refund",
+  "mostReturned": "Pinaka-maraming Return",
+  "processed": "Na-refund",
+  "newReturn": "Bagong Return",
+  "createNewReturn": "Gumawa ng Bagong Return",
+  "processReturnRequest": "Iproseso ang sales return",
+  "returnNumber": "Return Number",
+  "originalInvoice": "Orihinal na Invoice",
+  "returnReason": "Dahilan ng Return",
+  "returnAmount": "Halaga ng Return",
+  "returnStatus": "Status",
+  "returnDate": "Petsa",
+  "returnActions": "Aksyon",
+  "returnRefunded": "Na-refund",
+  "returnRejected": "Tinanggihan",
+  "defectiveProduct": "Sirang Produkto",
+  "wrongProduct": "Maling Produkto",
+  "customerRequest": "Kahilingan ng Customer",
+  "otherReason": "Iba pa",
+  "quickSearch": "Mabilis na paghahanap...",
+  "exportData": "I-export",
+  "printData": "I-print",
+  "approve": "Aprubahan",
+  "reject": "Tanggihan",
+  "previous": "Nakaraan",
+  "invoiceStep": "Invoice",
+  "itemsStep": "Mga Item",
+  "reasonStep": "Dahilan",
+  "confirmStep": "Kumpirmasyon",
+  "enterInvoiceNumber": "Invoice Number",
+  "invoiceExample": "Halimbawa: #INV-889",
+  "loadInvoice": "I-load",
+  "invoiceLoaded": "Na-load ang Invoice #{number}",
+  "invoiceLoadedCustomer": "Customer: {customer} | Petsa: {date}",
+  "selectItemsInfo": "Pumili ng mga item na ire-return. Hindi maaaring i-return ang higit sa nabili.",
+  "availableToReturn": "Available: {count}",
+  "alreadyReturnedFully": "Buong quantity na naibalik na",
+  "returnReasonLabel": "Dahilan ng Return (para sa napiling items)",
+  "additionalDetails": "Karagdagang detalye (kailangan para sa Iba pa)...",
+  "confirmReturn": "Kumpirmahin ang Return",
+  "refundAmount": "Halaga ng Refund",
+  "refundMethod": "Paraan ng Refund",
+  "cashRefund": "Cash",
+  "storeCredit": "Store Credit",
+  "returnCreatedSuccess": "Matagumpay na nagawa ang return",
+  "noReturns": "Walang Returns",
+  "noReturnsDesc": "Wala pang naitatalang return operations.",
+  "timesReturned": "{count} beses ({percent}% ng kabuuan)",
+  "fromInvoice": "Mula sa invoice",
+  "dateFromTo": "Petsa mula - hanggang",
+  "returnCopied": "Matagumpay na nakopya ang numero",
+  "ofTotalProcessed": "{percent}% na-proseso",
+  "invoiceDetails": "Detalye ng Invoice",
+  "invoiceNumberLabel": "Numero:",
+  "additionalOptions": "Karagdagang Opsyon",
+  "duplicateInvoice": "Gumawa ng Duplicate",
+  "returnMerchandise": "Ibalik ang Produkto",
+  "voidInvoice": "I-void ang Invoice",
+  "printBtn": "I-print",
+  "downloadBtn": "I-download",
+  "paidSuccessfully": "Matagumpay na Nabayaran",
+  "amountReceivedFull": "Buong halaga natanggap",
+  "completedStatus": "Kumpleto",
+  "pendingStatus": "Pending",
+  "voidedStatus": "Na-void",
+  "storeName": "Supermarket ng Barangay",
+  "storeAddress": "Riyadh, Al-Malaz District, Takhassusi Street",
+  "simplifiedTaxInvoice": "Simplified Tax Invoice",
+  "dateAndTime": "Petsa at Oras",
+  "cashierLabel": "Cashier",
+  "itemCol": "Item",
+  "quantityColDetail": "Qty",
+  "priceColDetail": "Presyo",
+  "totalCol": "Kabuuan",
+  "subtotalLabel": "Subtotal",
+  "discountVip": "Diskwento (VIP Member)",
+  "vatLabel": "VAT (15%)",
+  "grandTotalLabel": "Kabuuang Total",
+  "paymentMethodLabel": "Paraan ng Bayad",
+  "amountPaidLabel": "Halagang Binayaran",
+  "zatcaElectronic": "ZATCA - Electronic Invoice",
+  "scanToVerify": "I-scan para ma-verify",
+  "includesVat15": "Kasama ang 15% VAT",
+  "thankYouVisit": "Salamat sa pagbisita!",
+  "wishNiceDay": "Magandang araw sa inyo",
+  "customerInfo": "Impormasyon ng Customer",
+  "editBtn": "I-edit",
+  "vipSince": "VIP Customer mula {year}",
+  "activeStatusLabel": "Aktibo",
+  "callBtn": "Tawag",
+  "recordBtn": "Rekord",
+  "quickActions": "Mabilis na Aksyon",
+  "sendWhatsappAction": "Ipadala sa WhatsApp",
+  "sendEmailAction": "Ipadala sa Email",
+  "downloadPdfAction": "I-download PDF",
+  "shareLinkAction": "Ibahagi Link",
+  "eventLog": "Event Log",
+  "paymentCompleted": "Bayad Kumpleto",
+  "processedViaGateway": "Na-process sa payment gateway",
+  "minutesAgoDetail": "{count} minuto na ang nakalipas",
+  "invoiceCreated": "Na-gawa ang Invoice",
+  "byUser": "Ni {name}",
+  "todayAt": "Ngayon, {time}",
+  "orderStarted": "Nagsimula ang Order",
+  "cashierSessionOpened": "Binuksan ang cashier session",
+  "technicalData": "Teknikal na Data",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "I-void ang Invoice?",
+  "voidInvoiceMsg": "Permanenteng ma-void ang invoice na ito. Sigurado ka ba?",
+  "voidReasonLabel": "Dahilan ng Void (Kinakailangan)",
+  "voidReasonEntry": "Entry Error",
+  "voidReasonCustomer": "Kahilingan ng Customer",
+  "voidReasonDamaged": "Sirang Produkto",
+  "voidReasonOther": "Ibang Dahilan...",
+  "confirmVoid": "Kumpirmahin ang Void",
+  "invoiceVoided": "Matagumpay na na-void ang invoice",
+  "copiedText": "Nakopya: {text}",
+  "visaEnding": "Visa nagtatapos sa {digits}",
+  "mobileActionPrint": "I-print",
+  "mobileActionWhatsapp": "WhatsApp",
+  "mobileActionEmail": "Email",
+  "mobileActionMore": "Iba pa",
+  "sarCurrency": "SAR",
+  "skuLabel": "SKU: {code}",
+  "helpText": "Tulong",
+  "customerLedger": "Ledger ng Customer",
+  "accountStatement": "Statement ng Account",
+  "allPeriods": "Lahat",
+  "threeMonths": "3 Buwan",
+  "allMovements": "Lahat ng Transaksyon",
+  "adjustments": "Mga Adjustment",
+  "statementCol": "Paglalarawan",
+  "referenceCol": "Sanggunian",
+  "debitCol": "Debit",
+  "creditCol": "Credit",
+  "balanceCol": "Balanse",
+  "openingBalance": "Pambungad na Balanse",
+  "totalDebit": "Kabuuang Debit",
+  "totalCredit": "Kabuuang Credit",
+  "finalBalance": "Huling Balanse",
+  "manualAdjustment": "Manual na Adjustment",
+  "adjustmentType": "Uri ng Adjustment",
+  "debitAdjustment": "Debit Adjustment",
+  "creditAdjustment": "Credit Adjustment",
+  "adjustmentAmount": "Halaga ng Adjustment",
+  "adjustmentReason": "Dahilan ng Adjustment",
+  "adjustmentDate": "Petsa ng Adjustment",
+  "saveAdjustment": "I-save ang Adjustment",
+  "adjustmentSaved": "Matagumpay na na-save ang adjustment",
+  "enterValidAmount": "Maglagay ng wastong halaga",
+  "dueOnCustomer": "Utang ng customer",
+  "customerHasCredit": "May credit balance ang customer",
+  "noTransactions": "Walang transaksyon",
+  "recordPaymentBtn": "Mag-record ng Bayad",
+  "returnEntry": "Return",
+  "adjustmentEntry": "Adjustment",
+  "ordersHistory": "Kasaysayan ng Order",
+  "totalOrdersLabel": "Kabuuang Order",
+  "completedOrders": "Nakumpleto",
+  "pendingOrders": "Nakabinbin",
+  "cancelledOrders": "Kinansela",
+  "searchOrderHint": "Maghanap sa numero ng order, customer, o telepono...",
+  "channelLabel": "Channel",
+  "last30Days": "Huling 30 araw",
+  "orderDetails": "Detalye ng Order",
+  "unpaidLabel": "Hindi Nabayaran",
+  "voidTransaction": "I-void ang Transaksyon",
+  "voidSaleTransaction": "I-void ang Sales Transaction",
+  "voidWarningTitle": "Mahalagang Babala: Hindi na maaaring ibalik ang aksyon na ito",
+  "voidWarningDesc": "Ang pag-void ng transaksyon na ito ay magkakansela ng invoice at ibabalik ang lahat ng item sa inventory.",
+  "voidWarningShort": "Ang aksyon na ito ay magkakansela ng invoice. Hindi na maaaring bawiin.",
+  "enterInvoiceToVoid": "Ilagay ang invoice number para i-void",
+  "searchByInvoiceOrBarcode": "Maghanap gamit ang invoice number o barcode scanner",
+  "invoiceExampleVoid": "Halimbawa: #INV-2024-8892",
+  "activateBarcode": "I-activate ang barcode scanner",
+  "scanBarcodeMobile": "I-scan ang barcode",
+  "searchForInvoiceToVoid": "Maghanap ng invoice para i-void",
+  "enterNumberOrScan": "Ilagay ang numero o gamitin ang barcode scanner.",
+  "salesInvoice": "Sales Invoice",
+  "invoiceCompleted": "Kumpleto",
+  "paidCash": "Bayad: Cash",
+  "customerLabel": "Customer",
+  "dateAndTimeLabel": "Petsa at Oras",
+  "voidImpactSummary": "Buod ng Epekto ng Void",
+  "voidImpactItemsReturn": "{count} item ang ibabalik sa inventory.",
+  "voidImpactRefund": "Halaga na {amount} {currency} ang ibabawas/ibabalik.",
+  "returnedItems": "Mga Ibinalik na Item ({count})",
+  "viewAllItems": "Tingnan Lahat",
+  "moreItemsHint": "+ {count} pang item (kabuuan: {amount} {currency})",
+  "voidReason": "Dahilan ng Void",
+  "voidReasonRequired": "Dahilan ng Void *",
+  "customerRequestReason": "Kahilingan ng customer",
+  "wrongItemsReason": "Maling item",
+  "duplicateInvoiceReason": "Duplicate na invoice",
+  "systemErrorReason": "System error",
+  "otherReasonVoid": "Iba pa",
+  "additionalNotesVoid": "Karagdagang mga tala...",
+  "additionalDetailsRequired": "Karagdagang detalye (kailangan para sa Iba pa)...",
+  "managerApproval": "Pag-apruba ng Manager",
+  "managerApprovalRequired": "Kailangan ng Pag-apruba ng Manager",
+  "amountExceedsLimit": "Ang halaga ay lumampas sa limit ({amount} {currency}), ilagay ang manager PIN.",
+  "enterPinCode": "Ilagay ang PIN code",
+  "pinSentToManager": "Pansamantalang code ipinadala sa phone ng manager",
+  "defaultManagerPin": "Default manager code: 1234",
+  "confirmVoidAction": "Kinukumpirma ko ang pag-void ng transaksyon na ito",
+  "confirmVoidDesc": "Narepaso ko na ang mga detalye at tinatanggap ko ang buong responsibilidad.",
+  "cancelAction": "Kanselahin",
+  "confirmFinalVoid": "Kumpirmahin ang Final na Void",
+  "invoiceNotFound": "Hindi nahanap ang invoice",
+  "invoiceNotFoundDesc": "I-verify ang inilagay na numero o subukan ang barcode.",
+  "trySearchAgain": "Subukang maghanap muli",
+  "voidSuccess": "Matagumpay na na-void ang transaksyon",
+  "qtyLabel": "Qty: {count}",
+  "manageCustomersAndAccounts": "Pamahalaan ang mga customer at account",
+  "totalCustomersCount": "Kabuuang Customer",
+  "outstandingDebts": "Natitirang Utang",
+  "customerCount": "{count} customer",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "Customer Credit",
+  "filterByLabel": "I-filter ayon sa",
+  "debtors": "May Utang",
+  "creditorsLabel": "May Credit",
+  "quickActionsLabel": "Mabilisang Aksyon",
+  "sendDebtReminder": "Magpadala ng paalala sa utang",
+  "exportAccountStatement": "I-export ang statement",
+  "cancelSelectionCount": "Kanselahin ang pagpili ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "Maghanap sa pangalan o telepono... (Ctrl+F)",
+  "sortByBalance": "Balanse",
+  "refreshF5": "I-refresh (F5)",
+  "loadingCustomers": "Nilo-load ang mga customer...",
+  "payDebt": "Bayaran ang Utang",
+  "dueAmountLabel": "Dapat bayaran: {amount} SAR",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "Halaga ng Bayad",
+  "fullAmount": "Buo",
+  "payAction": "Bayaran",
+  "paymentRecorded": "Naitala ang bayad na {amount} SAR",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "Matagumpay na naidagdag ang customer",
+  "customerNameRequired": "Pangalan ng Customer *",
+  "owedLabel": "May utang",
+  "hasBalanceLabel": "Credit",
+  "zeroLabel": "Zero",
+  "addAction": "Idagdag",
+  "expenses": "Mga Gastos",
+  "expenseCategories": "Mga Kategorya ng Gastos",
+  "addExpense": "Magdagdag ng Gastos",
+  "totalExpenses": "Kabuuang Gastos",
+  "thisMonthExpenses": "Ngayong Buwan",
+  "noExpenses": "Walang naitatalang gastos",
+  "shiftsTitle": "Mga Shift",
+  "purchasesTitle": "Mga Pagbili",
+  "suppliersTitle": "Mga Supplier",
+  "discountsTitle": "Mga Diskwento",
+  "couponsTitle": "Mga Kupon",
+  "specialOffersTitle": "Mga Espesyal na Alok",
+  "smartPromotionsTitle": "Matalinong Promosyon",
+  "loyaltyTitle": "Programa ng Katapatan",
+  "notificationsTitle": "Mga Abiso",
+  "printQueueTitle": "Print Queue",
+  "syncStatusTitle": "Estado ng Sync",
+  "driversTitle": "Mga Driver",
+  "branchesTitle": "Mga Sangay",
+  "profileTitle": "Profile",
+  "settingsTitle": "Mga Setting",
+  "storeSettings": "Mga Setting ng Tindahan",
+  "posSettings": "Mga Setting ng POS",
+  "printerSettings": "Mga Setting ng Printer",
+  "securitySettings": "Seguridad",
+  "usersManagement": "Pamamahala ng User",
+  "rolesPermissions": "Mga Tungkulin at Pahintulot",
+  "activityLog": "Log ng Aktibidad",
+  "backupSettings": "Backup at Restore",
+  "zatcaCompliance": "ZATCA Compliance",
+  "helpSupport": "Tulong at Suporta",
+  "liveChat": "Live Chat",
+  "emailSupport": "Email Support",
+  "phoneSupport": "Phone Support",
+  "whatsappSupport": "WhatsApp Support",
+  "userGuide": "Gabay ng Gumagamit",
+  "videoTutorials": "Mga Video Tutorial",
+  "changelog": "Changelog",
+  "appInfo": "Impormasyon ng App",
+  "buildNumber": "Build Number",
+  "notificationChannels": "Mga Channel ng Notification",
+  "alertTypes": "Mga Uri ng Alerto",
+  "salesAlerts": "Mga Alerto sa Benta",
+  "inventoryAlerts": "Mga Alerto sa Imbentaryo",
+  "securityAlerts": "Mga Alerto sa Seguridad",
+  "reportAlerts": "Mga Alerto sa Ulat",
+  "users": "Mga Gumagamit",
+  "zatcaRegistered": "Nakarehistro sa ZATCA",
+  "zatcaPhase2Active": "Phase 2 Aktibo",
+  "registrationInfo": "Impormasyon ng Pagpaparehistro",
+  "businessName": "Pangalan ng Negosyo",
+  "branchCode": "Code ng Sangay",
+  "qrCodeOnInvoice": "QR Code sa Invoice",
+  "certificates": "Mga Sertipiko",
+  "csidCertificate": "CSID Certificate",
+  "valid": "Valid",
+  "privateKey": "Private Key",
+  "configured": "Na-configure"
 }

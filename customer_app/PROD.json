@@ -1,0 +1,1712 @@
+{
+    "app_info": {
+        "name": "customer_app",
+        "parent_project": "Alhai",
+        "version": "1.0.0",
+        "total_screens": 80,
+        "total_tasks": 120,
+        "tech_stack": "Flutter",
+        "platform": "Mobile (iOS/Android)",
+        "duration_weeks": 16,
+        "total_hours": 420,
+        "prd_date": "2026-01-15",
+        "status": "Ready for Development"
+    },
+    "phases": [
+        {
+            "id": 0,
+            "name": "Foundation + Setup",
+            "duration": "Week 1-2",
+            "hours": 40,
+            "priority": "P0"
+        },
+        {
+            "id": 1,
+            "name": "Auth + Onboarding",
+            "duration": "Week 2-3",
+            "hours": 32,
+            "priority": "P0"
+        },
+        {
+            "id": 2,
+            "name": "Home + Stores",
+            "duration": "Week 3-4",
+            "hours": 40,
+            "priority": "P0"
+        },
+        {
+            "id": 3,
+            "name": "Cart + Checkout",
+            "duration": "Week 5-6",
+            "hours": 48,
+            "priority": "P0"
+        },
+        {
+            "id": 4,
+            "name": "Orders + Tracking",
+            "duration": "Week 6-7",
+            "hours": 40,
+            "priority": "P0"
+        },
+        {
+            "id": 5,
+            "name": "Edge Cases + States",
+            "duration": "Week 8-9",
+            "hours": 48,
+            "priority": "P0"
+        },
+        {
+            "id": 6,
+            "name": "Payment Integration",
+            "duration": "Week 9-10",
+            "hours": 40,
+            "priority": "P1"
+        },
+        {
+            "id": 7,
+            "name": "Accounts + Loyalty",
+            "duration": "Week 11-12",
+            "hours": 36,
+            "priority": "P1"
+        },
+        {
+            "id": 8,
+            "name": "Settings + Profile",
+            "duration": "Week 13-14",
+            "hours": 32,
+            "priority": "P1"
+        },
+        {
+            "id": 9,
+            "name": "Support + Reports",
+            "duration": "Week 15-16",
+            "hours": 32,
+            "priority": "P2"
+        },
+        {
+            "id": 10,
+            "name": "Polish + Testing",
+            "duration": "Week 16",
+            "hours": 32,
+            "priority": "P1"
+        }
+    ],
+    "tasks": [
+        {
+            "id": "SETUP-001",
+            "title": "Project setup + DI + Router",
+            "description": "Initialize Flutter project, configure Riverpod for DI, setup GoRouter",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup",
+            "dependencies": [],
+            "acceptance_criteria": [
+                "Flutter project created",
+                "Riverpod configured",
+                "GoRouter with all 80 routes defined"
+            ]
+        },
+        {
+            "id": "SETUP-002",
+            "title": "Supabase + Models",
+            "description": "Configure Supabase client, generate models from schema",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Supabase client configured",
+                "All models generated",
+                "Auth service ready"
+            ]
+        },
+        {
+            "id": "SETUP-003",
+            "title": "Design System implementation",
+            "description": "Implement colors, fonts, spacing from UX Wireframes",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 12,
+            "category": "Setup",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Color palette implemented (Green #2EA043, Blue #0969DA)",
+                "Tajawal/Inter fonts configured",
+                "8dp grid system",
+                "Dark mode support"
+            ]
+        },
+        {
+            "id": "SETUP-004",
+            "title": "Location Services",
+            "description": "Setup GPS, permissions, geo-location services",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "GPS permission flow",
+                "Location service",
+                "Distance calculation"
+            ]
+        },
+        {
+            "id": "SETUP-005",
+            "title": "Localization (AR/EN)",
+            "description": "Setup i18n with Arabic and English support",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Setup",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "RTL support",
+                "Arabic translations",
+                "Language switch"
+            ]
+        },
+        {
+            "id": "AUTH-001",
+            "title": "Onboarding screens",
+            "description": "3 slides onboarding with skip and auto-transition",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Auth",
+            "route": "/onboarding",
+            "dependencies": [
+                "SETUP-003"
+            ],
+            "acceptance_criteria": [
+                "3 slides with images",
+                "Skip button",
+                "Auto-transition 5s",
+                "Dots indicator"
+            ]
+        },
+        {
+            "id": "AUTH-002",
+            "title": "Signup screen",
+            "description": "Phone number input with OTP verification and name",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Auth",
+            "route": "/auth/signup",
+            "dependencies": [
+                "AUTH-001",
+                "SETUP-002"
+            ],
+            "acceptance_criteria": [
+                "Phone number input with +966",
+                "Name input",
+                "Send OTP button",
+                "Link to login"
+            ]
+        },
+        {
+            "id": "AUTH-003",
+            "title": "Login screen",
+            "description": "Phone number login with OTP",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Auth",
+            "route": "/auth/login",
+            "dependencies": [
+                "SETUP-002"
+            ],
+            "acceptance_criteria": [
+                "Phone number input",
+                "OTP verification",
+                "Auto-login on success"
+            ]
+        },
+        {
+            "id": "AUTH-004",
+            "title": "OTP Verification screen",
+            "description": "6-digit OTP input with resend timer",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Auth",
+            "dependencies": [
+                "AUTH-002",
+                "AUTH-003"
+            ],
+            "acceptance_criteria": [
+                "6 digit boxes",
+                "45s resend timer",
+                "Auto-submit on complete"
+            ]
+        },
+        {
+            "id": "AUTH-005",
+            "title": "Global Customer creation",
+            "description": "Create global_customers record on signup",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Auth",
+            "dependencies": [
+                "AUTH-002"
+            ],
+            "acceptance_criteria": [
+                "Create global_customers record",
+                "Store location",
+                "Link to auth.users"
+            ]
+        },
+        {
+            "id": "AUTH-006",
+            "title": "Auth state management",
+            "description": "Persist auth state, auto-redirect logic",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 2,
+            "category": "Auth",
+            "dependencies": [
+                "AUTH-003"
+            ],
+            "acceptance_criteria": [
+                "Persist session",
+                "Auto-redirect to home if logged in",
+                "Logout functionality"
+            ]
+        },
+        {
+            "id": "HOME-001",
+            "title": "Home - Nearby Stores",
+            "description": "Display nearby stores sorted by distance",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 12,
+            "category": "Feature",
+            "route": "/home",
+            "dependencies": [
+                "AUTH-005",
+                "SETUP-004"
+            ],
+            "acceptance_criteria": [
+                "GPS location fetch",
+                "Call get_nearby_stores RPC",
+                "Display store cards with distance",
+                "Show debt balance per store",
+                "Pull to refresh"
+            ]
+        },
+        {
+            "id": "HOME-002",
+            "title": "Store card component",
+            "description": "Reusable store card with name, distance, debt, status",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 4,
+            "category": "UI",
+            "dependencies": [
+                "SETUP-003"
+            ],
+            "acceptance_criteria": [
+                "Store name",
+                "Distance badge",
+                "Open/Closed status",
+                "Debt amount",
+                "Last order date"
+            ]
+        },
+        {
+            "id": "HOME-003",
+            "title": "Store Details screen",
+            "description": "Full store info with account balance and orders",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Feature",
+            "route": "/stores/:storeId",
+            "dependencies": [
+                "HOME-001"
+            ],
+            "acceptance_criteria": [
+                "Store info (hours, phone, rating)",
+                "Customer account box (debt, limit)",
+                "Last orders list",
+                "New order CTA",
+                "Pay debt CTA"
+            ]
+        },
+        {
+            "id": "HOME-004",
+            "title": "Products List screen",
+            "description": "Browse products by category with search and filters",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Feature",
+            "route": "/stores/:storeId/products",
+            "dependencies": [
+                "HOME-003"
+            ],
+            "acceptance_criteria": [
+                "Category horizontal scroll",
+                "Product grid",
+                "Search bar",
+                "Add to cart button",
+                "Stock status"
+            ]
+        },
+        {
+            "id": "HOME-005",
+            "title": "Product Detail screen",
+            "description": "Product details with add to cart",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/products/:productId",
+            "dependencies": [
+                "HOME-004"
+            ],
+            "acceptance_criteria": [
+                "Large product image",
+                "Name, price, description",
+                "Quantity selector",
+                "Add to cart"
+            ]
+        },
+        {
+            "id": "CART-001",
+            "title": "Cart screen",
+            "description": "View and edit cart items",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Feature",
+            "route": "/cart",
+            "dependencies": [
+                "HOME-004"
+            ],
+            "acceptance_criteria": [
+                "Cart item list",
+                "Quantity +/- buttons",
+                "Remove item",
+                "Subtotal, delivery, total",
+                "Checkout button"
+            ]
+        },
+        {
+            "id": "CART-002",
+            "title": "Cart state management",
+            "description": "Local cart persistence and sync",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "dependencies": [
+                "CART-001"
+            ],
+            "acceptance_criteria": [
+                "Persist cart locally",
+                "Cart badge count",
+                "Clear cart on order success"
+            ]
+        },
+        {
+            "id": "CART-003",
+            "title": "Checkout screen",
+            "description": "Review order, select payment, address, schedule",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 12,
+            "category": "Feature",
+            "route": "/orders/new",
+            "dependencies": [
+                "CART-001"
+            ],
+            "acceptance_criteria": [
+                "Order summary",
+                "Payment method selection (Cash, Credit, Card)",
+                "Address selection",
+                "Schedule selection",
+                "Notes input",
+                "Confirm button"
+            ]
+        },
+        {
+            "id": "CART-004",
+            "title": "Schedule Delivery screen",
+            "description": "Date and time slot picker",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/orders/:orderId/schedule",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Calendar date picker",
+                "Time slot list (morning, afternoon, evening, express)",
+                "Slot availability",
+                "Express fee display",
+                "High demand warning"
+            ]
+        },
+        {
+            "id": "CART-005",
+            "title": "Order Confirmation screen",
+            "description": "Success confirmation with order details",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/orders/:orderId/confirmation",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Success icon and message",
+                "Order number",
+                "Store name",
+                "Total amount",
+                "Delivery time",
+                "New debt balance (if credit)",
+                "Track order CTA"
+            ]
+        },
+        {
+            "id": "CART-006",
+            "title": "Create Order API",
+            "description": "Submit order to backend, create customer_account if first time",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Create order record",
+                "Create order_items",
+                "Update customer_accounts balance if credit",
+                "Auto-create account if first order"
+            ]
+        },
+        {
+            "id": "ORDER-001",
+            "title": "Orders List screen",
+            "description": "View all orders with filter and search",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/orders",
+            "dependencies": [
+                "CART-005"
+            ],
+            "acceptance_criteria": [
+                "Orders grouped by status",
+                "Filter by status",
+                "Search by order number",
+                "Pagination"
+            ]
+        },
+        {
+            "id": "ORDER-002",
+            "title": "Order Details screen",
+            "description": "Full order info with actions",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Feature",
+            "route": "/orders/:orderId",
+            "dependencies": [
+                "ORDER-001"
+            ],
+            "acceptance_criteria": [
+                "Order status with ETA",
+                "Store info",
+                "Driver info (if assigned)",
+                "Items list",
+                "Totals breakdown",
+                "Cancel button (if pending)",
+                "Help button"
+            ]
+        },
+        {
+            "id": "ORDER-003",
+            "title": "Order Tracking screen",
+            "description": "Real-time tracking with map",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 12,
+            "category": "Feature",
+            "route": "/orders/:orderId/track",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Map with driver location",
+                "Status timeline",
+                "ETA countdown",
+                "Call/Chat driver"
+            ]
+        },
+        {
+            "id": "ORDER-004",
+            "title": "Order status real-time updates",
+            "description": "Supabase realtime subscription for order status",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Subscribe to order changes",
+                "Update UI on status change",
+                "Push notification on key events"
+            ]
+        },
+        {
+            "id": "ORDER-005",
+            "title": "Cancel Order flow",
+            "description": "Cancel pending order with confirmation",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/orders/:orderId/cancelled",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Confirmation dialog",
+                "Cancel reason selection",
+                "Refund info display",
+                "Update customer_accounts if credit"
+            ]
+        },
+        {
+            "id": "EDGE-001",
+            "title": "No Stores state",
+            "description": "Empty state when no nearby stores",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/states/no-stores",
+            "dependencies": [
+                "HOME-001"
+            ],
+            "acceptance_criteria": [
+                "Illustration",
+                "Message",
+                "Change location CTA",
+                "Expand radius CTA",
+                "Notify me CTA"
+            ]
+        },
+        {
+            "id": "EDGE-002",
+            "title": "Credit Unavailable state",
+            "description": "Store doesn't support credit payment",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/states/credit-unavailable",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Alternative payment methods",
+                "Find stores with credit CTA"
+            ]
+        },
+        {
+            "id": "EDGE-003",
+            "title": "Credit Limit Exceeded state",
+            "description": "Customer exceeds credit limit",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/states/credit-limit",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Current debt display",
+                "Order amount",
+                "Limit exceeded amount",
+                "Pay now CTA",
+                "Edit cart CTA",
+                "Change payment CTA"
+            ]
+        },
+        {
+            "id": "EDGE-004",
+            "title": "Price Changed state",
+            "description": "Prices changed since adding to cart",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/states/price-changed",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Changed items list",
+                "Old vs new price",
+                "Total difference",
+                "Accept CTA",
+                "Edit cart CTA"
+            ]
+        },
+        {
+            "id": "EDGE-005",
+            "title": "Min Order Not Met state",
+            "description": "Cart below minimum order value",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/states/min-order",
+            "dependencies": [
+                "CART-001"
+            ],
+            "acceptance_criteria": [
+                "Minimum amount display",
+                "Current cart amount",
+                "Gap amount",
+                "Suggested products",
+                "Browse more CTA"
+            ]
+        },
+        {
+            "id": "EDGE-006",
+            "title": "Out of Delivery Area state",
+            "description": "Address outside store delivery zone",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/states/out-of-delivery-area",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Address display",
+                "Distance vs max range",
+                "Change address CTA",
+                "Find nearby stores CTA"
+            ]
+        },
+        {
+            "id": "EDGE-007",
+            "title": "Store Closed state",
+            "description": "Store is currently closed",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/states/store-closed",
+            "dependencies": [
+                "HOME-003"
+            ],
+            "acceptance_criteria": [
+                "Store hours display",
+                "Opens in X hours",
+                "Schedule order CTA",
+                "Other open stores CTA"
+            ]
+        },
+        {
+            "id": "EDGE-008",
+            "title": "No Slots Available state",
+            "description": "All delivery slots are full",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/states/no-slots",
+            "dependencies": [
+                "CART-004"
+            ],
+            "acceptance_criteria": [
+                "Full slots display",
+                "Try tomorrow CTA",
+                "Other stores CTA",
+                "Notify me CTA"
+            ]
+        },
+        {
+            "id": "EDGE-009",
+            "title": "Item Unavailable state",
+            "description": "Product became unavailable after order",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/orders/:orderId/item-unavailable",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Unavailable item display",
+                "Substitute option",
+                "Remove item option",
+                "Wait option"
+            ]
+        },
+        {
+            "id": "PAY-001",
+            "title": "Payment Failed screen",
+            "description": "Payment failure with retry options",
+            "phase": 6,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/payments/failed",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Error icon",
+                "Failure reason",
+                "No charge confirmation",
+                "Retry CTA",
+                "Change method CTA",
+                "Support CTA"
+            ]
+        },
+        {
+            "id": "PAY-002",
+            "title": "Payment Pending screen",
+            "description": "Payment processing with auto-refresh",
+            "phase": 6,
+            "priority": "P0",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/payments/:paymentId/pending",
+            "dependencies": [
+                "CART-003"
+            ],
+            "acceptance_criteria": [
+                "Loading spinner",
+                "Don't close warning",
+                "Don't retry warning",
+                "5s auto-refresh",
+                "Manual refresh button",
+                "Support CTA"
+            ]
+        },
+        {
+            "id": "PAY-003",
+            "title": "Refund Status screen",
+            "description": "Track refund progress",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/payments/:paymentId/refund",
+            "dependencies": [
+                "ORDER-005"
+            ],
+            "acceptance_criteria": [
+                "Refund amount",
+                "Refund type (partial/full)",
+                "Refund method",
+                "Progress timeline",
+                "ETA display",
+                "Notify me CTA"
+            ]
+        },
+        {
+            "id": "PAY-004",
+            "title": "Payment Receipt screen",
+            "description": "View and share payment receipt",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/payments/:paymentId/receipt",
+            "dependencies": [
+                "CART-005"
+            ],
+            "acceptance_criteria": [
+                "Receipt details",
+                "Share button",
+                "Download PDF"
+            ]
+        },
+        {
+            "id": "PAY-005",
+            "title": "Pay Debt screen",
+            "description": "Pay outstanding debt to store",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/payments/debt/:storeId",
+            "dependencies": [
+                "HOME-003"
+            ],
+            "acceptance_criteria": [
+                "Current debt display",
+                "Amount input (full or partial)",
+                "Payment method selection",
+                "Confirm payment"
+            ]
+        },
+        {
+            "id": "PAY-006",
+            "title": "Payment gateway integration",
+            "description": "Integrate with mada/STC Pay/Apple Pay",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 12,
+            "category": "Feature",
+            "dependencies": [
+                "PAY-001"
+            ],
+            "acceptance_criteria": [
+                "mada integration",
+                "STC Pay integration",
+                "Apple Pay integration",
+                "3DS support"
+            ]
+        },
+        {
+            "id": "ACC-001",
+            "title": "My Accounts screen",
+            "description": "View all store accounts with debts",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/accounts",
+            "dependencies": [
+                "HOME-001"
+            ],
+            "acceptance_criteria": [
+                "Total debt sum",
+                "Store accounts list",
+                "Debt per store",
+                "Order count per store"
+            ]
+        },
+        {
+            "id": "ACC-002",
+            "title": "Account Details screen",
+            "description": "View account details for specific store",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/accounts/:storeId",
+            "dependencies": [
+                "ACC-001"
+            ],
+            "acceptance_criteria": [
+                "Debt balance",
+                "Credit limit",
+                "Transaction history",
+                "Pay debt CTA"
+            ]
+        },
+        {
+            "id": "ACC-003",
+            "title": "Transactions screen",
+            "description": "View all transactions across stores",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/transactions",
+            "dependencies": [
+                "ACC-001"
+            ],
+            "acceptance_criteria": [
+                "Transaction list",
+                "Filter by store",
+                "Filter by type",
+                "Export option"
+            ]
+        },
+        {
+            "id": "LOYALTY-001",
+            "title": "Loyalty Dashboard screen",
+            "description": "View loyalty points and rewards",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/loyalty",
+            "dependencies": [
+                "SETUP-002"
+            ],
+            "acceptance_criteria": [
+                "Points balance",
+                "Points earn rate",
+                "Available rewards",
+                "Challenges"
+            ]
+        },
+        {
+            "id": "LOYALTY-002",
+            "title": "Challenges screen",
+            "description": "View and complete loyalty challenges",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/loyalty/challenges",
+            "dependencies": [
+                "LOYALTY-001"
+            ],
+            "acceptance_criteria": [
+                "Active challenges",
+                "Progress bars",
+                "Rewards display"
+            ]
+        },
+        {
+            "id": "LOYALTY-003",
+            "title": "Points History screen",
+            "description": "View points earn/spend history",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/loyalty/history",
+            "dependencies": [
+                "LOYALTY-001"
+            ],
+            "acceptance_criteria": [
+                "Points transactions",
+                "Filter by type",
+                "Date range"
+            ]
+        },
+        {
+            "id": "CHAT-001",
+            "title": "Chat List screen",
+            "description": "View all order chats",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/chat",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Chat list by order",
+                "Unread badge",
+                "Last message preview"
+            ]
+        },
+        {
+            "id": "CHAT-002",
+            "title": "Order Chat screen",
+            "description": "Chat with store/driver for specific order",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/chat/:orderId",
+            "dependencies": [
+                "CHAT-001"
+            ],
+            "acceptance_criteria": [
+                "Message list",
+                "Send message",
+                "Auto-translation",
+                "Image attachment"
+            ]
+        },
+        {
+            "id": "SET-001",
+            "title": "Profile Settings screen",
+            "description": "Edit user profile",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/settings/profile",
+            "dependencies": [
+                "AUTH-005"
+            ],
+            "acceptance_criteria": [
+                "Edit name",
+                "Edit email",
+                "Profile photo",
+                "Phone (read-only)"
+            ]
+        },
+        {
+            "id": "SET-002",
+            "title": "Addresses screen",
+            "description": "Manage saved addresses",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/settings/addresses",
+            "dependencies": [
+                "SETUP-004"
+            ],
+            "acceptance_criteria": [
+                "Address list",
+                "Add new address",
+                "Edit address",
+                "Delete address",
+                "Set default"
+            ]
+        },
+        {
+            "id": "SET-003",
+            "title": "Payment Methods screen",
+            "description": "Manage saved payment methods",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/settings/payment-methods",
+            "dependencies": [
+                "PAY-006"
+            ],
+            "acceptance_criteria": [
+                "Saved cards list",
+                "Add new card",
+                "Remove card",
+                "Set default"
+            ]
+        },
+        {
+            "id": "SET-004",
+            "title": "Notifications Settings screen",
+            "description": "Customize notification preferences",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/notifications",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Order updates toggle",
+                "Promotions toggle",
+                "Reminders toggle",
+                "Sound toggle"
+            ]
+        },
+        {
+            "id": "SET-005",
+            "title": "Substitution Preferences screen",
+            "description": "Set product substitution preferences",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/substitutions",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Default preference (ask, auto, refuse)",
+                "Category-specific rules"
+            ]
+        },
+        {
+            "id": "SET-006",
+            "title": "Favorites screen",
+            "description": "View and manage favorite products",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/favorites",
+            "dependencies": [
+                "HOME-004"
+            ],
+            "acceptance_criteria": [
+                "Favorites list",
+                "Remove from favorites",
+                "Quick add to cart"
+            ]
+        },
+        {
+            "id": "SET-007",
+            "title": "General Settings screen",
+            "description": "App settings (language, theme)",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/general",
+            "dependencies": [
+                "SETUP-005"
+            ],
+            "acceptance_criteria": [
+                "Language switch (AR/EN)",
+                "Dark mode toggle",
+                "About app"
+            ]
+        },
+        {
+            "id": "SET-008",
+            "title": "Delete Account screen",
+            "description": "Account deletion flow",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/delete-account",
+            "dependencies": [
+                "SET-001"
+            ],
+            "acceptance_criteria": [
+                "Warning message",
+                "Outstanding debts check",
+                "Confirmation dialog",
+                "Reason selection"
+            ]
+        },
+        {
+            "id": "SUP-001",
+            "title": "Support Center screen",
+            "description": "Help and support options",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/support",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "FAQ section",
+                "Create ticket CTA",
+                "Call support CTA",
+                "WhatsApp support"
+            ]
+        },
+        {
+            "id": "SUP-002",
+            "title": "Create Ticket screen",
+            "description": "Submit support ticket",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/support/tickets/new",
+            "dependencies": [
+                "SUP-001"
+            ],
+            "acceptance_criteria": [
+                "Category selection",
+                "Order selection (optional)",
+                "Description input",
+                "Image attachment",
+                "Submit button"
+            ]
+        },
+        {
+            "id": "SUP-003",
+            "title": "Ticket Details screen",
+            "description": "View and reply to support ticket",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/support/tickets/:ticketId",
+            "dependencies": [
+                "SUP-002"
+            ],
+            "acceptance_criteria": [
+                "Ticket status",
+                "Message thread",
+                "Reply input"
+            ]
+        },
+        {
+            "id": "REP-001",
+            "title": "Dashboard screen",
+            "description": "Personal spending analytics",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 8,
+            "category": "Feature",
+            "route": "/dashboard",
+            "dependencies": [
+                "ORDER-001"
+            ],
+            "acceptance_criteria": [
+                "Monthly spending chart",
+                "Top stores",
+                "Top products",
+                "Spending trends"
+            ]
+        },
+        {
+            "id": "REP-002",
+            "title": "Purchases Report screen",
+            "description": "Detailed purchase history",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/reports/purchases",
+            "dependencies": [
+                "REP-001"
+            ],
+            "acceptance_criteria": [
+                "Date range filter",
+                "Store filter",
+                "Export option"
+            ]
+        },
+        {
+            "id": "REP-003",
+            "title": "Debts Report screen",
+            "description": "Debt summary and history",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/reports/debts",
+            "dependencies": [
+                "REP-001"
+            ],
+            "acceptance_criteria": [
+                "Total debts",
+                "Debt by store",
+                "Payment history"
+            ]
+        },
+        {
+            "id": "LOC-001",
+            "title": "Location Select screen",
+            "description": "Manual location selection",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/location/select",
+            "dependencies": [
+                "SETUP-004"
+            ],
+            "acceptance_criteria": [
+                "Map with pin",
+                "Search address",
+                "Use current location",
+                "Saved addresses"
+            ]
+        },
+        {
+            "id": "LOC-002",
+            "title": "Location Permission Denied state",
+            "description": "Handle GPS permission denial",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/states/location-permission-denied",
+            "dependencies": [
+                "SETUP-004"
+            ],
+            "acceptance_criteria": [
+                "Permission explanation",
+                "Open settings CTA",
+                "Manual input CTA"
+            ]
+        },
+        {
+            "id": "NOTIFY-001",
+            "title": "Notifications screen",
+            "description": "View all notifications",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/notifications",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Notification list",
+                "Read/unread status",
+                "Mark all read",
+                "Deep link on tap"
+            ]
+        },
+        {
+            "id": "RATE-001",
+            "title": "Rate Store screen",
+            "description": "Rate store after order",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/stores/:storeId/rate",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Star rating",
+                "Optional comment",
+                "Submit button"
+            ]
+        },
+        {
+            "id": "RATE-002",
+            "title": "Rate Driver screen",
+            "description": "Rate driver after delivery",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/orders/:orderId/rate-driver",
+            "dependencies": [
+                "ORDER-002"
+            ],
+            "acceptance_criteria": [
+                "Driver info",
+                "Star rating",
+                "Optional tip",
+                "Points bonus (+10)"
+            ]
+        },
+        {
+            "id": "SEARCH-001",
+            "title": "Global Search screen",
+            "description": "Search products across stores",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Feature",
+            "route": "/search",
+            "dependencies": [
+                "HOME-004"
+            ],
+            "acceptance_criteria": [
+                "Search input",
+                "Recent searches",
+                "Results by store",
+                "Filter options"
+            ]
+        },
+        {
+            "id": "FILTER-001",
+            "title": "Products Filter screen",
+            "description": "Filter products in store",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/stores/:storeId/products/filters",
+            "dependencies": [
+                "HOME-004"
+            ],
+            "acceptance_criteria": [
+                "Category filter",
+                "Price range",
+                "In stock only",
+                "Sort options"
+            ]
+        },
+        {
+            "id": "STATE-001",
+            "title": "No Internet state",
+            "description": "Offline state screen",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 3,
+            "category": "UI",
+            "route": "/states/no-internet",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "No connection illustration",
+                "Retry button"
+            ]
+        },
+        {
+            "id": "STATE-002",
+            "title": "Error state",
+            "description": "Server error state screen",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 3,
+            "category": "UI",
+            "route": "/states/error",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Error illustration",
+                "Error message",
+                "Retry button",
+                "Report button"
+            ]
+        },
+        {
+            "id": "STATE-003",
+            "title": "Empty state",
+            "description": "Empty list state component",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 2,
+            "category": "UI",
+            "route": "/states/empty",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Empty illustration",
+                "Context message",
+                "Action CTA"
+            ]
+        },
+        {
+            "id": "STATE-004",
+            "title": "Loading state",
+            "description": "Loading skeleton component",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 3,
+            "category": "UI",
+            "route": "/states/loading",
+            "dependencies": [
+                "SETUP-003"
+            ],
+            "acceptance_criteria": [
+                "Skeleton shimmer",
+                "Context-appropriate shape"
+            ]
+        },
+        {
+            "id": "SEC-001",
+            "title": "Active Devices screen",
+            "description": "View and manage logged-in devices",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/security/devices",
+            "dependencies": [
+                "AUTH-006"
+            ],
+            "acceptance_criteria": [
+                "Device list",
+                "Current device indicator",
+                "Logout device button",
+                "Logout all button"
+            ]
+        },
+        {
+            "id": "SEC-002",
+            "title": "Activity Log screen",
+            "description": "View account activity history",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/security/activity",
+            "dependencies": [
+                "AUTH-006"
+            ],
+            "acceptance_criteria": [
+                "Activity list",
+                "Login events",
+                "Order events",
+                "Settings changes"
+            ]
+        },
+        {
+            "id": "COMP-001",
+            "title": "Data Export screen",
+            "description": "Export personal data (GDPR)",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/data-export",
+            "dependencies": [
+                "SET-001"
+            ],
+            "acceptance_criteria": [
+                "Export request",
+                "Download/Email options",
+                "Processing status"
+            ]
+        },
+        {
+            "id": "COMP-002",
+            "title": "Permissions screen",
+            "description": "Manage consents and permissions",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Feature",
+            "route": "/settings/permissions",
+            "dependencies": [
+                "SET-001"
+            ],
+            "acceptance_criteria": [
+                "Marketing consent",
+                "Data sharing consent",
+                "Analytics consent"
+            ]
+        },
+        {
+            "id": "NAV-001",
+            "title": "Bottom Navigation",
+            "description": "Main navigation bar",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 4,
+            "category": "UI",
+            "dependencies": [
+                "SETUP-003"
+            ],
+            "acceptance_criteria": [
+                "5 tabs: Home, Orders, Accounts, Loyalty, Settings",
+                "Badge for unread notifications",
+                "Smooth transitions"
+            ]
+        },
+        {
+            "id": "TEST-001",
+            "title": "Unit tests setup",
+            "description": "Configure testing framework and write core tests",
+            "phase": 10,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Test",
+            "dependencies": [
+                "SETUP-001"
+            ],
+            "acceptance_criteria": [
+                "Mocktail configured",
+                "Core service tests",
+                "Repository tests"
+            ]
+        },
+        {
+            "id": "TEST-002",
+            "title": "Widget tests",
+            "description": "Write widget tests for critical screens",
+            "phase": 10,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Test",
+            "dependencies": [
+                "TEST-001"
+            ],
+            "acceptance_criteria": [
+                "Auth flow tests",
+                "Cart tests",
+                "Checkout tests"
+            ]
+        },
+        {
+            "id": "TEST-003",
+            "title": "Integration tests",
+            "description": "E2E tests for critical paths",
+            "phase": 10,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Test",
+            "dependencies": [
+                "TEST-002"
+            ],
+            "acceptance_criteria": [
+                "Happy path test",
+                "Credit path test",
+                "Error recovery test"
+            ]
+        },
+        {
+            "id": "POLISH-001",
+            "title": "Final polish and bug fixes",
+            "description": "Address remaining issues and polish UI",
+            "phase": 10,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Polish",
+            "dependencies": [
+                "TEST-003"
+            ],
+            "acceptance_criteria": [
+                "All P0 bugs fixed",
+                "Animations smooth",
+                "Performance optimized"
+            ]
+        }
+    ],
+    "statistics": {
+        "screens_by_priority": {
+            "P0": 30,
+            "P1": 44,
+            "P2": 6
+        },
+        "tasks_by_phase": {
+            "Phase 0 - Foundation": 5,
+            "Phase 1 - Auth": 6,
+            "Phase 2 - Home": 8,
+            "Phase 3 - Cart": 6,
+            "Phase 4 - Orders": 6,
+            "Phase 5 - Edge Cases": 13,
+            "Phase 6 - Payment": 6,
+            "Phase 7 - Accounts": 8,
+            "Phase 8 - Settings": 12,
+            "Phase 9 - Support": 10,
+            "Phase 10 - Testing": 4
+        },
+        "tasks_by_category": {
+            "Setup": 5,
+            "Auth": 6,
+            "Feature": 75,
+            "UI": 6,
+            "Test": 3,
+            "Polish": 1
+        }
+    },
+    "integration_points": {
+        "with_packages": [
+            "alhai_core",
+            "alhai_services",
+            "alhai_design_system"
+        ],
+        "with_apps": [
+            "pos_app (orders sync)",
+            "driver_app (tracking)",
+            "admin_pos (management)"
+        ],
+        "external_services": [
+            "Supabase (Auth, DB, Realtime)",
+            "Cloudflare R2 (Images)",
+            "Payment Gateway (mada, STC Pay)",
+            "Push Notifications (Firebase)"
+        ]
+    },
+    "created_at": "2026-01-28T08:05:00Z"
+}

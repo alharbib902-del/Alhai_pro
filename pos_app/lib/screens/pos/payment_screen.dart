@@ -1,0 +1,1038 @@
+/// شاشة الدفع - Payment Screen
+///
+/// شاشة دفع احترافية للويب مع:
+/// - طرق دفع متعددة (نقد، بطاقة، آجل)
+/// - حساب الباقي
+/// - اختصارات سريعة
+/// - تأثيرات بصرية
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:alhai_core/alhai_core.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_sizes.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/router/routes.dart';
+import '../../providers/cart_providers.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/products_providers.dart';
+import '../../services/sale_service.dart';
+import '../../widgets/common/app_button.dart';
+
+/// شاشة الدفع
+class PaymentScreen extends ConsumerStatefulWidget {
+  const PaymentScreen({super.key});
+
+  @override
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends ConsumerState<PaymentScreen>
+    with SingleTickerProviderStateMixin {
+  PaymentMethod _selectedMethod = PaymentMethod.cash;
+  final _cashReceivedController = TextEditingController();
+  final _cardRrnController = TextEditingController();
+  final _focusNode = FocusNode();
+  bool _isProcessing = false;
+  bool _showSuccess = false;
+  double _cashReceived = 0;
+
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.requestFocus();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _cashReceivedController.dispose();
+    _cardRrnController.dispose();
+    _focusNode.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cartState = ref.watch(cartStateProvider);
+    final subtotal = cartState.subtotal;
+    final tax = subtotal * 0.15;
+    final discount = cartState.discount;
+    final total = subtotal + tax - discount;
+    final change = _cashReceived - total;
+
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.escape): () => context.pop(),
+        const SingleActivator(LogicalKeyboardKey.enter): () {
+          if (_canConfirm(total)) _confirmPayment(total);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit1): () =>
+            setState(() => _selectedMethod = PaymentMethod.cash),
+        const SingleActivator(LogicalKeyboardKey.digit2): () =>
+            setState(() => _selectedMethod = PaymentMethod.card),
+        const SingleActivator(LogicalKeyboardKey.digit3): () =>
+            setState(() => _selectedMethod = PaymentMethod.wallet),
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: _showSuccess
+              ? _buildSuccessState()
+              : _isProcessing
+                  ? _buildProcessingState()
+                  : _buildPaymentContent(total, subtotal, tax, discount, change),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentContent(
+    double total,
+    double subtotal,
+    double tax,
+    double discount,
+    double change,
+  ) {
+    final isDesktop = AppBreakpoints.isDesktop(context);
+
+    return Row(
+      children: [
+        // Main Content
+        Expanded(
+          flex: 3,
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(isDesktop ? AppSpacing.xxl : AppSpacing.lg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Payment Methods
+                      Text(
+                        'طريقة الدفع',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      _buildPaymentMethods(),
+
+                      const SizedBox(height: AppSpacing.xxl),
+
+                      // Payment Details
+                      _buildPaymentDetails(total, change),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Summary Sidebar
+        Container(
+          width: isDesktop ? 400 : 350,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            border: const Border(
+              right: BorderSide(color: AppColors.border),
+            ),
+            boxShadow: AppShadows.lg,
+          ),
+          child: _buildSummaryPanel(total, subtotal, tax, discount, change),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: AppTopBarSize.height,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(
+          bottom: BorderSide(color: AppColors.border),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Back Button
+          AppIconButton(
+            icon: Icons.arrow_forward,
+            onPressed: () => context.pop(),
+            tooltip: 'رجوع (Esc)',
+          ),
+
+          const SizedBox(width: AppSpacing.md),
+
+          // Title
+          Text(
+            'إتمام الدفع',
+            style: AppTypography.titleLarge.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+
+          const Spacer(),
+
+          // Keyboard Shortcuts Hint
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.grey100,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.keyboard, size: 16, color: AppColors.textMuted),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  'Enter للتأكيد',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethods() {
+    return Row(
+      children: [
+        Expanded(
+          child: _PaymentMethodCard(
+            icon: Icons.payments_outlined,
+            label: 'نقداً',
+            shortcut: '1',
+            color: AppColors.cash,
+            selected: _selectedMethod == PaymentMethod.cash,
+            onTap: () => setState(() => _selectedMethod = PaymentMethod.cash),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: _PaymentMethodCard(
+            icon: Icons.credit_card,
+            label: 'بطاقة',
+            shortcut: '2',
+            color: AppColors.card,
+            selected: _selectedMethod == PaymentMethod.card,
+            onTap: () => setState(() => _selectedMethod = PaymentMethod.card),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: _PaymentMethodCard(
+            icon: Icons.access_time,
+            label: 'آجل',
+            shortcut: '3',
+            color: AppColors.debt,
+            selected: _selectedMethod == PaymentMethod.wallet,
+            onTap: () => setState(() => _selectedMethod = PaymentMethod.wallet),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentDetails(double total, double change) {
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+        return _buildCashDetails(total, change);
+      case PaymentMethod.card:
+        return _buildCardDetails();
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return _buildCreditDetails();
+    }
+  }
+
+  Widget _buildCashDetails(double total, double change) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'المبلغ المستلم',
+          style: AppTypography.titleMedium.copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Cash Input
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(color: AppColors.primaryBorder, width: 2),
+            boxShadow: AppShadows.sm,
+          ),
+          child: TextField(
+            controller: _cashReceivedController,
+            focusNode: _focusNode,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+            ],
+            textAlign: TextAlign.center,
+            style: AppTypography.displayMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: '0.00',
+              hintStyle: AppTypography.displayMedium.copyWith(
+                color: AppColors.textMuted,
+              ),
+              suffixText: 'ر.س',
+              suffixStyle: AppTypography.titleLarge.copyWith(
+                color: AppColors.textMuted,
+              ),
+              contentPadding: const EdgeInsets.all(AppSpacing.xl),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _cashReceived = double.tryParse(value) ?? 0;
+              });
+            },
+          ),
+        ),
+
+        const SizedBox(height: AppSpacing.xl),
+
+        // Quick Amount Buttons
+        Text(
+          'مبالغ سريعة',
+          style: AppTypography.labelLarge.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            _QuickAmountChip(
+              label: 'المبلغ المطلوب',
+              amount: total,
+              color: AppColors.primary,
+              onTap: () => _setAmount(total),
+            ),
+            _QuickAmountChip(amount: 50, onTap: () => _setAmount(50)),
+            _QuickAmountChip(amount: 100, onTap: () => _setAmount(100)),
+            _QuickAmountChip(amount: 200, onTap: () => _setAmount(200)),
+            _QuickAmountChip(amount: 500, onTap: () => _setAmount(500)),
+          ],
+        ),
+
+        const SizedBox(height: AppSpacing.xxl),
+
+        // Change Display
+        AnimatedContainer(
+          duration: AppDurations.normal,
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          decoration: BoxDecoration(
+            color: change >= 0 ? AppColors.successSurface : AppColors.errorSurface,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(
+              color: change >= 0 ? AppColors.success : AppColors.error,
+              width: 2,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    change >= 0 ? Icons.check_circle : Icons.error,
+                    color: change >= 0 ? AppColors.success : AppColors.error,
+                    size: 28,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Text(
+                    'الباقي:',
+                    style: AppTypography.titleLarge.copyWith(
+                      color: change >= 0 ? AppColors.success : AppColors.error,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                change >= 0
+                    ? '${change.toStringAsFixed(2)} ر.س'
+                    : 'المبلغ غير كافي',
+                style: AppTypography.displaySmall.copyWith(
+                  color: change >= 0 ? AppColors.success : AppColors.error,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCardDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'رقم مرجع العملية (RRN)',
+          style: AppTypography.titleMedium.copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // RRN Input
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(color: AppColors.border),
+            boxShadow: AppShadows.sm,
+          ),
+          child: TextField(
+            controller: _cardRrnController,
+            textAlign: TextAlign.center,
+            style: AppTypography.headlineMedium.copyWith(
+              color: AppColors.textPrimary,
+              letterSpacing: 2,
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'أدخل رقم العملية من الجهاز',
+              hintStyle: AppTypography.bodyLarge.copyWith(
+                color: AppColors.textMuted,
+              ),
+              contentPadding: const EdgeInsets.all(AppSpacing.xl),
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ),
+
+        const SizedBox(height: AppSpacing.xl),
+
+        // Info Box
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            color: AppColors.infoSurface,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline, color: AppColors.info, size: 24),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  'اطلب من العميل الدفع عبر جهاز البطاقة، ثم أدخل رقم العملية (RRN) من الإيصال',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.info,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCreditDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'البيع الآجل',
+          style: AppTypography.titleMedium.copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Warning Box
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            color: AppColors.warningSurface,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.warning_amber, color: AppColors.warning, size: 24),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  'سيتم تسجيل هذا المبلغ كدين على العميل. تأكد من تحديد العميل قبل إتمام العملية.',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.warning,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummaryPanel(
+    double total,
+    double subtotal,
+    double tax,
+    double discount,
+    double change,
+  ) {
+    return Column(
+      children: [
+        // Summary Header
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: const BoxDecoration(
+            color: AppColors.primarySurface,
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.receipt_long, color: AppColors.primary),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                'ملخص الطلب',
+                style: AppTypography.titleMedium.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Summary Content
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              children: [
+                _SummaryRow(label: 'المجموع الفرعي', value: subtotal),
+                const SizedBox(height: AppSpacing.md),
+                _SummaryRow(label: 'الضريبة (15%)', value: tax),
+                if (discount > 0) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _SummaryRow(
+                    label: 'الخصم',
+                    value: -discount,
+                    valueColor: AppColors.success,
+                  ),
+                ],
+
+                const Divider(height: AppSpacing.xxl),
+
+                // Total
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'المبلغ المطلوب',
+                      style: AppTypography.titleMedium.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      '${total.toStringAsFixed(2)} ر.س',
+                      style: AppTypography.displaySmall.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                // Payment Method Badge
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: _getMethodColor().withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _getMethodIcon(),
+                        color: _getMethodColor(),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        _getMethodLabel(),
+                        style: AppTypography.titleMedium.copyWith(
+                          color: _getMethodColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
+                // Confirm Button
+                SizedBox(
+                  width: double.infinity,
+                  child: AppButton.primary(
+                    label: 'تأكيد الدفع',
+                    icon: Icons.check_circle,
+                    size: ButtonSize.large,
+                    onPressed: _canConfirm(total) ? () => _confirmPayment(total) : null,
+                    isLoading: _isProcessing,
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.md),
+
+                // Cancel Button
+                SizedBox(
+                  width: double.infinity,
+                  child: AppButton.ghost(
+                    label: 'إلغاء',
+                    onPressed: () => context.pop(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProcessingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: 80,
+            height: 80,
+            child: CircularProgressIndicator(
+              strokeWidth: 4,
+              valueColor: AlwaysStoppedAnimation(AppColors.primary),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          Text(
+            'جاري معالجة الدفع...',
+            style: AppTypography.titleLarge.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'يرجى الانتظار',
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuccessState() {
+    return Center(
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: const BoxDecoration(
+                color: AppColors.successSurface,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle,
+                size: 80,
+                color: AppColors.success,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Text(
+              'تمت العملية بنجاح!',
+              style: AppTypography.displaySmall.copyWith(
+                color: AppColors.success,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'جاري طباعة الإيصال...',
+              style: AppTypography.bodyLarge.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // Helpers
+  // ============================================================================
+
+  void _setAmount(double amount) {
+    _cashReceivedController.text = amount.toStringAsFixed(2);
+    setState(() => _cashReceived = amount);
+  }
+
+  Color _getMethodColor() {
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+        return AppColors.cash;
+      case PaymentMethod.card:
+        return AppColors.card;
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return AppColors.debt;
+    }
+  }
+
+  IconData _getMethodIcon() {
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+        return Icons.payments;
+      case PaymentMethod.card:
+        return Icons.credit_card;
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return Icons.access_time;
+    }
+  }
+
+  String _getMethodLabel() {
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+        return 'الدفع نقداً';
+      case PaymentMethod.card:
+        return 'الدفع بالبطاقة';
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return 'البيع الآجل';
+    }
+  }
+
+  bool _canConfirm(double total) {
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+        return _cashReceived >= total;
+      case PaymentMethod.card:
+        return _cardRrnController.text.isNotEmpty;
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return true;
+    }
+  }
+
+  Future<void> _confirmPayment(double total) async {
+    setState(() => _isProcessing = true);
+
+    try {
+      final cartState = ref.read(cartStateProvider);
+      final storeId = ref.read(currentStoreIdProvider);
+      final userId = ref.read(currentUserProvider)?.id;
+
+      if (storeId == null || userId == null) {
+        throw Exception('لم يتم تحديد المتجر أو المستخدم');
+      }
+
+      final saleService = getIt<SaleService>();
+      final subtotal = cartState.subtotal;
+      final tax = subtotal * 0.15;
+
+      final saleId = await saleService.createSale(
+        storeId: storeId,
+        cashierId: userId,
+        items: cartState.items,
+        subtotal: subtotal,
+        discount: cartState.discount,
+        tax: tax,
+        total: total,
+        paymentMethod: _selectedMethod.name,
+        customerId: cartState.customerId,
+        notes: cartState.notes,
+      );
+
+      // Show success animation
+      setState(() {
+        _isProcessing = false;
+        _showSuccess = true;
+      });
+      _animationController.forward();
+
+      // Wait and navigate
+      await Future.delayed(const Duration(seconds: 2));
+
+      // مسح السلة بعد البيع الناجح
+      ref.read(cartStateProvider.notifier).clear();
+
+      // الانتقال لشاشة الإيصال
+      if (mounted) {
+        context.go('${AppRoutes.posReceipt}?saleId=$saleId');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Sub Widgets
+// ============================================================================
+
+class _PaymentMethodCard extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final String shortcut;
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _PaymentMethodCard({
+    required this.icon,
+    required this.label,
+    required this.shortcut,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  State<_PaymentMethodCard> createState() => _PaymentMethodCardState();
+}
+
+class _PaymentMethodCardState extends State<_PaymentMethodCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: AppDurations.fast,
+        decoration: BoxDecoration(
+          color: widget.selected
+              ? widget.color.withValues(alpha: 0.1)
+              : _isHovered
+                  ? AppColors.grey50
+                  : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          border: Border.all(
+            color: widget.selected ? widget.color : AppColors.border,
+            width: widget.selected ? 2 : 1,
+          ),
+          boxShadow: widget.selected || _isHovered ? AppShadows.md : AppShadows.sm,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onTap,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: Column(
+                children: [
+                  // Icon
+                  AnimatedContainer(
+                    duration: AppDurations.fast,
+                    width: widget.selected ? 72 : 64,
+                    height: widget.selected ? 72 : 64,
+                    decoration: BoxDecoration(
+                      color: widget.color.withValues(alpha: widget.selected ? 0.2 : 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      size: widget.selected ? 36 : 32,
+                      color: widget.color,
+                    ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Label
+                  Text(
+                    widget.label,
+                    style: AppTypography.titleMedium.copyWith(
+                      color: widget.selected ? widget.color : AppColors.textPrimary,
+                      fontWeight: widget.selected ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.xs),
+
+                  // Shortcut
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xxs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey100,
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
+                    ),
+                    child: Text(
+                      widget.shortcut,
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickAmountChip extends StatefulWidget {
+  final double amount;
+  final String? label;
+  final Color? color;
+  final VoidCallback onTap;
+
+  const _QuickAmountChip({
+    required this.amount,
+    this.label,
+    this.color,
+    required this.onTap,
+  });
+
+  @override
+  State<_QuickAmountChip> createState() => _QuickAmountChipState();
+}
+
+class _QuickAmountChipState extends State<_QuickAmountChip> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.color ?? AppColors.grey500;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: AppDurations.fast,
+        child: Material(
+          color: _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.full),
+          child: InkWell(
+            onTap: widget.onTap,
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppRadius.full),
+                border: Border.all(
+                  color: _isHovered ? color : AppColors.border,
+                ),
+              ),
+              child: Text(
+                widget.label ?? '${widget.amount.toInt()}',
+                style: AppTypography.labelLarge.copyWith(
+                  color: _isHovered ? color : AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final double value;
+  final Color? valueColor;
+
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: AppTypography.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        Text(
+          '${value < 0 ? '-' : ''}${value.abs().toStringAsFixed(2)} ر.س',
+          style: AppTypography.bodyMedium.copyWith(
+            color: valueColor ?? AppColors.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+}

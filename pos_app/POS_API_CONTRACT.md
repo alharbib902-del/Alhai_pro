@@ -1,7 +1,7 @@
-# 🔌 POS App - API Contract v2.1.0
+# 🔌 POS App - API Contract v3.0.0
 ## عقد الـ API بين التطبيق والسيرفر (معتمد)
 
-> **Version:** 2.1.0 | **Date:** 2026-01-20 | **Base URL:** `https://api.alhai.app/v1`
+> **Version:** 3.0.0 | **Date:** 2026-02-02 | **Base URL:** `https://api.alhai.app/v1`
 
 ---
 
@@ -33,7 +33,13 @@
 24. [Returns](#23-returns) ★
 25. [Cash Drawer](#24-cash-drawer) ★
 26. [Expiry Tracking](#25-expiry-tracking) ★
-27. [Error Codes](#error-codes)
+27. [Split Payment](#26-split-payment) ⭐ NEW v3.0
+28. [Debt Reminders](#27-debt-reminders) ⭐ NEW v3.0
+29. [Multi-Branch](#28-multi-branch) ⭐ NEW v3.0
+30. [Stock Transfers](#29-stock-transfers) ⭐ NEW v3.0
+31. [AI Transfer Suggestions](#30-ai-transfer-suggestions) ⭐ NEW v3.0
+32. [Loyalty Extended](#31-loyalty-extended) ⭐ NEW v3.0
+33. [Error Codes](#error-codes)
 
 ---
 
@@ -2643,6 +2649,935 @@ Soft delete (isActive=false)
 
 ---
 
+# 💳 26. Split Payment ⭐ NEW v3.0
+
+## POST `/sales` (Updated)
+إنشاء فاتورة بيع مع دفع مقسم
+
+**Request (Split Payment):**
+```json
+{
+  "items": [
+    {
+      "productId": "uuid",
+      "quantity": 2,
+      "unitPrice": 8.50
+    }
+  ],
+  "payments": [
+    {
+      "method": "CASH",
+      "amount": 200.00
+    },
+    {
+      "method": "CARD",
+      "amount": 150.00,
+      "deviceId": "uuid",
+      "transactionRef": "TXN123456"
+    },
+    {
+      "method": "CREDIT",
+      "amount": 150.00
+    }
+  ],
+  "customerId": "uuid",
+  "discount": 0,
+  "notes": "",
+  "clientCreatedAt": "2026-01-13T10:00:00Z"
+}
+```
+
+**Response 201:**
+```json
+{
+  "id": "uuid",
+  "receiptNo": "POS-2026-00001",
+  "items": [...],
+  "subtotal": 500.00,
+  "discount": 0,
+  "tax": 75.00,
+  "total": 500.00,
+  "payments": [
+    {
+      "id": "uuid",
+      "method": "CASH",
+      "amount": 200.00,
+      "processedAt": "2026-01-13T10:00:00Z"
+    },
+    {
+      "id": "uuid",
+      "method": "CARD",
+      "amount": 150.00,
+      "deviceId": "uuid",
+      "transactionRef": "TXN123456",
+      "processedAt": "2026-01-13T10:00:01Z"
+    },
+    {
+      "id": "uuid",
+      "method": "CREDIT",
+      "amount": 150.00,
+      "processedAt": "2026-01-13T10:00:02Z"
+    }
+  ],
+  "paymentSummary": {
+    "cashPaid": 200.00,
+    "cardPaid": 150.00,
+    "creditAmount": 150.00,
+    "totalPaid": 500.00
+  },
+  "customerId": "uuid",
+  "status": "COMPLETED"
+}
+```
+
+**Validation Rules:**
+- مجموع `payments.amount` يجب أن يساوي `total`
+- إذا كان هناك `CREDIT` payment، يجب تحديد `customerId`
+- `CARD` payment يتطلب `deviceId` و `transactionRef`
+
+**Errors:**
+- `400 PAYMENT_AMOUNT_MISMATCH` - مجموع الدفعات لا يساوي الإجمالي
+- `400 CREDIT_REQUIRES_CUSTOMER` - الدفع الآجل يتطلب تحديد العميل
+- `400 CARD_REQUIRES_DEVICE` - دفع البطاقة يتطلب جهاز
+
+---
+
+## GET `/sales/:id/payments`
+قائمة دفعات الفاتورة
+
+**Response 200:**
+```json
+{
+  "saleId": "uuid",
+  "payments": [
+    {
+      "id": "uuid",
+      "method": "CASH",
+      "amount": 200.00,
+      "processedAt": "2026-01-13T10:00:00Z"
+    }
+  ],
+  "total": 500.00,
+  "totalPaid": 500.00,
+  "remainingBalance": 0.00
+}
+```
+
+---
+
+# 📧 27. Debt Reminders ⭐ NEW v3.0
+
+## GET `/debt-reminders/settings`
+إعدادات تذكير الديون
+
+**Response 200:**
+```json
+{
+  "enabled": true,
+  "channels": ["WHATSAPP", "SMS"],
+  "schedule": [
+    {"daysAfterDue": 7, "enabled": true, "templateId": "reminder_7_days"},
+    {"daysAfterDue": 15, "enabled": true, "templateId": "reminder_15_days"},
+    {"daysAfterDue": 30, "enabled": true, "templateId": "reminder_30_days"}
+  ],
+  "minAmount": 100.00,
+  "autoSend": false,
+  "defaultChannel": "WHATSAPP",
+  "excludeWeekends": true,
+  "sendTime": "10:00"
+}
+```
+
+## PATCH `/debt-reminders/settings`
+تحديث إعدادات التذكير
+
+**Request:**
+```json
+{
+  "enabled": true,
+  "channels": ["WHATSAPP"],
+  "schedule": [
+    {"daysAfterDue": 7, "enabled": true},
+    {"daysAfterDue": 15, "enabled": true}
+  ],
+  "minAmount": 200.00,
+  "autoSend": true
+}
+```
+
+---
+
+## GET `/debt-reminders/templates`
+قوالب رسائل التذكير
+
+**Response 200:**
+```json
+{
+  "templates": [
+    {
+      "id": "reminder_7_days",
+      "name": "تذكير بعد 7 أيام",
+      "channel": "WHATSAPP",
+      "content": "مرحباً {customer_name}،\n\nنذكرك بمبلغ {amount} ر.س المستحق منذ {days} يوم.\n\nللدفع: {payment_link}\n\nشكراً لك،\n{store_name}",
+      "variables": ["customer_name", "amount", "days", "payment_link", "store_name"],
+      "isDefault": true
+    }
+  ]
+}
+```
+
+## POST `/debt-reminders/templates`
+إنشاء قالب جديد
+
+## PUT `/debt-reminders/templates/:id`
+تعديل قالب
+
+## DELETE `/debt-reminders/templates/:id`
+حذف قالب (فقط القوالب المخصصة)
+
+---
+
+## GET `/debt-reminders/scheduled`
+التذكيرات المجدولة
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| from | date | من تاريخ |
+| to | date | إلى تاريخ |
+| status | string | `PENDING`, `SENT`, `FAILED` |
+
+**Response 200:**
+```json
+{
+  "reminders": [
+    {
+      "id": "uuid",
+      "customerId": "uuid",
+      "customerName": "أحمد محمد",
+      "customerPhone": "+966500001234",
+      "debtAmount": 1500.00,
+      "daysOverdue": 7,
+      "scheduledAt": "2026-02-08T10:00:00Z",
+      "channel": "WHATSAPP",
+      "templateId": "reminder_7_days",
+      "status": "PENDING"
+    }
+  ],
+  "summary": {
+    "pending": 15,
+    "sentToday": 8,
+    "failedToday": 1
+  }
+}
+```
+
+---
+
+## POST `/debt-reminders/send`
+إرسال تذكير يدوي
+
+**Request:**
+```json
+{
+  "customerId": "uuid",
+  "channel": "WHATSAPP",
+  "templateId": "reminder_7_days"
+}
+```
+
+**Response 200:**
+```json
+{
+  "reminderId": "uuid",
+  "status": "SENT",
+  "messageId": "wamid.xxx",
+  "sentAt": "2026-02-02T10:30:00Z"
+}
+```
+
+---
+
+## POST `/debt-reminders/send-bulk`
+إرسال تذكيرات جماعية
+
+**Request:**
+```json
+{
+  "filter": {
+    "minAmount": 500,
+    "minDaysOverdue": 7,
+    "maxDaysOverdue": 30
+  },
+  "channel": "WHATSAPP",
+  "templateId": "reminder_7_days",
+  "dryRun": true
+}
+```
+
+**Response 200 (dryRun=true):**
+```json
+{
+  "wouldSendTo": 23,
+  "customers": [
+    {"id": "uuid", "name": "أحمد محمد", "amount": 1500.00, "daysOverdue": 10}
+  ],
+  "estimatedCost": 11.50
+}
+```
+
+---
+
+## GET `/debt-reminders/log`
+سجل التذكيرات المرسلة
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| customerId | uuid | فلتر بالعميل |
+| channel | string | `WHATSAPP`, `SMS` |
+| status | string | `SENT`, `DELIVERED`, `READ`, `FAILED` |
+| from | date | من تاريخ |
+| to | date | إلى تاريخ |
+
+**Response 200:**
+```json
+{
+  "logs": [
+    {
+      "id": "uuid",
+      "customerId": "uuid",
+      "customerName": "أحمد محمد",
+      "channel": "WHATSAPP",
+      "status": "READ",
+      "debtAmount": 1500.00,
+      "sentAt": "2026-02-01T10:30:00Z",
+      "deliveredAt": "2026-02-01T10:30:05Z",
+      "readAt": "2026-02-01T10:35:00Z",
+      "messagePreview": "مرحباً أحمد، نذكرك بمبلغ..."
+    }
+  ],
+  "total": 45
+}
+```
+
+---
+
+# 🏪 28. Multi-Branch ⭐ NEW v3.0
+
+## GET `/branches`
+قائمة الفروع
+
+**Response 200:**
+```json
+{
+  "branches": [
+    {
+      "id": "uuid",
+      "name": "فرع الرياض - العليا",
+      "address": "شارع العليا، حي الورود",
+      "phone": "+966500000001",
+      "isMain": true,
+      "status": "ACTIVE",
+      "productsCount": 1234,
+      "lowStockCount": 23,
+      "settings": {
+        "workingHours": {...},
+        "autoSync": true
+      },
+      "createdAt": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "total": 3
+}
+```
+
+## POST `/branches`
+إنشاء فرع جديد
+
+**Request:**
+```json
+{
+  "name": "فرع جدة - الكورنيش",
+  "address": "طريق الكورنيش، حي الشاطئ",
+  "phone": "+966500000002",
+  "settings": {
+    "copyProductsFrom": "uuid",
+    "copyPricesFrom": "uuid"
+  }
+}
+```
+
+**Response 201:**
+```json
+{
+  "id": "uuid",
+  "name": "فرع جدة - الكورنيش",
+  "isMain": false,
+  "status": "ACTIVE",
+  "inventorySetup": "PENDING",
+  "createdAt": "2026-02-02T10:00:00Z"
+}
+```
+
+## GET `/branches/:id`
+تفاصيل الفرع
+
+## PATCH `/branches/:id`
+تعديل بيانات الفرع
+
+## DELETE `/branches/:id`
+تعطيل الفرع (Soft delete)
+
+---
+
+## GET `/branches/:id/inventory`
+مخزون الفرع
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| lowStock | bool | المنخفض فقط |
+| categoryId | uuid | فلتر بالفئة |
+| search | string | بحث |
+
+**Response 200:**
+```json
+{
+  "branchId": "uuid",
+  "branchName": "فرع الرياض",
+  "inventory": [
+    {
+      "productId": "uuid",
+      "productName": "حليب طازج",
+      "barcode": "6281000000001",
+      "quantity": 50,
+      "reservedQty": 5,
+      "availableQty": 45,
+      "minStock": 20,
+      "status": "IN_STOCK",
+      "lastUpdated": "2026-02-01T10:00:00Z"
+    }
+  ],
+  "summary": {
+    "totalProducts": 1234,
+    "inStock": 1100,
+    "lowStock": 100,
+    "outOfStock": 34
+  }
+}
+```
+
+## POST `/branches/:id/inventory/adjust`
+تعديل مخزون الفرع
+
+**Request:**
+```json
+{
+  "productId": "uuid",
+  "newQuantity": 100,
+  "reason": "جرد فعلي"
+}
+```
+
+---
+
+## GET `/branches/comparison`
+مقارنة الفروع
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| metric | string | `sales`, `stock`, `customers` |
+| from | date | من تاريخ |
+| to | date | إلى تاريخ |
+
+**Response 200:**
+```json
+{
+  "metric": "sales",
+  "period": {"from": "2026-01-01", "to": "2026-01-31"},
+  "branches": [
+    {
+      "branchId": "uuid",
+      "branchName": "فرع الرياض",
+      "value": 150000.00,
+      "change": 12.5,
+      "rank": 1
+    },
+    {
+      "branchId": "uuid",
+      "branchName": "فرع جدة",
+      "value": 120000.00,
+      "change": 8.3,
+      "rank": 2
+    }
+  ]
+}
+```
+
+---
+
+# 🔄 29. Stock Transfers ⭐ NEW v3.0
+
+## GET `/stock-transfers`
+قائمة عمليات النقل
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| fromBranchId | uuid | من فرع |
+| toBranchId | uuid | إلى فرع |
+| status | string | `DRAFT`, `PENDING`, `IN_TRANSIT`, `RECEIVED`, `CANCELLED` |
+| from | date | من تاريخ |
+| to | date | إلى تاريخ |
+
+**Response 200:**
+```json
+{
+  "transfers": [
+    {
+      "id": "uuid",
+      "transferNumber": "TR-2026-00001",
+      "fromBranch": {"id": "uuid", "name": "فرع الرياض"},
+      "toBranch": {"id": "uuid", "name": "فرع جدة"},
+      "itemsCount": 15,
+      "totalValue": 5000.00,
+      "status": "IN_TRANSIT",
+      "isAiSuggested": true,
+      "aiReason": "نقص متوقع في فرع جدة",
+      "createdBy": {"id": "uuid", "name": "أحمد"},
+      "createdAt": "2026-02-01T10:00:00Z",
+      "sentAt": "2026-02-01T11:00:00Z",
+      "receivedAt": null
+    }
+  ],
+  "summary": {
+    "pending": 3,
+    "inTransit": 2,
+    "receivedThisMonth": 15
+  }
+}
+```
+
+## POST `/stock-transfers`
+إنشاء عملية نقل جديدة
+
+**Request:**
+```json
+{
+  "fromBranchId": "uuid",
+  "toBranchId": "uuid",
+  "items": [
+    {
+      "productId": "uuid",
+      "quantity": 50
+    }
+  ],
+  "notes": "نقل طارئ بسبب نقص المخزون",
+  "isAiSuggested": false
+}
+```
+
+**Response 201:**
+```json
+{
+  "id": "uuid",
+  "transferNumber": "TR-2026-00002",
+  "status": "DRAFT",
+  "items": [
+    {
+      "id": "uuid",
+      "productId": "uuid",
+      "productName": "حليب طازج",
+      "quantity": 50,
+      "unitCost": 10.00,
+      "totalValue": 500.00
+    }
+  ],
+  "totalItems": 1,
+  "totalValue": 500.00,
+  "createdAt": "2026-02-02T10:00:00Z"
+}
+```
+
+## GET `/stock-transfers/:id`
+تفاصيل عملية النقل
+
+## PATCH `/stock-transfers/:id`
+تعديل عملية النقل (فقط DRAFT)
+
+## DELETE `/stock-transfers/:id`
+إلغاء عملية النقل
+
+---
+
+## POST `/stock-transfers/:id/send`
+إرسال عملية النقل
+
+**Request:**
+```json
+{
+  "notes": "تم تسليم للسائق أحمد"
+}
+```
+
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "status": "IN_TRANSIT",
+  "sentAt": "2026-02-02T11:00:00Z",
+  "sentBy": {"id": "uuid", "name": "محمد"}
+}
+```
+
+---
+
+## POST `/stock-transfers/:id/receive`
+استلام عملية النقل
+
+**Request:**
+```json
+{
+  "items": [
+    {
+      "productId": "uuid",
+      "quantityReceived": 48,
+      "condition": "GOOD",
+      "notes": "2 علب تالفة"
+    }
+  ],
+  "notes": "تم الاستلام كاملاً ما عدا التالف"
+}
+```
+
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "status": "RECEIVED",
+  "receivedAt": "2026-02-02T14:00:00Z",
+  "receivedBy": {"id": "uuid", "name": "سارة"},
+  "discrepancies": [
+    {
+      "productId": "uuid",
+      "productName": "حليب طازج",
+      "expected": 50,
+      "received": 48,
+      "difference": -2,
+      "condition": "DAMAGED"
+    }
+  ],
+  "inventoryMovements": [
+    {"branchId": "uuid", "productId": "uuid", "type": "TRANSFER_IN", "quantity": 48}
+  ]
+}
+```
+
+---
+
+# 🤖 30. AI Transfer Suggestions ⭐ NEW v3.0
+
+## GET `/ai-transfers/suggestions`
+اقتراحات النقل الذكي
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| priority | string | `URGENT`, `NORMAL`, `LOW` |
+| status | string | `PENDING`, `APPLIED`, `IGNORED` |
+
+**Response 200:**
+```json
+{
+  "suggestions": [
+    {
+      "id": "uuid",
+      "fromBranch": {"id": "uuid", "name": "فرع الرياض"},
+      "toBranch": {"id": "uuid", "name": "فرع جدة"},
+      "product": {
+        "id": "uuid",
+        "name": "حليب طازج",
+        "barcode": "6281000000001"
+      },
+      "suggestedQty": 50,
+      "fromStock": 200,
+      "toStock": 10,
+      "fromSalesRate": 5.0,
+      "toSalesRate": 15.0,
+      "daysUntilStockout": 0.67,
+      "priority": "URGENT",
+      "reason": "سينفد المخزون في فرع جدة خلال يوم واحد",
+      "confidence": 0.95,
+      "status": "PENDING",
+      "createdAt": "2026-02-02T08:00:00Z"
+    }
+  ],
+  "summary": {
+    "urgent": 5,
+    "normal": 12,
+    "low": 8,
+    "potentialSavings": 15000.00
+  }
+}
+```
+
+## POST `/ai-transfers/suggestions/:id/apply`
+تطبيق اقتراح AI
+
+**Request:**
+```json
+{
+  "adjustedQty": 45,
+  "notes": "تعديل الكمية حسب الموجود"
+}
+```
+
+**Response 200:**
+```json
+{
+  "suggestionId": "uuid",
+  "status": "APPLIED",
+  "transfer": {
+    "id": "uuid",
+    "transferNumber": "TR-2026-00003",
+    "status": "DRAFT"
+  }
+}
+```
+
+## POST `/ai-transfers/suggestions/:id/ignore`
+تجاهل اقتراح AI
+
+**Request:**
+```json
+{
+  "reason": "المنتج سيصل غداً من المورد"
+}
+```
+
+---
+
+## POST `/ai-transfers/generate`
+إعادة توليد الاقتراحات
+
+**Request:**
+```json
+{
+  "branchIds": ["uuid1", "uuid2"],
+  "lookbackDays": 7,
+  "forecastDays": 14
+}
+```
+
+**Response 200:**
+```json
+{
+  "generatedAt": "2026-02-02T10:00:00Z",
+  "newSuggestions": 15,
+  "updatedSuggestions": 3,
+  "removedSuggestions": 2
+}
+```
+
+---
+
+## GET `/ai-transfers/analytics`
+تحليلات النقل الذكي
+
+**Response 200:**
+```json
+{
+  "period": {"from": "2026-01-01", "to": "2026-02-02"},
+  "suggestionsGenerated": 150,
+  "suggestionsApplied": 85,
+  "suggestionsIgnored": 45,
+  "applicationRate": 56.7,
+  "stockoutsPreventedEstimate": 23,
+  "savingsEstimate": 45000.00,
+  "accuracyScore": 0.87
+}
+```
+
+---
+
+# ⭐ 31. Loyalty Extended ⭐ NEW v3.0
+
+## GET `/loyalty/settings` (Extended)
+إعدادات الولاء الموسعة
+
+**Response 200:**
+```json
+{
+  "enabled": true,
+  "pointsPerRiyal": 1,
+  "pointsToRiyal": 100,
+  "minRedemption": 100,
+  "pointsExpiryMonths": 12,
+  "tiers": {
+    "enabled": true,
+    "levels": [
+      {
+        "id": "BRONZE",
+        "name": "برونزي",
+        "nameEn": "Bronze",
+        "minPoints": 0,
+        "multiplier": 1.0,
+        "benefits": ["نقطة لكل ريال"]
+      },
+      {
+        "id": "SILVER",
+        "name": "فضي",
+        "nameEn": "Silver",
+        "minPoints": 1000,
+        "multiplier": 1.25,
+        "benefits": ["1.25 نقطة لكل ريال", "عروض حصرية"]
+      },
+      {
+        "id": "GOLD",
+        "name": "ذهبي",
+        "nameEn": "Gold",
+        "minPoints": 5000,
+        "multiplier": 1.5,
+        "benefits": ["1.5 نقطة لكل ريال", "توصيل مجاني", "أولوية الطلبات"]
+      },
+      {
+        "id": "DIAMOND",
+        "name": "ماسي",
+        "nameEn": "Diamond",
+        "minPoints": 15000,
+        "multiplier": 2.0,
+        "benefits": ["نقطتان لكل ريال", "خصم 5% دائم", "هدايا موسمية"]
+      }
+    ]
+  }
+}
+```
+
+---
+
+## GET `/accounts/:id/loyalty` (Extended)
+نقاط وولاء العميل
+
+**Response 200:**
+```json
+{
+  "accountId": "uuid",
+  "tier": {
+    "current": "SILVER",
+    "name": "فضي",
+    "multiplier": 1.25,
+    "nextTier": "GOLD",
+    "pointsToNextTier": 2500
+  },
+  "points": {
+    "current": 2500,
+    "pending": 150,
+    "lifetimeEarned": 3500,
+    "lifetimeRedeemed": 500,
+    "equivalentValue": 25.00
+  },
+  "expiring": {
+    "amount": 300,
+    "expiryDate": "2026-03-01",
+    "daysUntilExpiry": 27
+  },
+  "recentTransactions": [
+    {
+      "id": "uuid",
+      "type": "EARN",
+      "points": 50,
+      "multiplier": 1.25,
+      "basePoints": 40,
+      "bonusPoints": 10,
+      "referenceId": "sale-uuid",
+      "createdAt": "2026-02-01T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## GET `/loyalty/expiring-points`
+النقاط التي ستنتهي قريباً
+
+**Query Params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| withinDays | int | خلال X يوم (Default: 30) |
+
+**Response 200:**
+```json
+{
+  "customers": [
+    {
+      "accountId": "uuid",
+      "name": "أحمد محمد",
+      "phone": "+966500001234",
+      "expiringPoints": 500,
+      "expiryDate": "2026-03-01",
+      "daysUntilExpiry": 27,
+      "totalPoints": 2500
+    }
+  ],
+  "summary": {
+    "totalExpiringPoints": 15000,
+    "affectedCustomers": 45
+  }
+}
+```
+
+---
+
+## POST `/loyalty/notify-expiring`
+إرسال تنبيه بالنقاط المنتهية
+
+**Request:**
+```json
+{
+  "withinDays": 30,
+  "channel": "WHATSAPP",
+  "dryRun": false
+}
+```
+
+---
+
+## POST `/accounts/:id/loyalty/redeem` (Extended)
+استبدال النقاط (موسع)
+
+**Request:**
+```json
+{
+  "points": 1000,
+  "saleId": "uuid",
+  "redeemType": "DISCOUNT"
+}
+```
+
+**Response 200:**
+```json
+{
+  "redemptionId": "uuid",
+  "pointsRedeemed": 1000,
+  "discountApplied": 10.00,
+  "remainingPoints": 1500,
+  "tier": {
+    "current": "SILVER",
+    "affected": false
+  }
+}
+```
+
+**Errors:**
+- `400 INSUFFICIENT_POINTS` - نقاط غير كافية
+- `400 BELOW_MIN_REDEMPTION` - أقل من الحد الأدنى
+- `400 POINTS_WOULD_DOWNGRADE_TIER` - سيؤدي لخفض المستوى (تحذير)
+
+---
+
 # ⚠️ Error Codes
 
 ## Error Format
@@ -2676,7 +3611,20 @@ Soft delete (isActive=false)
 | `IMPORT_SESSION_EXPIRED` | 404 | جلسة الاستيراد منتهية |
 | `UNCONFIRMED_LOW_CONFIDENCE` | 400 | سطور غير مؤكدة |
 | `IDEMPOTENCY_CONFLICT` | 409 | مفتاح مكرر بـ payload مختلف |
+| `PAYMENT_AMOUNT_MISMATCH` | 400 | مجموع الدفعات لا يساوي الإجمالي |
+| `CREDIT_REQUIRES_CUSTOMER` | 400 | الدفع الآجل يتطلب تحديد العميل |
+| `CARD_REQUIRES_DEVICE` | 400 | دفع البطاقة يتطلب جهاز |
+| `BRANCH_NOT_FOUND` | 404 | الفرع غير موجود |
+| `TRANSFER_NOT_FOUND` | 404 | عملية النقل غير موجودة |
+| `INVALID_TRANSFER_STATUS` | 409 | حالة النقل لا تسمح بهذا الإجراء |
+| `INSUFFICIENT_BRANCH_STOCK` | 400 | مخزون الفرع غير كافي |
+| `INSUFFICIENT_POINTS` | 400 | نقاط غير كافية للاستبدال |
+| `BELOW_MIN_REDEMPTION` | 400 | أقل من الحد الأدنى للاستبدال |
+| `POINTS_EXPIRED` | 400 | النقاط منتهية الصلاحية |
+| `SUGGESTION_ALREADY_APPLIED` | 409 | الاقتراح مطبق مسبقاً |
+| `REMINDER_ALREADY_SENT` | 409 | التذكير مرسل مسبقاً |
+| `TEMPLATE_NOT_FOUND` | 404 | قالب الرسالة غير موجود |
 
 ---
 
-> **Approved by:** _________ | **Date:** 2026-01-13
+> **Approved by:** _________ | **Date:** 2026-02-02

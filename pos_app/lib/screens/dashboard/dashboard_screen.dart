@@ -84,6 +84,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       case 'products':
         context.push(AppRoutes.products);
         break;
+      case 'categories':
+        context.push(AppRoutes.categories);
+        break;
       case 'inventory':
         context.push(AppRoutes.inventory);
         break;
@@ -91,7 +94,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         context.push(AppRoutes.customers);
         break;
       case 'sales':
-        context.push('/sales');
+        context.push(AppRoutes.invoices);
+        break;
+      case 'returns':
+        context.push(AppRoutes.returns);
+        break;
+      case 'orders':
+        context.push(AppRoutes.orders);
+        break;
+      case 'void-transaction':
+        context.push(AppRoutes.voidTransaction);
         break;
       case 'reports':
         context.push('/reports');
@@ -121,7 +133,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           if (isWideScreen)
             AppSidebar(
               storeName: l10n.brandName,
-              groups: DefaultSidebarItems.defaultGroups,
+              groups: DefaultSidebarItems.getGroups(context),
               selectedId: _selectedNavId,
               onItemTap: _handleNavigation,
               onSettingsTap: () => context.push(AppRoutes.settings),
@@ -172,7 +184,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Drawer(
       child: AppSidebar(
         storeName: l10n.brandName,
-        groups: DefaultSidebarItems.defaultGroups,
+        groups: DefaultSidebarItems.getGroups(context),
         selectedId: _selectedNavId,
         onItemTap: (item) {
           Navigator.pop(context);
@@ -316,12 +328,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ElegantQuickActions(
                 onNewSale: () => context.go(AppRoutes.pos),
                 onAddProduct: () => context.push(AppRoutes.products),
-                onRefund: () {},
+                onRefund: () => context.push(AppRoutes.returns),
                 onDailyReport: () => context.push('/reports'),
               ),
               const SizedBox(height: 24),
               TopProductsList(
                 products: _getSampleTopProducts(),
+                onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
               ),
             ],
           ),
@@ -343,12 +356,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ElegantQuickActions(
           onNewSale: () => context.go(AppRoutes.pos),
           onAddProduct: () => context.push(AppRoutes.products),
-          onRefund: () {},
+          onRefund: () => context.push(AppRoutes.returns),
           onDailyReport: () => context.push('/reports'),
         ),
         const SizedBox(height: 16),
         TopProductsList(
           products: _getSampleTopProducts(),
+          onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
         ),
       ],
     );

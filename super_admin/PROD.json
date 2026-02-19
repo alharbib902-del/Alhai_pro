@@ -1,0 +1,602 @@
+{
+    "app_info": {
+        "name": "super_admin",
+        "parent_project": "Alhai",
+        "version": "1.0.0",
+        "total_screens": 52,
+        "total_tasks": 75,
+        "tech_stack": "Flutter Web",
+        "platform": "Web Only (Desktop Browser)",
+        "duration_weeks": 12,
+        "total_hours": 400,
+        "prd_date": "2026-01-15",
+        "status": "Ready for Development",
+        "core_concept": "God Mode - Complete platform control"
+    },
+    "phases": [
+        {
+            "id": 0,
+            "name": "Foundation + Setup",
+            "duration": "Week 1",
+            "hours": 32,
+            "priority": "P0"
+        },
+        {
+            "id": 1,
+            "name": "Core Dashboard",
+            "duration": "Week 2-3",
+            "hours": 64,
+            "priority": "P0",
+            "screens": 12
+        },
+        {
+            "id": 2,
+            "name": "Management",
+            "duration": "Week 4-5",
+            "hours": 56,
+            "priority": "P0",
+            "screens": 10
+        },
+        {
+            "id": 3,
+            "name": "Support & Monitoring",
+            "duration": "Week 6-7",
+            "hours": 48,
+            "priority": "P0",
+            "screens": 8
+        },
+        {
+            "id": 4,
+            "name": "Analytics & Reports",
+            "duration": "Week 8-10",
+            "hours": 64,
+            "priority": "P1",
+            "screens": 10
+        },
+        {
+            "id": 5,
+            "name": "Advanced Features",
+            "duration": "Week 10-11",
+            "hours": 40,
+            "priority": "P2",
+            "screens": 5
+        },
+        {
+            "id": 6,
+            "name": "B2B Controls",
+            "duration": "Week 11",
+            "hours": 24,
+            "priority": "P2",
+            "screens": 7
+        },
+        {
+            "id": 7,
+            "name": "Testing + Polish",
+            "duration": "Week 12",
+            "hours": 32,
+            "priority": "P1"
+        }
+    ],
+    "tasks": [
+        {
+            "id": "SETUP-001",
+            "title": "Project setup + Auth + Routing",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-002",
+            "title": "Super Admin RLS Policies",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-003",
+            "title": "Role-based access control",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-004",
+            "title": "Audit logging system",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "DASH-001",
+            "title": "Main Dashboard (God View)",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 14,
+            "route": "/",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-002",
+            "title": "Platform Analytics",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/analytics",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-003",
+            "title": "Real-time Map",
+            "phase": 1,
+            "priority": "P1",
+            "hours": 12,
+            "route": "/map",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-004",
+            "title": "Revenue Dashboard",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/revenue",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-005",
+            "title": "Subscriptions Management",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/subscriptions",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-006",
+            "title": "Stores Directory",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/stores",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-007",
+            "title": "Store Details",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/stores/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-008",
+            "title": "Users Directory",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/users",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-009",
+            "title": "User Profile",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/users/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-010",
+            "title": "Alerts Dashboard",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/alerts",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-011",
+            "title": "System Health Monitor",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/system",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-012",
+            "title": "Quick Actions Panel",
+            "phase": 1,
+            "priority": "P1",
+            "hours": 4,
+            "route": "/actions",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-001",
+            "title": "Marketers Management",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/marketers",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-002",
+            "title": "Store Approvals Queue",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/approvals",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-003",
+            "title": "Subscription Plans Editor",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/plans",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-004",
+            "title": "Payment Management",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/payments",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-005",
+            "title": "Commission Calculator",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/commissions",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-006",
+            "title": "Promotions & Discounts",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/promotions",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-007",
+            "title": "Feature Flags",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/features",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-008",
+            "title": "Content Management",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/content",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-009",
+            "title": "Roles & Permissions",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/permissions",
+            "category": "Feature"
+        },
+        {
+            "id": "MGMT-010",
+            "title": "API Keys Management",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/api-keys",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-001",
+            "title": "Support Tickets Dashboard",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/support",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-002",
+            "title": "Ticket Details",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/support/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-003",
+            "title": "Live Chat",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/chat/:userId",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-004",
+            "title": "System Logs",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/logs",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-005",
+            "title": "Database Monitor",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/database",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-006",
+            "title": "API Usage Dashboard",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/api-usage",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-007",
+            "title": "Security Dashboard",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/security",
+            "category": "Feature"
+        },
+        {
+            "id": "SUPP-008",
+            "title": "Backup & Recovery",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/backups",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-001",
+            "title": "Executive Dashboard",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 12,
+            "route": "/executive",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-002",
+            "title": "Cohort Analysis",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/cohorts",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-003",
+            "title": "Funnel Analysis",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/funnels",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-004",
+            "title": "Geographic Analytics",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/geo",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-005",
+            "title": "Product Analytics",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/products-analytics",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-006",
+            "title": "Driver Performance",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/drivers-analytics",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-007",
+            "title": "Store Comparison",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/compare",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-008",
+            "title": "Financial Reports",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/financial",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-009",
+            "title": "Custom Reports Builder",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/reports/custom",
+            "category": "Feature"
+        },
+        {
+            "id": "ANLYT-010",
+            "title": "Export Center",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/export",
+            "category": "Feature"
+        },
+        {
+            "id": "ADV-001",
+            "title": "AI Insights",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 12,
+            "route": "/ai",
+            "category": "Feature"
+        },
+        {
+            "id": "ADV-002",
+            "title": "Automation Rules",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/automation",
+            "category": "Feature"
+        },
+        {
+            "id": "ADV-003",
+            "title": "Integrations Hub",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/integrations",
+            "category": "Feature"
+        },
+        {
+            "id": "ADV-004",
+            "title": "Experiments Dashboard",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/experiments",
+            "category": "Feature"
+        },
+        {
+            "id": "ADV-005",
+            "title": "Platform Settings",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/settings",
+            "category": "Feature"
+        },
+        {
+            "id": "TEST-001",
+            "title": "Unit tests",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 10,
+            "category": "Test"
+        },
+        {
+            "id": "TEST-002",
+            "title": "Integration tests",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 10,
+            "category": "Test"
+        },
+        {
+            "id": "POLISH-001",
+            "title": "Security audit",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Polish"
+        },
+        {
+            "id": "POLISH-002",
+            "title": "Final polish",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 4,
+            "category": "Polish"
+        }
+    ],
+    "statistics": {
+        "screens_by_priority": {
+            "P0": 25,
+            "P1": 17,
+            "P2": 5,
+            "B2B": 7
+        },
+        "screens_by_phase": {
+            "Phase 1 - Dashboard": 12,
+            "Phase 2 - Management": 10,
+            "Phase 3 - Support": 8,
+            "Phase 4 - Analytics": 10,
+            "Phase 5 - Advanced": 5,
+            "B2B": 7
+        }
+    },
+    "access_levels": {
+        "Level 1 - Owner": [
+            "Everything",
+            "Cannot be locked out"
+        ],
+        "Level 2 - Tech Lead": [
+            "System access",
+            "Database",
+            "No financial"
+        ],
+        "Level 3 - Support Manager": [
+            "View users",
+            "Tickets",
+            "Limited refunds"
+        ],
+        "Level 4 - Finance Manager": [
+            "Reports",
+            "Payments",
+            "Refunds"
+        ]
+    },
+    "revenue_tracking": {
+        "mrr": "~66,358 SAR/month",
+        "arr": "~796,296 SAR/year",
+        "net_profit": "~43,208 SAR/month",
+        "target_churn": "<5%"
+    },
+    "controls_apps": [
+        "admin_pos",
+        "admin_pos_lite",
+        "customer_app",
+        "driver_app",
+        "pos_app"
+    ],
+    "created_at": "2026-01-28T08:31:00Z"
+}

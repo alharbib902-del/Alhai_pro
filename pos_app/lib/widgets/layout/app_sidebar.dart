@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// عنصر في القائمة الجانبية
 class AppSidebarItem {
@@ -79,6 +80,7 @@ class AppSidebar extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: collapsed ? 80 : 280,
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
         border: Border(
@@ -116,7 +118,7 @@ class AppSidebar extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                       child: Text(
                         group.title!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.textTertiary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -137,7 +139,7 @@ class AppSidebar extends StatelessWidget {
           ),
 
           // الفاصل
-          Divider(color: AppColors.border, height: 1),
+          const Divider(color: AppColors.border, height: 1),
 
           // بطاقة المستخدم
           if (userName != null)
@@ -151,7 +153,7 @@ class AppSidebar extends StatelessWidget {
 
           // الفاصل
           if (userName != null)
-            Divider(color: AppColors.border, height: 1),
+            const Divider(color: AppColors.border, height: 1),
 
           // الأزرار السفلية
           _SidebarFooter(
@@ -185,86 +187,121 @@ class _SidebarHeader extends StatelessWidget {
     
     return Container(
       height: 96,
-      padding: EdgeInsets.all(collapsed ? 16 : 20),
+      padding: EdgeInsets.all(collapsed ? 4 : 20),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDarkMode 
-                ? Colors.white.withOpacity(0.1) 
+            color: isDarkMode
+                ? Colors.white.withValues(alpha:0.1)
                 : AppColors.border,
           ),
         ),
       ),
-      child: Row(
-        children: [
-          // الشعار مع تدرج لوني
-          Container(
-            width: collapsed ? 48 : 40,
-            height: collapsed ? 48 : 40,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primary, Color(0xFF047857)],
+      child: collapsed
+          ? Center(
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primary, Color(0xFF047857)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha:0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: storeLogoUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          storeLogoUrl!,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.point_of_sale_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
               ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
+            )
+          : Row(
+              children: [
+                // الشعار مع تدرج لوني
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.primary, Color(0xFF047857)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha:0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: storeLogoUrl != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            storeLogoUrl!,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.point_of_sale_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        storeName ?? 'Al-Hal POS',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Builder(builder: (ctx) {
+                        final l10n = AppLocalizations.of(ctx)!;
+                        return Text(
+                          l10n.posSystem,
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white.withValues(alpha:0.5)
+                                : AppColors.textTertiary,
+                            fontSize: 12,
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
                 ),
               ],
             ),
-            child: storeLogoUrl != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      storeLogoUrl!,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : const Icon(
-                    Icons.point_of_sale_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-          ),
-
-          if (!collapsed) ...[
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    storeName ?? 'متجر الحل',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 1.2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'نظام نقاط البيع',
-                    style: TextStyle(
-                      color: isDarkMode 
-                          ? Colors.white.withOpacity(0.5)
-                          : AppColors.textTertiary,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 }
@@ -301,7 +338,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
       onExit: (_) => setState(() => _isHovered = false),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: widget.collapsed ? 16 : 12,
+          horizontal: widget.collapsed ? 4 : 12,
           vertical: 2,
         ),
         child: Material(
@@ -312,20 +349,20 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               padding: EdgeInsets.symmetric(
-                horizontal: widget.collapsed ? 12 : 16,
+                horizontal: widget.collapsed ? 0 : 16,
                 vertical: 14,
               ),
               decoration: BoxDecoration(
                 color: widget.isSelected
-                    ? AppColors.primary.withOpacity(0.1)
+                    ? AppColors.primary.withValues(alpha:0.1)
                     : _isHovered
-                        ? (isDarkMode 
-                            ? Colors.white.withOpacity(0.05) 
+                        ? (isDarkMode
+                            ? Colors.white.withValues(alpha:0.05)
                             : AppColors.backgroundSecondary)
                         : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 border: widget.isSelected
-                    ? Border(
+                    ? const Border(
                         right: BorderSide(
                           color: AppColors.primary,
                           width: 3,
@@ -333,89 +370,102 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                       )
                     : null,
               ),
-              child: Row(
-                mainAxisAlignment: widget.collapsed
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                children: [
-                  // الأيقونة
-                  Icon(
-                    widget.isSelected
-                        ? (widget.item.activeIcon ?? widget.item.icon)
-                        : widget.item.icon,
-                    color: widget.isSelected
-                        ? AppColors.primary
-                        : (isDarkMode 
-                            ? Colors.white.withOpacity(0.6) 
-                            : AppColors.textSecondary),
-                    size: 20,
-                  ),
-
-                  if (!widget.collapsed) ...[
-                    const SizedBox(width: 16),
-
-                    // العنوان
-                    Expanded(
-                      child: Text(
-                        widget.item.title,
-                        style: TextStyle(
+              child: widget.collapsed
+                  ? Center(
+                      child: Icon(
+                        widget.isSelected
+                            ? (widget.item.activeIcon ?? widget.item.icon)
+                            : widget.item.icon,
+                        color: widget.isSelected
+                            ? AppColors.primary
+                            : (isDarkMode
+                                ? Colors.white.withValues(alpha:0.6)
+                                : AppColors.textSecondary),
+                        size: 20,
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        // الأيقونة
+                        Icon(
+                          widget.isSelected
+                              ? (widget.item.activeIcon ?? widget.item.icon)
+                              : widget.item.icon,
                           color: widget.isSelected
                               ? AppColors.primary
-                              : (isDarkMode 
-                                  ? Colors.white.withOpacity(0.7) 
-                                  : AppColors.textPrimary),
-                          fontSize: 14,
-                          fontWeight: widget.isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w500,
+                              : (isDarkMode
+                                  ? Colors.white.withValues(alpha:0.6)
+                                  : AppColors.textSecondary),
+                          size: 20,
                         ),
-                      ),
+                        const SizedBox(width: 16),
+
+                        // العنوان
+                        Expanded(
+                          child: Text(
+                            widget.item.title,
+                            style: TextStyle(
+                              color: widget.isSelected
+                                  ? AppColors.primary
+                                  : (isDarkMode
+                                      ? Colors.white.withValues(alpha:0.7)
+                                      : AppColors.textPrimary),
+                              fontSize: 14,
+                              fontWeight: widget.isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+
+                        // الشارة (Badge)
+                        if (widget.item.badge != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.error.withValues(alpha:0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              widget.item.badge!,
+                              style: const TextStyle(
+                                color: AppColors.error,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                        // علامة جديد
+                        if (widget.item.isNew)
+                          Builder(builder: (ctx) {
+                            final l10n = AppLocalizations.of(ctx)!;
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                l10n.newBadge,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          }),
+                      ],
                     ),
-
-                    // الشارة (Badge)
-                    if (widget.item.badge != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          widget.item.badge!,
-                          style: TextStyle(
-                            color: AppColors.error,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-
-                    // علامة جديد
-                    if (widget.item.isNew)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'جديد',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ],
-              ),
             ),
           ),
         ),
@@ -460,107 +510,144 @@ class _UserProfileCardState extends State<_UserProfileCard> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            padding: EdgeInsets.all(widget.collapsed ? 12 : 16),
+            padding: EdgeInsets.all(widget.collapsed ? 4 : 16),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? (isDark ? Colors.white.withOpacity(0.05) : AppColors.backgroundSecondary)
+                  ? (isDark ? Colors.white.withValues(alpha:0.05) : AppColors.backgroundSecondary)
                   : Colors.transparent,
             ),
-            child: Row(
-              mainAxisAlignment: widget.collapsed
-                  ? MainAxisAlignment.center
-                  : MainAxisAlignment.start,
-              children: [
-                // الصورة الشخصية مع نقطة الحالة
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: widget.collapsed ? 20 : 18,
-                      backgroundColor: AppColors.primary.withOpacity(0.15),
-                      backgroundImage: widget.avatarUrl != null
-                          ? NetworkImage(widget.avatarUrl!)
-                          : null,
-                      child: widget.avatarUrl == null
-                          ? Text(
-                              widget.name.isNotEmpty
-                                  ? widget.name[0].toUpperCase()
-                                  : '?',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontSize: widget.collapsed ? 16 : 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : null,
-                    ),
-                    // نقطة الحالة (متصل)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: AppColors.success,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                if (!widget.collapsed) ...[
-                  const SizedBox(width: 12),
-
-                  // الاسم والدور
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+            child: widget.collapsed
+                ? Center(
+                    child: Stack(
                       children: [
-                        Text(
-                          widget.name,
-                          style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.primary.withValues(alpha:0.15),
+                          backgroundImage: widget.avatarUrl != null
+                              ? NetworkImage(widget.avatarUrl!)
+                              : null,
+                          child: widget.avatarUrl == null
+                              ? Text(
+                                  widget.name.isNotEmpty
+                                      ? widget.name[0].toUpperCase()
+                                      : '?',
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : null,
                         ),
-                        if (widget.role != null) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            widget.role!,
-                            style: TextStyle(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.5)
-                                  : AppColors.textTertiary,
-                              fontSize: 11,
+                        // نقطة الحالة (متصل)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: AppColors.success,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                width: 2,
+                              ),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
+                        ),
                       ],
                     ),
-                  ),
+                  )
+                : Row(
+                    children: [
+                      // الصورة الشخصية مع نقطة الحالة
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 18,
+                            backgroundColor: AppColors.primary.withValues(alpha:0.15),
+                            backgroundImage: widget.avatarUrl != null
+                                ? NetworkImage(widget.avatarUrl!)
+                                : null,
+                            child: widget.avatarUrl == null
+                                ? Text(
+                                    widget.name.isNotEmpty
+                                        ? widget.name[0].toUpperCase()
+                                        : '?',
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          // نقطة الحالة (متصل)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: AppColors.success,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 12),
 
-                  // سهم
-                  Icon(
-                    Icons.chevron_left_rounded,
-                    color: isDark
-                        ? Colors.white.withOpacity(0.3)
-                        : AppColors.textTertiary,
-                    size: 18,
+                      // الاسم والدور
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.name,
+                              style: TextStyle(
+                                color: isDark ? Colors.white : AppColors.textPrimary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (widget.role != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                widget.role!,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha:0.5)
+                                      : AppColors.textTertiary,
+                                  fontSize: 11,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+
+                      // سهم
+                      Icon(
+                        Icons.chevron_left_rounded,
+                        color: isDark
+                            ? Colors.white.withValues(alpha:0.3)
+                            : AppColors.textTertiary,
+                        size: 18,
+                      ),
+                    ],
                   ),
-                ],
-              ],
-            ),
           ),
         ),
       ),
@@ -585,39 +672,35 @@ class _SidebarFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(collapsed ? 12 : 16),
-      child: Column(
-        children: [
-          // الإعدادات
-          _FooterButton(
-            icon: Icons.settings_outlined,
-            title: 'الإعدادات',
-            collapsed: collapsed,
-            onTap: onSettingsTap,
-          ),
-
-          const SizedBox(height: 4),
-
-          // الدعم
-          _FooterButton(
-            icon: Icons.help_outline_rounded,
-            title: 'الدعم الفني',
-            collapsed: collapsed,
-            onTap: onSupportTap,
-          ),
-
-          const SizedBox(height: 4),
-
-          // تسجيل الخروج
-          _FooterButton(
-            icon: Icons.logout_rounded,
-            title: 'تسجيل الخروج',
-            collapsed: collapsed,
-            onTap: onLogoutTap,
-            isDestructive: true,
-          ),
-        ],
-      ),
+      padding: EdgeInsets.all(collapsed ? 4 : 16),
+      child: Builder(builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx)!;
+        return Column(
+          children: [
+            _FooterButton(
+              icon: Icons.settings_outlined,
+              title: l10n.settings,
+              collapsed: collapsed,
+              onTap: onSettingsTap,
+            ),
+            const SizedBox(height: 4),
+            _FooterButton(
+              icon: Icons.help_outline_rounded,
+              title: l10n.technicalSupportShort,
+              collapsed: collapsed,
+              onTap: onSupportTap,
+            ),
+            const SizedBox(height: 4),
+            _FooterButton(
+              icon: Icons.logout_rounded,
+              title: l10n.logout,
+              collapsed: collapsed,
+              onTap: onLogoutTap,
+              isDestructive: true,
+            ),
+          ],
+        );
+      }),
     );
   }
 }
@@ -662,39 +745,46 @@ class _FooterButtonState extends State<_FooterButton> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: EdgeInsets.symmetric(
-              horizontal: widget.collapsed ? 12 : 12,
+              horizontal: widget.collapsed ? 0 : 12,
               vertical: 10,
             ),
             decoration: BoxDecoration(
               color: _isHovered
                   ? (widget.isDestructive
-                      ? AppColors.error.withOpacity(0.05)
+                      ? AppColors.error.withValues(alpha:0.05)
                       : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Row(
-              mainAxisAlignment: widget.collapsed
-                  ? MainAxisAlignment.center
-                  : MainAxisAlignment.start,
-              children: [
-                Icon(
-                  widget.icon,
-                  color: color,
-                  size: 20,
-                ),
-                if (!widget.collapsed) ...[
-                  const SizedBox(width: 12),
-                  Text(
-                    widget.title,
-                    style: TextStyle(
+            child: widget.collapsed
+                ? Center(
+                    child: Icon(
+                      widget.icon,
                       color: color,
-                      fontSize: 14,
+                      size: 20,
                     ),
+                  )
+                : Row(
+                    children: [
+                      Icon(
+                        widget.icon,
+                        color: color,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          widget.title,
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ],
-            ),
           ),
         ),
       ),
@@ -702,89 +792,190 @@ class _FooterButtonState extends State<_FooterButton> {
   }
 }
 
-/// القائمة الجانبية الافتراضية
+/// القائمة الجانبية الافتراضية - مع دعم الترجمة
 class DefaultSidebarItems {
-  static const dashboard = AppSidebarItem(
-    id: 'dashboard',
-    title: 'لوحة التحكم',
-    icon: Icons.dashboard_outlined,
-    activeIcon: Icons.dashboard_rounded,
-  );
+  /// إنشاء القائمة الافتراضية مع الترجمة
+  static List<SidebarGroup> getGroups(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
 
-  static const pos = AppSidebarItem(
-    id: 'pos',
-    title: 'نقطة البيع',
-    icon: Icons.point_of_sale_outlined,
-    activeIcon: Icons.point_of_sale_rounded,
-  );
+    final dashboard = AppSidebarItem(
+      id: 'dashboard',
+      title: l10n.dashboard,
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard_rounded,
+    );
 
-  static const products = AppSidebarItem(
-    id: 'products',
-    title: 'المنتجات',
-    icon: Icons.inventory_2_outlined,
-    activeIcon: Icons.inventory_2_rounded,
-  );
+    final pos = AppSidebarItem(
+      id: 'pos',
+      title: l10n.pos,
+      icon: Icons.point_of_sale_outlined,
+      activeIcon: Icons.point_of_sale_rounded,
+    );
 
-  static const inventory = AppSidebarItem(
-    id: 'inventory',
-    title: 'المخزون',
-    icon: Icons.warehouse_outlined,
-    activeIcon: Icons.warehouse_rounded,
-    badge: '5',
-    badgeColor: Color(0xFFF59E0B),
-  );
+    final products = AppSidebarItem(
+      id: 'products',
+      title: l10n.products,
+      icon: Icons.inventory_2_outlined,
+      activeIcon: Icons.inventory_2_rounded,
+    );
 
-  static const customers = AppSidebarItem(
-    id: 'customers',
-    title: 'العملاء',
-    icon: Icons.people_outline_rounded,
-    activeIcon: Icons.people_rounded,
-  );
+    final categories = AppSidebarItem(
+      id: 'categories',
+      title: l10n.categories,
+      icon: Icons.category_outlined,
+      activeIcon: Icons.category_rounded,
+    );
 
-  static const sales = AppSidebarItem(
-    id: 'sales',
-    title: 'المبيعات',
-    icon: Icons.receipt_long_outlined,
-    activeIcon: Icons.receipt_long_rounded,
-  );
+    final inventory = AppSidebarItem(
+      id: 'inventory',
+      title: l10n.inventory,
+      icon: Icons.warehouse_outlined,
+      activeIcon: Icons.warehouse_rounded,
+      badge: '5',
+      badgeColor: const Color(0xFFF59E0B),
+    );
 
-  static const reports = AppSidebarItem(
-    id: 'reports',
-    title: 'التقارير',
-    icon: Icons.analytics_outlined,
-    activeIcon: Icons.analytics_rounded,
-  );
+    final customers = AppSidebarItem(
+      id: 'customers',
+      title: l10n.customers,
+      icon: Icons.people_outline_rounded,
+      activeIcon: Icons.people_rounded,
+    );
 
-  static const employees = AppSidebarItem(
-    id: 'employees',
-    title: 'الموظفين',
-    icon: Icons.badge_outlined,
-    activeIcon: Icons.badge_rounded,
-  );
+    final invoices = AppSidebarItem(
+      id: 'invoices',
+      title: l10n.invoices,
+      icon: Icons.receipt_outlined,
+      activeIcon: Icons.receipt_rounded,
+    );
 
-  static const loyalty = AppSidebarItem(
-    id: 'loyalty',
-    title: 'برنامج الولاء',
-    icon: Icons.card_giftcard_outlined,
-    activeIcon: Icons.card_giftcard_rounded,
-    isNew: true,
-  );
+    final orders = AppSidebarItem(
+      id: 'orders',
+      title: l10n.ordersHistory,
+      icon: Icons.history_rounded,
+      activeIcon: Icons.history_rounded,
+    );
 
+    final sales = AppSidebarItem(
+      id: 'sales',
+      title: l10n.sales,
+      icon: Icons.receipt_long_outlined,
+      activeIcon: Icons.receipt_long_rounded,
+    );
+
+    final returns = AppSidebarItem(
+      id: 'returns',
+      title: l10n.returns,
+      icon: Icons.assignment_return_outlined,
+      activeIcon: Icons.assignment_return_rounded,
+    );
+
+    final voidTransaction = AppSidebarItem(
+      id: 'void-transaction',
+      title: l10n.voidTransaction,
+      icon: Icons.block_outlined,
+      activeIcon: Icons.block_rounded,
+    );
+
+    final reports = AppSidebarItem(
+      id: 'reports',
+      title: l10n.reports,
+      icon: Icons.analytics_outlined,
+      activeIcon: Icons.analytics_rounded,
+    );
+
+    final employees = AppSidebarItem(
+      id: 'employees',
+      title: l10n.employees,
+      icon: Icons.badge_outlined,
+      activeIcon: Icons.badge_rounded,
+    );
+
+    final loyalty = AppSidebarItem(
+      id: 'loyalty',
+      title: l10n.loyaltyProgram,
+      icon: Icons.card_giftcard_outlined,
+      activeIcon: Icons.card_giftcard_rounded,
+      isNew: true,
+    );
+
+    final expenses = AppSidebarItem(
+      id: 'expenses',
+      title: l10n.expenses,
+      icon: Icons.account_balance_wallet_outlined,
+      activeIcon: Icons.account_balance_wallet_rounded,
+    );
+
+    final shifts = AppSidebarItem(
+      id: 'shifts',
+      title: l10n.shift,
+      icon: Icons.schedule_outlined,
+      activeIcon: Icons.schedule_rounded,
+    );
+
+    final suppliers2 = AppSidebarItem(
+      id: 'suppliers',
+      title: l10n.supplier,
+      icon: Icons.local_shipping_outlined,
+      activeIcon: Icons.local_shipping_rounded,
+    );
+
+    final purchases = AppSidebarItem(
+      id: 'purchases',
+      title: l10n.purchase,
+      icon: Icons.shopping_bag_outlined,
+      activeIcon: Icons.shopping_bag_rounded,
+    );
+
+    return [
+      SidebarGroup(
+        items: [dashboard, pos],
+      ),
+      SidebarGroup(
+        title: l10n.storeManagement,
+        items: [products, categories, inventory, customers, suppliers2],
+      ),
+      SidebarGroup(
+        title: l10n.finance,
+        items: [invoices, orders, sales, returns, voidTransaction, expenses, reports],
+      ),
+      SidebarGroup(
+        title: l10n.teamSection,
+        items: [employees, loyalty, shifts, purchases],
+      ),
+    ];
+  }
+
+  /// للتوافق مع الاستخدام القديم (fallback بالعربي)
   static const List<SidebarGroup> defaultGroups = [
     SidebarGroup(
-      items: [dashboard, pos],
+      items: [
+        AppSidebarItem(id: 'dashboard', title: 'Dashboard', icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard_rounded),
+        AppSidebarItem(id: 'pos', title: 'POS', icon: Icons.point_of_sale_outlined, activeIcon: Icons.point_of_sale_rounded),
+      ],
     ),
     SidebarGroup(
-      title: 'إدارة المتجر',
-      items: [products, inventory, customers],
+      title: 'Store',
+      items: [
+        AppSidebarItem(id: 'products', title: 'Products', icon: Icons.inventory_2_outlined, activeIcon: Icons.inventory_2_rounded),
+        AppSidebarItem(id: 'categories', title: 'Categories', icon: Icons.category_outlined, activeIcon: Icons.category_rounded),
+        AppSidebarItem(id: 'inventory', title: 'Inventory', icon: Icons.warehouse_outlined, activeIcon: Icons.warehouse_rounded, badge: '5', badgeColor: Color(0xFFF59E0B)),
+        AppSidebarItem(id: 'customers', title: 'Customers', icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded),
+      ],
     ),
     SidebarGroup(
-      title: 'المالية',
-      items: [sales, reports],
+      title: 'Finance',
+      items: [
+        AppSidebarItem(id: 'sales', title: 'Sales', icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long_rounded),
+        AppSidebarItem(id: 'reports', title: 'Reports', icon: Icons.analytics_outlined, activeIcon: Icons.analytics_rounded),
+      ],
     ),
     SidebarGroup(
-      title: 'الفريق',
-      items: [employees, loyalty],
+      title: 'Team',
+      items: [
+        AppSidebarItem(id: 'employees', title: 'Employees', icon: Icons.badge_outlined, activeIcon: Icons.badge_rounded),
+        AppSidebarItem(id: 'loyalty', title: 'Loyalty', icon: Icons.card_giftcard_outlined, activeIcon: Icons.card_giftcard_rounded, isNew: true),
+      ],
     ),
   ];
 }

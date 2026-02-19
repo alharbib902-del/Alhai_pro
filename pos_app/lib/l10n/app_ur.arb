@@ -1,17 +1,14 @@
 {
   "@@locale": "ur",
-
   "appTitle": "پوائنٹ آف سیل",
   "login": "لاگ ان",
   "logout": "لاگ آؤٹ",
   "welcome": "خوش آمدید",
   "welcomeBack": "واپسی پر خوش آمدید",
-
   "phone": "فون نمبر",
   "phoneHint": "05xxxxxxxx",
   "phoneRequired": "فون نمبر درکار ہے",
   "phoneInvalid": "غلط فون نمبر",
-
   "otp": "تصدیقی کوڈ",
   "otpHint": "تصدیقی کوڈ درج کریں",
   "otpSent": "تصدیقی کوڈ بھیج دیا گیا",
@@ -19,14 +16,12 @@
   "otpExpired": "تصدیقی کوڈ ختم ہو گیا",
   "otpInvalid": "غلط تصدیقی کوڈ",
   "otpResendIn": "{seconds} سیکنڈ میں دوبارہ بھیجیں",
-
   "pin": "پن کوڈ",
   "pinHint": "پن کوڈ درج کریں",
   "pinRequired": "پن کوڈ درکار ہے",
   "pinInvalid": "غلط پن کوڈ",
   "pinAttemptsRemaining": "باقی کوششیں: {count}",
   "pinLocked": "اکاؤنٹ لاک ہو گیا۔ {minutes} منٹ بعد کوشش کریں",
-
   "home": "ہوم",
   "dashboard": "ڈیش بورڈ",
   "pos": "پوائنٹ آف سیل",
@@ -38,21 +33,18 @@
   "invoices": "انوائسز",
   "reports": "رپورٹس",
   "settings": "ترتیبات",
-
   "sales": "فروخت",
   "salesAnalytics": "فروخت کا تجزیہ",
   "refund": "واپسی",
   "todaySales": "آج کی فروخت",
   "totalSales": "کل فروخت",
   "averageSale": "اوسط فروخت",
-
   "cart": "کارٹ",
   "cartEmpty": "کارٹ خالی ہے",
   "addToCart": "کارٹ میں شامل کریں",
   "removeFromCart": "کارٹ سے ہٹائیں",
   "clearCart": "کارٹ صاف کریں",
   "checkout": "چیک آؤٹ",
-
   "payment": "ادائیگی",
   "paymentMethod": "ادائیگی کا طریقہ",
   "cash": "نقد",
@@ -61,7 +53,6 @@
   "transfer": "ٹرانسفر",
   "paymentSuccess": "ادائیگی کامیاب",
   "paymentFailed": "ادائیگی ناکام",
-
   "price": "قیمت",
   "quantity": "مقدار",
   "total": "کل",
@@ -70,7 +61,6 @@
   "tax": "ٹیکس",
   "vat": "ویلیو ایڈڈ ٹیکس",
   "grandTotal": "مجموعی کل",
-
   "product": "پروڈکٹ",
   "productName": "پروڈکٹ کا نام",
   "productCode": "پروڈکٹ کوڈ",
@@ -80,19 +70,16 @@
   "lowStock": "کم اسٹاک",
   "outOfStock": "اسٹاک ختم",
   "inStock": "دستیاب",
-
   "customer": "گاہک",
   "customerName": "گاہک کا نام",
   "customerPhone": "گاہک کا فون",
   "debt": "قرض",
   "balance": "بیلنس",
-
   "search": "تلاش",
   "searchHint": "یہاں تلاش کریں...",
   "filter": "فلٹر",
   "sort": "ترتیب",
   "all": "سب",
-
   "add": "شامل کریں",
   "edit": "ترمیم",
   "delete": "حذف",
@@ -105,7 +92,6 @@
   "done": "مکمل",
   "submit": "جمع کروائیں",
   "retry": "دوبارہ کوشش کریں",
-
   "loading": "لوڈ ہو رہا ہے...",
   "noData": "کوئی ڈیٹا نہیں",
   "noResults": "کوئی نتائج نہیں",
@@ -116,35 +102,28 @@
   "noInternet": "انٹرنیٹ کنکشن نہیں",
   "offline": "آف لائن",
   "online": "آن لائن",
-
   "success": "کامیابی",
   "warning": "انتباہ",
   "info": "معلومات",
-
   "yes": "ہاں",
   "no": "نہیں",
-
   "today": "آج",
   "yesterday": "کل",
   "thisWeek": "اس ہفتے",
   "thisMonth": "اس مہینے",
-
   "shift": "شفٹ",
   "openShift": "شفٹ شروع کریں",
   "closeShift": "شفٹ بند کریں",
   "shiftSummary": "شفٹ کا خلاصہ",
   "cashDrawer": "کیش دراز",
-
   "receipt": "رسید",
   "printReceipt": "رسید پرنٹ کریں",
   "shareReceipt": "رسید شیئر کریں",
-
   "sync": "مطابقت پذیری",
   "syncing": "مطابقت ہو رہی ہے...",
   "syncComplete": "مطابقت مکمل",
   "syncFailed": "مطابقت ناکام",
   "lastSync": "آخری مطابقت",
-
   "language": "زبان",
   "arabic": "العربية",
   "english": "English",
@@ -153,32 +132,26 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "تھیم",
   "darkMode": "ڈارک موڈ",
   "lightMode": "لائٹ موڈ",
   "systemMode": "سسٹم موڈ",
-
   "notifications": "اطلاعات",
   "security": "سیکیورٹی",
   "printer": "پرنٹر",
   "backup": "بیک اپ",
   "help": "مدد",
   "about": "ایپ کے بارے میں",
-
   "version": "ورژن",
   "copyright": "جملہ حقوق محفوظ ہیں",
-
   "deleteConfirmTitle": "حذف کی تصدیق",
   "deleteConfirmMessage": "کیا آپ واقعی حذف کرنا چاہتے ہیں؟",
   "logoutConfirmTitle": "لاگ آؤٹ کی تصدیق",
   "logoutConfirmMessage": "کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟",
-
   "requiredField": "یہ فیلڈ ضروری ہے",
   "invalidFormat": "غلط فارمیٹ",
   "minLength": "کم از کم {min} حروف ہونے چاہئیں",
   "maxLength": "{max} حروف سے کم ہونا چاہیے",
-
   "welcomeTitle": "واپسی پر خوش آمدید! 👋",
   "welcomeSubtitle": "اپنی دکان کو آسانی اور تیزی سے چلانے کے لیے لاگ ان کریں",
   "welcomeSubtitleShort": "اپنی دکان چلانے کے لیے لاگ ان کریں",
@@ -197,13 +170,12 @@
   "changeNumber": "نمبر تبدیل کریں",
   "verificationCode": "تصدیقی کوڈ",
   "remainingAttempts": "باقی کوششیں: {count}",
-  "technicalSupport": "تکنیکی مدد",
+  "technicalSupport": "تکنیکی معاونت",
   "privacyPolicy": "رازداری کی پالیسی",
   "termsAndConditions": "شرائط و ضوابط",
   "allRightsReserved": "© 2026 الحل سسٹم۔ جملہ حقوق محفوظ ہیں۔",
   "dayMode": "دن کا موڈ",
   "nightMode": "رات کا موڈ",
-
   "selectBranch": "شاخ منتخب کریں",
   "selectBranchDesc": "وہ شاخ منتخب کریں جس پر آپ کام کرنا چاہتے ہیں",
   "availableBranches": "دستیاب شاخیں",
@@ -212,13 +184,10 @@
   "addBranch": "نئی شاخ شامل کریں",
   "comingSoon": "یہ فیچر جلد آ رہا ہے",
   "tryDifferentSearch": "مختلف الفاظ سے تلاش کریں",
-
   "selectLanguage": "زبان منتخب کریں",
   "languageChangeInfo": "اپنی پسندیدہ ڈسپلے زبان منتخب کریں۔ تبدیلیاں فوری طور پر لاگو ہوں گی۔",
-
   "centralManagement": "مرکزی انتظام",
   "centralManagementDesc": "ایک جگہ سے اپنی تمام شاخوں اور گوداموں کو کنٹرول کریں۔ تمام POS پوائنٹس پر فوری رپورٹس اور انوینٹری سنک حاصل کریں۔",
-  
   "selectBranchToContinue": "جاری رکھنے کے لیے شاخ منتخب کریں",
   "youHaveAccessToBranches": "آپ کو درج ذیل شاخوں تک رسائی حاصل ہے۔ شروع کرنے کے لیے ایک منتخب کریں۔",
   "searchForBranch": "شاخ تلاش کریں...",
@@ -226,56 +195,50 @@
   "closedOpensAt": "بند (کھلتا ہے {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "لاگ ان بطور",
   "support247": "24/7 معاونت",
   "analyticsTools": "تجزیاتی ٹولز",
   "uptime": "اپ ٹائم",
-  "technicalSupport": "تکنیکی معاونت",
-  "privacyPolicy": "رازداری کی پالیسی",
-
   "dashboardTitle": "ڈیش بورڈ",
   "searchPlaceholder": "عام تلاش...",
   "mainBranch": "مین برانچ (ریاض)",
-  
   "todaySalesLabel": "آج کی فروخت",
   "ordersCountLabel": "آرڈرز کی تعداد",
   "newCustomersLabel": "نئے گاہک",
   "stockAlertsLabel": "اسٹاک الرٹس",
   "productsUnit": "مصنوعات",
-  
   "salesAnalysis": "فروخت کا تجزیہ",
   "storePerformance": "اس ہفتے اسٹور کی کارکردگی",
   "weekly": "ہفتہ وار",
   "monthly": "ماہانہ",
   "yearly": "سالانہ",
-  
   "quickAction": "فوری کارروائی",
   "newSale": "نئی فروخت",
   "addProduct": "مصنوعات شامل کریں",
   "returnItem": "واپسی",
   "dailyReport": "یومیہ رپورٹ",
   "closeDay": "دن بند کریں",
-  
   "topSelling": "سب سے زیادہ فروخت",
   "ordersToday": "آج {count} آرڈرز",
   "@ordersToday": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  
   "recentTransactions": "حالیہ ٹرانزیکشنز",
   "viewAll": "سب دیکھیں",
   "orderNumber": "آرڈر نمبر",
-  "customer": "گاہک",
   "time": "وقت",
   "status": "حیثیت",
   "amount": "رقم",
   "action": "کارروائی",
-  
   "completed": "مکمل",
   "returned": "واپس",
   "pending": "زیر التواء",
@@ -284,15 +247,15 @@
   "minutesAgo": "{count} منٹ پہلے",
   "@minutesAgo": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  
   "posSystem": "پوائنٹ آف سیل سسٹم",
   "branchManager": "برانچ مینیجر",
   "settingsSection": "ترتیبات",
   "systemSettings": "سسٹم ترتیبات",
-  "notifications": "اطلاعات",
   "sar": "ر.س",
   "daily": "روزانہ",
   "goodMorning": "صبح بخیر",
@@ -308,13 +271,716 @@
   "goodMorningName": "صبح بخیر، {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "شام بخیر، {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "شاپنگ کارٹ",
+  "selectOrSearchCustomer": "گاہک منتخب کریں یا تلاش کریں",
+  "newCustomer": "نیا",
+  "draft": "مسودہ",
+  "pay": "ادائیگی",
+  "haveCoupon": "کیا آپ کے پاس ڈسکاؤنٹ کوپن ہے؟",
+  "discountPercent": "ڈسکاؤنٹ {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "دراز کھولیں",
+  "suspend": "معطل",
+  "quantitySoldOut": "ختم ہو گیا",
+  "noProducts": "کوئی مصنوعات نہیں",
+  "addProductsToStart": "شروع کرنے کے لیے مصنوعات شامل کریں",
+  "undoComingSoon": "واپس (جلد آ رہا ہے)",
+  "employees": "ملازمین",
+  "loyaltyProgram": "لائلٹی پروگرام",
+  "newBadge": "نیا",
+  "technicalSupportShort": "تکنیکی معاونت",
+  "productDetails": "مصنوعات کی تفصیلات",
+  "stockMovements": "اسٹاک کی نقل و حرکت",
+  "priceHistory": "قیمت کی تاریخ",
+  "salesHistory": "فروخت کی تاریخ",
+  "available": "دستیاب",
+  "alertLevel": "الرٹ لیول",
+  "reorderPoint": "دوبارہ آرڈر پوائنٹ",
+  "revenue": "آمدنی",
+  "supplier": "سپلائر",
+  "lastSale": "آخری فروخت",
+  "printLabel": "لیبل پرنٹ کریں",
+  "copied": "کاپی ہو گیا",
+  "copiedToClipboard": "{label} کاپی ہو گیا",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "فعال",
+  "inactive": "غیر فعال",
+  "profitMargin": "منافع کا مارجن",
+  "sellingPrice": "فروخت کی قیمت",
+  "costPrice": "لاگت کی قیمت",
+  "description": "تفصیل",
+  "noDescription": "کوئی تفصیل نہیں",
+  "productNotFound": "مصنوعات نہیں ملی",
+  "stockStatus": "اسٹاک کی حالت",
+  "currentStock": "موجودہ اسٹاک",
+  "unit": "یونٹ",
+  "units": "یونٹس",
+  "date": "تاریخ",
+  "type": "قسم",
+  "reference": "حوالہ",
+  "newBalance": "نیا بیلنس",
+  "oldPrice": "پرانی قیمت",
+  "newPrice": "نئی قیمت",
+  "reason": "وجہ",
+  "invoiceNumber": "انوائس نمبر",
+  "categoryLabel": "زمرہ",
+  "uncategorized": "غیر زمرہ بند",
+  "noSupplier": "کوئی سپلائر نہیں",
+  "moreOptions": "مزید آپشنز",
+  "noStockMovements": "کوئی اسٹاک حرکت نہیں",
+  "noPriceHistory": "قیمت کی تاریخ نہیں",
+  "noSalesHistory": "فروخت کی تاریخ نہیں",
+  "sale": "فروخت",
+  "purchase": "خریداری",
+  "adjustment": "ایڈجسٹمنٹ",
+  "returnText": "واپسی",
+  "waste": "ضائع",
+  "initialStock": "ابتدائی اسٹاک",
+  "searchByNameOrBarcode": "نام یا بارکوڈ سے تلاش کریں...",
+  "hideFilters": "فلٹرز چھپائیں",
+  "showFilters": "فلٹرز دکھائیں",
+  "sortByName": "نام",
+  "sortByPrice": "قیمت",
+  "sortByStock": "اسٹاک",
+  "sortByRecent": "حالیہ",
+  "allItems": "سب",
+  "clearFilters": "فلٹرز صاف کریں",
+  "noBarcode": "بارکوڈ نہیں",
+  "stockCount": "اسٹاک: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "تبدیلیاں محفوظ کریں",
+  "addTheProduct": "مصنوعات شامل کریں",
+  "editProduct": "مصنوعات میں ترمیم",
+  "newProduct": "نئی مصنوعات",
+  "minimumQuantity": "کم از کم مقدار",
+  "selectCategory": "زمرہ منتخب کریں",
+  "productImage": "مصنوعات کی تصویر",
+  "trackInventory": "انوینٹری ٹریک کریں",
+  "productSavedSuccess": "مصنوعات کامیابی سے محفوظ ہو گئی",
+  "productAddedSuccess": "مصنوعات کامیابی سے شامل ہو گئی",
+  "scanBarcode": "بارکوڈ اسکین کریں",
+  "activeProduct": "فعال مصنوعات",
+  "currency": "ر.س",
+  "hoursAgo": "{count} گھنٹے پہلے",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} دن پہلے",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "سپلائر کی قیمتوں کی تجدید",
+  "costIncrease": "لاگت میں اضافہ",
+  "duplicateProduct": "مصنوعات کی نقل",
+  "categoriesManagement": "زمرہ جات کا انتظام",
+  "categoriesCount": "{count} زمرے",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "زمرہ شامل کریں",
+  "editCategory": "زمرہ ترمیم کریں",
+  "deleteCategory": "زمرہ حذف کریں",
+  "categoryName": "زمرے کا نام",
+  "categoryNameAr": "نام (عربی)",
+  "categoryNameEn": "نام (انگریزی)",
+  "parentCategory": "بالائی زمرہ",
+  "noParentCategory": "بالائی زمرہ نہیں (اصل)",
+  "sortOrder": "ترتیب",
+  "categoryColor": "رنگ",
+  "categoryIcon": "آئیکن",
+  "categoryDetails": "زمرے کی تفصیلات",
+  "categoryCreatedAt": "تخلیق کی تاریخ",
+  "categoryProducts": "زمرے کی مصنوعات",
+  "noCategorySelected": "تفصیلات دیکھنے کے لیے زمرہ منتخب کریں",
+  "deleteCategoryConfirm": "کیا آپ واقعی اس زمرے کو حذف کرنا چاہتے ہیں؟",
+  "categoryDeletedSuccess": "زمرہ کامیابی سے حذف ہو گیا",
+  "categorySavedSuccess": "زمرہ کامیابی سے محفوظ ہو گیا",
+  "searchCategories": "زمرے تلاش کریں...",
+  "reorderCategories": "ترتیب تبدیل کریں",
+  "noCategories": "کوئی زمرے نہیں ملے",
+  "subcategories": "ذیلی زمرے",
+  "activeStatus": "فعال",
+  "inactiveStatus": "غیر فعال",
+  "invoicesTitle": "انوائسز",
+  "totalInvoices": "کل انوائسز",
+  "totalPaid": "کل ادا شدہ",
+  "totalPending": "کل زیر التوا",
+  "totalOverdue": "کل تاخیر شدہ",
+  "comparedToLastMonth": "پچھلے مہینے کے مقابلے میں",
+  "ofTotalDue": "کل واجبات کا {percent}%",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} انوائسز ادائیگی کے منتظر",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "ابھی یاددہانی بھیجیں",
+  "revenueAnalysis": "آمدنی کا تجزیہ",
+  "last7Days": "آخری 7 دن",
+  "thisMonthPeriod": "اس مہینے",
+  "thisYearPeriod": "اس سال",
+  "paymentMethods": "ادائیگی کے طریقے",
+  "cashPayment": "نقد",
+  "cardPayment": "کارڈ",
+  "walletPayment": "والیٹ",
+  "saveCurrentFilter": "موجودہ فلٹر محفوظ کریں",
+  "statusAll": "حالت: سب",
+  "statusPaid": "ادا شدہ",
+  "statusPending": "زیر التوا",
+  "statusOverdue": "تاخیر شدہ",
+  "statusCancelled": "منسوخ",
+  "resetFilters": "ری سیٹ",
+  "createInvoice": "انوائس بنائیں",
+  "invoiceNumberCol": "انوائس نمبر",
+  "customerNameCol": "گاہک کا نام",
+  "dateCol": "تاریخ",
+  "amountCol": "رقم",
+  "statusCol": "حالت",
+  "paymentCol": "ادائیگی",
+  "actionsCol": "ایکشنز",
+  "viewInvoice": "دیکھیں",
+  "printInvoice": "پرنٹ",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "واٹس ایپ",
+  "deleteInvoice": "حذف",
+  "reminder": "یاددہانی",
+  "exportAll": "سب ایکسپورٹ",
+  "printReport": "رپورٹ پرنٹ",
+  "more": "مزید",
+  "showingResults": "{total} میں سے {from} سے {to} دکھا رہے ہیں",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "نئی انوائس",
+  "selectCustomer": "گاہک منتخب کریں",
+  "cashCustomerGeneral": "نقد گاہک (عام)",
+  "addNewCustomer": "+ نیا گاہک شامل کریں",
+  "productsSection": "مصنوعات",
+  "addProductToInvoice": "+ مصنوعات شامل کریں",
+  "productCol": "مصنوعات",
+  "quantityCol": "مقدار",
+  "priceCol": "قیمت",
+  "dueDate": "مقررہ تاریخ",
+  "invoiceTotal": "کل:",
+  "saveInvoice": "انوائس محفوظ کریں",
+  "deleteConfirm": "کیا آپ کو یقین ہے؟",
+  "deleteInvoiceMsg": "کیا آپ واقعی یہ انوائس حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔",
+  "yesDelete": "ہاں، حذف کریں",
+  "copiedSuccess": "کامیابی سے کاپی ہوا",
+  "invoiceDeleted": "انوائس کامیابی سے حذف ہوئی",
+  "sat": "ہفتہ",
+  "sun": "اتوار",
+  "mon": "پیر",
+  "tue": "منگل",
+  "wed": "بدھ",
+  "thu": "جمعرات",
+  "fri": "جمعہ",
+  "selected": "{count} منتخب",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "پرنٹ",
+  "bulkExportPdf": "PDF ایکسپورٹ",
+  "allRightsReservedFooter": "© 2026 Alhai POS. تمام حقوق محفوظ ہیں۔",
+  "privacyPolicyFooter": "رازداری کی پالیسی",
+  "termsFooter": "شرائط و ضوابط",
+  "supportFooter": "تکنیکی مدد",
+  "paid": "ادا شدہ",
+  "overdue": "تاخیر شدہ",
+  "creditCard": "کریڈٹ کارڈ",
+  "electronicWallet": "الیکٹرانک والیٹ",
+  "searchInvoiceHint": "انوائس نمبر، گاہک سے تلاش...",
+  "customerDetails": "گاہک کی تفصیلات",
+  "customerProfileAndTransactions": "پروفائل اور لین دین کا جائزہ",
+  "customerDetailTitle": "گاہک کی تفصیلات",
+  "totalPurchases": "کل خریداری",
+  "loyaltyPoints": "لائلٹی پوائنٹس",
+  "lastVisit": "آخری دورہ",
+  "newSaleAction": "نئی فروخت",
+  "editInfo": "معلومات میں ترمیم",
+  "whatsapp": "واٹس ایپ",
+  "blockCustomer": "گاہک کو بلاک کریں",
+  "purchasesTab": "خریداریاں",
+  "accountTab": "اکاؤنٹ",
+  "debtsTab": "قرضے",
+  "analyticsTab": "تجزیات",
+  "recentOrdersLog": "حالیہ آرڈرز کا ریکارڈ",
+  "exportCsv": "CSV ایکسپورٹ",
+  "searchByInvoiceNumber": "انوائس نمبر سے تلاش...",
+  "items": "اشیاء",
+  "viewDetails": "تفصیلات دیکھیں",
+  "financialLedger": "مالی لین دین کا ریکارڈ",
+  "cashPaymentEntry": "نقد ادائیگی",
+  "walletTopup": "والیٹ ٹاپ اپ",
+  "loyaltyPointsDeduction": "لائلٹی پوائنٹس کی کٹوتی",
+  "redeemPoints": "{count} پوائنٹس ریڈیم",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "مکمل دیکھیں",
+  "currentBalance": "موجودہ بیلنس",
+  "creditLimit": "کریڈٹ لمٹ",
+  "used": "استعمال شدہ",
+  "topUpBalance": "بیلنس ٹاپ اپ",
+  "overdueDebt": "تاخیر شدہ",
+  "upcomingDebt": "آنے والا",
+  "payNow": "ابھی ادا کریں",
+  "remind": "یاد دہانی",
+  "monthlySpending": "ماہانہ اخراجات",
+  "purchaseDistribution": "زمرے کے مطابق خریداری کی تقسیم",
+  "last6Months": "آخری 6 ماہ",
+  "thisYear": "اس سال",
+  "averageOrder": "اوسط آرڈر",
+  "purchaseFrequency": "خریداری کی تعدد",
+  "everyNDays": "ہر {count} دن",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "اخراجات میں اضافہ",
+  "favoriteProduct": "پسندیدہ مصنوعات",
+  "internalNotes": "اندرونی نوٹس (صرف عملے کے لیے)",
+  "addNote": "شامل کریں",
+  "addNewNote": "نیا نوٹ شامل کریں...",
+  "joinedDate": "شمولیت: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "آخری اپڈیٹ: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "{total} میں سے {from}-{to} دکھا رہے ہیں",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "سبزیاں",
+  "dairy": "ڈیری",
+  "meat": "گوشت",
+  "bakery": "بیکری",
+  "other": "دیگر",
+  "returns": "واپسی",
+  "salesReturns": "فروخت کی واپسی",
+  "purchaseReturns": "خریداری کی واپسی",
+  "totalReturns": "کل واپسیاں",
+  "totalRefundedAmount": "کل واپس کی گئی رقم",
+  "mostReturned": "سب سے زیادہ واپس",
+  "processed": "واپس کیا گیا",
+  "newReturn": "نئی واپسی",
+  "createNewReturn": "نئی واپسی بنائیں",
+  "processReturnRequest": "فروخت واپسی کی درخواست",
+  "returnNumber": "واپسی نمبر",
+  "originalInvoice": "اصل بل",
+  "returnReason": "واپسی کی وجہ",
+  "returnAmount": "واپسی رقم",
+  "returnStatus": "حالت",
+  "returnDate": "تاریخ",
+  "returnActions": "کارروائیاں",
+  "returnRefunded": "واپس کیا گیا",
+  "returnRejected": "مسترد",
+  "defectiveProduct": "خراب پروڈکٹ",
+  "wrongProduct": "غلط پروڈکٹ",
+  "customerRequest": "گاہک کی درخواست",
+  "otherReason": "دیگر",
+  "quickSearch": "فوری تلاش...",
+  "exportData": "ایکسپورٹ",
+  "printData": "پرنٹ",
+  "approve": "منظور",
+  "reject": "مسترد",
+  "previous": "پچھلا",
+  "invoiceStep": "بل",
+  "itemsStep": "آئٹمز",
+  "reasonStep": "وجہ",
+  "confirmStep": "تصدیق",
+  "enterInvoiceNumber": "بل نمبر",
+  "invoiceExample": "مثال: #INV-889",
+  "loadInvoice": "لوڈ",
+  "invoiceLoaded": "بل #{number} لوڈ ہو گیا",
+  "invoiceLoadedCustomer": "گاہک: {customer} | تاریخ: {date}",
+  "selectItemsInfo": "واپسی کے لیے آئٹمز منتخب کریں۔ فروخت سے زیادہ مقدار واپس نہیں ہو سکتی۔",
+  "availableToReturn": "دستیاب: {count}",
+  "alreadyReturnedFully": "پوری مقدار پہلے ہی واپس ہو چکی",
+  "returnReasonLabel": "واپسی کی وجہ (منتخب آئٹمز کے لیے)",
+  "additionalDetails": "اضافی تفصیلات (دیگر کے لیے ضروری)...",
+  "confirmReturn": "واپسی کی تصدیق",
+  "refundAmount": "واپسی رقم",
+  "refundMethod": "واپسی کا طریقہ",
+  "cashRefund": "نقد",
+  "storeCredit": "سٹور کریڈٹ",
+  "returnCreatedSuccess": "واپسی کامیابی سے بنائی گئی",
+  "noReturns": "کوئی واپسی نہیں",
+  "noReturnsDesc": "ابھی تک کوئی واپسی ریکارڈ نہیں ہوئی۔",
+  "timesReturned": "{count} بار ({percent}% کل میں سے)",
+  "fromInvoice": "بل سے",
+  "dateFromTo": "تاریخ سے - تک",
+  "returnCopied": "نمبر کامیابی سے کاپی ہوا",
+  "ofTotalProcessed": "{percent}% پروسیس ہوا",
+  "invoiceDetails": "انوائس کی تفصیلات",
+  "invoiceNumberLabel": "نمبر:",
+  "additionalOptions": "اضافی اختیارات",
+  "duplicateInvoice": "ڈپلیکیٹ بنائیں",
+  "returnMerchandise": "سامان واپسی",
+  "voidInvoice": "انوائس منسوخ کریں",
+  "printBtn": "پرنٹ",
+  "downloadBtn": "ڈاؤن لوڈ",
+  "paidSuccessfully": "ادائیگی کامیاب",
+  "amountReceivedFull": "پوری رقم موصول ہوئی",
+  "completedStatus": "مکمل",
+  "pendingStatus": "زیر التوا",
+  "voidedStatus": "منسوخ",
+  "storeName": "محلے کا سپر مارکیٹ",
+  "storeAddress": "ریاض، الملز ضلع، تخصصی سڑک",
+  "simplifiedTaxInvoice": "آسان ٹیکس انوائس",
+  "dateAndTime": "تاریخ اور وقت",
+  "cashierLabel": "کیشیئر",
+  "itemCol": "آئٹم",
+  "quantityColDetail": "مقدار",
+  "priceColDetail": "قیمت",
+  "totalCol": "کل",
+  "subtotalLabel": "ذیلی کل",
+  "discountVip": "رعایت (VIP ممبر)",
+  "vatLabel": "ویلیو ایڈڈ ٹیکس (15%)",
+  "grandTotalLabel": "مجموعی کل",
+  "paymentMethodLabel": "ادائیگی کا طریقہ",
+  "amountPaidLabel": "ادا شدہ رقم",
+  "zatcaElectronic": "ZATCA - الیکٹرانک انوائس",
+  "scanToVerify": "تصدیق کے لیے اسکین کریں",
+  "includesVat15": "15% VAT شامل ہے",
+  "thankYouVisit": "آپ کی آمد کا شکریہ!",
+  "wishNiceDay": "آپ کا دن اچھا گزرے",
+  "customerInfo": "گاہک کی معلومات",
+  "editBtn": "ترمیم",
+  "vipSince": "{year} سے VIP گاہک",
+  "activeStatusLabel": "فعال",
+  "callBtn": "کال",
+  "recordBtn": "ریکارڈ",
+  "quickActions": "فوری اقدامات",
+  "sendWhatsappAction": "واٹس ایپ بھیجیں",
+  "sendEmailAction": "ای میل بھیجیں",
+  "downloadPdfAction": "PDF ڈاؤن لوڈ",
+  "shareLinkAction": "لنک شیئر کریں",
+  "eventLog": "ایونٹ لاگ",
+  "paymentCompleted": "ادائیگی مکمل",
+  "processedViaGateway": "پیمنٹ گیٹ وے سے پروسیس",
+  "minutesAgoDetail": "{count} منٹ پہلے",
+  "invoiceCreated": "انوائس بنائی گئی",
+  "byUser": "{name} کے ذریعے",
+  "todayAt": "آج، {time}",
+  "orderStarted": "آرڈر شروع ہوا",
+  "cashierSessionOpened": "کیشیئر سیشن کھولا گیا",
+  "technicalData": "تکنیکی ڈیٹا",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "انوائس منسوخ کریں؟",
+  "voidInvoiceMsg": "یہ انوائس مستقل طور پر منسوخ ہو جائے گی۔ کیا آپ کو یقین ہے؟",
+  "voidReasonLabel": "منسوخی کی وجہ (ضروری)",
+  "voidReasonEntry": "اندراج کی غلطی",
+  "voidReasonCustomer": "گاہک کی درخواست",
+  "voidReasonDamaged": "خراب پروڈکٹ",
+  "voidReasonOther": "دیگر وجہ...",
+  "confirmVoid": "منسوخی کی تصدیق",
+  "invoiceVoided": "انوائس کامیابی سے منسوخ ہو گئی",
+  "copiedText": "کاپی ہوا: {text}",
+  "visaEnding": "Visa ختم ہوتا ہے {digits}",
+  "mobileActionPrint": "پرنٹ",
+  "mobileActionWhatsapp": "واٹس ایپ",
+  "mobileActionEmail": "ای میل",
+  "mobileActionMore": "مزید",
+  "sarCurrency": "ر.س",
+  "skuLabel": "SKU: {code}",
+  "helpText": "مدد",
+  "ordersHistory": "آرڈرز کی تاریخ",
+  "totalOrdersLabel": "کل آرڈرز",
+  "completedOrders": "مکمل",
+  "pendingOrders": "زیر التوا",
+  "cancelledOrders": "منسوخ",
+  "searchOrderHint": "آرڈر نمبر، کسٹمر، یا فون سے تلاش...",
+  "channelLabel": "چینل",
+  "last30Days": "آخری 30 دن",
+  "orderDetails": "آرڈر کی تفصیلات",
+  "unpaidLabel": "ادائیگی نہیں ہوئی",
+  "customerLedger": "کسٹمر لیجر",
+  "accountStatement": "اکاؤنٹ اسٹیٹمنٹ",
+  "allPeriods": "سب",
+  "threeMonths": "3 ماہ",
+  "allMovements": "تمام لین دین",
+  "adjustments": "ایڈجسٹمنٹس",
+  "statementCol": "تفصیل",
+  "referenceCol": "حوالہ",
+  "debitCol": "ڈیبٹ",
+  "creditCol": "کریڈٹ",
+  "balanceCol": "بیلنس",
+  "openingBalance": "ابتدائی بیلنس",
+  "totalDebit": "کل ڈیبٹ",
+  "totalCredit": "کل کریڈٹ",
+  "finalBalance": "حتمی بیلنس",
+  "manualAdjustment": "دستی ایڈجسٹمنٹ",
+  "adjustmentType": "ایڈجسٹمنٹ کی قسم",
+  "debitAdjustment": "ڈیبٹ ایڈجسٹمنٹ",
+  "creditAdjustment": "کریڈٹ ایڈجسٹمنٹ",
+  "adjustmentAmount": "ایڈجسٹمنٹ کی رقم",
+  "adjustmentReason": "ایڈجسٹمنٹ کی وجہ",
+  "adjustmentDate": "ایڈجسٹمنٹ کی تاریخ",
+  "saveAdjustment": "ایڈجسٹمنٹ محفوظ کریں",
+  "adjustmentSaved": "ایڈجسٹمنٹ کامیابی سے محفوظ ہو گئی",
+  "enterValidAmount": "درست رقم درج کریں",
+  "dueOnCustomer": "کسٹمر پر واجب الادا",
+  "customerHasCredit": "کسٹمر کا کریڈٹ بیلنس ہے",
+  "noTransactions": "کوئی لین دین نہیں",
+  "recordPaymentBtn": "ادائیگی ریکارڈ کریں",
+  "returnEntry": "واپسی",
+  "adjustmentEntry": "ایڈجسٹمنٹ",
+  "voidTransaction": "لین دین منسوخ کریں",
+  "voidSaleTransaction": "فروخت کا لین دین منسوخ کریں",
+  "voidWarningTitle": "اہم تنبیہ: اس عمل کو واپس نہیں کیا جا سکتا",
+  "voidWarningDesc": "اس لین دین کو منسوخ کرنے سے انوائس مکمل طور پر منسوخ ہو جائے گا۔",
+  "voidWarningShort": "یہ عمل انوائس کو مکمل طور پر منسوخ کر دے گا۔ واپسی ممکن نہیں۔",
+  "enterInvoiceToVoid": "منسوخی کے لیے انوائس نمبر درج کریں",
+  "searchByInvoiceOrBarcode": "انوائس نمبر یا بارکوڈ اسکینر استعمال کریں",
+  "invoiceExampleVoid": "مثال: #INV-2024-8892",
+  "activateBarcode": "بارکوڈ اسکینر فعال کریں",
+  "scanBarcodeMobile": "بارکوڈ اسکین کریں",
+  "searchForInvoiceToVoid": "منسوخی کے لیے انوائس تلاش کریں",
+  "enterNumberOrScan": "نمبر درج کریں یا بارکوڈ اسکینر استعمال کریں۔",
+  "salesInvoice": "فروخت انوائس",
+  "invoiceCompleted": "مکمل",
+  "paidCash": "ادائیگی: نقد",
+  "customerLabel": "صارف",
+  "dateAndTimeLabel": "تاریخ اور وقت",
+  "voidImpactSummary": "منسوخی کے اثرات کا خلاصہ",
+  "voidImpactItemsReturn": "{count} اشیاء خود بخود اسٹاک میں واپس ہوں گی۔",
+  "voidImpactRefund": "رقم {amount} {currency} کاٹی/واپس کی جائے گی۔",
+  "returnedItems": "واپس شدہ اشیاء ({count})",
+  "viewAllItems": "سب دیکھیں",
+  "moreItemsHint": "+ {count} مزید اشیاء (کل: {amount} {currency})",
+  "voidReason": "منسوخی کی وجہ",
+  "voidReasonRequired": "منسوخی کی وجہ *",
+  "customerRequestReason": "صارف کی درخواست",
+  "wrongItemsReason": "غلط اشیاء",
+  "duplicateInvoiceReason": "ڈپلیکیٹ انوائس",
+  "systemErrorReason": "سسٹم کی خرابی",
+  "otherReasonVoid": "دیگر",
+  "additionalNotesVoid": "اضافی نوٹس...",
+  "additionalDetailsRequired": "اضافی تفصیلات (دیگر کے لیے ضروری)...",
+  "managerApproval": "مینیجر کی منظوری",
+  "managerApprovalRequired": "مینیجر کی منظوری ضروری ہے",
+  "amountExceedsLimit": "رقم مجاز حد ({amount} {currency}) سے زیادہ ہے، مینیجر PIN درج کریں۔",
+  "enterPinCode": "PIN کوڈ درج کریں",
+  "pinSentToManager": "عارضی کوڈ مینیجر کے فون پر بھیجا گیا",
+  "defaultManagerPin": "مینیجر کا ڈیفالٹ کوڈ: 1234",
+  "confirmVoidAction": "میں اس لین دین کی منسوخی کی تصدیق کرتا ہوں",
+  "confirmVoidDesc": "میں نے تفصیلات کا جائزہ لیا ہے اور مکمل ذمہ داری لیتا ہوں۔",
+  "cancelAction": "منسوخ",
+  "confirmFinalVoid": "حتمی منسوخی کی تصدیق",
+  "invoiceNotFound": "انوائس نہیں ملا",
+  "invoiceNotFoundDesc": "درج کردہ نمبر کی تصدیق کریں یا بارکوڈ استعمال کریں۔",
+  "trySearchAgain": "دوبارہ تلاش کریں",
+  "voidSuccess": "لین دین کامیابی سے منسوخ ہو گیا",
+  "qtyLabel": "مقدار: {count}",
+  "manageCustomersAndAccounts": "صارفین اور اکاؤنٹس کا انتظام",
+  "totalCustomersCount": "کل صارفین",
+  "outstandingDebts": "واجب الادا قرضے",
+  "customerCount": "{count} صارف",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "صارف کریڈٹ",
+  "filterByLabel": "فلٹر",
+  "debtors": "مقروض",
+  "creditorsLabel": "قرض دار",
+  "quickActionsLabel": "فوری اقدامات",
+  "sendDebtReminder": "قرض کی یاددہانی بھیجیں",
+  "exportAccountStatement": "اکاؤنٹ اسٹیٹمنٹ برآمد",
+  "cancelSelectionCount": "انتخاب منسوخ ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "نام یا فون سے تلاش... (Ctrl+F)",
+  "sortByBalance": "بیلنس",
+  "refreshF5": "ریفریش (F5)",
+  "loadingCustomers": "صارفین لوڈ ہو رہے ہیں...",
+  "payDebt": "قرض ادائیگی",
+  "dueAmountLabel": "واجب الادا: {amount} ریال",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "ادائیگی کی رقم",
+  "fullAmount": "مکمل",
+  "payAction": "ادائیگی",
+  "paymentRecorded": "{amount} ریال ادائیگی درج",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "صارف کامیابی سے شامل",
+  "customerNameRequired": "صارف کا نام *",
+  "owedLabel": "واجب الادا",
+  "hasBalanceLabel": "کریڈٹ",
+  "zeroLabel": "صفر",
+  "addAction": "شامل کریں",
+  "expenses": "اخراجات",
+  "expenseCategories": "اخراجات کی اقسام",
+  "addExpense": "اخراجات شامل کریں",
+  "totalExpenses": "کل اخراجات",
+  "thisMonthExpenses": "اس ماہ",
+  "noExpenses": "کوئی اخراجات درج نہیں",
+  "shiftsTitle": "شفٹیں",
+  "purchasesTitle": "خریداری",
+  "suppliersTitle": "سپلائرز",
+  "discountsTitle": "چھوٹ",
+  "couponsTitle": "کوپن",
+  "specialOffersTitle": "خصوصی آفرز",
+  "smartPromotionsTitle": "سمارٹ پروموشنز",
+  "loyaltyTitle": "وفاداری پروگرام",
+  "notificationsTitle": "اطلاعات",
+  "printQueueTitle": "پرنٹ قطار",
+  "syncStatusTitle": "سنک اسٹیٹس",
+  "driversTitle": "ڈرائیورز",
+  "branchesTitle": "شاخیں",
+  "profileTitle": "پروفائل",
+  "settingsTitle": "ترتیبات",
+  "storeSettings": "اسٹور ترتیبات",
+  "posSettings": "POS ترتیبات",
+  "printerSettings": "پرنٹر ترتیبات",
+  "securitySettings": "سکیورٹی",
+  "usersManagement": "صارف انتظام",
+  "rolesPermissions": "کردار اور اجازتیں",
+  "activityLog": "سرگرمی لاگ",
+  "backupSettings": "بیک اپ اور بحالی",
+  "zatcaCompliance": "ZATCA تعمیل",
+  "helpSupport": "مدد اور سپورٹ",
+  "liveChat": "لائیو چیٹ",
+  "emailSupport": "ای میل سپورٹ",
+  "phoneSupport": "فون سپورٹ",
+  "whatsappSupport": "واٹس ایپ سپورٹ",
+  "userGuide": "صارف گائیڈ",
+  "videoTutorials": "ویڈیو ٹیوٹوریلز",
+  "changelog": "تبدیلیوں کا لاگ",
+  "appInfo": "ایپ کی معلومات",
+  "buildNumber": "بلڈ نمبر",
+  "notificationChannels": "اطلاع کے چینلز",
+  "alertTypes": "الرٹ کی اقسام",
+  "salesAlerts": "فروخت الرٹس",
+  "inventoryAlerts": "انوینٹری الرٹس",
+  "securityAlerts": "سیکورٹی الرٹس",
+  "reportAlerts": "رپورٹ الرٹس",
+  "users": "صارفین",
+  "zatcaRegistered": "ZATCA میں رجسٹرڈ",
+  "zatcaPhase2Active": "مرحلہ 2 فعال",
+  "registrationInfo": "رجسٹریشن کی معلومات",
+  "businessName": "کاروبار کا نام",
+  "branchCode": "برانچ کوڈ",
+  "qrCodeOnInvoice": "انوائس پر QR کوڈ",
+  "certificates": "سرٹیفکیٹس",
+  "csidCertificate": "CSID سرٹیفکیٹ",
+  "valid": "درست",
+  "privateKey": "پرائیویٹ کی",
+  "configured": "ترتیب شدہ"
 }

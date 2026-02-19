@@ -102,7 +102,7 @@ class AppHeader extends ConsumerWidget {
                     children: [
                       Text(
                         title!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class AppHeader extends ConsumerWidget {
                       if (subtitle != null)
                         Text(
                           subtitle!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 11,
                           ),
@@ -364,7 +364,7 @@ class _SearchFieldState extends State<_SearchField> {
                       _controller.clear();
                       widget.onChanged?.call('');
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.close_rounded,
                       color: AppColors.textTertiary,
                       size: 20,
@@ -382,7 +382,7 @@ class _SearchFieldState extends State<_SearchField> {
                           color: AppColors.border,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Text(
+                        child: const Text(
                           '⌘K',
                           style: TextStyle(
                             color: AppColors.textTertiary,
@@ -410,12 +410,10 @@ class _SearchFieldState extends State<_SearchField> {
 class _HeaderIconButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback? onTap;
-  final Color? color;
 
   const _HeaderIconButton({
     required this.icon,
     this.onTap,
-    this.color,
   });
 
   @override
@@ -446,7 +444,7 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
             ),
             child: Icon(
               widget.icon,
-              color: widget.color ?? AppColors.textSecondary,
+              color: AppColors.textSecondary,
               size: 22,
             ),
           ),
@@ -495,7 +493,7 @@ class _NotificationButtonState extends State<_NotificationButton> {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(
+                const Icon(
                   Icons.notifications_outlined,
                   color: AppColors.textSecondary,
                   size: 22,
@@ -593,7 +591,7 @@ class _UserInfoState extends State<_UserInfo> {
                           widget.name.isNotEmpty
                               ? widget.name[0].toUpperCase()
                               : '?',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -611,7 +609,7 @@ class _UserInfoState extends State<_UserInfo> {
                   children: [
                     Text(
                       widget.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -620,7 +618,7 @@ class _UserInfoState extends State<_UserInfo> {
                     if (widget.role != null)
                       Text(
                         widget.role!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 11,
                         ),
@@ -631,7 +629,7 @@ class _UserInfoState extends State<_UserInfo> {
                 const SizedBox(width: 8),
 
                 // السهم
-                Icon(
+                const Icon(
                   Icons.keyboard_arrow_down_rounded,
                   color: AppColors.textTertiary,
                   size: 18,
@@ -660,7 +658,7 @@ class AppBreadcrumb extends StatelessWidget {
       children: [
         for (int i = 0; i < items.length; i++) ...[
           if (i > 0) ...[
-            Icon(
+            const Icon(
               Icons.chevron_left_rounded,
               color: AppColors.textTertiary,
               size: 18,
@@ -789,7 +787,7 @@ class DateTimeDisplay extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showIcon) ...[
-          Icon(
+          const Icon(
             Icons.calendar_today_rounded,
             size: 16,
             color: AppColors.textSecondary,
@@ -798,7 +796,7 @@ class DateTimeDisplay extends StatelessWidget {
         ],
         Text(
           '$day، $date${showTime ? ' - $time' : ''}',
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.textSecondary,
             fontSize: 13,
           ),

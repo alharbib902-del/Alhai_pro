@@ -1,0 +1,1511 @@
+/// شاشة إلغاء عملية بيع - Void Transaction Screen
+///
+/// تعرض نموذج إلغاء فاتورة مع:
+/// - بحث عن فاتورة بالرقم أو الباركود
+/// - عرض تفاصيل الفاتورة والأصناف
+/// - اختيار سبب الإلغاء
+/// - موافقة المدير (PIN)
+/// - تأكيد الإلغاء
+/// متوافقة مع جميع الشاشات (desktop + tablet + mobile)
+/// تدعم الوضع الفاتح والداكن
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/router/routes.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../widgets/layout/app_sidebar.dart';
+
+// ============================================================================
+// DEMO DATA MODELS
+// ============================================================================
+
+class _InvoiceItem {
+  final String name;
+  final String sku;
+  final IconData icon;
+  final int qty;
+  final double price;
+  double get total => qty * price;
+
+  const _InvoiceItem({
+    required this.name,
+    required this.sku,
+    required this.icon,
+    required this.qty,
+    required this.price,
+  });
+}
+
+class _InvoiceData {
+  final String id;
+  final String customer;
+  final String customerInitial;
+  final DateTime date;
+  final double total;
+  final String paymentMethod;
+  final List<_InvoiceItem> items;
+
+  const _InvoiceData({
+    required this.id,
+    required this.customer,
+    required this.customerInitial,
+    required this.date,
+    required this.total,
+    required this.paymentMethod,
+    required this.items,
+  });
+}
+
+// ============================================================================
+// VOID TRANSACTION SCREEN
+// ============================================================================
+
+class VoidTransactionScreen extends ConsumerStatefulWidget {
+  const VoidTransactionScreen({super.key});
+
+  @override
+  ConsumerState<VoidTransactionScreen> createState() => _VoidTransactionScreenState();
+}
+
+class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
+  bool _sidebarCollapsed = false;
+  final String _selectedNavId = 'returns';
+
+  // Search state
+  final _invoiceController = TextEditingController();
+  bool _isSearching = false;
+  _InvoiceData? _invoiceData;
+  bool _showNotFound = false;
+
+  // Form state
+  String? _selectedReason;
+  final _notesController = TextEditingController();
+  final _pinController = TextEditingController();
+  bool _confirmed = false;
+
+  // Demo data
+  static final _demoInvoice = _InvoiceData(
+    id: '#INV-2024-8892',
+    customer: 'أحمد محمد العلي',
+    customerInitial: 'أ',
+    date: DateTime(2024, 8, 15, 14, 30),
+    total: 450.00,
+    paymentMethod: 'cash',
+    items: const [
+      _InvoiceItem(name: 'حليب كامل الدسم 1ل', sku: '882910', icon: Icons.local_drink, qty: 2, price: 6.00),
+      _InvoiceItem(name: 'خبز أبيض 500غ', sku: '771202', icon: Icons.bakery_dining, qty: 1, price: 5.00),
+      _InvoiceItem(name: 'جبن شيدر 200غ', sku: '662045', icon: Icons.breakfast_dining, qty: 3, price: 12.00),
+      _InvoiceItem(name: 'عصير برتقال 1ل', sku: '553011', icon: Icons.local_cafe, qty: 5, price: 79.40),
+    ],
+  );
+
+  final List<String> _reasonKeys = [
+    'customer_request',
+    'wrong_items',
+    'duplicate',
+    'system_error',
+    'other',
+  ];
+
+  @override
+  void dispose() {
+    _invoiceController.dispose();
+    _notesController.dispose();
+    _pinController.dispose();
+    super.dispose();
+  }
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  Future<void> _searchInvoice() async {
+    if (_invoiceController.text.trim().isEmpty) return;
+
+    setState(() {
+      _isSearching = true;
+      _showNotFound = false;
+      _invoiceData = null;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    setState(() {
+      _isSearching = false;
+      // Demo: always find the invoice
+      _invoiceData = _demoInvoice;
+      _selectedReason = null;
+      _notesController.clear();
+      _pinController.clear();
+      _confirmed = false;
+    });
+  }
+
+  void _resetForm() {
+    setState(() {
+      _invoiceController.clear();
+      _invoiceData = null;
+      _showNotFound = false;
+      _selectedReason = null;
+      _notesController.clear();
+      _pinController.clear();
+      _confirmed = false;
+    });
+  }
+
+  bool get _isFormValid {
+    return _selectedReason != null && _pinController.text.length >= 4 && _confirmed;
+  }
+
+  void _confirmVoid() {
+    if (!_isFormValid) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Show success
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(l10n.voidSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        backgroundColor: AppColors.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    _resetForm();
+  }
+
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(l10n.copiedSuccess),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  String _getReasonText(String key, AppLocalizations l10n) {
+    switch (key) {
+      case 'customer_request':
+        return l10n.customerRequestReason;
+      case 'wrong_items':
+        return l10n.wrongItemsReason;
+      case 'duplicate':
+        return l10n.duplicateInvoiceReason;
+      case 'system_error':
+        return l10n.systemErrorReason;
+      case 'other':
+        return l10n.otherReasonVoid;
+      default:
+        return key;
+    }
+  }
+
+  // ============================================================================
+  // NAVIGATION
+  // ============================================================================
+
+  void _handleNavigation(AppSidebarItem item) {
+    switch (item.id) {
+      case 'dashboard':
+        context.go(AppRoutes.dashboard);
+      case 'pos':
+        context.go(AppRoutes.pos);
+      case 'products':
+        context.push(AppRoutes.products);
+      case 'inventory':
+        context.push(AppRoutes.inventory);
+      case 'customers':
+        context.push(AppRoutes.customers);
+      case 'sales':
+        context.push(AppRoutes.invoices);
+      case 'returns':
+        context.push(AppRoutes.returns);
+      case 'reports':
+        context.push(AppRoutes.reports);
+      case 'suppliers':
+        context.push(AppRoutes.suppliers);
+    }
+  }
+
+  List<SidebarGroup> _getSidebarGroups(AppLocalizations l10n) {
+    return [
+      SidebarGroup(items: [
+        AppSidebarItem(id: 'dashboard', title: l10n.dashboard, icon: Icons.dashboard_outlined, activeIcon: Icons.dashboard_rounded),
+        AppSidebarItem(id: 'pos', title: l10n.pos, icon: Icons.point_of_sale_outlined, activeIcon: Icons.point_of_sale_rounded),
+      ]),
+      SidebarGroup(title: l10n.storeManagement, items: [
+        AppSidebarItem(id: 'products', title: l10n.products, icon: Icons.inventory_2_outlined, activeIcon: Icons.inventory_2_rounded),
+        AppSidebarItem(id: 'inventory', title: l10n.inventory, icon: Icons.warehouse_outlined, activeIcon: Icons.warehouse_rounded),
+        AppSidebarItem(id: 'customers', title: l10n.customers, icon: Icons.people_outline_rounded, activeIcon: Icons.people_rounded),
+        AppSidebarItem(id: 'suppliers', title: l10n.supplier, icon: Icons.local_shipping_outlined, activeIcon: Icons.local_shipping_rounded),
+      ]),
+      SidebarGroup(title: l10n.finance, items: [
+        AppSidebarItem(id: 'sales', title: l10n.invoices, icon: Icons.receipt_long_outlined, activeIcon: Icons.receipt_long_rounded),
+        AppSidebarItem(id: 'returns', title: l10n.returns, icon: Icons.assignment_return_outlined, activeIcon: Icons.assignment_return_rounded),
+        AppSidebarItem(id: 'reports', title: l10n.reports, icon: Icons.analytics_outlined, activeIcon: Icons.analytics_rounded),
+      ]),
+    ];
+  }
+
+  // ============================================================================
+  // BUILD
+  // ============================================================================
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isWideScreen = size.width > 900;
+    final isMediumScreen = size.width > 600;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+      drawer: isWideScreen ? null : _buildDrawer(l10n),
+      body: Row(
+        children: [
+          if (isWideScreen)
+            AppSidebar(
+              storeName: l10n.brandName,
+              groups: _getSidebarGroups(l10n),
+              selectedId: _selectedNavId,
+              onItemTap: _handleNavigation,
+              onSettingsTap: () => context.push(AppRoutes.settings),
+              onSupportTap: () {},
+              onLogoutTap: () => context.go('/login'),
+              collapsed: _sidebarCollapsed,
+              userName: 'كريم محمود',
+              userRole: l10n.branchManager,
+              onUserTap: () {},
+            ),
+          Expanded(
+            child: Column(
+              children: [
+                _buildHeader(context, isWideScreen, isDark, l10n),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1400),
+                      child: Column(
+                        children: [
+                          // Warning Banner
+                          _buildWarningBanner(isDark, l10n, isMediumScreen),
+                          SizedBox(height: isMediumScreen ? 32 : 16),
+
+                          if (_invoiceData == null && !_showNotFound) ...[
+                            // Search Section
+                            _buildSearchSection(isDark, l10n, isMediumScreen),
+                          ] else if (_showNotFound) ...[
+                            // Not Found
+                            _buildNotFoundSection(isDark, l10n),
+                          ] else ...[
+                            // Invoice Details + Void Form
+                            if (isWideScreen)
+                              _buildDesktopLayout(isDark, l10n)
+                            else
+                              _buildMobileLayout(isDark, l10n, isMediumScreen),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      // Mobile bottom action bar
+      bottomNavigationBar: (!isWideScreen && _invoiceData != null)
+          ? _buildMobileBottomBar(isDark, l10n)
+          : null,
+    );
+  }
+
+  // ============================================================================
+  // HEADER
+  // ============================================================================
+
+  Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        border: Border(bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: isWideScreen
+                ? () => setState(() => _sidebarCollapsed = !_sidebarCollapsed)
+                : () => Scaffold.of(context).openDrawer(),
+            icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            l10n.voidSaleTransaction,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+          ),
+          const Spacer(),
+          // Search in header (desktop)
+          if (isWideScreen)
+            SizedBox(
+              width: 280,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: l10n.quickSearch,
+                  hintStyle: TextStyle(color: isDark ? AppColors.textMutedDark : AppColors.textMuted, fontSize: 14),
+                  prefixIcon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+                style: TextStyle(color: isDark ? Colors.white : AppColors.textPrimary, fontSize: 14),
+              ),
+            ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () {},
+            icon: Badge(
+              smallSize: 8,
+              backgroundColor: AppColors.secondary,
+              child: Icon(Icons.notifications_outlined, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              isDark ? Icons.light_mode : Icons.dark_mode,
+              color: isDark ? const Color(0xFFFBBF24) : AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // WARNING BANNER
+  // ============================================================================
+
+  Widget _buildWarningBanner(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    return Container(
+      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.2) : const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF991B1B).withValues(alpha: 0.4) : const Color(0xFFFECACA)),
+      ),
+      child: Row(
+        crossAxisAlignment: isMediumScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: isMediumScreen ? 56 : 40,
+            height: isMediumScreen ? 56 : 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.5) : const Color(0xFFFEE2E2),
+            ),
+            child: Icon(
+              Icons.warning_amber_rounded,
+              size: isMediumScreen ? 28 : 20,
+              color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+            ),
+          ),
+          SizedBox(width: isMediumScreen ? 16 : 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isMediumScreen ? l10n.voidWarningTitle : l10n.warning,
+                  style: TextStyle(
+                    fontSize: isMediumScreen ? 16 : 14,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isMediumScreen ? l10n.voidWarningDesc : l10n.voidWarningShort,
+                  style: TextStyle(
+                    fontSize: isMediumScreen ? 14 : 12,
+                    color: isDark ? const Color(0xFFFCA5A5).withValues(alpha: 0.8) : const Color(0xFFB91C1C),
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // SEARCH SECTION
+  // ============================================================================
+
+  Widget _buildSearchSection(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    return Container(
+      padding: EdgeInsets.all(isMediumScreen ? 32 : 20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+      ),
+      child: Column(
+        children: [
+          if (isMediumScreen) ...[
+            // Desktop: centered with title
+            Text(
+              l10n.enterInvoiceToVoid,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.searchByInvoiceOrBarcode,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Search row
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Row(
+                children: [
+                  Expanded(child: _buildSearchInput(isDark, l10n)),
+                  const SizedBox(width: 12),
+                  _buildSearchButton(isDark, l10n, large: true),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Barcode link
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.qr_code_scanner, size: 16, color: AppColors.primary),
+              label: Text(
+                l10n.activateBarcode,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primary),
+              ),
+            ),
+          ] else ...[
+            // Mobile: compact
+            Text(
+              l10n.enterInvoiceToVoid,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildSearchInput(isDark, l10n),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildSearchButton(isDark, l10n, large: false)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Barcode button
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.qr_code_scanner, size: 18),
+              label: Text(l10n.scanBarcodeMobile),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                minimumSize: const Size(double.infinity, 0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border),
+                foregroundColor: isDark ? Colors.white70 : AppColors.textSecondary,
+              ),
+            ),
+          ],
+
+          // Empty state
+          if (_invoiceData == null && !_showNotFound) ...[
+            SizedBox(height: isMediumScreen ? 40 : 24),
+            Container(
+              width: isMediumScreen ? 120 : 80,
+              height: isMediumScreen ? 120 : 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDark ? const Color(0xFF374151) : AppColors.grey100,
+              ),
+              child: Icon(
+                Icons.search_rounded,
+                size: isMediumScreen ? 48 : 32,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.searchForInvoiceToVoid,
+              style: TextStyle(
+                fontSize: isMediumScreen ? 18 : 15,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.enterNumberOrScan,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchInput(bool isDark, AppLocalizations l10n) {
+    return TextField(
+      controller: _invoiceController,
+      textDirection: TextDirection.ltr,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Courier',
+        color: isDark ? Colors.white : AppColors.textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: l10n.invoiceExampleVoid,
+        hintStyle: TextStyle(
+          color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+          fontWeight: FontWeight.normal,
+          fontSize: 16,
+        ),
+        prefixIcon: Icon(Icons.receipt_long, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+        suffixIcon: _invoiceController.text.isNotEmpty
+            ? IconButton(
+                onPressed: () => setState(() => _invoiceController.clear()),
+                icon: Icon(Icons.clear, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              )
+            : null,
+        filled: true,
+        fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border, width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+      ),
+      onSubmitted: (_) => _searchInvoice(),
+      onChanged: (_) => setState(() {}),
+    );
+  }
+
+  Widget _buildSearchButton(bool isDark, AppLocalizations l10n, {required bool large}) {
+    return FilledButton.icon(
+      onPressed: _isSearching ? null : _searchInvoice,
+      icon: _isSearching
+          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+          : const Icon(Icons.search, size: 20),
+      label: Text(l10n.search, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      style: FilledButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: large ? 32 : 24, vertical: large ? 20 : 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        elevation: 2,
+      ),
+    );
+  }
+
+  // ============================================================================
+  // NOT FOUND
+  // ============================================================================
+
+  Widget _buildNotFoundSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(48),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark ? const Color(0xFF374151) : AppColors.grey100,
+            ),
+            child: Icon(Icons.cancel_outlined, size: 40, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.invoiceNotFound,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.invoiceNotFoundDesc,
+            style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: _resetForm,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            child: Text(l10n.trySearchAgain, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // DESKTOP LAYOUT (3-column grid)
+  // ============================================================================
+
+  Widget _buildDesktopLayout(bool isDark, AppLocalizations l10n) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left: Invoice summary + Items
+        Expanded(
+          flex: 2,
+          child: Column(
+            children: [
+              _buildInvoiceSummaryCard(isDark, l10n, isMobile: false),
+              const SizedBox(height: 24),
+              _buildItemsList(isDark, l10n),
+            ],
+          ),
+        ),
+        const SizedBox(width: 24),
+        // Right: Reason + PIN + Confirm + Buttons
+        Expanded(
+          flex: 1,
+          child: Column(
+            children: [
+              _buildReasonCard(isDark, l10n),
+              const SizedBox(height: 24),
+              _buildManagerPinCard(isDark, l10n),
+              const SizedBox(height: 24),
+              _buildConfirmCheckbox(isDark, l10n),
+              const SizedBox(height: 24),
+              _buildDesktopButtons(isDark, l10n),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ============================================================================
+  // MOBILE LAYOUT
+  // ============================================================================
+
+  Widget _buildMobileLayout(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    return Column(
+      children: [
+        _buildInvoiceSummaryCard(isDark, l10n, isMobile: true),
+        const SizedBox(height: 16),
+        _buildImpactAlert(isDark, l10n),
+        const SizedBox(height: 16),
+        _buildReasonCard(isDark, l10n),
+        const SizedBox(height: 16),
+        _buildManagerPinCard(isDark, l10n),
+        const SizedBox(height: 16),
+        _buildConfirmCheckbox(isDark, l10n),
+        const SizedBox(height: 80), // Space for bottom bar
+      ],
+    );
+  }
+
+  // ============================================================================
+  // INVOICE SUMMARY CARD
+  // ============================================================================
+
+  Widget _buildInvoiceSummaryCard(bool isDark, AppLocalizations l10n, {required bool isMobile}) {
+    final inv = _invoiceData!;
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: Invoice type + ID + Total
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF374151) : AppColors.grey100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        l10n.salesInvoice,
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : AppColors.textSecondary),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          inv.id,
+                          style: TextStyle(
+                            fontSize: isMobile ? 18 : 22,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Courier',
+                            color: isDark ? Colors.white : AppColors.textPrimary,
+                          ),
+                          textDirection: TextDirection.ltr,
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _copyToClipboard(inv.id),
+                          child: Icon(Icons.copy_rounded, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.paidCash,
+                      style: TextStyle(fontSize: 13, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                    ),
+                  ],
+                ),
+              ),
+              // Total amount
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    l10n.grandTotal,
+                    style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        inv.total.toStringAsFixed(2),
+                        style: TextStyle(
+                          fontSize: isMobile ? 24 : 28,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        l10n.sar,
+                        style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.success.withValues(alpha: 0.15) : const Color(0xFFDCFCE7),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      l10n.invoiceCompleted,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+          Divider(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.divider),
+          const SizedBox(height: 16),
+
+          // Customer & Date
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.customerLabel,
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? AppColors.textMutedDark : AppColors.textMuted, letterSpacing: 0.5),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.primary.withValues(alpha: 0.15),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            inv.customerInitial,
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            inv.customer,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : AppColors.textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      l10n.dateAndTimeLabel,
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? AppColors.textMutedDark : AppColors.textMuted, letterSpacing: 0.5),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${inv.date.year}/${inv.date.month.toString().padLeft(2, '0')}/${inv.date.day.toString().padLeft(2, '0')} - ${inv.date.hour}:${inv.date.minute.toString().padLeft(2, '0')}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Courier',
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Impact alert (desktop only - inline)
+          if (!isMobile) ...[
+            const SizedBox(height: 20),
+            _buildImpactAlert(isDark, l10n),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // IMPACT ALERT
+  // ============================================================================
+
+  Widget _buildImpactAlert(bool isDark, AppLocalizations l10n) {
+    final inv = _invoiceData!;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF78350F).withValues(alpha: 0.2) : const Color(0xFFFFFBEB),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: isDark ? const Color(0xFFB45309).withValues(alpha: 0.3) : const Color(0xFFFDE68A)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, size: 18, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.voidImpactSummary,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.check, size: 14, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.voidImpactItemsReturn(inv.items.length),
+                        style: TextStyle(fontSize: 12, color: isDark ? const Color(0xFFFDE68A).withValues(alpha: 0.9) : const Color(0xFF92400E)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.replay, size: 14, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.voidImpactRefund(inv.total.toStringAsFixed(2), l10n.sar),
+                        style: TextStyle(fontSize: 12, color: isDark ? const Color(0xFFFDE68A).withValues(alpha: 0.9) : const Color(0xFF92400E)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // ITEMS LIST
+  // ============================================================================
+
+  Widget _buildItemsList(bool isDark, AppLocalizations l10n) {
+    final inv = _invoiceData!;
+    final visibleItems = inv.items.take(2).toList();
+    final remainingCount = inv.items.length - 2;
+    final remainingTotal = inv.items.skip(2).fold(0.0, (sum, item) => sum + item.total);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
+              border: Border(bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.divider)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.returnedItems(inv.items.length),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(l10n.viewAllItems, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.primary)),
+                ),
+              ],
+            ),
+          ),
+          // Items
+          ...visibleItems.map((item) => _buildItemRow(item, isDark, l10n)),
+          // More items hint
+          if (remainingCount > 0)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
+              ),
+              child: Center(
+                child: Text(
+                  l10n.moreItemsHint(remainingCount, remainingTotal.toStringAsFixed(2), l10n.sar),
+                  style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItemRow(_InvoiceItem item, bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.divider)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: isDark ? const Color(0xFF374151) : AppColors.grey100,
+            ),
+            child: Icon(item.icon, size: 18, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary)),
+                Text(
+                  'SKU: ${item.sku}',
+                  style: TextStyle(fontSize: 11, fontFamily: 'Courier', color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                  textDirection: TextDirection.ltr,
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${item.total.toStringAsFixed(2)} ${l10n.sar}',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+              ),
+              Text(
+                l10n.qtyLabel(item.qty),
+                style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // REASON CARD
+  // ============================================================================
+
+  Widget _buildReasonCard(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.help_outline, size: 18, color: AppColors.primary),
+              const SizedBox(width: 8),
+              Text(
+                l10n.voidReason,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.textPrimary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Reason options
+          ...List.generate(_reasonKeys.length, (i) {
+            final key = _reasonKeys[i];
+            final isSelected = _selectedReason == key;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedReason = key),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (isDark ? AppColors.error.withValues(alpha: 0.1) : const Color(0xFFFEF2F2))
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.error
+                          : (isDark ? Colors.white.withValues(alpha: 0.12) : AppColors.border),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? AppColors.error : (isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
+                            width: isSelected ? 6 : 2,
+                          ),
+                          color: isSelected ? Colors.white : Colors.transparent,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        _getReasonText(key, l10n),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isDark ? Colors.white.withValues(alpha: 0.8) : AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+          // Notes
+          const SizedBox(height: 8),
+          TextField(
+            controller: _notesController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: _selectedReason == 'other' ? l10n.additionalDetailsRequired : l10n.additionalNotesVoid,
+              hintStyle: TextStyle(fontSize: 13, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.error.withValues(alpha: 0.5)),
+              ),
+            ),
+            style: TextStyle(fontSize: 13, color: isDark ? Colors.white : AppColors.textPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // MANAGER PIN CARD
+  // ============================================================================
+
+  Widget _buildManagerPinCard(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E3A5F).withValues(alpha: 0.3) : const Color(0xFFEFF6FF),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.shield_outlined, size: 18, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8)),
+              const SizedBox(width: 8),
+              Text(
+                l10n.managerApproval,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.amountExceedsLimit('200', l10n.sar),
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? const Color(0xFF93C5FD).withValues(alpha: 0.8) : const Color(0xFF1E3A8A),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // PIN input
+          TextField(
+            controller: _pinController,
+            obscureText: true,
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 12,
+              fontFamily: 'Courier',
+              color: isDark ? Colors.white : AppColors.textPrimary,
+            ),
+            decoration: InputDecoration(
+              hintText: '••••',
+              hintStyle: TextStyle(
+                fontSize: 28,
+                letterSpacing: 12,
+                color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted,
+              ),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: isDark ? const Color(0xFF1D4ED8).withValues(alpha: 0.3) : const Color(0xFFBFDBFE)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+              ),
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              l10n.pinSentToManager,
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // CONFIRM CHECKBOX
+  // ============================================================================
+
+  Widget _buildConfirmCheckbox(bool isDark, AppLocalizations l10n) {
+    return GestureDetector(
+      onTap: () => setState(() => _confirmed = !_confirmed),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: _confirmed
+                ? AppColors.error
+                : (isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: _confirmed,
+                onChanged: (v) => setState(() => _confirmed = v ?? false),
+                activeColor: AppColors.error,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.confirmVoidAction,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.confirmVoidDesc,
+                    style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // DESKTOP BUTTONS
+  // ============================================================================
+
+  Widget _buildDesktopButtons(bool isDark, AppLocalizations l10n) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: _resetForm,
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border),
+              foregroundColor: isDark ? Colors.white70 : AppColors.textSecondary,
+            ),
+            child: Text(l10n.cancelAction, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 2,
+          child: FilledButton.icon(
+            onPressed: _isFormValid ? _confirmVoid : null,
+            icon: const Icon(Icons.block, size: 18),
+            label: Text(l10n.confirmFinalVoid, style: const TextStyle(fontWeight: FontWeight.bold)),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: isDark ? AppColors.error.withValues(alpha: 0.3) : AppColors.error.withValues(alpha: 0.4),
+              disabledForegroundColor: Colors.white.withValues(alpha: 0.5),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              elevation: _isFormValid ? 4 : 0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ============================================================================
+  // MOBILE BOTTOM BAR
+  // ============================================================================
+
+  Widget _buildMobileBottomBar(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        border: Border(top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: _resetForm,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.border),
+                foregroundColor: isDark ? Colors.white70 : AppColors.textSecondary,
+              ),
+              child: Text(l10n.cancelAction, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: FilledButton.icon(
+              onPressed: _isFormValid ? _confirmVoid : null,
+              icon: const Icon(Icons.block, size: 18),
+              label: Text(l10n.confirmFinalVoid, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: isDark ? AppColors.error.withValues(alpha: 0.3) : AppColors.error.withValues(alpha: 0.4),
+                disabledForegroundColor: Colors.white.withValues(alpha: 0.5),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // DRAWER (mobile)
+  // ============================================================================
+
+  Widget _buildDrawer(AppLocalizations l10n) {
+    return Drawer(
+      child: AppSidebar(
+        storeName: l10n.brandName,
+        groups: _getSidebarGroups(l10n),
+        selectedId: _selectedNavId,
+        onItemTap: (item) {
+          Navigator.pop(context);
+          _handleNavigation(item);
+        },
+        onSettingsTap: () {
+          Navigator.pop(context);
+          context.push(AppRoutes.settings);
+        },
+        onSupportTap: () => Navigator.pop(context),
+        onLogoutTap: () {
+          Navigator.pop(context);
+          context.go('/login');
+        },
+        userName: 'كريم محمود',
+        userRole: l10n.branchManager,
+        onUserTap: () => Navigator.pop(context),
+      ),
+    );
+  }
+}

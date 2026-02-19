@@ -1,17 +1,14 @@
 {
   "@@locale": "hi",
-
   "appTitle": "पॉइंट ऑफ सेल",
   "login": "लॉग इन",
   "logout": "लॉग आउट",
   "welcome": "स्वागत है",
   "welcomeBack": "वापसी पर स्वागत है",
-
   "phone": "फ़ोन नंबर",
   "phoneHint": "05xxxxxxxx",
   "phoneRequired": "फ़ोन नंबर आवश्यक है",
   "phoneInvalid": "अमान्य फ़ोन नंबर",
-
   "otp": "सत्यापन कोड",
   "otpHint": "सत्यापन कोड दर्ज करें",
   "otpSent": "सत्यापन कोड भेजा गया",
@@ -19,14 +16,12 @@
   "otpExpired": "सत्यापन कोड समाप्त हो गया",
   "otpInvalid": "अमान्य सत्यापन कोड",
   "otpResendIn": "{seconds} सेकंड में पुनः भेजें",
-
   "pin": "पिन कोड",
   "pinHint": "पिन कोड दर्ज करें",
   "pinRequired": "पिन कोड आवश्यक है",
   "pinInvalid": "अमान्य पिन कोड",
   "pinAttemptsRemaining": "शेष प्रयास: {count}",
   "pinLocked": "खाता लॉक हो गया। {minutes} मिनट बाद प्रयास करें",
-
   "home": "होम",
   "dashboard": "डैशबोर्ड",
   "pos": "पॉइंट ऑफ सेल",
@@ -38,21 +33,18 @@
   "invoices": "चालान",
   "reports": "रिपोर्ट",
   "settings": "सेटिंग्स",
-
   "sales": "बिक्री",
   "salesAnalytics": "बिक्री विश्लेषण",
   "refund": "वापसी",
   "todaySales": "आज की बिक्री",
   "totalSales": "कुल बिक्री",
   "averageSale": "औसत बिक्री",
-
   "cart": "कार्ट",
   "cartEmpty": "कार्ट खाली है",
   "addToCart": "कार्ट में जोड़ें",
   "removeFromCart": "कार्ट से हटाएं",
   "clearCart": "कार्ट साफ़ करें",
   "checkout": "चेकआउट",
-
   "payment": "भुगतान",
   "paymentMethod": "भुगतान का तरीका",
   "cash": "नकद",
@@ -61,7 +53,6 @@
   "transfer": "ट्रांसफर",
   "paymentSuccess": "भुगतान सफल",
   "paymentFailed": "भुगतान विफल",
-
   "price": "मूल्य",
   "quantity": "मात्रा",
   "total": "कुल",
@@ -70,7 +61,6 @@
   "tax": "कर",
   "vat": "वैट",
   "grandTotal": "कुल योग",
-
   "product": "उत्पाद",
   "productName": "उत्पाद का नाम",
   "productCode": "उत्पाद कोड",
@@ -80,19 +70,16 @@
   "lowStock": "कम स्टॉक",
   "outOfStock": "स्टॉक समाप्त",
   "inStock": "उपलब्ध",
-
   "customer": "ग्राहक",
   "customerName": "ग्राहक का नाम",
   "customerPhone": "ग्राहक का फ़ोन",
   "debt": "कर्ज",
   "balance": "शेष राशि",
-
   "search": "खोज",
   "searchHint": "यहाँ खोजें...",
   "filter": "फ़िल्टर",
   "sort": "क्रमबद्ध करें",
   "all": "सभी",
-
   "add": "जोड़ें",
   "edit": "संपादित करें",
   "delete": "हटाएं",
@@ -105,7 +92,6 @@
   "done": "हो गया",
   "submit": "जमा करें",
   "retry": "पुनः प्रयास करें",
-
   "loading": "लोड हो रहा है...",
   "noData": "कोई डेटा नहीं",
   "noResults": "कोई परिणाम नहीं",
@@ -116,35 +102,28 @@
   "noInternet": "इंटरनेट कनेक्शन नहीं",
   "offline": "ऑफ़लाइन",
   "online": "ऑनलाइन",
-
   "success": "सफलता",
   "warning": "चेतावनी",
   "info": "जानकारी",
-
   "yes": "हाँ",
   "no": "नहीं",
-
   "today": "आज",
   "yesterday": "कल",
   "thisWeek": "इस सप्ताह",
   "thisMonth": "इस महीने",
-
   "shift": "शिफ्ट",
   "openShift": "शिफ्ट शुरू करें",
   "closeShift": "शिफ्ट बंद करें",
   "shiftSummary": "शिफ्ट सारांश",
   "cashDrawer": "कैश ड्रॉअर",
-
   "receipt": "रसीद",
   "printReceipt": "रसीद प्रिंट करें",
   "shareReceipt": "रसीद शेयर करें",
-
   "sync": "सिंक",
   "syncing": "सिंक हो रहा है...",
   "syncComplete": "सिंक पूर्ण",
   "syncFailed": "सिंक विफल",
   "lastSync": "अंतिम सिंक",
-
   "language": "भाषा",
   "arabic": "العربية",
   "english": "English",
@@ -153,32 +132,26 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "थीम",
   "darkMode": "डार्क मोड",
   "lightMode": "लाइट मोड",
   "systemMode": "सिस्टम मोड",
-
   "notifications": "सूचनाएं",
   "security": "सुरक्षा",
   "printer": "प्रिंटर",
   "backup": "बैकअप",
   "help": "मदद",
   "about": "ऐप के बारे में",
-
   "version": "संस्करण",
   "copyright": "सर्वाधिकार सुरक्षित",
-
   "deleteConfirmTitle": "हटाने की पुष्टि",
   "deleteConfirmMessage": "क्या आप वाकई हटाना चाहते हैं?",
   "logoutConfirmTitle": "लॉग आउट की पुष्टि",
   "logoutConfirmMessage": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
-
   "requiredField": "यह फ़ील्ड आवश्यक है",
   "invalidFormat": "अमान्य प्रारूप",
   "minLength": "कम से कम {min} अक्षर होने चाहिए",
   "maxLength": "{max} अक्षरों से कम होना चाहिए",
-
   "welcomeTitle": "वापसी पर स्वागत है! 👋",
   "welcomeSubtitle": "अपनी दुकान को आसानी और तेज़ी से प्रबंधित करने के लिए साइन इन करें",
   "welcomeSubtitleShort": "अपनी दुकान प्रबंधित करने के लिए साइन इन करें",
@@ -203,7 +176,6 @@
   "allRightsReserved": "© 2026 अल-हल सिस्टम। सर्वाधिकार सुरक्षित।",
   "dayMode": "दिन मोड",
   "nightMode": "रात मोड",
-
   "selectBranch": "शाखा चुनें",
   "selectBranchDesc": "वह शाखा चुनें जिस पर आप काम करना चाहते हैं",
   "availableBranches": "उपलब्ध शाखाएं",
@@ -212,13 +184,10 @@
   "addBranch": "नई शाखा जोड़ें",
   "comingSoon": "यह सुविधा जल्द आ रही है",
   "tryDifferentSearch": "अलग शब्दों से खोजें",
-
   "selectLanguage": "भाषा चुनें",
   "languageChangeInfo": "अपनी पसंदीदा प्रदर्शन भाषा चुनें। परिवर्तन तुरंत लागू होंगे।",
-
   "centralManagement": "केंद्रीय प्रबंधन",
   "centralManagementDesc": "एक ही स्थान से अपनी सभी शाखाओं और गोदामों को नियंत्रित करें। सभी POS बिंदुओं पर तत्काल रिपोर्ट और इन्वेंट्री सिंक प्राप्त करें।",
-  
   "selectBranchToContinue": "जारी रखने के लिए शाखा चुनें",
   "youHaveAccessToBranches": "आपके पास निम्नलिखित शाखाओं तक पहुंच है। शुरू करने के लिए एक चुनें।",
   "searchForBranch": "शाखा खोजें...",
@@ -226,16 +195,15 @@
   "closedOpensAt": "बंद (खुलता है {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "लॉग इन के रूप में",
   "support247": "24/7 सहायता",
   "analyticsTools": "विश्लेषण उपकरण",
   "uptime": "अपटाइम",
-  "technicalSupport": "तकनीकी सहायता",
-  "privacyPolicy": "गोपनीयता नीति",
-
   "dashboardTitle": "डैशबोर्ड",
   "searchPlaceholder": "सामान्य खोज...",
   "mainBranch": "मुख्य शाखा (रियाद)",
@@ -257,11 +225,16 @@
   "closeDay": "दिन बंद करें",
   "topSelling": "सबसे ज्यादा बिकने वाले",
   "ordersToday": "आज {count} ऑर्डर",
-  "@ordersToday": {"placeholders": {"count": {"type": "int"}}},
+  "@ordersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "recentTransactions": "हालिया लेनदेन",
   "viewAll": "सभी देखें",
   "orderNumber": "ऑर्डर #",
-  "customer": "ग्राहक",
   "time": "समय",
   "status": "स्थिति",
   "amount": "राशि",
@@ -272,12 +245,17 @@
   "cancelled": "रद्द",
   "guestCustomer": "अतिथि ग्राहक",
   "minutesAgo": "{count} मिनट पहले",
-  "@minutesAgo": {"placeholders": {"count": {"type": "int"}}},
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "posSystem": "पॉइंट ऑफ सेल सिस्टम",
   "branchManager": "शाखा प्रबंधक",
   "settingsSection": "सेटिंग्स",
   "systemSettings": "सिस्टम सेटिंग्स",
-  "notifications": "सूचनाएं",
   "sar": "SAR",
   "daily": "दैनिक",
   "goodMorning": "सुप्रभात",
@@ -293,13 +271,716 @@
   "goodMorningName": "सुप्रभात, {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "शुभ संध्या, {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "शॉपिंग कार्ट",
+  "selectOrSearchCustomer": "ग्राहक चुनें या खोजें",
+  "newCustomer": "नया",
+  "draft": "ड्राफ्ट",
+  "pay": "भुगतान",
+  "haveCoupon": "क्या आपके पास डिस्काउंट कूपन है?",
+  "discountPercent": "छूट {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "दराज खोलें",
+  "suspend": "स्थगित",
+  "quantitySoldOut": "स्टॉक खत्म",
+  "noProducts": "कोई उत्पाद नहीं",
+  "addProductsToStart": "शुरू करने के लिए उत्पाद जोड़ें",
+  "undoComingSoon": "पूर्ववत करें (जल्द आ रहा है)",
+  "employees": "कर्मचारी",
+  "loyaltyProgram": "लॉयल्टी प्रोग्राम",
+  "newBadge": "नया",
+  "technicalSupportShort": "तकनीकी सहायता",
+  "productDetails": "उत्पाद विवरण",
+  "stockMovements": "स्टॉक गतिविधि",
+  "priceHistory": "मूल्य इतिहास",
+  "salesHistory": "बिक्री इतिहास",
+  "available": "उपलब्ध",
+  "alertLevel": "अलर्ट स्तर",
+  "reorderPoint": "पुनः ऑर्डर बिंदु",
+  "revenue": "राजस्व",
+  "supplier": "आपूर्तिकर्ता",
+  "lastSale": "अंतिम बिक्री",
+  "printLabel": "लेबल प्रिंट करें",
+  "copied": "कॉपी हो गया",
+  "copiedToClipboard": "{label} कॉपी हो गया",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "सक्रिय",
+  "inactive": "निष्क्रिय",
+  "profitMargin": "लाभ मार्जिन",
+  "sellingPrice": "बिक्री मूल्य",
+  "costPrice": "लागत मूल्य",
+  "description": "विवरण",
+  "noDescription": "कोई विवरण नहीं",
+  "productNotFound": "उत्पाद नहीं मिला",
+  "stockStatus": "स्टॉक स्थिति",
+  "currentStock": "वर्तमान स्टॉक",
+  "unit": "इकाई",
+  "units": "इकाइयाँ",
+  "date": "तारीख",
+  "type": "प्रकार",
+  "reference": "संदर्भ",
+  "newBalance": "नई शेष राशि",
+  "oldPrice": "पुरानी कीमत",
+  "newPrice": "नई कीमत",
+  "reason": "कारण",
+  "invoiceNumber": "चालान नंबर",
+  "categoryLabel": "श्रेणी",
+  "uncategorized": "बिना श्रेणी",
+  "noSupplier": "कोई आपूर्तिकर्ता नहीं",
+  "moreOptions": "अधिक विकल्प",
+  "noStockMovements": "कोई स्टॉक गतिविधि नहीं",
+  "noPriceHistory": "कोई मूल्य इतिहास नहीं",
+  "noSalesHistory": "कोई बिक्री इतिहास नहीं",
+  "sale": "बिक्री",
+  "purchase": "खरीद",
+  "adjustment": "समायोजन",
+  "returnText": "वापसी",
+  "waste": "बर्बाद",
+  "initialStock": "प्रारंभिक स्टॉक",
+  "searchByNameOrBarcode": "नाम या बारकोड से खोजें...",
+  "hideFilters": "फ़िल्टर छुपाएं",
+  "showFilters": "फ़िल्टर दिखाएं",
+  "sortByName": "नाम",
+  "sortByPrice": "मूल्य",
+  "sortByStock": "स्टॉक",
+  "sortByRecent": "हाल का",
+  "allItems": "सभी",
+  "clearFilters": "फ़िल्टर साफ़ करें",
+  "noBarcode": "कोई बारकोड नहीं",
+  "stockCount": "स्टॉक: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "परिवर्तन सहेजें",
+  "addTheProduct": "उत्पाद जोड़ें",
+  "editProduct": "उत्पाद संपादित करें",
+  "newProduct": "नया उत्पाद",
+  "minimumQuantity": "न्यूनतम मात्रा",
+  "selectCategory": "श्रेणी चुनें",
+  "productImage": "उत्पाद छवि",
+  "trackInventory": "इन्वेंटरी ट्रैक करें",
+  "productSavedSuccess": "उत्पाद सफलतापूर्वक सहेजा गया",
+  "productAddedSuccess": "उत्पाद सफलतापूर्वक जोड़ा गया",
+  "scanBarcode": "बारकोड स्कैन करें",
+  "activeProduct": "सक्रिय उत्पाद",
+  "currency": "SAR",
+  "hoursAgo": "{count} घंटे पहले",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} दिन पहले",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "आपूर्तिकर्ता मूल्य अपडेट",
+  "costIncrease": "लागत में वृद्धि",
+  "duplicateProduct": "उत्पाद की प्रतिलिपि",
+  "categoriesManagement": "श्रेणी प्रबंधन",
+  "categoriesCount": "{count} श्रेणियां",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "श्रेणी जोड़ें",
+  "editCategory": "श्रेणी संपादित करें",
+  "deleteCategory": "श्रेणी हटाएं",
+  "categoryName": "श्रेणी का नाम",
+  "categoryNameAr": "नाम (अरबी)",
+  "categoryNameEn": "नाम (अंग्रेज़ी)",
+  "parentCategory": "मूल श्रेणी",
+  "noParentCategory": "कोई मूल श्रेणी नहीं (मुख्य)",
+  "sortOrder": "क्रम",
+  "categoryColor": "रंग",
+  "categoryIcon": "आइकन",
+  "categoryDetails": "श्रेणी विवरण",
+  "categoryCreatedAt": "बनाने की तारीख",
+  "categoryProducts": "श्रेणी उत्पाद",
+  "noCategorySelected": "विवरण देखने के लिए श्रेणी चुनें",
+  "deleteCategoryConfirm": "क्या आप वाकई इस श्रेणी को हटाना चाहते हैं?",
+  "categoryDeletedSuccess": "श्रेणी सफलतापूर्वक हटा दी गई",
+  "categorySavedSuccess": "श्रेणी सफलतापूर्वक सहेजी गई",
+  "searchCategories": "श्रेणियां खोजें...",
+  "reorderCategories": "क्रम बदलें",
+  "noCategories": "कोई श्रेणी नहीं मिली",
+  "subcategories": "उप-श्रेणियां",
+  "activeStatus": "सक्रिय",
+  "inactiveStatus": "निष्क्रिय",
+  "invoicesTitle": "इनवॉइस",
+  "totalInvoices": "कुल इनवॉइस",
+  "totalPaid": "कुल भुगतान",
+  "totalPending": "कुल लंबित",
+  "totalOverdue": "कुल अतिदेय",
+  "comparedToLastMonth": "पिछले महीने की तुलना में",
+  "ofTotalDue": "कुल बकाया का {percent}%",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} इनवॉइस भुगतान की प्रतीक्षा में",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "अभी रिमाइंडर भेजें",
+  "revenueAnalysis": "राजस्व विश्लेषण",
+  "last7Days": "पिछले 7 दिन",
+  "thisMonthPeriod": "इस महीने",
+  "thisYearPeriod": "इस साल",
+  "paymentMethods": "भुगतान के तरीके",
+  "cashPayment": "नकद",
+  "cardPayment": "कार्ड",
+  "walletPayment": "वॉलेट",
+  "saveCurrentFilter": "वर्तमान फ़िल्टर सहेजें",
+  "statusAll": "स्थिति: सभी",
+  "statusPaid": "भुगतान किया",
+  "statusPending": "लंबित",
+  "statusOverdue": "अतिदेय",
+  "statusCancelled": "रद्द",
+  "resetFilters": "रीसेट",
+  "createInvoice": "इनवॉइस बनाएं",
+  "invoiceNumberCol": "इनवॉइस #",
+  "customerNameCol": "ग्राहक का नाम",
+  "dateCol": "तारीख",
+  "amountCol": "राशि",
+  "statusCol": "स्थिति",
+  "paymentCol": "भुगतान",
+  "actionsCol": "कार्यवाई",
+  "viewInvoice": "देखें",
+  "printInvoice": "प्रिंट",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "व्हाट्सएप",
+  "deleteInvoice": "हटाएं",
+  "reminder": "रिमाइंडर",
+  "exportAll": "सभी निर्यात",
+  "printReport": "रिपोर्ट प्रिंट",
+  "more": "अधिक",
+  "showingResults": "{total} में से {from} से {to} दिखा रहे हैं",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "नई इनवॉइस",
+  "selectCustomer": "ग्राहक चुनें",
+  "cashCustomerGeneral": "नकद ग्राहक (सामान्य)",
+  "addNewCustomer": "+ नया ग्राहक जोड़ें",
+  "productsSection": "उत्पाद",
+  "addProductToInvoice": "+ उत्पाद जोड़ें",
+  "productCol": "उत्पाद",
+  "quantityCol": "मात्रा",
+  "priceCol": "कीमत",
+  "dueDate": "नियत तारीख",
+  "invoiceTotal": "कुल:",
+  "saveInvoice": "इनवॉइस सहेजें",
+  "deleteConfirm": "क्या आप सुनिश्चित हैं?",
+  "deleteInvoiceMsg": "क्या आप वाकई इस इनवॉइस को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+  "yesDelete": "हां, हटाएं",
+  "copiedSuccess": "सफलतापूर्वक कॉपी किया गया",
+  "invoiceDeleted": "इनवॉइस सफलतापूर्वक हटाई गई",
+  "sat": "शनि",
+  "sun": "रवि",
+  "mon": "सोम",
+  "tue": "मंगल",
+  "wed": "बुध",
+  "thu": "गुरु",
+  "fri": "शुक्र",
+  "selected": "{count} चयनित",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "प्रिंट",
+  "bulkExportPdf": "PDF निर्यात",
+  "allRightsReservedFooter": "© 2026 Alhai POS. सर्वाधिकार सुरक्षित।",
+  "privacyPolicyFooter": "गोपनीयता नीति",
+  "termsFooter": "नियम और शर्तें",
+  "supportFooter": "तकनीकी सहायता",
+  "paid": "भुगतान किया",
+  "overdue": "अतिदेय",
+  "creditCard": "क्रेडिट कार्ड",
+  "electronicWallet": "ई-वॉलेट",
+  "searchInvoiceHint": "इनवॉइस नंबर, ग्राहक से खोजें...",
+  "customerDetails": "ग्राहक विवरण",
+  "customerProfileAndTransactions": "प्रोલाइल और लेन-देन का अवलोकन",
+  "customerDetailTitle": "ग्राहक विवरण",
+  "totalPurchases": "कुल खरीदारी",
+  "loyaltyPoints": "लॉयल्टी पॉइंट्स",
+  "lastVisit": "अंतिम विज़िट",
+  "newSaleAction": "नई बिक्री",
+  "editInfo": "जानकारी संपादित करें",
+  "whatsapp": "व्हाट्सएप",
+  "blockCustomer": "ग्राहक को ब्लॉक करें",
+  "purchasesTab": "खरीदारी",
+  "accountTab": "खाता",
+  "debtsTab": "कर्ज़",
+  "analyticsTab": "विश्लेषण",
+  "recentOrdersLog": "हालिया ऑर्डर लॉग",
+  "exportCsv": "CSV निर्यात",
+  "searchByInvoiceNumber": "इनवॉइस नंबर से खोजें...",
+  "items": "आइटम",
+  "viewDetails": "विवरण देखें",
+  "financialLedger": "वित्तीय लेनदेन रजिस्टर",
+  "cashPaymentEntry": "नकद भुगतान",
+  "walletTopup": "वॉलेट टॉप-अप",
+  "loyaltyPointsDeduction": "लॉयल्टी पॉइंट्स कटौती",
+  "redeemPoints": "{count} पॉइंट रिडीम",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "पूरा देखें",
+  "currentBalance": "वर्तमान शेष",
+  "creditLimit": "क्रेडिट सीमा",
+  "used": "उपयोग किया गया",
+  "topUpBalance": "शेष राशि टॉप-अप",
+  "overdueDebt": "अतिदेय",
+  "upcomingDebt": "आगामी",
+  "payNow": "अभी भुगतान करें",
+  "remind": "रिमाइंडर",
+  "monthlySpending": "मासिक खर्च",
+  "purchaseDistribution": "श्रेणी के अनुसार खरीदारी वितरण",
+  "last6Months": "पिछले 6 महीने",
+  "thisYear": "इस साल",
+  "averageOrder": "औसत ऑर्डर",
+  "purchaseFrequency": "खरीदारी आवृत्ति",
+  "everyNDays": "हर {count} दिन",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "खर्च वृद्धि",
+  "favoriteProduct": "पसंदीदा उत्पाद",
+  "internalNotes": "आंतरिक नोट्स (केवल कर्मचारियों के लिए दृश्य)",
+  "addNote": "जोड़ें",
+  "addNewNote": "नया नोट जोड़ें...",
+  "joinedDate": "शामिल: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "अंतिम अपडेट: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "{total} में से {from}-{to} दिखा रहे हैं",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "सब्ज़ीयां",
+  "dairy": "डेयरी",
+  "meat": "मांस",
+  "bakery": "बेकरी",
+  "other": "अन्य",
+  "returns": "वापसी",
+  "salesReturns": "बिक्री वापसी",
+  "purchaseReturns": "खरीद वापसी",
+  "totalReturns": "कुल वापसियां",
+  "totalRefundedAmount": "कुल वापसी राशि",
+  "mostReturned": "सबसे अधिक वापस",
+  "processed": "वापस किया गया",
+  "newReturn": "नई वापसी",
+  "createNewReturn": "नई वापसी बनाएं",
+  "processReturnRequest": "बिक्री वापसी अनुरोध",
+  "returnNumber": "वापसी संख्या",
+  "originalInvoice": "मूल बिल",
+  "returnReason": "वापसी का कारण",
+  "returnAmount": "वापसी राशि",
+  "returnStatus": "स्थिति",
+  "returnDate": "तारीख",
+  "returnActions": "कार्रवाई",
+  "returnRefunded": "वापस किया गया",
+  "returnRejected": "अस्वीकृत",
+  "defectiveProduct": "खराब उत्पाद",
+  "wrongProduct": "गलत उत्पाद",
+  "customerRequest": "ग्राहक अनुरोध",
+  "otherReason": "अन्य",
+  "quickSearch": "त्वरित खोज...",
+  "exportData": "निर्यात",
+  "printData": "प्रिंट",
+  "approve": "मंजूर",
+  "reject": "अस्वीकार",
+  "previous": "पिछला",
+  "invoiceStep": "बिल",
+  "itemsStep": "आइटम",
+  "reasonStep": "कारण",
+  "confirmStep": "पुष्टि",
+  "enterInvoiceNumber": "बिल नंबर",
+  "invoiceExample": "उदाहरण: #INV-889",
+  "loadInvoice": "लोड",
+  "invoiceLoaded": "बिल #{number} लोड हुआ",
+  "invoiceLoadedCustomer": "ग्राहक: {customer} | तारीख: {date}",
+  "selectItemsInfo": "वापसी के लिए आइटम चुनें। बिक्री से अधिक मात्रा वापस नहीं हो सकती।",
+  "availableToReturn": "उपलब्ध: {count}",
+  "alreadyReturnedFully": "पूरी मात्रा पहले ही वापस हो चुकी",
+  "returnReasonLabel": "वापसी का कारण (चयनित आइटम के लिए)",
+  "additionalDetails": "अतिरिक्त विवरण (अन्य के लिए आवश्यक)...",
+  "confirmReturn": "वापसी की पुष्टि",
+  "refundAmount": "वापसी राशि",
+  "refundMethod": "वापसी का तरीका",
+  "cashRefund": "नकद",
+  "storeCredit": "स्टोर क्रेडिट",
+  "returnCreatedSuccess": "वापसी सफलतापूर्वक बनाई गई",
+  "noReturns": "कोई वापसी नहीं",
+  "noReturnsDesc": "अभी तक कोई वापसी दर्ज नहीं हुई।",
+  "timesReturned": "{count} बार ({percent}% कुल में से)",
+  "fromInvoice": "बिल से",
+  "dateFromTo": "तारीख से - तक",
+  "returnCopied": "नंबर सफलतापूर्वक कॉपी हुआ",
+  "ofTotalProcessed": "{percent}% प्रोसेस हुआ",
+  "invoiceDetails": "इनवॉइस विवरण",
+  "invoiceNumberLabel": "नंबर:",
+  "additionalOptions": "अतिरिक्त विकल्प",
+  "duplicateInvoice": "डुप्लिकेट बनाएं",
+  "returnMerchandise": "सामान वापसी",
+  "voidInvoice": "इनवॉइस रद्द करें",
+  "printBtn": "प्रिंट",
+  "downloadBtn": "डाउनलोड",
+  "paidSuccessfully": "भुगतान सफल",
+  "amountReceivedFull": "पूरी राशि प्राप्त",
+  "completedStatus": "पूर्ण",
+  "pendingStatus": "लंबित",
+  "voidedStatus": "रद्द",
+  "storeName": "मोहल्ला सुपरमार्केट",
+  "storeAddress": "रियाध, अल-मलज जिला, तखस्सुसी स्ट्रीट",
+  "simplifiedTaxInvoice": "सरल कर इनवॉइस",
+  "dateAndTime": "दिनांक और समय",
+  "cashierLabel": "कैशियर",
+  "itemCol": "आइटम",
+  "quantityColDetail": "मात्रा",
+  "priceColDetail": "कीमत",
+  "totalCol": "कुल",
+  "subtotalLabel": "उप-कुल",
+  "discountVip": "छूट (VIP सदस्य)",
+  "vatLabel": "वैट (15%)",
+  "grandTotalLabel": "कुल योग",
+  "paymentMethodLabel": "भुगतान विधि",
+  "amountPaidLabel": "भुगतान राशि",
+  "zatcaElectronic": "ZATCA - इलेक्ट्रॉनिक इनवॉइस",
+  "scanToVerify": "सत्यापन के लिए स्कैन करें",
+  "includesVat15": "15% वैट शामिल",
+  "thankYouVisit": "आने के लिए धन्यवाद!",
+  "wishNiceDay": "आपका दिन शुभ हो",
+  "customerInfo": "ग्राहक जानकारी",
+  "editBtn": "संपादित",
+  "vipSince": "{year} से VIP ग्राहक",
+  "activeStatusLabel": "सक्रिय",
+  "callBtn": "कॉल",
+  "recordBtn": "रिकॉर्ड",
+  "quickActions": "त्वरित कार्य",
+  "sendWhatsappAction": "व्हाट्सएप भेजें",
+  "sendEmailAction": "ईमेल भेजें",
+  "downloadPdfAction": "PDF डाउनलोड",
+  "shareLinkAction": "लिंक शेयर करें",
+  "eventLog": "इवेंट लॉग",
+  "paymentCompleted": "भुगतान पूर्ण",
+  "processedViaGateway": "पेमेंट गेटवे से प्रोसेस",
+  "minutesAgoDetail": "{count} मिनट पहले",
+  "invoiceCreated": "इनवॉइस बनाया गया",
+  "byUser": "{name} द्वारा",
+  "todayAt": "आज, {time}",
+  "orderStarted": "ऑर्डर शुरू",
+  "cashierSessionOpened": "कैशियर सत्र खोला गया",
+  "technicalData": "तकनीकी डेटा",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "इनवॉइस रद्द करें?",
+  "voidInvoiceMsg": "यह इनवॉइस स्थायी रूप से रद्द हो जाएगी। क्या आप सुनिश्चित हैं?",
+  "voidReasonLabel": "रद्दीकरण कारण (आवश्यक)",
+  "voidReasonEntry": "प्रविष्टि त्रुटि",
+  "voidReasonCustomer": "ग्राहक अनुरोध",
+  "voidReasonDamaged": "क्षतिग्रस्त उत्पाद",
+  "voidReasonOther": "अन्य कारण...",
+  "confirmVoid": "रद्दीकरण की पुष्टि",
+  "invoiceVoided": "इनवॉइस सफलतापूर्वक रद्द",
+  "copiedText": "कॉपी किया: {text}",
+  "visaEnding": "Visa अंतिम {digits}",
+  "mobileActionPrint": "प्रिंट",
+  "mobileActionWhatsapp": "व्हाट्सएप",
+  "mobileActionEmail": "ईमेल",
+  "mobileActionMore": "और",
+  "sarCurrency": "ر.س",
+  "skuLabel": "SKU: {code}",
+  "helpText": "सहायता",
+  "ordersHistory": "ऑर्डर हिस्ट्री",
+  "totalOrdersLabel": "कुल ऑर्डर",
+  "completedOrders": "पूर्ण",
+  "pendingOrders": "लंबित",
+  "cancelledOrders": "रद्द",
+  "searchOrderHint": "ऑर्डर नंबर, ग्राहक, या फोन से खोजें...",
+  "channelLabel": "चैनल",
+  "last30Days": "पिछले 30 दिन",
+  "orderDetails": "ऑर्डर विवरण",
+  "unpaidLabel": "अवैतनिक",
+  "customerLedger": "ग्राहक खाता",
+  "accountStatement": "खाता विवरण",
+  "allPeriods": "सभी",
+  "threeMonths": "3 महीने",
+  "allMovements": "सभी लेनदेन",
+  "adjustments": "समायोजन",
+  "statementCol": "विवरण",
+  "referenceCol": "संदर्भ",
+  "debitCol": "डेबिट",
+  "creditCol": "क्रेडिट",
+  "balanceCol": "शेष राशि",
+  "openingBalance": "प्रारंभिक शेष",
+  "totalDebit": "कुल डेबिट",
+  "totalCredit": "कुल क्रेडिट",
+  "finalBalance": "अंतिम शेष",
+  "manualAdjustment": "मैनुअल समायोजन",
+  "adjustmentType": "समायोजन प्रकार",
+  "debitAdjustment": "डेबिट समायोजन",
+  "creditAdjustment": "क्रेडिट समायोजन",
+  "adjustmentAmount": "समायोजन राशि",
+  "adjustmentReason": "समायोजन का कारण",
+  "adjustmentDate": "समायोजन तिथि",
+  "saveAdjustment": "समायोजन सहेजें",
+  "adjustmentSaved": "समायोजन सफलतापूर्वक सहेजा गया",
+  "enterValidAmount": "एक मान्य राशि दर्ज करें",
+  "dueOnCustomer": "ग्राहक पर बकाया",
+  "customerHasCredit": "ग्राहक का क्रेडिट शेष है",
+  "noTransactions": "कोई लेनदेन नहीं",
+  "recordPaymentBtn": "भुगतान दर्ज करें",
+  "returnEntry": "वापसी",
+  "adjustmentEntry": "समायोजन",
+  "voidTransaction": "लेनदेन रद्द करें",
+  "voidSaleTransaction": "बिक्री लेनदेन रद्द करें",
+  "voidWarningTitle": "महत्वपूर्ण चेतावनी: यह कार्रवाई पूर्ववत नहीं की जा सकती",
+  "voidWarningDesc": "इस लेनदेन को रद्द करने से चालान पूरी तरह रद्द हो जाएगा।",
+  "voidWarningShort": "यह कार्रवाई चालान को पूरी तरह रद्द कर देगी। पूर्ववत नहीं किया जा सकता।",
+  "enterInvoiceToVoid": "रद्द करने के लिए चालान नंबर दर्ज करें",
+  "searchByInvoiceOrBarcode": "चालान नंबर या बारकोड स्कैनर का उपयोग करें",
+  "invoiceExampleVoid": "उदाहरण: #INV-2024-8892",
+  "activateBarcode": "बारकोड स्कैनर सक्रिय करें",
+  "scanBarcodeMobile": "बारकोड स्कैन करें",
+  "searchForInvoiceToVoid": "रद्द करने के लिए चालान खोजें",
+  "enterNumberOrScan": "नंबर दर्ज करें या बारकोड स्कैनर उपयोग करें।",
+  "salesInvoice": "बिक्री चालान",
+  "invoiceCompleted": "पूर्ण",
+  "paidCash": "भुगतान: नकद",
+  "customerLabel": "ग्राहक",
+  "dateAndTimeLabel": "तिथि और समय",
+  "voidImpactSummary": "रद्दीकरण प्रभाव सारांश",
+  "voidImpactItemsReturn": "{count} वस्तुएं स्वचालित रूप से इन्वेंट्री में वापस होंगी।",
+  "voidImpactRefund": "राशि {amount} {currency} काटी/वापस की जाएगी।",
+  "returnedItems": "वापसी वस्तुएं ({count})",
+  "viewAllItems": "सभी देखें",
+  "moreItemsHint": "+ {count} और वस्तुएं (कुल: {amount} {currency})",
+  "voidReason": "रद्द करने का कारण",
+  "voidReasonRequired": "रद्द करने का कारण *",
+  "customerRequestReason": "ग्राहक की अनुरोध",
+  "wrongItemsReason": "गलत वस्तुएं",
+  "duplicateInvoiceReason": "डुप्लिकेट चालान",
+  "systemErrorReason": "सिस्टम त्रुटि",
+  "otherReasonVoid": "अन्य",
+  "additionalNotesVoid": "अतिरिक्त नोट्स...",
+  "additionalDetailsRequired": "अतिरिक्त विवरण (अन्य के लिए आवश्यक)...",
+  "managerApproval": "प्रबंधक की स्वीकृति",
+  "managerApprovalRequired": "प्रबंधक की स्वीकृति आवश्यक",
+  "amountExceedsLimit": "राशि अनुमत सीमा ({amount} {currency}) से अधिक है, प्रबंधक PIN दर्ज करें।",
+  "enterPinCode": "PIN कोड दर्ज करें",
+  "pinSentToManager": "अस्थायी कोड प्रबंधक के फोन पर भेजा गया",
+  "defaultManagerPin": "डिफ़ॉल्ट प्रबंधक कोड: 1234",
+  "confirmVoidAction": "मैं इस लेनदेन को रद्द करने की पुष्टि करता हूं",
+  "confirmVoidDesc": "मैंने विवरण की समीक्षा की है और पूर्ण जिम्मेदारी लेता हूं।",
+  "cancelAction": "रद्द करें",
+  "confirmFinalVoid": "अंतिम रद्दीकरण की पुष्टि",
+  "invoiceNotFound": "चालान नहीं मिला",
+  "invoiceNotFoundDesc": "दर्ज किया गया नंबर सत्यापित करें या बारकोड उपयोग करें।",
+  "trySearchAgain": "पुनः खोजने का प्रयास करें",
+  "voidSuccess": "लेनदेन सफलतापूर्वक रद्द किया गया",
+  "qtyLabel": "मात्रा: {count}",
+  "manageCustomersAndAccounts": "ग्राहक और खाते प्रबंधित करें",
+  "totalCustomersCount": "कुल ग्राहक",
+  "outstandingDebts": "बकाया ऋण",
+  "customerCount": "{count} ग्राहक",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "ग्राहक क्रेडिट",
+  "filterByLabel": "फ़िल्टर",
+  "debtors": "कर्जदार",
+  "creditorsLabel": "लेनदार",
+  "quickActionsLabel": "त्वरित कार्य",
+  "sendDebtReminder": "ऋण अनुस्मारक भेजें",
+  "exportAccountStatement": "खाता विवरण निर्यात करें",
+  "cancelSelectionCount": "चयन रद्द करें ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "नाम या फ़ोन से खोजें... (Ctrl+F)",
+  "sortByBalance": "बैलेंस",
+  "refreshF5": "रिफ्रेश (F5)",
+  "loadingCustomers": "ग्राहक लोड हो रहे हैं...",
+  "payDebt": "ऋण भुगतान",
+  "dueAmountLabel": "बकाया: {amount} रियाल",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "भुगतान राशि",
+  "fullAmount": "पूर्ण",
+  "payAction": "भुगतान",
+  "paymentRecorded": "{amount} रियाल भुगतान दर्ज",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "ग्राहक सफलतापूर्वक जोड़ा गया",
+  "customerNameRequired": "ग्राहक का नाम *",
+  "owedLabel": "बकाया",
+  "hasBalanceLabel": "क्रेडिट",
+  "zeroLabel": "शून्य",
+  "addAction": "जोड़ें",
+  "expenses": "खर्चे",
+  "expenseCategories": "खर्च श्रेणियां",
+  "addExpense": "खर्च जोड़ें",
+  "totalExpenses": "कुल खर्चे",
+  "thisMonthExpenses": "इस महीने",
+  "noExpenses": "कोई खर्च दर्ज नहीं",
+  "shiftsTitle": "शिफ्ट",
+  "purchasesTitle": "खरीद",
+  "suppliersTitle": "आपूर्तिकर्ता",
+  "discountsTitle": "छूट",
+  "couponsTitle": "कूपन",
+  "specialOffersTitle": "विशेष ऑफर",
+  "smartPromotionsTitle": "स्मार्ट प्रमोशन",
+  "loyaltyTitle": "लॉयल्टी प्रोग्राम",
+  "notificationsTitle": "सूचनाएं",
+  "printQueueTitle": "प्रिंट कतार",
+  "syncStatusTitle": "सिंक स्थिति",
+  "driversTitle": "ड्राइवर",
+  "branchesTitle": "शाखाएं",
+  "profileTitle": "प्रोफाइल",
+  "settingsTitle": "सेटिंग्स",
+  "storeSettings": "स्टोर सेटिंग्स",
+  "posSettings": "POS सेटिंग्स",
+  "printerSettings": "प्रिंटर सेटिंग्स",
+  "securitySettings": "सुरक्षा",
+  "usersManagement": "उपयोगकर्ता प्रबंधन",
+  "rolesPermissions": "भूमिकाएं और अनुमतियां",
+  "activityLog": "गतिविधि लॉग",
+  "backupSettings": "बैकअप और रिस्टोर",
+  "zatcaCompliance": "ZATCA अनुपालन",
+  "helpSupport": "सहायता और समर्थन",
+  "liveChat": "लाइव चैट",
+  "emailSupport": "ईमेल सहायता",
+  "phoneSupport": "फ़ोन सहायता",
+  "whatsappSupport": "व्हाट्सएप सहायता",
+  "userGuide": "उपयोगकर्ता गाइड",
+  "videoTutorials": "वीडियो ट्यूटोरियल",
+  "changelog": "परिवर्तन लॉग",
+  "appInfo": "ऐप जानकारी",
+  "buildNumber": "बिल्ड नंबर",
+  "notificationChannels": "सूचना चैनल",
+  "alertTypes": "अलर्ट के प्रकार",
+  "salesAlerts": "बिक्री अलर्ट",
+  "inventoryAlerts": "इन्वेंट्री अलर्ट",
+  "securityAlerts": "सुरक्षा अलर्ट",
+  "reportAlerts": "रिपोर्ट अलर्ट",
+  "users": "उपयोगकर्ता",
+  "zatcaRegistered": "ZATCA में पंजीकृत",
+  "zatcaPhase2Active": "चरण 2 सक्रिय",
+  "registrationInfo": "पंजीकरण जानकारी",
+  "businessName": "व्यवसाय का नाम",
+  "branchCode": "शाखा कोड",
+  "qrCodeOnInvoice": "इनवॉइस पर QR कोड",
+  "certificates": "प्रमाणपत्र",
+  "csidCertificate": "CSID प्रमाणपत्र",
+  "valid": "मान्य",
+  "privateKey": "निजी कुंजी",
+  "configured": "कॉन्फ़िगर किया गया"
 }

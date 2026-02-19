@@ -24,12 +24,16 @@ class ProductsRepositoryImpl implements ProductsRepository {
     String storeId, {
     int page = 1,
     int limit = 20,
+    String? categoryId,
+    String? searchQuery,
   }) async {
     try {
       final responses = await _remote.getProducts(
         storeId,
         page: page,
         limit: limit,
+        categoryId: categoryId,
+        searchQuery: searchQuery,
       );
 
       final items = responses.map((r) => r.toDomain()).toList();

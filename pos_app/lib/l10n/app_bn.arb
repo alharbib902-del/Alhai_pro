@@ -1,17 +1,14 @@
 {
   "@@locale": "bn",
-
   "appTitle": "পয়েন্ট অফ সেল",
   "login": "লগ ইন",
   "logout": "লগ আউট",
   "welcome": "স্বাগতম",
   "welcomeBack": "ফিরে আসায় স্বাগতম",
-
   "phone": "ফোন নম্বর",
   "phoneHint": "05xxxxxxxx",
   "phoneRequired": "ফোন নম্বর প্রয়োজন",
   "phoneInvalid": "অবৈধ ফোন নম্বর",
-
   "otp": "যাচাইকরণ কোড",
   "otpHint": "যাচাইকরণ কোড লিখুন",
   "otpSent": "যাচাইকরণ কোড পাঠানো হয়েছে",
@@ -19,14 +16,12 @@
   "otpExpired": "যাচাইকরণ কোডের মেয়াদ শেষ",
   "otpInvalid": "অবৈধ যাচাইকরণ কোড",
   "otpResendIn": "{seconds} সেকেন্ডে পুনরায় পাঠান",
-
   "pin": "পিন কোড",
   "pinHint": "পিন কোড লিখুন",
   "pinRequired": "পিন কোড প্রয়োজন",
   "pinInvalid": "অবৈধ পিন কোড",
   "pinAttemptsRemaining": "অবশিষ্ট চেষ্টা: {count}",
   "pinLocked": "অ্যাকাউন্ট লক হয়েছে। {minutes} মিনিট পরে চেষ্টা করুন",
-
   "home": "হোম",
   "dashboard": "ড্যাশবোর্ড",
   "pos": "পয়েন্ট অফ সেল",
@@ -38,21 +33,18 @@
   "invoices": "চালান",
   "reports": "রিপোর্ট",
   "settings": "সেটিংস",
-
   "sales": "বিক্রয়",
   "salesAnalytics": "বিক্রয় বিশ্লেষণ",
   "refund": "ফেরত",
   "todaySales": "আজকের বিক্রয়",
   "totalSales": "মোট বিক্রয়",
   "averageSale": "গড় বিক্রয়",
-
   "cart": "কার্ট",
   "cartEmpty": "কার্ট খালি",
   "addToCart": "কার্টে যোগ করুন",
   "removeFromCart": "কার্ট থেকে সরান",
   "clearCart": "কার্ট খালি করুন",
   "checkout": "চেকআউট",
-
   "payment": "পেমেন্ট",
   "paymentMethod": "পেমেন্ট পদ্ধতি",
   "cash": "নগদ",
@@ -61,7 +53,6 @@
   "transfer": "ট্রান্সফার",
   "paymentSuccess": "পেমেন্ট সফল",
   "paymentFailed": "পেমেন্ট ব্যর্থ",
-
   "price": "মূল্য",
   "quantity": "পরিমাণ",
   "total": "মোট",
@@ -70,7 +61,6 @@
   "tax": "কর",
   "vat": "ভ্যাট",
   "grandTotal": "সর্বমোট",
-
   "product": "পণ্য",
   "productName": "পণ্যের নাম",
   "productCode": "পণ্য কোড",
@@ -80,19 +70,16 @@
   "lowStock": "কম স্টক",
   "outOfStock": "স্টক শেষ",
   "inStock": "উপলব্ধ",
-
   "customer": "গ্রাহক",
   "customerName": "গ্রাহকের নাম",
   "customerPhone": "গ্রাহকের ফোন",
   "debt": "ঋণ",
   "balance": "ব্যালেন্স",
-
   "search": "অনুসন্ধান",
   "searchHint": "এখানে অনুসন্ধান করুন...",
   "filter": "ফিল্টার",
   "sort": "সাজান",
   "all": "সব",
-
   "add": "যোগ করুন",
   "edit": "সম্পাদনা",
   "delete": "মুছুন",
@@ -105,7 +92,6 @@
   "done": "সম্পন্ন",
   "submit": "জমা দিন",
   "retry": "পুনরায় চেষ্টা",
-
   "loading": "লোড হচ্ছে...",
   "noData": "কোনো ডেটা নেই",
   "noResults": "কোনো ফলাফল নেই",
@@ -116,35 +102,28 @@
   "noInternet": "ইন্টারনেট সংযোগ নেই",
   "offline": "অফলাইন",
   "online": "অনলাইন",
-
   "success": "সফল",
   "warning": "সতর্কতা",
   "info": "তথ্য",
-
   "yes": "হ্যাঁ",
   "no": "না",
-
   "today": "আজ",
   "yesterday": "গতকাল",
   "thisWeek": "এই সপ্তাহ",
   "thisMonth": "এই মাস",
-
   "shift": "শিফট",
   "openShift": "শিফট খুলুন",
   "closeShift": "শিফট বন্ধ করুন",
   "shiftSummary": "শিফট সারাংশ",
   "cashDrawer": "ক্যাশ ড্রয়ার",
-
   "receipt": "রসিদ",
   "printReceipt": "রসিদ প্রিন্ট করুন",
   "shareReceipt": "রসিদ শেয়ার করুন",
-
   "sync": "সিঙ্ক",
   "syncing": "সিঙ্ক হচ্ছে...",
   "syncComplete": "সিঙ্ক সম্পূর্ণ",
   "syncFailed": "সিঙ্ক ব্যর্থ",
   "lastSync": "শেষ সিঙ্ক",
-
   "language": "ভাষা",
   "arabic": "العربية",
   "english": "English",
@@ -153,32 +132,26 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "থিম",
   "darkMode": "ডার্ক মোড",
   "lightMode": "লাইট মোড",
   "systemMode": "সিস্টেম মোড",
-
   "notifications": "বিজ্ঞপ্তি",
   "security": "নিরাপত্তা",
   "printer": "প্রিন্টার",
   "backup": "ব্যাকআপ",
   "help": "সাহায্য",
   "about": "সম্পর্কে",
-
   "version": "সংস্করণ",
   "copyright": "সর্বস্বত্ব সংরক্ষিত",
-
   "deleteConfirmTitle": "মুছে ফেলা নিশ্চিত করুন",
   "deleteConfirmMessage": "আপনি কি নিশ্চিত মুছে ফেলতে চান?",
   "logoutConfirmTitle": "লগ আউট নিশ্চিত করুন",
   "logoutConfirmMessage": "আপনি কি নিশ্চিত লগ আউট করতে চান?",
-
   "requiredField": "এই ক্ষেত্রটি প্রয়োজনীয়",
   "invalidFormat": "অবৈধ ফরম্যাট",
   "minLength": "ন্যূনতম {min} অক্ষর হতে হবে",
   "maxLength": "{max} অক্ষরের কম হতে হবে",
-
   "welcomeTitle": "ফিরে আসায় স্বাগতম! 👋",
   "welcomeSubtitle": "আপনার দোকান সহজে এবং দ্রুত পরিচালনা করতে সাইন ইন করুন",
   "welcomeSubtitleShort": "আপনার দোকান পরিচালনা করতে সাইন ইন করুন",
@@ -203,7 +176,6 @@
   "allRightsReserved": "© 2026 আল-হাল সিস্টেম। সর্বস্বত্ব সংরক্ষিত।",
   "dayMode": "দিনের মোড",
   "nightMode": "রাতের মোড",
-
   "selectBranch": "শাখা নির্বাচন করুন",
   "selectBranchDesc": "আপনি যে শাখায় কাজ করতে চান তা নির্বাচন করুন",
   "availableBranches": "উপলব্ধ শাখা",
@@ -212,13 +184,10 @@
   "addBranch": "নতুন শাখা যোগ করুন",
   "comingSoon": "এই বৈশিষ্ট্যটি শীঘ্রই আসছে",
   "tryDifferentSearch": "বিভিন্ন শব্দ দিয়ে অনুসন্ধান করুন",
-
   "selectLanguage": "ভাষা নির্বাচন করুন",
   "languageChangeInfo": "আপনার পছন্দের প্রদর্শন ভাষা নির্বাচন করুন। পরিবর্তনগুলি অবিলম্বে প্রয়োগ করা হবে।",
-
   "centralManagement": "কেন্দ্রীয় ব্যবস্থাপনা",
   "centralManagementDesc": "একটি স্থান থেকে আপনার সমস্ত শাখা এবং গুদাম নিয়ন্ত্রণ করুন। সমস্ত POS পয়েন্টে তাত্ক্ষণিক রিপোর্ট এবং ইনভেন্টরি সিঙ্ক পান।",
-  
   "selectBranchToContinue": "চালিয়ে যেতে শাখা নির্বাচন করুন",
   "youHaveAccessToBranches": "আপনার নিম্নলিখিত শাখাগুলিতে অ্যাক্সেস আছে। শুরু করতে একটি নির্বাচন করুন।",
   "searchForBranch": "শাখা অনুসন্ধান করুন...",
@@ -226,16 +195,15 @@
   "closedOpensAt": "বন্ধ (খোলে {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "হিসাবে লগইন",
   "support247": "24/7 সহায়তা",
   "analyticsTools": "বিশ্লেষণ সরঞ্জাম",
   "uptime": "আপটাইম",
-  "technicalSupport": "প্রযুক্তিগত সহায়তা",
-  "privacyPolicy": "গোপনীয়তা নীতি",
-
   "dashboardTitle": "ড্যাশবোর্ড",
   "searchPlaceholder": "সাধারণ অনুসন্ধান...",
   "mainBranch": "প্রধান শাখা (রিয়াদ)",
@@ -257,11 +225,16 @@
   "closeDay": "দিন বন্ধ করুন",
   "topSelling": "সবচেয়ে বেশি বিক্রি",
   "ordersToday": "আজ {count} অর্ডার",
-  "@ordersToday": {"placeholders": {"count": {"type": "int"}}},
+  "@ordersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "recentTransactions": "সাম্প্রতিক লেনদেন",
   "viewAll": "সব দেখুন",
   "orderNumber": "অর্ডার #",
-  "customer": "গ্রাহক",
   "time": "সময়",
   "status": "অবস্থা",
   "amount": "পরিমাণ",
@@ -272,12 +245,17 @@
   "cancelled": "বাতিল",
   "guestCustomer": "অতিথি গ্রাহক",
   "minutesAgo": "{count} মিনিট আগে",
-  "@minutesAgo": {"placeholders": {"count": {"type": "int"}}},
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "posSystem": "পয়েন্ট অফ সেল সিস্টেম",
   "branchManager": "শাখা ব্যবস্থাপক",
   "settingsSection": "সেটিংস",
   "systemSettings": "সিস্টেম সেটিংস",
-  "notifications": "বিজ্ঞপ্তি",
   "sar": "SAR",
   "daily": "দৈনিক",
   "goodMorning": "সুপ্রভাত",
@@ -293,13 +271,742 @@
   "goodMorningName": "সুপ্রভাত, {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "শুভ সন্ধ্যা, {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "শপিং কার্ট",
+  "selectOrSearchCustomer": "গ্রাহক নির্বাচন বা অনুসন্ধান করুন",
+  "newCustomer": "নতুন",
+  "draft": "খসড়া",
+  "pay": "পেমেন্ট",
+  "haveCoupon": "আপনার কি ডিসকাউন্ট কুপন আছে?",
+  "discountPercent": "ছাড় {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "ড্রয়ার খুলুন",
+  "suspend": "স্থগিত",
+  "quantitySoldOut": "স্টক শেষ",
+  "noProducts": "কোন পণ্য নেই",
+  "addProductsToStart": "শুরু করতে পণ্য যোগ করুন",
+  "undoComingSoon": "পূর্বাবস্থায় ফেরান (শীঘ্রই আসছে)",
+  "employees": "কর্মচারী",
+  "loyaltyProgram": "লয়্যালটি প্রোগ্রাম",
+  "newBadge": "নতুন",
+  "technicalSupportShort": "প্রযুক্তি সহায়তা",
+  "productDetails": "পণ্যের বিবরণ",
+  "stockMovements": "স্টক চলাচল",
+  "priceHistory": "মূল্য ইতিহাস",
+  "salesHistory": "বিক্রয় ইতিহাস",
+  "available": "উপলব্ধ",
+  "alertLevel": "সতর্কতা স্তর",
+  "reorderPoint": "পুনর্অর্ডার পয়েন্ট",
+  "revenue": "রাজস্ব",
+  "supplier": "সরবরাহকারী",
+  "lastSale": "শেষ বিক্রয়",
+  "printLabel": "লেবেল প্রিন্ট করুন",
+  "copied": "কপি হয়েছে",
+  "copiedToClipboard": "{label} কপি হয়েছে",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "সক্রিয়",
+  "inactive": "নিষ্ক্রিয়",
+  "profitMargin": "লাভ মার্জিন",
+  "sellingPrice": "বিক্রয় মূল্য",
+  "costPrice": "খরচ মূল্য",
+  "description": "বিবরণ",
+  "noDescription": "কোনো বিবরণ নেই",
+  "productNotFound": "পণ্য পাওয়া যায়নি",
+  "stockStatus": "স্টক অবস্থা",
+  "currentStock": "বর্তমান স্টক",
+  "unit": "ইউনিট",
+  "units": "ইউনিট",
+  "date": "তারিখ",
+  "type": "ধরন",
+  "reference": "রেফারেন্স",
+  "newBalance": "নতুন ব্যালেন্স",
+  "oldPrice": "পুরানো মূল্য",
+  "newPrice": "নতুন মূল্য",
+  "reason": "কারণ",
+  "invoiceNumber": "চালান নম্বর",
+  "categoryLabel": "বিভাগ",
+  "uncategorized": "শ্রেণীবিহীন",
+  "noSupplier": "কোনো সরবরাহকারী নেই",
+  "moreOptions": "আরও অপশন",
+  "noStockMovements": "কোনো স্টক চলাচল নেই",
+  "noPriceHistory": "কোনো মূল্য ইতিহাস নেই",
+  "noSalesHistory": "কোনো বিক্রয় ইতিহাস নেই",
+  "sale": "বিক্রয়",
+  "purchase": "ক্রয়",
+  "adjustment": "সমন্বয়",
+  "returnText": "ফেরত",
+  "waste": "অপচয়",
+  "initialStock": "প্রারম্ভিক স্টক",
+  "searchByNameOrBarcode": "নাম বা বারকোড দিয়ে অনুসন্ধান করুন...",
+  "hideFilters": "ফিল্টার লুকান",
+  "showFilters": "ফিল্টার দেখান",
+  "sortByName": "নাম",
+  "sortByPrice": "মূল্য",
+  "sortByStock": "স্টক",
+  "sortByRecent": "সাম্প্রতিক",
+  "allItems": "সব",
+  "clearFilters": "ফিল্টার মুছুন",
+  "noBarcode": "বারকোড নেই",
+  "stockCount": "স্টক: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "পরিবর্তন সংরক্ষণ করুন",
+  "addTheProduct": "পণ্য যোগ করুন",
+  "editProduct": "পণ্য সম্পাদনা করুন",
+  "newProduct": "নতুন পণ্য",
+  "minimumQuantity": "ন্যূনতম পরিমাণ",
+  "selectCategory": "বিভাগ নির্বাচন করুন",
+  "productImage": "পণ্যের ছবি",
+  "trackInventory": "ইনভেন্টরি ট্র্যাক করুন",
+  "productSavedSuccess": "পণ্য সফলভাবে সংরক্ষিত হয়েছে",
+  "productAddedSuccess": "পণ্য সফলভাবে যোগ করা হয়েছে",
+  "scanBarcode": "বারকোড স্ক্যান করুন",
+  "activeProduct": "সক্রিয় পণ্য",
+  "currency": "SAR",
+  "hoursAgo": "{count} ঘন্টা আগে",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} দিন আগে",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "সরবরাহকারীর মূল্য আপডেট",
+  "costIncrease": "খরচ বৃদ্ধি",
+  "duplicateProduct": "পণ্য অনুলিপি করুন",
+  "categoriesManagement": "বিভাগ ব্যবস্থাপনা",
+  "categoriesCount": "{count} বিভাগ",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "বিভাগ যোগ করুন",
+  "editCategory": "বিভাগ সম্পাদনা করুন",
+  "deleteCategory": "বিভাগ মুছুন",
+  "categoryName": "বিভাগের নাম",
+  "categoryNameAr": "নাম (আরবি)",
+  "categoryNameEn": "নাম (ইংরেজি)",
+  "parentCategory": "মূল বিভাগ",
+  "noParentCategory": "কোনো মূল বিভাগ নেই (প্রধান)",
+  "sortOrder": "ক্রম",
+  "categoryColor": "রঙ",
+  "categoryIcon": "আইকন",
+  "categoryDetails": "বিভাগের বিবরণ",
+  "categoryCreatedAt": "তৈরির তারিখ",
+  "categoryProducts": "বিভাগের পণ্য",
+  "noCategorySelected": "বিবরণ দেখতে বিভাগ নির্বাচন করুন",
+  "deleteCategoryConfirm": "আপনি কি নিশ্চিত যে আপনি এই বিভাগটি মুছতে চান?",
+  "categoryDeletedSuccess": "বিভাগ সফলভাবে মুছে ফেলা হয়েছে",
+  "categorySavedSuccess": "বিভাগ সফলভাবে সংরক্ষিত হয়েছে",
+  "searchCategories": "বিভাগ খুঁজুন...",
+  "reorderCategories": "পুনর্বিন্যাস",
+  "noCategories": "কোনো বিভাগ পাওয়া যায়নি",
+  "subcategories": "উপ-বিভাগ",
+  "activeStatus": "সক্রিয়",
+  "inactiveStatus": "নিষ্ক্রিয়",
+  "invoicesTitle": "ইনভয়েস",
+  "totalInvoices": "মোট ইনভয়েস",
+  "totalPaid": "মোট পরিশোধিত",
+  "totalPending": "মোট মুলতুবি",
+  "totalOverdue": "মোট বকেয়া",
+  "comparedToLastMonth": "গত মাসের তুলনায়",
+  "ofTotalDue": "মোট পাওনার {percent}%",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} ইনভয়েস পেমেন্টের অপেক্ষায়",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "এখনই রিমাইন্ডার পাঠান",
+  "revenueAnalysis": "রাজস্ব বিশ্লেষণ",
+  "last7Days": "শেষ ৭ দিন",
+  "thisMonthPeriod": "এই মাস",
+  "thisYearPeriod": "এই বছর",
+  "paymentMethods": "পেমেন্ট পদ্ধতি",
+  "cashPayment": "নগদ",
+  "cardPayment": "কার্ড",
+  "walletPayment": "ওয়ালেট",
+  "saveCurrentFilter": "বর্তমান ফিল্টার সংরক্ষণ",
+  "statusAll": "অবস্থা: সব",
+  "statusPaid": "পরিশোধিত",
+  "statusPending": "মুলতুবি",
+  "statusOverdue": "বকেয়া",
+  "statusCancelled": "বাতিল",
+  "resetFilters": "রিসেট",
+  "createInvoice": "ইনভয়েস তৈরি",
+  "invoiceNumberCol": "ইনভয়েস #",
+  "customerNameCol": "গ্রাহকের নাম",
+  "dateCol": "তারিখ",
+  "amountCol": "পরিমাণ",
+  "statusCol": "অবস্থা",
+  "paymentCol": "পেমেন্ট",
+  "actionsCol": "অ্যাকশন",
+  "viewInvoice": "দেখুন",
+  "printInvoice": "প্রিন্ট",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "হোয়াটসঅ্যাপ",
+  "deleteInvoice": "মুছুন",
+  "reminder": "রিমাইন্ডার",
+  "exportAll": "সব এক্সপোর্ট",
+  "printReport": "রিপোর্ট প্রিন্ট",
+  "more": "আরও",
+  "showingResults": "{total} এর মধ্যে {from} থেকে {to} দেখাচ্ছে",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "নতুন ইনভয়েস",
+  "selectCustomer": "গ্রাহক নির্বাচন",
+  "cashCustomerGeneral": "নগদ গ্রাহক (সাধারণ)",
+  "addNewCustomer": "+ নতুন গ্রাহক যোগ করুন",
+  "productsSection": "পণ্য",
+  "addProductToInvoice": "+ পণ্য যোগ করুন",
+  "productCol": "পণ্য",
+  "quantityCol": "পরিমাণ",
+  "priceCol": "মূল্য",
+  "dueDate": "নির্ধারিত তারিখ",
+  "invoiceTotal": "মোট:",
+  "saveInvoice": "ইনভয়েস সংরক্ষণ",
+  "deleteConfirm": "আপনি কি নিশ্চিত?",
+  "deleteInvoiceMsg": "আপনি কি সত্যিই এই ইনভয়েস মুছতে চান? এই কাজ পূর্বাবস্থায় ফেরানো যাবে না।",
+  "yesDelete": "হ্যাঁ, মুছুন",
+  "copiedSuccess": "সফলভাবে কপি হয়েছে",
+  "invoiceDeleted": "ইনভয়েস সফলভাবে মুছে ফেলা হয়েছে",
+  "sat": "শনি",
+  "sun": "রবি",
+  "mon": "সোম",
+  "tue": "মঙ্গল",
+  "wed": "বুধ",
+  "thu": "বৃহ",
+  "fri": "শুক্র",
+  "selected": "{count} নির্বাচিত",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "প্রিন্ট",
+  "bulkExportPdf": "PDF এক্সপোর্ট",
+  "allRightsReservedFooter": "© 2026 Alhai POS. সর্বস্বত্ব সংরক্ষিত।",
+  "privacyPolicyFooter": "গোপনীয়তা নীতি",
+  "termsFooter": "শর্তাবলী",
+  "supportFooter": "প্রযুক্তি সহায়তা",
+  "paid": "পরিশোধিত",
+  "overdue": "বকেয়া",
+  "creditCard": "ক্রেডিট কার্ড",
+  "electronicWallet": "ই-ওয়ালেট",
+  "searchInvoiceHint": "ইনভয়েস নম্বর, গ্রাহক দিয়ে খুঁজুন...",
+  "customerDetails": "গ্রাহকের বিবরণ",
+  "customerProfileAndTransactions": "প্রোফাইল এবং লেনদেনের সংক্ষিপ্ত বিবরণ",
+  "customerDetailTitle": "গ্রাহকের বিবরণ",
+  "totalPurchases": "মোট ক্রয়",
+  "loyaltyPoints": "লয়্যালটি পয়েন্ট",
+  "lastVisit": "শেষ ভিজিট",
+  "newSaleAction": "নতুন বিক্রয়",
+  "editInfo": "তথ্য সম্পাদনা",
+  "whatsapp": "হোয়াটসঅ্যাপ",
+  "blockCustomer": "গ্রাহককে ব্লক করুন",
+  "purchasesTab": "ক্রয়",
+  "accountTab": "অ্যাকাউন্ট",
+  "debtsTab": "ঋণ",
+  "analyticsTab": "বিশ্লেষণ",
+  "recentOrdersLog": "সাম্প্রতিক অর্ডার লগ",
+  "exportCsv": "CSV রপ্তানি",
+  "searchByInvoiceNumber": "ইনভয়েস নম্বর দিয়ে খুঁজুন...",
+  "items": "আইটেম",
+  "viewDetails": "বিবরণ দেখুন",
+  "financialLedger": "আর্থিক লেনদেন রেজিস্টার",
+  "cashPaymentEntry": "নগদ পেমেন্ট",
+  "walletTopup": "ওয়ালেট টপ-আপ",
+  "loyaltyPointsDeduction": "লয়্যালটি পয়েন্ট কর্তন",
+  "redeemPoints": "{count} পয়েন্ট রিডিম",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "সম্পূর্ণ দেখুন",
+  "currentBalance": "বর্তমান ব্যালেন্স",
+  "creditLimit": "ক্রেডিট সীমা",
+  "used": "ব্যবহৃত",
+  "topUpBalance": "ব্যালেন্স টপ-আপ",
+  "overdueDebt": "মেয়াদোত্তীর্ণ",
+  "upcomingDebt": "আসন্ন",
+  "payNow": "এখনই পরিশোধ করুন",
+  "remind": "স্মরণ",
+  "monthlySpending": "মাসিক ব্যয়",
+  "purchaseDistribution": "বিভাগ অনুসারে ক্রয় বিতরণ",
+  "last6Months": "শেষ ৬ মাস",
+  "thisYear": "এই বছর",
+  "averageOrder": "গড় অর্ডার",
+  "purchaseFrequency": "ক্রয় ফ্রিকোয়েন্সি",
+  "everyNDays": "প্রতি {count} দিন",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "ব্যয় বৃদ্ধি",
+  "favoriteProduct": "প্রিয় পণ্য",
+  "internalNotes": "অভ্যন্তরীণ নোট (শুধু কর্মীদের জন্য দৃশ্যমান)",
+  "addNote": "যোগ করুন",
+  "addNewNote": "নতুন নোট যোগ করুন...",
+  "joinedDate": "যোগদান: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "শেষ আপডেট: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "{total} এর মধ্যে {from}-{to} দেখাচ্ছে",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "সবজি",
+  "dairy": "দুগ্ধ",
+  "meat": "মাংস",
+  "bakery": "বেকারি",
+  "other": "অন্যান্য",
+  "returns": "ফেরত",
+  "salesReturns": "বিক্রয় ফেরত",
+  "purchaseReturns": "ক্রয় ফেরত",
+  "totalReturns": "মোট ফেরত",
+  "totalRefundedAmount": "মোট ফেরত পরিমাণ",
+  "mostReturned": "সবচেয়ে বেশি ফেরত",
+  "processed": "ফেরত দেওয়া হয়েছে",
+  "newReturn": "নতুন ফেরত",
+  "createNewReturn": "নতুন ফেরত তৈরি করুন",
+  "processReturnRequest": "বিক্রয় ফেরত অনুরোধ",
+  "returnNumber": "ফেরত নম্বর",
+  "originalInvoice": "মূল চালান",
+  "returnReason": "ফেরতের কারণ",
+  "returnAmount": "ফেরত পরিমাণ",
+  "returnStatus": "অবস্থা",
+  "returnDate": "তারিখ",
+  "returnActions": "পদক্ষেপ",
+  "returnRefunded": "ফেরত দেওয়া হয়েছে",
+  "returnRejected": "প্রত্যাখ্যাত",
+  "defectiveProduct": "ত্রুটিপূর্ণ পণ্য",
+  "wrongProduct": "ভুল পণ্য",
+  "customerRequest": "গ্রাহকের অনুরোধ",
+  "otherReason": "অন্যান্য",
+  "quickSearch": "দ্রুত খুঁজুন...",
+  "exportData": "রপ্তানি",
+  "printData": "প্রিন্ট",
+  "approve": "অনুমোদন",
+  "reject": "প্রত্যাখ্যান",
+  "previous": "পূর্ববর্তী",
+  "invoiceStep": "চালান",
+  "itemsStep": "আইটেম",
+  "reasonStep": "কারণ",
+  "confirmStep": "নিশ্চিতকরণ",
+  "enterInvoiceNumber": "চালান নম্বর",
+  "invoiceExample": "উদাহরণ: #INV-889",
+  "loadInvoice": "লোড",
+  "invoiceLoaded": "চালান #{number} লোড হয়েছে",
+  "invoiceLoadedCustomer": "গ্রাহক: {customer} | তারিখ: {date}",
+  "selectItemsInfo": "ফেরতের জন্য আইটেম নির্বাচন করুন। বিক্রয়ের বেশি পরিমাণ ফেরত হবে না।",
+  "availableToReturn": "উপলব্ধ: {count}",
+  "alreadyReturnedFully": "পূর্ণ পরিমাণ ইতিমধ্যে ফেরত হয়েছে",
+  "returnReasonLabel": "ফেরতের কারণ (নির্বাচিত আইটেমের জন্য)",
+  "additionalDetails": "অতিরিক্ত বিবরণ (অন্যান্যের জন্য প্রয়োজন)...",
+  "confirmReturn": "ফেরত নিশ্চিত করুন",
+  "refundAmount": "ফেরত পরিমাণ",
+  "refundMethod": "ফেরতের পদ্ধতি",
+  "cashRefund": "নগদ",
+  "storeCredit": "স্টোর ক্রেডিট",
+  "returnCreatedSuccess": "ফেরত সফলভাবে তৈরি হয়েছে",
+  "noReturns": "কোনো ফেরত নেই",
+  "noReturnsDesc": "এখনো কোনো ফেরত রেকর্ড হয়নি।",
+  "timesReturned": "{count} বার ({percent}% মোটের মধ্যে)",
+  "fromInvoice": "চালান থেকে",
+  "dateFromTo": "তারিখ থেকে - পর্যন্ত",
+  "returnCopied": "নম্বর সফলভাবে কপি হয়েছে",
+  "ofTotalProcessed": "{percent}% প্রক্রিয়া হয়েছে",
+  "invoiceDetails": "ইনভয়েস বিবরণ",
+  "invoiceNumberLabel": "নম্বর:",
+  "additionalOptions": "অতিরিক্ত বিকল্প",
+  "duplicateInvoice": "ডুপ্লিকেট তৈরি",
+  "returnMerchandise": "পণ্য ফেরত",
+  "voidInvoice": "ইনভয়েস বাতিল করুন",
+  "printBtn": "প্রিন্ট",
+  "downloadBtn": "ডাউনলোড",
+  "paidSuccessfully": "পেমেন্ট সফল",
+  "amountReceivedFull": "সম্পূর্ণ পরিমাণ প্রাপ্ত",
+  "completedStatus": "সম্পন্ন",
+  "pendingStatus": "মুলতুবি",
+  "voidedStatus": "বাতিল",
+  "storeName": "পাড়ার সুপারমার্কেট",
+  "storeAddress": "রিয়াদ, আল-মালাজ জেলা",
+  "simplifiedTaxInvoice": "সরলীকৃত কর ইনভয়েস",
+  "dateAndTime": "তারিখ ও সময়",
+  "cashierLabel": "ক্যাশিয়ার",
+  "itemCol": "আইটেম",
+  "quantityColDetail": "পরিমাণ",
+  "priceColDetail": "মূল্য",
+  "totalCol": "মোট",
+  "subtotalLabel": "উপ-মোট",
+  "discountVip": "ছাড় (VIP সদস্য)",
+  "vatLabel": "ভ্যাট (15%)",
+  "grandTotalLabel": "সর্বমোট",
+  "paymentMethodLabel": "পেমেন্ট পদ্ধতি",
+  "amountPaidLabel": "প্রদত্ত পরিমাণ",
+  "zatcaElectronic": "ZATCA - ইলেকট্রনিক ইনভয়েস",
+  "scanToVerify": "যাচাই করতে স্ক্যান করুন",
+  "includesVat15": "15% ভ্যাট অন্তর্ভুক্ত",
+  "thankYouVisit": "আপনার পরিদর্শনের জন্য ধন্যবাদ!",
+  "wishNiceDay": "আপনার দিন শুভ হোক",
+  "customerInfo": "গ্রাহক তথ্য",
+  "editBtn": "সম্পাদনা",
+  "vipSince": "{year} থেকে VIP গ্রাহক",
+  "activeStatusLabel": "সক্রিয়",
+  "callBtn": "কল",
+  "recordBtn": "রেকর্ড",
+  "quickActions": "দ্রুত কার্যক্রম",
+  "sendWhatsappAction": "হোয়াটসঅ্যাপ পাঠান",
+  "sendEmailAction": "ইমেইল পাঠান",
+  "downloadPdfAction": "PDF ডাউনলোড",
+  "shareLinkAction": "লিংক শেয়ার",
+  "eventLog": "ইভেন্ট লগ",
+  "paymentCompleted": "পেমেন্ট সম্পন্ন",
+  "processedViaGateway": "পেমেন্ট গেটওয়ে দিয়ে প্রসেস",
+  "minutesAgoDetail": "{count} মিনিট আগে",
+  "invoiceCreated": "ইনভয়েস তৈরি হয়েছে",
+  "byUser": "{name} দ্বারা",
+  "todayAt": "আজ, {time}",
+  "orderStarted": "অর্ডার শুরু",
+  "cashierSessionOpened": "ক্যাশিয়ার সেশন খোলা হয়েছে",
+  "technicalData": "প্রযুক্তিগত তথ্য",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "ইনভয়েস বাতিল করবেন?",
+  "voidInvoiceMsg": "এই ইনভয়েসটি স্থায়ীভাবে বাতিল হবে। আপনি কি নিশ্চিত?",
+  "voidReasonLabel": "বাতিলের কারণ (আবশ্যক)",
+  "voidReasonEntry": "এন্ট্রি ত্রুটি",
+  "voidReasonCustomer": "গ্রাহকের অনুরোধ",
+  "voidReasonDamaged": "ক্ষতিগ্রস্ত পণ্য",
+  "voidReasonOther": "অন্যান্য কারণ...",
+  "confirmVoid": "বাতিল নিশ্চিত করুন",
+  "invoiceVoided": "ইনভয়েস সফলভাবে বাতিল হয়েছে",
+  "copiedText": "কপি হয়েছে: {text}",
+  "visaEnding": "Visa শেষ {digits}",
+  "mobileActionPrint": "প্রিন্ট",
+  "mobileActionWhatsapp": "হোয়াটসঅ্যাপ",
+  "mobileActionEmail": "ইমেইল",
+  "mobileActionMore": "আরো",
+  "sarCurrency": "ر.س",
+  "skuLabel": "SKU: {code}",
+  "helpText": "সাহায্য",
+  "ordersHistory": "অর্ডার ইতিহাস",
+  "totalOrdersLabel": "মোট অর্ডার",
+  "completedOrders": "সম্পন্ন",
+  "pendingOrders": "মুলতুবি",
+  "cancelledOrders": "বাতিল",
+  "searchOrderHint": "অর্ডার নম্বর, গ্রাহক, বা ফোন দিয়ে খুঁজুন...",
+  "channelLabel": "চ্যানেল",
+  "last30Days": "শেষ ৩০ দিন",
+  "orderDetails": "অর্ডার বিবরণ",
+  "unpaidLabel": "অপরিশোধিত",
+  "customerLedger": "গ্রাহক লেজার",
+  "accountStatement": "অ্যাকাউন্ট স্টেটমেন্ট",
+  "allPeriods": "সব",
+  "threeMonths": "৩ মাস",
+  "allMovements": "সব লেনদেন",
+  "adjustments": "সমন্বয়",
+  "statementCol": "বিবরণ",
+  "referenceCol": "রেফারেন্স",
+  "debitCol": "ডেবিট",
+  "creditCol": "ক্রেডিট",
+  "balanceCol": "ব্যালেন্স",
+  "openingBalance": "প্রারম্ভিক ব্যালেন্স",
+  "totalDebit": "মোট ডেবিট",
+  "totalCredit": "মোট ক্রেডিট",
+  "finalBalance": "চূড়ান্ত ব্যালেন্স",
+  "manualAdjustment": "ম্যানুয়াল সমন্বয়",
+  "adjustmentType": "সমন্বয়ের ধরন",
+  "debitAdjustment": "ডেবিট সমন্বয়",
+  "creditAdjustment": "ক্রেডিট সমন্বয়",
+  "adjustmentAmount": "সমন্বয়ের পরিমাণ",
+  "adjustmentReason": "সমন্বয়ের কারণ",
+  "adjustmentDate": "সমন্বয়ের তারিখ",
+  "saveAdjustment": "সমন্বয় সংরক্ষণ",
+  "adjustmentSaved": "সমন্বয় সফলভাবে সংরক্ষিত",
+  "enterValidAmount": "একটি বৈধ পরিমাণ লিখুন",
+  "dueOnCustomer": "গ্রাহকের উপর বকেয়া",
+  "customerHasCredit": "গ্রাহকের ক্রেডিট ব্যালেন্স আছে",
+  "noTransactions": "কোনো লেনদেন নেই",
+  "recordPaymentBtn": "পেমেন্ট রেকর্ড",
+  "returnEntry": "ফেরত",
+  "adjustmentEntry": "সমন্বয়",
+  "voidTransaction": "লেনদেন বাতিল করুন",
+  "voidSaleTransaction": "বিক্রয় লেনদেন বাতিল করুন",
+  "voidWarningTitle": "গুরুত্বপূর্ণ সতর্কতা: এই পদক্ষেপ পূর্বাবস্থায় ফেরানো যাবে না",
+  "voidWarningDesc": "এই লেনদেন বাতিল করলে ইনভয়েস সম্পূর্ণরূপে বাতিল হবে।",
+  "voidWarningShort": "এই পদক্ষেপ ইনভয়েস সম্পূর্ণরূপে বাতিল করবে। ফেরানো যাবে না।",
+  "enterInvoiceToVoid": "বাতিলের জন্য ইনভয়েস নম্বর লিখুন",
+  "searchByInvoiceOrBarcode": "ইনভয়েস নম্বর বা বারকোড স্ক্যানার ব্যবহার করুন",
+  "invoiceExampleVoid": "উদাহরণ: #INV-2024-8892",
+  "activateBarcode": "বারকোড স্ক্যানার সক্রিয় করুন",
+  "scanBarcodeMobile": "বারকোড স্ক্যান করুন",
+  "searchForInvoiceToVoid": "বাতিলের জন্য ইনভয়েস খুঁজুন",
+  "enterNumberOrScan": "নম্বর লিখুন বা বারকোড স্ক্যানার ব্যবহার করুন।",
+  "salesInvoice": "বিক্রয় ইনভয়েস",
+  "invoiceCompleted": "সম্পূর্ণ",
+  "paidCash": "পরিশোধ: নগদ",
+  "customerLabel": "গ্রাহক",
+  "dateAndTimeLabel": "তারিখ ও সময়",
+  "voidImpactSummary": "বাতিলের প্রভাব সারাংশ",
+  "voidImpactItemsReturn": "{count}টি আইটেম স্বয়ংক্রিয়ভাবে ইনভেন্টরিতে ফিরে যাবে।",
+  "voidImpactRefund": "পরিমাণ {amount} {currency} কাটা/ফেরত হবে।",
+  "returnedItems": "ফেরত আইটেম ({count})",
+  "viewAllItems": "সব দেখুন",
+  "moreItemsHint": "+ {count}টি আইটেম (মোট: {amount} {currency})",
+  "voidReason": "বাতিলের কারণ",
+  "voidReasonRequired": "বাতিলের কারণ *",
+  "customerRequestReason": "গ্রাহকের অনুরোধ",
+  "wrongItemsReason": "ভুল আইটেম",
+  "duplicateInvoiceReason": "ডুপ্লিকেট ইনভয়েস",
+  "systemErrorReason": "সিস্টেম ত্রুটি",
+  "otherReasonVoid": "অন্যান্য",
+  "additionalNotesVoid": "অতিরিক্ত নোট...",
+  "additionalDetailsRequired": "অতিরিক্ত বিবরণ (অন্যান্যের জন্য প্রয়োজন)...",
+  "managerApproval": "ম্যানেজারের অনুমোদন",
+  "managerApprovalRequired": "ম্যানেজারের অনুমোদন প্রয়োজন",
+  "amountExceedsLimit": "পরিমাণ অনুমোদিত সীমা ({amount} {currency}) অতিক্রম করেছে, ম্যানেজার PIN দিন।",
+  "enterPinCode": "PIN কোড লিখুন",
+  "pinSentToManager": "অস্থায়ী কোড ম্যানেজারের ফোনে পাঠানো হয়েছে",
+  "defaultManagerPin": "ডিফল্ট ম্যানেজার কোড: 1234",
+  "confirmVoidAction": "আমি এই লেনদেন বাতিলের নিশ্চিতকরণ করছি",
+  "confirmVoidDesc": "আমি বিবরণ পর্যালোচনা করেছি এবং সম্পূর্ণ দায়িত্ব নিচ্ছি।",
+  "cancelAction": "বাতিল",
+  "confirmFinalVoid": "চূড়ান্ত বাতিলের নিশ্চিতকরণ",
+  "invoiceNotFound": "ইনভয়েস পাওয়া যায়নি",
+  "invoiceNotFoundDesc": "লেখা নম্বর যাচাই করুন বা বারকোড ব্যবহার করুন।",
+  "trySearchAgain": "আবার খুঁজুন",
+  "voidSuccess": "লেনদেন সফলভাবে বাতিল হয়েছে",
+  "qtyLabel": "পরিমাণ: {count}",
+  "manageCustomersAndAccounts": "গ্রাহক ও অ্যাকাউন্ট পরিচালনা",
+  "totalCustomersCount": "মোট গ্রাহক",
+  "outstandingDebts": "বকেয়া ঋণ",
+  "customerCount": "{count} গ্রাহক",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "গ্রাহকের ক্রেডিট",
+  "filterByLabel": "ফিল্টার",
+  "debtors": "ঋণগ্রস্ত",
+  "creditorsLabel": "পাওনাদার",
+  "quickActionsLabel": "দ্রুত কর্ম",
+  "sendDebtReminder": "ঋণ স্মারক পাঠান",
+  "exportAccountStatement": "অ্যাকাউন্ট স্টেটমেন্ট রপ্তানি",
+  "cancelSelectionCount": "নির্বাচন বাতিল ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "নাম বা ফোনে অনুসন্ধান... (Ctrl+F)",
+  "sortByBalance": "ব্যালেন্স",
+  "refreshF5": "রিফ্রেশ (F5)",
+  "loadingCustomers": "গ্রাহক লোড হচ্ছে...",
+  "payDebt": "ঋণ পরিশোধ",
+  "dueAmountLabel": "বকেয়া: {amount} রিয়াল",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "পরিশোধের পরিমাণ",
+  "fullAmount": "সম্পূর্ণ",
+  "payAction": "পরিশোধ",
+  "paymentRecorded": "{amount} রিয়াল পরিশোধ রেকর্ড হয়েছে",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "গ্রাহক সফলভাবে যোগ হয়েছে",
+  "customerNameRequired": "গ্রাহকের নাম *",
+  "owedLabel": "বকেয়া",
+  "hasBalanceLabel": "ক্রেডিট",
+  "zeroLabel": "শূন্য",
+  "addAction": "যোগ করুন",
+  "expenses": "খরচ",
+  "expenseCategories": "খরচের বিভাগ",
+  "addExpense": "খরচ যোগ করুন",
+  "totalExpenses": "মোট খরচ",
+  "thisMonthExpenses": "এই মাস",
+  "noExpenses": "কোন খরচ নেই",
+  "drawerStatus": "ড্রয়ারের অবস্থা",
+  "drawerOpen": "খোলা",
+  "drawerClosed": "বন্ধ",
+  "cashIn": "নগদ জমা",
+  "cashOut": "নগদ উত্তোলন",
+  "expectedAmount": "প্রত্যাশিত পরিমাণ",
+  "countedAmount": "গণনা করা পরিমাণ",
+  "difference": "পার্থক্য",
+  "monthlyCloseTitle": "মাসিক বন্ধ",
+  "totalReceivables": "মোট প্রাপ্য",
+  "interestRate": "সুদের হার",
+  "closeMonth": "মাস বন্ধ করুন",
+  "shiftsTitle": "শিফট",
+  "currentShift": "বর্তমান শিফট",
+  "shiftHistory": "শিফটের ইতিহাস",
+  "noShifts": "কোন শিফট নেই",
+  "purchasesTitle": "ক্রয়",
+  "smartReorder": "স্মার্ট রিঅর্ডার",
+  "suppliersTitle": "সরবরাহকারী",
+  "addSupplier": "সরবরাহকারী যোগ করুন",
+  "noSuppliers": "কোন সরবরাহকারী নেই",
+  "discountsTitle": "ছাড়",
+  "couponsTitle": "কুপন",
+  "specialOffersTitle": "বিশেষ অফার",
+  "smartPromotionsTitle": "স্মার্ট প্রমোশন",
+  "loyaltyTitle": "আনুগত্য প্রোগ্রাম",
+  "notificationsTitle": "বিজ্ঞপ্তি",
+  "printQueueTitle": "প্রিন্ট কিউ",
+  "syncStatusTitle": "সিঙ্ক অবস্থা",
+  "pendingTransactionsTitle": "মুলতুবি লেনদেন",
+  "conflictResolutionTitle": "বিরোধ সমাধান",
+  "driversTitle": "ড্রাইভার",
+  "branchesTitle": "শাখা",
+  "profileTitle": "প্রোফাইল",
+  "settingsTitle": "সেটিংস",
+  "storeSettings": "স্টোর সেটিংস",
+  "posSettings": "পিওএস সেটিংস",
+  "printerSettings": "প্রিন্টার সেটিংস",
+  "paymentDevicesSettings": "পেমেন্ট ডিভাইস",
+  "barcodeSettings": "বারকোড সেটিংস",
+  "receiptTemplate": "রসিদ টেমপ্লেট",
+  "taxSettings": "ট্যাক্স সেটিংস",
+  "discountSettings": "ছাড় সেটিংস",
+  "interestSettings": "সুদ সেটিংস",
+  "securitySettings": "নিরাপত্তা",
+  "usersManagement": "ব্যবহারকারী ব্যবস্থাপনা",
+  "rolesPermissions": "ভূমিকা ও অনুমতি",
+  "activityLog": "কার্যকলাপ লগ",
+  "backupSettings": "ব্যাকআপ ও পুনরুদ্ধার",
+  "zatcaCompliance": "ZATCA সম্মতি",
+  "helpSupport": "সাহায্য ও সমর্থন",
+  "liveChat": "লাইভ চ্যাট",
+  "emailSupport": "ইমেইল সাপোর্ট",
+  "phoneSupport": "ফোন সাপোর্ট",
+  "whatsappSupport": "হোয়াটসঅ্যাপ সাপোর্ট",
+  "userGuide": "ব্যবহারকারী গাইড",
+  "videoTutorials": "ভিডিও টিউটোরিয়াল",
+  "changelog": "পরিবর্তন লগ",
+  "appInfo": "অ্যাপ তথ্য",
+  "buildNumber": "বিল্ড নম্বর",
+  "notificationChannels": "বিজ্ঞপ্তি চ্যানেল",
+  "alertTypes": "সতর্কতার ধরন",
+  "salesAlerts": "বিক্রয় সতর্কতা",
+  "inventoryAlerts": "ইনভেন্টরি সতর্কতা",
+  "securityAlerts": "নিরাপত্তা সতর্কতা",
+  "reportAlerts": "রিপোর্ট সতর্কতা",
+  "users": "ব্যবহারকারী",
+  "zatcaRegistered": "ZATCA-তে নিবন্ধিত",
+  "zatcaPhase2Active": "দ্বিতীয় পর্যায় সক্রিয়",
+  "registrationInfo": "নিবন্ধন তথ্য",
+  "businessName": "ব্যবসার নাম",
+  "branchCode": "শাখা কোড",
+  "qrCodeOnInvoice": "ইনভয়েসে QR কোড",
+  "certificates": "সার্টিফিকেট",
+  "csidCertificate": "CSID সার্টিফিকেট",
+  "valid": "বৈধ",
+  "privateKey": "প্রাইভেট কী",
+  "configured": "কনফিগার করা হয়েছে"
 }

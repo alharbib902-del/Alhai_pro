@@ -1,0 +1,17 @@
+{
+  "name": "alhai-pos-screen-testing",
+  "version": "1.0.0",
+  "description": "Agent-based screen testing for Alhai POS App",
+  "scripts": {
+    "test:report": "node src/mainRunner.js",
+    "test:finance": "node src/mainRunner.js --agent=finance",
+    "test:shifts": "node src/mainRunner.js --agent=shifts",
+    "test:purchases": "node src/mainRunner.js --agent=purchasesSuppliers",
+    "test:marketing": "node src/mainRunner.js --agent=marketingPromotions",
+    "test:infrastructure": "node src/mainRunner.js --agent=infrastructure",
+    "test:settings": "node src/mainRunner.js --agent=settings"
+  },
+  "dependencies": {
+    "playwright": "^1.42.0"
+  }
+}

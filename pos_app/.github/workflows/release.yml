@@ -1,0 +1,124 @@
+# Release Workflow - إصدار نسخة جديدة
+# يعمل تلقائياً عند إنشاء tag جديد بصيغة v*
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+
+jobs:
+  # =====================================================
+  # Build all platforms
+  # =====================================================
+  build:
+    name: Build Release
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  # =====================================================
+  # Create GitHub Release
+  # =====================================================
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: artifacts/android
+
+      - name: Download Android AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: artifacts/android
+        continue-on-error: true
+
+      - name: Download Web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: artifacts/web
+
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: artifacts/windows
+        continue-on-error: true
+
+      - name: Compress Web build
+        run: |
+          cd artifacts/web
+          zip -r ../pos-app-web-${{ github.ref_name }}.zip .
+
+      - name: Compress Windows build
+        if: hashFiles('artifacts/windows/*') != ''
+        run: |
+          cd artifacts/windows
+          zip -r ../pos-app-windows-${{ github.ref_name }}.zip .
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [ -n "$PREV_TAG" ]; then
+            echo "## Changes since $PREV_TAG" > CHANGELOG.md
+            git log $PREV_TAG..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          else
+            echo "## Initial Release" > CHANGELOG.md
+            git log --pretty=format:"- %s (%h)" -20 >> CHANGELOG.md
+          fi
+
+          cat CHANGELOG.md
+
+      - name: Rename APK
+        run: |
+          mv artifacts/android/*.apk artifacts/pos-app-${{ github.ref_name }}.apk 2>/dev/null || true
+
+      - name: Rename AAB
+        run: |
+          mv artifacts/android/*.aab artifacts/pos-app-${{ github.ref_name }}.aab 2>/dev/null || true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: POS App ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+          files: |
+            artifacts/pos-app-${{ github.ref_name }}.apk
+            artifacts/pos-app-${{ github.ref_name }}.aab
+            artifacts/pos-app-web-${{ github.ref_name }}.zip
+            artifacts/pos-app-windows-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "::notice title=Release Created::POS App ${{ github.ref_name }} has been released successfully!"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error title=Release Failed::Failed to create release for ${{ github.ref_name }}"

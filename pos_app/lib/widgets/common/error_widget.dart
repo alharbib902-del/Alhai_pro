@@ -1,0 +1,130 @@
+import 'package:flutter/material.dart';
+
+/// Widget موحد لعرض الأخطاء
+class ErrorWidget extends StatelessWidget {
+  /// رسالة الخطأ
+  final String message;
+  
+  /// حدث إعادة المحاولة
+  final VoidCallback? onRetry;
+  
+  /// أيقونة الخطأ
+  final IconData icon;
+
+  const ErrorWidget({
+    super.key,
+    required this.message,
+    this.onRetry,
+    this.icon = Icons.error_outline,
+  });
+
+  /// خطأ شبكة
+  factory ErrorWidget.network({VoidCallback? onRetry}) {
+    return ErrorWidget(
+      message: 'خطأ في الاتصال بالخادم',
+      icon: Icons.cloud_off,
+      onRetry: onRetry,
+    );
+  }
+
+  /// خطأ تحميل
+  factory ErrorWidget.loading({String? details, VoidCallback? onRetry}) {
+    return ErrorWidget(
+      message: details ?? 'فشل تحميل البيانات',
+      icon: Icons.sync_problem,
+      onRetry: onRetry,
+    );
+  }
+
+  /// خطأ عام
+  factory ErrorWidget.generic({String? message, VoidCallback? onRetry}) {
+    return ErrorWidget(
+      message: message ?? 'حدث خطأ غير متوقع',
+      icon: Icons.warning_amber,
+      onRetry: onRetry,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 64,
+              color: Colors.red.shade300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// رسالة خطأ بسيطة (inline)
+class ErrorMessage extends StatelessWidget {
+  /// رسالة الخطأ
+  final String message;
+  
+  /// حدث الإغلاق
+  final VoidCallback? onDismiss;
+
+  const ErrorMessage({
+    super.key,
+    required this.message,
+    this.onDismiss,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade400, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(color: Colors.red.shade700),
+            ),
+          ),
+          if (onDismiss != null)
+            IconButton(
+              icon: const Icon(Icons.close, size: 18),
+              onPressed: onDismiss,
+              color: Colors.red.shade400,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+        ],
+      ),
+    );
+  }
+}

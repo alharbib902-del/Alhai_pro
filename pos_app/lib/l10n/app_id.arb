@@ -1,18 +1,15 @@
 {
   "@@locale": "id",
   "@@last_modified": "2026-02-07",
-
   "appTitle": "Sistem POS",
   "login": "Masuk",
   "logout": "Keluar",
   "welcome": "Selamat Datang",
   "welcomeBack": "Selamat Datang Kembali",
-
   "phone": "Nomor Telepon",
   "phoneHint": "08xxxxxxxxxx",
   "phoneRequired": "Nomor telepon wajib diisi",
   "phoneInvalid": "Nomor telepon tidak valid",
-
   "otp": "Kode Verifikasi",
   "otpHint": "Masukkan kode verifikasi",
   "otpSent": "Kode verifikasi terkirim",
@@ -22,10 +19,11 @@
   "otpResendIn": "Kirim ulang dalam {seconds} detik",
   "@otpResendIn": {
     "placeholders": {
-      "seconds": {"type": "int"}
+      "seconds": {
+        "type": "int"
+      }
     }
   },
-
   "pin": "Kode PIN",
   "pinHint": "Masukkan kode PIN",
   "pinRequired": "Kode PIN wajib diisi",
@@ -33,16 +31,19 @@
   "pinAttemptsRemaining": "Sisa percobaan: {count}",
   "@pinAttemptsRemaining": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "pinLocked": "Akun terkunci. Coba lagi setelah {minutes} menit",
   "@pinLocked": {
     "placeholders": {
-      "minutes": {"type": "int"}
+      "minutes": {
+        "type": "int"
+      }
     }
   },
-
   "home": "Beranda",
   "dashboard": "Dasbor",
   "pos": "Titik Penjualan",
@@ -54,21 +55,18 @@
   "invoices": "Faktur",
   "reports": "Laporan",
   "settings": "Pengaturan",
-
   "sales": "Penjualan",
   "salesAnalytics": "Analisis Penjualan",
   "refund": "Pengembalian",
   "todaySales": "Penjualan Hari Ini",
   "totalSales": "Total Penjualan",
   "averageSale": "Rata-rata Penjualan",
-
   "cart": "Keranjang",
   "cartEmpty": "Keranjang kosong",
   "addToCart": "Tambah ke Keranjang",
   "removeFromCart": "Hapus dari Keranjang",
   "clearCart": "Kosongkan Keranjang",
   "checkout": "Checkout",
-
   "payment": "Pembayaran",
   "paymentMethod": "Metode Pembayaran",
   "cash": "Tunai",
@@ -77,7 +75,6 @@
   "transfer": "Transfer",
   "paymentSuccess": "Pembayaran berhasil",
   "paymentFailed": "Pembayaran gagal",
-
   "price": "Harga",
   "quantity": "Jumlah",
   "total": "Total",
@@ -86,7 +83,6 @@
   "tax": "Pajak",
   "vat": "PPN",
   "grandTotal": "Total Keseluruhan",
-
   "product": "Produk",
   "productName": "Nama Produk",
   "productCode": "Kode Produk",
@@ -96,19 +92,16 @@
   "lowStock": "Stok Rendah",
   "outOfStock": "Stok Habis",
   "inStock": "Tersedia",
-
   "customer": "Pelanggan",
   "customerName": "Nama Pelanggan",
   "customerPhone": "Telepon Pelanggan",
   "debt": "Hutang",
   "balance": "Saldo",
-
   "search": "Cari",
   "searchHint": "Cari di sini...",
   "filter": "Filter",
   "sort": "Urutkan",
   "all": "Semua",
-
   "add": "Tambah",
   "edit": "Edit",
   "delete": "Hapus",
@@ -121,7 +114,6 @@
   "done": "Selesai",
   "submit": "Kirim",
   "retry": "Coba Lagi",
-
   "loading": "Memuat...",
   "noData": "Tidak ada data",
   "noResults": "Tidak ada hasil",
@@ -132,35 +124,28 @@
   "noInternet": "Tidak ada koneksi internet",
   "offline": "Offline",
   "online": "Online",
-
   "success": "Berhasil",
   "warning": "Peringatan",
   "info": "Info",
-
   "yes": "Ya",
   "no": "Tidak",
-
   "today": "Hari Ini",
   "yesterday": "Kemarin",
   "thisWeek": "Minggu Ini",
   "thisMonth": "Bulan Ini",
-
   "shift": "Shift",
   "openShift": "Buka Shift",
   "closeShift": "Tutup Shift",
   "shiftSummary": "Ringkasan Shift",
   "cashDrawer": "Laci Uang",
-
   "receipt": "Struk",
   "printReceipt": "Cetak Struk",
   "shareReceipt": "Bagikan Struk",
-
   "sync": "Sinkronisasi",
   "syncing": "Menyinkronkan...",
   "syncComplete": "Sinkronisasi selesai",
   "syncFailed": "Sinkronisasi gagal",
   "lastSync": "Sinkronisasi terakhir",
-
   "language": "Bahasa",
   "arabic": "العربية",
   "english": "English",
@@ -169,42 +154,40 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "Tema",
   "darkMode": "Mode Gelap",
   "lightMode": "Mode Terang",
   "systemMode": "Mode Sistem",
-
   "notifications": "Notifikasi",
   "security": "Keamanan",
   "printer": "Printer",
   "backup": "Cadangan",
   "help": "Bantuan",
   "about": "Tentang",
-
   "version": "Versi",
   "copyright": "Hak cipta dilindungi",
-
   "deleteConfirmTitle": "Konfirmasi Hapus",
   "deleteConfirmMessage": "Apakah Anda yakin ingin menghapus?",
   "logoutConfirmTitle": "Konfirmasi Keluar",
   "logoutConfirmMessage": "Apakah Anda yakin ingin keluar?",
-
   "requiredField": "Bidang ini wajib diisi",
   "invalidFormat": "Format tidak valid",
   "minLength": "Minimal {min} karakter",
   "@minLength": {
     "placeholders": {
-      "min": {"type": "int"}
+      "min": {
+        "type": "int"
+      }
     }
   },
   "maxLength": "Maksimal {max} karakter",
   "@maxLength": {
     "placeholders": {
-      "max": {"type": "int"}
+      "max": {
+        "type": "int"
+      }
     }
   },
-
   "welcomeTitle": "Selamat Datang Kembali! 👋",
   "welcomeSubtitle": "Masuk untuk mengelola toko Anda dengan mudah dan cepat",
   "welcomeSubtitleShort": "Masuk untuk mengelola toko Anda",
@@ -219,19 +202,25 @@
   "waitMinutes": "Batas percobaan tercapai. Tunggu {minutes} menit",
   "@waitMinutes": {
     "placeholders": {
-      "minutes": {"type": "int"}
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "waitSeconds": "Harap tunggu {seconds} detik",
   "@waitSeconds": {
     "placeholders": {
-      "seconds": {"type": "int"}
+      "seconds": {
+        "type": "int"
+      }
     }
   },
   "resendIn": "Kirim ulang ({time})",
   "@resendIn": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "resendCode": "Kirim ulang kode",
@@ -240,7 +229,9 @@
   "remainingAttempts": "Sisa percobaan: {count}",
   "@remainingAttempts": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "technicalSupport": "Dukungan Teknis",
@@ -249,32 +240,32 @@
   "allRightsReserved": "© 2026 Al-Hal System. Hak cipta dilindungi.",
   "dayMode": "Mode Siang",
   "nightMode": "Mode Malam",
-
   "selectBranch": "Pilih Cabang",
   "selectBranchDesc": "Pilih cabang yang ingin Anda kelola",
   "availableBranches": "Cabang Tersedia",
   "branchCount": "{count} cabang",
   "@branchCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "branchSelected": "Dipilih {name}",
   "@branchSelected": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "addBranch": "Tambah Cabang Baru",
   "comingSoon": "Fitur ini segera hadir",
   "tryDifferentSearch": "Coba kata pencarian lain",
-
   "selectLanguage": "Pilih Bahasa",
   "languageChangeInfo": "Pilih bahasa tampilan pilihan Anda. Perubahan akan diterapkan segera.",
-
   "centralManagement": "Manajemen Terpusat",
   "centralManagementDesc": "Kontrol semua cabang dan gudang Anda dari satu tempat. Dapatkan laporan instan dan sinkronisasi inventaris di semua titik POS.",
-  
   "selectBranchToContinue": "Pilih Cabang untuk Melanjutkan",
   "youHaveAccessToBranches": "Anda memiliki akses ke cabang-cabang berikut. Pilih salah satu untuk memulai.",
   "searchForBranch": "Cari cabang...",
@@ -282,16 +273,15 @@
   "closedOpensAt": "Tutup (Buka {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "Masuk sebagai",
   "support247": "Dukungan 24/7",
   "analyticsTools": "Alat Analitik",
   "uptime": "Uptime",
-  "technicalSupport": "Dukungan Teknis",
-  "privacyPolicy": "Kebijakan Privasi",
-
   "dashboardTitle": "Dasbor",
   "searchPlaceholder": "Pencarian umum...",
   "mainBranch": "Cabang Utama (Riyadh)",
@@ -313,11 +303,16 @@
   "closeDay": "Tutup Hari",
   "topSelling": "Terlaris",
   "ordersToday": "{count} pesanan hari ini",
-  "@ordersToday": {"placeholders": {"count": {"type": "int"}}},
+  "@ordersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "recentTransactions": "Transaksi Terbaru",
   "viewAll": "Lihat Semua",
   "orderNumber": "Pesanan #",
-  "customer": "Pelanggan",
   "time": "Waktu",
   "status": "Status",
   "amount": "Jumlah",
@@ -328,12 +323,17 @@
   "cancelled": "Dibatalkan",
   "guestCustomer": "Pelanggan Tamu",
   "minutesAgo": "{count} menit yang lalu",
-  "@minutesAgo": {"placeholders": {"count": {"type": "int"}}},
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "posSystem": "Sistem Point of Sale",
   "branchManager": "Manajer Cabang",
   "settingsSection": "Pengaturan",
   "systemSettings": "Pengaturan Sistem",
-  "notifications": "Notifikasi",
   "sar": "SAR",
   "daily": "Harian",
   "goodMorning": "Selamat Pagi",
@@ -349,13 +349,716 @@
   "goodMorningName": "Selamat Pagi, {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "Selamat Malam, {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "Keranjang Belanja",
+  "selectOrSearchCustomer": "Pilih atau cari pelanggan",
+  "newCustomer": "Baru",
+  "draft": "Draf",
+  "pay": "Bayar",
+  "haveCoupon": "Punya kupon diskon?",
+  "discountPercent": "Diskon {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "Buka Laci",
+  "suspend": "Tunda",
+  "quantitySoldOut": "Stok Habis",
+  "noProducts": "Tidak ada produk",
+  "addProductsToStart": "Tambahkan produk untuk memulai",
+  "undoComingSoon": "Batalkan (segera hadir)",
+  "employees": "Karyawan",
+  "loyaltyProgram": "Program Loyalitas",
+  "newBadge": "Baru",
+  "technicalSupportShort": "Dukungan Teknis",
+  "productDetails": "Detail Produk",
+  "stockMovements": "Pergerakan Stok",
+  "priceHistory": "Riwayat Harga",
+  "salesHistory": "Riwayat Penjualan",
+  "available": "Tersedia",
+  "alertLevel": "Level Peringatan",
+  "reorderPoint": "Titik Pesan Ulang",
+  "revenue": "Pendapatan",
+  "supplier": "Pemasok",
+  "lastSale": "Penjualan Terakhir",
+  "printLabel": "Cetak Label",
+  "copied": "Disalin",
+  "copiedToClipboard": "{label} disalin",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "Aktif",
+  "inactive": "Nonaktif",
+  "profitMargin": "Margin Keuntungan",
+  "sellingPrice": "Harga Jual",
+  "costPrice": "Harga Pokok",
+  "description": "Deskripsi",
+  "noDescription": "Tidak ada deskripsi",
+  "productNotFound": "Produk tidak ditemukan",
+  "stockStatus": "Status Stok",
+  "currentStock": "Stok Saat Ini",
+  "unit": "unit",
+  "units": "unit",
+  "date": "Tanggal",
+  "type": "Jenis",
+  "reference": "Referensi",
+  "newBalance": "Saldo Baru",
+  "oldPrice": "Harga Lama",
+  "newPrice": "Harga Baru",
+  "reason": "Alasan",
+  "invoiceNumber": "No. Faktur",
+  "categoryLabel": "Kategori",
+  "uncategorized": "Tanpa Kategori",
+  "noSupplier": "Tidak ada pemasok",
+  "moreOptions": "Opsi Lainnya",
+  "noStockMovements": "Tidak ada pergerakan stok",
+  "noPriceHistory": "Tidak ada riwayat harga",
+  "noSalesHistory": "Tidak ada riwayat penjualan",
+  "sale": "Penjualan",
+  "purchase": "Pembelian",
+  "adjustment": "Penyesuaian",
+  "returnText": "Pengembalian",
+  "waste": "Pemborosan",
+  "initialStock": "Stok Awal",
+  "searchByNameOrBarcode": "Cari berdasarkan nama atau barcode...",
+  "hideFilters": "Sembunyikan Filter",
+  "showFilters": "Tampilkan Filter",
+  "sortByName": "Nama",
+  "sortByPrice": "Harga",
+  "sortByStock": "Stok",
+  "sortByRecent": "Terbaru",
+  "allItems": "Semua",
+  "clearFilters": "Hapus Filter",
+  "noBarcode": "Tanpa barcode",
+  "stockCount": "Stok: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "Simpan Perubahan",
+  "addTheProduct": "Tambah Produk",
+  "editProduct": "Edit Produk",
+  "newProduct": "Produk Baru",
+  "minimumQuantity": "Jumlah Minimum",
+  "selectCategory": "Pilih Kategori",
+  "productImage": "Gambar Produk",
+  "trackInventory": "Lacak Inventaris",
+  "productSavedSuccess": "Produk berhasil disimpan",
+  "productAddedSuccess": "Produk berhasil ditambahkan",
+  "scanBarcode": "Pindai Barcode",
+  "activeProduct": "Produk Aktif",
+  "currency": "SAR",
+  "hoursAgo": "{count} jam yang lalu",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} hari yang lalu",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "Pembaruan harga pemasok",
+  "costIncrease": "Kenaikan biaya",
+  "duplicateProduct": "Duplikat Produk",
+  "categoriesManagement": "Manajemen Kategori",
+  "categoriesCount": "{count} kategori",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "Tambah Kategori",
+  "editCategory": "Edit Kategori",
+  "deleteCategory": "Hapus Kategori",
+  "categoryName": "Nama Kategori",
+  "categoryNameAr": "Nama (Arab)",
+  "categoryNameEn": "Nama (Inggris)",
+  "parentCategory": "Kategori Induk",
+  "noParentCategory": "Tanpa kategori induk (Utama)",
+  "sortOrder": "Urutan",
+  "categoryColor": "Warna",
+  "categoryIcon": "Ikon",
+  "categoryDetails": "Detail Kategori",
+  "categoryCreatedAt": "Tanggal Dibuat",
+  "categoryProducts": "Produk Kategori",
+  "noCategorySelected": "Pilih kategori untuk melihat detailnya",
+  "deleteCategoryConfirm": "Apakah Anda yakin ingin menghapus kategori ini?",
+  "categoryDeletedSuccess": "Kategori berhasil dihapus",
+  "categorySavedSuccess": "Kategori berhasil disimpan",
+  "searchCategories": "Cari kategori...",
+  "reorderCategories": "Atur ulang",
+  "noCategories": "Tidak ada kategori ditemukan",
+  "subcategories": "Sub-kategori",
+  "activeStatus": "Aktif",
+  "inactiveStatus": "Tidak Aktif",
+  "invoicesTitle": "Faktur",
+  "totalInvoices": "Total Faktur",
+  "totalPaid": "Total Dibayar",
+  "totalPending": "Total Tertunda",
+  "totalOverdue": "Total Terlambat",
+  "comparedToLastMonth": "Dibandingkan bulan lalu",
+  "ofTotalDue": "{percent}% dari total jatuh tempo",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} faktur menunggu pembayaran",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "Kirim Pengingat Sekarang",
+  "revenueAnalysis": "Analisis Pendapatan",
+  "last7Days": "7 Hari Terakhir",
+  "thisMonthPeriod": "Bulan Ini",
+  "thisYearPeriod": "Tahun Ini",
+  "paymentMethods": "Metode Pembayaran",
+  "cashPayment": "Tunai",
+  "cardPayment": "Kartu",
+  "walletPayment": "Dompet",
+  "saveCurrentFilter": "Simpan Filter Saat Ini",
+  "statusAll": "Status: Semua",
+  "statusPaid": "Dibayar",
+  "statusPending": "Tertunda",
+  "statusOverdue": "Terlambat",
+  "statusCancelled": "Dibatalkan",
+  "resetFilters": "Reset",
+  "createInvoice": "Buat Faktur",
+  "invoiceNumberCol": "No. Faktur",
+  "customerNameCol": "Nama Pelanggan",
+  "dateCol": "Tanggal",
+  "amountCol": "Jumlah",
+  "statusCol": "Status",
+  "paymentCol": "Pembayaran",
+  "actionsCol": "Aksi",
+  "viewInvoice": "Lihat",
+  "printInvoice": "Cetak",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "WhatsApp",
+  "deleteInvoice": "Hapus",
+  "reminder": "Pengingat",
+  "exportAll": "Ekspor Semua",
+  "printReport": "Cetak Laporan",
+  "more": "Lainnya",
+  "showingResults": "Menampilkan {from} hingga {to} dari {total} hasil",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "Faktur Baru",
+  "selectCustomer": "Pilih Pelanggan",
+  "cashCustomerGeneral": "Pelanggan Tunai (Umum)",
+  "addNewCustomer": "+ Tambah Pelanggan Baru",
+  "productsSection": "Produk",
+  "addProductToInvoice": "+ Tambah Produk",
+  "productCol": "Produk",
+  "quantityCol": "Qty",
+  "priceCol": "Harga",
+  "dueDate": "Tanggal Jatuh Tempo",
+  "invoiceTotal": "Total:",
+  "saveInvoice": "Simpan Faktur",
+  "deleteConfirm": "Apakah Anda yakin?",
+  "deleteInvoiceMsg": "Apakah Anda benar-benar ingin menghapus faktur ini? Tindakan ini tidak dapat dibatalkan.",
+  "yesDelete": "Ya, Hapus",
+  "copiedSuccess": "Berhasil disalin",
+  "invoiceDeleted": "Faktur berhasil dihapus",
+  "sat": "Sab",
+  "sun": "Min",
+  "mon": "Sen",
+  "tue": "Sel",
+  "wed": "Rab",
+  "thu": "Kam",
+  "fri": "Jum",
+  "selected": "{count} dipilih",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "Cetak",
+  "bulkExportPdf": "Ekspor PDF",
+  "allRightsReservedFooter": "© 2026 Alhai POS. Hak cipta dilindungi.",
+  "privacyPolicyFooter": "Kebijakan Privasi",
+  "termsFooter": "Syarat & Ketentuan",
+  "supportFooter": "Dukungan Teknis",
+  "paid": "Dibayar",
+  "overdue": "Terlambat",
+  "creditCard": "Kartu Kredit",
+  "electronicWallet": "E-Wallet",
+  "searchInvoiceHint": "Cari berdasarkan nomor faktur, pelanggan...",
+  "customerDetails": "Detail Pelanggan",
+  "customerProfileAndTransactions": "Ikhtisar profil dan transaksi",
+  "customerDetailTitle": "Detail Pelanggan",
+  "totalPurchases": "Total Pembelian",
+  "loyaltyPoints": "Poin Loyalitas",
+  "lastVisit": "Kunjungan Terakhir",
+  "newSaleAction": "Penjualan Baru",
+  "editInfo": "Edit Info",
+  "whatsapp": "WhatsApp",
+  "blockCustomer": "Blokir Pelanggan",
+  "purchasesTab": "Pembelian",
+  "accountTab": "Akun",
+  "debtsTab": "Hutang",
+  "analyticsTab": "Analitik",
+  "recentOrdersLog": "Log Pesanan Terbaru",
+  "exportCsv": "Ekspor CSV",
+  "searchByInvoiceNumber": "Cari berdasarkan nomor faktur...",
+  "items": "Item",
+  "viewDetails": "Lihat Detail",
+  "financialLedger": "Buku Besar Keuangan",
+  "cashPaymentEntry": "Pembayaran Tunai",
+  "walletTopup": "Isi Ulang Dompet",
+  "loyaltyPointsDeduction": "Potongan Poin Loyalitas",
+  "redeemPoints": "Tukar {count} poin",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "Lihat Selengkapnya",
+  "currentBalance": "Saldo Saat Ini",
+  "creditLimit": "Batas Kredit",
+  "used": "Digunakan",
+  "topUpBalance": "Isi Ulang Saldo",
+  "overdueDebt": "Terlambat",
+  "upcomingDebt": "Akan Datang",
+  "payNow": "Bayar Sekarang",
+  "remind": "Ingatkan",
+  "monthlySpending": "Pengeluaran Bulanan",
+  "purchaseDistribution": "Distribusi Pembelian berdasarkan Kategori",
+  "last6Months": "6 Bulan Terakhir",
+  "thisYear": "Tahun Ini",
+  "averageOrder": "Rata-rata Pesanan",
+  "purchaseFrequency": "Frekuensi Pembelian",
+  "everyNDays": "Setiap {count} hari",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "Pertumbuhan Pengeluaran",
+  "favoriteProduct": "Produk Favorit",
+  "internalNotes": "Catatan Internal (hanya terlihat oleh staf)",
+  "addNote": "Tambah",
+  "addNewNote": "Tambahkan catatan baru...",
+  "joinedDate": "Bergabung: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "Terakhir diperbarui: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "Menampilkan {from}-{to} dari {total} pesanan",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "Sayuran",
+  "dairy": "Susu",
+  "meat": "Daging",
+  "bakery": "Roti",
+  "other": "Lainnya",
+  "returns": "Pengembalian",
+  "salesReturns": "Retur Penjualan",
+  "purchaseReturns": "Retur Pembelian",
+  "totalReturns": "Total Pengembalian",
+  "totalRefundedAmount": "Total Jumlah Dikembalikan",
+  "mostReturned": "Paling Sering Dikembalikan",
+  "processed": "Dikembalikan",
+  "newReturn": "Retur Baru",
+  "createNewReturn": "Buat Retur Baru",
+  "processReturnRequest": "Proses permintaan retur penjualan",
+  "returnNumber": "Nomor Retur",
+  "originalInvoice": "Invoice Asli",
+  "returnReason": "Alasan Pengembalian",
+  "returnAmount": "Jumlah Pengembalian",
+  "returnStatus": "Status",
+  "returnDate": "Tanggal",
+  "returnActions": "Aksi",
+  "returnRefunded": "Dikembalikan",
+  "returnRejected": "Ditolak",
+  "defectiveProduct": "Produk Rusak",
+  "wrongProduct": "Produk Salah",
+  "customerRequest": "Permintaan Pelanggan",
+  "otherReason": "Lainnya",
+  "quickSearch": "Pencarian cepat...",
+  "exportData": "Ekspor",
+  "printData": "Cetak",
+  "approve": "Setujui",
+  "reject": "Tolak",
+  "previous": "Sebelumnya",
+  "invoiceStep": "Invoice",
+  "itemsStep": "Item",
+  "reasonStep": "Alasan",
+  "confirmStep": "Konfirmasi",
+  "enterInvoiceNumber": "Nomor Invoice",
+  "invoiceExample": "Contoh: #INV-889",
+  "loadInvoice": "Muat",
+  "invoiceLoaded": "Invoice #{number} berhasil dimuat",
+  "invoiceLoadedCustomer": "Pelanggan: {customer} | Tanggal: {date}",
+  "selectItemsInfo": "Pilih item yang akan dikembalikan. Tidak bisa mengembalikan lebih dari yang dijual.",
+  "availableToReturn": "Tersedia: {count}",
+  "alreadyReturnedFully": "Jumlah penuh sudah dikembalikan",
+  "returnReasonLabel": "Alasan Pengembalian (untuk item terpilih)",
+  "additionalDetails": "Detail tambahan (diperlukan untuk Lainnya)...",
+  "confirmReturn": "Konfirmasi Pengembalian",
+  "refundAmount": "Jumlah Refund",
+  "refundMethod": "Metode Refund",
+  "cashRefund": "Tunai",
+  "storeCredit": "Kredit Toko",
+  "returnCreatedSuccess": "Retur berhasil dibuat",
+  "noReturns": "Tidak Ada Pengembalian",
+  "noReturnsDesc": "Belum ada operasi pengembalian yang tercatat.",
+  "timesReturned": "{count} kali ({percent}% dari total)",
+  "fromInvoice": "Dari invoice",
+  "dateFromTo": "Tanggal dari - sampai",
+  "returnCopied": "Nomor berhasil disalin",
+  "ofTotalProcessed": "{percent}% diproses",
+  "invoiceDetails": "Detail Faktur",
+  "invoiceNumberLabel": "Nomor:",
+  "additionalOptions": "Opsi Tambahan",
+  "duplicateInvoice": "Buat Duplikat",
+  "returnMerchandise": "Pengembalian Barang",
+  "voidInvoice": "Void Faktur",
+  "printBtn": "Cetak",
+  "downloadBtn": "Unduh",
+  "paidSuccessfully": "Pembayaran Berhasil",
+  "amountReceivedFull": "Jumlah penuh diterima",
+  "completedStatus": "Selesai",
+  "pendingStatus": "Tertunda",
+  "voidedStatus": "Dibatalkan",
+  "storeName": "Supermarket Lingkungan",
+  "storeAddress": "Riyadh, Distrik Al-Malaz",
+  "simplifiedTaxInvoice": "Faktur Pajak Sederhana",
+  "dateAndTime": "Tanggal & Waktu",
+  "cashierLabel": "Kasir",
+  "itemCol": "Item",
+  "quantityColDetail": "Qty",
+  "priceColDetail": "Harga",
+  "totalCol": "Total",
+  "subtotalLabel": "Subtotal",
+  "discountVip": "Diskon (Anggota VIP)",
+  "vatLabel": "PPN (15%)",
+  "grandTotalLabel": "Total Keseluruhan",
+  "paymentMethodLabel": "Metode Pembayaran",
+  "amountPaidLabel": "Jumlah Dibayar",
+  "zatcaElectronic": "ZATCA - Faktur Elektronik",
+  "scanToVerify": "Scan untuk verifikasi",
+  "includesVat15": "Termasuk PPN 15%",
+  "thankYouVisit": "Terima kasih atas kunjungan Anda!",
+  "wishNiceDay": "Semoga hari Anda menyenangkan",
+  "customerInfo": "Informasi Pelanggan",
+  "editBtn": "Edit",
+  "vipSince": "Pelanggan VIP sejak {year}",
+  "activeStatusLabel": "Aktif",
+  "callBtn": "Telepon",
+  "recordBtn": "Rekam",
+  "quickActions": "Aksi Cepat",
+  "sendWhatsappAction": "Kirim WhatsApp",
+  "sendEmailAction": "Kirim Email",
+  "downloadPdfAction": "Unduh PDF",
+  "shareLinkAction": "Bagikan Link",
+  "eventLog": "Log Kejadian",
+  "paymentCompleted": "Pembayaran Selesai",
+  "processedViaGateway": "Diproses melalui payment gateway",
+  "minutesAgoDetail": "{count} menit lalu",
+  "invoiceCreated": "Faktur Dibuat",
+  "byUser": "Oleh {name}",
+  "todayAt": "Hari ini, {time}",
+  "orderStarted": "Pesanan Dimulai",
+  "cashierSessionOpened": "Sesi kasir dibuka",
+  "technicalData": "Data Teknis",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "Void Faktur?",
+  "voidInvoiceMsg": "Faktur ini akan dibatalkan secara permanen. Apakah Anda yakin?",
+  "voidReasonLabel": "Alasan Void (Wajib)",
+  "voidReasonEntry": "Kesalahan Entri",
+  "voidReasonCustomer": "Permintaan Pelanggan",
+  "voidReasonDamaged": "Produk Rusak",
+  "voidReasonOther": "Alasan Lain...",
+  "confirmVoid": "Konfirmasi Void",
+  "invoiceVoided": "Faktur berhasil di-void",
+  "copiedText": "Disalin: {text}",
+  "visaEnding": "Visa berakhir {digits}",
+  "mobileActionPrint": "Cetak",
+  "mobileActionWhatsapp": "WhatsApp",
+  "mobileActionEmail": "Email",
+  "mobileActionMore": "Lainnya",
+  "sarCurrency": "SAR",
+  "skuLabel": "SKU: {code}",
+  "helpText": "Bantuan",
+  "customerLedger": "Buku Besar Pelanggan",
+  "accountStatement": "Laporan Akun",
+  "allPeriods": "Semua",
+  "threeMonths": "3 Bulan",
+  "allMovements": "Semua Transaksi",
+  "adjustments": "Penyesuaian",
+  "statementCol": "Keterangan",
+  "referenceCol": "Referensi",
+  "debitCol": "Debit",
+  "creditCol": "Kredit",
+  "balanceCol": "Saldo",
+  "openingBalance": "Saldo Awal",
+  "totalDebit": "Total Debit",
+  "totalCredit": "Total Kredit",
+  "finalBalance": "Saldo Akhir",
+  "manualAdjustment": "Penyesuaian Manual",
+  "adjustmentType": "Jenis Penyesuaian",
+  "debitAdjustment": "Penyesuaian Debit",
+  "creditAdjustment": "Penyesuaian Kredit",
+  "adjustmentAmount": "Jumlah Penyesuaian",
+  "adjustmentReason": "Alasan Penyesuaian",
+  "adjustmentDate": "Tanggal Penyesuaian",
+  "saveAdjustment": "Simpan Penyesuaian",
+  "adjustmentSaved": "Penyesuaian berhasil disimpan",
+  "enterValidAmount": "Masukkan jumlah yang valid",
+  "dueOnCustomer": "Tagihan pelanggan",
+  "customerHasCredit": "Pelanggan memiliki saldo kredit",
+  "noTransactions": "Tidak ada transaksi",
+  "recordPaymentBtn": "Catat Pembayaran",
+  "returnEntry": "Pengembalian",
+  "adjustmentEntry": "Penyesuaian",
+  "ordersHistory": "Riwayat Pesanan",
+  "totalOrdersLabel": "Total Pesanan",
+  "completedOrders": "Selesai",
+  "pendingOrders": "Tertunda",
+  "cancelledOrders": "Dibatalkan",
+  "searchOrderHint": "Cari berdasarkan nomor pesanan, pelanggan, atau telepon...",
+  "channelLabel": "Saluran",
+  "last30Days": "30 hari terakhir",
+  "orderDetails": "Detail Pesanan",
+  "unpaidLabel": "Belum Dibayar",
+  "voidTransaction": "Batalkan Transaksi",
+  "voidSaleTransaction": "Batalkan Transaksi Penjualan",
+  "voidWarningTitle": "Peringatan Penting: Tindakan ini tidak dapat dibatalkan",
+  "voidWarningDesc": "Membatalkan transaksi ini akan membatalkan invoice sepenuhnya dan mengembalikan semua item ke inventaris.",
+  "voidWarningShort": "Tindakan ini akan membatalkan invoice sepenuhnya. Tidak dapat dibatalkan.",
+  "enterInvoiceToVoid": "Masukkan nomor invoice untuk dibatalkan",
+  "searchByInvoiceOrBarcode": "Cari dengan nomor invoice atau pemindai barcode",
+  "invoiceExampleVoid": "Contoh: #INV-2024-8892",
+  "activateBarcode": "Aktifkan pemindai barcode",
+  "scanBarcodeMobile": "Pindai barcode",
+  "searchForInvoiceToVoid": "Cari invoice untuk dibatalkan",
+  "enterNumberOrScan": "Masukkan nomor atau gunakan pemindai barcode.",
+  "salesInvoice": "Invoice Penjualan",
+  "invoiceCompleted": "Selesai",
+  "paidCash": "Dibayar: Tunai",
+  "customerLabel": "Pelanggan",
+  "dateAndTimeLabel": "Tanggal dan Waktu",
+  "voidImpactSummary": "Ringkasan Dampak Pembatalan",
+  "voidImpactItemsReturn": "{count} item akan dikembalikan ke inventaris secara otomatis.",
+  "voidImpactRefund": "Jumlah {amount} {currency} akan dipotong/dikembalikan.",
+  "returnedItems": "Item Dikembalikan ({count})",
+  "viewAllItems": "Lihat Semua",
+  "moreItemsHint": "+ {count} item lagi (total: {amount} {currency})",
+  "voidReason": "Alasan Pembatalan",
+  "voidReasonRequired": "Alasan Pembatalan *",
+  "customerRequestReason": "Permintaan pelanggan",
+  "wrongItemsReason": "Item salah",
+  "duplicateInvoiceReason": "Invoice duplikat",
+  "systemErrorReason": "Kesalahan sistem",
+  "otherReasonVoid": "Lainnya",
+  "additionalNotesVoid": "Catatan tambahan...",
+  "additionalDetailsRequired": "Detail tambahan (diperlukan untuk Lainnya)...",
+  "managerApproval": "Persetujuan Manajer",
+  "managerApprovalRequired": "Persetujuan Manajer Diperlukan",
+  "amountExceedsLimit": "Jumlah melebihi batas ({amount} {currency}), masukkan PIN manajer.",
+  "enterPinCode": "Masukkan kode PIN",
+  "pinSentToManager": "Kode sementara dikirim ke ponsel manajer",
+  "defaultManagerPin": "Kode manajer default: 1234",
+  "confirmVoidAction": "Saya mengkonfirmasi pembatalan transaksi ini",
+  "confirmVoidDesc": "Saya telah meninjau detail dan bertanggung jawab penuh.",
+  "cancelAction": "Batal",
+  "confirmFinalVoid": "Konfirmasi Pembatalan Final",
+  "invoiceNotFound": "Invoice tidak ditemukan",
+  "invoiceNotFoundDesc": "Verifikasi nomor yang dimasukkan atau coba gunakan barcode.",
+  "trySearchAgain": "Coba cari lagi",
+  "voidSuccess": "Transaksi berhasil dibatalkan",
+  "qtyLabel": "Jumlah: {count}",
+  "manageCustomersAndAccounts": "Kelola pelanggan dan akun",
+  "totalCustomersCount": "Total Pelanggan",
+  "outstandingDebts": "Utang Tertunggak",
+  "customerCount": "{count} pelanggan",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "Kredit Pelanggan",
+  "filterByLabel": "Filter berdasarkan",
+  "debtors": "Berutang",
+  "creditorsLabel": "Berkredit",
+  "quickActionsLabel": "Tindakan Cepat",
+  "sendDebtReminder": "Kirim pengingat utang",
+  "exportAccountStatement": "Ekspor laporan akun",
+  "cancelSelectionCount": "Batalkan pilihan ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "Cari berdasarkan nama atau telepon... (Ctrl+F)",
+  "sortByBalance": "Saldo",
+  "refreshF5": "Segarkan (F5)",
+  "loadingCustomers": "Memuat pelanggan...",
+  "payDebt": "Bayar Utang",
+  "dueAmountLabel": "Jatuh tempo: {amount} SAR",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "Jumlah Pembayaran",
+  "fullAmount": "Penuh",
+  "payAction": "Bayar",
+  "paymentRecorded": "Pembayaran {amount} SAR tercatat",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "Pelanggan berhasil ditambahkan",
+  "customerNameRequired": "Nama Pelanggan *",
+  "owedLabel": "Berutang",
+  "hasBalanceLabel": "Kredit",
+  "zeroLabel": "Nol",
+  "addAction": "Tambah",
+  "expenses": "Pengeluaran",
+  "expenseCategories": "Kategori Pengeluaran",
+  "addExpense": "Tambah Pengeluaran",
+  "totalExpenses": "Total Pengeluaran",
+  "thisMonthExpenses": "Bulan Ini",
+  "noExpenses": "Tidak ada pengeluaran tercatat",
+  "shiftsTitle": "Shift",
+  "purchasesTitle": "Pembelian",
+  "suppliersTitle": "Pemasok",
+  "discountsTitle": "Diskon",
+  "couponsTitle": "Kupon",
+  "specialOffersTitle": "Penawaran Khusus",
+  "smartPromotionsTitle": "Promosi Cerdas",
+  "loyaltyTitle": "Program Loyalitas",
+  "notificationsTitle": "Notifikasi",
+  "printQueueTitle": "Antrean Cetak",
+  "syncStatusTitle": "Status Sinkronisasi",
+  "driversTitle": "Pengemudi",
+  "branchesTitle": "Cabang",
+  "profileTitle": "Profil",
+  "settingsTitle": "Pengaturan",
+  "storeSettings": "Pengaturan Toko",
+  "posSettings": "Pengaturan POS",
+  "printerSettings": "Pengaturan Printer",
+  "securitySettings": "Keamanan",
+  "usersManagement": "Manajemen Pengguna",
+  "rolesPermissions": "Peran & Izin",
+  "activityLog": "Log Aktivitas",
+  "backupSettings": "Backup & Pemulihan",
+  "zatcaCompliance": "Kepatuhan ZATCA",
+  "helpSupport": "Bantuan & Dukungan",
+  "liveChat": "Obrolan Langsung",
+  "emailSupport": "Dukungan Email",
+  "phoneSupport": "Dukungan Telepon",
+  "whatsappSupport": "Dukungan WhatsApp",
+  "userGuide": "Panduan Pengguna",
+  "videoTutorials": "Tutorial Video",
+  "changelog": "Log Perubahan",
+  "appInfo": "Info Aplikasi",
+  "buildNumber": "Nomor Build",
+  "notificationChannels": "Saluran Notifikasi",
+  "alertTypes": "Jenis Peringatan",
+  "salesAlerts": "Peringatan Penjualan",
+  "inventoryAlerts": "Peringatan Inventaris",
+  "securityAlerts": "Peringatan Keamanan",
+  "reportAlerts": "Peringatan Laporan",
+  "users": "Pengguna",
+  "zatcaRegistered": "Terdaftar di ZATCA",
+  "zatcaPhase2Active": "Fase 2 Aktif",
+  "registrationInfo": "Info Pendaftaran",
+  "businessName": "Nama Bisnis",
+  "branchCode": "Kode Cabang",
+  "qrCodeOnInvoice": "Kode QR di Faktur",
+  "certificates": "Sertifikat",
+  "csidCertificate": "Sertifikat CSID",
+  "valid": "Valid",
+  "privateKey": "Kunci Privat",
+  "configured": "Dikonfigurasi"
 }

@@ -1,0 +1,1131 @@
+{
+    "app_info": {
+        "name": "admin_pos",
+        "parent_project": "Alhai",
+        "version": "1.0.0",
+        "total_screens": 106,
+        "total_tasks": 130,
+        "tech_stack": "Flutter",
+        "platforms": [
+            "iOS",
+            "Android",
+            "Web",
+            "Windows",
+            "macOS"
+        ],
+        "architecture": "Multi-Tenant SaaS",
+        "duration_weeks": 24,
+        "total_hours": 720,
+        "prd_date": "2026-01-15",
+        "status": "Ready for Development"
+    },
+    "phases": [
+        {
+            "id": 0,
+            "name": "Foundation + Setup",
+            "duration": "Week 1-2",
+            "hours": 48,
+            "priority": "P0"
+        },
+        {
+            "id": 1,
+            "name": "Onboarding & Authentication",
+            "duration": "Week 2-3",
+            "hours": 32,
+            "priority": "P0",
+            "screens": 6
+        },
+        {
+            "id": 2,
+            "name": "Dashboard & Stores",
+            "duration": "Week 3-5",
+            "hours": 64,
+            "priority": "P0",
+            "screens": 14
+        },
+        {
+            "id": 3,
+            "name": "Staff Management",
+            "duration": "Week 5-6",
+            "hours": 48,
+            "priority": "P0",
+            "screens": 10
+        },
+        {
+            "id": 4,
+            "name": "Products & Inventory",
+            "duration": "Week 7-9",
+            "hours": 64,
+            "priority": "P0",
+            "screens": 14
+        },
+        {
+            "id": 5,
+            "name": "Customers",
+            "duration": "Week 9-10",
+            "hours": 40,
+            "priority": "P0",
+            "screens": 8
+        },
+        {
+            "id": 6,
+            "name": "Orders & Deliveries",
+            "duration": "Week 10-12",
+            "hours": 48,
+            "priority": "P0",
+            "screens": 9
+        },
+        {
+            "id": 7,
+            "name": "Financial & Reports",
+            "duration": "Week 12-14",
+            "hours": 64,
+            "priority": "P0",
+            "screens": 12
+        },
+        {
+            "id": 8,
+            "name": "KPI & AI Insights",
+            "duration": "Week 15-16",
+            "hours": 48,
+            "priority": "P1",
+            "screens": 7
+        },
+        {
+            "id": 9,
+            "name": "Settings",
+            "duration": "Week 17-18",
+            "hours": 40,
+            "priority": "P1",
+            "screens": 8
+        },
+        {
+            "id": 10,
+            "name": "Account & Subscription",
+            "duration": "Week 19-20",
+            "hours": 40,
+            "priority": "P0",
+            "screens": 6
+        },
+        {
+            "id": 11,
+            "name": "B2B Wholesale",
+            "duration": "Week 21-22",
+            "hours": 48,
+            "priority": "P2",
+            "screens": 12
+        },
+        {
+            "id": 12,
+            "name": "Testing & Polish",
+            "duration": "Week 23-24",
+            "hours": 48,
+            "priority": "P1"
+        }
+    ],
+    "tasks": [
+        {
+            "id": "SETUP-001",
+            "title": "Project setup + DI + Router",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-002",
+            "title": "Supabase + Multi-Tenant Models",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-003",
+            "title": "RLS Policies Implementation",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 12,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-004",
+            "title": "Shared packages integration",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 8,
+            "category": "Setup"
+        },
+        {
+            "id": "SETUP-005",
+            "title": "Responsive design system",
+            "phase": 0,
+            "priority": "P0",
+            "hours": 10,
+            "category": "Setup"
+        },
+        {
+            "id": "AUTH-001",
+            "title": "Splash Screen",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 2,
+            "route": "/splash",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-002",
+            "title": "Onboarding (Slides)",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 4,
+            "route": "/onboarding",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-003",
+            "title": "Login screen",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/login",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-004",
+            "title": "Sign Up + ID Upload",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/signup",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-005",
+            "title": "Pending Approval screen",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 3,
+            "route": "/pending-approval",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-006",
+            "title": "Forgot Password",
+            "phase": 1,
+            "priority": "P1",
+            "hours": 4,
+            "route": "/forgot-password",
+            "category": "Auth"
+        },
+        {
+            "id": "AUTH-007",
+            "title": "Auth state + session management",
+            "phase": 1,
+            "priority": "P0",
+            "hours": 4,
+            "category": "Auth"
+        },
+        {
+            "id": "DASH-001",
+            "title": "Main Dashboard (Multi-Store KPI)",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 16,
+            "route": "/dashboard",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-002",
+            "title": "Stores List",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/stores",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-003",
+            "title": "Create Store Wizard (4 steps)",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 14,
+            "route": "/stores/create",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-004",
+            "title": "Store Details",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/stores/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-005",
+            "title": "Store Settings",
+            "phase": 2,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/stores/:id/settings",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-006",
+            "title": "Store Analytics",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/stores/:id/analytics",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-007",
+            "title": "Store QR Code",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 3,
+            "route": "/stores/:id/qr",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-008",
+            "title": "Store Hours",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 4,
+            "route": "/stores/:id/hours",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-009",
+            "title": "Delivery Zones",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/stores/:id/zones",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-010",
+            "title": "Payment Methods",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/stores/:id/payment-methods",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-011",
+            "title": "Store Comparison",
+            "phase": 2,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/stores/compare",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-012",
+            "title": "Store Map View",
+            "phase": 2,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/stores/map",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-013",
+            "title": "Store Performance",
+            "phase": 2,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/stores/:id/performance",
+            "category": "Feature"
+        },
+        {
+            "id": "DASH-014",
+            "title": "Store Branding",
+            "phase": 2,
+            "priority": "P2",
+            "hours": 6,
+            "route": "/stores/:id/branding",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-001",
+            "title": "Staff List",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/staff",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-002",
+            "title": "Add Cashier",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/staff/add/cashier",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-003",
+            "title": "Add Driver",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/staff/add/driver",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-004",
+            "title": "Add Manager",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/staff/add/manager",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-005",
+            "title": "Staff Details",
+            "phase": 3,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/staff/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-006",
+            "title": "Permissions Editor",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/staff/:id/permissions",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-007",
+            "title": "Staff Transfer",
+            "phase": 3,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/staff/:id/transfer",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-008",
+            "title": "Attendance Tracker",
+            "phase": 3,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/staff/attendance",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-009",
+            "title": "Staff Performance",
+            "phase": 3,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/staff/:id/performance",
+            "category": "Feature"
+        },
+        {
+            "id": "STAFF-010",
+            "title": "Payroll Basic",
+            "phase": 3,
+            "priority": "P2",
+            "hours": 12,
+            "route": "/staff/payroll",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-001",
+            "title": "Products List (All Stores)",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/products",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-002",
+            "title": "Add Product",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/products/add",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-003",
+            "title": "Product Details",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/products/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-004",
+            "title": "Edit Product",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 4,
+            "route": "/products/:id/edit",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-005",
+            "title": "Categories Management",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/categories",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-006",
+            "title": "Warehouses List",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/warehouses",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-007",
+            "title": "Warehouse Details",
+            "phase": 4,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/warehouses/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-008",
+            "title": "Transfer Inventory",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 12,
+            "route": "/warehouses/transfer",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-009",
+            "title": "Transfer History",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/warehouses/transfers",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-010",
+            "title": "Stock Alerts",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/inventory/alerts",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-011",
+            "title": "Expiry Tracking",
+            "phase": 4,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/inventory/expiry",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-012",
+            "title": "Barcode Scanner",
+            "phase": 4,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/products/scan",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-013",
+            "title": "Bulk Import Products",
+            "phase": 4,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/products/import",
+            "category": "Feature"
+        },
+        {
+            "id": "PROD-014",
+            "title": "Inventory Audit",
+            "phase": 4,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/inventory/audit",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-001",
+            "title": "Customers List",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/customers",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-002",
+            "title": "Customer Details",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/customers/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-003",
+            "title": "Customer Accounts (Multi-Store)",
+            "phase": 5,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/customers/:id/accounts",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-004",
+            "title": "Customer Map View",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/customers/map",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-005",
+            "title": "Customer Segments",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/customers/segments",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-006",
+            "title": "Customer Loyalty",
+            "phase": 5,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/customers/:id/loyalty",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-007",
+            "title": "Shared Customers",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/customers/shared",
+            "category": "Feature"
+        },
+        {
+            "id": "CUST-008",
+            "title": "Customer Behavior Analytics",
+            "phase": 5,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/customers/analytics",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-001",
+            "title": "Orders List (All Stores)",
+            "phase": 6,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/orders",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-002",
+            "title": "Order Details",
+            "phase": 6,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/orders/:id",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-003",
+            "title": "Assign Driver",
+            "phase": 6,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/orders/:id/assign-driver",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-004",
+            "title": "Deliveries Map",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/deliveries/map",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-005",
+            "title": "Driver Tracking",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/deliveries/track/:orderId",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-006",
+            "title": "Order States Management",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/orders/states",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-007",
+            "title": "Returns Management",
+            "phase": 6,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/orders/returns",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-008",
+            "title": "Refunds",
+            "phase": 6,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/orders/refunds",
+            "category": "Feature"
+        },
+        {
+            "id": "ORD-009",
+            "title": "Delivery Zones Heatmap",
+            "phase": 6,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/deliveries/heatmap",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-001",
+            "title": "Financial Dashboard",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 14,
+            "route": "/financial",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-002",
+            "title": "Sales Report",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/reports/sales",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-003",
+            "title": "Debts Dashboard",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 12,
+            "route": "/financial/debts",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-004",
+            "title": "Debts Report (Detailed)",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/reports/debts",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-005",
+            "title": "Payments History",
+            "phase": 7,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/financial/payments",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-006",
+            "title": "VAT Report",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/reports/vat",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-007",
+            "title": "Profit/Loss Statement",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 10,
+            "route": "/reports/profit-loss",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-008",
+            "title": "Cashier Performance",
+            "phase": 7,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/reports/cashier",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-009",
+            "title": "Driver Commission",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/reports/driver-commission",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-010",
+            "title": "Income Trends",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/reports/income-trends",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-011",
+            "title": "Expense Tracking",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/financial/expenses",
+            "category": "Feature"
+        },
+        {
+            "id": "FIN-012",
+            "title": "Tax Summary",
+            "phase": 7,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/reports/tax-summary",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-001",
+            "title": "KPI Dashboard",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 14,
+            "route": "/kpi",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-002",
+            "title": "AI Insights",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 12,
+            "route": "/ai/insights",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-003",
+            "title": "Sales Trends",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/analytics/sales-trends",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-004",
+            "title": "Customer Behavior",
+            "phase": 8,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/analytics/customer-behavior",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-005",
+            "title": "Inventory Optimization",
+            "phase": 8,
+            "priority": "P2",
+            "hours": 10,
+            "route": "/ai/inventory-optimization",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-006",
+            "title": "Predictive Analytics",
+            "phase": 8,
+            "priority": "P2",
+            "hours": 12,
+            "route": "/ai/predictions",
+            "category": "Feature"
+        },
+        {
+            "id": "KPI-007",
+            "title": "Recommendations Engine",
+            "phase": 8,
+            "priority": "P2",
+            "hours": 12,
+            "route": "/ai/recommendations",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-001",
+            "title": "General Settings",
+            "phase": 9,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/settings",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-002",
+            "title": "Notification Settings",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 4,
+            "route": "/settings/notifications",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-003",
+            "title": "Payment Gateway",
+            "phase": 9,
+            "priority": "P1",
+            "hours": 8,
+            "route": "/settings/payment-gateway",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-004",
+            "title": "Backup & Restore",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/settings/backup",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-005",
+            "title": "API Keys",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 6,
+            "route": "/settings/api-keys",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-006",
+            "title": "Webhooks",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 6,
+            "route": "/settings/webhooks",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-007",
+            "title": "Integrations",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 8,
+            "route": "/settings/integrations",
+            "category": "Feature"
+        },
+        {
+            "id": "SET-008",
+            "title": "Security Settings",
+            "phase": 9,
+            "priority": "P2",
+            "hours": 6,
+            "route": "/settings/security",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-001",
+            "title": "My Profile",
+            "phase": 10,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/profile",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-002",
+            "title": "Subscription Plan",
+            "phase": 10,
+            "priority": "P0",
+            "hours": 8,
+            "route": "/subscription",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-003",
+            "title": "Billing History",
+            "phase": 10,
+            "priority": "P0",
+            "hours": 6,
+            "route": "/billing",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-004",
+            "title": "Upgrade Plan",
+            "phase": 10,
+            "priority": "P0",
+            "hours": 10,
+            "route": "/subscription/upgrade",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-005",
+            "title": "My Referrals",
+            "phase": 10,
+            "priority": "P1",
+            "hours": 6,
+            "route": "/referrals",
+            "category": "Feature"
+        },
+        {
+            "id": "ACC-006",
+            "title": "Referral Earnings",
+            "phase": 10,
+            "priority": "P2",
+            "hours": 4,
+            "route": "/referrals/earnings",
+            "category": "Feature"
+        },
+        {
+            "id": "TEST-001",
+            "title": "Unit tests",
+            "phase": 12,
+            "priority": "P1",
+            "hours": 12,
+            "category": "Test"
+        },
+        {
+            "id": "TEST-002",
+            "title": "Widget tests",
+            "phase": 12,
+            "priority": "P1",
+            "hours": 12,
+            "category": "Test"
+        },
+        {
+            "id": "TEST-003",
+            "title": "Integration tests",
+            "phase": 12,
+            "priority": "P1",
+            "hours": 10,
+            "category": "Test"
+        },
+        {
+            "id": "TEST-004",
+            "title": "Performance testing",
+            "phase": 12,
+            "priority": "P1",
+            "hours": 6,
+            "category": "Test"
+        },
+        {
+            "id": "POLISH-001",
+            "title": "Final polish and bug fixes",
+            "phase": 12,
+            "priority": "P1",
+            "hours": 8,
+            "category": "Polish"
+        }
+    ],
+    "statistics": {
+        "screens_by_priority": {
+            "P0": 40,
+            "P1": 30,
+            "P2": 24,
+            "B2B": 12
+        },
+        "screens_by_phase": {
+            "Phase 1 - Auth": 6,
+            "Phase 2 - Dashboard": 14,
+            "Phase 3 - Staff": 10,
+            "Phase 4 - Products": 14,
+            "Phase 5 - Customers": 8,
+            "Phase 6 - Orders": 9,
+            "Phase 7 - Financial": 12,
+            "Phase 8 - KPI": 7,
+            "Phase 9 - Settings": 8,
+            "Phase 10 - Account": 6,
+            "B2B": 12
+        }
+    },
+    "subscription_tiers": {
+        "Basic": {
+            "price": "99 SAR/month",
+            "max_stores": 1,
+            "max_staff": 3,
+            "max_products": 1000,
+            "ai_insights": false,
+            "transfers": false
+        },
+        "Pro": {
+            "price": "249 SAR/month",
+            "max_stores": 3,
+            "max_staff": 10,
+            "max_products": 5000,
+            "ai_insights": true,
+            "transfers": true
+        },
+        "Enterprise": {
+            "price": "Custom",
+            "max_stores": "Unlimited",
+            "max_staff": "Unlimited",
+            "max_products": "Unlimited",
+            "ai_insights": true,
+            "transfers": true,
+            "api_access": true
+        }
+    },
+    "user_roles": [
+        "Super Admin",
+        "Marketer",
+        "Owner",
+        "Store Manager",
+        "Cashier",
+        "Driver"
+    ],
+    "integration_points": {
+        "with_packages": [
+            "alhai_core",
+            "alhai_services",
+            "alhai_design_system"
+        ],
+        "with_apps": [
+            "customer_app (orders)",
+            "pos_app (stores, cashiers)",
+            "driver_app (deliveries)"
+        ]
+    },
+    "created_at": "2026-01-28T08:22:00Z"
+}

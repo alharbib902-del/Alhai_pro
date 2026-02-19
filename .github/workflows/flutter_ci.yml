@@ -1,0 +1,156 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ============================================================================
+  # ANALYZE & TEST
+  # ============================================================================
+  test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: |
+          cd pos_app
+          flutter pub get
+
+      - name: Analyze code
+        run: |
+          cd pos_app
+          flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: |
+          cd pos_app
+          flutter test --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: pos_app/coverage/lcov.info
+          fail_ci_if_error: false
+
+  # ============================================================================
+  # BUILD ANDROID
+  # ============================================================================
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: |
+          cd pos_app
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd pos_app
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: pos_app/build/app/outputs/flutter-apk/app-release.apk
+
+  # ============================================================================
+  # BUILD iOS
+  # ============================================================================
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: |
+          cd pos_app
+          flutter pub get
+
+      - name: Build iOS (no codesign)
+        run: |
+          cd pos_app
+          flutter build ios --release --no-codesign
+
+  # ============================================================================
+  # BUILD WEB
+  # ============================================================================
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: |
+          cd pos_app
+          flutter pub get
+
+      - name: Build Web
+        run: |
+          cd pos_app
+          flutter build web --release
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: pos_app/build/web

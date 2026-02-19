@@ -1,130 +1,196 @@
-# 🛒 POS App - Alhai Grocery Store
+# 🛒 نظام نقاط البيع المتكامل (POS App)
 
-**Version:** 1.0.0-dev  
-**Date:** 2026-01-20  
-**Platform:** Flutter (iOS/Android)
+> نظام إدارة المبيعات والمخزون للمتاجر الصغيرة والمتوسطة
 
----
-
-## 📋 Overview
-
-تطبيق نقاط البيع (POS) لمتاجر البقالة الذكية. يدعم:
-- البيع السريع (Online/Offline)
-- إدارة المخزون والمنتجات
-- إدارة العملاء والديون
-- تقارير المبيعات والضرائب (ZATCA)
-- الإيصالات الرقمية عبر WhatsApp
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.x-blue)](https://dart.dev)
+[![License](https://img.shields.io/badge/License-Proprietary-red)]()
 
 ---
 
-## 🏗️ Project Structure
+## 📋 المحتويات
 
+- [نظرة عامة](#نظرة-عامة)
+- [المميزات](#المميزات)
+- [المتطلبات](#المتطلبات)
+- [التثبيت](#التثبيت)
+- [الاستخدام](#الاستخدام)
+- [البنية](#البنية)
+- [API](#api)
+- [الدعم](#الدعم)
+
+---
+
+## 🎯 نظرة عامة
+
+نظام POS متكامل مبني بـ Flutter يوفر:
+- ✅ العمل بدون إنترنت (Offline-First)
+- ✅ مزامنة تلقائية مع السيرفر
+- ✅ إدارة المخزون الذكية
+- ✅ تقارير مفصلة
+- ✅ دعم ZATCA (الفوترة الإلكترونية)
+
+---
+
+## ✨ المميزات
+
+### نقطة البيع
+- 🛒 بيع سريع بالباركود أو البحث
+- 💳 دعم طرق دفع متعددة (نقد، بطاقة، آجل)
+- 🧾 طباعة فواتير حرارية
+- 🏷️ خصومات ونسب مئوية
+
+### المخزون
+- 📦 إدارة المنتجات والأصناف
+- 📊 تتبع الكميات والتنبيهات
+- 📅 تتبع تواريخ الصلاحية
+- 📥 إدارة المشتريات والموردين
+
+### العملاء والديون
+- 👥 إدارة العملاء والحسابات
+- 💰 تتبع الديون والدفعات
+- 📈 كشف حساب مفصل
+- 📱 تذكيرات WhatsApp
+
+### التقارير
+- 📊 تقرير المبيعات اليومي/الشهري
+- 📈 تقرير الأرباح
+- 📋 تقرير المخزون
+- 🧾 تقرير ضريبة القيمة المضافة
+
+### المميزات المتقدمة
+- 🤖 تحليل ذكي بالـ AI
+- 📍 إشعارات جغرافية (Geo-Fencing)
+- 🎁 برنامج الولاء
+- 🚗 إدارة السائقين والتوصيل
+
+---
+
+## ⚙️ المتطلبات
+
+```yaml
+Flutter SDK: >= 3.0.0
+Dart SDK: >= 3.0.0
+Android: minSdkVersion 21 (Android 5.0+)
+iOS: 12.0+
 ```
-pos_app/
-├── lib/
-│   ├── main.dart
-│   ├── app/
-│   ├── features/
-│   ├── core/
-│   └── shared/
-├── docs/
-│   ├── POS_SITEMAP.md      ← خريطة الشاشات
-│   ├── POS_BACKLOG.md      ← Backlog التطوير
-│   ├── POS_API_CONTRACT.md ← عقد الـ API
-│   └── POS_APP_SPEC.md     ← المواصفات التفصيلية
-└── test/
-```
+
+### Dependencies الرئيسية
+- `flutter_riverpod` - إدارة الحالة
+- `drift` - قاعدة البيانات المحلية
+- `go_router` - التنقل
+- `dio` - طلبات HTTP
+- `shared_preferences` - التخزين المحلي
 
 ---
 
-## 📊 Development Status
-
-| Sprint | Stories | Points | Status |
-|--------|---------|--------|--------|
-| Sprint A | 18 | 92 | 🔲 Not Started |
-| Sprint B | 16 | 85 | 🔲 Not Started |
-| **Total** | **34** | **177** | - |
-
----
-
-## 🚀 Quick Start
+## 🚀 التثبيت
 
 ```bash
-# Clone the repository
-git clone https://github.com/alhai/pos_app.git
+# 1. استنساخ المشروع
+git clone <repository-url>
+cd pos_app
 
-# Install dependencies
+# 2. تثبيت الحزم
 flutter pub get
 
-# Run code generation
-flutter pub run build_runner build
+# 3. توليد الكود (Drift)
+dart run build_runner build --delete-conflicting-outputs
 
-# Run the app
+# 4. تشغيل التطبيق
 flutter run
 ```
 
----
+### بناء APK
+```bash
+flutter build apk --release
+```
 
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [POS_SITEMAP.md](./POS_SITEMAP.md) | خريطة الشاشات والتنقل |
-| [POS_BACKLOG.md](./POS_BACKLOG.md) | User Stories + Acceptance Criteria |
-| [POS_API_CONTRACT.md](./POS_API_CONTRACT.md) | عقد الـ API |
-| [POS_APP_SPEC.md](./POS_APP_SPEC.md) | المواصفات التفصيلية |
-
----
-
-## 🔧 Tech Stack
-
-- **Framework:** Flutter 3.16+
-- **State Management:** Riverpod + ChangeNotifier
-- **Local DB:** SQLite (Drift)
-- **Network:** Dio
-- **Code Generation:** freezed, json_serializable
-- **Testing:** flutter_test, mockito
+### بناء للـ Play Store
+```bash
+flutter build appbundle
+```
 
 ---
 
-## 📱 Features (Sprint A)
+## 📱 الاستخدام
 
-- ✅ OTP Authentication
-- ✅ Store Selection
-- ✅ Quick Sale (Scan/Search)
-- ✅ Cart Management
-- ✅ Payment Processing (Cash)
-- ✅ Receipt Printing
-- ✅ WhatsApp Digital Receipts
-- ✅ Customer Lookup
-- ✅ Low Stock Alerts
-- ✅ Shift Management
-- ✅ Role-Based Access
+### تسجيل الدخول
+1. أدخل اسم المستخدم وكلمة المرور
+2. اختر الفرع (إن وجد)
+3. ابدأ العمل!
 
----
+### عملية بيع
+1. افتح شاشة نقطة البيع
+2. أضف المنتجات (باركود/بحث/لمس)
+3. اختر طريقة الدفع
+4. أتمم العملية وأطبع الفاتورة
 
-## 📱 Features (Sprint B)
-
-- ⏳ Offline Sales
-- ⏳ Background Sync
-- ⏳ Conflict Resolution
-- ⏳ Refunds & Returns
-- ⏳ Card Payments (Semi-integrated)
-- ⏳ Receipt Customization
-- ⏳ Scanner Audio/Haptic Feedback
+### إدارة المخزون
+1. أضف المنتجات من شاشة المنتجات
+2. أدخل الكميات عند الشراء
+3. راقب التنبيهات للمخزون المنخفض
 
 ---
 
-## 👥 Team
+## 🏗️ البنية
 
-| Role | Name |
-|------|------|
-| Owner | Basem Al-Harbi |
-| Developer A | TBD |
-| Developer B | TBD |
+```
+lib/
+├── core/              # الإعدادات والثوابت
+│   ├── config/
+│   ├── router/
+│   └── theme/
+├── data/              # البيانات
+│   ├── local/         # قاعدة البيانات
+│   └── remote/        # API
+├── providers/         # Riverpod Providers
+├── screens/           # الشاشات
+├── services/          # الخدمات
+└── widgets/           # المكونات المشتركة
+```
 
 ---
 
-## 📄 License
+## 🔗 API
 
-Proprietary - Alhai © 2026
+راجع ملف [POS_API_CONTRACT.md](./POS_API_CONTRACT.md) للتفاصيل.
+
+### Endpoints الرئيسية
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| POST | `/auth/login` | تسجيل الدخول |
+| GET | `/products` | قائمة المنتجات |
+| POST | `/sales` | إنشاء بيع |
+| GET | `/customers` | قائمة العملاء |
+| POST | `/sync` | مزامنة البيانات |
+
+---
+
+## 🗄️ قاعدة البيانات
+
+**Schema Version:** 4
+
+### الجداول الرئيسية
+- `products` - المنتجات
+- `categories` - الأصناف
+- `sales` - المبيعات
+- `sale_items` - عناصر البيع
+- `accounts` - الحسابات (عملاء/موردين)
+- `transactions` - المعاملات المالية
+- `inventory_movements` - حركات المخزون
+
+---
+
+## 📞 الدعم
+
+للدعم الفني:
+- 📧 Email: support@example.com
+- 📱 WhatsApp: +966xxxxxxxxx
+
+---
+
+## 📄 الترخيص
+
+جميع الحقوق محفوظة © 2026

@@ -16,14 +16,26 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
     String storeId, {
     int page = 1,
     int limit = 20,
+    String? categoryId,
+    String? searchQuery,
   }) async {
+    final queryParams = <String, dynamic>{
+      'store_id': storeId,
+      'page': page,
+      'limit': limit,
+    };
+
+    // إضافة الفلاتر إن وجدت
+    if (categoryId != null) {
+      queryParams['category_id'] = categoryId;
+    }
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      queryParams['search'] = searchQuery;
+    }
+
     final response = await _dio.get(
       '/products',
-      queryParameters: {
-        'store_id': storeId,
-        'page': page,
-        'limit': limit,
-      },
+      queryParameters: queryParams,
     );
     final list = response.data['data'] as List<dynamic>;
     return list

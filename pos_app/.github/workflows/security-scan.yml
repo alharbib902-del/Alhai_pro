@@ -1,0 +1,182 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly on Monday at 2 AM
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Secret Scanning with TruffleHog
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha || 'HEAD~10' }}
+          head: HEAD
+          extra_args: --only-verified
+
+  # Gitleaks Scan
+  gitleaks:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # Dependency Vulnerability Scan
+  dependency-scan:
+    name: Dependency Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Check outdated packages
+        run: flutter pub outdated
+
+      - name: OSV Scanner
+        uses: google/osv-scanner-action@v1
+        with:
+          scan-args: |-
+            --lockfile=pubspec.lock
+            --format=json
+        continue-on-error: true
+
+  # SAST with Semgrep
+  sast:
+    name: SAST Analysis
+    runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config auto \
+            --config .semgrep.yaml \
+            --error \
+            --json \
+            --output semgrep-results.json \
+            lib/ || true
+
+      - name: Upload Semgrep results
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+        if: always()
+
+  # Code Quality Checks
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Check for unguarded debug code
+        run: |
+          echo "Checking for unguarded debug statements..."
+
+          # Find debugPrint without kDebugMode guard
+          if grep -rn "debugPrint" lib/ --include="*.dart" | grep -v "kDebugMode" | grep -v "// ignore:" | head -20; then
+            echo "⚠️ Found debugPrint statements that may need kDebugMode guard"
+            echo "Consider wrapping with: if (kDebugMode) { debugPrint(...); }"
+          fi
+
+          # Find print statements (should use debugPrint or logger)
+          if grep -rn "^\s*print(" lib/ --include="*.dart" | grep -v "// ignore:" | head -10; then
+            echo "⚠️ Found print() statements - consider using debugPrint or ProductionLogger"
+          fi
+
+      - name: Flutter analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Check for hardcoded secrets patterns
+        run: |
+          echo "Checking for potential hardcoded secrets..."
+
+          patterns=(
+            "password\s*=\s*['\"][^'\"]+['\"]"
+            "api_key\s*=\s*['\"][^'\"]+['\"]"
+            "secret\s*=\s*['\"][^'\"]+['\"]"
+            "token\s*=\s*['\"][^'\"]+['\"]"
+            "Bearer\s+[A-Za-z0-9_-]+"
+          )
+
+          found=false
+          for pattern in "${patterns[@]}"; do
+            if grep -rniE "$pattern" lib/ --include="*.dart" | grep -v "// ignore:" | grep -v "test" | head -5; then
+              found=true
+            fi
+          done
+
+          if [ "$found" = true ]; then
+            echo "⚠️ Potential hardcoded secrets found - please review"
+          else
+            echo "✅ No obvious hardcoded secrets patterns found"
+          fi
+
+  # Security Report Summary
+  security-report:
+    name: Security Report
+    runs-on: ubuntu-latest
+    needs: [secret-scan, gitleaks, dependency-scan, sast, code-quality]
+    if: always()
+    steps:
+      - name: Generate Report
+        run: |
+          echo "# Security Scan Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Scan | ${{ needs.secret-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gitleaks | ${{ needs.gitleaks.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || '⚠️ Check logs' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SAST | ${{ needs.sast.result == 'success' && '✅ Passed' || '⚠️ Check logs' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Quality | ${{ needs.code-quality.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY

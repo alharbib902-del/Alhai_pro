@@ -1,17 +1,14 @@
 {
   "@@locale": "en",
-
   "appTitle": "POS System",
   "login": "Login",
   "logout": "Logout",
   "welcome": "Welcome",
   "welcomeBack": "Welcome back",
-
   "phone": "Phone Number",
   "phoneHint": "05xxxxxxxx",
   "phoneRequired": "Phone number is required",
   "phoneInvalid": "Invalid phone number",
-
   "otp": "Verification Code",
   "otpHint": "Enter verification code",
   "otpSent": "Verification code sent",
@@ -19,14 +16,12 @@
   "otpExpired": "Verification code expired",
   "otpInvalid": "Invalid verification code",
   "otpResendIn": "Resend in {seconds} seconds",
-
   "pin": "PIN Code",
   "pinHint": "Enter PIN code",
   "pinRequired": "PIN code is required",
   "pinInvalid": "Invalid PIN code",
   "pinAttemptsRemaining": "Attempts remaining: {count}",
   "pinLocked": "Account locked. Try after {minutes} minutes",
-
   "home": "Home",
   "dashboard": "Dashboard",
   "pos": "Point of Sale",
@@ -38,21 +33,18 @@
   "invoices": "Invoices",
   "reports": "Reports",
   "settings": "Settings",
-
   "sales": "Sales",
   "salesAnalytics": "Sales Analytics",
   "refund": "Refund",
   "todaySales": "Today's Sales",
   "totalSales": "Total Sales",
   "averageSale": "Average Sale",
-
   "cart": "Cart",
   "cartEmpty": "Cart is empty",
   "addToCart": "Add to Cart",
   "removeFromCart": "Remove from Cart",
   "clearCart": "Clear Cart",
   "checkout": "Checkout",
-
   "payment": "Payment",
   "paymentMethod": "Payment Method",
   "cash": "Cash",
@@ -61,7 +53,6 @@
   "transfer": "Transfer",
   "paymentSuccess": "Payment successful",
   "paymentFailed": "Payment failed",
-
   "price": "Price",
   "quantity": "Quantity",
   "total": "Total",
@@ -70,7 +61,6 @@
   "tax": "Tax",
   "vat": "VAT",
   "grandTotal": "Grand Total",
-
   "product": "Product",
   "productName": "Product Name",
   "productCode": "Product Code",
@@ -80,19 +70,16 @@
   "lowStock": "Low Stock",
   "outOfStock": "Out of Stock",
   "inStock": "In Stock",
-
   "customer": "Customer",
   "customerName": "Customer Name",
   "customerPhone": "Customer Phone",
   "debt": "Debt",
   "balance": "Balance",
-
   "search": "Search",
   "searchHint": "Search here...",
   "filter": "Filter",
   "sort": "Sort",
   "all": "All",
-
   "add": "Add",
   "edit": "Edit",
   "delete": "Delete",
@@ -105,7 +92,6 @@
   "done": "Done",
   "submit": "Submit",
   "retry": "Retry",
-
   "loading": "Loading...",
   "noData": "No data",
   "noResults": "No results",
@@ -116,35 +102,28 @@
   "noInternet": "No internet connection",
   "offline": "Offline",
   "online": "Online",
-
   "success": "Success",
   "warning": "Warning",
   "info": "Info",
-
   "yes": "Yes",
   "no": "No",
-
   "today": "Today",
   "yesterday": "Yesterday",
   "thisWeek": "This Week",
   "thisMonth": "This Month",
-
   "shift": "Shift",
   "openShift": "Open Shift",
   "closeShift": "Close Shift",
   "shiftSummary": "Shift Summary",
   "cashDrawer": "Cash Drawer",
-
   "receipt": "Receipt",
   "printReceipt": "Print Receipt",
   "shareReceipt": "Share Receipt",
-
   "sync": "Sync",
   "syncing": "Syncing...",
   "syncComplete": "Sync complete",
   "syncFailed": "Sync failed",
   "lastSync": "Last sync",
-
   "language": "Language",
   "arabic": "العربية",
   "english": "English",
@@ -153,32 +132,26 @@
   "filipino": "Filipino",
   "bengali": "বাংলা",
   "indonesian": "Bahasa Indonesia",
-
   "theme": "Theme",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
   "systemMode": "System Mode",
-
   "notifications": "Notifications",
   "security": "Security",
   "printer": "Printer",
   "backup": "Backup",
   "help": "Help",
   "about": "About",
-
   "version": "Version",
   "copyright": "All rights reserved",
-
   "deleteConfirmTitle": "Confirm Delete",
   "deleteConfirmMessage": "Are you sure you want to delete?",
   "logoutConfirmTitle": "Confirm Logout",
   "logoutConfirmMessage": "Are you sure you want to logout?",
-
   "requiredField": "This field is required",
   "invalidFormat": "Invalid format",
   "minLength": "Must be at least {min} characters",
   "maxLength": "Must be less than {max} characters",
-
   "welcomeTitle": "Welcome Back! 👋",
   "welcomeSubtitle": "Sign in to manage your store easily and quickly",
   "welcomeSubtitleShort": "Sign in to manage your store",
@@ -203,7 +176,6 @@
   "allRightsReserved": "© 2026 Al-Hal System. All rights reserved.",
   "dayMode": "Day Mode",
   "nightMode": "Night Mode",
-
   "selectBranch": "Select Branch",
   "selectBranchDesc": "Select the branch you want to work on",
   "availableBranches": "Available Branches",
@@ -212,13 +184,10 @@
   "addBranch": "Add New Branch",
   "comingSoon": "This feature coming soon",
   "tryDifferentSearch": "Try different search terms",
-
   "selectLanguage": "Select Language",
   "languageChangeInfo": "Choose your preferred display language. Changes will be applied immediately.",
-
   "centralManagement": "Central Management",
   "centralManagementDesc": "Control all your branches and warehouses from one place. Get instant reports and inventory sync across all POS points.",
-  
   "selectBranchToContinue": "Select Branch to Continue",
   "youHaveAccessToBranches": "You have access to the following branches. Select one to start.",
   "searchForBranch": "Search for branch...",
@@ -226,56 +195,50 @@
   "closedOpensAt": "Closed (Opens {time})",
   "@closedOpensAt": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "loggedInAs": "Logged in as",
-  "technicalSupport": "Technical Support",
-  "privacyPolicy": "Privacy Policy",
   "support247": "24/7 Support",
   "analyticsTools": "Analytics Tools",
   "uptime": "Uptime",
-
   "dashboardTitle": "Dashboard",
   "searchPlaceholder": "General search...",
   "mainBranch": "Main Branch (Riyadh)",
-  
   "todaySalesLabel": "Today's Sales",
   "ordersCountLabel": "Orders Count",
   "newCustomersLabel": "New Customers",
   "stockAlertsLabel": "Stock Alerts",
   "productsUnit": "products",
-  
   "salesAnalysis": "Sales Analysis",
   "storePerformance": "Store performance this week",
   "weekly": "Weekly",
   "monthly": "Monthly",
   "yearly": "Yearly",
-  
   "quickAction": "Quick Action",
   "newSale": "New Sale",
   "addProduct": "Add Product",
   "returnItem": "Return",
   "dailyReport": "Daily Report",
   "closeDay": "Close Day",
-  
   "topSelling": "Top Selling",
   "ordersToday": "{count} orders today",
   "@ordersToday": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  
   "recentTransactions": "Recent Transactions",
   "viewAll": "View All",
   "orderNumber": "Order #",
-  "customer": "Customer",
   "time": "Time",
   "status": "Status",
   "amount": "Amount",
   "action": "Action",
-  
   "completed": "Completed",
   "returned": "Returned",
   "pending": "Pending",
@@ -284,15 +247,15 @@
   "minutesAgo": "{count} minutes ago",
   "@minutesAgo": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  
   "posSystem": "POS System",
   "branchManager": "Branch Manager",
   "settingsSection": "Settings",
   "systemSettings": "System Settings",
-  "notifications": "Notifications",
   "sar": "SAR",
   "daily": "Daily",
   "goodMorning": "Good Morning",
@@ -308,13 +271,960 @@
   "goodMorningName": "Good Morning, {name}!",
   "@goodMorningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "goodEveningName": "Good Evening, {name}!",
   "@goodEveningName": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "shoppingCart": "Shopping Cart",
+  "selectOrSearchCustomer": "Select or search customer",
+  "newCustomer": "New",
+  "draft": "Draft",
+  "pay": "Pay",
+  "haveCoupon": "Have a discount coupon?",
+  "discountPercent": "Discount {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "Open Drawer",
+  "suspend": "Suspend",
+  "quantitySoldOut": "Sold Out",
+  "noProducts": "No products",
+  "addProductsToStart": "Add products to start",
+  "undoComingSoon": "Undo (coming soon)",
+  "employees": "Employees",
+  "loyaltyProgram": "Loyalty Program",
+  "newBadge": "New",
+  "technicalSupportShort": "Technical Support",
+  "productDetails": "Product Details",
+  "stockMovements": "Stock Movements",
+  "priceHistory": "Price History",
+  "salesHistory": "Sales History",
+  "available": "Available",
+  "alertLevel": "Alert Level",
+  "reorderPoint": "Reorder Point",
+  "revenue": "Revenue",
+  "supplier": "Supplier",
+  "lastSale": "Last Sale",
+  "printLabel": "Print Label",
+  "copied": "Copied",
+  "copiedToClipboard": "{label} copied",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "Active",
+  "inactive": "Inactive",
+  "profitMargin": "Profit Margin",
+  "sellingPrice": "Selling Price",
+  "costPrice": "Cost Price",
+  "description": "Description",
+  "noDescription": "No description",
+  "productNotFound": "Product not found",
+  "stockStatus": "Stock Status",
+  "currentStock": "Current Stock",
+  "unit": "unit",
+  "units": "units",
+  "date": "Date",
+  "type": "Type",
+  "reference": "Reference",
+  "newBalance": "New Balance",
+  "oldPrice": "Old Price",
+  "newPrice": "New Price",
+  "reason": "Reason",
+  "invoiceNumber": "Invoice #",
+  "categoryLabel": "Category",
+  "uncategorized": "Uncategorized",
+  "noSupplier": "No supplier",
+  "moreOptions": "More Options",
+  "noStockMovements": "No stock movements",
+  "noPriceHistory": "No price history",
+  "noSalesHistory": "No sales history",
+  "sale": "Sale",
+  "purchase": "Purchase",
+  "adjustment": "Adjustment",
+  "returnText": "Return",
+  "waste": "Waste",
+  "initialStock": "Initial Stock",
+  "searchByNameOrBarcode": "Search by name or barcode...",
+  "hideFilters": "Hide Filters",
+  "showFilters": "Show Filters",
+  "sortByName": "Name",
+  "sortByPrice": "Price",
+  "sortByStock": "Stock",
+  "sortByRecent": "Recent",
+  "allItems": "All",
+  "clearFilters": "Clear Filters",
+  "noBarcode": "No barcode",
+  "stockCount": "Stock: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "Save Changes",
+  "addTheProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "newProduct": "New Product",
+  "minimumQuantity": "Minimum Qty",
+  "selectCategory": "Select Category",
+  "productImage": "Product Image",
+  "trackInventory": "Track Inventory",
+  "productSavedSuccess": "Product saved successfully",
+  "productAddedSuccess": "Product added successfully",
+  "scanBarcode": "Scan Barcode",
+  "activeProduct": "Active Product",
+  "currency": "SAR",
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "Supplier price update",
+  "costIncrease": "Cost increase",
+  "duplicateProduct": "Duplicate Product",
+  "categoriesManagement": "Categories Management",
+  "categoriesCount": "{count} categories",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "Add Category",
+  "editCategory": "Edit Category",
+  "deleteCategory": "Delete Category",
+  "categoryName": "Category Name",
+  "categoryNameAr": "Name (Arabic)",
+  "categoryNameEn": "Name (English)",
+  "parentCategory": "Parent Category",
+  "noParentCategory": "No parent (Root)",
+  "sortOrder": "Sort Order",
+  "categoryColor": "Color",
+  "categoryIcon": "Icon",
+  "categoryDetails": "Category Details",
+  "categoryCreatedAt": "Created At",
+  "categoryProducts": "Category Products",
+  "noCategorySelected": "Select a category to view its details",
+  "deleteCategoryConfirm": "Are you sure you want to delete this category?",
+  "categoryDeletedSuccess": "Category deleted successfully",
+  "categorySavedSuccess": "Category saved successfully",
+  "searchCategories": "Search categories...",
+  "reorderCategories": "Reorder",
+  "noCategories": "No categories found",
+  "subcategories": "Subcategories",
+  "activeStatus": "Active",
+  "inactiveStatus": "Inactive",
+  "invoicesTitle": "Invoices",
+  "totalInvoices": "Total Invoices",
+  "totalPaid": "Total Paid",
+  "totalPending": "Total Pending",
+  "totalOverdue": "Total Overdue",
+  "comparedToLastMonth": "Compared to last month",
+  "ofTotalDue": "{percent}% of total due",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count} invoices waiting payment",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "Send Reminder Now",
+  "revenueAnalysis": "Revenue Analysis",
+  "last7Days": "Last 7 Days",
+  "thisMonthPeriod": "This Month",
+  "thisYearPeriod": "This Year",
+  "paymentMethods": "Payment Methods",
+  "cashPayment": "Cash",
+  "cardPayment": "Card",
+  "walletPayment": "Wallet",
+  "saveCurrentFilter": "Save Current Filter",
+  "statusAll": "Status: All",
+  "statusPaid": "Paid",
+  "statusPending": "Pending",
+  "statusOverdue": "Overdue",
+  "statusCancelled": "Cancelled",
+  "resetFilters": "Reset",
+  "createInvoice": "Create Invoice",
+  "invoiceNumberCol": "Invoice #",
+  "customerNameCol": "Customer Name",
+  "dateCol": "Date",
+  "amountCol": "Amount",
+  "statusCol": "Status",
+  "paymentCol": "Payment",
+  "actionsCol": "Actions",
+  "viewInvoice": "View",
+  "printInvoice": "Print",
+  "exportPdf": "PDF",
+  "sendWhatsapp": "WhatsApp",
+  "deleteInvoice": "Delete",
+  "reminder": "Reminder",
+  "exportAll": "Export All",
+  "printReport": "Print Report",
+  "more": "More",
+  "showingResults": "Showing {from} to {to} of {total} results",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "New Invoice",
+  "selectCustomer": "Select Customer",
+  "cashCustomerGeneral": "Cash Customer (General)",
+  "addNewCustomer": "+ Add New Customer",
+  "productsSection": "Products",
+  "addProductToInvoice": "+ Add Product",
+  "productCol": "Product",
+  "quantityCol": "Qty",
+  "priceCol": "Price",
+  "dueDate": "Due Date",
+  "invoiceTotal": "Total:",
+  "saveInvoice": "Save Invoice",
+  "deleteConfirm": "Are you sure?",
+  "deleteInvoiceMsg": "Do you really want to delete this invoice? This action cannot be undone.",
+  "yesDelete": "Yes, Delete",
+  "copiedSuccess": "Copied successfully",
+  "invoiceDeleted": "Invoice deleted successfully",
+  "sat": "Sat",
+  "sun": "Sun",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "selected": "{count} selected",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "Print",
+  "bulkExportPdf": "Export PDF",
+  "allRightsReservedFooter": "© 2026 Alhai POS. All rights reserved.",
+  "privacyPolicyFooter": "Privacy Policy",
+  "termsFooter": "Terms & Conditions",
+  "supportFooter": "Technical Support",
+  "paid": "Paid",
+  "overdue": "Overdue",
+  "creditCard": "Credit Card",
+  "electronicWallet": "E-Wallet",
+  "searchInvoiceHint": "Search by invoice number, customer...",
+  "customerDetails": "Customer Details",
+  "customerProfileAndTransactions": "Overview of the profile and transactions",
+  "customerDetailTitle": "Customer Details",
+  "totalPurchases": "Total Purchases",
+  "loyaltyPoints": "Loyalty Points",
+  "lastVisit": "Last Visit",
+  "newSaleAction": "New Sale",
+  "editInfo": "Edit Info",
+  "whatsapp": "WhatsApp",
+  "blockCustomer": "Block Customer",
+  "purchasesTab": "Purchases",
+  "accountTab": "Account",
+  "debtsTab": "Debts",
+  "analyticsTab": "Analytics",
+  "recentOrdersLog": "Recent Orders Log",
+  "exportCsv": "Export CSV",
+  "searchByInvoiceNumber": "Search by invoice number...",
+  "items": "Items",
+  "viewDetails": "View Details",
+  "financialLedger": "Financial Ledger",
+  "cashPaymentEntry": "Cash Payment",
+  "walletTopup": "Wallet Top-up",
+  "loyaltyPointsDeduction": "Loyalty Points Deduction",
+  "redeemPoints": "Redeem {count} points",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "View Full",
+  "currentBalance": "Current Balance",
+  "creditLimit": "Credit Limit",
+  "used": "Used",
+  "topUpBalance": "Top Up Balance",
+  "overdueDebt": "Overdue",
+  "upcomingDebt": "Upcoming",
+  "payNow": "Pay Now",
+  "remind": "Remind",
+  "monthlySpending": "Monthly Spending",
+  "purchaseDistribution": "Purchases Distribution by Category",
+  "last6Months": "Last 6 months",
+  "thisYear": "This Year",
+  "averageOrder": "Average Order",
+  "purchaseFrequency": "Purchase Frequency",
+  "everyNDays": "Every {count} days",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "Spending Growth",
+  "favoriteProduct": "Favorite Product",
+  "internalNotes": "Internal Notes (visible to staff only)",
+  "addNote": "Add",
+  "addNewNote": "Add a new note...",
+  "joinedDate": "Joined: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "Last updated: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "Showing {from}-{to} of {total} orders",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "Vegetables",
+  "dairy": "Dairy",
+  "meat": "Meat",
+  "bakery": "Bakery",
+  "other": "Other",
+  "returns": "Returns",
+  "salesReturns": "Sales Returns",
+  "purchaseReturns": "Purchase Returns",
+  "totalReturns": "Total Returns",
+  "totalRefundedAmount": "Total Refunded Amount",
+  "mostReturned": "Most Returned",
+  "processed": "Processed",
+  "newReturn": "New Return",
+  "createNewReturn": "Create New Return",
+  "processReturnRequest": "Process sales return request",
+  "returnNumber": "Return Number",
+  "originalInvoice": "Original Invoice",
+  "returnReason": "Return Reason",
+  "returnAmount": "Return Amount",
+  "returnStatus": "Return Status",
+  "returnDate": "Return Date",
+  "returnActions": "Actions",
+  "returnRefunded": "Refunded",
+  "returnRejected": "Rejected",
+  "defectiveProduct": "Defective Product",
+  "wrongProduct": "Wrong Product",
+  "customerRequest": "Customer Request",
+  "otherReason": "Other",
+  "quickSearch": "Quick search...",
+  "exportData": "Export",
+  "printData": "Print",
+  "approve": "Approve",
+  "reject": "Reject",
+  "previous": "Previous",
+  "invoiceStep": "Invoice",
+  "itemsStep": "Items",
+  "reasonStep": "Reason",
+  "confirmStep": "Confirmation",
+  "enterInvoiceNumber": "Invoice Number",
+  "invoiceExample": "Example: #INV-889",
+  "loadInvoice": "Load",
+  "invoiceLoaded": "Invoice #{number} loaded",
+  "@invoiceLoaded": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceLoadedCustomer": "Customer: {customer} | Date: {date}",
+  "@invoiceLoadedCustomer": {
+    "placeholders": {
+      "customer": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "selectItemsInfo": "Select items to return. Cannot return more than sold quantity.",
+  "availableToReturn": "Available: {count}",
+  "@availableToReturn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alreadyReturnedFully": "Full quantity already returned",
+  "returnReasonLabel": "Return Reason (for selected items)",
+  "additionalDetails": "Additional details (required for Other)...",
+  "confirmReturn": "Confirm Return",
+  "refundAmount": "Refund Amount",
+  "refundMethod": "Refund Method",
+  "cashRefund": "Cash",
+  "storeCredit": "Store Credit",
+  "returnCreatedSuccess": "Return created successfully",
+  "noReturns": "No Returns",
+  "noReturnsDesc": "No return operations recorded yet.",
+  "timesReturned": "{count} times ({percent}% of total)",
+  "@timesReturned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "fromInvoice": "From invoice",
+  "dateFromTo": "Date from - to",
+  "returnCopied": "Number copied successfully",
+  "ofTotalProcessed": "{percent}% processed",
+  "@ofTotalProcessed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceDetails": "Invoice Details",
+  "invoiceNumberLabel": "Number:",
+  "additionalOptions": "Additional Options",
+  "duplicateInvoice": "Create Duplicate",
+  "returnMerchandise": "Return Merchandise",
+  "voidInvoice": "Void Invoice",
+  "printBtn": "Print",
+  "downloadBtn": "Download",
+  "paidSuccessfully": "Payment Successful",
+  "amountReceivedFull": "Full amount received",
+  "completedStatus": "Completed",
+  "pendingStatus": "Pending",
+  "voidedStatus": "Voided",
+  "storeName": "Neighborhood Supermarket",
+  "storeAddress": "Riyadh, Al-Malaz District, Takhassusi Street",
+  "simplifiedTaxInvoice": "Simplified Tax Invoice",
+  "dateAndTime": "Date & Time",
+  "cashierLabel": "Cashier",
+  "itemCol": "Item",
+  "quantityColDetail": "Qty",
+  "priceColDetail": "Price",
+  "totalCol": "Total",
+  "subtotalLabel": "Subtotal",
+  "discountVip": "Discount (VIP Member)",
+  "vatLabel": "VAT (15%)",
+  "grandTotalLabel": "Grand Total",
+  "paymentMethodLabel": "Payment Method",
+  "amountPaidLabel": "Amount Paid",
+  "zatcaElectronic": "ZATCA - Electronic Invoice",
+  "scanToVerify": "Scan to verify invoice",
+  "includesVat15": "Includes 15% VAT",
+  "thankYouVisit": "Thank you for your visit!",
+  "wishNiceDay": "We wish you a wonderful day",
+  "customerInfo": "Customer Information",
+  "editBtn": "Edit",
+  "vipSince": "VIP Customer since {year}",
+  "@vipSince": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "activeStatusLabel": "Active",
+  "callBtn": "Call",
+  "recordBtn": "Record",
+  "quickActions": "Quick Actions",
+  "sendWhatsappAction": "Send WhatsApp",
+  "sendEmailAction": "Send Email",
+  "downloadPdfAction": "Download PDF",
+  "shareLinkAction": "Share Link",
+  "eventLog": "Event Log",
+  "paymentCompleted": "Payment Completed",
+  "processedViaGateway": "Processed via payment gateway",
+  "minutesAgoDetail": "{count} minutes ago",
+  "@minutesAgoDetail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceCreated": "Invoice Created",
+  "byUser": "By {name}",
+  "@byUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "todayAt": "Today, {time}",
+  "@todayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "orderStarted": "Order Started",
+  "cashierSessionOpened": "Cashier session opened",
+  "technicalData": "Technical Data",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "Void Invoice?",
+  "voidInvoiceMsg": "This invoice will be permanently voided and will not be counted in daily sales. Are you sure?",
+  "voidReasonLabel": "Void Reason (Required)",
+  "voidReasonEntry": "Entry Error",
+  "voidReasonCustomer": "Customer Request",
+  "voidReasonDamaged": "Damaged Product",
+  "voidReasonOther": "Other Reason...",
+  "confirmVoid": "Confirm Void",
+  "invoiceVoided": "Invoice voided successfully",
+  "copiedText": "Copied: {text}",
+  "@copiedText": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "visaEnding": "Visa ending {digits}",
+  "@visaEnding": {
+    "placeholders": {
+      "digits": {
+        "type": "String"
+      }
+    }
+  },
+  "mobileActionPrint": "Print",
+  "mobileActionWhatsapp": "WhatsApp",
+  "mobileActionEmail": "Email",
+  "mobileActionMore": "More",
+  "sarCurrency": "SAR",
+  "skuLabel": "SKU: {code}",
+  "@skuLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "helpText": "Help",
+  "customerLedger": "Customer Ledger",
+  "accountStatement": "Account Statement",
+  "allPeriods": "All",
+  "threeMonths": "3 Months",
+  "allMovements": "All Transactions",
+  "adjustments": "Adjustments",
+  "statementCol": "Description",
+  "referenceCol": "Reference",
+  "debitCol": "Debit",
+  "creditCol": "Credit",
+  "balanceCol": "Balance",
+  "openingBalance": "Opening Balance",
+  "totalDebit": "Total Debit",
+  "totalCredit": "Total Credit",
+  "finalBalance": "Final Balance",
+  "manualAdjustment": "Manual Adjustment",
+  "adjustmentType": "Adjustment Type",
+  "debitAdjustment": "Debit Adjustment",
+  "creditAdjustment": "Credit Adjustment",
+  "adjustmentAmount": "Adjustment Amount",
+  "adjustmentReason": "Adjustment Reason",
+  "adjustmentDate": "Adjustment Date",
+  "saveAdjustment": "Save Adjustment",
+  "adjustmentSaved": "Adjustment saved successfully",
+  "enterValidAmount": "Enter a valid amount",
+  "dueOnCustomer": "Due on customer",
+  "customerHasCredit": "Customer has credit balance",
+  "noTransactions": "No transactions",
+  "recordPaymentBtn": "Record Payment",
+  "returnEntry": "Return",
+  "adjustmentEntry": "Adjustment",
+  "ordersHistory": "Orders History",
+  "totalOrdersLabel": "Total Orders",
+  "completedOrders": "Completed",
+  "pendingOrders": "Pending",
+  "cancelledOrders": "Cancelled",
+  "searchOrderHint": "Search by order number, customer, or phone...",
+  "channelLabel": "Channel",
+  "last30Days": "Last 30 days",
+  "orderDetails": "Order Details",
+  "unpaidLabel": "Unpaid",
+  "voidTransaction": "Void Transaction",
+  "voidSaleTransaction": "Void Sale Transaction",
+  "voidWarningTitle": "Important Warning: This action cannot be undone",
+  "voidWarningDesc": "Voiding this transaction will cancel the invoice completely and return all items to inventory. Please verify the information before proceeding.",
+  "voidWarningShort": "This action will cancel the invoice completely and return items to inventory. Cannot be undone.",
+  "enterInvoiceToVoid": "Enter the invoice number to void",
+  "searchByInvoiceOrBarcode": "You can search by invoice number or use the barcode scanner",
+  "invoiceExampleVoid": "Example: #INV-2024-8892",
+  "activateBarcode": "Activate barcode scanner",
+  "scanBarcodeMobile": "Scan barcode",
+  "searchForInvoiceToVoid": "Search for an invoice to void",
+  "enterNumberOrScan": "Enter the number manually or use the barcode scanner.",
+  "salesInvoice": "Sales Invoice",
+  "invoiceCompleted": "Completed",
+  "paidCash": "Paid: Cash",
+  "customerLabel": "Customer",
+  "dateAndTimeLabel": "Date & Time",
+  "voidImpactSummary": "Void Impact Summary",
+  "voidImpactItemsReturn": "Will return {count} items to inventory automatically.",
+  "voidImpactRefund": "Will deduct/refund amount of {amount} {currency}.",
+  "returnedItems": "Returned Items ({count})",
+  "viewAllItems": "View All",
+  "moreItemsHint": "+ {count} more items (total: {amount} {currency})",
+  "voidReason": "Void Reason",
+  "voidReasonRequired": "Void Reason *",
+  "customerRequestReason": "Customer request",
+  "wrongItemsReason": "Wrong items",
+  "duplicateInvoiceReason": "Duplicate invoice",
+  "systemErrorReason": "System error",
+  "otherReasonVoid": "Other",
+  "additionalNotesVoid": "Additional notes...",
+  "additionalDetailsRequired": "Additional details (required for Other)...",
+  "managerApproval": "Manager Approval",
+  "managerApprovalRequired": "Manager Approval Required",
+  "amountExceedsLimit": "Amount exceeds the allowed limit ({amount} {currency}), please enter manager PIN.",
+  "enterPinCode": "Enter PIN code",
+  "pinSentToManager": "Temporary code sent to manager's phone",
+  "defaultManagerPin": "Default manager code: 1234",
+  "confirmVoidAction": "I confirm voiding this transaction",
+  "confirmVoidDesc": "I have reviewed the details and take full responsibility.",
+  "cancelAction": "Cancel",
+  "confirmFinalVoid": "Confirm Final Void",
+  "invoiceNotFound": "Invoice not found",
+  "invoiceNotFoundDesc": "Verify the entered number or try using the barcode.",
+  "trySearchAgain": "Try searching again",
+  "voidSuccess": "Transaction voided successfully",
+  "qtyLabel": "Qty: {count}",
+  "manageCustomersAndAccounts": "Manage customers and accounts",
+  "totalCustomersCount": "Total Customers",
+  "outstandingDebts": "Outstanding Debts",
+  "customerCount": "{count} customer(s)",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "creditBalance": "Customer Credit",
+  "filterByLabel": "Filter by",
+  "debtors": "Debtors",
+  "creditorsLabel": "Creditors",
+  "quickActionsLabel": "Quick Actions",
+  "sendDebtReminder": "Send debt reminder",
+  "exportAccountStatement": "Export account statement",
+  "cancelSelectionCount": "Cancel selection ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "Search by name or phone... (Ctrl+F)",
+  "sortByBalance": "Balance",
+  "refreshF5": "Refresh (F5)",
+  "loadingCustomers": "Loading customers...",
+  "payDebt": "Pay Debt",
+  "dueAmountLabel": "Due: {amount} SAR",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "Payment Amount",
+  "fullAmount": "Full",
+  "payAction": "Pay",
+  "paymentRecorded": "Payment of {amount} SAR recorded",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "Customer added successfully",
+  "customerNameRequired": "Customer Name *",
+  "owedLabel": "Owes",
+  "hasBalanceLabel": "Credit",
+  "zeroLabel": "Zero",
+  "addAction": "Add",
+  "expenses": "Expenses",
+  "expenseCategories": "Expense Categories",
+  "addExpense": "Add Expense",
+  "totalExpenses": "Total Expenses",
+  "thisMonthExpenses": "This Month",
+  "expenseAmount": "Amount",
+  "expenseDate": "Date",
+  "expenseCategory": "Category",
+  "expenseNotes": "Notes",
+  "noExpenses": "No expenses recorded",
+  "drawerStatus": "Drawer Status",
+  "drawerOpen": "Open",
+  "drawerClosed": "Closed",
+  "currentBalance": "Current Balance",
+  "cashIn": "Cash In",
+  "cashOut": "Cash Out",
+  "expectedAmount": "Expected Amount",
+  "countedAmount": "Counted Amount",
+  "difference": "Difference",
+  "openDrawerAction": "Open Drawer",
+  "closeDrawerAction": "Close Drawer",
+  "monthlyCloseTitle": "Monthly Close",
+  "monthlyCloseDesc": "Close month and calculate receivables",
+  "totalReceivables": "Total Receivables",
+  "interestRate": "Interest Rate",
+  "closeMonth": "Close Month",
+  "shiftsTitle": "Shifts",
+  "currentShift": "Current Shift",
+  "shiftHistory": "Shift History",
+  "openShiftAction": "Open Shift",
+  "closeShiftAction": "Close Shift",
+  "shiftStartTime": "Start Time",
+  "shiftEndTime": "End Time",
+  "shiftTotalSales": "Total Sales",
+  "shiftTotalOrders": "Total Orders",
+  "startingCash": "Starting Cash",
+  "cashierName": "Cashier",
+  "shiftDuration": "Duration",
+  "noShifts": "No shifts recorded",
+  "purchasesTitle": "Purchases",
+  "newPurchase": "New Purchase",
+  "smartReorder": "Smart Reorder",
+  "aiInvoiceImport": "AI Invoice Import",
+  "aiInvoiceReview": "AI Invoice Review",
+  "purchaseOrder": "Purchase Order",
+  "purchaseTotal": "Purchase Total",
+  "purchaseDate": "Purchase Date",
+  "suppliersTitle": "Suppliers",
+  "addSupplier": "Add Supplier",
+  "supplierName": "Supplier Name",
+  "supplierPhone": "Phone",
+  "supplierEmail": "Email",
+  "supplierAddress": "Address",
+  "totalSuppliers": "Total Suppliers",
+  "supplierDetails": "Supplier Details",
+  "noSuppliers": "No suppliers found",
+  "discountsTitle": "Discounts",
+  "addDiscount": "Add Discount",
+  "discountName": "Discount Name",
+  "discountType": "Discount Type",
+  "discountValue": "Value",
+  "percentageDiscount": "Percentage",
+  "fixedDiscount": "Fixed Amount",
+  "activeDiscounts": "Active Discounts",
+  "couponsTitle": "Coupons",
+  "addCoupon": "Add Coupon",
+  "couponCode": "Coupon Code",
+  "couponUsage": "Usage",
+  "couponExpiry": "Expiry",
+  "totalCoupons": "Total Coupons",
+  "activeCoupons": "Active",
+  "expiredCoupons": "Expired",
+  "specialOffersTitle": "Special Offers",
+  "addOffer": "Add Offer",
+  "offerName": "Offer Name",
+  "offerStartDate": "Start Date",
+  "offerEndDate": "End Date",
+  "smartPromotionsTitle": "Smart Promotions",
+  "activePromotions": "Active Promotions",
+  "suggestedPromotions": "AI Suggestions",
+  "loyaltyTitle": "Loyalty Program",
+  "loyaltyMembers": "Members",
+  "loyaltyRewards": "Rewards",
+  "loyaltyTiers": "Tiers",
+  "totalMembers": "Total Members",
+  "pointsIssued": "Points Issued",
+  "pointsRedeemed": "Points Redeemed",
+  "notificationsTitle": "Notifications",
+  "markAllRead": "Mark All Read",
+  "noNotifications": "No notifications",
+  "printQueueTitle": "Print Queue",
+  "printAll": "Print All",
+  "cancelAll": "Cancel All",
+  "noPrintJobs": "No print jobs",
+  "syncStatusTitle": "Sync Status",
+  "lastSyncTime": "Last Sync",
+  "pendingItems": "Pending Items",
+  "syncNow": "Sync Now",
+  "pendingTransactionsTitle": "Pending Transactions",
+  "conflictResolutionTitle": "Conflict Resolution",
+  "localValue": "Local",
+  "serverValue": "Server",
+  "keepLocal": "Keep Local",
+  "keepServer": "Keep Server",
+  "driversTitle": "Drivers",
+  "addDriver": "Add Driver",
+  "driverName": "Driver Name",
+  "driverStatus": "Status",
+  "delivering": "Delivering",
+  "totalDeliveries": "Total Deliveries",
+  "driverRating": "Rating",
+  "branchesTitle": "Branches",
+  "addBranchAction": "Add Branch",
+  "branchName": "Branch Name",
+  "branchManager": "Manager",
+  "branchEmployees": "Employees",
+  "branchSales": "Today's Sales",
+  "profileTitle": "Profile",
+  "editProfile": "Edit Profile",
+  "personalInfo": "Personal Information",
+  "accountSettings": "Account Settings",
+  "fullName": "Full Name",
+  "emailAddress": "Email",
+  "phoneNumber": "Phone Number",
+  "role": "Role",
+  "settingsTitle": "Settings",
+  "storeSettings": "Store Settings",
+  "posSettings": "POS Settings",
+  "printerSettings": "Printer Settings",
+  "paymentDevicesSettings": "Payment Devices",
+  "barcodeSettings": "Barcode Settings",
+  "receiptTemplate": "Receipt Template",
+  "taxSettings": "Tax Settings",
+  "discountSettings": "Discount Settings",
+  "interestSettings": "Interest Settings",
+  "languageSettings": "Language",
+  "themeSettings": "Theme",
+  "securitySettings": "Security",
+  "usersManagement": "Users Management",
+  "rolesPermissions": "Roles & Permissions",
+  "activityLog": "Activity Log",
+  "backupSettings": "Backup & Restore",
+  "notificationSettings": "Notifications",
+  "zatcaCompliance": "ZATCA Compliance",
+  "helpSupport": "Help & Support",
+  "general": "General",
+  "appearance": "Appearance",
+  "securitySection": "Security",
+  "advanced": "Advanced",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "configure": "Configure",
+  "connected": "Connected",
+  "notConnected": "Not Connected",
+  "testConnection": "Test Connection",
+  "lastBackup": "Last Backup",
+  "autoBackup": "Auto Backup",
+  "manualBackup": "Backup Now",
+  "restoreBackup": "Restore",
+  "biometricAuth": "Biometric Authentication",
+  "sessionTimeout": "Session Timeout",
+  "changePin": "Change PIN",
+  "twoFactorAuth": "Two-Factor Auth",
+  "addUser": "Add User",
+  "userName": "Username",
+  "userEmail": "Email",
+  "userPhone": "Phone",
+  "addRole": "Add Role",
+  "roleName": "Role Name",
+  "permissions": "Permissions",
+  "faq": "FAQ",
+  "contactSupport": "Contact Support",
+  "documentation": "Documentation",
+  "reportBug": "Report a Bug",
+  "zatcaRegistration": "ZATCA Registration",
+  "eInvoicing": "E-Invoicing",
+  "qrCode": "QR Code",
+  "vatNumber": "VAT Number",
+  "taxNumber": "Tax Number",
+  "pushNotifications": "Push Notifications",
+  "emailNotifications": "Email Notifications",
+  "smsNotifications": "SMS Notifications",
+  "orderNotifications": "Order Notifications",
+  "stockNotifications": "Stock Alerts",
+  "paymentNotifications": "Payment Notifications",
+  "liveChat": "Live Chat",
+  "emailSupport": "Email Support",
+  "phoneSupport": "Phone Support",
+  "whatsappSupport": "WhatsApp Support",
+  "userGuide": "User Guide",
+  "videoTutorials": "Video Tutorials",
+  "changelog": "Changelog",
+  "appInfo": "App Info",
+  "buildNumber": "Build Number",
+  "notificationChannels": "Notification Channels",
+  "alertTypes": "Alert Types",
+  "salesAlerts": "Sales Alerts",
+  "inventoryAlerts": "Inventory Alerts",
+  "securityAlerts": "Security Alerts",
+  "reportAlerts": "Report Alerts",
+  "users": "Users",
+  "zatcaRegistered": "Registered with ZATCA",
+  "zatcaPhase2Active": "Phase 2 Active",
+  "registrationInfo": "Registration Info",
+  "businessName": "Business Name",
+  "branchCode": "Branch Code",
+  "qrCodeOnInvoice": "QR Code on Invoice",
+  "certificates": "Certificates",
+  "csidCertificate": "CSID Certificate",
+  "valid": "Valid",
+  "privateKey": "Private Key",
+  "configured": "Configured"
 }

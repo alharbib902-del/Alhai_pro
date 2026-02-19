@@ -6,10 +6,15 @@ import '../../dto/products/update_product_request.dart';
 /// Repository ↔ DataSource = DTO only
 abstract class ProductsRemoteDataSource {
   /// Gets paginated list of products for a store
+  ///
+  /// [categoryId] - فلترة حسب التصنيف (اختياري)
+  /// [searchQuery] - البحث في اسم المنتج (اختياري)
   Future<List<ProductResponse>> getProducts(
     String storeId, {
     int page = 1,
     int limit = 20,
+    String? categoryId,
+    String? searchQuery,
   });
 
   /// Gets a single product by ID

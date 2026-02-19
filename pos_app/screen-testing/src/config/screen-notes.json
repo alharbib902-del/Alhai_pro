@@ -1,0 +1,41 @@
+{
+  "globalNotes": {
+    "themeToggle": "Use ?theme=light|dark query param first, fallback to /#/settings/theme UI toggle",
+    "selectorStrategy": "ARIA/Label → Text content → CSS class/id fallback",
+    "continueOnFailure": true,
+    "screenshotFormats": ["full", "content"],
+    "consoleLevels": ["error", "warning"]
+  },
+  "agentNotes": {
+    "finance": {
+      "description": "Invoices, Orders, Returns, Void Transaction, Expenses, Reports, Cash Drawer, Monthly Close",
+      "dataRequirements": "Most screens work with empty state; filled states need demo data seeded",
+      "specialCases": ["Cash drawer requires active shift", "Monthly close requires debt records"]
+    },
+    "shifts": {
+      "description": "Shifts list, Open Shift, Close Shift, Shift Summary",
+      "dataRequirements": "Shift open/close flow depends on shift state",
+      "specialCases": ["Cannot close shift if none open", "Summary needs completed shifts"]
+    },
+    "purchasesSuppliers": {
+      "description": "Purchase Form, Smart Reorder, AI Import, AI Review, Suppliers list/form/detail",
+      "dataRequirements": "AI Review needs imported invoice data",
+      "specialCases": ["AI Invoice Review requires going through import flow first"]
+    },
+    "marketingPromotions": {
+      "description": "Discounts, Coupons, Special Offers, Smart Promotions, Loyalty Program",
+      "dataRequirements": "Empty state is valid for all",
+      "specialCases": ["Loyalty program has tier system"]
+    },
+    "infrastructure": {
+      "description": "Notifications, Print Queue, Sync Status, Pending Transactions, Conflict Resolution, Drivers, Branches",
+      "dataRequirements": "Most work in empty state",
+      "specialCases": ["Conflict resolution needs sync conflicts"]
+    },
+    "settings": {
+      "description": "All settings sub-screens (store, POS, printer, language, theme, payment, barcode, receipt, tax, discounts, interest, security, users, roles, activity log, backup, notifications, ZATCA, help)",
+      "dataRequirements": "Settings load from SharedPreferences/defaults",
+      "specialCases": ["Security settings has timeout guard", "Theme changes affect entire app"]
+    }
+  }
+}

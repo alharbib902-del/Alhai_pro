@@ -79,7 +79,7 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDarkMode ? 0.2 : 0.04),
+                  color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
                   blurRadius: _isHovered ? 20 : 8,
                   offset: const Offset(0, 4),
                 ),
@@ -115,7 +115,7 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                           width: isMobile ? 40 : 48,
                           height: isMobile ? 40 : 48,
                           decoration: BoxDecoration(
-                            color: effectiveIconColor.withOpacity(0.1),
+                            color: effectiveIconColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
                           ),
                           child: Icon(
@@ -236,9 +236,9 @@ class _ChangeIndicator extends StatelessWidget {
         vertical: compact ? 3 : 4,
       ),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.15),
+        color: _color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _color.withOpacity(0.3)),
+        border: Border.all(color: _color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

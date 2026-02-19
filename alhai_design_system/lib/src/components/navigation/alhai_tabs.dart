@@ -48,6 +48,10 @@ class AlhaiTabs extends StatelessWidget {
   /// TabBar padding override
   final EdgeInsetsGeometry? paddingOverride;
 
+  /// Fixed height for TabBarView (use when placed inside ScrollView/unbounded).
+  /// When null, Expanded is used (requires bounded parent height).
+  final double? viewHeight;
+
   const AlhaiTabs({
     super.key,
     required this.tabs,
@@ -58,6 +62,7 @@ class AlhaiTabs extends StatelessWidget {
     this.showDivider = true,
     this.onTap,
     this.paddingOverride,
+    this.viewHeight,
   })  : assert(tabs.length == views.length, 'tabs and views must have same length'),
         assert(tabs.length > 0, 'tabs must not be empty'),
         assert(views.length > 0, 'views must not be empty'),
@@ -82,7 +87,13 @@ class AlhaiTabs extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final tabBarView = TabBarView(
+      controller: controller,
+      children: views,
+    );
+
     return Column(
+      mainAxisSize: viewHeight != null ? MainAxisSize.min : MainAxisSize.max,
       children: [
         // TabBar
         _buildTabBar(context, theme, colorScheme),
@@ -95,13 +106,12 @@ class AlhaiTabs extends StatelessWidget {
             color: colorScheme.outlineVariant,
           ),
 
-        // TabBarView
-        Expanded(
-          child: TabBarView(
-            controller: controller,
-            children: views,
-          ),
-        ),
+        // TabBarView — SizedBox when viewHeight set (for unbounded parents),
+        // Expanded otherwise (for bounded parents)
+        if (viewHeight != null)
+          SizedBox(height: viewHeight, child: tabBarView)
+        else
+          Expanded(child: tabBarView),
       ],
     );
   }

@@ -111,7 +111,7 @@ class SimpleBarChart extends StatelessWidget {
                             width: barWidth.clamp(20.0, 48.0),
                             height: (barAreaHeight - 8) * percentage,
                             decoration: BoxDecoration(
-                              color: effectiveColor.withOpacity(0.8),
+                              color: effectiveColor.withValues(alpha: 0.8),
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(4),
                               ),
@@ -217,7 +217,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -288,7 +288,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
+                                    color: Colors.black.withValues(alpha: 0.08),
                                     blurRadius: 4,
                                     offset: const Offset(0, 1),
                                   ),
@@ -335,12 +335,14 @@ class TopProductsList extends StatelessWidget {
   final List<TopProductItem> products;
   final String title;
   final int maxItems;
+  final void Function(String productId)? onProductTap;
 
   const TopProductsList({
     super.key,
     required this.products,
     this.title = '',
     this.maxItems = 3,
+    this.onProductTap,
   });
 
   @override
@@ -361,7 +363,7 @@ class TopProductsList extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -386,6 +388,9 @@ class TopProductsList extends StatelessWidget {
             return _TopProductRow(
               product: entry.value,
               isLast: entry.key == displayProducts.length - 1,
+              onTap: entry.value.id != null && onProductTap != null
+                  ? () => onProductTap!(entry.value.id!)
+                  : null,
             );
           }),
         ],
@@ -396,6 +401,7 @@ class TopProductsList extends StatelessWidget {
 
 /// عنصر منتج في القائمة
 class TopProductItem {
+  final String? id;
   final String name;
   final String? imageUrl;
   final IconData? icon;
@@ -404,6 +410,7 @@ class TopProductItem {
   final String? quantityLabel;
 
   const TopProductItem({
+    this.id,
     required this.name,
     this.imageUrl,
     this.icon,
@@ -416,10 +423,12 @@ class TopProductItem {
 class _TopProductRow extends StatelessWidget {
   final TopProductItem product;
   final bool isLast;
+  final VoidCallback? onTap;
 
   const _TopProductRow({
     required this.product,
     required this.isLast,
+    this.onTap,
   });
 
   @override
@@ -427,7 +436,10 @@ class _TopProductRow extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         border: isLast
@@ -504,13 +516,14 @@ class _TopProductRow extends StatelessWidget {
           // الإيرادات
           Text(
             '${product.revenue.toStringAsFixed(0)} ${l10n.sar}',
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primary,
               fontSize: 13,
               fontWeight: FontWeight.bold,
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -3,14 +3,19 @@ import '../models/paginated.dart';
 import '../models/product.dart';
 import '../models/update_product_params.dart';
 
-/// Repository contract for product operations (v3.2)
+/// Repository contract for product operations (v3.3)
 /// UI ↔ Repository = Domain Models only
 abstract class ProductsRepository {
   /// Gets paginated list of products for a store
+  ///
+  /// [categoryId] - فلترة حسب التصنيف (اختياري)
+  /// [searchQuery] - البحث في اسم المنتج (اختياري)
   Future<Paginated<Product>> getProducts(
     String storeId, {
     int page = 1,
     int limit = 20,
+    String? categoryId,
+    String? searchQuery,
   });
 
   /// Gets a single product by ID

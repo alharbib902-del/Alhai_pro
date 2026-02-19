@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for:*)",
+      "Bash(done)",
+      "Bash(flutter test:*)"
+    ]
+  }
+}
