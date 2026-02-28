@@ -20,7 +20,7 @@ Alhai Platform:
 │   └── يطلب من بقالات متعددة
 ├── driver_app (18 screens) - للمندوب
 │   └── يوصل لبقالة واحدة أو أكثر
-├── pos_app (~25 screens) - للكاشير
+├── cashier (~25 screens) - للكاشير
 │   └── يعمل في بقالة واحدة
 ├── alhai_core - Models مشتركة
 └── alhai_design_system - UI components
@@ -44,7 +44,7 @@ Total: ~197 screens عبر 5 تطبيقات
    └── يستخدم: admin_pos (صلاحيات محدودة)
    
 5. Cashier (الكاشير)
-   └── يستخدم: pos_app
+   └── يستخدم: cashier
    
 6. Driver (المندوب)
    └── يستخدم: driver_app

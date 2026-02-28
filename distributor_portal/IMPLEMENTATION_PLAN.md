@@ -126,7 +126,7 @@ gantt
 |---------|---------|
 | super_admin | Approval + Fees |
 | admin_pos | Receive orders |
-| pos_app | Delivery confirmation |
+| cashier | Delivery confirmation |
 
 ---
 

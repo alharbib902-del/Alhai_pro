@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: alhai_database
+dependency_overrides:
+  alhai_database:
+    path: ..\\alhai_database

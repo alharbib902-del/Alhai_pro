@@ -372,7 +372,7 @@ git commit -m "FIX: Drift migration error in products table"
 ```json
 {
   "app_info": {
-    "name": "pos_app",
+    "name": "cashier",
     "version": "1.0.0",
     "total_tasks": 156,
     "completed_tasks": 0,

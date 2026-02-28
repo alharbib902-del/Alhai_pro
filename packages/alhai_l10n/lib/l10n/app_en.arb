@@ -1,0 +1,4828 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2026-02-04",
+  "appTitle": "POS System",
+  "@appTitle": {
+    "description": "اسم التطبيق"
+  },
+  "login": "Login",
+  "logout": "Logout",
+  "welcome": "Welcome",
+  "welcomeBack": "Welcome back",
+  "phone": "Phone Number",
+  "phoneHint": "05xxxxxxxx",
+  "phoneRequired": "Phone number is required",
+  "phoneInvalid": "Invalid phone number",
+  "otp": "Verification Code",
+  "otpHint": "Enter verification code",
+  "otpSent": "Verification code sent",
+  "otpResend": "Resend code",
+  "otpExpired": "Verification code expired",
+  "otpInvalid": "Invalid verification code",
+  "otpResendIn": "Resend in {seconds} seconds",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pin": "PIN Code",
+  "pinHint": "Enter PIN code",
+  "pinRequired": "PIN code is required",
+  "pinInvalid": "Invalid PIN code",
+  "pinAttemptsRemaining": "Attempts remaining: {count}",
+  "@pinAttemptsRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pinLocked": "Account locked. Try after {minutes} minutes",
+  "@pinLocked": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "pos": "Point of Sale",
+  "products": "Products",
+  "categories": "Categories",
+  "inventory": "Inventory",
+  "customers": "Customers",
+  "orders": "Orders",
+  "invoices": "Invoices",
+  "reports": "Reports",
+  "settings": "Settings",
+  "sales": "Sales",
+  "salesAnalytics": "Sales Analytics",
+  "refund": "Refund",
+  "todaySales": "Today's Sales",
+  "totalSales": "Total Sales",
+  "averageSale": "Average Sale",
+  "cart": "Cart",
+  "cartEmpty": "Cart is empty",
+  "addToCart": "Add to Cart",
+  "removeFromCart": "Remove from Cart",
+  "clearCart": "Clear Cart",
+  "checkout": "Checkout",
+  "payment": "Payment",
+  "paymentMethod": "Payment Method",
+  "cash": "Cash",
+  "card": "Card",
+  "credit": "Credit",
+  "transfer": "Transfer",
+  "paymentSuccess": "Payment successful",
+  "paymentFailed": "Payment failed",
+  "price": "Price",
+  "quantity": "Quantity",
+  "total": "Total",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "tax": "Tax",
+  "vat": "VAT",
+  "grandTotal": "Grand Total",
+  "product": "product",
+  "productName": "Product Name",
+  "productCode": "Product Code",
+  "barcode": "Barcode",
+  "sku": "SKU",
+  "stock": "Stock",
+  "lowStock": "Low Stock",
+  "outOfStock": "Out of Stock",
+  "inStock": "In Stock",
+  "customer": "Customer",
+  "customerName": "Customer Name",
+  "customerPhone": "Customer Phone",
+  "debt": "Debt",
+  "balance": "Balance",
+  "search": "Search",
+  "searchHint": "Search here...",
+  "filter": "Filter",
+  "sort": "Sort",
+  "all": "All",
+  "add": "Add",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "close": "Close",
+  "back": "Back",
+  "next": "Next",
+  "done": "Done",
+  "submit": "Submit",
+  "retry": "Retry",
+  "loading": "Loading...",
+  "noData": "No data",
+  "noResults": "No results",
+  "error": "Error",
+  "errorOccurred": "An error occurred",
+  "tryAgain": "Try again",
+  "connectionError": "Connection error",
+  "noInternet": "No internet connection",
+  "offline": "Offline",
+  "online": "Online",
+  "success": "Success",
+  "warning": "Warning",
+  "info": "Info",
+  "yes": "Yes",
+  "no": "No",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "thisWeek": "This Week",
+  "thisMonth": "This Month",
+  "shift": "Shift",
+  "openShift": "Open Shift",
+  "closeShift": "Close Shift",
+  "shiftSummary": "Shift Summary",
+  "cashDrawer": "Cash Drawer",
+  "receipt": "Receipt",
+  "printReceipt": "Print Receipt",
+  "shareReceipt": "Share Receipt",
+  "sync": "Sync",
+  "syncing": "Syncing...",
+  "syncComplete": "Sync complete",
+  "syncFailed": "Sync failed",
+  "lastSync": "Last sync",
+  "language": "Language",
+  "arabic": "العربية",
+  "english": "English",
+  "urdu": "اردو",
+  "hindi": "हिन्दी",
+  "filipino": "Filipino",
+  "bengali": "বাংলা",
+  "indonesian": "Bahasa Indonesia",
+  "theme": "Theme",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "systemMode": "System Mode",
+  "notifications": "Notifications",
+  "security": "Security",
+  "printer": "Printer",
+  "backup": "Backup",
+  "help": "Help",
+  "about": "About",
+  "version": "Version",
+  "copyright": "All rights reserved",
+  "deleteConfirmTitle": "Confirm Delete",
+  "deleteConfirmMessage": "Are you sure you want to delete?",
+  "logoutConfirmTitle": "Confirm Logout",
+  "logoutConfirmMessage": "Are you sure you want to logout?",
+  "requiredField": "This field is required",
+  "invalidFormat": "Invalid format",
+  "minLength": "Must be at least {min} characters",
+  "@minLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "maxLength": "Must be less than {max} characters",
+  "@maxLength": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "welcomeTitle": "Welcome Back! 👋",
+  "welcomeSubtitle": "Sign in to manage your store easily and quickly",
+  "welcomeSubtitleShort": "Sign in to manage your store",
+  "brandName": "Al-Hal POS",
+  "brandTagline": "Smart Point of Sale System",
+  "enterPhoneToContinue": "Enter your phone number to continue",
+  "pleaseEnterValidPhone": "Please enter a valid phone number",
+  "otpSentViaWhatsApp": "Verification code sent via WhatsApp",
+  "otpResent": "Verification code resent",
+  "enterOtpFully": "Please enter the complete verification code",
+  "maxAttemptsReached": "Maximum attempts reached. Please request a new code",
+  "waitMinutes": "Maximum attempts reached. Wait {minutes} minutes",
+  "@waitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "waitSeconds": "Please wait {seconds} seconds",
+  "@waitSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendIn": "Resend ({time})",
+  "@resendIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "resendCode": "Resend code",
+  "changeNumber": "Change number",
+  "verificationCode": "Verification Code",
+  "remainingAttempts": "Remaining attempts: {count}",
+  "@remainingAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "technicalSupport": "Technical Support",
+  "privacyPolicy": "Privacy Policy",
+  "termsAndConditions": "Terms and Conditions",
+  "allRightsReserved": "© 2026 Al-Hal System. All rights reserved.",
+  "dayMode": "Day Mode",
+  "nightMode": "Night Mode",
+  "selectBranch": "Select Branch",
+  "selectBranchDesc": "Select the branch you want to work on",
+  "availableBranches": "Available Branches",
+  "branchCount": "{count, plural, =0{No branches} one{1 branch} other{{count} branches}}",
+  "@branchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "branchSelected": "Selected {name}",
+  "@branchSelected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "addBranch": "Add New Branch",
+  "comingSoon": "Coming soon",
+  "tryDifferentSearch": "Try different search terms",
+  "selectLanguage": "Select Language",
+  "languageChangeInfo": "Choose your preferred display language. Changes will be applied immediately.",
+  "centralManagement": "Central Management",
+  "centralManagementDesc": "Control all your branches and warehouses from one place. Get instant reports and inventory sync across all POS points.",
+  "selectBranchToContinue": "Select Branch to Continue",
+  "youHaveAccessToBranches": "You have access to the following branches. Select one to start.",
+  "searchForBranch": "Search for branch...",
+  "openNow": "Open Now",
+  "closedOpensAt": "Closed (Opens {time})",
+  "@closedOpensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "loggedInAs": "Logged in as",
+  "support247": "24/7 Support",
+  "analyticsTools": "Analytics Tools",
+  "uptime": "Uptime",
+  "dashboardTitle": "Dashboard",
+  "searchPlaceholder": "General search...",
+  "mainBranch": "Main Branch (Riyadh)",
+  "todaySalesLabel": "Today's Sales",
+  "ordersCountLabel": "Orders Count",
+  "newCustomersLabel": "New Customers",
+  "stockAlertsLabel": "Stock Alerts",
+  "productsUnit": "products",
+  "salesAnalysis": "Sales Analysis",
+  "storePerformance": "Store performance this week",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "quickAction": "Quick Action",
+  "newSale": "New Sale",
+  "addProduct": "Add Product",
+  "returnItem": "Return",
+  "dailyReport": "Daily Report",
+  "closeDay": "Close Day",
+  "topSelling": "Top Selling",
+  "ordersToday": "{count, plural, =0{No orders today} one{1 order today} other{{count} orders today}}",
+  "@ordersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentTransactions": "Recent Transactions",
+  "viewAll": "View All",
+  "orderNumber": "Order #",
+  "time": "Time",
+  "status": "Status",
+  "amount": "Amount",
+  "action": "Action",
+  "completed": "Completed",
+  "returned": "Returned",
+  "pending": "Pending",
+  "cancelled": "Cancelled",
+  "guestCustomer": "Guest Customer",
+  "minutesAgo": "{count, plural, one{1 minute ago} other{{count} minutes ago}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "posSystem": "POS System",
+  "branchManager": "Manager",
+  "settingsSection": "Settings",
+  "systemSettings": "System Settings",
+  "sar": "SAR",
+  "daily": "Daily",
+  "goodMorning": "Good Morning",
+  "goodEvening": "Good Evening",
+  "cashCustomer": "Cash Customer",
+  "noTransactionsToday": "No transactions today",
+  "comparedToYesterday": "Compared to yesterday",
+  "ordersText": "orders today",
+  "storeManagement": "Store Management",
+  "finance": "Finance",
+  "teamSection": "Team",
+  "fullscreen": "Fullscreen",
+  "goodMorningName": "Good Morning, {name}!",
+  "@goodMorningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "goodEveningName": "Good Evening, {name}!",
+  "@goodEveningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shoppingCart": "Shopping Cart",
+  "selectOrSearchCustomer": "Select or search customer",
+  "newCustomer": "New",
+  "draft": "Draft",
+  "pay": "Pay",
+  "haveCoupon": "Have a discount coupon?",
+  "discountPercent": "Discount {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "openDrawer": "Open Drawer",
+  "suspend": "Suspend",
+  "quantitySoldOut": "Sold Out",
+  "noProducts": "No products",
+  "addProductsToStart": "Add products to start",
+  "undoComingSoon": "Undo (coming soon)",
+  "employees": "Employees",
+  "loyaltyProgram": "Loyalty Program",
+  "newBadge": "New",
+  "technicalSupportShort": "Technical Support",
+  "productDetails": "Product Details",
+  "stockMovements": "Stock Movements",
+  "priceHistory": "Price History",
+  "salesHistory": "Sales History",
+  "available": "Available",
+  "alertLevel": "Alert Level",
+  "reorderPoint": "Reorder Point",
+  "revenue": "Revenue",
+  "supplier": "Supplier",
+  "lastSale": "Last Sale",
+  "printLabel": "Print Label",
+  "copied": "Copied",
+  "copiedToClipboard": "{label} copied",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "active": "Active",
+  "inactive": "Inactive",
+  "profitMargin": "Profit Margin",
+  "sellingPrice": "Selling Price",
+  "costPrice": "Cost Price",
+  "description": "Description",
+  "noDescription": "No description",
+  "productNotFound": "Product not found",
+  "stockStatus": "Stock Status",
+  "currentStock": "Current Stock",
+  "unit": "Unit",
+  "units": "units",
+  "date": "Date",
+  "type": "Type",
+  "reference": "Reference",
+  "newBalance": "New Balance",
+  "oldPrice": "Old Price",
+  "newPrice": "New Price",
+  "reason": "Reason",
+  "invoiceNumber": "Invoice #",
+  "categoryLabel": "Category",
+  "uncategorized": "Uncategorized",
+  "noSupplier": "No supplier",
+  "moreOptions": "More Options",
+  "noStockMovements": "No stock movements",
+  "noPriceHistory": "No price history",
+  "noSalesHistory": "No sales history",
+  "sale": "Sale",
+  "purchase": "Purchase",
+  "adjustment": "Adjustment",
+  "returnText": "Return",
+  "waste": "Waste",
+  "initialStock": "Initial Stock",
+  "searchByNameOrBarcode": "Search by name or barcode...",
+  "hideFilters": "Hide Filters",
+  "showFilters": "Show Filters",
+  "sortByName": "By name",
+  "sortByPrice": "Price",
+  "sortByStock": "Stock",
+  "sortByRecent": "Recent",
+  "allItems": "All",
+  "clearFilters": "Clear Filters",
+  "noBarcode": "No barcode",
+  "stockCount": "Stock: {count}",
+  "@stockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveChanges": "Save Changes",
+  "addTheProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "newProduct": "New Product",
+  "minimumQuantity": "Minimum Qty",
+  "selectCategory": "Select Category",
+  "productImage": "Product Image",
+  "trackInventory": "Track Inventory",
+  "productSavedSuccess": "Product saved successfully",
+  "productAddedSuccess": "Product added successfully",
+  "scanBarcode": "Scan Barcode",
+  "activeProduct": "Active Product",
+  "currency": "SAR",
+  "hoursAgo": "{count, plural, one{1 hour ago} other{{count} hours ago}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count, plural, one{1 day ago} other{{count} days ago}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPriceUpdate": "Supplier price update",
+  "costIncrease": "Cost increase",
+  "duplicateProduct": "Duplicate Product",
+  "categoriesManagement": "Categories Management",
+  "categoriesCount": "{count, plural, =0{No categories} one{1 category} other{{count} categories}}",
+  "@categoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCategory": "Add Category",
+  "editCategory": "Edit Category",
+  "deleteCategory": "Delete Category",
+  "categoryName": "Category Name",
+  "categoryNameAr": "Name (Arabic)",
+  "categoryNameEn": "Name (English)",
+  "parentCategory": "Parent Category",
+  "noParentCategory": "No parent (Root)",
+  "sortOrder": "Sort Order",
+  "categoryColor": "Color",
+  "categoryIcon": "Icon",
+  "categoryDetails": "Category Details",
+  "categoryCreatedAt": "Created At",
+  "categoryProducts": "Category Products",
+  "noCategorySelected": "Select a category to view its details",
+  "deleteCategoryConfirm": "Are you sure you want to delete this category?",
+  "categoryDeletedSuccess": "Category deleted successfully",
+  "categorySavedSuccess": "Category saved successfully",
+  "searchCategories": "Search categories...",
+  "reorderCategories": "Reorder",
+  "noCategories": "No categories found",
+  "subcategories": "Subcategories",
+  "activeStatus": "Active",
+  "inactiveStatus": "Inactive",
+  "invoicesTitle": "Invoices",
+  "totalInvoices": "Total Invoices",
+  "totalPaid": "Total Paid",
+  "totalPending": "Total Pending",
+  "totalOverdue": "Total Overdue",
+  "comparedToLastMonth": "Compared to last month",
+  "ofTotalDue": "{percent}% of total due",
+  "@ofTotalDue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicesWaitingPayment": "{count, plural, =0{No invoices waiting} one{1 invoice waiting payment} other{{count} invoices waiting payment}}",
+  "@invoicesWaitingPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendReminderNow": "Send Reminder Now",
+  "revenueAnalysis": "Revenue Analysis",
+  "last7Days": "Last 7 Days",
+  "thisMonthPeriod": "This Month",
+  "thisYearPeriod": "This Year",
+  "paymentMethods": "Payment Methods",
+  "cashPayment": "Cash",
+  "cardPayment": "Card",
+  "walletPayment": "Wallet",
+  "saveCurrentFilter": "Save Current Filter",
+  "statusAll": "Status: All",
+  "statusPaid": "Paid",
+  "statusPending": "Pending",
+  "statusOverdue": "Overdue",
+  "statusCancelled": "Cancelled",
+  "resetFilters": "Reset",
+  "createInvoice": "Create Invoice",
+  "invoiceNumberCol": "Invoice #",
+  "customerNameCol": "Customer Name",
+  "dateCol": "Date",
+  "amountCol": "Amount",
+  "statusCol": "Status",
+  "paymentCol": "Payment",
+  "actionsCol": "Actions",
+  "viewInvoice": "View",
+  "printInvoice": "Print",
+  "exportPdf": "Export PDF",
+  "sendWhatsapp": "WhatsApp",
+  "deleteInvoice": "Delete",
+  "reminder": "Reminder",
+  "exportAll": "Export All",
+  "printReport": "Print Report",
+  "more": "More",
+  "showingResults": "Showing {from} to {to} of {total} results",
+  "@showingResults": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newInvoice": "New Invoice",
+  "selectCustomer": "Select Customer",
+  "cashCustomerGeneral": "Cash Customer (General)",
+  "addNewCustomer": "+ Add New Customer",
+  "productsSection": "Products",
+  "addProductToInvoice": "+ Add Product",
+  "productCol": "Product",
+  "quantityCol": "Qty",
+  "priceCol": "Price",
+  "dueDate": "Due Date",
+  "invoiceTotal": "Total:",
+  "saveInvoice": "Save Invoice",
+  "deleteConfirm": "Are you sure?",
+  "deleteInvoiceMsg": "Do you really want to delete this invoice? This action cannot be undone.",
+  "yesDelete": "Yes, Delete",
+  "copiedSuccess": "Copied successfully",
+  "invoiceDeleted": "Invoice deleted successfully",
+  "sat": "Sat",
+  "sun": "Sun",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "selected": "{count, plural, =0{None selected} one{1 selected} other{{count} selected}}",
+  "@selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkPrint": "Print",
+  "bulkExportPdf": "Export PDF",
+  "allRightsReservedFooter": "© 2026 Alhai POS. All rights reserved.",
+  "privacyPolicyFooter": "Privacy Policy",
+  "termsFooter": "Terms & Conditions",
+  "supportFooter": "Technical Support",
+  "paid": "Paid",
+  "overdue": "Overdue",
+  "creditCard": "Credit Card",
+  "electronicWallet": "E-Wallet",
+  "searchInvoiceHint": "Search by invoice number, customer...",
+  "customerDetails": "Customer Details",
+  "customerProfileAndTransactions": "Overview of the profile and transactions",
+  "customerDetailTitle": "Customer Details",
+  "totalPurchases": "Total Purchases",
+  "loyaltyPoints": "Loyalty Points",
+  "lastVisit": "Last Visit",
+  "newSaleAction": "New Sale",
+  "editInfo": "Edit Info",
+  "whatsapp": "WhatsApp",
+  "blockCustomer": "Block Customer",
+  "purchasesTab": "Purchases",
+  "accountTab": "Account",
+  "debtsTab": "Debts",
+  "analyticsTab": "Analytics",
+  "recentOrdersLog": "Recent Orders Log",
+  "exportCsv": "Export CSV",
+  "searchByInvoiceNumber": "Search by invoice number...",
+  "items": "Items",
+  "viewDetails": "View Details",
+  "financialLedger": "Financial Ledger",
+  "cashPaymentEntry": "Cash Payment",
+  "walletTopup": "Wallet Top-up",
+  "loyaltyPointsDeduction": "Loyalty Points Deduction",
+  "redeemPoints": "Redeem {count} points",
+  "@redeemPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewFullLedger": "View Full",
+  "currentBalance": "Current Balance",
+  "creditLimit": "Credit Limit",
+  "used": "Used",
+  "topUpBalance": "Top Up Balance",
+  "overdueDebt": "Overdue",
+  "upcomingDebt": "Upcoming",
+  "payNow": "Pay Now",
+  "remind": "Remind",
+  "monthlySpending": "Monthly Spending",
+  "purchaseDistribution": "Purchases Distribution by Category",
+  "last6Months": "Last 6 months",
+  "thisYear": "This Year",
+  "averageOrder": "Average Order",
+  "purchaseFrequency": "Purchase Frequency",
+  "everyNDays": "Every {count} days",
+  "@everyNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "spendingGrowth": "Spending Growth",
+  "favoriteProduct": "Favorite Product",
+  "internalNotes": "Internal Notes (visible to staff only)",
+  "addNote": "Add",
+  "addNewNote": "Add a new note...",
+  "joinedDate": "Joined: {date}",
+  "@joinedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastUpdated": "Last updated: {time}",
+  "@lastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "showingOrders": "Showing {from}-{to} of {total} orders",
+  "@showingOrders": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vegetables": "Vegetables",
+  "dairy": "Dairy",
+  "meat": "Meat",
+  "bakery": "Bakery",
+  "other": "Other",
+  "returns": "Returns",
+  "salesReturns": "Sales Returns",
+  "purchaseReturns": "Purchase Returns",
+  "totalReturns": "Total Returns",
+  "totalRefundedAmount": "Total Refunded Amount",
+  "mostReturned": "Most Returned",
+  "processed": "Processed",
+  "newReturn": "New Return",
+  "createNewReturn": "Create New Return",
+  "processReturnRequest": "Process sales return request",
+  "returnNumber": "Return Number",
+  "originalInvoice": "Original Invoice",
+  "returnReason": "Return Reason",
+  "returnAmount": "Return Amount",
+  "returnStatus": "Return Status",
+  "returnDate": "Return Date",
+  "returnActions": "Actions",
+  "returnRefunded": "Refunded",
+  "returnRejected": "Rejected",
+  "defectiveProduct": "Defective Product",
+  "wrongProduct": "Wrong Product",
+  "customerRequest": "Customer Request",
+  "otherReason": "Other reason",
+  "quickSearch": "Quick search...",
+  "exportData": "Export",
+  "printData": "Print",
+  "approve": "Approve",
+  "reject": "Reject",
+  "previous": "Previous",
+  "invoiceStep": "Invoice",
+  "itemsStep": "Items",
+  "reasonStep": "Reason",
+  "confirmStep": "Confirmation",
+  "enterInvoiceNumber": "Invoice Number",
+  "invoiceExample": "Example: #INV-889",
+  "loadInvoice": "Load",
+  "invoiceLoaded": "Invoice #{number} loaded",
+  "@invoiceLoaded": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceLoadedCustomer": "Customer: {customer} | Date: {date}",
+  "@invoiceLoadedCustomer": {
+    "placeholders": {
+      "customer": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "selectItemsInfo": "Select items to return. Cannot return more than sold quantity.",
+  "availableToReturn": "Available: {count}",
+  "@availableToReturn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alreadyReturnedFully": "Full quantity already returned",
+  "returnReasonLabel": "Return Reason (for selected items)",
+  "additionalDetails": "Additional details (required for Other)...",
+  "confirmReturn": "Confirm Return",
+  "refundAmount": "Refund Amount",
+  "refundMethod": "Refund Method",
+  "cashRefund": "Cash",
+  "storeCredit": "Store Credit",
+  "returnCreatedSuccess": "Return created successfully",
+  "noReturns": "No Returns",
+  "noReturnsDesc": "No return operations recorded yet.",
+  "timesReturned": "{count} times ({percent}% of total)",
+  "@timesReturned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "fromInvoice": "From invoice",
+  "dateFromTo": "Date from - to",
+  "returnCopied": "Number copied successfully",
+  "ofTotalProcessed": "{percent}% processed",
+  "@ofTotalProcessed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceDetails": "Invoice Details",
+  "invoiceNumberLabel": "Number:",
+  "@invoiceNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "additionalOptions": "Additional Options",
+  "duplicateInvoice": "Create Duplicate",
+  "returnMerchandise": "Return Merchandise",
+  "voidInvoice": "Void Invoice",
+  "printBtn": "Print",
+  "downloadBtn": "Download",
+  "paidSuccessfully": "Payment Successful",
+  "amountReceivedFull": "Full amount received",
+  "completedStatus": "Completed",
+  "pendingStatus": "Pending",
+  "voidedStatus": "Voided",
+  "storeName": "Store Name",
+  "storeAddress": "Riyadh, Al-Malaz District, Takhassusi Street",
+  "simplifiedTaxInvoice": "Simplified Tax Invoice",
+  "dateAndTime": "Date & Time",
+  "cashierLabel": "Cashier",
+  "itemCol": "Item",
+  "quantityColDetail": "Qty",
+  "priceColDetail": "Price",
+  "totalCol": "Total",
+  "subtotalLabel": "Subtotal",
+  "discountVip": "Discount (VIP Member)",
+  "vatLabel": "VAT (15%)",
+  "grandTotalLabel": "Grand Total",
+  "paymentMethodLabel": "Payment Method",
+  "amountPaidLabel": "Amount Paid",
+  "zatcaElectronic": "ZATCA - Electronic Invoice",
+  "scanToVerify": "Scan to verify invoice",
+  "includesVat15": "Includes 15% VAT",
+  "thankYouVisit": "Thank you for your visit!",
+  "wishNiceDay": "We wish you a wonderful day",
+  "customerInfo": "Customer Information",
+  "editBtn": "Edit",
+  "vipSince": "VIP Customer since {year}",
+  "@vipSince": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "activeStatusLabel": "Active",
+  "callBtn": "Call",
+  "recordBtn": "Record",
+  "quickActions": "Quick Actions",
+  "sendWhatsappAction": "Send WhatsApp",
+  "sendEmailAction": "Send Email",
+  "downloadPdfAction": "Download PDF",
+  "shareLinkAction": "Share Link",
+  "eventLog": "Event Log",
+  "paymentCompleted": "Payment Completed",
+  "processedViaGateway": "Processed via payment gateway",
+  "minutesAgoDetail": "{count} minutes ago",
+  "@minutesAgoDetail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceCreated": "Invoice Created",
+  "byUser": "By {name}",
+  "@byUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "todayAt": "Today, {time}",
+  "@todayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "orderStarted": "Order Started",
+  "cashierSessionOpened": "Cashier session opened",
+  "technicalData": "Technical Data",
+  "deviceIdLabel": "Device ID",
+  "terminalLabel": "Terminal",
+  "softwareVersion": "Software V",
+  "voidInvoiceConfirm": "Void Invoice?",
+  "voidInvoiceMsg": "This invoice will be permanently voided and will not be counted in daily sales. Are you sure?",
+  "voidReasonLabel": "Void Reason (Required)",
+  "voidReasonEntry": "Entry Error",
+  "voidReasonCustomer": "Customer Request",
+  "voidReasonDamaged": "Damaged Product",
+  "voidReasonOther": "Other Reason...",
+  "confirmVoid": "Confirm Void",
+  "invoiceVoided": "Invoice voided successfully",
+  "copiedText": "Copied: {text}",
+  "@copiedText": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "visaEnding": "Visa ending {digits}",
+  "@visaEnding": {
+    "placeholders": {
+      "digits": {
+        "type": "String"
+      }
+    }
+  },
+  "mobileActionPrint": "Print",
+  "mobileActionWhatsapp": "WhatsApp",
+  "mobileActionEmail": "Email",
+  "mobileActionMore": "More",
+  "sarCurrency": "SAR",
+  "skuLabel": "SKU: {code}",
+  "@skuLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "helpText": "Help",
+  "customerLedger": "Customer Ledger",
+  "accountStatement": "Account Statement",
+  "allPeriods": "All",
+  "threeMonths": "3 Months",
+  "allMovements": "All Transactions",
+  "adjustments": "Adjustments",
+  "statementCol": "Description",
+  "referenceCol": "Reference",
+  "debitCol": "Debit",
+  "creditCol": "Credit",
+  "balanceCol": "Balance",
+  "openingBalance": "Opening Balance",
+  "totalDebit": "Total Debit",
+  "totalCredit": "Total Credit",
+  "finalBalance": "Final Balance",
+  "manualAdjustment": "Manual Adjustment",
+  "adjustmentType": "Adjustment Type",
+  "debitAdjustment": "Debit Adjustment",
+  "creditAdjustment": "Credit Adjustment",
+  "adjustmentAmount": "Adjustment Amount",
+  "adjustmentReason": "Adjustment Reason",
+  "adjustmentDate": "Adjustment Date",
+  "saveAdjustment": "Save Adjustment",
+  "adjustmentSaved": "Adjustment saved successfully",
+  "enterValidAmount": "Enter a valid amount",
+  "dueOnCustomer": "Due on customer",
+  "customerHasCredit": "Customer has credit balance",
+  "noTransactions": "No transactions",
+  "recordPaymentBtn": "Record Payment",
+  "returnEntry": "Return",
+  "adjustmentEntry": "Adjustment",
+  "ordersHistory": "Orders History",
+  "totalOrdersLabel": "Total Orders",
+  "completedOrders": "Completed",
+  "pendingOrders": "Pending",
+  "cancelledOrders": "Cancelled",
+  "searchOrderHint": "Search by order number, customer, or phone...",
+  "channelLabel": "Channel",
+  "last30Days": "Last 30 days",
+  "orderDetails": "Order Details",
+  "unpaidLabel": "Unpaid",
+  "voidTransaction": "Void Transaction",
+  "voidSaleTransaction": "Void Sale Transaction",
+  "voidWarningTitle": "Important Warning: This action cannot be undone",
+  "voidWarningDesc": "Voiding this transaction will cancel the invoice completely and return all items to inventory. Please verify the information before proceeding.",
+  "voidWarningShort": "This action will cancel the invoice completely and return items to inventory. Cannot be undone.",
+  "enterInvoiceToVoid": "Enter the invoice number to void",
+  "searchByInvoiceOrBarcode": "You can search by invoice number or use the barcode scanner",
+  "invoiceExampleVoid": "Example: #INV-2024-8892",
+  "activateBarcode": "Activate barcode scanner",
+  "scanBarcodeMobile": "Scan barcode",
+  "searchForInvoiceToVoid": "Search for an invoice to void",
+  "enterNumberOrScan": "Enter the number manually or use the barcode scanner.",
+  "salesInvoice": "Sales Invoice",
+  "invoiceCompleted": "Completed",
+  "paidCash": "Paid: Cash",
+  "customerLabel": "Customer",
+  "dateAndTimeLabel": "Date & Time",
+  "voidImpactSummary": "Void Impact Summary",
+  "voidImpactItemsReturn": "Will return {count} items to inventory automatically.",
+  "@voidImpactItemsReturn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "voidImpactRefund": "Will deduct/refund amount of {amount} {currency}.",
+  "@voidImpactRefund": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "returnedItems": "Returned Items ({count})",
+  "@returnedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewAllItems": "View All",
+  "moreItemsHint": "+ {count} more items (total: {amount} {currency})",
+  "@moreItemsHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "voidReason": "Void Reason",
+  "voidReasonRequired": "Void Reason *",
+  "customerRequestReason": "Customer request",
+  "wrongItemsReason": "Wrong items",
+  "duplicateInvoiceReason": "Duplicate invoice",
+  "systemErrorReason": "System error",
+  "otherReasonVoid": "Other",
+  "additionalNotesVoid": "Additional notes...",
+  "additionalDetailsRequired": "Additional details (required for Other)...",
+  "managerApproval": "Manager Approval",
+  "managerApprovalRequired": "Manager Approval Required",
+  "amountExceedsLimit": "Amount exceeds the allowed limit ({amount} {currency}), please enter manager PIN.",
+  "@amountExceedsLimit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPinCode": "Enter PIN code",
+  "pinSentToManager": "Temporary code sent to manager's phone",
+  "defaultManagerPin": "Default manager code: 1234",
+  "confirmVoidAction": "I confirm voiding this transaction",
+  "confirmVoidDesc": "I have reviewed the details and take full responsibility.",
+  "cancelAction": "Cancel",
+  "confirmFinalVoid": "Confirm Final Void",
+  "invoiceNotFound": "Invoice not found",
+  "invoiceNotFoundDesc": "Verify the entered number or try using the barcode.",
+  "trySearchAgain": "Try searching again",
+  "voidSuccess": "Transaction voided successfully",
+  "qtyLabel": "Qty: {count}",
+  "@qtyLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manageCustomersAndAccounts": "Manage customers and accounts",
+  "totalCustomersCount": "Total Customers",
+  "outstandingDebts": "Outstanding Debts",
+  "creditBalance": "Customer Credit",
+  "filterByLabel": "Filter by",
+  "debtors": "Debtors",
+  "creditorsLabel": "Creditors",
+  "quickActionsLabel": "Quick Actions",
+  "sendDebtReminder": "Send debt reminder",
+  "exportAccountStatement": "Export account statement",
+  "cancelSelectionCount": "Cancel selection ({count})",
+  "@cancelSelectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "searchByNameOrPhone": "Search by name or phone... (Ctrl+F)",
+  "sortByBalance": "Balance",
+  "refreshF5": "Refresh (F5)",
+  "loadingCustomers": "Loading customers...",
+  "payDebt": "Pay Debt",
+  "dueAmountLabel": "Due: {amount} SAR",
+  "@dueAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountLabel": "Payment Amount",
+  "fullAmount": "Full",
+  "payAction": "Pay",
+  "paymentRecorded": "Payment of {amount} SAR recorded",
+  "@paymentRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "customerAddedSuccess": "Customer added successfully",
+  "customerNameRequired": "Customer Name *",
+  "owedLabel": "Owes",
+  "hasBalanceLabel": "Credit",
+  "zeroLabel": "Zero",
+  "addAction": "Add",
+  "expenses": "Expenses",
+  "expenseCategories": "Expense Categories",
+  "addExpense": "Add Expense",
+  "totalExpenses": "Total Expenses",
+  "thisMonthExpenses": "This Month",
+  "expenseAmount": "Amount",
+  "expenseDate": "Date",
+  "expenseCategory": "Category",
+  "expenseNotes": "Notes",
+  "noExpenses": "No expenses recorded",
+  "drawerStatus": "Drawer Status",
+  "drawerOpen": "Open",
+  "drawerClosed": "Closed",
+  "cashIn": "Cash In",
+  "cashOut": "Cash Out",
+  "expectedAmount": "Expected Amount",
+  "countedAmount": "Counted Amount",
+  "difference": "Difference",
+  "openDrawerAction": "Open Drawer",
+  "closeDrawerAction": "Close Drawer",
+  "monthlyCloseTitle": "Monthly Close",
+  "monthlyCloseDesc": "Close month and calculate receivables",
+  "totalReceivables": "Total Receivables",
+  "interestRate": "Interest Rate",
+  "closeMonth": "Close Month",
+  "shiftsTitle": "Shifts",
+  "currentShift": "Current Shift",
+  "shiftHistory": "Shift History",
+  "openShiftAction": "Open Shift",
+  "closeShiftAction": "Close Shift",
+  "shiftStartTime": "Start Time",
+  "shiftEndTime": "End Time",
+  "shiftTotalSales": "Total Sales",
+  "shiftTotalOrders": "Total Orders",
+  "startingCash": "Starting Cash",
+  "cashierName": "Cashier Name",
+  "shiftDuration": "Duration",
+  "noShifts": "No shifts recorded",
+  "purchasesTitle": "Purchases",
+  "newPurchase": "New Purchase",
+  "smartReorder": "Smart Reorder",
+  "aiInvoiceImport": "AI Invoice Import",
+  "aiInvoiceReview": "AI Invoice Review",
+  "purchaseOrder": "Purchase Order",
+  "purchaseTotal": "Purchase Total",
+  "purchaseDate": "Purchase Date",
+  "suppliersTitle": "Suppliers",
+  "addSupplier": "Add Supplier",
+  "supplierName": "Supplier Name",
+  "supplierPhone": "Phone",
+  "supplierEmail": "Email",
+  "supplierAddress": "Address",
+  "totalSuppliers": "Total Suppliers",
+  "supplierDetails": "Supplier Details",
+  "noSuppliers": "No suppliers found",
+  "discountsTitle": "Discounts",
+  "addDiscount": "Add Discount",
+  "discountName": "Discount Name",
+  "discountType": "Discount Type",
+  "discountValue": "Value",
+  "percentageDiscount": "Percentage",
+  "fixedDiscount": "Fixed Amount",
+  "activeDiscounts": "Active Discounts",
+  "couponsTitle": "Coupons",
+  "addCoupon": "Add Coupon",
+  "couponCode": "Coupon Code",
+  "couponUsage": "Usage",
+  "couponExpiry": "Expiry",
+  "totalCoupons": "Total Coupons",
+  "activeCoupons": "Active",
+  "expiredCoupons": "Expired",
+  "specialOffersTitle": "Special Offers",
+  "addOffer": "Add Offer",
+  "offerName": "Offer Name",
+  "offerStartDate": "Start Date",
+  "offerEndDate": "End Date",
+  "smartPromotionsTitle": "Smart Promotions",
+  "activePromotions": "Active Promotions",
+  "suggestedPromotions": "AI Suggestions",
+  "loyaltyTitle": "Loyalty Program",
+  "loyaltyMembers": "Members",
+  "loyaltyRewards": "Rewards",
+  "loyaltyTiers": "Tiers",
+  "totalMembers": "Total Members",
+  "pointsIssued": "Points Issued",
+  "pointsRedeemed": "Points Redeemed",
+  "notificationsTitle": "Notifications",
+  "markAllRead": "Mark All Read",
+  "noNotifications": "No notifications",
+  "printQueueTitle": "Print Queue",
+  "printAll": "Print All",
+  "cancelAll": "Cancel All",
+  "noPrintJobs": "No print jobs",
+  "syncStatusTitle": "Sync Status",
+  "lastSyncTime": "Last Sync",
+  "pendingItems": "Pending Items",
+  "syncNow": "Sync Now",
+  "pendingTransactionsTitle": "Pending Transactions",
+  "conflictResolutionTitle": "Conflict Resolution",
+  "localValue": "Local",
+  "serverValue": "Server",
+  "keepLocal": "Keep Local",
+  "keepServer": "Keep Server",
+  "driversTitle": "Drivers",
+  "addDriver": "Add Driver",
+  "driverName": "Driver Name",
+  "driverStatus": "Status",
+  "delivering": "Delivering",
+  "totalDeliveries": "Total Deliveries",
+  "driverRating": "Rating",
+  "branchesTitle": "Branches",
+  "addBranchAction": "Add Branch",
+  "branchName": "Branch Name",
+  "branchEmployees": "Employees",
+  "branchSales": "Today's Sales",
+  "profileTitle": "Profile",
+  "editProfile": "Edit Profile",
+  "personalInfo": "Personal Information",
+  "accountSettings": "Account Settings",
+  "fullName": "Full Name",
+  "emailAddress": "Email",
+  "phoneNumber": "Phone Number",
+  "role": "Role",
+  "settingsTitle": "Settings",
+  "storeSettings": "Store Settings",
+  "posSettings": "POS Settings",
+  "printerSettings": "Printer Settings",
+  "paymentDevicesSettings": "Payment Devices",
+  "barcodeSettings": "Barcode Settings",
+  "receiptTemplate": "Receipt Template",
+  "taxSettings": "Tax Settings",
+  "discountSettings": "Discount Settings",
+  "interestSettings": "Interest Settings",
+  "languageSettings": "Language",
+  "themeSettings": "Theme",
+  "securitySettings": "Security",
+  "usersManagement": "Users Management",
+  "rolesPermissions": "Roles & Permissions",
+  "activityLog": "Activity Log",
+  "backupSettings": "Backup & Restore",
+  "notificationSettings": "Notifications",
+  "zatcaCompliance": "ZATCA Compliance",
+  "helpSupport": "Help & Support",
+  "general": "General",
+  "appearance": "Appearance",
+  "securitySection": "Security",
+  "advanced": "Advanced",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "configure": "Configure",
+  "connected": "Connected",
+  "notConnected": "Not Connected",
+  "testConnection": "Test Connection",
+  "lastBackup": "Last Backup",
+  "autoBackup": "Auto Backup",
+  "manualBackup": "Backup Now",
+  "restoreBackup": "Restore",
+  "biometricAuth": "Biometric Authentication",
+  "sessionTimeout": "Session Timeout",
+  "changePin": "Change PIN",
+  "twoFactorAuth": "Two-Factor Auth",
+  "addUser": "Add User",
+  "userName": "Username",
+  "userEmail": "Email",
+  "userPhone": "Phone",
+  "addRole": "Add Role",
+  "roleName": "Role Name",
+  "permissions": "Permissions",
+  "faq": "FAQ",
+  "contactSupport": "Contact Support",
+  "documentation": "Documentation",
+  "reportBug": "Report a Bug",
+  "zatcaRegistration": "ZATCA Registration",
+  "eInvoicing": "E-Invoicing",
+  "qrCode": "QR Code",
+  "vatNumber": "VAT Number",
+  "taxNumber": "Tax Number",
+  "pushNotifications": "Push Notifications",
+  "emailNotifications": "Email Notifications",
+  "smsNotifications": "SMS Notifications",
+  "orderNotifications": "Order Notifications",
+  "stockNotifications": "Stock Alerts",
+  "paymentNotifications": "Payment Notifications",
+  "liveChat": "Live Chat",
+  "emailSupport": "Email Support",
+  "phoneSupport": "Phone Support",
+  "whatsappSupport": "WhatsApp Support",
+  "userGuide": "User Guide",
+  "videoTutorials": "Video Tutorials",
+  "changelog": "Changelog",
+  "appInfo": "App Info",
+  "buildNumber": "Build Number",
+  "notificationChannels": "Notification Channels",
+  "alertTypes": "Alert Types",
+  "salesAlerts": "Sales Alerts",
+  "inventoryAlerts": "Inventory Alerts",
+  "securityAlerts": "Security Alerts",
+  "reportAlerts": "Report Alerts",
+  "users": "Users",
+  "zatcaRegistered": "Registered with ZATCA",
+  "zatcaPhase2Active": "Phase 2 Active",
+  "registrationInfo": "Registration Info",
+  "businessName": "Business Name",
+  "branchCode": "Branch Code",
+  "qrCodeOnInvoice": "QR code appears on every invoice",
+  "certificates": "Certificates",
+  "csidCertificate": "CSID Certificate",
+  "valid": "Valid",
+  "privateKey": "Private Key",
+  "configured": "Configured",
+  "aiSection": "Artificial Intelligence",
+  "aiAssistantTitle": "AI Assistant",
+  "aiAssistantSubtitle": "Ask your smart assistant anything about your store",
+  "aiSalesForecastingTitle": "Sales Forecasting",
+  "aiSalesForecastingSubtitle": "Predict future sales using historical data",
+  "aiSmartPricingTitle": "Smart Pricing",
+  "aiSmartPricingSubtitle": "AI-powered price optimization suggestions",
+  "aiFraudDetectionTitle": "Fraud Detection",
+  "aiFraudDetectionSubtitle": "Detect suspicious patterns and protect your business",
+  "aiBasketAnalysisTitle": "Basket Analysis",
+  "aiBasketAnalysisSubtitle": "Discover products frequently bought together",
+  "aiCustomerRecommendationsTitle": "Customer Recommendations",
+  "aiCustomerRecommendationsSubtitle": "Personalized product suggestions for customers",
+  "aiSmartInventoryTitle": "Smart Inventory",
+  "aiSmartInventorySubtitle": "Optimal stock levels and waste prediction",
+  "aiCompetitorAnalysisTitle": "Competitor Analysis",
+  "aiCompetitorAnalysisSubtitle": "Compare your prices with competitors",
+  "aiSmartReportsTitle": "Smart Reports",
+  "aiSmartReportsSubtitle": "Generate reports using natural language",
+  "aiStaffAnalyticsTitle": "Staff Analytics",
+  "aiStaffAnalyticsSubtitle": "Employee performance analysis and optimization",
+  "aiProductRecognitionTitle": "Product Recognition",
+  "aiProductRecognitionSubtitle": "Identify products using camera",
+  "aiSentimentAnalysisTitle": "Sentiment Analysis",
+  "aiSentimentAnalysisSubtitle": "Analyze customer feedback and satisfaction",
+  "aiReturnPredictionTitle": "Return Prediction",
+  "aiReturnPredictionSubtitle": "Predict and prevent product returns",
+  "aiPromotionDesignerTitle": "Promotion Designer",
+  "aiPromotionDesignerSubtitle": "AI-generated promotions with ROI forecasting",
+  "aiChatWithDataTitle": "Chat with Data",
+  "aiChatWithDataSubtitle": "Query your data using natural language",
+  "aiConfidence": "Confidence",
+  "aiHighConfidence": "High confidence",
+  "aiMediumConfidence": "Medium confidence",
+  "aiLowConfidence": "Low confidence",
+  "aiAnalyzing": "Analyzing...",
+  "aiGenerating": "Generating...",
+  "aiNoData": "No data available for analysis",
+  "aiRefresh": "Refresh Analysis",
+  "aiExport": "Export Results",
+  "aiApply": "Apply Suggestions",
+  "aiDismiss": "Dismiss",
+  "aiViewDetails": "View Details",
+  "aiSuggestions": "AI Suggestions",
+  "aiInsights": "AI Insights",
+  "aiPrediction": "Prediction",
+  "aiRecommendation": "Recommendation",
+  "aiAlert": "Alert",
+  "aiWarning": "Warning",
+  "aiTrend": "Trend",
+  "aiPositive": "Positive",
+  "aiNegative": "Negative",
+  "aiNeutral": "Neutral",
+  "aiSendMessage": "Send message...",
+  "aiQuickTemplates": "Quick Templates",
+  "aiForecastPeriod": "Forecast Period",
+  "aiWeekly": "Weekly",
+  "aiMonthly": "Monthly",
+  "aiQuarterly": "Quarterly",
+  "aiWhatIfScenario": "What-If Scenario",
+  "aiSeasonalPatterns": "Seasonal Patterns",
+  "aiPriceSuggestion": "Price Suggestion",
+  "aiCurrentPrice": "Current Price",
+  "aiSuggestedPrice": "Suggested Price",
+  "aiPriceImpact": "Price Impact",
+  "aiDemandElasticity": "Demand Elasticity",
+  "aiFraudAlerts": "Fraud Alerts",
+  "aiFraudRiskScore": "Risk Score",
+  "aiBehaviorScore": "Behavior Score",
+  "aiInvestigation": "Investigation",
+  "aiAssociationRules": "Association Rules",
+  "aiBundleSuggestions": "Bundle Suggestions",
+  "aiRepurchaseReminder": "Repurchase Reminder",
+  "aiCustomerSegment": "Customer Segment",
+  "aiEoqCalculator": "EOQ Calculator",
+  "aiAbcAnalysis": "ABC Analysis",
+  "aiWastePrediction": "Waste Prediction",
+  "aiReorderPoint": "Reorder Point",
+  "aiCompetitorPrices": "Competitor Prices",
+  "aiMarketPosition": "Market Position",
+  "aiQueryInput": "Ask anything about your data...",
+  "aiReportTemplate": "Report Template",
+  "aiStaffPerformance": "Staff Performance",
+  "aiShiftOptimization": "Shift Optimization",
+  "aiProductScan": "Scan Product",
+  "aiOcrResults": "OCR Results",
+  "aiSentimentScore": "Sentiment Score",
+  "aiKeywords": "Keywords",
+  "aiReturnRisk": "Return Risk",
+  "aiPreventiveActions": "Preventive Actions",
+  "aiRoiForecast": "ROI Forecast",
+  "aiAbTesting": "A/B Testing",
+  "aiQueryHistory": "Query History",
+  "aiApplied": "Applied",
+  "aiPending": "Pending",
+  "aiHighPriority": "High Priority",
+  "aiMediumPriority": "Medium Priority",
+  "aiLowPriority": "Low Priority",
+  "aiCritical": "Critical",
+  "aiSar": "SAR",
+  "aiPercentChange": "{percent}% change",
+  "@aiPercentChange": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "aiItemsCount": "{count} items",
+  "@aiItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiLastUpdated": "Last updated: {time}",
+  "@aiLastUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedToServer": "Connected to server",
+  "lastSyncAt": "Last sync: {time}",
+  "@lastSyncAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingOperations": "Pending Operations",
+  "nPendingOperations": "{count} operations awaiting sync",
+  "@nPendingOperations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noPendingOperations": "No pending operations",
+  "syncInfo": "Sync Information",
+  "device": "Device",
+  "appVersion": "App Version",
+  "lastFullSync": "Last Full Sync",
+  "databaseStatus": "Database Status",
+  "healthy": "Healthy",
+  "syncSuccessful": "Sync completed successfully",
+  "justNow": "Just now",
+  "allOperationsSynced": "All operations synced",
+  "willSyncWhenOnline": "Will sync when connected to internet",
+  "syncAll": "Sync All",
+  "operationSynced": "Operation synced",
+  "deleteOperation": "Delete Operation",
+  "deleteOperationConfirm": "Do you want to delete this operation from the queue?",
+  "insertOperation": "Insert",
+  "updateOperation": "Update",
+  "operationLabel": "Operation",
+  "nPendingCount": "{count} pending operation(s)",
+  "@nPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictsNeedResolution": "{count} conflicts need resolution",
+  "@conflictsNeedResolution": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseCorrectValue": "Choose the correct value for each conflict",
+  "noConflicts": "No conflicts",
+  "productPriceConflict": "Product price conflict",
+  "stockQuantityConflict": "Stock quantity conflict",
+  "useAllLocal": "Use All Local",
+  "useAllServer": "Use All from Server",
+  "conflictResolvedLocal": "Conflict resolved using local value",
+  "conflictResolvedServer": "Conflict resolved using server value",
+  "useLocalValues": "Local values",
+  "useServerValues": "Server values",
+  "applyToAllConflicts": "Will apply {choice} to all conflicts",
+  "@applyToAllConflicts": {
+    "placeholders": {
+      "choice": {
+        "type": "String"
+      }
+    }
+  },
+  "allConflictsResolved": "All conflicts resolved",
+  "localValueLabel": "Local Value",
+  "serverValueLabel": "Server Value",
+  "noteOptional": "Note (optional)",
+  "suspendInvoice": "Suspend Invoice",
+  "invoiceSuspended": "Invoice suspended",
+  "nItems": "{count} item(s)",
+  "@nItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "saveSaleError": "Error saving sale: {error}",
+  "@saveSaleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "refresh": "Refresh",
+  "stockGood": "Stock is Good!",
+  "manageInventory": "Manage Inventory",
+  "pendingSyncCount": "{count} pending sync",
+  "@pendingSyncCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "freshMilk": "Fresh Milk",
+  "whiteBread": "White Bread",
+  "localEggs": "Local Eggs",
+  "yogurt": "Yogurt",
+  "minQuantityLabel": "Min: {count}",
+  "@minQuantityLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manageDiscounts": "Manage Discounts",
+  "newDiscount": "New Discount",
+  "totalLabel": "Total",
+  "stopped": "Stopped",
+  "allProducts": "All Products",
+  "specificCategory": "Specific Category",
+  "percentageLabel": "Percentage %",
+  "fixedAmount": "Fixed Amount",
+  "thePercentage": "Percentage",
+  "theAmount": "Amount",
+  "discountOff": "{value}% discount",
+  "@discountOff": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "sarDiscountOff": "{value} SAR discount",
+  "@sarDiscountOff": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "manageCoupons": "Manage Coupons",
+  "newCoupon": "New Coupon",
+  "expired": "Expired",
+  "deactivated": "Deactivated",
+  "usageCount": "{used}/{max} uses",
+  "@usageCount": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "freeDelivery": "Free Delivery",
+  "percentageDiscountLabel": "{value}% discount",
+  "@percentageDiscountLabel": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "fixedDiscountLabel": "{value} SAR discount",
+  "@fixedDiscountLabel": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "couponTypeLabel": "Type",
+  "percentageRate": "Percentage Rate",
+  "minimumOrder": "Minimum Order",
+  "expiryDate": "Expiry Date",
+  "copyCode": "Copy",
+  "usages": "Uses",
+  "percentageDiscountOption": "Percentage Discount",
+  "fixedDiscountOption": "Fixed Discount",
+  "freeDeliveryOption": "Free Delivery",
+  "percentageField": "Percentage %",
+  "manageSpecialOffers": "Manage Special Offers",
+  "newOffer": "New Offer",
+  "expiringSoon": "Expiring Soon",
+  "offerExpired": "Expired",
+  "bundleDiscount": "Bundle - {discount}% off",
+  "@bundleDiscount": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "buyAndGetFree": "Buy & Get Free",
+  "offerDiscountPercent": "{discount}% discount",
+  "@offerDiscountPercent": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "offerDiscountFixed": "{discount} SAR discount",
+  "@offerDiscountFixed": {
+    "placeholders": {
+      "discount": {
+        "type": "String"
+      }
+    }
+  },
+  "bundleLabel": "Bundle",
+  "buyAndGet": "Buy & Get",
+  "startDateLabel": "Start Date",
+  "endDateLabel": "End Date",
+  "productsLabel": "Products",
+  "offerType": "Type",
+  "theDiscount": "Discount:",
+  "smartSuggestions": "Smart Suggestions",
+  "suggestionsBasedOnAnalysis": "Suggested offers based on sales and inventory analysis",
+  "suggestedDiscountPercent": "{percent}% suggested discount",
+  "@suggestedDiscountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "stockLabelCount": "Stock: {count}",
+  "@stockLabelCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "validityDays": "Validity: {days} days",
+  "@validityDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "ignore": "Ignore",
+  "applyAction": "Apply",
+  "usageCountTimes": "Usage: {count} times",
+  "@usageCountTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promotionHistory": "Previous Promotions History",
+  "createNewPromotion": "Create New Promotion",
+  "percentageDiscountType": "Percentage Discount",
+  "percentageDiscountDesc": "10%, 20%, etc.",
+  "buyXGetY": "Buy X Get Y",
+  "buyXGetYDesc": "Buy 2 Get 1 Free",
+  "fixedAmountDiscount": "Fixed Amount Discount",
+  "fixedAmountDiscountDesc": "10 SAR off product",
+  "promotionApplied": "Promotion applied to {product}",
+  "@promotionApplied": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionType": "Type: {type}",
+  "@promotionType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionValue": "Value: {value}",
+  "@promotionValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionUsage": "Usage: {count} times",
+  "@promotionUsage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "percentageType": "Percentage",
+  "buyXGetYType": "Buy & Get",
+  "fixedAmountType": "Fixed Amount",
+  "closeAction": "Close",
+  "holdInvoices": "Hold Invoices",
+  "clearAll": "Clear All",
+  "noHoldInvoices": "No Hold Invoices",
+  "holdInvoicesDesc": "When you hold an invoice from POS, it will appear here\nYou can hold multiple invoices and resume them later",
+  "deleteInvoiceTitle": "Delete Invoice",
+  "deleteInvoiceConfirmMsg": "Do you want to delete \"{name}\"?\nThis action cannot be undone.",
+  "@deleteInvoiceConfirmMsg": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotUndo": "This action cannot be undone.",
+  "deleteAllLabel": "Delete All",
+  "deleteAllInvoices": "Delete All Invoices",
+  "deleteAllInvoicesConfirm": "Do you want to delete all hold invoices ({count} invoices)?\nThis action cannot be undone.",
+  "@deleteAllInvoicesConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceDeletedMsg": "Invoice deleted",
+  "allInvoicesDeleted": "All invoices deleted",
+  "resumedInvoice": "Resumed: {name}",
+  "@resumedInvoice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemLabel": "{count} item",
+  "@itemLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moreItems": "+{count} more items",
+  "@moreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resume": "Resume",
+  "justNowTime": "Just now",
+  "minutesAgoTime": "{count} minutes ago",
+  "@minutesAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoTime": "{count} hours ago",
+  "@hoursAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgoTime": "{count} days ago",
+  "@daysAgoTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "debtManagement": "Debt Management",
+  "sortLabel": "Sort",
+  "sortByAmount": "By amount",
+  "sortByDate": "By Date",
+  "sendReminders": "Send Reminders",
+  "allTab": "All",
+  "overdueTab": "Overdue",
+  "upcomingTab": "Upcoming",
+  "totalDebts": "Total Debts",
+  "overdueDebts": "Overdue Debts",
+  "debtorCustomers": "Debtor Customers",
+  "noDebts": "No Debts",
+  "customerLabel2": "{count} customer",
+  "@customerLabel2": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdueDays": "Overdue {days} days",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lastPaymentDate": "Last payment: {date}",
+  "@lastPaymentDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recordPayment": "Record Payment",
+  "amountDue": "Amount Due",
+  "currentDebt": "Current debt: {amount} SAR",
+  "@currentDebt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paidAmount": "Paid Amount",
+  "cashMethod": "Cash",
+  "cardMethod": "Card",
+  "transferMethod": "Transfer",
+  "paymentRecordedSuccess": "Payment recorded successfully",
+  "sendRemindersTitle": "Send Reminders",
+  "sendRemindersConfirm": "A reminder will be sent to {count} customers with overdue debts",
+  "@sendRemindersConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sendAction": "Send",
+  "remindersSent": "{count} reminders sent",
+  "@remindersSent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordPaymentFor": "Record Payment - {name}",
+  "@recordPaymentFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sendReminder": "Send Reminder",
+  "tabAiSuggestions": "AI Suggestions",
+  "tabActivePromotions": "Active Promotions",
+  "tabHistory": "History",
+  "fruitYogurt": "Fruit Yogurt",
+  "buttermilk": "Buttermilk",
+  "appleJuice": "Apple Juice",
+  "whiteCheese": "White Cheese",
+  "orangeJuice": "Orange Juice",
+  "slowMovementReason": "Slow movement - {days} days without sale",
+  "@slowMovementReason": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "nearExpiryReason": "Near expiry date",
+  "excessStockReason": "Excess stock",
+  "weekendOffer": "Weekend Offer",
+  "buy2Get1Free": "Buy 2 Get 1 Free",
+  "productsListLabel": "Products:",
+  "paymentMethodLabel2": "Payment Method",
+  "lastPaymentLabel": "Last Payment",
+  "currencySAR": "SAR",
+  "debtAmountWithCurrency": "{amount} SAR",
+  "@debtAmountWithCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUserName": "Ahmed Mohammed",
+  "saveSettings": "Save Settings",
+  "settingsSaved": "Settings saved",
+  "settingsReset": "Settings have been reset",
+  "resetSettings": "Reset Settings",
+  "resetSettingsDesc": "Reset all settings to default values",
+  "resetSettingsConfirm": "Are you sure you want to reset all POS settings to default values?",
+  "resetAction": "Reset",
+  "posSettingsSubtitle": "Display, Cart, Payment, Receipt",
+  "displaySettings": "Display Settings",
+  "productDisplayMode": "Product Display Mode",
+  "productDisplayModeDesc": "How products are displayed in POS screen",
+  "gridColumns": "Number of Columns",
+  "nColumns": "{count} columns",
+  "@nColumns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showProductImages": "Show Product Images",
+  "showProductImagesDesc": "Show images on product cards",
+  "showPrices": "Show Prices",
+  "showPricesDesc": "Show price on product card",
+  "showStockLevel": "Show Stock Level",
+  "showStockLevelDesc": "Show available quantity",
+  "cartSettings": "Cart Settings",
+  "autoFocusBarcode": "Auto-focus Barcode Field",
+  "autoFocusBarcodeDesc": "Focus on barcode field when screen opens",
+  "allowNegativeStock": "Allow Negative Stock",
+  "allowNegativeStockDesc": "Sell even when stock is zero",
+  "confirmBeforeDelete": "Confirm Before Delete",
+  "confirmBeforeDeleteDesc": "Ask for confirmation when removing product from cart",
+  "showItemNotes": "Show Item Notes",
+  "showItemNotesDesc": "Allow adding notes to each item",
+  "cashPaymentOption": "Cash Payment",
+  "cardPaymentOption": "Card Payment",
+  "creditPaymentOption": "Credit Payment",
+  "bankTransferOption": "Bank Transfer",
+  "allowSplitPayment": "Allow Split Payment",
+  "allowSplitPaymentDesc": "Pay with multiple methods",
+  "requireCustomerForCredit": "Require Customer for Credit",
+  "requireCustomerForCreditDesc": "Customer must be selected for credit payment",
+  "receiptSettings": "Receipt Settings",
+  "autoPrintReceipt": "Auto Print Receipt",
+  "autoPrintReceiptDesc": "Print immediately after transaction",
+  "receiptCopies": "Number of Receipt Copies",
+  "emailReceiptOption": "Email Receipt",
+  "emailReceiptDesc": "Send a copy to customer",
+  "smsReceiptOption": "SMS Receipt",
+  "smsReceiptDesc": "Text message to customer",
+  "printerSettingsDesc": "Choose printer and its settings",
+  "receiptDesign": "Receipt Design",
+  "receiptDesignDesc": "Customize receipt appearance",
+  "advancedSettings": "Advanced Settings",
+  "allowHoldInvoices": "Allow Hold Invoices",
+  "allowHoldInvoicesDesc": "Save invoice temporarily",
+  "maxHoldInvoices": "Max Hold Invoices",
+  "quickSaleMode": "Quick Sale Mode",
+  "quickSaleModeDesc": "Simplified screen for quick sales",
+  "soundEffects": "Sound Effects",
+  "soundEffectsDesc": "Sounds on scan and add",
+  "hapticFeedback": "Haptic Feedback",
+  "hapticFeedbackDesc": "Vibrate on button press",
+  "keyboardShortcuts": "Keyboard Shortcuts",
+  "customizeShortcuts": "Customize shortcuts",
+  "shortcutSearchProduct": "Search product",
+  "shortcutSearchCustomer": "Search customer",
+  "shortcutHoldInvoice": "Hold invoice",
+  "shortcutFavorites": "Favorites",
+  "shortcutApplyDiscount": "Apply discount",
+  "shortcutPayment": "Payment",
+  "shortcutCancelBack": "Cancel / Back",
+  "shortcutDeleteProduct": "Delete product",
+  "paymentDevicesSubtitle": "mada, STC Pay, Apple Pay",
+  "supportedPaymentMethods": "Supported Payment Methods",
+  "madaLocalCards": "Local mada cards",
+  "internationalCards": "International cards",
+  "stcDigitalWallet": "STC digital wallet",
+  "paymentTerminal": "Payment Terminal",
+  "ingenicoDevices": "Ingenico devices",
+  "verifoneDevices": "Verifone devices",
+  "paxDevices": "PAX devices",
+  "settlement": "Settlement",
+  "autoSettlement": "Auto Settlement",
+  "autoSettlementDesc": "Automatic end-of-day settlement",
+  "manualSettlement": "Manual Settlement",
+  "executeSettlementNow": "Execute settlement now",
+  "settlingInProgress": "Settling...",
+  "paymentDevicesSettingsSaved": "Payment devices settings saved",
+  "printerType": "Printer Type",
+  "thermalUsbPrinter": "USB thermal printer",
+  "bluetoothPortablePrinter": "Bluetooth portable printer",
+  "saveAsPdf": "Save as PDF file",
+  "compactTemplate": "Compact",
+  "basicInfoOnly": "Basic info only",
+  "detailedTemplate": "Detailed",
+  "allDetails": "All details",
+  "printOptions": "Print Options",
+  "autoPrinting": "Auto Printing",
+  "autoPrintAfterSale": "Auto print receipt after each sale",
+  "testPrintInProgress": "Test printing...",
+  "testPrint": "Test Print",
+  "printerSettingsSaved": "Printer settings saved",
+  "printerSettingsSubtitle": "Printer type, template, auto print",
+  "enableScanner": "Enable Scanner",
+  "barcodeScanner": "Barcode Scanner",
+  "barcodeScannerDesc": "Use barcode scanner to add products",
+  "deviceCamera": "Device Camera",
+  "bluetoothScanner": "Bluetooth Scanner",
+  "externalScannerConnected": "External scanner connected",
+  "alerts": "Alerts",
+  "beepOnScan": "Beep on Scan",
+  "vibrateOnScan": "Vibrate on Scan",
+  "behavior": "Behavior",
+  "autoAddToCart": "Auto Add to Cart",
+  "autoAddToCartDesc": "When scanning existing product",
+  "barcodeFormats": "Barcode Formats",
+  "allFormats": "All formats",
+  "unspecified": "Unspecified",
+  "qrCodeOnly": "QR Code only",
+  "testing": "Testing",
+  "testScanner": "Test Scanner",
+  "testScanBarcode": "Try scanning a barcode",
+  "pointCameraAtBarcode": "Point camera at the barcode",
+  "scanArea": "Scan area",
+  "barcodeSettingsSubtitle": "Scanner, alerts, formats",
+  "taxSettingsSubtitle": "VAT, ZATCA, e-invoicing",
+  "vatSettings": "Value Added Tax",
+  "enableVat": "Enable VAT",
+  "enableVatDesc": "Apply VAT on all sales",
+  "taxRate": "Tax Rate",
+  "taxNumberHint": "15 digits starting with 3",
+  "pricesIncludeTax": "Prices Include Tax",
+  "pricesIncludeTaxDesc": "Displayed prices include tax",
+  "showTaxOnReceipt": "Show Tax on Receipt",
+  "showTaxOnReceiptDesc": "Show tax details",
+  "zatcaEInvoicing": "ZATCA - E-Invoicing",
+  "enableZatca": "Enable ZATCA",
+  "enableZatcaDesc": "Comply with e-invoicing system",
+  "phaseOne": "Phase 1",
+  "phaseOneDesc": "Invoice issuance",
+  "phaseTwo": "Phase 2",
+  "phaseTwoDesc": "Integration and linking",
+  "taxSettingsSaved": "Tax settings saved",
+  "discountSettingsTitle": "Discount Settings",
+  "discountSettingsSubtitle": "Manual, VIP, volume, coupons",
+  "generalDiscounts": "General Discounts",
+  "enableDiscountsOption": "Enable Discounts",
+  "enableDiscountsDesc": "Allow applying discounts",
+  "manualDiscount": "Manual Discount",
+  "manualDiscountDesc": "Allow cashier to enter manual discount",
+  "maxDiscountLimit": "Max Discount Limit",
+  "requireApproval": "Require Approval",
+  "requireApprovalDesc": "Require manager approval for discount",
+  "vipCustomerDiscount": "VIP Customer Discount",
+  "vipDiscount": "VIP Discount",
+  "vipDiscountDesc": "Auto discount for VIP customers",
+  "vipDiscountRate": "VIP Discount Rate",
+  "otherDiscounts": "Other Discounts",
+  "volumeDiscount": "Volume Discount",
+  "volumeDiscountDesc": "Auto discount on certain quantities",
+  "couponsOption": "Coupons",
+  "couponsDesc": "Support discount coupons",
+  "discountSettingsSaved": "Discount settings saved",
+  "interestSettingsTitle": "Interest Settings",
+  "interestSettingsSubtitle": "Rate, grace period, auto calculation",
+  "monthlyInterest": "Monthly Interest",
+  "enableInterest": "Enable Interest",
+  "enableInterestDesc": "Apply interest on credit debts",
+  "monthlyInterestRate": "Monthly Interest Rate",
+  "maxInterestRateLabel": "Max Interest Rate",
+  "gracePeriod": "Grace Period",
+  "graceDays": "Grace Days",
+  "graceDaysLabel": "{days} days before interest calculation",
+  "@graceDaysLabel": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "compoundInterest": "Compound Interest",
+  "compoundInterestDesc": "Calculate interest on interest",
+  "calculationAndAlerts": "Calculation & Alerts",
+  "autoCalculation": "Auto Calculation",
+  "autoCalculationDesc": "Auto calculate interest at end of each month",
+  "customerNotification": "Customer Notification",
+  "customerNotificationDesc": "Send notification when interest is calculated",
+  "interestSettingsSaved": "Interest settings saved",
+  "receiptTemplateTitle": "Receipt Template",
+  "receiptTemplateSubtitle": "Header, footer, fields, paper size",
+  "headerAndFooter": "Header & Footer",
+  "receiptTitleField": "Receipt Title",
+  "footerText": "Footer Text",
+  "displayedFields": "Displayed Fields",
+  "storeLogo": "Store Logo",
+  "addressField": "Address",
+  "phoneNumberField": "Phone Number",
+  "vatNumberField": "VAT Number",
+  "invoiceBarcode": "Invoice Barcode",
+  "qrCodeField": "QR Code",
+  "qrCodeEInvoice": "QR code for e-invoice",
+  "paperSize": "Paper Size",
+  "standardSize": "Standard size",
+  "smallSize": "Small size",
+  "normalPrint": "Normal print",
+  "receiptTemplateSaved": "Receipt template saved",
+  "instantNotifications": "Instant notifications on device",
+  "emailNotificationsDesc": "Send notifications via email",
+  "smsNotificationsDesc": "Notifications via text messages",
+  "salesAlertsDesc": "Sales and invoices alerts",
+  "inventoryAlertsDesc": "Low stock alerts",
+  "securityAlertsDesc": "Security and login alerts",
+  "reportAlertsDesc": "Daily and weekly reports",
+  "contactSupportDesc": "Available 24/7",
+  "systemGuide": "System Guide",
+  "changeLog": "Change Log",
+  "faqQuestion1": "How to add a new product?",
+  "faqAnswer1": "Go to Products > Add Product and fill in the details",
+  "faqQuestion2": "How to print invoices?",
+  "faqAnswer2": "After completing the sale, click Print Receipt",
+  "faqQuestion3": "How to set discounts?",
+  "faqAnswer3": "From Settings > Discount Settings, you can configure discounts",
+  "faqQuestion4": "How to add a new user?",
+  "faqAnswer4": "From Settings > User Management > Add User",
+  "faqQuestion5": "How to view reports?",
+  "faqAnswer5": "From the main menu > Reports, choose the desired report type",
+  "businessNameValue": "Al-Hai Business",
+  "disabledLabel": "Disabled",
+  "allFilter": "All",
+  "loginLogoutFilter": "Login/Logout",
+  "salesFilter": "Sales",
+  "productsFilter": "Products",
+  "usersFilter": "Users",
+  "systemFilter": "System",
+  "noActivities": "No activities",
+  "pinSection": "PIN Code",
+  "createPinOption": "Create PIN",
+  "createPinDesc": "Set a 4-digit PIN for fast login",
+  "changePinOption": "Change PIN",
+  "changePinDesc": "Update your current PIN",
+  "removePinOption": "Remove PIN",
+  "removePinDesc": "Delete PIN and use OTP login",
+  "biometricSection": "Biometric Login",
+  "fingerprintOption": "Fingerprint",
+  "fingerprintDesc": "Login using fingerprint",
+  "faceIdOption": "Face ID",
+  "faceIdDesc": "Login using face recognition",
+  "sessionSection": "Session",
+  "autoLockOption": "Auto Lock",
+  "autoLockDesc": "Lock screen after inactivity",
+  "autoLockTimeout": "Auto Lock Timeout",
+  "dangerZone": "Danger Zone",
+  "logoutAllDevices": "Logout All Devices",
+  "logoutAllDevicesDesc": "End all active sessions",
+  "clearAllData": "Clear All Data",
+  "clearAllDataDesc": "Delete all local data",
+  "createPinTitle": "Create PIN",
+  "enterNewPin": "Enter new 4-digit PIN",
+  "changePinTitle": "Change PIN",
+  "enterCurrentPin": "Enter current PIN",
+  "enterNewPinChange": "Enter new PIN",
+  "removePinTitle": "Remove PIN",
+  "removePinConfirm": "Are you sure you want to remove PIN login?",
+  "removeAction": "Remove",
+  "pinCreated": "PIN created successfully",
+  "pinChangedSuccess": "PIN changed successfully",
+  "pinRemovedSuccess": "PIN removed",
+  "logoutAllTitle": "Logout All Devices",
+  "logoutAllConfirm": "This will end all active sessions. You will need to login again.",
+  "logoutAllAction": "Logout All",
+  "loggedOutAll": "All devices logged out",
+  "clearDataTitle": "Clear All Data",
+  "clearDataConfirm": "This will delete all local data. This action cannot be undone.",
+  "clearDataAction": "Clear Data",
+  "dataCleared": "All data cleared",
+  "afterMinutes": "After {count} minutes",
+  "@afterMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storeInfo": "Store Information",
+  "storeNameField": "Store Name",
+  "addressLabel": "Address",
+  "taxInfo": "Tax Information",
+  "vatNumberFieldLabel": "VAT Number (VAT)",
+  "vatNumberHintText": "15 digits starting with 3",
+  "commercialRegister": "Commercial Register",
+  "enableVatOption": "Enable VAT",
+  "taxRateField": "Tax Rate",
+  "languageAndCurrency": "Language & Currency",
+  "currencyFieldLabel": "Currency",
+  "saudiRiyal": "Saudi Riyal (SAR)",
+  "usDollar": "US Dollar (USD)",
+  "storeLogoSection": "Store Logo",
+  "storeLogoDesc": "Appears on invoices and receipts",
+  "changeButton": "Change",
+  "storeSettingsSaved": "Store settings saved",
+  "ownerRole": "Owner",
+  "managerRole": "Manager",
+  "supervisorRole": "Supervisor",
+  "cashierRole": "Cashier",
+  "disabledStatus": "Disabled",
+  "editMenuAction": "Edit",
+  "disableMenuAction": "Disable",
+  "enableMenuAction": "Enable",
+  "addUserTitle": "Add User",
+  "editUserTitle": "Edit User",
+  "nameRequired": "Name *",
+  "roleLabel": "Role",
+  "userDetailsTitle": "User Details",
+  "rolesTab": "Roles",
+  "permissionsTab": "Permissions",
+  "newRoleButton": "New Role",
+  "systemBadge": "System",
+  "userCountLabel": "{count} users",
+  "@userCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "permissionCountLabel": "{count} permissions",
+  "@permissionCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "editRoleMenu": "Edit",
+  "duplicateRoleMenu": "Duplicate",
+  "deleteRoleMenu": "Delete",
+  "addRoleTitle": "Add Role",
+  "editRoleTitle": "Edit Role",
+  "roleNameField": "Role Name",
+  "roleDescField": "Description",
+  "rolePermissionsLabel": "Permissions",
+  "permViewSales": "View Sales",
+  "permViewSalesDesc": "View sales and invoices",
+  "permCreateSale": "Create Sale",
+  "permCreateSaleDesc": "Create new sales",
+  "permApplyDiscount": "Apply Discount",
+  "permApplyDiscountDesc": "Apply discounts to invoices",
+  "permVoidSale": "Void Sale",
+  "permVoidSaleDesc": "Cancel and void sales",
+  "permViewProducts": "View Products",
+  "permViewProductsDesc": "View product list",
+  "permEditProducts": "Edit Products",
+  "permEditProductsDesc": "Edit product details and prices",
+  "permManageInventory": "Manage Inventory",
+  "permManageInventoryDesc": "Manage stock and inventory",
+  "permViewReports": "View Reports",
+  "permViewReportsDesc": "View all reports",
+  "permExportReports": "Export Reports",
+  "permExportReportsDesc": "Export reports as PDF/Excel",
+  "permViewCustomers": "View Customers",
+  "permViewCustomersDesc": "View customer list",
+  "permManageCustomers": "Manage Customers",
+  "permManageCustomersDesc": "Add and edit customers",
+  "permManageDebts": "Manage Debts",
+  "permManageDebtsDesc": "Manage customer debts",
+  "permOpenCloseShift": "Open/Close Shift",
+  "permOpenCloseShiftDesc": "Open and close work shifts",
+  "permManageCashDrawer": "Manage Cash Drawer",
+  "permManageCashDrawerDesc": "Add and withdraw cash",
+  "permManageUsers": "Manage Users",
+  "permManageUsersDesc": "Add and edit users",
+  "permManageRoles": "Manage Roles",
+  "permManageRolesDesc": "Manage roles and permissions",
+  "permViewSettings": "View Settings",
+  "permViewSettingsDesc": "View system settings",
+  "permEditSettings": "Edit Settings",
+  "permEditSettingsDesc": "Modify system settings",
+  "permViewAuditLog": "View Audit Log",
+  "permViewAuditLogDesc": "View activity log",
+  "permManageBackup": "Manage Backup",
+  "permManageBackupDesc": "Backup and restore",
+  "permCategorySales": "Sales",
+  "permCategoryProducts": "Products",
+  "permCategoryReports": "Reports",
+  "permCategoryCustomers": "Customers",
+  "permCategoryShifts": "Shifts",
+  "permCategoryUsers": "Users",
+  "permCategorySettings": "Settings",
+  "permCategorySecurity": "Security",
+  "autoBackupEnabled": "Auto backup enabled",
+  "autoBackupDisabledLabel": "Disabled",
+  "backupFrequency": "Backup Frequency",
+  "everyHour": "Every hour",
+  "dailyBackup": "Daily",
+  "weeklyBackup": "Weekly",
+  "manualBackupSection": "Manual Backup",
+  "createBackupNow": "Create Backup Now",
+  "lastBackupTime": "Last backup: 3 hours ago",
+  "restoreSection": "Restore",
+  "restoreFromBackup": "Restore from Backup",
+  "restoreFromBackupDesc": "Restore data from a previous backup",
+  "backupHistoryLabel": "Backup History",
+  "backupInProgress": "Creating backup...",
+  "backupCreated": "Backup created successfully",
+  "restoreConfirmTitle": "Restore from Backup",
+  "restoreConfirmMessage": "This will replace all current data. This action cannot be undone.",
+  "restoreAction": "Restore",
+  "restoreInProgress": "Restoring...",
+  "restoreComplete": "Restore complete",
+  "pasteCode": "Paste code",
+  "devOtpMessage": "Dev OTP: {otp}",
+  "@devOtpMessage": {
+    "placeholders": {
+      "otp": {
+        "type": "String"
+      }
+    }
+  },
+  "orderHistory": "Order History",
+  "history": "History",
+  "selectDateRange": "Select Period",
+  "orderSearchHint": "Search by order number or customer ID...",
+  "noOrders": "No orders",
+  "orderStatusConfirmed": "Confirmed",
+  "orderStatusPreparing": "Preparing",
+  "orderStatusReady": "Ready",
+  "orderStatusDelivering": "Delivering",
+  "filterOrders": "Filter Orders",
+  "channelApp": "App",
+  "channelWhatsapp": "WhatsApp",
+  "channelPos": "POS",
+  "paymentCashType": "Cash",
+  "paymentMixed": "Mixed",
+  "paymentOnline": "Online",
+  "shareAction": "Share",
+  "exportOrders": "Export Orders",
+  "selectExportFormat": "Select export format",
+  "exportedAsExcel": "Exported as Excel",
+  "exportedAsPdf": "Exported as PDF",
+  "alertSettings": "Alert Settings",
+  "acknowledgeAll": "Acknowledge All",
+  "allWithCount": "All ({count})",
+  "@allWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lowStockWithCount": "Low Stock ({count})",
+  "@lowStockWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "expiryWithCount": "Near Expiry ({count})",
+  "@expiryWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "urgentAlerts": "Urgent Alerts",
+  "nearExpiry": "Near Expiry",
+  "noAlerts": "No alerts",
+  "alertDismissed": "Alert dismissed",
+  "undo": "Undo",
+  "criticalPriority": "Critical",
+  "highPriority": "Urgent",
+  "stockAlertMessage": "Quantity: {current} (Minimum: {threshold})",
+  "@stockAlertMessage": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "expiryAlertLabel": "Expiry alert",
+  "currentQuantity": "Current Quantity",
+  "minimumThreshold": "Minimum",
+  "dismissAction": "Dismiss",
+  "lowStockNotifications": "Low Stock Notifications",
+  "expiryNotifications": "Expiry Notifications",
+  "minimumStockLevel": "Minimum Stock Level",
+  "thresholdUnits": "{count} units",
+  "@thresholdUnits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "acknowledgeAllAlerts": "Acknowledge All Alerts",
+  "willDismissAlerts": "Will dismiss {count} alerts",
+  "@willDismissAlerts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allAlertsAcknowledged": "All alerts acknowledged",
+  "createPurchaseOrder": "Create Purchase Order",
+  "productLabelName": "Product: {name}",
+  "@productLabelName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "requiredQuantity": "Required Quantity",
+  "createAction": "Create",
+  "purchaseOrderCreated": "Purchase order created",
+  "newCategory": "New Category",
+  "productCountUnit": "{count, plural, =0{No products} one{1 product} other{{count} products}}",
+  "@productCountUnit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "iconLabel": "Icon:",
+  "colorLabel": "Color:",
+  "deleteCategoryMessage": "Delete category \"{name}\"?\n{count} products will be moved to \"Uncategorized\".",
+  "@deleteCategoryMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "productNumber": "Product {number}",
+  "@productNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "priceWithCurrency": "{price} SAR",
+  "@priceWithCurrency": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "currentlyOpenShift": "Currently Open Shift",
+  "since": "Since",
+  "transaction": "transaction",
+  "totalTransactions": "Total Transactions",
+  "openShifts": "Open Shifts",
+  "closedShifts": "Closed Shifts",
+  "shiftsLog": "Shifts Log",
+  "noShiftsToday": "No shifts today",
+  "open": "Open",
+  "customPeriod": "Custom Period",
+  "salesReport": "Sales Report",
+  "salesReportDesc": "Sales and invoices details",
+  "profitReport": "Profit Report",
+  "profitReportDesc": "Net profit and losses",
+  "inventoryReport": "Inventory Report",
+  "inventoryReportDesc": "Inventory movements and stocktaking",
+  "vatReport": "VAT Report",
+  "vatReportDesc": "Value Added Tax 15%",
+  "customerReport": "Customer Report",
+  "customerReportDesc": "Customer activity and debts",
+  "purchasesReport": "Purchases Report",
+  "purchasesReportDesc": "Purchase invoices and suppliers",
+  "costs": "Costs",
+  "netProfit": "Net Profit",
+  "salesTax": "Sales Tax",
+  "purchasesTax": "Purchases Tax",
+  "taxDue": "Tax Due",
+  "debts": "Debts",
+  "paidDebts": "Paid",
+  "averageAmount": "Average",
+  "suppliers": "Suppliers",
+  "todayExpenses": "Today's Expenses",
+  "transactionCount": "Transactions Count",
+  "salaries": "Salaries",
+  "rent": "Rent",
+  "purchases": "Purchases",
+  "noDriversRegistered": "No drivers registered",
+  "addDriversForDelivery": "Add drivers to manage delivery",
+  "onDelivery": "On Delivery",
+  "unavailable": "Unavailable",
+  "totalDrivers": "Total Drivers",
+  "availableDrivers": "Available Drivers",
+  "inDelivery": "In Delivery",
+  "excellentRating": "Excellent Rating",
+  "delivery": "delivery",
+  "track": "Track",
+  "percentage": "Percentage",
+  "totalSavings": "Total Savings",
+  "totalUsage": "Total Usage",
+  "times": "times",
+  "activeOffers": "Active Offers",
+  "upcomingOffers": "Upcoming Offers",
+  "expiredOffers": "Expired Offers",
+  "bundle": "Bundle",
+  "dueDebts": "Due Debts",
+  "collected": "Collected",
+  "newNotification": "New Notification",
+  "oneHourAgo": "1 hour ago",
+  "twoHoursAgo": "2 hours ago",
+  "trackingMap": "Tracking Map",
+  "deliveriesToday": "{count} deliveries today",
+  "@deliveriesToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "assignOrder": "Assign Order",
+  "driversTrackingMap": "Drivers Tracking Map",
+  "gpsSubscriptionRequired": "(Requires GPS subscription)",
+  "vehicleLabel": "Vehicle",
+  "vehicleHint": "e.g.: Hilux - White",
+  "plateNumberLabel": "Plate Number",
+  "assignOrderTo": "Assign order to {name}",
+  "@assignOrderTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "orderLabel": "Order",
+  "orderAssignedTo": "Order assigned to {name}",
+  "@orderAssignedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "closingPeriod": "Closing period: {period}",
+  "@closingPeriod": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "lastClosing": "Last closing: {date}",
+  "@lastClosing": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "interestRateAndGrace": "Interest rate: {rate}% | Grace period: {days} days",
+  "@interestRateAndGrace": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "selectedCustomers": "Selected Customers",
+  "expectedInterests": "Expected Interests",
+  "noDebtsNeedClosing": "No debts need closing",
+  "allCustomersWithinGrace": "All customers are within the grace period",
+  "debtLabel": "Debt: {amount} SAR",
+  "@debtLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "expectedInterestLabel": "Expected interest: {amount} SAR",
+  "@expectedInterestLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "selectedCustomerCount": "{count} customer(s) selected",
+  "@selectedCustomerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "processingClose": "Processing...",
+  "executeClose": "Execute Close",
+  "interestWillBeAdded": "Interest will be added to {count} customer(s)",
+  "@interestWillBeAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "totalInterestsLabel": "Total interests: {amount} SAR",
+  "@totalInterestsLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "monthCloseSuccess": "Month closed for {count} customer(s)",
+  "@monthCloseSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readAll": "Read All",
+  "averageExpense": "Average Expense",
+  "expensesList": "Expenses List",
+  "electricity": "Electricity",
+  "maintenance": "Maintenance",
+  "services": "Services",
+  "expense": "Expense",
+  "filterExpenses": "Filter Expenses",
+  "openedNotification": "Opened",
+  "openTime": "Open Time",
+  "closeTime": "Close Time",
+  "expectedCash": "Expected Cash",
+  "closingCash": "Closing Cash",
+  "printAction": "Print",
+  "exportAction": "Export",
+  "viewReport": "View Report",
+  "exportingReport": "Exporting report...",
+  "chartsUnderDev": "Charts under development...",
+  "reportsAnalysis": "Performance and sales analysis",
+  "aiAssociationFrequency": "{productA} + {productB}: repeated {frequency} times",
+  "@aiAssociationFrequency": {
+    "placeholders": {
+      "productA": {
+        "type": "String"
+      },
+      "productB": {
+        "type": "String"
+      },
+      "frequency": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBundleActivated": "Bundle activated: {name}",
+  "@aiBundleActivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "aiPromotionsGeneratedCount": "{count} promotions generated based on store data analysis",
+  "@aiPromotionsGeneratedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiPromotionApplied": "Applied: {title}",
+  "@aiPromotionApplied": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "aiConfidencePercent": "Confidence: {percent}%",
+  "@aiConfidencePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "aiAlertsWithCount": "Alerts ({count})",
+  "@aiAlertsWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiStaffCurrentSuggested": "{current} staff currently → {suggested} suggested",
+  "@aiStaffCurrentSuggested": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "suggested": {
+        "type": "int"
+      }
+    }
+  },
+  "aiMinutesAgo": "{minutes} minutes ago",
+  "@aiMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "aiHoursAgo": "{hours} hours ago",
+  "@aiHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "aiDaysAgo": "{days} days ago",
+  "@aiDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "aiDetectedCount": "Detected: {count}",
+  "@aiDetectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiMatchedCount": "Matched: {count}",
+  "@aiMatchedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiAccuracyPercent": "Accuracy: {percent}%",
+  "@aiAccuracyPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "aiProductAccepted": "{name} accepted",
+  "@aiProductAccepted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "aiErrorOccurred": "Error occurred: {error}",
+  "@aiErrorOccurred": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiErrorWithMessage": "Error: {error}",
+  "@aiErrorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiBasketAnalysis": "AI Basket Analysis",
+  "aiAssociations": "Associations",
+  "aiCrossSell": "Cross-Sell",
+  "aiAvgBasketSize": "Avg Basket Size",
+  "aiProductUnit": "products",
+  "aiAvgBasketValue": "Avg Basket Value",
+  "aiSaudiRiyal": "SAR",
+  "aiStrongestAssociation": "Strongest Association",
+  "aiConversionRate": "Conversion Rate",
+  "aiFromSuggestions": "from suggestions",
+  "aiAssistant": "AI Assistant",
+  "aiAskAboutStore": "Ask any question about your store",
+  "aiClearChat": "Clear Chat",
+  "aiAssistantReady": "AI Assistant is ready to help!",
+  "aiAskAboutSalesStock": "Ask about sales, stock, customers, or anything about your store",
+  "aiCompetitorAnalysis": "Competitor Analysis",
+  "aiPriceComparison": "Price Comparison",
+  "aiTrackedProducts": "Tracked Products",
+  "aiCheaperThanCompetitors": "Cheaper than competitors",
+  "aiMoreExpensive": "More expensive than competitors",
+  "aiAvgPriceDiff": "Avg Price Difference",
+  "aiSortByName": "Sort by name",
+  "aiSortByPriceDiff": "Sort by price difference",
+  "aiSortByOurPrice": "Sort by our price",
+  "aiSortByCategory": "Sort by category",
+  "aiSortLabel": "Sort",
+  "aiPriceIndex": "Price Index",
+  "aiQuality": "Quality",
+  "aiBranches": "Branches",
+  "aiMarkAllRead": "Mark all as read",
+  "aiNoAlertsCurrently": "No alerts currently",
+  "aiFraudDetection": "AI Fraud Detection",
+  "aiTotalAlerts": "Total Alerts",
+  "aiCriticalAlerts": "Critical Alerts",
+  "aiNeedsReview": "Needs Review",
+  "aiRiskLevel": "Risk Level",
+  "aiBehaviorScores": "Behavior Scores",
+  "aiRiskMeter": "Risk Meter",
+  "aiHighRisk": "High Risk",
+  "aiLowRisk": "Low Risk",
+  "aiPatternRefund": "Refund",
+  "aiPatternAfterHours": "After Hours",
+  "aiPatternVoid": "Void",
+  "aiPatternDiscount": "Discount",
+  "aiPatternSplit": "Split",
+  "aiPatternCashDrawer": "Cash Drawer",
+  "aiNoFraudAlerts": "No alerts",
+  "aiSelectAlertToInvestigate": "Select an alert from the list to investigate",
+  "aiStaffAnalytics": "Staff Analytics",
+  "aiLeaderboard": "Leaderboard",
+  "aiIndividualPerformance": "Individual Performance",
+  "aiAvgPerformance": "Avg Performance",
+  "aiTotalSalesLabel": "Total Sales",
+  "aiTotalTransactions": "Total Transactions",
+  "aiAvgVoidRate": "Avg Void Rate",
+  "aiTeamGrowth": "Team Growth",
+  "aiLeaderboardThisWeek": "Leaderboard - This Week",
+  "aiSalesForecasting": "Sales Forecasting",
+  "aiSmartForecastSubtitle": "Smart analysis for future sales prediction",
+  "aiForecastAccuracy": "Forecast Accuracy",
+  "aiTrendUp": "Upward",
+  "aiTrendDown": "Downward",
+  "aiTrendStable": "Stable",
+  "aiNextWeekForecast": "Next Week Forecast",
+  "aiMonthForecast": "Month Forecast",
+  "aiForecastSummary": "Forecast Summary",
+  "aiSalesTrendingUp": "Sales trending up - keep going!",
+  "aiSalesDeclining": "Sales declining - activate offers",
+  "aiSalesStable": "Sales stable - maintain performance",
+  "aiProductRecognition": "Product Recognition",
+  "aiSingleProduct": "Single Product",
+  "aiShelfScan": "Shelf Scan",
+  "aiBarcodeOcr": "Barcode OCR",
+  "aiPriceTag": "Price Tag",
+  "aiCameraArea": "Camera Area",
+  "aiPointCameraAtProduct": "Point the camera at the product or shelf",
+  "aiStartScan": "Start Scan",
+  "aiAnalyzingImage": "Analyzing image...",
+  "aiStartScanToSeeResults": "Start scanning to see results",
+  "aiScanResults": "Scan Results",
+  "aiProductSaved": "Product saved successfully",
+  "aiPromotionDesigner": "AI Promotion Designer",
+  "aiSuggestedPromotions": "Suggested Promotions",
+  "aiRoiAnalysis": "ROI Analysis",
+  "aiAbTest": "A/B Test",
+  "aiSmartPromotionDesigner": "Smart Promotion Designer",
+  "aiProjectedRevenue": "Projected Revenue",
+  "aiAiConfidence": "AI Confidence",
+  "aiSelectPromotionForRoi": "Select a promotion from the first tab to view ROI analysis",
+  "aiRevenueLabel": "Revenue",
+  "aiCostLabel": "Cost",
+  "aiDiscountLabel": "Discount",
+  "aiAbTestDescription": "A/B test splits your customers into two groups and shows each group a different offer to determine the best performer.",
+  "aiAbTestLaunched": "A/B test launched successfully!",
+  "aiChatWithData": "Chat with Data - AI",
+  "aiChatWithYourData": "Chat with your Data",
+  "aiAskAboutDataInArabic": "Ask any question about your sales, stock, and customers in Arabic",
+  "aiTrySampleQuestions": "Try one of these questions",
+  "aiTip": "Tip",
+  "aiTipDescription": "You can ask in Arabic or English. AI understands context and chooses the best way to display results: numbers, tables, or charts.",
+  "loadingApp": "Loading...",
+  "initializingSearch": "Initializing search...",
+  "loadingData": "Loading data...",
+  "initializingDemoData": "Initializing demo data...",
+  "pointOfSale": "Point of Sale",
+  "managerPinSetup": "Manager PIN Setup",
+  "confirmPin": "Confirm PIN",
+  "createNewPin": "Create New PIN",
+  "reenterPinToConfirm": "Re-enter PIN to confirm",
+  "enterFourDigitPin": "Enter a 4-digit PIN",
+  "pinsMismatch": "PINs do not match",
+  "managerPinCreatedSuccess": "Manager PIN created successfully",
+  "enterManagerPin": "Enter manager PIN",
+  "operationRequiresApproval": "This operation requires manager approval",
+  "approvalGranted": "Approved",
+  "accountLockedWaitMinutes": "Account locked. Wait {minutes} minutes",
+  "@accountLockedWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "wrongPinAttemptsRemaining": "Wrong PIN. Remaining attempts: {remaining}",
+  "@wrongPinAttemptsRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "selectYourBranchToContinue": "Select your branch to continue",
+  "branchClosed": "Closed",
+  "noResultsFoundSearch": "No results found",
+  "branchSelectedMessage": "{branchName} selected",
+  "@branchSelectedMessage": {
+    "placeholders": {
+      "branchName": {
+        "type": "String"
+      }
+    }
+  },
+  "shiftIsClosed": "Shift Closed",
+  "noOpenShiftCurrently": "No open shift currently",
+  "shiftIsOpen": "Shift Open",
+  "shiftOpenSince": "Since: {time}",
+  "@shiftOpenSince": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceSummary": "Balance Summary",
+  "cashIncoming": "Cash In",
+  "cashOutgoing": "Cash Out",
+  "expectedBalance": "Expected Balance",
+  "noCashMovementsYet": "No cash movements yet",
+  "noteLabel": "Note",
+  "depositDone": "Deposit completed",
+  "withdrawalDone": "Withdrawal completed",
+  "amPeriod": "AM",
+  "pmPeriod": "PM",
+  "newPurchaseInvoice": "New Purchase Invoice",
+  "supplierData": "Supplier Information",
+  "selectSupplierRequired": "Select Supplier *",
+  "supplierInvoiceNumber": "Supplier Invoice Number",
+  "noProductsAddedYet": "No products added yet",
+  "paymentStatus": "Payment Status",
+  "paidStatus": "Paid",
+  "deferredPayment": "Deferred",
+  "productNameRequired": "Product Name *",
+  "purchasePrice": "Purchase Price",
+  "pleaseSelectSupplier": "Please select a supplier",
+  "purchaseInvoiceSavedTotal": "Purchase invoice saved with total {total} SAR",
+  "@purchaseInvoiceSavedTotal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "smartReorderAi": "AI Smart Reorder",
+  "smartReorderDescription": "Set your budget and let AI optimize your purchases",
+  "orderSettings": "Order Settings",
+  "availableBudget": "Available Budget",
+  "enterAvailableAmount": "Enter available purchase amount",
+  "supplierLabel": "Supplier",
+  "calculating": "Calculating...",
+  "calculateSmartDistribution": "Calculate Smart Distribution",
+  "setBudgetAndCalculate": "Set budget and press calculate",
+  "numberOfProducts": "Number of Products",
+  "suggestedProducts": "Suggested Products",
+  "sendOrder": "Send Order",
+  "emailLabel": "Email",
+  "confirmSending": "Confirm Sending",
+  "sendOrderToSupplier": "Send order to {supplier}?",
+  "@sendOrderToSupplier": {
+    "placeholders": {
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
+  "orderSentSuccess": "Order sent successfully",
+  "turnoverRate": "Turnover: {rate}%",
+  "@turnoverRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "editSupplier": "Edit Supplier",
+  "addNewSupplier": "Add New Supplier",
+  "basicInfo": "Basic Information",
+  "supplierContactName": "Supplier / Contact Name *",
+  "companyNameRequired": "Company Name *",
+  "generalCategory": "General",
+  "foodMaterials": "Food Materials",
+  "beverages": "Beverages",
+  "vegetablesFruits": "Vegetables & Fruits",
+  "equipment": "Equipment",
+  "contactInfo": "Contact Information",
+  "primaryPhoneRequired": "Primary Phone *",
+  "secondaryPhoneOptional": "Secondary Phone (Optional)",
+  "emailField": "Email",
+  "addressField2": "Address",
+  "commercialInfo": "Commercial Information",
+  "taxNumberVat": "Tax Number (VAT)",
+  "commercialRegNumber": "Commercial Registration (CR)",
+  "financialInfo": "Financial Information",
+  "paymentTerms": "Payment Terms",
+  "payOnDelivery": "Pay on Delivery",
+  "sevenDays": "7 Days",
+  "fourteenDays": "14 Days",
+  "thirtyDays": "30 Days",
+  "sixtyDays": "60 Days",
+  "bankName": "Bank Name",
+  "ibanNumber": "IBAN Number",
+  "additionalSettings": "Additional Settings",
+  "supplierIsActive": "Supplier Active",
+  "notesField": "Notes",
+  "savingData": "Saving...",
+  "updateSupplier": "Update Supplier",
+  "addSupplierBtn": "Add Supplier",
+  "deleteSupplier": "Delete Supplier",
+  "supplierUpdatedSuccess": "Supplier updated successfully",
+  "supplierAddedSuccess": "Supplier added successfully",
+  "supplierDeletedSuccess": "Supplier deleted",
+  "deleteSupplierConfirmTitle": "Delete Supplier",
+  "deleteSupplierConfirmMessage": "Are you sure you want to delete this supplier? This action cannot be undone.",
+  "supplierDetailsTitle": "Supplier Details",
+  "backButton": "Back",
+  "editButton": "Edit",
+  "newPurchaseOrder": "New Purchase Order",
+  "deleteButton": "Delete",
+  "phoneLabel": "Phone",
+  "supplierEmailLabel": "Email",
+  "supplierAddressLabel": "Address",
+  "dueToSupplier": "Due to Supplier",
+  "balanceInOurFavor": "Balance in Our Favor",
+  "paymentBtn": "Pay",
+  "totalPurchasesLabel": "Total Purchases",
+  "lastPurchaseDate": "Last Purchase",
+  "recentPurchases": "Recent Purchases",
+  "noPurchasesYet": "No purchases yet",
+  "pendingLabel": "Pending",
+  "deleteSupplierDialogTitle": "Delete Supplier",
+  "deleteSupplierDialogMessage": "All supplier data will be deleted. Continue?",
+  "unknownUser": "Unknown",
+  "employeeRole": "Employee",
+  "operationCount": "operation",
+  "dayCount": "day",
+  "personalInfoSection": "Personal Information",
+  "emailInfoLabel": "Email",
+  "phoneInfoLabel": "Phone",
+  "branchInfoLabel": "Branch",
+  "employeeIdLabel": "Employee ID",
+  "notSpecified": "Not specified",
+  "mainBranchDefault": "Main Branch",
+  "changePassword": "Change Password",
+  "activityLogLink": "Activity Log",
+  "logoutButton": "Logout",
+  "systemAdminRole": "System Admin",
+  "noBranchesRegistered": "No branches registered",
+  "branchEmailLabel": "Email",
+  "branchCityLabel": "City",
+  "importSupplierInvoice": "Import Supplier Invoice",
+  "captureOrSelectPhoto": "Capture a photo or select from gallery\nData will be extracted automatically",
+  "captureImage": "Capture Image",
+  "galleryPick": "Gallery",
+  "anotherImage": "Another Image",
+  "aiProcessingBtn": "AI Processing",
+  "processingInvoice": "Processing invoice...",
+  "extractingDataWithAi": "Extracting data with AI",
+  "dataExtracted": "Data Extracted",
+  "purchaseInvoiceCreated": "Purchase invoice created",
+  "reviewInvoice": "Review Invoice",
+  "confirmAllItems": "Confirm All",
+  "unknownSupplier": "Unknown Supplier",
+  "itemCount": "{count, plural, =0{No items} one{1 item} other{{count} items}}",
+  "@itemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "progressLabel": "Progress: {confirmed} / {total}",
+  "@progressLabel": {
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "needsReviewCount": "{count} needs review",
+  "@needsReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notMatchedStatus": "Not Matched",
+  "matchedStatus": "Matched",
+  "matchedProductLabel": "Matched Product",
+  "matchedWithName": "Matched: {name}",
+  "@matchedWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchForProduct": "Search for product...",
+  "createNewProduct": "Create New Product",
+  "savingInvoice": "Saving...",
+  "invoiceSavedSuccess": "Purchase invoice saved successfully",
+  "customerAnalytics": "Customer Analytics",
+  "weekPeriod": "Week",
+  "monthPeriod": "Month",
+  "yearPeriod": "Year",
+  "totalCustomers": "Total Customers",
+  "newCustomers": "New Customers",
+  "returningCustomers": "Returning Customers",
+  "averageSpending": "Average Spending",
+  "topCustomers": "Top Customers",
+  "orderCount": "{count} orders",
+  "@orderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "customerDistribution": "Customer Distribution",
+  "vipCustomers": "VIP (over 5,000 SAR)",
+  "regularCustomers": "Regular (1,000-5,000 SAR)",
+  "normalCustomers": "Normal (under 1,000 SAR)",
+  "customerActivity": "Customer Activity",
+  "activeLabel": "Active",
+  "dormantLabel": "Dormant",
+  "inactiveLabel": "Inactive",
+  "noPrintJobsPending": "No pending print jobs",
+  "printerConnected": "Printer connected",
+  "totalPrintLabel": "Total",
+  "waitingPrintLabel": "Waiting",
+  "failedPrintLabel": "Failed",
+  "pendingJobsCount": "{count} pending jobs",
+  "@pendingJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "printingInProgress": "Printing...",
+  "failedRetry": "Failed - Try again",
+  "waitingStatus": "Waiting",
+  "printingOrderId": "Printing {orderId}...",
+  "@printingOrderId": {
+    "placeholders": {
+      "orderId": {
+        "type": "String"
+      }
+    }
+  },
+  "allJobsPrinted": "All jobs printed",
+  "clearPrintQueueTitle": "Clear Print Queue",
+  "clearPrintQueueConfirm": "Clear all pending print jobs?",
+  "clearBtn": "Clear",
+  "gotIt": "Got it",
+  "print": "Print",
+  "display": "Display",
+  "item": "Item",
+  "invoice": "Invoice",
+  "accept": "Accept",
+  "details": "Details",
+  "newLabel": "New",
+  "mixed": "Mixed",
+  "lowStockLabel": "Low",
+  "debtor": "Debtor",
+  "creditor": "Creditor",
+  "balanceLabel": "Balance",
+  "returnLabel": "Return",
+  "skip": "Skip",
+  "send": "Send",
+  "cloud": "Cloud",
+  "defaultLabel": "Default",
+  "closed": "Closed",
+  "owes": "Owes",
+  "due": "Due",
+  "balanced": "Balanced",
+  "offlineModeTitle": "Offline Mode",
+  "offlineModeDescription": "You can continue using the app:",
+  "offlineCanSell": "Make sales",
+  "offlineCanAddToCart": "Add products to cart",
+  "offlineCanPrint": "Print receipts",
+  "offlineAutoSync": "Data will sync automatically when connection is restored.",
+  "offlineSavingLocally": "Offline - saving operations locally",
+  "seconds": "Seconds",
+  "errors": "Errors",
+  "syncLabel": "Sync",
+  "slow": "Slow",
+  "myGrocery": "My Grocery",
+  "cashier": "Cashier",
+  "goBack": "Go Back",
+  "menuLabel": "Menu",
+  "gold": "Gold",
+  "silver": "Silver",
+  "diamond": "Diamond",
+  "bronze": "Bronze",
+  "saudiArabia": "Saudi Arabia",
+  "uae": "UAE",
+  "kuwait": "Kuwait",
+  "bahrain": "Bahrain",
+  "qatar": "Qatar",
+  "oman": "Oman",
+  "control": "Control",
+  "strong": "Strong",
+  "medium": "Medium",
+  "weak": "Weak",
+  "good": "Good",
+  "danger": "Danger",
+  "currentLabel": "Current",
+  "suggested": "Suggested",
+  "actual": "Actual",
+  "forecast": "Forecast",
+  "critical": "Critical",
+  "high": "High",
+  "low": "Low",
+  "investigation": "Investigation",
+  "apply": "Apply",
+  "run": "Run",
+  "positive": "Positive",
+  "neutral": "Neutral",
+  "negative": "Negative",
+  "elastic": "Elastic",
+  "demand": "Demand",
+  "quality": "Quality",
+  "luxury": "Luxury",
+  "economic": "Economic",
+  "ourStore": "Our Store",
+  "upcoming": "Upcoming",
+  "cost": "Cost",
+  "duration": "Duration",
+  "quiet": "Quiet",
+  "busy": "Busy",
+  "outstanding": "Outstanding",
+  "donate": "Donate",
+  "day": "Day",
+  "days": "Days",
+  "projected": "Projected",
+  "analysis": "Analysis",
+  "review": "Review",
+  "productCategory": "Category",
+  "ourPrice": "Our Price",
+  "position": "Position",
+  "cheapest": "Cheapest",
+  "mostExpensive": "Most Expensive",
+  "soldOut": "Sold Out",
+  "noDataAvailable": "No data available",
+  "noDataFoundMessage": "No data was found",
+  "noSearchResultsFound": "No results found",
+  "noProductsFound": "No products found",
+  "noCustomers": "No customers",
+  "addCustomersToStart": "Add new customers to start",
+  "noOrdersYet": "You haven't made any orders yet",
+  "noConnection": "No connection",
+  "checkInternet": "Check your internet connection",
+  "cartIsEmpty": "Cart is empty",
+  "browseProducts": "Browse Products",
+  "noResultsFor": "No results for \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "paidLabel": "Paid",
+  "remainingLabel": "Remaining",
+  "completeLabel": "Complete",
+  "addPayment": "Add",
+  "payments": "Payments",
+  "now": "Now",
+  "ecommerce": "Online Store",
+  "ecommerceSection": "E-Commerce",
+  "wallet": "Wallet",
+  "subscription": "Subscription",
+  "complaintsReport": "Complaints Report",
+  "mediaLibrary": "Media Library",
+  "deviceLog": "Device Log",
+  "shippingGateways": "Shipping Gateways",
+  "systemSection": "System",
+  "averageInvoice": "Average Invoice",
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "vipMember": "VIP Member",
+  "activeSuppliers": "Active Suppliers",
+  "duePayments": "Due Payments",
+  "productCatalog": "Product Catalog",
+  "comingSoonBrowseSuppliers": "Coming Soon - Browse supplier products",
+  "comingSoonTag": "Coming Soon",
+  "supplierNotFound": "Supplier not found",
+  "viewAllPurchases": "View All Purchases",
+  "completedLabel": "Completed",
+  "pendingStatusLabel": "Pending",
+  "registerPayment": "Register Payment",
+  "errorLoadingSuppliers": "Error loading suppliers: {error}",
+  "@errorLoadingSuppliers": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "cancelLabel": "Cancel",
+  "addLabel": "Add",
+  "saveLabel": "Save",
+  "purchaseInvoiceSaved": "Purchase invoice saved - Total: {total} SAR",
+  "@purchaseInvoiceSaved": {
+    "placeholders": {
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "errorSavingPurchase": "Error saving purchase: {error}",
+  "@errorSavingPurchase": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "smartReorderTitle": "Smart Reorder",
+  "smartReorderAiTitle": "AI Smart Reorder",
+  "budgetDescription": "Set the budget and the system will distribute it based on turnover rate",
+  "enterValidBudget": "Please enter a valid budget",
+  "confirmSendTitle": "Confirm Send",
+  "sendOrderToMsg": "Send order to {supplier}?",
+  "@sendOrderToMsg": {
+    "placeholders": {
+      "supplier": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderSentSuccessMsg": "Order sent successfully",
+  "sendingOrderVia": "Sending order via {method}...",
+  "@sendingOrderVia": {
+    "placeholders": {
+      "method": {
+        "type": "Object"
+      }
+    }
+  },
+  "stockQuantity": "Stock: {qty}",
+  "@stockQuantity": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      }
+    }
+  },
+  "turnoverLabel": "Turnover: {rate}%",
+  "@turnoverLabel": {
+    "placeholders": {
+      "rate": {
+        "type": "Object"
+      }
+    }
+  },
+  "failedCapture": "Failed to capture image: {error}",
+  "@failedCapture": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "failedPickImage": "Failed to pick image: {error}",
+  "@failedPickImage": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "failedProcessInvoice": "Failed to process invoice: {error}",
+  "@failedProcessInvoice": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "matchLabel": "Match: {name}",
+  "@matchLabel": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "suggestedProduct": "Suggested Product {index}",
+  "@suggestedProduct": {
+    "placeholders": {
+      "index": {
+        "type": "Object"
+      }
+    }
+  },
+  "barcodeLabel": "Barcode: 123456789",
+  "purchaseInvoiceSavedSuccess": "Purchase invoice saved successfully",
+  "aiImportedInvoice": "AI imported invoice",
+  "aiInvoiceNote": "AI Invoice: {number}",
+  "@aiInvoiceNote": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "supplierCanCreateOrders": "Can create purchase orders from this supplier",
+  "notesFieldHint": "Any additional notes about the supplier...",
+  "deleteConfirmCancel": "Cancel",
+  "deleteConfirmBtn": "Delete",
+  "supplierUpdatedMsg": "Supplier data updated",
+  "errorOccurredMsg": "Error occurred: {error}",
+  "@errorOccurredMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "errorDuringDeleteMsg": "Error during delete: {error}",
+  "@errorDuringDeleteMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "fortyFiveDays": "45 Days",
+  "expenseCategoriesTitle": "Expense Categories",
+  "noCategoriesFound": "No expense categories found",
+  "monthlyBudget": "Monthly Budget",
+  "spentAmount": "Spent",
+  "remainingAmount": "Remaining",
+  "overBudget": "Over Budget",
+  "expenseCount": "{count} expenses",
+  "@expenseCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "spentLabel": "Spent: {amount} SAR",
+  "@spentLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "remainingLabel2": "Remaining: {amount} SAR",
+  "@remainingLabel2": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "expensesThisMonth": "{count} expenses this month",
+  "@expensesThisMonth": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "recentExpenses": "Recent Expenses",
+  "expenseNumber": "Expense #{id}",
+  "@expenseNumber": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "budgetLabel": "Budget",
+  "monthlyBudgetLabel": "Monthly Budget",
+  "categoryNameHint": "Example: Employee Salaries",
+  "productNameLabel": "Product Name *",
+  "quantityLabel": "Qty",
+  "purchasePriceLabel": "Purchase Price",
+  "saveInvoiceBtn": "Save Invoice",
+  "ibanLabel": "IBAN Account Number",
+  "supplierActiveLabel": "Supplier Active",
+  "notesLabel": "Notes",
+  "deleteSupplierConfirm": "Are you sure you want to delete this supplier? All associated data will be deleted.",
+  "supplierDeletedMsg": "Supplier deleted",
+  "savingLabel": "Saving...",
+  "supplierDetailTitle": "Supplier Details",
+  "supplierNotFoundMsg": "Supplier not found",
+  "lastPurchaseLabel": "Last Purchase",
+  "recentPurchasesLabel": "Recent Purchases",
+  "noPurchasesLabel": "No purchases yet",
+  "supplierAddedMsg": "Supplier added",
+  "openingCashLabel": "Opening Cash",
+  "importantNotes": "Important Notes",
+  "countCashBeforeShift": "Make sure to count the cash in the drawer before opening the shift",
+  "shiftTimeAutoRecorded": "Shift open time will be recorded automatically",
+  "oneShiftAtATime": "Cannot open more than one shift at the same time",
+  "pleaseEnterOpeningCash": "Please enter opening cash amount (greater than zero)",
+  "shiftOpenedWithAmount": "Shift opened with {amount} {currency}",
+  "@shiftOpenedWithAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOpeningShift": "Error opening shift",
+  "noOpenShift": "No open shift",
+  "shiftInfoLabel": "Shift Information",
+  "salesSummaryLabel": "Sales Summary",
+  "cashRefundsLabel": "Cash Refunds",
+  "cashDepositLabel": "Cash Deposit",
+  "cashWithdrawalLabel": "Cash Withdrawal",
+  "expectedInDrawer": "Expected in Drawer",
+  "actualCashInDrawer": "Actual Cash in Drawer",
+  "drawerMatched": "Matched",
+  "surplusStatus": "Surplus",
+  "deficitStatus": "Deficit",
+  "expectedAmountCurrency": "Expected: {amount} {currency}",
+  "@expectedAmountCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "actualAmountCurrency": "Actual: {amount} {currency}",
+  "@actualAmountCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "drawerMatchedMessage": "Drawer is matched",
+  "surplusAmount": "Surplus: +{amount} {currency}",
+  "@surplusAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "deficitAmount": "Deficit: {amount} {currency}",
+  "@deficitAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmCloseShift": "Do you want to close the shift?",
+  "errorClosingShift": "Error closing shift",
+  "shiftClosedSuccessfully": "Shift closed successfully",
+  "shiftStatsLabel": "Shift Statistics",
+  "shiftDurationLabel": "Shift Duration",
+  "invoiceCountLabel": "Invoice Count",
+  "invoiceUnit": "invoice",
+  "cardSalesLabel": "Card Sales",
+  "cashSalesLabel": "Cash Sales",
+  "refundsLabel": "Refunds",
+  "expectedInDrawerLabel": "Expected in Drawer",
+  "actualInDrawerLabel": "Actual in Drawer",
+  "differenceLabel": "Difference",
+  "printingReport": "Printing report...",
+  "sharingInProgress": "Sharing...",
+  "openNewShift": "Open New Shift",
+  "hoursAndMinutes": "{hours} hours {minutes} minutes",
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursOnly": "{hours} hours",
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesOnly": "{minutes} minutes",
+  "@minutesOnly": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "rejectedNotApproved": "Operation rejected - not approved",
+  "errorWithDetails": "Error: {error}",
+  "@errorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryManagement": "Manage & track inventory",
+  "bulkEdit": "Bulk Edit",
+  "totalProducts": "Total Products",
+  "inventoryValue": "Inventory Value",
+  "exportInventoryReport": "Export Inventory Report",
+  "printOrderList": "Print Order List",
+  "inventoryMovementLog": "Inventory Movement Log",
+  "editSelected": "Edit Selected",
+  "clearSelection": "Clear Selection",
+  "noOutOfStockProducts": "No out of stock products",
+  "allProductsAvailable": "All products are available in stock",
+  "editStock": "Edit Stock",
+  "newQuantity": "New Quantity",
+  "receiveGoods": "Receive Goods",
+  "damaged": "Damaged",
+  "correction": "Correction",
+  "stockUpdatedTo": "Stock updated for",
+  "featureUnderDevelopment": "This feature is under development...",
+  "newest": "Newest",
+  "adjustStock": "Adjust Stock",
+  "adjustmentHistory": "Adjustment History",
+  "errorLoadingProducts": "Error loading products",
+  "selectProduct": "Select Product",
+  "subtract": "Subtract",
+  "setQuantity": "Set",
+  "enterQuantity": "Enter quantity",
+  "enterValidQuantity": "Enter valid quantity",
+  "notesOptional": "Notes (optional)",
+  "enterAdditionalNotes": "Enter any additional notes...",
+  "adjustmentSummary": "Adjustment Summary",
+  "newStock": "New Stock",
+  "warningNegativeStock": "Warning: Stock will become negative!",
+  "saving": "Saving...",
+  "storeNotSelected": "Store not selected",
+  "noInventoryMovements": "No inventory movements",
+  "adjustmentSavedSuccess": "Adjustment saved successfully",
+  "errorSaving": "Error saving",
+  "enterBarcode": "Enter barcode",
+  "theft": "Theft",
+  "noMatchingProducts": "No matching products",
+  "stockTransfer": "Stock Transfer",
+  "newTransfer": "New Transfer",
+  "fromBranch": "From Branch",
+  "toBranch": "To Branch",
+  "selectSourceBranch": "Select source branch",
+  "selectTargetBranch": "Select target branch",
+  "selectProductsForTransfer": "Select products for transfer",
+  "creating": "Creating...",
+  "createTransferRequest": "Create Transfer Request",
+  "errorLoadingTransfers": "Error loading transfers",
+  "noPreviousTransfers": "No previous transfers",
+  "approved": "Approved",
+  "inTransit": "In Transit",
+  "complete": "Complete",
+  "completeTransfer": "Complete Transfer",
+  "completeTransferConfirm": "Do you want to complete this transfer? Quantities will be deducted from source and added to target branch.",
+  "transferCompletedSuccess": "Transfer completed and stock updated",
+  "errorCompletingTransfer": "Error completing transfer",
+  "transferCreatedSuccess": "Transfer request created successfully",
+  "errorCreatingTransfer": "Error creating transfer",
+  "stockTake": "Stock Take",
+  "startStockTake": "Start Stock Take",
+  "counted": "Counted",
+  "variances": "Variances",
+  "of_": "of",
+  "system": "System",
+  "count": "Count",
+  "finishStockTake": "Finish Stock Take",
+  "stockTakeDescription": "Count stock products and compare with system",
+  "noProductsInStock": "No products in stock",
+  "noProductsToCount": "No products to start counting",
+  "errorCreatingStockTake": "Error creating stock take",
+  "saveStockTakeConfirm": "Save stock take results and update inventory?",
+  "stockTakeSavedSuccess": "Stock take saved and inventory updated successfully",
+  "errorCompletingStockTake": "Error completing stock take",
+  "stockTakeHistory": "Stock Take History",
+  "errorLoadingHistory": "Error loading history",
+  "noStockTakeHistory": "No previous stock take history",
+  "inProgress": "In Progress",
+  "expiryTracking": "Expiry Tracking",
+  "errorLoadingExpiryData": "Error loading expiry data",
+  "withinMonth": "Within Month",
+  "noProductsExpiringIn7Days": "No products expiring in 7 days",
+  "noProductsExpiringInMonth": "No products expiring in a month",
+  "noExpiredProducts": "No expired products",
+  "batch": "Batch",
+  "expiredSinceDays": "Expired {days} days ago",
+  "@expiredSinceDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "remove": "Remove",
+  "pressToAddExpiryTracking": "Press + to add new expiry tracking",
+  "applyDiscountTo": "Apply discount to",
+  "confirmRemoval": "Confirm Removal",
+  "removeExpiryTrackingFor": "Remove expiry tracking for",
+  "expiryTrackingRemoved": "Expiry tracking removed",
+  "errorRemovingExpiryTracking": "Error removing expiry tracking",
+  "addExpiryDate": "Add Expiry Date",
+  "barcodeOrProductName": "Barcode or product name",
+  "selectDate": "Select date",
+  "batchNumberOptional": "Batch number (optional)",
+  "expiryTrackingAdded": "Expiry tracking added successfully",
+  "errorAddingExpiryTracking": "Error adding expiry tracking",
+  "barcodeScanner2": "Barcode Scanner",
+  "scanning": "Scanning...",
+  "pressToStart": "Press to start",
+  "stop": "Stop",
+  "startScanning": "Start Scanning",
+  "enterBarcodeManually": "Enter barcode manually",
+  "noScannedProducts": "No scanned products",
+  "enterBarcodeToSearch": "Enter barcode to search database",
+  "useManualInputToSearch": "Use manual input to search for products",
+  "found": "Found",
+  "productNotFoundForBarcode": "Product not found",
+  "addNewProduct": "Add New Product",
+  "willOpenAddProductScreen": "Will open add product screen",
+  "scanHistory": "Scan History",
+  "addedToCart": "Added",
+  "barcodePrint": "Barcode Print",
+  "noProductsWithBarcode": "No products with barcode",
+  "addBarcodeFirst": "Add barcode to products first",
+  "searchProduct": "Search product...",
+  "totalLabels": "Total Labels",
+  "printLabels": "Print Labels",
+  "printList": "Print List",
+  "selectProductsToPrint": "Select products to print",
+  "willPrint": "Will print",
+  "label": "label",
+  "printing": "Printing...",
+  "messageAddedToQueue": "Message added to send queue",
+  "messageSendFailed": "Failed to send message",
+  "noPhoneForCustomer": "No phone number for customer",
+  "inputContainsDangerousContent": "Input contains prohibited content",
+  "whatsappGreeting": "Hello {name}\nHow can we help you?",
+  "@whatsappGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "segmentVip": "VIP",
+  "segmentRegular": "Regular",
+  "segmentAtRisk": "At Risk",
+  "segmentLost": "Lost",
+  "segmentNewCustomer": "New",
+  "customerCount": "{count} customer",
+  "@customerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "revenueK": "{amount}K SAR",
+  "@revenueK": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tabRecommendations": "Recommendations",
+  "tabRepurchase": "Repurchase",
+  "tabSegments": "Segments",
+  "lastVisitLabel": "Last visit: {time}",
+  "@lastVisitLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "visitCountLabel": "{count} visits",
+  "@visitCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "avgSpendLabel": "Avg: {amount} SAR",
+  "@avgSpendLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "totalSpentLabel": "Total: {amount}K SAR",
+  "@totalSpentLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recommendedProducts": "Recommended Products",
+  "sendWhatsAppOffer": "Send WhatsApp Offer",
+  "totalRevenueLabel": "Total Revenue",
+  "avgSpendStat": "Average Spend",
+  "amountSar": "{amount} SAR",
+  "@amountSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "specialOfferMissYou": "Special offer for you! We miss your visit",
+  "friendlyReminderPurchase": "Friendly reminder to purchase {product}",
+  "@friendlyReminderPurchase": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "timeAgoToday": "Today",
+  "timeAgoYesterday": "Yesterday",
+  "timeAgoDays": "{days} days ago",
+  "@timeAgoDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "riskAnalysisTab": "Risk Analysis",
+  "preventiveActionsTab": "Preventive Actions",
+  "errorOccurredDetail": "Error occurred: {error}",
+  "@errorOccurredDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "returnRateTitle": "Return Rate",
+  "avgLast6Months": "Average last 6 months",
+  "amountAtRiskTitle": "Amount at Risk",
+  "highRiskOperations": "High Risk Operations",
+  "needsImmediateAction": "Needs immediate action",
+  "returnTrendTitle": "Return Trend",
+  "operationsAtRiskCount": "Operations at risk ({count})",
+  "@operationsAtRiskCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "riskFilterAll": "All",
+  "riskFilterVeryHigh": "Very High",
+  "riskFilterHigh": "High",
+  "riskFilterMedium": "Medium",
+  "riskFilterLow": "Low",
+  "totalExpectedSavings": "Total Expected Savings",
+  "fromPreventiveActions": "From {count} preventive actions",
+  "@fromPreventiveActions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "suggestedPreventiveActions": "Suggested Preventive Actions",
+  "applyPreventiveHint": "Apply these actions to reduce returns and increase customer satisfaction",
+  "actionApplied": "Applied: {action}",
+  "@actionApplied": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "actionDismissed": "Dismissed: {action}",
+  "@actionDismissed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "veryPositiveSentiment": "Very Positive",
+  "positiveSentiment": "Positive",
+  "neutralSentiment": "Neutral",
+  "negativeSentiment": "Negative",
+  "veryNegativeSentiment": "Very Negative",
+  "ratingsDistribution": "Ratings Distribution",
+  "sentimentTrendTitle": "Sentiment Trend",
+  "sentimentIndicator": "Sentiment Indicator",
+  "minutesAgoSentiment": "{count} minutes ago",
+  "@minutesAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoSentiment": "{count} hours ago",
+  "@hoursAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgoSentiment": "{count} days ago",
+  "@daysAgoSentiment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "totalProductsTitle": "Total Products",
+  "categoryATitle": "Category A",
+  "mostImportant": "Most Important",
+  "withinDays": "Within 7 days",
+  "needReorder": "Need Reorder",
+  "estimatedLossSar": "{amount} SAR estimated loss",
+  "@estimatedLossSar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tabAbcAnalysis": "ABC Analysis",
+  "tabWastePrediction": "Waste Prediction",
+  "tabReorder": "Reorder",
+  "filterAllLabel": "All",
+  "categoryALabel": "Category A",
+  "categoryBLabel": "Category B",
+  "categoryCLabel": "Category C",
+  "orderUnitsSnack": "Order {qty} units of {name}",
+  "@orderUnitsSnack": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "urgencyCritical": "Critical",
+  "urgencyHigh": "High",
+  "urgencyMedium": "Medium",
+  "urgencyLow": "Low",
+  "currentStockLabel": "Current Stock",
+  "reorderPointLabel": "Reorder Point",
+  "suggestedQtyLabel": "Suggested Qty",
+  "daysOfStockLabel": "Days of Stock",
+  "estimatedCostLabel": "Estimated cost: {amount} SAR",
+  "@estimatedCostLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseOrderCreatedFor": "Purchase order created: {name}",
+  "@purchaseOrderCreatedFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "orderUnitsButton": "Order {qty} units",
+  "@orderUnitsButton": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      }
+    }
+  },
+  "actionDiscount": "Discount",
+  "actionTransfer": "Transfer",
+  "actionDonate": "Donate",
+  "actionOnProduct": "Action on: {name}",
+  "@actionOnProduct": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "totalSuggestionsLabel": "Total Suggestions",
+  "canIncreaseLabel": "Can Increase",
+  "shouldDecreaseLabel": "Should Decrease",
+  "expectedMonthlyImpact": "Expected Monthly Impact",
+  "noSuggestionsInFilter": "No suggestions in this filter",
+  "selectProductForDetails": "Select a product to view details",
+  "selectProductHint": "Click on a product from the list to view impact calculator and demand elasticity",
+  "priceApplied": "Price {price} SAR applied to {product}",
+  "@priceApplied": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOccurredShort": "Error: {error}",
+  "@errorOccurredShort": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "readyTemplates": "Ready Templates",
+  "hideTemplates": "Hide Templates",
+  "showTemplates": "Show Templates",
+  "askAboutStore": "Ask any question about your store",
+  "writeQuestionHint": "Write your question and we will generate the appropriate report automatically",
+  "quickActionTodaySales": "How much sales today?",
+  "quickActionTop10": "Top 10 products",
+  "quickActionMonthlyCompare": "Monthly comparison",
+  "analyzingData": "Analyzing data and generating report...",
+  "profileScreenTitle": "Profile",
+  "unknownUserName": "Unknown",
+  "defaultEmployeeRole": "Employee",
+  "transactionUnit": "transaction",
+  "dayUnit": "day",
+  "emailFieldLabel": "Email",
+  "phoneFieldLabel": "Phone",
+  "branchFieldLabel": "Branch",
+  "mainBranchName": "Main Branch",
+  "employeeNumberLabel": "Employee Number",
+  "changePasswordLabel": "Change Password",
+  "activityLogLabel": "Activity Log",
+  "logoutDialogTitle": "Logout",
+  "logoutDialogBody": "Do you want to logout from the system?",
+  "cancelButton": "Cancel",
+  "exitButton": "Exit",
+  "editProfileSnack": "Edit Profile",
+  "changePasswordSnack": "Change Password",
+  "roleAdmin": "System Admin",
+  "roleManager": "Manager",
+  "roleCashier": "Cashier",
+  "roleEmployee": "Employee",
+  "onboardingTitle1": "Fast Point of Sale",
+  "onboardingDesc1": "Complete sales quickly and easily with a simple and comfortable interface",
+  "onboardingTitle2": "Work Offline",
+  "onboardingDesc2": "Keep working even without connection, and sync will happen automatically",
+  "onboardingTitle3": "Inventory Management",
+  "onboardingDesc3": "Track your inventory accurately with shortage and expiry alerts",
+  "onboardingTitle4": "Smart Reports",
+  "onboardingDesc4": "Get detailed reports and analytics for your store performance",
+  "startNow": "Start Now",
+  "favorites": "Favorites",
+  "editMode": "Edit",
+  "doneMode": "Done",
+  "errorLoadingFavorites": "Error loading favorites",
+  "noFavoriteProducts": "No favorite products",
+  "addFavoritesFromProducts": "Add products to favorites from the products screen",
+  "tapProductToAddToCart": "Tap a product to add it to cart",
+  "addedProductToCart": "{name} added to cart",
+  "@addedProductToCart": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "addToCartAction": "Add to cart",
+  "removeFromFavorites": "Remove from favorites",
+  "removedProductFromFavorites": "{name} removed from favorites",
+  "@removedProductFromFavorites": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentMethodTitle": "Payment Method",
+  "backEsc": "Back (Esc)",
+  "completePayment": "Complete Payment",
+  "enterToConfirm": "Enter to confirm",
+  "cashOnlyOffline": "Cash only in offline mode",
+  "cardsDisabledInSettings": "Cards disabled in settings",
+  "creditPayment": "Credit",
+  "unavailableOffline": "Unavailable offline",
+  "disabledInSettings": "Disabled in settings",
+  "amountReceived": "Amount Received",
+  "quickAmounts": "Quick Amounts",
+  "requiredAmount": "Required Amount",
+  "changeLabel": "Change:",
+  "insufficientAmount": "Insufficient amount",
+  "rrnLabel": "Reference Number (RRN)",
+  "enterRrnFromDevice": "Enter transaction number from device",
+  "cardPaymentInstructions": "Ask the customer to pay via card terminal, then enter the transaction number (RRN) from the receipt",
+  "creditSale": "Credit Sale",
+  "creditSaleWarning": "This amount will be recorded as a debt for the customer. Make sure to select the customer before completing the transaction.",
+  "orderSummary": "Order Summary",
+  "taxLabel": "Tax (15%)",
+  "discountLabel": "Discount",
+  "payCash": "Pay Cash",
+  "payCard": "Pay by Card",
+  "payCreditSale": "Credit Sale",
+  "confirmPayment": "Confirm Payment",
+  "processingPayment": "Processing payment...",
+  "pleaseWait": "Please wait",
+  "paymentSuccessful": "Payment successful!",
+  "printingReceipt": "Printing receipt...",
+  "whatsappReceipt": "WhatsApp receipt",
+  "storeOrUserNotSet": "Store or user not set",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "receiptTitle": "Receipt",
+  "invoiceNotSpecified": "Invoice number not specified",
+  "pendingSync": "Pending sync",
+  "notSynced": "Not synced",
+  "receiptNumberLabel": "No: {number}",
+  "@receiptNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "itemColumnHeader": "Item",
+  "totalAmount": "Total",
+  "paymentMethodField": "Payment Method",
+  "zatcaQrCode": "ZATCA Tax QR Code",
+  "whatsappSentLabel": "Sent ✓",
+  "whatsappLabel": "WhatsApp",
+  "whatsappReceiptSent": "Receipt sent via WhatsApp ✓",
+  "whatsappSendFailed": "Send failed: {error}",
+  "@whatsappSendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotPrintNoInvoice": "Cannot print - invoice number not available",
+  "invoiceAddedToPrintQueue": "Invoice added to print queue",
+  "mixedMethod": "Mixed",
+  "creditMethod": "Credit",
+  "walletMethod": "Wallet",
+  "bankTransferMethod": "Bank Transfer",
+  "scanBarcodeHint": "Scan barcode or enter it (F1)",
+  "openCamera": "Open camera",
+  "searchProductHint": "Search product (F2)",
+  "hideCart": "Hide cart",
+  "showCart": "Show cart",
+  "cartTitle": "Cart",
+  "clearAction": "Clear",
+  "allCategories": "All",
+  "otherCategory": "Other",
+  "storeNotSet": "Store not set",
+  "retryAction": "Retry",
+  "vatTax15": "VAT (15%)",
+  "totalGrand": "Total",
+  "holdOrder": "Hold",
+  "payActionLabel": "Pay",
+  "f12QuickPay": "F12 for quick pay",
+  "productNotFoundBarcode": "Product not found for barcode: {barcode}",
+  "@productNotFoundBarcode": {
+    "placeholders": {
+      "barcode": {
+        "type": "String"
+      }
+    }
+  },
+  "clearCartTitle": "Clear Cart",
+  "clearCartMessage": "Do you want to remove all products from the cart?",
+  "orderOnHold": "Order on hold",
+  "deleteItem": "Delete",
+  "itemsCountPrice": "{count} items - {price} SAR",
+  "@itemsCountPrice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "taxReportTitle": "Tax Report",
+  "exportReportAction": "Export Report",
+  "printReportAction": "Print Report",
+  "quarterly": "Quarterly",
+  "netTaxDue": "Net Tax Due",
+  "salesTaxCollected": "Sales Tax",
+  "salesTaxSubtitle": "Collected",
+  "purchasesTaxPaid": "Purchases Tax",
+  "purchasesTaxSubtitle": "Paid",
+  "taxByPaymentMethod": "Tax by Payment Method",
+  "invoiceCount": "{count} invoices",
+  "@invoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taxDetailsTitle": "Tax Details",
+  "taxableSales": "Taxable Sales",
+  "salesTax15": "Sales Tax (15%)",
+  "taxablePurchases": "Taxable Purchases",
+  "purchasesTax15": "Purchases Tax (15%)",
+  "netTax": "Net Tax",
+  "zatcaReminder": "ZATCA Reminder",
+  "zatcaDeadline": "Filing deadline: end of next month",
+  "historyAction": "History",
+  "sendToAuthority": "Send to Authority",
+  "cashPaymentMethod": "Cash",
+  "cardPaymentMethod": "Card",
+  "mixedPaymentMethod": "Mixed",
+  "creditPaymentMethod": "Credit",
+  "vatReportTitle": "VAT Report",
+  "selectPeriod": "Select period",
+  "salesVat": "Sales VAT",
+  "totalSalesIncVat": "Total Sales (incl. VAT)",
+  "vatCollected": "VAT Collected",
+  "purchasesVat": "Purchases VAT",
+  "totalPurchasesIncVat": "Total Purchases (incl. VAT)",
+  "vatPaid": "VAT Paid",
+  "netVatDue": "Net VAT Due",
+  "dueToAuthority": "Due to authority",
+  "dueFromAuthority": "Due from authority",
+  "exportingPdfReport": "Exporting report...",
+  "debtsReportTitle": "Debts Report",
+  "sortByLastPayment": "By last payment",
+  "customersCount": "Customers",
+  "noOutstandingDebts": "No outstanding debts",
+  "lastUpdate": "Last update: {date}",
+  "@lastUpdate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentAmountField": "Payment Amount",
+  "recordAction": "Record",
+  "paymentRecordedMsg": "Payment recorded",
+  "showDetails": "View details: {name}",
+  "@showDetails": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsReportPdf": "Debts Report",
+  "dateFieldLabel": "Date: {date}",
+  "@dateFieldLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsDetails": "Debt Details:",
+  "customerCol": "Customer",
+  "phoneCol": "Phone",
+  "refundReceiptTitle": "Refund Receipt",
+  "noRefundId": "No refund ID",
+  "refundNotFound": "Refund data not found",
+  "refundSuccessful": "Refund successful",
+  "refundNumberLabel": "Refund No: {number}",
+  "@refundNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "refundReceipt": "Refund Receipt",
+  "originalInvoiceNumber": "Original Invoice Number",
+  "refundDate": "Refund Date",
+  "refundMethodField": "Refund Method",
+  "returnedProducts": "Returned Products",
+  "totalRefund": "Total Refund",
+  "reasonLabel": "Reason",
+  "homeAction": "Home",
+  "printError": "Print error: {error}",
+  "@printError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "damagedProduct": "Damaged product",
+  "wrongOrder": "Wrong order",
+  "customerChangedMind": "Customer changed mind",
+  "expiredProduct": "Expired product",
+  "unsatisfactoryQuality": "Unsatisfactory quality",
+  "cashRefundMethod": "Cash",
+  "cardRefundMethod": "Card",
+  "walletRefundMethod": "Wallet",
+  "refundReasonTitle": "Refund Reason",
+  "noRefundData": "No refund data. Please go back and select products.",
+  "invoiceFieldLabel": "Invoice: {receiptNo}",
+  "@invoiceFieldLabel": {
+    "placeholders": {
+      "receiptNo": {
+        "type": "String"
+      }
+    }
+  },
+  "productsCountAmount": "{count} products - {amount} SAR",
+  "@productsCountAmount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "selectRefundReason": "Select refund reason",
+  "additionalNotesOptional": "Additional notes (optional)",
+  "addNotesHint": "Add any additional notes...",
+  "processingAction": "Processing...",
+  "nextSupervisorApproval": "Next - Supervisor Approval",
+  "refundCreationError": "Error creating refund: {error}",
+  "@refundCreationError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "refundRequestTitle": "Refund Request",
+  "invoiceNumberHint": "Invoice number",
+  "searchAction": "Search",
+  "selectProductsForRefund": "Select products to return",
+  "selectAll": "Select all",
+  "quantityTimesPrice": "Qty: {qty} × {price} SAR",
+  "@quantityTimesPrice": {
+    "placeholders": {
+      "qty": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "productsSelected": "{count} products selected",
+  "@productsSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refundAmountValue": "Amount: {amount} SAR",
+  "@refundAmountValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "nextAction": "Next",
+  "enterInvoiceToSearch": "Enter invoice number to search",
+  "invoiceNotFoundMsg": "Invoice not found",
+  "shippingGatewaysTitle": "Shipping Gateways",
+  "availableShippingGateways": "Available Shipping Gateways",
+  "activateShippingGateways": "Activate and configure shipping gateways for order delivery",
+  "aramexName": "Aramex",
+  "aramexDesc": "Global shipping company with multiple services",
+  "smsaDesc": "Fast domestic shipping",
+  "fastloName": "Fastlo",
+  "fastloDesc": "Same day fast delivery",
+  "dhlDesc": "Fast and reliable international shipping",
+  "jtDesc": "Economy shipping",
+  "customDeliveryName": "Custom Delivery",
+  "customDeliveryDesc": "Manage delivery with your own drivers",
+  "settingsAction": "Settings",
+  "hourlyView": "Hourly",
+  "dailyView": "Daily",
+  "peakHourLabel": "Peak Hour",
+  "transactionsWithCount": "{count} transactions",
+  "@transactionsWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "peakDayLabel": "Peak Day",
+  "avgPerHour": "Avg/Hour",
+  "transactionWord": "transactions",
+  "transactionsByHour": "Transactions by Hour",
+  "transactionsByDay": "Transactions by Day",
+  "activityHeatmap": "Activity Heatmap",
+  "lowLabel": "Low",
+  "highLabel": "High",
+  "analysisRecommendations": "Recommendations Based on Analysis",
+  "staffRecommendation": "Staff",
+  "staffRecommendationDesc": "Increase cashiers during 12:00-13:00 and 17:00-19:00 (peak sales)",
+  "offersRecommendation": "Offers",
+  "offersRecommendationDesc": "Offer special deals during 14:00-16:00 to boost sales in quiet period",
+  "inventoryRecommendation": "Inventory",
+  "inventoryRecommendationDesc": "Prepare inventory before Thursday and Friday (highest sales days)",
+  "shiftsRecommendation": "Shifts",
+  "shiftsRecommendationDesc": "Distribute shifts: morning 8-15, evening 15-22 with overlap at peak",
+  "topProductsTab": "Top Products",
+  "byCategoryTab": "By Category",
+  "performanceAnalysisTab": "Performance Analysis",
+  "noSalesDataForPeriod": "No sales data for the selected period",
+  "categoryFilter": "Category",
+  "allCategoriesFilter": "All Categories",
+  "sortByField": "Sort by",
+  "revenueSort": "Revenue",
+  "unitsSort": "Units",
+  "profitSort": "Profit",
+  "revenueLabel": "Revenue",
+  "unitsLabel": "Units",
+  "profitLabel": "Profit",
+  "stockLabel": "Stock",
+  "revenueByCategoryTitle": "Revenue Distribution by Category",
+  "noRevenueForPeriod": "No revenue for this period",
+  "unclassified": "Unclassified",
+  "productUnit": "product",
+  "unitsSoldUnit": "units",
+  "totalRevenueKpi": "Total Revenue",
+  "unitsSoldKpi": "Units Sold",
+  "totalProfitKpi": "Total Profit",
+  "profitMarginKpi": "Profit Margin",
+  "performanceOverview": "Performance Overview",
+  "trendingUpProducts": "Trending Up",
+  "stableProducts": "Stable",
+  "trendingDownProducts": "Trending Down",
+  "noSalesProducts": "No sales products ({count})",
+  "@noSalesProducts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inStockCount": "{count} in stock",
+  "@inStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "slowMovingLabel": "Slow",
+  "needsReorder": "Needs reorder ({count})",
+  "@needsReorder": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "soldUnitsStock": "Sold: {sold} units | Stock: {stock}",
+  "@soldUnitsStock": {
+    "placeholders": {
+      "sold": {
+        "type": "int"
+      },
+      "stock": {
+        "type": "int"
+      }
+    }
+  },
+  "reorderLabel": "Reorder",
+  "totalComplaintsLabel": "Total Complaints",
+  "openComplaints": "Open",
+  "closedComplaints": "Closed",
+  "avgResolutionTime": "Avg Resolution Time",
+  "daysUnit": "{count} days",
+  "@daysUnit": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fromDate": "From date",
+  "toDate": "To date",
+  "statusFilter": "Status",
+  "departmentFilter": "Department",
+  "paymentDepartment": "Payment",
+  "technicalDepartment": "Technical",
+  "otherDepartment": "Other",
+  "noComplaintsRecorded": "No complaints recorded yet",
+  "overviewTab": "Overview",
+  "topCustomersTab": "Top Customers",
+  "growthAnalysisTab": "Growth Analysis",
+  "loyaltyTab": "Loyalty",
+  "totalCustomersLabel": "Total Customers",
+  "activeCustomersLabel": "Active Customers",
+  "avgOrderValueLabel": "Avg Order Value",
+  "tierDistribution": "Customer Distribution by Tier",
+  "activitySummary": "Activity Summary",
+  "totalRevenueFromCustomers": "Total revenue from registered customers",
+  "avgOrderPerCustomer": "Average order value per customer",
+  "activeCustomersLast30": "Active customers (last 30 days)",
+  "newCustomersLast30": "New customers (last 30 days)",
+  "topCustomersTitle": "Top {count} Customers",
+  "@topCustomersTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bySpending": "By Spending",
+  "byOrders": "By Orders",
+  "byPoints": "By Points",
+  "ordersCount": "{count} orders",
+  "@ordersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "avgOrderStat": "Avg Order",
+  "loyaltyPointsStat": "Loyalty Points",
+  "lastOrderStat": "Last Order",
+  "newCustomerGrowth": "New Customer Growth",
+  "customerRetentionRate": "Customer Retention Rate",
+  "monthlyPeriod": "Monthly",
+  "totalCustomersPeriod": "Total Customers",
+  "activePeriod": "Active",
+  "activeCustomersInfo": "Active customers: purchased within the last 30 days",
+  "cohortAnalysis": "Cohort Analysis",
+  "cohortDescription": "Return rate after first purchase",
+  "cohortGroup": "Group",
+  "month1": "Month 1",
+  "month2": "Month 2",
+  "month3": "Month 3",
+  "loyaltyProgramStats": "Loyalty Program Stats",
+  "totalPointsGranted": "Total Points Granted",
+  "remainingPoints": "Remaining Points",
+  "pointsValue": "Points Value",
+  "pointsByTier": "Points by Tier",
+  "pointsUnit": "points",
+  "redemptionPatterns": "Redemption Patterns",
+  "purchaseDiscount": "Purchase Discount",
+  "freeProducts": "Free Products",
+  "couponsLabel": "Coupons",
+  "diamondTier": "Diamond",
+  "goldTier": "Gold",
+  "silverTier": "Silver",
+  "bronzeTier": "Bronze",
+  "todayDate": "Today",
+  "yesterdayDate": "Yesterday",
+  "daysCountLabel": "{count} days",
+  "@daysCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ofTotalLabel": "{active} of {total}",
+  "@ofTotalLabel": {
+    "placeholders": {
+      "active": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "exportingReportMsg": "Exporting report...",
+  "januaryMonth": "January",
+  "februaryMonth": "February",
+  "marchMonth": "March",
+  "aprilMonth": "April",
+  "mayMonth": "May",
+  "juneMonth": "June",
+  "errorLabel": "Error: {error}",
+  "@errorLabel": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "saturdayDay": "Saturday",
+  "sundayDay": "Sunday",
+  "mondayDay": "Monday",
+  "tuesdayDay": "Tuesday",
+  "wednesdayDay": "Wednesday",
+  "thursdayDay": "Thursday",
+  "fridayDay": "Friday",
+  "satShort": "Sat",
+  "sunShort": "Sun",
+  "monShort": "Mon",
+  "tueShort": "Tue",
+  "wedShort": "Wed",
+  "thuShort": "Thu",
+  "friShort": "Fri",
+  "errorLoadingVatReport": "Error loading VAT report",
+  "errorLoadingComplaints": "Error loading complaints",
+  "errorLoadingCustomerReport": "Error loading customer report",
+  "reprintReceipt": "Reprint Receipt",
+  "searchByInvoiceOrCustomer": "Search by invoice or customer...",
+  "selectInvoiceToPrint": "Select an invoice to reprint",
+  "receiptPreview": "Receipt Preview",
+  "receiptPrinted": "Receipt printed successfully",
+  "refunded": "Refunded",
+  "cashMovement": "Cash Movement",
+  "movementType": "Movement Type",
+  "reasonHint": "Enter reason...",
+  "bankDeposit": "Bank Deposit",
+  "bankWithdrawal": "Bank Withdrawal",
+  "changeForDrawer": "Change for Drawer",
+  "confirmDeposit": "Confirm Deposit",
+  "confirmWithdrawal": "Confirm Withdrawal",
+  "dailySummary": "Daily Summary",
+  "netRevenue": "Net Revenue",
+  "afterRefunds": "After Refunds",
+  "shiftsCount": "Shifts Count",
+  "todayShifts": "Today's Shifts",
+  "ongoing": "Ongoing",
+  "confirmOrder": "Confirm Order",
+  "orderNow": "Order Now",
+  "orderCart": "Order Cart",
+  "orderReceived": "Your order has been received!",
+  "orderBeingPrepared": "Your order will be prepared as soon as possible",
+  "redirectingToHome": "Redirecting to home page automatically...",
+  "kioskOrderNote": "Kiosk order",
+  "pricePerUnit": "{price} SAR per unit",
+  "@pricePerUnit": { "placeholders": { "price": { "type": "String" } } },
+  "itemCount": "{count} items",
+  "@itemCount": { "placeholders": { "count": { "type": "int" } } },
+  "selectFromMenu": "Select from menu",
+  "orderCartWithCount": "Order Cart ({count} items)",
+  "@orderCartWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "amountWithSar": "{amount} SAR",
+  "@amountWithSar": { "placeholders": { "amount": { "type": "String" } } },
+  "qtyTimesPrice": "{qty} x {price} SAR",
+  "@qtyTimesPrice": { "placeholders": { "qty": { "type": "int" }, "price": { "type": "String" } } },
+  "applyCoupon": "Apply Coupon",
+  "enterCouponCode": "Enter coupon code",
+  "invalidCoupon": "Invalid or not found coupon",
+  "couponExpired": "Coupon has expired",
+  "minimumPurchaseRequired": "Minimum purchase {amount} SAR",
+  "@minimumPurchaseRequired": { "placeholders": { "amount": { "type": "String" } } },
+  "couponDiscountApplied": "Discount of {amount} SAR applied",
+  "@couponDiscountApplied": { "placeholders": { "amount": { "type": "String" } } },
+  "couponInvalid": "Invalid coupon",
+  "noteLabel": "Note",
+  "customerAddedSuccess": "{name} added successfully",
+  "@customerAddedSuccess": { "placeholders": { "name": { "type": "String" } } },
+  "customerAddFailed": "Failed to add customer",
+  "quantityColon": "Quantity:",
+  "riyal": "SAR",
+  "mobileNumber": "Mobile Number",
+  "banknotes": "Banknotes",
+  "coins": "Coins",
+  "resetAction": "Reset",
+  "totalAmountLabel": "Total Amount",
+  "denominationRiyal": "{amount} SAR",
+  "@denominationRiyal": { "placeholders": { "amount": { "type": "String" } } },
+  "denominationHalala": "{amount} Halala",
+  "@denominationHalala": { "placeholders": { "amount": { "type": "String" } } },
+  "countCurrency": "Count Currency",
+  "confirmAmountSar": "Confirm: {amount} SAR",
+  "@confirmAmountSar": { "placeholders": { "amount": { "type": "String" } } },
+  "amountRiyal": "{amount} SAR",
+  "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
+  "itemDeletedMsg": "Item deleted",
+  "pressBackAgainToExit": "Press again to exit",
+  "deleteHeldInvoiceConfirm": "Delete this held invoice?"
+}

@@ -62,8 +62,8 @@ class ProductResponse with _$ProductResponse {
       categoryId: categoryId,
       isActive: isActive,
       trackInventory: trackInventory,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

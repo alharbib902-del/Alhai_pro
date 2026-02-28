@@ -53,7 +53,7 @@ class StockAdjustmentResponse {
       reason: reason,
       referenceId: referenceId,
       createdBy: createdBy,
-      createdAt: DateTime.parse(createdAt),
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
     );
   }
 }

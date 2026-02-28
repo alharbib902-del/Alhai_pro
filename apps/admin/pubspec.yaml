@@ -1,0 +1,75 @@
+name: admin
+description: Al-HAI Admin Dashboard - Full management system (all 123 screens)
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Foundations
+  alhai_core:
+    path: ../../alhai_core
+  alhai_services:
+    path: ../../alhai_services
+  alhai_design_system:
+    path: ../../alhai_design_system
+
+  # Infra
+  alhai_database:
+    path: ../../packages/alhai_database
+  alhai_sync:
+    path: ../../packages/alhai_sync
+  alhai_l10n:
+    path: ../../packages/alhai_l10n
+
+  # UI Features (all)
+  alhai_auth:
+    path: ../../packages/alhai_auth
+  alhai_shared_ui:
+    path: ../../packages/alhai_shared_ui
+  alhai_pos:
+    path: ../../packages/alhai_pos
+  alhai_ai:
+    path: ../../packages/alhai_ai
+  alhai_reports:
+    path: ../../packages/alhai_reports
+
+  # Media
+  image_picker: ^1.0.7
+
+  # Images
+  cached_network_image: ^3.3.1
+
+  # Security
+  flutter_secure_storage: ^9.0.0
+
+  # App infra
+  go_router: ^13.0.0
+  flutter_riverpod: ^2.4.9
+  get_it: ^7.7.0
+  shared_preferences: ^2.2.2
+  supabase_flutter: ^2.3.4
+  firebase_core: ^3.8.0
+  uuid: ^4.4.0
+  drift: ^2.14.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.7
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

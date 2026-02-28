@@ -1,0 +1,57 @@
+import 'package:alhai_core/alhai_core.dart' as core;
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:alhai_database/alhai_database.dart';
+
+/// GetIt instance - uses the same instance as alhai_core
+final getIt = core.getIt;
+
+/// Dependency Injection Configuration
+///
+/// Uses alhai_core's getIt for core dependencies
+/// and registers local Cashier app dependencies.
+
+/// Initialize all dependencies
+/// Call this in main() before runApp()
+Future<void> configureDependencies({String? environment}) async {
+  // Allow reassignment so we can override core repos with local ones
+  getIt.allowReassignment = true;
+
+  // Initialize core dependencies first
+  await core.configureDependencies(environment: environment);
+
+  // Register local database
+  if (!getIt.isRegistered<AppDatabase>()) {
+    final database = AppDatabase();
+    getIt.registerSingleton<AppDatabase>(database);
+  }
+
+  // Override core repositories with local (offline) implementations
+  final db = getIt<AppDatabase>();
+
+  // Replace core ProductsRepository with local one (offline-first)
+  getIt.registerLazySingleton<core.ProductsRepository>(
+    () => LocalProductsRepository(db),
+  );
+
+  // Replace core CategoriesRepository with local one (offline-first)
+  getIt.registerLazySingleton<core.CategoriesRepository>(
+    () => LocalCategoriesRepository(db),
+  );
+
+  // Register Supabase client (if initialized)
+  try {
+    final supabase = Supabase.instance.client;
+    if (!getIt.isRegistered<SupabaseClient>()) {
+      getIt.registerSingleton<SupabaseClient>(supabase);
+    }
+  } catch (_) {
+    // Supabase not initialized - offline mode only
+  }
+
+  // Disable reassignment after setup
+  getIt.allowReassignment = false;
+}
+
+/// Get the local database instance
+AppDatabase get appDatabase => getIt<AppDatabase>();

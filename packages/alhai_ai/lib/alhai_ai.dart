@@ -1,0 +1,96 @@
+library alhai_ai;
+
+// ─── Screens ──────────────────────────────────────────────────
+export 'src/screens/ai/ai_assistant_screen.dart';
+export 'src/screens/ai/ai_basket_analysis_screen.dart';
+export 'src/screens/ai/ai_chat_with_data_screen.dart';
+export 'src/screens/ai/ai_competitor_analysis_screen.dart';
+export 'src/screens/ai/ai_customer_recommendations_screen.dart';
+export 'src/screens/ai/ai_fraud_detection_screen.dart';
+export 'src/screens/ai/ai_product_recognition_screen.dart';
+export 'src/screens/ai/ai_promotion_designer_screen.dart';
+export 'src/screens/ai/ai_return_prediction_screen.dart';
+export 'src/screens/ai/ai_sales_forecasting_screen.dart';
+export 'src/screens/ai/ai_sentiment_analysis_screen.dart';
+export 'src/screens/ai/ai_smart_inventory_screen.dart';
+export 'src/screens/ai/ai_smart_pricing_screen.dart';
+export 'src/screens/ai/ai_smart_reports_screen.dart';
+export 'src/screens/ai/ai_staff_analytics_screen.dart';
+
+// ─── Providers ────────────────────────────────────────────────
+export 'src/providers/ai_assistant_providers.dart';
+export 'src/providers/ai_basket_analysis_providers.dart';
+export 'src/providers/ai_chat_with_data_providers.dart';
+export 'src/providers/ai_competitor_analysis_providers.dart';
+export 'src/providers/ai_customer_recommendations_providers.dart';
+export 'src/providers/ai_fraud_detection_providers.dart';
+export 'src/providers/ai_product_recognition_providers.dart';
+export 'src/providers/ai_promotion_designer_providers.dart';
+export 'src/providers/ai_return_prediction_providers.dart';
+export 'src/providers/ai_sales_forecasting_providers.dart';
+export 'src/providers/ai_sentiment_analysis_providers.dart';
+export 'src/providers/ai_smart_inventory_providers.dart';
+export 'src/providers/ai_smart_pricing_providers.dart';
+export 'src/providers/ai_smart_reports_providers.dart';
+export 'src/providers/ai_staff_analytics_providers.dart';
+
+// ─── Services ─────────────────────────────────────────────────
+export 'src/services/ai_analytics_service.dart';
+export 'src/services/ai_api_service.dart';
+export 'src/services/ai_assistant_service.dart';
+export 'src/services/ai_basket_analysis_service.dart';
+export 'src/services/ai_chat_with_data_service.dart';
+export 'src/services/ai_competitor_analysis_service.dart';
+export 'src/services/ai_customer_recommendations_service.dart';
+export 'src/services/ai_fraud_detection_service.dart';
+export 'src/services/ai_invoice_service.dart';
+export 'src/services/ai_product_recognition_service.dart';
+export 'src/services/ai_promotion_designer_service.dart';
+export 'src/services/ai_return_prediction_service.dart';
+export 'src/services/ai_sales_forecasting_service.dart' hide TrendDirection;
+export 'src/services/ai_sentiment_analysis_service.dart';
+export 'src/services/ai_smart_inventory_service.dart';
+export 'src/services/ai_smart_pricing_service.dart';
+export 'src/services/ai_smart_reports_service.dart';
+export 'src/services/ai_staff_analytics_service.dart';
+
+// ─── Widgets ──────────────────────────────────────────────────
+export 'src/widgets/ai/ab_test_config_panel.dart';
+export 'src/widgets/ai/abc_analysis_chart.dart';
+export 'src/widgets/ai/ai_chat_input.dart';
+export 'src/widgets/ai/ai_quick_templates.dart';
+export 'src/widgets/ai/association_matrix.dart';
+export 'src/widgets/ai/behavior_score_widget.dart';
+export 'src/widgets/ai/bundle_suggestion_card.dart';
+export 'src/widgets/ai/chat_message_bubble.dart';
+export 'src/widgets/ai/competitor_price_table.dart';
+export 'src/widgets/ai/data_query_input.dart';
+export 'src/widgets/ai/demand_elasticity_chart.dart';
+export 'src/widgets/ai/eoq_calculator_card.dart';
+export 'src/widgets/ai/forecast_chart.dart';
+export 'src/widgets/ai/fraud_alert_card.dart';
+export 'src/widgets/ai/fraud_investigation_panel.dart';
+export 'src/widgets/ai/generated_promotion_card.dart';
+export 'src/widgets/ai/generated_report_view.dart';
+export 'src/widgets/ai/keyword_cloud.dart';
+export 'src/widgets/ai/market_position_chart.dart';
+export 'src/widgets/ai/ocr_data_panel.dart';
+export 'src/widgets/ai/preventive_action_card.dart';
+export 'src/widgets/ai/price_suggestion_card.dart';
+export 'src/widgets/ai/profit_impact_calculator.dart';
+export 'src/widgets/ai/query_history_panel.dart';
+export 'src/widgets/ai/query_result_view.dart';
+export 'src/widgets/ai/recognition_result_card.dart';
+export 'src/widgets/ai/recommendation_card.dart';
+export 'src/widgets/ai/report_query_input.dart';
+export 'src/widgets/ai/report_template_card.dart';
+export 'src/widgets/ai/repurchase_timeline.dart';
+export 'src/widgets/ai/return_risk_card.dart';
+export 'src/widgets/ai/roi_forecast_chart.dart';
+export 'src/widgets/ai/seasonal_patterns_card.dart';
+export 'src/widgets/ai/sentiment_gauge.dart';
+export 'src/widgets/ai/shift_optimization_chart.dart';
+export 'src/widgets/ai/staff_performance_card.dart';
+export 'src/widgets/ai/waste_prediction_card.dart';
+export 'src/widgets/ai/what_if_panel.dart';
+export 'src/widgets/ai/whatsapp_recommendation_dialog.dart';

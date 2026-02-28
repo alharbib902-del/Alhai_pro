@@ -71,7 +71,7 @@ Margin: 65%
 - admin_pos_lite (20 screens)
 - customer_app (40 screens)  
 - driver_app (18 screens)
-- pos_app (~25 screens)
+- cashier (~25 screens)
 
 **Total**: ~242 screens across platform
 

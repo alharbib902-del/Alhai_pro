@@ -374,7 +374,7 @@
             "Track status",
             "Invoices"
         ],
-        "with_pos_app": [
+        "with_cashier": [
             "Delivery confirmation",
             "Payment processing"
         ]

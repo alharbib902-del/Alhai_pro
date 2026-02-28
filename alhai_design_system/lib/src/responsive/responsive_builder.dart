@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../tokens/alhai_breakpoints.dart';
 
-/// Responsive builder widget for adaptive layouts
+/// Responsive builder widget for adaptive layouts.
+///
+/// NOTE: Prefer using [ResponsiveBuilder] from `alhai_shared_ui` package
+/// which is the canonical version used across all app screens.
+/// This version exists in the design system but is not actively used.
+@Deprecated('Use ResponsiveBuilder from alhai_shared_ui instead')
 class ResponsiveBuilder extends StatelessWidget {
   /// Builder for mobile layout
   final Widget Function(BuildContext context) mobile;

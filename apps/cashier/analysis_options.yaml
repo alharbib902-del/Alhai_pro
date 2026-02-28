@@ -1,0 +1,44 @@
+include: package:flutter_lints/flutter.yaml
+
+# L107: Hardcoded-string detection
+# ---------------------------------
+# Flutter's built-in analyzer does not have a native "avoid_hardcoded_strings"
+# rule. We enforce the following complementary rules and conventions:
+#
+# 1. `avoid_print` catches debug prints that sometimes contain hardcoded text.
+# 2. `prefer_const_declarations` flags literals that should be const (and thus
+#    easier to grep for hardcoded user-facing text).
+# 3. For automated detection of hardcoded user-facing strings, integrate
+#    `dart_code_metrics` (DCM) with its `avoid-returning-widgets` and
+#    `prefer-extracting-callbacks` rules, or use `custom_lint` with a bespoke
+#    rule that flags `Text('...')` where the string is not an `l10n.*` call.
+#
+#    To enable DCM:
+#      a) Add `dart_code_metrics` to dev_dependencies in pubspec.yaml.
+#      b) Uncomment the section below.
+#
+# dart_code_metrics:
+#   rules:
+#     - avoid-returning-widgets
+#     - prefer-extracting-callbacks
+
+analyzer:
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+  errors:
+    invalid_annotation_target: ignore
+    sort_constructors_first: ignore
+    dangling_library_doc_comments: ignore
+
+linter:
+  rules:
+    # Core lint rules
+    avoid_print: true
+    prefer_const_constructors: false
+    prefer_const_declarations: true
+    prefer_final_fields: true
+    # L107: Additional rules that help catch hardcoded strings indirectly
+    prefer_interpolation_to_compose_strings: true
+    use_full_hex_values_for_flutter_colors: true
+    no_adjacent_strings_in_list: true

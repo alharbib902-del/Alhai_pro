@@ -105,7 +105,7 @@
 
 ## 🔗 ملفات إضافية
 
-في مجلد `pos_app/`:
+في مجلد `cashier/`:
 - Multi-tenancy Architecture
 - POS App Specifications
 - Role-based Access Control

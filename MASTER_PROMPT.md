@@ -5,7 +5,7 @@
 ## 📌 كيفية الاستخدام:
 
 1. انسخ هذا الـ Prompt
-2. غيّر `[APP_NAME]` باسم التطبيق (مثل: pos_app, customer_app, إلخ)
+2. غيّر `[APP_NAME]` باسم التطبيق (مثل: cashier, customer_app, إلخ)
 3. أعطه لـ Claude Opus
 4. سيولّد لك كل ملفات الخطة تلقائياً
 
@@ -31,7 +31,7 @@
 2. admin_pos_lite (28 شاشة) - قرارات سريعة + AI
 3. customer_app (40 شاشة) - تطبيق العملاء
 4. driver_app (18 شاشة) - تطبيق التوصيل
-5. pos_app (79 شاشة) - نقاط البيع
+5. cashier (79 شاشة) - نقاط البيع
 6. super_admin (52 شاشة) - إدارة المنصة
 7. distributor_portal (25 شاشة) - بوابة الموزعين
 
@@ -156,7 +156,7 @@
 | admin_pos_lite | 28 | ⏳ |
 | customer_app | 40 | ⏳ |
 | driver_app | 18 | ⏳ |
-| pos_app | 79 | ⏳ |
+| cashier | 79 | ⏳ |
 | super_admin | 52 | ⏳ |
 | distributor_portal | 25 | ⏳ |
 

@@ -1616,7 +1616,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
   
-  # Dependency Injection (like pos_app)
+  # Dependency Injection (like cashier)
   get_it: ^7.6.4
   injectable: ^2.3.2
   

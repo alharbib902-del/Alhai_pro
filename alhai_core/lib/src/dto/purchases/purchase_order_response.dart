@@ -68,10 +68,10 @@ class PurchaseOrderResponse {
       total: total,
       paidAmount: paidAmount,
       notes: notes,
-      expectedDate: expectedDate != null ? DateTime.parse(expectedDate!) : null,
-      receivedDate: receivedDate != null ? DateTime.parse(receivedDate!) : null,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      expectedDate: expectedDate != null ? DateTime.tryParse(expectedDate!) : null,
+      receivedDate: receivedDate != null ? DateTime.tryParse(receivedDate!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

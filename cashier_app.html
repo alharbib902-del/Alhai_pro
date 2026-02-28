@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحي — تطبيق الكاشير | Cashier App Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #f97316;
+  --accent-light: #fb923c;
+  --green: #00d4aa;
+  --blue: #4facfe;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --pink: #f093fb;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(249, 115, 22, 0.15);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(249, 115, 22, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(79, 172, 254, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ====== GLASS CARD ====== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-on-scroll.visible:nth-child(2) { transition-delay: 0.1s; }
+.animate-on-scroll.visible:nth-child(3) { transition-delay: 0.15s; }
+.animate-on-scroll.visible:nth-child(4) { transition-delay: 0.2s; }
+.animate-on-scroll.visible:nth-child(5) { transition-delay: 0.25s; }
+.animate-on-scroll.visible:nth-child(6) { transition-delay: 0.3s; }
+
+/* ====== BACK LINK ====== */
+.back-link-bar {
+  padding: 20px 0;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s;
+  direction: ltr;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* ====== HERO SECTION ====== */
+.hero {
+  padding: 40px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 212, 170, 0.12);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  color: var(--green);
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.3); }
+  50% { box-shadow: 0 0 0 10px rgba(0, 212, 170, 0); }
+}
+
+.hero-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--yellow), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 32px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.9;
+}
+
+/* ====== COUNTER CARDS ====== */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.counter-card {
+  padding: 28px 16px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: default;
+}
+
+.counter-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.counter-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  direction: ltr;
+}
+
+.counter-card:nth-child(2) .counter-value { color: var(--blue); }
+.counter-card:nth-child(3) .counter-value { color: var(--green); }
+.counter-card:nth-child(4) .counter-value { color: #22d3ee; }
+
+.counter-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ====== SECTION ====== */
+.section {
+  padding: 60px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent);
+}
+
+.section-icon.green { background: rgba(0, 212, 170, 0.15); color: var(--green); }
+.section-icon.blue { background: rgba(79, 172, 254, 0.15); color: var(--blue); }
+.section-icon.purple { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+.section-icon.yellow { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
+.section-icon.red { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ====== OFFLINE ARCHITECTURE FLOW ====== */
+.arch-flow {
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.arch-flow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.1), transparent 70%);
+  pointer-events: none;
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.flow-step {
+  width: 100%;
+  text-align: center;
+  padding: 20px 28px;
+  background: rgba(249, 115, 22, 0.06);
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  border-radius: var(--radius-sm);
+  position: relative;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.flow-step:hover {
+  transform: scale(1.02);
+  border-color: var(--accent);
+}
+
+.flow-step.highlight {
+  background: rgba(0, 212, 170, 0.08);
+  border-color: rgba(0, 212, 170, 0.3);
+}
+
+.flow-step.sync-step {
+  background: rgba(79, 172, 254, 0.08);
+  border-color: rgba(79, 172, 254, 0.3);
+}
+
+.flow-step-icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.flow-step.highlight .flow-step-icon { color: var(--green); }
+.flow-step.sync-step .flow-step-icon { color: var(--blue); }
+
+.flow-step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.flow-step-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.flow-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+  padding: 6px 0;
+  opacity: 0.6;
+}
+
+.arch-keypoints {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.keypoint {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: rgba(255,255,255, 0.02);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255, 0.05);
+  transition: border-color 0.3s;
+}
+
+.keypoint:hover {
+  border-color: var(--accent);
+}
+
+.keypoint-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--green);
+}
+
+.keypoint-text h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.keypoint-text p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* ====== NAVIGATION / SHELL LAYOUT ====== */
+.shell-demo {
+  padding: 32px;
+}
+
+.shell-layouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+@media (max-width: 768px) {
+  .shell-layouts { grid-template-columns: 1fr; }
+}
+
+.layout-preview {
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(15, 15, 26, 0.6);
+}
+
+.layout-title {
+  background: rgba(249, 115, 22, 0.1);
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+}
+
+.layout-body {
+  display: flex;
+  min-height: 200px;
+  direction: rtl;
+}
+
+.layout-sidebar {
+  width: 100px;
+  background: rgba(249, 115, 22, 0.06);
+  border-left: 1px solid rgba(249, 115, 22, 0.12);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layout-sidebar .sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.layout-sidebar .sidebar-item.active {
+  background: rgba(249, 115, 22, 0.2);
+  color: var(--accent);
+}
+
+.layout-sidebar .sidebar-item i {
+  font-size: 0.8rem;
+  width: 16px;
+  text-align: center;
+}
+
+.layout-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.layout-body-mobile {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.layout-appbar {
+  background: rgba(249, 115, 22, 0.08);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+  font-size: 0.85rem;
+}
+
+.layout-appbar i {
+  color: var(--accent);
+}
+
+.layout-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Nav Items Grid */
+.nav-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255, 0.05);
+  background: rgba(255,255,255, 0.02);
+  transition: all 0.3s;
+}
+
+.nav-item:hover {
+  border-color: var(--accent);
+  background: rgba(249, 115, 22, 0.06);
+  transform: translateY(-2px);
+}
+
+.nav-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.nav-item-icon.orange { background: rgba(249, 115, 22, 0.15); color: var(--accent); }
+.nav-item-icon.blue { background: rgba(79, 172, 254, 0.15); color: var(--blue); }
+.nav-item-icon.green { background: rgba(0, 212, 170, 0.15); color: var(--green); }
+.nav-item-icon.purple { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+.nav-item-icon.yellow { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
+
+.nav-item-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.nav-item-info p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  direction: ltr;
+  text-align: right;
+}
+
+/* ====== ROUTES TABLE ====== */
+.routes-category {
+  margin-bottom: 28px;
+}
+
+.routes-category-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.routes-category-title .cat-badge {
+  font-size: 0.75rem;
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.route-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.route-table th {
+  text-align: right;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255,255,255, 0.06);
+}
+
+.route-table td {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255, 0.03);
+  vertical-align: middle;
+}
+
+.route-table tr:hover td {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+.route-path {
+  font-family: 'Courier New', monospace;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  direction: ltr;
+  text-align: right;
+  background: rgba(249, 115, 22, 0.08);
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.route-screen {
+  font-family: 'Courier New', monospace;
+  color: var(--blue);
+  font-size: 0.82rem;
+  direction: ltr;
+  text-align: right;
+}
+
+.route-name-ar {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ====== REPOSITORIES SECTION ====== */
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 820px) {
+  .repo-grid { grid-template-columns: 1fr; }
+}
+
+.repo-card {
+  padding: 28px;
+}
+
+.repo-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.repo-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.repo-card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.repo-card-header p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.method-list {
+  list-style: none;
+}
+
+.method-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.method-list li:last-child { border-bottom: none; }
+
+.method-list li i {
+  color: var(--green);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.method-name {
+  font-family: 'Courier New', monospace;
+  color: var(--accent-light);
+  font-weight: 600;
+  font-size: 0.82rem;
+  direction: ltr;
+}
+
+.method-desc {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin-right: auto;
+}
+
+/* ====== DEPENDENCIES ====== */
+.deps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .deps-grid { grid-template-columns: 1fr; }
+}
+
+.dep-group {
+  padding: 28px;
+}
+
+.dep-group-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dep-group-title .count-badge {
+  font-size: 0.75rem;
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.dep-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dep-chip {
+  background: rgba(255,255,255, 0.04);
+  border: 1px solid rgba(255,255,255, 0.08);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dep-chip:hover {
+  border-color: var(--accent);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.dep-chip.excluded {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.dep-chip i {
+  font-size: 0.75rem;
+}
+
+.dep-note {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(249, 115, 22, 0.06);
+  border-right: 3px solid var(--accent);
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ====== TESTS ====== */
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.test-card {
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.test-card:hover { transform: translateY(-3px); }
+
+.test-card-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.test-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.test-card-file {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  direction: ltr;
+}
+
+/* ====== COMPATIBILITY TABLE ====== */
+.compat-table-wrap {
+  padding: 32px;
+  overflow-x: auto;
+}
+
+.compat-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.compat-table th {
+  text-align: center;
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(249, 115, 22, 0.08);
+  border-bottom: 2px solid rgba(249, 115, 22, 0.2);
+}
+
+.compat-table td {
+  text-align: center;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255, 0.04);
+}
+
+.compat-table tr:hover td {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+.compat-check { color: var(--green); font-size: 1.1rem; }
+.compat-cross { color: var(--text-muted); font-size: 0.85rem; }
+.compat-excellent {
+  color: var(--green);
+  font-weight: 700;
+  background: rgba(0, 212, 170, 0.1);
+  padding: 3px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.compat-good {
+  color: var(--blue);
+  font-weight: 600;
+  background: rgba(79, 172, 254, 0.1);
+  padding: 3px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.compat-optional {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* ====== DIFFERENTIATORS ====== */
+.diff-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.diff-card {
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.diff-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 0 0 0 80px;
+  opacity: 0.1;
+}
+
+.diff-card.vs-admin::before { background: var(--purple); }
+.diff-card.vs-lite::before { background: var(--blue); }
+.diff-card.strength::before { background: var(--green); }
+
+.diff-card-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+.diff-card.vs-admin .diff-card-badge { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+.diff-card.vs-lite .diff-card-badge { background: rgba(79, 172, 254, 0.15); color: var(--blue); }
+.diff-card.strength .diff-card-badge { background: rgba(0, 212, 170, 0.15); color: var(--green); }
+
+.diff-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.diff-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.diff-card li {
+  padding: 5px 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diff-card li i {
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.diff-card.vs-admin li i,
+.diff-card.vs-lite li i { color: var(--red); }
+.diff-card.strength li i { color: var(--green); }
+
+/* ====== FOOTER ====== */
+.footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255, 0.05);
+  margin-top: 40px;
+}
+
+.footer-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.3s;
+}
+
+.footer-link:hover { opacity: 0.8; }
+
+.footer-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* ====== SHIMMER ====== */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 600px) {
+  .counters-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-items-grid { grid-template-columns: 1fr; }
+  .diff-cards { grid-template-columns: 1fr; }
+  .tests-grid { grid-template-columns: 1fr; }
+  .arch-keypoints { grid-template-columns: 1fr; }
+  .repo-grid { grid-template-columns: 1fr; }
+  .deps-grid { grid-template-columns: 1fr; }
+  .route-table th:nth-child(3),
+  .route-table td:nth-child(3) { display: none; }
+  .shell-layouts { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- BACK LINK                                    -->
+<!-- ============================================ -->
+<div class="container">
+  <div class="back-link-bar">
+    <a href="project_report.html" class="back-link">
+      <i class="fas fa-arrow-left"></i>
+      <span>&#8592; العودة للتقرير الرئيسي</span>
+    </a>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- HERO SECTION                                 -->
+<!-- ============================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span style="font-size:1.1rem;">&#x1F7E2;</span>
+      يعمل بدون إنترنت
+    </div>
+    <div class="hero-icon">
+      <i class="fas fa-cash-register"></i>
+    </div>
+    <h1 class="hero-title">تطبيق الكاشير — Cashier</h1>
+    <p class="hero-subtitle">
+      تطبيق كاشير احترافي يعمل 100% بدون إنترنت (Offline-First) مع مزامنة تلقائية عند الاتصال
+    </p>
+
+    <div class="counters-grid animate-on-scroll">
+      <div class="counter-card glass">
+        <div class="counter-value" data-target="28">0</div>
+        <div class="counter-label"><i class="fas fa-route"></i> مسار</div>
+      </div>
+      <div class="counter-card glass">
+        <div class="counter-value" data-target="36">0</div>
+        <div class="counter-label"><i class="fas fa-vial"></i> اختبار</div>
+      </div>
+      <div class="counter-card glass">
+        <div class="counter-value" data-target="10">0</div>
+        <div class="counter-label"><i class="fas fa-file-code"></i> ملفات</div>
+      </div>
+      <div class="counter-card glass">
+        <div class="counter-value" data-target="100" data-suffix="%">0</div>
+        <div class="counter-label"><i class="fas fa-wifi-slash"></i> Offline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- OFFLINE-FIRST ARCHITECTURE                   -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon green">
+        <i class="fas fa-database"></i>
+      </div>
+      <h2 class="section-title">بنية Offline-First</h2>
+      <p class="section-subtitle">كل العمليات تعمل محليًا بدون أي اعتماد على الشبكة</p>
+    </div>
+
+    <div class="arch-flow glass animate-on-scroll">
+      <div class="flow-steps">
+        <!-- Step 1 -->
+        <div class="flow-step">
+          <div class="flow-step-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="flow-step-title">العمليات</div>
+          <div class="flow-step-desc">POS، العملاء، المرتجعات، الورديات</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+
+        <!-- Step 2 -->
+        <div class="flow-step">
+          <div class="flow-step-icon"><i class="fas fa-layer-group"></i></div>
+          <div class="flow-step-title">المستودعات المحلية</div>
+          <div class="flow-step-desc">LocalProductsRepository / LocalCategoriesRepository</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+
+        <!-- Step 3 -->
+        <div class="flow-step highlight">
+          <div class="flow-step-icon"><i class="fas fa-hard-drive"></i></div>
+          <div class="flow-step-title">قاعدة البيانات المحلية</div>
+          <div class="flow-step-desc">AppDatabase — Drift / SQLite</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+
+        <!-- Step 4 -->
+        <div class="flow-step highlight">
+          <div class="flow-step-icon"><i class="fas fa-bolt"></i></div>
+          <div class="flow-step-title">البيانات متاحة فورًا</div>
+          <div class="flow-step-desc">بدون انتظار الشبكة — صفر زمن انتظار</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+
+        <!-- Step 5 -->
+        <div class="flow-step sync-step">
+          <div class="flow-step-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+          <div class="flow-step-title">المزامنة في الخلفية</div>
+          <div class="flow-step-desc">alhai_sync — عند توفر الإنترنت تلقائيًا</div>
+        </div>
+      </div>
+
+      <div class="arch-keypoints">
+        <div class="keypoint">
+          <div class="keypoint-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="keypoint-text">
+            <h4>قراءة محلية بالكامل</h4>
+            <p>كل البيانات تُقرأ من SQLite محليًا عبر Drift</p>
+          </div>
+        </div>
+        <div class="keypoint">
+          <div class="keypoint-icon">
+            <i class="fas fa-ban"></i>
+          </div>
+          <div class="keypoint-text">
+            <h4>صفر استدعاءات شبكية</h4>
+            <p>العمليات الأساسية لا تحتاج أي اتصال بالإنترنت</p>
+          </div>
+        </div>
+        <div class="keypoint">
+          <div class="keypoint-icon">
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <div class="keypoint-text">
+            <h4>مزامنة شفافة</h4>
+            <p>المزامنة تحدث تلقائيًا في الخلفية دون تأثير على الأداء</p>
+          </div>
+        </div>
+        <div class="keypoint">
+          <div class="keypoint-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="keypoint-text">
+            <h4>Graceful Fallback</h4>
+            <p>فشل Firebase / Supabase لا يؤثر — التطبيق يستمر 100%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- NAVIGATION SECTION                           -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon">
+        <i class="fas fa-compass"></i>
+      </div>
+      <h2 class="section-title">CashierShell — التنقل</h2>
+      <p class="section-subtitle">تخطيط ذكي يتكيف بين سطح المكتب والجوال</p>
+    </div>
+
+    <div class="shell-demo glass animate-on-scroll">
+      <div class="shell-layouts">
+        <!-- Desktop Layout -->
+        <div class="layout-preview">
+          <div class="layout-title">
+            <i class="fas fa-desktop" style="color: var(--accent);"></i>
+            سطح المكتب — Desktop
+          </div>
+          <div class="layout-body">
+            <div class="layout-sidebar">
+              <div class="sidebar-item active">
+                <i class="fas fa-cash-register"></i>
+                نقطة البيع
+              </div>
+              <div class="sidebar-item">
+                <i class="fas fa-users"></i>
+                العملاء
+              </div>
+              <div class="sidebar-item">
+                <i class="fas fa-clock"></i>
+                الورديات
+              </div>
+              <div class="sidebar-item">
+                <i class="fas fa-undo"></i>
+                المرتجعات
+              </div>
+              <div class="sidebar-item">
+                <i class="fas fa-user"></i>
+                الملف الشخصي
+              </div>
+            </div>
+            <div class="layout-main">
+              <div style="text-align:center;">
+                <i class="fas fa-expand" style="font-size:1.5rem; color: var(--text-muted); margin-bottom:8px; display:block;"></i>
+                المحتوى الرئيسي<br>
+                <small style="color: var(--text-muted);">Sidebar ثابت 220px على اليمين</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Layout -->
+        <div class="layout-preview">
+          <div class="layout-title">
+            <i class="fas fa-mobile-alt" style="color: var(--blue);"></i>
+            الجوال — Mobile
+          </div>
+          <div class="layout-body-mobile">
+            <div class="layout-appbar">
+              <span><i class="fas fa-cash-register"></i> نقطة البيع</span>
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="layout-content">
+              <div style="text-align:center;">
+                <i class="fas fa-mobile-alt" style="font-size:1.5rem; color: var(--text-muted); margin-bottom:8px; display:block;"></i>
+                المحتوى الرئيسي<br>
+                <small style="color: var(--text-muted);">AppBar + Drawer للتنقل</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 Navigation Items -->
+      <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px; color: var(--text-secondary);">
+        <i class="fas fa-list" style="color: var(--accent);"></i>
+        عناصر التنقل — 5 أقسام
+      </h3>
+      <div class="nav-items-grid">
+        <div class="nav-item">
+          <div class="nav-item-icon orange"><i class="fas fa-cash-register"></i></div>
+          <div class="nav-item-info">
+            <h4>نقطة البيع</h4>
+            <p>/pos</p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-item-icon blue"><i class="fas fa-users"></i></div>
+          <div class="nav-item-info">
+            <h4>العملاء</h4>
+            <p>/customers</p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-item-icon green"><i class="fas fa-clock"></i></div>
+          <div class="nav-item-info">
+            <h4>الورديات</h4>
+            <p>/shifts</p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-item-icon purple"><i class="fas fa-undo-alt"></i></div>
+          <div class="nav-item-info">
+            <h4>المرتجعات</h4>
+            <p>/returns</p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-item-icon yellow"><i class="fas fa-user"></i></div>
+          <div class="nav-item-info">
+            <h4>الملف الشخصي</h4>
+            <p>/profile</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ALL ROUTES SECTION                           -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon blue">
+        <i class="fas fa-sitemap"></i>
+      </div>
+      <h2 class="section-title">جميع المسارات — 28 مسار</h2>
+      <p class="section-subtitle">خريطة كاملة لكل الشاشات والتنقل في التطبيق</p>
+    </div>
+
+    <div class="glass animate-on-scroll" style="padding: 32px;">
+
+      <!-- Auth Routes -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-lock" style="color: var(--yellow);"></i>
+          Auth — المصادقة
+          <span class="cat-badge">3 مسارات</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">خارج Shell</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/splash</span></td>
+              <td><span class="route-screen">SplashScreen</span></td>
+              <td class="route-name-ar">شاشة البداية</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/login</span></td>
+              <td><span class="route-screen">LoginScreen</span></td>
+              <td class="route-name-ar">تسجيل الدخول</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/store-select</span></td>
+              <td><span class="route-screen">StoreSelectScreen</span></td>
+              <td class="route-name-ar">اختيار المتجر</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- POS Overlays -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-layer-group" style="color: var(--accent);"></i>
+          POS Overlays — شاشات منفصلة
+          <span class="cat-badge">2 مسارات</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">خارج Shell</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/pos/payment</span></td>
+              <td><span class="route-screen">PaymentScreen</span></td>
+              <td class="route-name-ar">الدفع</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/pos/receipt</span></td>
+              <td><span class="route-screen">ReceiptScreen</span></td>
+              <td class="route-name-ar">الإيصال</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- POS Operations -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-cash-register" style="color: var(--accent);"></i>
+          POS Operations — عمليات البيع
+          <span class="cat-badge">6 مسارات</span>
+          <span style="font-size:0.75rem; color:var(--green);">داخل Shell</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/pos</span></td>
+              <td><span class="route-screen">PosScreen</span></td>
+              <td class="route-name-ar">نقطة البيع</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/pos/quick-sale</span></td>
+              <td><span class="route-screen">QuickSaleScreen</span></td>
+              <td class="route-name-ar">البيع السريع</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/pos/favorites</span></td>
+              <td><span class="route-screen">FavoritesScreen</span></td>
+              <td class="route-name-ar">المفضلة</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/pos/hold-invoices</span></td>
+              <td><span class="route-screen">HoldInvoicesScreen</span></td>
+              <td class="route-name-ar">الفواتير المعلقة</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/pos/barcode-scanner</span></td>
+              <td><span class="route-screen">BarcodeScannerScreen</span></td>
+              <td class="route-name-ar">ماسح الباركود</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/cash-drawer</span></td>
+              <td><span class="route-screen">CashDrawerScreen</span></td>
+              <td class="route-name-ar">درج النقود</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Returns -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-undo-alt" style="color: var(--purple);"></i>
+          Returns — المرتجعات
+          <span class="cat-badge">4 مسارات</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/returns</span></td>
+              <td><span class="route-screen">ReturnsScreen</span></td>
+              <td class="route-name-ar">المرتجعات</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/returns/request</span></td>
+              <td><span class="route-screen">RefundRequestScreen</span></td>
+              <td class="route-name-ar">طلب استرداد</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/returns/reason</span></td>
+              <td><span class="route-screen">RefundReasonScreen</span></td>
+              <td class="route-name-ar">سبب الإرجاع</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/returns/receipt/:id</span></td>
+              <td><span class="route-screen">RefundReceiptScreen</span></td>
+              <td class="route-name-ar">إيصال المرتجع</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Customers -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-users" style="color: var(--blue);"></i>
+          Customers — العملاء
+          <span class="cat-badge">3 مسارات</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/customers</span></td>
+              <td><span class="route-screen">CustomersScreen</span></td>
+              <td class="route-name-ar">العملاء</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/customers/:id</span></td>
+              <td><span class="route-screen">CustomerDetailScreen</span></td>
+              <td class="route-name-ar">تفاصيل العميل</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/customers/:id/ledger</span></td>
+              <td><span class="route-screen">CustomerLedgerScreen</span></td>
+              <td class="route-name-ar">دفتر حساب العميل</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Shifts -->
+      <div class="routes-category">
+        <div class="routes-category-title">
+          <i class="fas fa-clock" style="color: var(--green);"></i>
+          Shifts — الورديات
+          <span class="cat-badge">4 مسارات</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/shifts</span></td>
+              <td><span class="route-screen">ShiftsScreen</span></td>
+              <td class="route-name-ar">الورديات</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/shifts/open</span></td>
+              <td><span class="route-screen">ShiftOpenScreen</span></td>
+              <td class="route-name-ar">فتح الوردية</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/shifts/close</span></td>
+              <td><span class="route-screen">ShiftCloseScreen</span></td>
+              <td class="route-name-ar">إغلاق الوردية</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/shifts/summary</span></td>
+              <td><span class="route-screen">ShiftSummaryScreen</span></td>
+              <td class="route-name-ar">ملخص الوردية</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Common -->
+      <div class="routes-category" style="margin-bottom:0;">
+        <div class="routes-category-title">
+          <i class="fas fa-ellipsis-h" style="color: var(--text-muted);"></i>
+          Common — عام
+          <span class="cat-badge">6 مسارات</span>
+        </div>
+        <table class="route-table">
+          <thead>
+            <tr>
+              <th>المسار</th>
+              <th>الشاشة</th>
+              <th>الوصف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="route-path">/notifications</span></td>
+              <td><span class="route-screen">NotificationsScreen</span></td>
+              <td class="route-name-ar">الإشعارات</td>
+            </tr>
+            <tr>
+              <td><span class="route-path">/profile</span></td>
+              <td><span class="route-screen">ProfileScreen</span></td>
+              <td class="route-name-ar">الملف الشخصي</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- LOCAL REPOSITORIES SECTION                   -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon green">
+        <i class="fas fa-warehouse"></i>
+      </div>
+      <h2 class="section-title">المستودعات المحلية — Local Repositories</h2>
+      <p class="section-subtitle">طبقة الوصول للبيانات تعمل بالكامل على SQLite محلي</p>
+    </div>
+
+    <div class="repo-grid">
+
+      <!-- LocalProductsRepository -->
+      <div class="repo-card glass animate-on-scroll">
+        <div class="repo-card-header">
+          <div class="repo-card-icon" style="background: rgba(249, 115, 22, 0.15); color: var(--accent);">
+            <i class="fas fa-box"></i>
+          </div>
+          <div>
+            <h3>LocalProductsRepository</h3>
+            <p>إدارة المنتجات محليًا — 10 عمليات</p>
+          </div>
+        </div>
+        <ul class="method-list">
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getProducts()</span>
+            <span class="method-desc">مع تقسيم الصفحات والبحث</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getProduct(id)</span>
+            <span class="method-desc">منتج واحد بالمعرف</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getByBarcode()</span>
+            <span class="method-desc">بحث بالباركود</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">searchProducts(query, storeId)</span>
+            <span class="method-desc">بحث متقدم</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getLowStockProducts()</span>
+            <span class="method-desc">المنتجات منخفضة المخزون</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getProductsByCategory()</span>
+            <span class="method-desc">المنتجات حسب التصنيف</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">watchProducts()</span>
+            <span class="method-desc">تدفق تفاعلي — reactive stream</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">updateStock()</span>
+            <span class="method-desc">تحديث المخزون</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">createProduct()</span>
+            <span class="method-desc">إنشاء منتج جديد</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">updateProduct() / deleteProduct()</span>
+            <span class="method-desc">تعديل / حذف منتج</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- LocalCategoriesRepository -->
+      <div class="repo-card glass animate-on-scroll">
+        <div class="repo-card-header">
+          <div class="repo-card-icon" style="background: rgba(0, 212, 170, 0.15); color: var(--green);">
+            <i class="fas fa-folder-tree"></i>
+          </div>
+          <div>
+            <h3>LocalCategoriesRepository</h3>
+            <p>إدارة التصنيفات محليًا — 6 عمليات</p>
+          </div>
+        </div>
+        <ul class="method-list">
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getCategories(storeId)</span>
+            <span class="method-desc">تصنيفات المتجر</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getCategory(id)</span>
+            <span class="method-desc">تصنيف واحد بالمعرف</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getRootCategories()</span>
+            <span class="method-desc">التصنيفات الرئيسية</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getChildCategories()</span>
+            <span class="method-desc">التصنيفات الفرعية</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">watchCategories()</span>
+            <span class="method-desc">تدفق تفاعلي — reactive stream</span>
+          </li>
+          <li>
+            <i class="fas fa-circle"></i>
+            <span class="method-name">getCategoriesCount()</span>
+            <span class="method-desc">عدد التصنيفات</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- DEPENDENCIES SECTION                         -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon purple">
+        <i class="fas fa-puzzle-piece"></i>
+      </div>
+      <h2 class="section-title">الاعتماديات — Dependencies</h2>
+      <p class="section-subtitle">9 حزم داخلية + 6 حزم خارجية</p>
+    </div>
+
+    <div class="deps-grid animate-on-scroll">
+      <!-- Internal -->
+      <div class="dep-group glass">
+        <div class="dep-group-title">
+          <i class="fas fa-cubes" style="color: var(--accent);"></i>
+          الحزم الداخلية
+          <span class="count-badge">9</span>
+        </div>
+        <ul class="dep-list">
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--accent);"></i> alhai_core</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--blue);"></i> alhai_services</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--green);"></i> alhai_design_system</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--purple);"></i> alhai_database</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--yellow);"></i> alhai_sync</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--pink);"></i> alhai_l10n</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--blue);"></i> alhai_auth</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--accent);"></i> alhai_shared_ui</li>
+          <li class="dep-chip"><i class="fas fa-cube" style="color: var(--green);"></i> alhai_pos</li>
+        </ul>
+        <div class="dep-note">
+          <i class="fas fa-info-circle" style="color: var(--accent);"></i>
+          <strong>لا يشمل:</strong>
+          <span class="dep-chip excluded" style="display: inline-flex; margin: 0 4px;">alhai_ai</span>
+          <span class="dep-chip excluded" style="display: inline-flex; margin: 0 4px;">alhai_reports</span>
+          — الكاشير لا يحتاجها
+        </div>
+      </div>
+
+      <!-- External -->
+      <div class="dep-group glass">
+        <div class="dep-group-title">
+          <i class="fas fa-download" style="color: var(--blue);"></i>
+          الحزم الخارجية
+          <span class="count-badge">6</span>
+        </div>
+        <ul class="dep-list">
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--green);"></i> go_router</li>
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--blue);"></i> flutter_riverpod</li>
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--purple);"></i> get_it</li>
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--accent);"></i> supabase_flutter</li>
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--yellow);"></i> shared_preferences</li>
+          <li class="dep-chip"><i class="fas fa-external-link-alt" style="color: var(--red);"></i> firebase_core</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TESTS SECTION                                -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon yellow">
+        <i class="fas fa-vial"></i>
+      </div>
+      <h2 class="section-title">الاختبارات — 36 اختبار</h2>
+      <p class="section-subtitle">تغطية شاملة للراوتر والحقن والشاشة الرئيسية</p>
+    </div>
+
+    <div class="tests-grid animate-on-scroll">
+      <div class="test-card glass">
+        <div class="test-card-value" style="color: var(--accent);">25</div>
+        <div class="test-card-name">Router Tests</div>
+        <div class="test-card-file">router_test.dart</div>
+      </div>
+      <div class="test-card glass">
+        <div class="test-card-value" style="color: var(--blue);">8</div>
+        <div class="test-card-name">Injection Tests</div>
+        <div class="test-card-file">injection_test.dart</div>
+      </div>
+      <div class="test-card glass">
+        <div class="test-card-value" style="color: var(--green);">3</div>
+        <div class="test-card-name">CashierShell Tests</div>
+        <div class="test-card-file">cashier_shell_test.dart</div>
+      </div>
+    </div>
+
+    <!-- Test Summary Bar -->
+    <div class="glass animate-on-scroll" style="padding: 24px; margin-top: 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-weight:700;">نسبة النجاح</span>
+        <span style="font-weight:800; font-size:1.3rem; color: var(--green);">36/36 — 100%</span>
+      </div>
+      <div style="height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden;">
+        <div style="height:100%; width:100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius:5px; position:relative;">
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 50%,transparent 100%);animation:shimmer 2s infinite;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- COMPATIBILITY TABLE                          -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon blue">
+        <i class="fas fa-tasks"></i>
+      </div>
+      <h2 class="section-title">التوافق — Compatibility</h2>
+      <p class="section-subtitle">تقييم شامل لجودة التطبيق</p>
+    </div>
+
+    <div class="compat-table-wrap glass animate-on-scroll">
+      <table class="compat-table">
+        <thead>
+          <tr>
+            <th>الجوال</th>
+            <th>الأداء</th>
+            <th>Drift / SQLite</th>
+            <th>Supabase</th>
+            <th>الترجمة L10n</th>
+            <th>تجربة المستخدم</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="compat-excellent">ممتاز</span></td>
+            <td><span class="compat-excellent">ممتاز (الأسرع)</span></td>
+            <td><span class="compat-check"><i class="fas fa-check-circle"></i></span></td>
+            <td><span class="compat-optional">اختياري <i class="fas fa-minus-circle compat-cross"></i></span></td>
+            <td><span class="compat-check"><i class="fas fa-check-circle"></i></span></td>
+            <td><span class="compat-good">جيد</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- KEY DIFFERENTIATORS                          -->
+<!-- ============================================ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon red">
+        <i class="fas fa-balance-scale"></i>
+      </div>
+      <h2 class="section-title">ما يميز الكاشير — Key Differentiators</h2>
+      <p class="section-subtitle">مقارنة مع التطبيقات الأخرى في المنظومة</p>
+    </div>
+
+    <div class="diff-cards animate-on-scroll">
+      <!-- vs Admin -->
+      <div class="diff-card glass vs-admin">
+        <div class="diff-card-badge">vs Admin POS</div>
+        <h3><i class="fas fa-shield-alt" style="color: var(--purple); margin-left:8px;"></i> مقارنة بالأدمن</h3>
+        <ul>
+          <li><i class="fas fa-times-circle"></i> بدون ذكاء اصطناعي (AI)</li>
+          <li><i class="fas fa-times-circle"></i> بدون تقارير متقدمة</li>
+          <li><i class="fas fa-times-circle"></i> بدون إدارة الإعدادات</li>
+          <li><i class="fas fa-check-circle" style="color: var(--green) !important;"></i> POS نقي وسريع فقط</li>
+        </ul>
+      </div>
+
+      <!-- vs Admin Lite -->
+      <div class="diff-card glass vs-lite">
+        <div class="diff-card-badge">vs Admin Lite</div>
+        <h3><i class="fas fa-feather-alt" style="color: var(--blue); margin-left:8px;"></i> مقارنة بالأدمن لايت</h3>
+        <ul>
+          <li><i class="fas fa-times-circle"></i> بدون تقارير</li>
+          <li><i class="fas fa-times-circle"></i> بدون ذكاء اصطناعي</li>
+          <li><i class="fas fa-times-circle"></i> بدون مراقبة</li>
+          <li><i class="fas fa-check-circle" style="color: var(--green) !important;"></i> مُركَّز على عمليات البيع فقط</li>
+        </ul>
+      </div>
+
+      <!-- Strength -->
+      <div class="diff-card glass strength">
+        <div class="diff-card-badge">نقاط القوة</div>
+        <h3><i class="fas fa-trophy" style="color: var(--green); margin-left:8px;"></i> لماذا الكاشير؟</h3>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> الأسرع أداءً في المنظومة</li>
+          <li><i class="fas fa-check-circle"></i> أصغر حجم (footprint)</li>
+          <li><i class="fas fa-check-circle"></i> يعمل في أي مكان — بدون إنترنت</li>
+          <li><i class="fas fa-check-circle"></i> مثالي لنقاط البيع الميدانية</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER                                       -->
+<!-- ============================================ -->
+<footer class="footer">
+  <div class="container">
+    <a href="project_report.html" class="footer-link">
+      <i class="fas fa-arrow-left"></i>
+      العودة للتقرير الرئيسي
+    </a>
+    <div class="footer-date">
+      <i class="fas fa-calendar-alt"></i>
+      آخر تحديث: فبراير 2026 — منظومة الحي
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================ -->
+<!-- JAVASCRIPT                                   -->
+<!-- ============================================ -->
+<script>
+// ====== Scroll Animations ======
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+// ====== Counter Animation ======
+function animateCounters() {
+  const counters = document.querySelectorAll('.counter-value[data-target]');
+  counters.forEach(counter => {
+    const target = parseInt(counter.dataset.target);
+    const suffix = counter.dataset.suffix || '';
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      counter.textContent = Math.floor(current) + suffix;
+    }, 16);
+  });
+}
+
+// Run counter animation when counters come into view
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounters();
+      counterObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+const countersGrid = document.querySelector('.counters-grid');
+if (countersGrid) counterObserver.observe(countersGrid);
+
+// ====== Smooth scroll for anchors ======
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ====== Flow steps staggered animation ======
+const flowObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const steps = entry.target.querySelectorAll('.flow-step');
+      const arrows = entry.target.querySelectorAll('.flow-arrow');
+      steps.forEach((step, i) => {
+        setTimeout(() => {
+          step.style.opacity = '1';
+          step.style.transform = 'translateY(0)';
+        }, i * 200);
+      });
+      arrows.forEach((arrow, i) => {
+        setTimeout(() => {
+          arrow.style.opacity = '0.6';
+        }, i * 200 + 100);
+      });
+      flowObserver.disconnect();
+    }
+  });
+}, { threshold: 0.2 });
+
+const flowSteps = document.querySelector('.flow-steps');
+if (flowSteps) {
+  const allFlowChildren = flowSteps.querySelectorAll('.flow-step, .flow-arrow');
+  allFlowChildren.forEach(child => {
+    child.style.opacity = '0';
+    child.style.transform = 'translateY(20px)';
+    child.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  });
+  flowSteps.querySelectorAll('.flow-arrow').forEach(a => {
+    a.style.transform = 'none';
+  });
+  flowObserver.observe(flowSteps);
+}
+</script>
+</body>
+</html>

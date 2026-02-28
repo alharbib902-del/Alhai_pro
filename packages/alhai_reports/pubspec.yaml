@@ -1,0 +1,40 @@
+name: alhai_reports
+description: Report screens and services for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  alhai_core:
+    path: ../../alhai_core
+  alhai_services:
+    path: ../../alhai_services
+  alhai_design_system:
+    path: ../../alhai_design_system
+  alhai_l10n:
+    path: ../alhai_l10n
+  alhai_database:
+    path: ../alhai_database
+  alhai_shared_ui:
+    path: ../alhai_shared_ui
+  alhai_auth:
+    path: ../alhai_auth
+  flutter_riverpod: ^2.4.9
+  get_it: ^7.7.0
+  go_router: ^13.0.0
+  drift: ^2.14.1
+  intl: ^0.20.2
+  pdf: ^3.10.8
+  printing: ^5.12.0
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4

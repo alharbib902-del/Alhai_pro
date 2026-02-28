@@ -31,6 +31,9 @@ extension AlhaiContextExtensions on BuildContext {
   /// Is desktop size
   bool get isDesktop => AlhaiBreakpoints.isDesktop(screenWidth);
 
+  /// Is wide screen (>= 1536)
+  bool get isWide => screenWidth >= 1536;
+
   /// Current column count
   int get columns => AlhaiBreakpoints.getColumns(screenWidth);
 
@@ -64,6 +67,12 @@ extension AlhaiContextExtensions on BuildContext {
 
   /// All safe area padding
   EdgeInsets get safePadding => MediaQuery.paddingOf(this);
+
+  /// Keyboard view insets (bottom keyboard height)
+  EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(this);
+
+  /// Whether user prefers reduced motion (accessibility)
+  bool get prefersReducedMotion => MediaQuery.disableAnimationsOf(this);
   
   /// Keyboard-aware page insets (safe area + keyboard)
   EdgeInsets get pageInsets =>

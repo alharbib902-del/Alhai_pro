@@ -1,0 +1,126 @@
+# TODO(L04): Implement a versioning strategy for all apps. Currently all apps are at
+# 1.0.0+1. Consider using melos versioning (melos version) with conventional
+# commits, or a manual per-app versioning scheme before first production release.
+#
+# L36: Path dependency convention
+# ──────────────────────────────
+# All packages live under packages/ and all apps live under apps/ OR at the repo
+# root. This means path dependencies follow two patterns:
+#
+#   From an app under apps/<app>/pubspec.yaml:
+#     alhai_core:           { path: ../../alhai_core }
+#     alhai_database:       { path: ../../packages/alhai_database }
+#
+#   From a package under packages/<pkg>/pubspec.yaml:
+#     alhai_core:           { path: ../../alhai_core }
+#     <sibling package>:    { path: ../<sibling> }
+#
+#   From a root-level app (customer_app, driver_app, super_admin, distributor_portal):
+#     alhai_core:           { path: ../alhai_core }
+#     alhai_database:       { path: ../packages/alhai_database }
+#
+# Keep these patterns consistent when adding new packages or apps. Melos resolves
+# all paths below automatically via the packages glob list.
+name: alhai_monorepo
+
+packages:
+  # Apps inside apps/ directory
+  - apps/**
+  # Shared packages
+  - packages/**
+  # Root-level shared libraries
+  - alhai_core
+  - alhai_services
+  - alhai_design_system
+  # Root-level apps (to be moved under apps/ in a future migration)
+  - customer_app
+  - distributor_portal
+  - driver_app
+  - super_admin
+
+command:
+  bootstrap:
+    runPubGetInParallel: true
+
+scripts:
+  analyze:
+    run: melos exec -c 6 -- flutter analyze
+    description: Run analyzer in all packages and apps
+
+  test:
+    run: melos exec -c 6 -- flutter test
+    description: Run tests in all packages and apps
+
+  format:
+    run: melos exec -- dart format .
+    description: Format all packages and apps
+
+  get:
+    run: melos bootstrap
+    description: Bootstrap workspace
+
+  codegen:
+    run: melos exec -- dart run build_runner build --delete-conflicting-outputs
+    packageFilters:
+      dependsOn: build_runner
+    description: Run code generation (Drift, Injectable, Freezed)
+
+  build:cashier:apk:
+    run: melos exec --scope="cashier" -- flutter build apk
+    description: Build Cashier APK
+
+  build:admin:web:
+    run: melos exec --scope="admin" -- flutter build web
+    description: Build Admin Web
+
+  build:lite:apk:
+    run: melos exec --scope="admin_lite" -- flutter build apk
+    description: Build Admin Lite APK
+
+  clean:
+    run: melos exec -- flutter clean
+    description: Clean all packages and apps
+
+  format:check:
+    run: melos exec -- dart format --set-exit-if-changed .
+    description: Check formatting without modifying (CI)
+
+  test:coverage:
+    run: melos exec -c 4 -- flutter test --coverage
+    description: Run tests with coverage reporting
+
+  build:all:
+    run: |
+      melos run build:cashier:apk
+      melos run build:admin:web
+      melos run build:lite:apk
+    description: Build all apps
+
+  deps:check:
+    run: melos exec -- flutter pub outdated
+    description: Check outdated dependencies across workspace
+
+  fix:
+    run: melos exec -- dart fix --apply
+    description: Apply dart fix suggestions across workspace
+
+  # L80: Responsive / golden layout tests.
+  # Runs tests tagged 'responsive' across all packages.
+  # Tag your responsive tests with @Tags(['responsive']) and place them in
+  # test/responsive/ directories. These tests should use golden file comparisons
+  # at multiple breakpoints (mobile 375px, tablet 768px, desktop 1440px).
+  test:responsive:
+    run: >
+      melos exec -c 4 --
+      flutter test --tags responsive --dart-define=GOLDEN_TEST=true
+    description: Run responsive/golden layout tests across all packages
+    packageFilters:
+      dirExists: test/responsive
+
+  test:responsive:update:
+    run: >
+      melos exec -c 4 --
+      flutter test --tags responsive --update-goldens --dart-define=GOLDEN_TEST=true
+    description: Update golden files for responsive layout tests
+    packageFilters:
+      dirExists: test/responsive

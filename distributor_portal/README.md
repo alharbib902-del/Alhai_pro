@@ -91,7 +91,7 @@
 - Update order status
 - Send invoices
 
-### With pos_app:
+### With cashier:
 - Delivery confirmation
 - Split payment processing
 

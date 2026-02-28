@@ -1,19 +1,28 @@
-name: Flutter CI/CD
+# M12: Split from monolithic flutter_ci.yml into separate workflow files.
+# Build workflows (build-android.yml, build-ios.yml, build-web.yml) trigger
+# via workflow_run after this test workflow completes successfully.
+
+name: Analyze & Test
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  # L50: Quarterly certificate rotation check.
+  # Runs at midnight on the 1st day of every 3rd month (Jan, Apr, Jul, Oct).
+  # Verifies pinned SSL certificate fingerprints are not expiring within 30 days.
+  schedule:
+    - cron: '0 0 1 */3 *'
 
 jobs:
   # ============================================================================
-  # ANALYZE & TEST
+  # ANALYZE & TEST (all packages and apps)
   # ============================================================================
   test:
     name: Analyze & Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,136 +30,109 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.27.4'
           channel: 'stable'
           cache: true
 
-      - name: Get dependencies
-        run: |
-          cd pos_app
-          flutter pub get
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
 
       - name: Analyze code
+        run: melos run analyze
+
+      - name: Run tests with coverage
+        run: melos run test -- --coverage
+
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Merge coverage reports
         run: |
-          cd pos_app
-          flutter analyze --no-fatal-infos
+          mkdir -p coverage
+          # Merge all package coverage files
+          find . -name "lcov.info" -path "*/coverage/*" | while read f; do
+            if [ -s "$f" ]; then
+              cat "$f" >> coverage/merged_lcov.info
+            fi
+          done
 
-      - name: Run tests
+      - name: Check coverage threshold
+        if: hashFiles('coverage/merged_lcov.info') != ''
         run: |
-          cd pos_app
-          flutter test --coverage
+          COVERAGE=$(lcov --summary coverage/merged_lcov.info 2>&1 | grep "lines" | grep -oP '[\d.]+%' | head -1 | tr -d '%')
+          echo "Total coverage: ${COVERAGE}%"
+          if [ -n "$COVERAGE" ]; then
+            THRESHOLD=60
+            if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+              echo "::warning::Coverage ${COVERAGE}% is below threshold ${THRESHOLD}%"
+            else
+              echo "Coverage ${COVERAGE}% meets threshold ${THRESHOLD}%"
+            fi
+          fi
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: pos_app/coverage/lcov.info
-          fail_ci_if_error: false
-
-  # ============================================================================
-  # BUILD ANDROID
-  # ============================================================================
-  build-android:
-    name: Build Android
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: |
-          cd pos_app
-          flutter pub get
-
-      - name: Build APK
-        run: |
-          cd pos_app
-          flutter build apk --release
-
-      - name: Upload APK
+      - name: Upload coverage report
+        if: hashFiles('coverage/merged_lcov.info') != ''
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: pos_app/build/app/outputs/flutter-apk/app-release.apk
+          name: coverage-report
+          path: coverage/merged_lcov.info
 
   # ============================================================================
-  # BUILD iOS
+  # CERTIFICATE ROTATION CHECK (L50)
+  # Runs only on the quarterly schedule trigger.
+  # Checks SSL certificate expiry for all pinned domains and warns if any
+  # certificate expires within 30 days.
   # ============================================================================
-  build-ios:
-    name: Build iOS
-    runs-on: macos-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: |
-          cd pos_app
-          flutter pub get
-
-      - name: Build iOS (no codesign)
-        run: |
-          cd pos_app
-          flutter build ios --release --no-codesign
-
-  # ============================================================================
-  # BUILD WEB
-  # ============================================================================
-  build-web:
-    name: Build Web
+  cert-check:
+    name: Certificate Expiry Check
     runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    
+    if: github.event_name == 'schedule'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
+      - name: Check SSL certificate expiry dates
         run: |
-          cd pos_app
-          flutter pub get
+          DOMAINS=(
+            "supabase.co"
+            "api.openai.com"
+          )
+          WARN_DAYS=30
+          EXIT_CODE=0
 
-      - name: Build Web
+          for DOMAIN in "${DOMAINS[@]}"; do
+            echo "Checking $DOMAIN ..."
+            EXPIRY=$(echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" 2>/dev/null \
+              | openssl x509 -noout -enddate 2>/dev/null \
+              | cut -d= -f2)
+
+            if [ -z "$EXPIRY" ]; then
+              echo "::warning::Could not retrieve certificate for $DOMAIN"
+              continue
+            fi
+
+            EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s 2>/dev/null || date -j -f "%b %d %T %Y %Z" "$EXPIRY" +%s 2>/dev/null)
+            NOW_EPOCH=$(date +%s)
+            DAYS_LEFT=$(( (EXPIRY_EPOCH - NOW_EPOCH) / 86400 ))
+
+            echo "  Certificate expires: $EXPIRY ($DAYS_LEFT days left)"
+
+            if [ "$DAYS_LEFT" -le "$WARN_DAYS" ]; then
+              echo "::error::Certificate for $DOMAIN expires in $DAYS_LEFT days! Rotate pinned fingerprints NOW."
+              EXIT_CODE=1
+            elif [ "$DAYS_LEFT" -le 60 ]; then
+              echo "::warning::Certificate for $DOMAIN expires in $DAYS_LEFT days. Plan rotation soon."
+            fi
+          done
+
+          exit $EXIT_CODE
+
+      - name: Scan for pinned fingerprints in codebase
         run: |
-          cd pos_app
-          flutter build web --release
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: pos_app/build/web
+          echo "Searching for hardcoded certificate fingerprints..."
+          grep -rn "sha256/" --include="*.dart" . || echo "No pinned fingerprints found in Dart files."
+          grep -rn "ssl_pinning\|certificate_hash\|fingerprint" --include="*.dart" . || echo "No pinning references found."

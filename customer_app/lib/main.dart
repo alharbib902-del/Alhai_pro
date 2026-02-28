@@ -4,10 +4,15 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'core/router/app_router.dart';
 import 'di/injection.dart';
 
+// L78: This app uses a router with placeholder screens per route.
+// Responsive layout patterns (ResponsiveBuilder, breakpoints, adaptive
+// navigation) should be applied when building real UI screens.
+// See alhai_design_system responsive tokens and alhai_shared_ui ResponsiveScaffold.
+
 void main() {
   // Initialize DI
   configureDependencies();
-  
+
   runApp(
     const ProviderScope(
       child: CustomerApp(),

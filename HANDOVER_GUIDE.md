@@ -10,7 +10,7 @@
 
 | التطبيق | النوع | الشاشات | الحالة |
 |---------|-------|---------|--------|
-| `pos_app` | Mobile + Desktop | ~50 | 🟡 بدأ التطوير |
+| `apps/cashier` | Desktop/Tablet | ~14 | 🟡 بدأ التطوير |
 | `customer_app` | Mobile | 80 | 🟢 جاهز للبدء |
 | `driver_app` | Mobile | 18 | 🟢 جاهز للبدء |
 | `admin_pos` | Web + Mobile | ~40 | 🟢 جاهز للبدء |
@@ -67,7 +67,7 @@ flutter run
 ## 🎯 توزيع العمل المقترح
 
 ```
-Device A → pos_app (أولوية عالية)
+Device A → apps/cashier (أولوية عالية)
 Device B → customer_app (أولوية عالية)
 لاحقاً  → driver_app, admin_pos, etc.
 ```

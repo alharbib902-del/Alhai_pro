@@ -101,7 +101,7 @@ class ReportsRepositoryImpl implements ReportsRepository {
     try {
       final dateStr = date.toIso8601String().split('T').first;
       final response = await _remote.getHourlySales(storeId, dateStr);
-      return response.map((k, v) => MapEntry(int.parse(k), v));
+      return response.map((k, v) => MapEntry(int.tryParse(k) ?? 0, v));
     } on DioException catch (e) {
       throw ErrorMapper.fromDioError(e);
     }

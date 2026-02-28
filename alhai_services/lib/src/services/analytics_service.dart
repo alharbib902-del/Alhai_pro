@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة التحليلات والذكاء الاصطناعي
-/// تستخدم من: pos_app, admin_pos
+/// تستخدم من: cashier, admin_pos
 class AnalyticsService {
   final AnalyticsRepository _analyticsRepo;
 

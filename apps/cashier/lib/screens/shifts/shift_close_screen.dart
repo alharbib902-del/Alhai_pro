@@ -1,0 +1,792 @@
+/// Shift Close Screen - Cashier-specific shift closing
+///
+/// Full implementation: shift details, sales summary, closing cash input,
+/// difference indicator, close button with confirmation dialog.
+/// Supports: RTL Arabic, dark/light theme, responsive layout.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_database/alhai_database.dart';
+import '../../widgets/cash/denomination_counter_widget.dart';
+// alhai_design_system is re-exported via alhai_shared_ui
+
+/// شاشة إغلاق الوردية
+class ShiftCloseScreen extends ConsumerStatefulWidget {
+  const ShiftCloseScreen({super.key});
+
+  @override
+  ConsumerState<ShiftCloseScreen> createState() => _ShiftCloseScreenState();
+}
+
+class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
+  final _actualCashController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _actualCashController.dispose();
+    super.dispose();
+  }
+
+  String _formatTime(DateTime dt, AppLocalizations l10n) {
+    final hour = dt.hour;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? l10n.pmPeriod : l10n.amPeriod;
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    return '$displayHour:$minute $period';
+  }
+
+  String _formatDuration(DateTime openedAt, AppLocalizations l10n) {
+    final duration = DateTime.now().difference(openedAt);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    if (hours > 0 && minutes > 0) {
+      return l10n.hoursAndMinutes(hours, minutes);
+    } else if (hours > 0) {
+      return l10n.hoursOnly(hours);
+    } else {
+      return l10n.minutesOnly(minutes);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isWideScreen = size.width > 900;
+    final isMediumScreen = size.width > 600;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+    final userName = user?.name ?? l10n.defaultUserName;
+
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.closeShift,
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: false,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: userName,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: ref.watch(openShiftProvider).when(
+            data: (shift) {
+              if (shift == null) {
+                return _buildNoShiftMessage(isDark, l10n);
+              }
+              return ref.watch(shiftMovementsProvider(shift.id)).when(
+                data: (movements) => SingleChildScrollView(
+                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  child: _buildContent(
+                    shift,
+                    movements,
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
+                loading: () =>
+                    const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('$e')),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(child: Text('$e')),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoShiftMessage(bool isDark, AppLocalizations l10n) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.timer_off_rounded,
+            size: 64,
+            color: AppColors.getTextMuted(isDark),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.noOpenShift,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+          const SizedBox(height: 24),
+          FilledButton.icon(
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back_rounded),
+            label: Text(l10n.goBack),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getDateSubtitle(AppLocalizations l10n) {
+    final now = DateTime.now();
+    final dateStr = '${now.day}/${now.month}/${now.year}';
+    return '$dateStr \u2022 ${l10n.mainBranch}';
+  }
+
+  Widget _buildContent(
+    ShiftsTableData shift,
+    List<CashMovementsTableData> movements,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final user = ref.watch(currentUserProvider);
+
+    final openingCash = shift.openingCash;
+    final cashIn = movements
+        .where((m) => m.type == 'cash_in')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final cashOut = movements
+        .where((m) => m.type == 'cash_out')
+        .fold<double>(0, (sum, m) => sum + m.amount);
+    final totalSalesAmount = shift.totalSalesAmount;
+    final totalRefundsAmount = shift.totalRefundsAmount;
+    final expectedCash =
+        openingCash + cashIn - cashOut + totalSalesAmount - totalRefundsAmount;
+
+    final actualCash = double.tryParse(_actualCashController.text) ?? 0;
+    final difference = actualCash - expectedCash;
+
+    if (isWideScreen) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Column(
+              children: [
+                _buildShiftInfoCard(user, shift, isDark, l10n),
+                const SizedBox(height: 24),
+                _buildSalesSummaryCard(
+                  openingCash, totalSalesAmount, totalRefundsAmount,
+                  cashIn, cashOut, expectedCash, isDark, l10n,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 24),
+          Expanded(
+            flex: 2,
+            child: Column(
+              children: [
+                _buildActualCashCard(actualCash, difference, isDark, l10n),
+                const SizedBox(height: 24),
+                _buildCloseButton(shift, expectedCash, isDark, l10n),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildShiftInfoCard(user, shift, isDark, l10n),
+        SizedBox(height: isMediumScreen ? 24 : 16),
+        _buildSalesSummaryCard(
+          openingCash, totalSalesAmount, totalRefundsAmount,
+          cashIn, cashOut, expectedCash, isDark, l10n,
+        ),
+        SizedBox(height: isMediumScreen ? 24 : 16),
+        _buildActualCashCard(actualCash, difference, isDark, l10n),
+        const SizedBox(height: 24),
+        _buildCloseButton(shift, expectedCash, isDark, l10n),
+      ],
+    );
+  }
+
+  Widget _buildShiftInfoCard(
+      dynamic user, ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.info.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.info_outline_rounded,
+                    color: AppColors.info, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.shiftInfoLabel,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _InfoRow(
+            label: l10n.cashierLabel,
+            value: shift.cashierName,
+            icon: Icons.person_rounded,
+            isDark: isDark,
+          ),
+          Divider(height: 20, color: AppColors.getBorder(isDark)),
+          _InfoRow(
+            label: l10n.openTime,
+            value: _formatTime(shift.openedAt, l10n),
+            icon: Icons.login_rounded,
+            isDark: isDark,
+          ),
+          Divider(height: 20, color: AppColors.getBorder(isDark)),
+          _InfoRow(
+            label: l10n.duration,
+            value: _formatDuration(shift.openedAt, l10n),
+            icon: Icons.timer_rounded,
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSalesSummaryCard(
+    double openingCash,
+    double totalSalesAmount,
+    double totalRefundsAmount,
+    double cashIn,
+    double cashOut,
+    double expectedCash,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.receipt_long_rounded,
+                    color: AppColors.success, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.salesSummaryLabel,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _SummaryRow(
+              label: l10n.openingBalance,
+              value: openingCash,
+              color: AppColors.info,
+              isDark: isDark,
+              currency: l10n.sar),
+          _SummaryRow(
+              label: l10n.totalSales,
+              value: totalSalesAmount,
+              color: AppColors.success,
+              prefix: '+',
+              isDark: isDark,
+              currency: l10n.sar),
+          _SummaryRow(
+              label: l10n.cashRefundsLabel,
+              value: totalRefundsAmount,
+              color: AppColors.error,
+              prefix: '-',
+              isDark: isDark,
+              currency: l10n.sar),
+          _SummaryRow(
+              label: l10n.cashDepositLabel,
+              value: cashIn,
+              color: AppColors.success,
+              prefix: '+',
+              isDark: isDark,
+              currency: l10n.sar),
+          _SummaryRow(
+              label: l10n.cashWithdrawalLabel,
+              value: cashOut,
+              color: AppColors.secondary,
+              prefix: '-',
+              isDark: isDark,
+              currency: l10n.sar),
+          Divider(height: 24, color: AppColors.getBorder(isDark)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                          Icons.account_balance_wallet_rounded,
+                          color: AppColors.primary,
+                          size: 16),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      l10n.expectedInDrawer,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  CurrencyFormatter.formatCompact(expectedCash),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.primary),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActualCashCard(
+      double actualCash, double difference, bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.calculate_rounded,
+                    color: AppColors.warning, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.actualCashInDrawer,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // زر عد العملات
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () async {
+                final total = await showDenominationCounterSheet(
+                  context,
+                  initialTotal: double.tryParse(_actualCashController.text) ?? 0,
+                );
+                if (total != null && mounted) {
+                  setState(() {
+                    _actualCashController.text = total.toStringAsFixed(2);
+                  });
+                }
+              },
+              icon: const Icon(Icons.calculate_rounded, size: 18),
+              label: const Text('عد العملات بالفئات 🪙'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.warning,
+                side: const BorderSide(color: AppColors.warning),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _actualCashController,
+            keyboardType: TextInputType.number,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              hintText: '0.00',
+              hintStyle: TextStyle(
+                color: AppColors.getTextMuted(isDark),
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+              suffixText: l10n.sar,
+              suffixStyle: TextStyle(
+                fontSize: 16,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Icon(Icons.money_rounded,
+                    size: 28, color: AppColors.getTextMuted(isDark)),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
+              ),
+              filled: true,
+              fillColor: AppColors.getSurfaceVariant(isDark),
+            ),
+          ),
+          if (_actualCashController.text.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: difference == 0
+                    ? AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08)
+                    : (difference > 0
+                        ? AppColors.warning
+                            .withValues(alpha: isDark ? 0.15 : 0.08)
+                        : AppColors.error
+                            .withValues(alpha: isDark ? 0.15 : 0.08)),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: difference == 0
+                      ? AppColors.success.withValues(alpha: 0.3)
+                      : (difference > 0
+                          ? AppColors.warning.withValues(alpha: 0.3)
+                          : AppColors.error.withValues(alpha: 0.3)),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        difference == 0
+                            ? Icons.check_circle_rounded
+                            : (difference > 0
+                                ? Icons.arrow_upward_rounded
+                                : Icons.arrow_downward_rounded),
+                        color: difference == 0
+                            ? AppColors.success
+                            : (difference > 0
+                                ? AppColors.warning
+                                : AppColors.error),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        difference == 0
+                            ? l10n.drawerMatched
+                            : (difference > 0
+                                ? l10n.surplusStatus
+                                : l10n.deficitStatus),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: difference == 0
+                              ? AppColors.success
+                              : (difference > 0
+                                  ? AppColors.warning
+                                  : AppColors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '${difference >= 0 ? '+' : ''}${CurrencyFormatter.formatCompact(difference)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: difference == 0
+                          ? AppColors.success
+                          : (difference > 0
+                              ? AppColors.warning
+                              : AppColors.error),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCloseButton(
+      ShiftsTableData shift, double expectedCash, bool isDark, AppLocalizations l10n) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: _isLoading || _actualCashController.text.isEmpty
+            ? null
+            : () => _closeShift(shift, expectedCash),
+        icon: _isLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
+              )
+            : const Icon(Icons.lock_rounded, size: 20),
+        label: Text(l10n.closeShift,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.error,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _closeShift(ShiftsTableData shift, double expectedCash) async {
+    final l10n = AppLocalizations.of(context)!;
+    final actualCash = double.tryParse(_actualCashController.text) ?? 0;
+    final difference = actualCash - expectedCash;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.closeShift),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.expectedAmountCurrency(
+                CurrencyFormatter.formatCompact(expectedCash), l10n.sar)),
+            Text(l10n.actualAmountCurrency(
+                CurrencyFormatter.formatCompact(actualCash), l10n.sar)),
+            const SizedBox(height: 8),
+            Text(
+              difference == 0
+                  ? l10n.drawerMatchedMessage
+                  : difference > 0
+                      ? l10n.surplusAmount(
+                          CurrencyFormatter.formatCompact(difference), l10n.sar)
+                      : l10n.deficitAmount(
+                          CurrencyFormatter.formatCompact(difference), l10n.sar),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: difference == 0
+                    ? AppColors.success
+                    : (difference > 0 ? AppColors.warning : AppColors.error),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(l10n.confirmCloseShift),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final closeShift = ref.read(closeShiftActionProvider);
+      await closeShift(
+        shiftId: shift.id,
+        closingCash: actualCash,
+        expectedCash: expectedCash,
+        difference: difference,
+        totalSales: shift.totalSales,
+        totalSalesAmount: shift.totalSalesAmount,
+        totalRefunds: shift.totalRefunds,
+        totalRefundsAmount: shift.totalRefundsAmount,
+        notes: null,
+      );
+
+      if (!mounted) return;
+      context.push(AppRoutes.shiftSummary);
+    } catch (e) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.errorClosingShift),
+          content: Text('$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final bool isDark;
+
+  const _InfoRow(
+      {required this.label,
+      required this.value,
+      required this.icon,
+      required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: AppColors.getTextMuted(isDark)),
+          const SizedBox(width: 10),
+          Text(
+            '$label:',
+            style:
+                TextStyle(color: AppColors.getTextSecondary(isDark)),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final double value;
+  final Color color;
+  final String prefix;
+  final bool isDark;
+  final String currency;
+
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    required this.color,
+    this.prefix = '',
+    required this.isDark,
+    required this.currency,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                  color: AppColors.getTextSecondary(isDark)),
+            ),
+          ),
+          Text(
+            '$prefix${CurrencyFormatter.formatCompact(value)}',
+            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}

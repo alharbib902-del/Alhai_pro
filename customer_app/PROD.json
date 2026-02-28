@@ -1697,7 +1697,7 @@
             "alhai_design_system"
         ],
         "with_apps": [
-            "pos_app (orders sync)",
+            "cashier (orders sync)",
             "driver_app (tracking)",
             "admin_pos (management)"
         ],

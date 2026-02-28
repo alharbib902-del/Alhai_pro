@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحي - لوحة الإدارة | Admin App Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #6c63ff;
+  --accent-light: #8b83ff;
+  --green: #00d4aa;
+  --blue: #4facfe;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --pink: #f093fb;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(108, 99, 255, 0.15);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(108, 99, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+  --admin-color: #3b82f6;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(108, 99, 255, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ====== GLASS CARD ====== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-on-scroll.visible:nth-child(2) { transition-delay: 0.1s; }
+.animate-on-scroll.visible:nth-child(3) { transition-delay: 0.15s; }
+.animate-on-scroll.visible:nth-child(4) { transition-delay: 0.2s; }
+.animate-on-scroll.visible:nth-child(5) { transition-delay: 0.25s; }
+.animate-on-scroll.visible:nth-child(6) { transition-delay: 0.3s; }
+
+/* ====== NAV ====== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 12px 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(15, 15, 26, 0.85);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  transition: transform 0.3s;
+}
+
+.nav.visible { transform: translateY(0); }
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--admin-color), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--admin-color);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+}
+
+/* ====== BACK LINK ====== */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 8px 0;
+  transition: color 0.2s;
+  margin-bottom: 10px;
+}
+
+.back-link:hover {
+  color: var(--admin-color);
+}
+
+/* ====== HERO SECTION ====== */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--admin-color), transparent);
+}
+
+.hero-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--admin-color);
+  margin-bottom: 20px;
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--admin-color), var(--blue), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 32px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.9;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--admin-color);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  margin-bottom: 28px;
+}
+
+/* ====== COUNTER CARDS ====== */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.counter-card {
+  padding: 28px 16px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: default;
+}
+
+.counter-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--admin-color);
+}
+
+.counter-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--admin-color);
+  direction: ltr;
+}
+
+.counter-card:nth-child(2) .counter-value { color: var(--blue); }
+.counter-card:nth-child(3) .counter-value { color: var(--green); }
+.counter-card:nth-child(4) .counter-value { color: var(--purple); }
+
+.counter-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ====== SECTION ====== */
+.section {
+  padding: 60px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--admin-color);
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ====== ARCHITECTURE SECTION ====== */
+.arch-diagram {
+  max-width: 900px;
+  margin: 0 auto 36px;
+}
+
+.arch-layer {
+  margin-bottom: 16px;
+}
+
+.arch-layer-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.arch-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.arch-box {
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid;
+  text-align: center;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  transition: transform 0.3s;
+}
+
+.arch-box:hover { transform: translateY(-2px); }
+
+.arch-connector {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tech-badge {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  direction: ltr;
+}
+
+/* ====== ROUTES TABLE SECTION ====== */
+.routes-category {
+  margin-bottom: 32px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(59, 130, 246, 0.06);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.category-header:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.category-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.category-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex: 1;
+}
+
+.category-count {
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--admin-color);
+}
+
+.category-chevron {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: transform 0.3s;
+}
+
+.routes-category.expanded .category-chevron {
+  transform: rotate(90deg);
+}
+
+.category-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.routes-category.expanded .category-body {
+  max-height: 5000px;
+}
+
+.route-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 2fr 1fr auto;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: background 0.2s;
+  gap: 12px;
+}
+
+.route-row:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.route-path {
+  font-size: 0.82rem;
+  color: var(--blue);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  font-weight: 600;
+}
+
+.route-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.route-name-en {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  display: block;
+  margin-top: 2px;
+}
+
+.route-screen {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+.route-status {
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.route-status.active {
+  color: var(--green);
+}
+
+.route-status.coming {
+  color: var(--yellow);
+}
+
+/* Route header row */
+.route-header {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 2fr 1fr auto;
+  padding: 8px 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+/* ====== DEPENDENCIES SECTION ====== */
+.deps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.dep-card {
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.dep-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dep-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.dep-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dep-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+.dep-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dep-type {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ====== SHELL LAYOUT SECTION ====== */
+.shell-diagram {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.shell-sidebar {
+  background: rgba(15, 15, 26, 0.9);
+  border-left: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.shell-sidebar-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--admin-color);
+  padding: 8px 20px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shell-nav-group {
+  margin-bottom: 16px;
+}
+
+.shell-nav-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 20px;
+  margin-bottom: 4px;
+}
+
+.shell-nav-item {
+  padding: 7px 20px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.shell-nav-item:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--admin-color);
+}
+
+.shell-nav-item.active-item {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--admin-color);
+  border-right: 3px solid var(--admin-color);
+}
+
+.shell-nav-item i {
+  width: 18px;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.shell-content {
+  background: rgba(26, 26, 46, 0.4);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shell-content-inner {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.shell-content-inner i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: var(--admin-color);
+  opacity: 0.5;
+}
+
+.shell-content-inner p {
+  font-size: 0.95rem;
+}
+
+.shell-info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.shell-info-card {
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.shell-info-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.shell-info-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.shell-info-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ====== TESTS SECTION ====== */
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.test-card {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.3s;
+}
+
+.test-card:hover { transform: translateY(-3px); }
+
+.test-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.test-info h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  margin-bottom: 4px;
+}
+
+.test-info p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.test-count {
+  margin-right: auto;
+  margin-left: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--admin-color);
+}
+
+/* ====== PROGRESS BAR ====== */
+.progress-bar-outer {
+  height: 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  border-radius: 7px;
+  background: linear-gradient(90deg, var(--admin-color), var(--green));
+  width: 0%;
+  transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.progress-bar-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ====== COMPAT TABLE ====== */
+.compat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.compat-item {
+  padding: 20px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.compat-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.compat-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.compat-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.compat-value.good { color: var(--green); }
+.compat-value.ok { color: var(--yellow); }
+.compat-value.yes { color: var(--green); }
+
+/* ====== FOOTER ====== */
+.footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.footer-link {
+  color: var(--admin-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--accent-light);
+}
+
+.footer-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.footer-stat {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.footer-stat span {
+  color: var(--admin-color);
+}
+
+/* ====== BACK TO TOP ====== */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--admin-color);
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: #2563eb;
+}
+
+/* ====== SUMMARY STATS ROW ====== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.stat-card {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.3s;
+}
+
+.stat-card:hover { transform: translateY(-3px); }
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.stat-info h4 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  direction: ltr;
+  text-align: right;
+}
+
+.stat-info p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .container { padding: 0 14px; }
+  .hero { padding: 50px 0 40px; }
+  .counters-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .counter-card { padding: 18px 10px; }
+  .counter-value { font-size: 1.8rem; }
+  .section { padding: 40px 0; }
+  .shell-diagram { grid-template-columns: 1fr; }
+  .shell-sidebar { border-left: none; border-bottom: 1px solid var(--border); }
+  .route-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .route-header { display: none; }
+  .route-screen { display: none; }
+  .deps-grid { grid-template-columns: 1fr; }
+  .arch-box { padding: 8px 12px; font-size: 0.78rem; }
+}
+
+@media (max-width: 480px) {
+  .counters-grid { grid-template-columns: repeat(2, 1fr); }
+  .counter-value { font-size: 1.5rem; }
+  .stats-row { grid-template-columns: 1fr; }
+  .route-row { grid-template-columns: 1fr; }
+  .route-path { margin-bottom: 4px; }
+}
+
+/* ====== SEARCH / FILTER ====== */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+  border-color: var(--admin-color);
+}
+
+.filter-input::placeholder {
+  color: var(--text-muted);
+}
+
+.filter-stats {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.expand-all-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expand-all-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--admin-color);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-brand"><i class="fa-solid fa-gauge-high"></i> لوحة الإدارة</div>
+    <div class="nav-links">
+      <a href="#architecture" class="nav-link">البنية</a>
+      <a href="#screens" class="nav-link">الشاشات</a>
+      <a href="#dependencies" class="nav-link">التبعيات</a>
+      <a href="#shell" class="nav-link">التخطيط</a>
+      <a href="#tests" class="nav-link">الاختبارات</a>
+      <a href="#compat" class="nav-link">التوافق</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <a href="project_report.html" class="back-link animate-on-scroll">
+      <i class="fa-solid fa-arrow-right"></i> العودة للتقرير الرئيسي
+    </a>
+
+    <div class="hero-icon animate-on-scroll">
+      <i class="fa-solid fa-gauge-high"></i>
+    </div>
+
+    <h1 class="hero-title">لوحة الإدارة</h1>
+    <p class="hero-subtitle">
+      تطبيق الإدارة الكامل مع جميع الشاشات والـ 90+ مسار وشريط جانبي متكامل
+    </p>
+
+    <div class="hero-badge animate-on-scroll">
+      <i class="fa-solid fa-crown"></i> كامل الصلاحيات — Admin App
+    </div>
+
+    <div class="counters-grid">
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="123">0</div>
+        <div class="counter-label">شاشة</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="93">0</div>
+        <div class="counter-label">مسار</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="59">0</div>
+        <div class="counter-label">اختبار</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="8">0</div>
+        <div class="counter-label">ملفات مصدر</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE SECTION -->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+        <i class="fa-solid fa-sitemap"></i>
+      </div>
+      <h2 class="section-title">البنية التقنية</h2>
+      <p class="section-subtitle">استراتيجية Online-first مع GoRouter + ShellRoute + Riverpod + GetIt</p>
+    </div>
+
+    <div class="arch-diagram animate-on-scroll">
+      <!-- Layer 1: Strategy -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">الاستراتيجية</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: var(--admin-color); background: rgba(59,130,246,0.1); color: var(--admin-color);">
+            <i class="fa-solid fa-cloud"></i> Online-First
+          </div>
+          <div class="arch-box" style="border-color: var(--green); background: rgba(0,212,170,0.1); color: var(--green);">
+            <i class="fa-solid fa-database"></i> Local Fallback (Drift)
+          </div>
+          <div class="arch-box" style="border-color: var(--yellow); background: rgba(245,158,11,0.1); color: var(--yellow);">
+            <i class="fa-solid fa-arrows-rotate"></i> Auto Sync
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fa-solid fa-arrow-down"></i></div>
+
+      <!-- Layer 2: Router -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">التوجيه والتنقل</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: var(--accent); background: rgba(108,99,255,0.1); color: var(--accent);">
+            GoRouter 13+
+          </div>
+          <div class="arch-box" style="border-color: var(--pink); background: rgba(240,147,251,0.1); color: var(--pink);">
+            ShellRoute (DashboardShell)
+          </div>
+          <div class="arch-box" style="border-color: var(--blue); background: rgba(79,172,254,0.1); color: var(--blue);">
+            LazyScreen + Preload
+          </div>
+          <div class="arch-box" style="border-color: var(--green); background: rgba(0,212,170,0.1); color: var(--green);">
+            Fade Transitions
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fa-solid fa-arrow-down"></i></div>
+
+      <!-- Layer 3: State -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">إدارة الحالة والتبعيات</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: var(--purple); background: rgba(168,85,247,0.1); color: var(--purple);">
+            flutter_riverpod
+          </div>
+          <div class="arch-box" style="border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red);">
+            GetIt (DI)
+          </div>
+          <div class="arch-box" style="border-color: var(--yellow); background: rgba(245,158,11,0.1); color: var(--yellow);">
+            shared_preferences
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fa-solid fa-arrow-down"></i></div>
+
+      <!-- Layer 4: Backend -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">الخدمات الخلفية</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: #3ecf8e; background: rgba(62,207,142,0.1); color: #3ecf8e;">
+            <i class="fa-solid fa-cloud"></i> Supabase
+          </div>
+          <div class="arch-box" style="border-color: #ffca28; background: rgba(255,202,40,0.1); color: #ffca28;">
+            <i class="fa-solid fa-fire"></i> Firebase
+          </div>
+          <div class="arch-box" style="border-color: var(--green); background: rgba(0,212,170,0.1); color: var(--green);">
+            <i class="fa-solid fa-hard-drive"></i> Drift/SQLite
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-badges animate-on-scroll">
+      <span class="tech-badge"><i class="fa-solid fa-route"></i> GoRouter</span>
+      <span class="tech-badge"><i class="fa-solid fa-layer-group"></i> ShellRoute</span>
+      <span class="tech-badge"><i class="fa-solid fa-atom"></i> Riverpod</span>
+      <span class="tech-badge"><i class="fa-solid fa-syringe"></i> GetIt DI</span>
+      <span class="tech-badge"><i class="fa-solid fa-cloud"></i> Supabase</span>
+      <span class="tech-badge"><i class="fa-solid fa-fire"></i> Firebase</span>
+      <span class="tech-badge"><i class="fa-solid fa-database"></i> Drift</span>
+      <span class="tech-badge"><i class="fa-solid fa-bolt"></i> LazyScreen</span>
+      <span class="tech-badge"><i class="fa-solid fa-shield-halved"></i> Auth Redirect</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(59,130,246,0.15); color: var(--admin-color);">
+          <i class="fa-solid fa-route"></i>
+        </div>
+        <div class="stat-info">
+          <h4>93</h4>
+          <p>مسار مسجل</p>
+        </div>
+      </div>
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+          <i class="fa-solid fa-display"></i>
+        </div>
+        <div class="stat-info">
+          <h4>123</h4>
+          <p>شاشة فعلية</p>
+        </div>
+      </div>
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <div class="stat-info">
+          <h4>15</h4>
+          <p>خدمة ذكاء اصطناعي</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALL SCREENS SECTION -->
+<section class="section" id="screens">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fa-solid fa-table-cells-large"></i>
+      </div>
+      <h2 class="section-title">جميع المسارات والشاشات (93 مسار)</h2>
+      <p class="section-subtitle">كل مسار مسجل في GoRouter مصنف حسب الفئة مع حالة التنفيذ</p>
+    </div>
+
+    <div class="filter-bar animate-on-scroll">
+      <input type="text" class="filter-input" id="routeSearch" placeholder="ابحث عن مسار أو شاشة...">
+      <span class="filter-stats" id="filterStats">93 مسار</span>
+      <button class="expand-all-btn" id="expandAllBtn" onclick="toggleAllCategories()">
+        <i class="fa-solid fa-expand"></i> توسيع الكل
+      </button>
+    </div>
+
+    <div id="routesContainer">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- DEPENDENCIES SECTION -->
+<section class="section" id="dependencies">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+        <i class="fa-solid fa-cubes"></i>
+      </div>
+      <h2 class="section-title">التبعيات (17 حزمة)</h2>
+      <p class="section-subtitle">11 حزمة داخلية من monorepo الحي + 6 حزم خارجية</p>
+    </div>
+
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--admin-color);">
+      <i class="fa-solid fa-puzzle-piece"></i> الحزم الداخلية (11)
+    </h3>
+    <div class="deps-grid animate-on-scroll" style="margin-bottom: 32px;">
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(108,99,255,0.15); color: #6c63ff;"><i class="fa-solid fa-microchip"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_core</div><div class="dep-desc">النواة - النماذج والمستودعات</div></div>
+        <div class="dep-type" style="background: rgba(108,99,255,0.15); color: #6c63ff;">core</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(100,116,139,0.15); color: #64748b;"><i class="fa-solid fa-gears"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_services</div><div class="dep-desc">طبقة الخدمات - 38 خدمة</div></div>
+        <div class="dep-type" style="background: rgba(100,116,139,0.15); color: #64748b;">services</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(240,147,251,0.15); color: #f093fb;"><i class="fa-solid fa-palette"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_design_system</div><div class="dep-desc">57 مكوّن UI</div></div>
+        <div class="dep-type" style="background: rgba(240,147,251,0.15); color: #f093fb;">UI</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(0,212,170,0.15); color: #00d4aa;"><i class="fa-solid fa-database"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_database</div><div class="dep-desc">50 جدول Drift/SQLite</div></div>
+        <div class="dep-type" style="background: rgba(0,212,170,0.15); color: #00d4aa;">data</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;"><i class="fa-solid fa-arrows-rotate"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_sync</div><div class="dep-desc">محرك مزامنة 46 جدول</div></div>
+        <div class="dep-type" style="background: rgba(245,158,11,0.15); color: #f59e0b;">sync</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(6,182,212,0.15); color: #06b6d4;"><i class="fa-solid fa-language"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_l10n</div><div class="dep-desc">7 لغات + 3,039 مفتاح</div></div>
+        <div class="dep-type" style="background: rgba(6,182,212,0.15); color: #06b6d4;">l10n</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(16,185,129,0.15); color: #10b981;"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_auth</div><div class="dep-desc">OTP + PIN + بصمة</div></div>
+        <div class="dep-type" style="background: rgba(16,185,129,0.15); color: #10b981;">auth</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(79,172,254,0.15); color: #4facfe;"><i class="fa-solid fa-puzzle-piece"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_shared_ui</div><div class="dep-desc">27 شاشة مشتركة</div></div>
+        <div class="dep-type" style="background: rgba(79,172,254,0.15); color: #4facfe;">UI</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(239,68,68,0.15); color: #ef4444;"><i class="fa-solid fa-cash-register"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_pos</div><div class="dep-desc">13 شاشة نقطة بيع</div></div>
+        <div class="dep-type" style="background: rgba(239,68,68,0.15); color: #ef4444;">feature</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(168,85,247,0.15); color: #a855f7;"><i class="fa-solid fa-brain"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_ai</div><div class="dep-desc">15 خدمة ذكاء اصطناعي</div></div>
+        <div class="dep-type" style="background: rgba(168,85,247,0.15); color: #a855f7;">AI</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(139,92,246,0.15); color: #8b5cf6;"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="dep-info"><div class="dep-name">alhai_reports</div><div class="dep-desc">13 شاشة تقارير</div></div>
+        <div class="dep-type" style="background: rgba(139,92,246,0.15); color: #8b5cf6;">reports</div>
+      </div>
+    </div>
+
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--blue);">
+      <i class="fa-solid fa-download"></i> الحزم الخارجية (6)
+    </h3>
+    <div class="deps-grid animate-on-scroll">
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(108,99,255,0.15); color: var(--accent);"><i class="fa-solid fa-route"></i></div>
+        <div class="dep-info"><div class="dep-name">go_router</div><div class="dep-desc">التوجيه التصريحي مع ShellRoute</div></div>
+        <div class="dep-type" style="background: rgba(108,99,255,0.15); color: var(--accent);">routing</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);"><i class="fa-solid fa-atom"></i></div>
+        <div class="dep-info"><div class="dep-name">flutter_riverpod</div><div class="dep-desc">إدارة الحالة التفاعلية</div></div>
+        <div class="dep-type" style="background: rgba(168,85,247,0.15); color: var(--purple);">state</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(239,68,68,0.15); color: var(--red);"><i class="fa-solid fa-syringe"></i></div>
+        <div class="dep-info"><div class="dep-name">get_it</div><div class="dep-desc">حقن التبعيات</div></div>
+        <div class="dep-type" style="background: rgba(239,68,68,0.15); color: var(--red);">DI</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(62,207,142,0.15); color: #3ecf8e;"><i class="fa-solid fa-cloud"></i></div>
+        <div class="dep-info"><div class="dep-name">supabase_flutter</div><div class="dep-desc">الخدمات السحابية والمصادقة</div></div>
+        <div class="dep-type" style="background: rgba(62,207,142,0.15); color: #3ecf8e;">backend</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(245,158,11,0.15); color: var(--yellow);"><i class="fa-solid fa-floppy-disk"></i></div>
+        <div class="dep-info"><div class="dep-name">shared_preferences</div><div class="dep-desc">تخزين محلي خفيف</div></div>
+        <div class="dep-type" style="background: rgba(245,158,11,0.15); color: var(--yellow);">storage</div>
+      </div>
+      <div class="dep-card glass">
+        <div class="dep-icon" style="background: rgba(255,202,40,0.15); color: #ffca28;"><i class="fa-solid fa-fire"></i></div>
+        <div class="dep-info"><div class="dep-name">firebase_core</div><div class="dep-desc">إشعارات الدفع والتحليلات</div></div>
+        <div class="dep-type" style="background: rgba(255,202,40,0.15); color: #ffca28;">firebase</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHELL LAYOUT SECTION -->
+<section class="section" id="shell">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(240,147,251,0.15); color: var(--pink);">
+        <i class="fa-solid fa-table-columns"></i>
+      </div>
+      <h2 class="section-title">تخطيط AdminDashboardShell</h2>
+      <p class="section-subtitle">شريط جانبي ثابت على سطح المكتب + درج على الجوال - لا يُعاد بناؤه عند التنقل</p>
+    </div>
+
+    <div class="shell-diagram glass animate-on-scroll">
+      <div class="shell-sidebar">
+        <div class="shell-sidebar-title">
+          <i class="fa-solid fa-gauge-high"></i> الحي - الإدارة
+        </div>
+
+        <div class="shell-nav-group">
+          <div class="shell-nav-label">الرئيسية</div>
+          <div class="shell-nav-item active-item"><i class="fa-solid fa-house"></i> الرئيسية</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-chart-line"></i> لوحة التحكم</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-cash-register"></i> نقطة البيع</div>
+        </div>
+
+        <div class="shell-nav-group">
+          <div class="shell-nav-label">المبيعات</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> الفواتير</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-cart-shopping"></i> الطلبات</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-rotate-left"></i> المرتجعات</div>
+        </div>
+
+        <div class="shell-nav-group">
+          <div class="shell-nav-label">المنتجات</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-box"></i> المنتجات</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-warehouse"></i> المخزون</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-tags"></i> التصنيفات</div>
+        </div>
+
+        <div class="shell-nav-group">
+          <div class="shell-nav-label">الأشخاص</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-users"></i> العملاء</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-truck"></i> الموردون</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-id-badge"></i> الموظفون</div>
+        </div>
+
+        <div class="shell-nav-group">
+          <div class="shell-nav-label">الأدوات</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-brain"></i> الذكاء الاصطناعي</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-chart-pie"></i> التقارير</div>
+          <div class="shell-nav-item"><i class="fa-solid fa-gear"></i> الإعدادات</div>
+        </div>
+      </div>
+
+      <div class="shell-content">
+        <div class="shell-content-inner">
+          <i class="fa-solid fa-display"></i>
+          <p>منطقة المحتوى الرئيسية</p>
+          <p style="font-size: 0.82rem; margin-top: 8px;">يتم عرض الشاشة المختارة هنا دون إعادة بناء الشريط الجانبي</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell-info-cards">
+      <div class="shell-info-card glass animate-on-scroll">
+        <div class="shell-info-icon" style="background: rgba(59,130,246,0.15); color: var(--admin-color);">
+          <i class="fa-solid fa-desktop"></i>
+        </div>
+        <div>
+          <div class="shell-info-title">سطح المكتب</div>
+          <div class="shell-info-desc">شريط جانبي ثابت (250px) مع تجميع ذكي للعناصر حسب الفئة. يبقى مرئي دائما ولا يُعاد بناؤه عند التنقل بفضل ShellRoute.</div>
+        </div>
+      </div>
+      <div class="shell-info-card glass animate-on-scroll">
+        <div class="shell-info-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+          <i class="fa-solid fa-mobile-screen"></i>
+        </div>
+        <div>
+          <div class="shell-info-title">الجوال</div>
+          <div class="shell-info-desc">درج جانبي قابل للسحب (Drawer) يظهر بالضغط على زر القائمة. نفس عناصر التنقل مع تحسينات للمس.</div>
+        </div>
+      </div>
+      <div class="shell-info-card glass animate-on-scroll">
+        <div class="shell-info-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <div class="shell-info-title">الأداء</div>
+          <div class="shell-info-desc">تحميل كسول (LazyScreen) للشاشات الثقيلة + تحميل مسبق لشاشة POS + انتقالات Fade سلسة بين الشاشات.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTS SECTION -->
+<section class="section" id="tests">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fa-solid fa-vial"></i>
+      </div>
+      <h2 class="section-title">الاختبارات (59 اختبار)</h2>
+      <p class="section-subtitle">تغطية شاملة للتوجيه وحقن التبعيات والتخطيط</p>
+    </div>
+
+    <div class="overall-progress glass animate-on-scroll" style="padding: 28px; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <span style="font-size: 1.1rem; font-weight: 700;">نسبة النجاح</span>
+        <span style="font-size: 1.5rem; font-weight: 800; color: var(--green);">100%</span>
+      </div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" data-width="100"></div>
+      </div>
+    </div>
+
+    <div class="tests-grid">
+      <div class="test-card glass animate-on-scroll">
+        <div class="test-icon" style="background: rgba(59,130,246,0.15); color: var(--admin-color);">
+          <i class="fa-solid fa-route"></i>
+        </div>
+        <div class="test-info">
+          <h4>router_test.dart</h4>
+          <p>اختبارات التوجيه - التحقق من جميع المسارات والشاشات والـ redirect</p>
+        </div>
+        <div class="test-count">46</div>
+      </div>
+      <div class="test-card glass animate-on-scroll">
+        <div class="test-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+          <i class="fa-solid fa-syringe"></i>
+        </div>
+        <div class="test-info">
+          <h4>injection_test.dart</h4>
+          <p>اختبارات حقن التبعيات - التحقق من تسجيل GetIt و AppDatabase</p>
+        </div>
+        <div class="test-count">10</div>
+      </div>
+      <div class="test-card glass animate-on-scroll">
+        <div class="test-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+          <i class="fa-solid fa-table-columns"></i>
+        </div>
+        <div class="test-info">
+          <h4>dashboard_shell_test.dart</h4>
+          <p>اختبارات التخطيط - الشريط الجانبي والتجاوب والتنقل</p>
+        </div>
+        <div class="test-count">3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPATIBILITY TABLE -->
+<section class="section" id="compat">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(245,158,11,0.15); color: var(--yellow);">
+        <i class="fa-solid fa-check-double"></i>
+      </div>
+      <h2 class="section-title">التوافق والجاهزية</h2>
+      <p class="section-subtitle">حالة التوافق مع المنصات والخدمات المختلفة</p>
+    </div>
+
+    <div class="compat-grid animate-on-scroll">
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-mobile-screen"></i> الجوال</div>
+        <div class="compat-value good">ممتاز</div>
+      </div>
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-gauge-high"></i> الأداء</div>
+        <div class="compat-value ok">جيد</div>
+      </div>
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-database"></i> Drift</div>
+        <div class="compat-value yes">نعم</div>
+      </div>
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-cloud"></i> Supabase</div>
+        <div class="compat-value yes">نعم</div>
+      </div>
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-language"></i> الترجمة</div>
+        <div class="compat-value yes">نعم</div>
+      </div>
+      <div class="compat-item">
+        <div class="compat-label"><i class="fa-solid fa-wand-magic-sparkles"></i> UX</div>
+        <div class="compat-value ok">جيد</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p style="margin-bottom: 12px;">
+      <a href="project_report.html" class="footer-link">
+        <i class="fa-solid fa-arrow-right"></i> العودة للتقرير الرئيسي
+      </a>
+    </p>
+    <p><i class="fa-solid fa-robot"></i> تم إنشاء هذا التقرير تلقائيا بتاريخ <span id="reportDate"></span></p>
+    <div class="footer-stats">
+      <div class="footer-stat"><span>123</span> شاشة</div>
+      <div class="footer-stat"><span>93</span> مسار</div>
+      <div class="footer-stat"><span>59</span> اختبار</div>
+      <div class="footer-stat"><span>100%</span> نجاح</div>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" aria-label="العودة للأعلى">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script>
+// =============================================
+// ROUTES DATA - All 93 routes organized by category
+// =============================================
+const ROUTES_DATA = [
+  {
+    id: 'auth',
+    nameAr: 'المصادقة',
+    nameEn: 'Auth',
+    icon: 'fa-shield-halved',
+    color: '#10b981',
+    routes: [
+      { path: '/splash', nameAr: 'شاشة البداية', nameEn: 'Splash', screen: 'SplashScreen', active: true },
+      { path: '/login', nameAr: 'تسجيل الدخول', nameEn: 'Login', screen: 'LoginScreen', active: true },
+      { path: '/store-select', nameAr: 'اختيار المتجر', nameEn: 'Store Select', screen: 'StoreSelectScreen', active: true },
+      { path: '/onboarding', nameAr: 'دليل البداية', nameEn: 'Onboarding', screen: 'OnboardingScreen', active: true },
+    ]
+  },
+  {
+    id: 'pos',
+    nameAr: 'نقطة البيع',
+    nameEn: 'POS',
+    icon: 'fa-cash-register',
+    color: '#ef4444',
+    routes: [
+      { path: '/pos', nameAr: 'شاشة البيع', nameEn: 'POS', screen: 'PosScreen', active: true },
+      { path: '/pos/payment', nameAr: 'الدفع', nameEn: 'Payment', screen: 'PaymentScreen', active: true },
+      { path: '/pos/receipt', nameAr: 'الإيصال', nameEn: 'Receipt', screen: 'ReceiptScreen', active: true },
+      { path: '/pos/search', nameAr: 'بحث المنتجات', nameEn: 'POS Search', screen: 'PosScreen', active: true },
+      { path: '/pos/quick-sale', nameAr: 'البيع السريع', nameEn: 'Quick Sale', screen: 'QuickSaleScreen', active: true },
+      { path: '/pos/favorites', nameAr: 'المفضلة', nameEn: 'Favorites', screen: 'FavoritesScreen', active: true },
+      { path: '/pos/hold', nameAr: 'الفواتير المعلقة', nameEn: 'Hold Invoices', screen: 'HoldInvoicesScreen', active: true },
+      { path: '/pos/barcode', nameAr: 'ماسح الباركود', nameEn: 'Barcode Scanner', screen: 'BarcodeScannerScreen', active: true },
+    ]
+  },
+  {
+    id: 'products',
+    nameAr: 'المنتجات',
+    nameEn: 'Products',
+    icon: 'fa-box',
+    color: '#4facfe',
+    routes: [
+      { path: '/products', nameAr: 'قائمة المنتجات', nameEn: 'Products', screen: 'ProductsScreen', active: true },
+      { path: '/products/add', nameAr: 'إضافة منتج', nameEn: 'Add Product', screen: 'ProductFormScreen', active: true },
+      { path: '/products/edit/:id', nameAr: 'تعديل منتج', nameEn: 'Edit Product', screen: 'ProductFormScreen', active: true },
+      { path: '/products/:id', nameAr: 'تفاصيل المنتج', nameEn: 'Product Detail', screen: 'ProductDetailScreen', active: true },
+      { path: '/categories', nameAr: 'التصنيفات', nameEn: 'Categories', screen: 'CategoriesScreen', active: true },
+    ]
+  },
+  {
+    id: 'inventory',
+    nameAr: 'المخزون',
+    nameEn: 'Inventory',
+    icon: 'fa-warehouse',
+    color: '#f59e0b',
+    routes: [
+      { path: '/inventory', nameAr: 'إدارة المخزون', nameEn: 'Inventory', screen: 'InventoryScreen', active: true },
+      { path: '/inventory/expiry-tracking', nameAr: 'تتبع الصلاحية', nameEn: 'Expiry Tracking', screen: 'ExpiryTrackingScreen', active: true },
+    ]
+  },
+  {
+    id: 'customers',
+    nameAr: 'العملاء',
+    nameEn: 'Customers',
+    icon: 'fa-users',
+    color: '#06b6d4',
+    routes: [
+      { path: '/customers', nameAr: 'قائمة العملاء', nameEn: 'Customers', screen: 'CustomersScreen', active: true },
+      { path: '/customers/:id', nameAr: 'تفاصيل العميل', nameEn: 'Customer Detail', screen: 'CustomerDetailScreen', active: true },
+      { path: '/customers/:id/ledger', nameAr: 'كشف حساب العميل', nameEn: 'Customer Ledger', screen: 'CustomerLedgerScreen', active: true },
+    ]
+  },
+  {
+    id: 'suppliers',
+    nameAr: 'الموردون',
+    nameEn: 'Suppliers',
+    icon: 'fa-truck',
+    color: '#8b5cf6',
+    routes: [
+      { path: '/suppliers', nameAr: 'قائمة الموردين', nameEn: 'Suppliers', screen: 'SuppliersScreen', active: true },
+      { path: '/suppliers/new', nameAr: 'إضافة مورد', nameEn: 'Supplier Form', screen: 'SupplierFormScreen', active: true },
+      { path: '/suppliers/:id', nameAr: 'تفاصيل المورد', nameEn: 'Supplier Detail', screen: 'SupplierDetailScreen', active: true },
+    ]
+  },
+  {
+    id: 'orders',
+    nameAr: 'الطلبات',
+    nameEn: 'Orders',
+    icon: 'fa-cart-shopping',
+    color: '#f97316',
+    routes: [
+      { path: '/orders', nameAr: 'الطلبات', nameEn: 'Orders', screen: 'OrdersScreen', active: true },
+    ]
+  },
+  {
+    id: 'invoices',
+    nameAr: 'المبيعات والفواتير',
+    nameEn: 'Invoices',
+    icon: 'fa-file-invoice-dollar',
+    color: '#3b82f6',
+    routes: [
+      { path: '/sales', nameAr: 'المبيعات', nameEn: 'Sales', screen: 'InvoicesScreen', active: true },
+      { path: '/invoices', nameAr: 'الفواتير', nameEn: 'Invoices', screen: 'InvoicesScreen', active: true },
+      { path: '/invoices/:id', nameAr: 'تفاصيل الفاتورة', nameEn: 'Invoice Detail', screen: 'InvoiceDetailScreen', active: true },
+    ]
+  },
+  {
+    id: 'returns',
+    nameAr: 'المرتجعات',
+    nameEn: 'Returns',
+    icon: 'fa-rotate-left',
+    color: '#ef4444',
+    routes: [
+      { path: '/returns', nameAr: 'المرتجعات', nameEn: 'Returns', screen: 'ReturnsScreen', active: true },
+      { path: '/returns/request', nameAr: 'طلب استرداد', nameEn: 'Refund Request', screen: 'RefundRequestScreen', active: true },
+      { path: '/returns/reason', nameAr: 'سبب الإرجاع', nameEn: 'Refund Reason', screen: 'RefundReasonScreen', active: true },
+      { path: '/returns/receipt/:id', nameAr: 'إيصال المرتجع', nameEn: 'Refund Receipt', screen: 'RefundReceiptScreen', active: true },
+      { path: '/void-transaction', nameAr: 'إلغاء عملية', nameEn: 'Void Transaction', screen: 'VoidTransactionScreen', active: true },
+    ]
+  },
+  {
+    id: 'expenses',
+    nameAr: 'المصروفات',
+    nameEn: 'Expenses',
+    icon: 'fa-receipt',
+    color: '#f59e0b',
+    routes: [
+      { path: '/expenses', nameAr: 'المصروفات', nameEn: 'Expenses', screen: 'ExpensesScreen', active: true },
+      { path: '/expenses/categories', nameAr: 'فئات المصروفات', nameEn: 'Expense Categories', screen: 'ExpenseCategoriesScreen', active: true },
+    ]
+  },
+  {
+    id: 'cash',
+    nameAr: 'النقد والديون',
+    nameEn: 'Cash & Debts',
+    icon: 'fa-coins',
+    color: '#00d4aa',
+    routes: [
+      { path: '/cash-drawer', nameAr: 'درج النقود', nameEn: 'Cash Drawer', screen: 'CashDrawerScreen', active: true },
+      { path: '/debts/monthly-close', nameAr: 'الإقفال الشهري', nameEn: 'Monthly Close', screen: 'MonthlyCloseScreen', active: true },
+    ]
+  },
+  {
+    id: 'shifts',
+    nameAr: 'الورديات',
+    nameEn: 'Shifts',
+    icon: 'fa-clock',
+    color: '#6c63ff',
+    routes: [
+      { path: '/shifts', nameAr: 'الورديات', nameEn: 'Shifts', screen: 'ShiftsScreen', active: true },
+      { path: '/shifts/open', nameAr: 'فتح الوردية', nameEn: 'Shift Open', screen: 'ShiftOpenScreen', active: true },
+      { path: '/shifts/close', nameAr: 'إغلاق الوردية', nameEn: 'Shift Close', screen: 'ShiftCloseScreen', active: true },
+      { path: '/shifts/summary', nameAr: 'ملخص الوردية', nameEn: 'Shift Summary', screen: 'ShiftSummaryScreen', active: true },
+    ]
+  },
+  {
+    id: 'purchases',
+    nameAr: 'المشتريات',
+    nameEn: 'Purchases',
+    icon: 'fa-truck-fast',
+    color: '#f093fb',
+    routes: [
+      { path: '/purchases/new', nameAr: 'أمر شراء جديد', nameEn: 'Purchase Form', screen: 'PurchaseFormScreen', active: true },
+      { path: '/purchases/smart-reorder', nameAr: 'إعادة الطلب الذكي', nameEn: 'Smart Reorder', screen: 'SmartReorderScreen', active: true },
+      { path: '/purchases/ai-import', nameAr: 'استيراد فاتورة بالذكاء', nameEn: 'AI Invoice Import', screen: 'AiInvoiceImportScreen', active: true },
+      { path: '/purchases/ai-review', nameAr: 'مراجعة الفاتورة', nameEn: 'AI Invoice Review', screen: 'AiInvoiceReviewScreen', active: true },
+    ]
+  },
+  {
+    id: 'marketing',
+    nameAr: 'التسويق',
+    nameEn: 'Marketing',
+    icon: 'fa-bullhorn',
+    color: '#f97316',
+    routes: [
+      { path: '/marketing/discounts', nameAr: 'الخصومات', nameEn: 'Discounts', screen: 'DiscountsScreen', active: true },
+      { path: '/marketing/coupons', nameAr: 'الكوبونات', nameEn: 'Coupons', screen: 'CouponManagementScreen', active: true },
+      { path: '/marketing/offers', nameAr: 'العروض الخاصة', nameEn: 'Special Offers', screen: 'SpecialOffersScreen', active: true },
+      { path: '/promotions', nameAr: 'العروض الذكية', nameEn: 'Smart Promotions', screen: 'SmartPromotionsScreen', active: true },
+      { path: '/loyalty', nameAr: 'برنامج الولاء', nameEn: 'Loyalty Program', screen: 'LoyaltyProgramScreen', active: true },
+    ]
+  },
+  {
+    id: 'notifications',
+    nameAr: 'الإشعارات والطباعة',
+    nameEn: 'Notifications & Printing',
+    icon: 'fa-bell',
+    color: '#06b6d4',
+    routes: [
+      { path: '/notifications', nameAr: 'الإشعارات', nameEn: 'Notifications', screen: 'NotificationsScreen', active: true },
+      { path: '/print-queue', nameAr: 'طابور الطباعة', nameEn: 'Print Queue', screen: 'PrintQueueScreen', active: true },
+    ]
+  },
+  {
+    id: 'sync',
+    nameAr: 'المزامنة',
+    nameEn: 'Sync',
+    icon: 'fa-arrows-rotate',
+    color: '#f59e0b',
+    routes: [
+      { path: '/sync', nameAr: 'حالة المزامنة', nameEn: 'Sync Status', screen: 'SyncStatusScreen', active: true },
+      { path: '/sync/pending', nameAr: 'المعاملات المعلقة', nameEn: 'Pending Transactions', screen: 'PendingTransactionsScreen', active: true },
+      { path: '/sync/conflicts', nameAr: 'حل التعارضات', nameEn: 'Conflict Resolution', screen: 'ConflictResolutionScreen', active: true },
+    ]
+  },
+  {
+    id: 'management',
+    nameAr: 'الإدارة',
+    nameEn: 'Management',
+    icon: 'fa-building',
+    color: '#3b82f6',
+    routes: [
+      { path: '/home', nameAr: 'الشاشة الرئيسية', nameEn: 'Home', screen: 'HomeScreen', active: true },
+      { path: '/dashboard', nameAr: 'لوحة التحكم', nameEn: 'Dashboard', screen: 'DashboardScreen', active: true },
+      { path: '/drivers', nameAr: 'إدارة السائقين', nameEn: 'Drivers', screen: 'DriverManagementScreen', active: true },
+      { path: '/branches', nameAr: 'إدارة الفروع', nameEn: 'Branches', screen: 'BranchManagementScreen', active: true },
+      { path: '/employees', nameAr: 'إدارة الموظفين', nameEn: 'Employees', screen: 'UsersManagementScreen', active: true },
+    ]
+  },
+  {
+    id: 'profile',
+    nameAr: 'الملف الشخصي',
+    nameEn: 'Profile',
+    icon: 'fa-user',
+    color: '#8b5cf6',
+    routes: [
+      { path: '/profile', nameAr: 'الملف الشخصي', nameEn: 'Profile', screen: 'ProfileScreen', active: true },
+    ]
+  },
+  {
+    id: 'reports',
+    nameAr: 'التقارير',
+    nameEn: 'Reports',
+    icon: 'fa-chart-pie',
+    color: '#8b5cf6',
+    routes: [
+      { path: '/reports', nameAr: 'التقارير', nameEn: 'Reports', screen: 'ReportsScreen', active: true },
+      { path: '/reports/complaints', nameAr: 'تقرير الشكاوى', nameEn: 'Complaints Report', screen: 'ComplaintsReportScreen', active: true },
+    ]
+  },
+  {
+    id: 'settings',
+    nameAr: 'الإعدادات',
+    nameEn: 'Settings',
+    icon: 'fa-gear',
+    color: '#64748b',
+    routes: [
+      { path: '/settings', nameAr: 'الإعدادات', nameEn: 'Settings', screen: 'SettingsScreen', active: true },
+      { path: '/settings/printer', nameAr: 'إعدادات الطابعة', nameEn: 'Printer Settings', screen: 'PrinterSettingsScreen', active: true },
+      { path: '/settings/language', nameAr: 'اللغة', nameEn: 'Language', screen: 'LanguageScreen', active: true },
+      { path: '/settings/theme', nameAr: 'المظهر', nameEn: 'Theme', screen: 'ThemeScreen', active: true },
+      { path: '/settings/store', nameAr: 'إعدادات المتجر', nameEn: 'Store Settings', screen: 'StoreSettingsScreen', active: true },
+      { path: '/settings/pos', nameAr: 'إعدادات نقطة البيع', nameEn: 'POS Settings', screen: 'PosSettingsScreen', active: true },
+      { path: '/settings/payment-devices', nameAr: 'أجهزة الدفع', nameEn: 'Payment Devices', screen: 'PaymentDevicesSettingsScreen', active: true },
+      { path: '/settings/barcode', nameAr: 'إعدادات الباركود', nameEn: 'Barcode Settings', screen: 'BarcodeSettingsScreen', active: true },
+      { path: '/settings/receipt', nameAr: 'قالب الإيصال', nameEn: 'Receipt Template', screen: 'ReceiptTemplateScreen', active: true },
+      { path: '/settings/tax', nameAr: 'إعدادات الضريبة', nameEn: 'Tax Settings', screen: 'TaxSettingsScreen', active: true },
+      { path: '/settings/discounts', nameAr: 'إعدادات الخصومات', nameEn: 'Discount Settings', screen: 'DiscountsSettingsScreen', active: true },
+      { path: '/settings/interest', nameAr: 'إعدادات الفوائد', nameEn: 'Interest Settings', screen: 'InterestSettingsScreen', active: true },
+      { path: '/settings/security', nameAr: 'الأمان', nameEn: 'Security Settings', screen: 'SecuritySettingsScreen', active: true },
+      { path: '/settings/users', nameAr: 'إدارة المستخدمين', nameEn: 'Users Management', screen: 'UsersManagementScreen', active: true },
+      { path: '/settings/roles', nameAr: 'الأدوار والصلاحيات', nameEn: 'Roles & Permissions', screen: 'RolesPermissionsScreen', active: true },
+      { path: '/settings/activity-log', nameAr: 'سجل النشاطات', nameEn: 'Activity Log', screen: 'ActivityLogScreen', active: true },
+      { path: '/settings/backup', nameAr: 'النسخ الاحتياطي', nameEn: 'Backup', screen: 'BackupSettingsScreen', active: true },
+      { path: '/settings/notifications', nameAr: 'إعدادات الإشعارات', nameEn: 'Notifications Settings', screen: 'NotificationsSettingsScreen', active: true },
+      { path: '/settings/zatca', nameAr: 'توافق ZATCA', nameEn: 'ZATCA Compliance', screen: 'ZatcaComplianceScreen', active: true },
+      { path: '/settings/help', nameAr: 'المساعدة والدعم', nameEn: 'Help & Support', screen: 'HelpSupportScreen', active: true },
+      { path: '/settings/shipping', nameAr: 'بوابات الشحن', nameEn: 'Shipping Gateways', screen: 'ShippingGatewaysScreen', active: true },
+    ]
+  },
+  {
+    id: 'ai',
+    nameAr: 'الذكاء الاصطناعي',
+    nameEn: 'AI',
+    icon: 'fa-brain',
+    color: '#a855f7',
+    routes: [
+      { path: '/ai/assistant', nameAr: 'المساعد الذكي', nameEn: 'AI Assistant', screen: 'AiAssistantScreen', active: true },
+      { path: '/ai/sales-forecasting', nameAr: 'التنبؤ بالمبيعات', nameEn: 'Sales Forecasting', screen: 'AiSalesForecastingScreen', active: true },
+      { path: '/ai/smart-pricing', nameAr: 'التسعير الذكي', nameEn: 'Smart Pricing', screen: 'AiSmartPricingScreen', active: true },
+      { path: '/ai/fraud-detection', nameAr: 'كشف الاحتيال', nameEn: 'Fraud Detection', screen: 'AiFraudDetectionScreen', active: true },
+      { path: '/ai/basket-analysis', nameAr: 'تحليل السلة', nameEn: 'Basket Analysis', screen: 'AiBasketAnalysisScreen', active: true },
+      { path: '/ai/customer-recommendations', nameAr: 'توصيات العملاء', nameEn: 'Customer Recommendations', screen: 'AiCustomerRecommendationsScreen', active: true },
+      { path: '/ai/smart-inventory', nameAr: 'المخزون الذكي', nameEn: 'Smart Inventory', screen: 'AiSmartInventoryScreen', active: true },
+      { path: '/ai/competitor-analysis', nameAr: 'تحليل المنافسين', nameEn: 'Competitor Analysis', screen: 'AiCompetitorAnalysisScreen', active: true },
+      { path: '/ai/smart-reports', nameAr: 'التقارير الذكية', nameEn: 'Smart Reports', screen: 'AiSmartReportsScreen', active: true },
+      { path: '/ai/staff-analytics', nameAr: 'تحليلات الموظفين', nameEn: 'Staff Analytics', screen: 'AiStaffAnalyticsScreen', active: true },
+      { path: '/ai/product-recognition', nameAr: 'التعرف على المنتجات', nameEn: 'Product Recognition', screen: 'AiProductRecognitionScreen', active: true },
+      { path: '/ai/sentiment-analysis', nameAr: 'تحليل المشاعر', nameEn: 'Sentiment Analysis', screen: 'AiSentimentAnalysisScreen', active: true },
+      { path: '/ai/return-prediction', nameAr: 'توقع المرتجعات', nameEn: 'Return Prediction', screen: 'AiReturnPredictionScreen', active: true },
+      { path: '/ai/promotion-designer', nameAr: 'مصمم العروض', nameEn: 'Promotion Designer', screen: 'AiPromotionDesignerScreen', active: true },
+      { path: '/ai/chat-with-data', nameAr: 'محادثة مع البيانات', nameEn: 'Chat with Data', screen: 'AiChatWithDataScreen', active: true },
+    ]
+  },
+  {
+    id: 'new-features',
+    nameAr: 'ميزات جديدة',
+    nameEn: 'New Features',
+    icon: 'fa-sparkles',
+    color: '#00d4aa',
+    routes: [
+      { path: '/ecommerce', nameAr: 'المتجر الإلكتروني', nameEn: 'E-Commerce', screen: 'EcommerceScreen', active: true },
+      { path: '/wallet', nameAr: 'المحفظة الإلكترونية', nameEn: 'Wallet', screen: 'WalletScreen', active: true },
+      { path: '/subscription', nameAr: 'إدارة الاشتراك', nameEn: 'Subscription', screen: 'SubscriptionScreen', active: true },
+      { path: '/media', nameAr: 'مكتبة الوسائط', nameEn: 'Media Library', screen: 'MediaLibraryScreen', active: true },
+      { path: '/devices', nameAr: 'سجل الأجهزة', nameEn: 'Device Log', screen: 'DeviceLogScreen', active: true },
+    ]
+  },
+];
+
+// =============================================
+// RENDER ROUTES
+// =============================================
+// =============================================
+// SCROLL ANIMATIONS (IntersectionObserver) — must be before renderRoutes
+// =============================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+
+      // Trigger progress bar
+      entry.target.querySelectorAll('.progress-bar-inner[data-width]').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 300);
+      });
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+let allExpanded = false;
+
+function renderRoutes(filterText) {
+  const container = document.getElementById('routesContainer');
+  let html = '';
+  let totalVisible = 0;
+
+  ROUTES_DATA.forEach((cat, idx) => {
+    let routes = cat.routes;
+    if (filterText) {
+      routes = routes.filter(r =>
+        r.path.toLowerCase().includes(filterText) ||
+        r.nameAr.includes(filterText) ||
+        r.nameEn.toLowerCase().includes(filterText) ||
+        r.screen.toLowerCase().includes(filterText)
+      );
+    }
+    if (routes.length === 0 && filterText) return;
+
+    totalVisible += routes.length;
+
+    const isExpanded = allExpanded || (filterText && routes.length > 0);
+
+    html += '<div class="routes-category glass animate-on-scroll' + (isExpanded ? ' expanded' : '') + '" data-cat="' + idx + '">';
+
+    // Category Header
+    html += '<div class="category-header" onclick="toggleCategory(' + idx + ')">' +
+      '<div class="category-icon" style="background:' + cat.color + '20; color:' + cat.color + ';">' +
+        '<i class="fa-solid ' + cat.icon + '"></i>' +
+      '</div>' +
+      '<div class="category-title">' + cat.nameAr + ' <span style="color: var(--text-muted); font-size: 0.82rem; direction: ltr; font-family: Tajawal, monospace;">(' + cat.nameEn + ')</span></div>' +
+      '<div class="category-count">' + routes.length + ' مسار</div>' +
+      '<i class="fa-solid fa-chevron-left category-chevron"></i>' +
+    '</div>';
+
+    // Category Body
+    html += '<div class="category-body">';
+    html += '<div class="route-header"><span>المسار</span><span>الشاشة</span><span>المكون</span><span>الحالة</span></div>';
+
+    routes.forEach(r => {
+      const statusClass = r.active ? 'active' : 'coming';
+      const statusText = r.active ? '&#x2705; فعال' : '&#x1F51C; قريبا';
+      html += '<div class="route-row">' +
+        '<div class="route-path">' + r.path + '</div>' +
+        '<div class="route-name">' + r.nameAr + '<span class="route-name-en">' + r.nameEn + '</span></div>' +
+        '<div class="route-screen">' + r.screen + '</div>' +
+        '<div class="route-status ' + statusClass + '">' + statusText + '</div>' +
+      '</div>';
+    });
+
+    html += '</div>'; // category-body
+    html += '</div>'; // routes-category
+  });
+
+  container.innerHTML = html;
+
+  // Update stats
+  const stats = document.getElementById('filterStats');
+  if (filterText) {
+    stats.textContent = totalVisible + ' نتيجة';
+  } else {
+    const totalRoutes = ROUTES_DATA.reduce((sum, c) => sum + c.routes.length, 0);
+    stats.textContent = totalRoutes + ' مسار';
+  }
+
+  // Re-observe for animations
+  document.querySelectorAll('#routesContainer .animate-on-scroll').forEach(el => observer.observe(el));
+}
+
+function toggleCategory(idx) {
+  const card = document.querySelector('[data-cat="' + idx + '"]');
+  if (card) card.classList.toggle('expanded');
+}
+
+function toggleAllCategories() {
+  allExpanded = !allExpanded;
+  const btn = document.getElementById('expandAllBtn');
+  btn.innerHTML = allExpanded
+    ? '<i class="fa-solid fa-compress"></i> طي الكل'
+    : '<i class="fa-solid fa-expand"></i> توسيع الكل';
+  document.querySelectorAll('.routes-category').forEach(c => {
+    if (allExpanded) c.classList.add('expanded');
+    else c.classList.remove('expanded');
+  });
+}
+
+// Search filter
+document.getElementById('routeSearch').addEventListener('input', function() {
+  const val = this.value.trim().toLowerCase();
+  renderRoutes(val);
+});
+
+// Initial render
+renderRoutes('');
+
+// =============================================
+// COUNTER ANIMATION
+// =============================================
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const duration = 2000;
+      const start = performance.now();
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        let current = Math.round(eased * target);
+        el.textContent = current + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.counter-value[data-target]').forEach(el => counterObserver.observe(el));
+
+// =============================================
+// NAV SHOW/HIDE
+// =============================================
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 300) {
+    nav.classList.add('visible');
+  } else {
+    nav.classList.remove('visible');
+  }
+}, { passive: true });
+
+// =============================================
+// BACK TO TOP
+// =============================================
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 600) {
+    backBtn.classList.add('visible');
+  } else {
+    backBtn.classList.remove('visible');
+  }
+}, { passive: true });
+backBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// =============================================
+// DATE
+// =============================================
+document.getElementById('reportDate').textContent = new Date().toLocaleDateString('ar-SA', {
+  year: 'numeric', month: 'long', day: 'numeric',
+  calendar: 'gregory'
+});
+</script>
+</body>
+</html>

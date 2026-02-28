@@ -11,7 +11,24 @@ abstract final class AlhaiTypography {
   /// Uses asset fonts for production stability
   static const String fontFamily = 'Tajawal';
 
-  /// Get base text style with Tajawal
+  /// Fallback font families for multi-script support.
+  ///
+  /// The app supports 7 locales including Hindi (hi) and Bengali (bn).
+  /// Tajawal only covers Arabic/Latin glyphs, so we declare fallbacks for
+  /// Devanagari (Hindi) and Bengali scripts. Android and Chrome ship Noto Sans
+  /// variants that will be picked up automatically; on platforms without them
+  /// the system default (Roboto, SF Pro, etc.) is used.
+  static const List<String> fontFamilyFallback = [
+    'NotoSansDevanagari', // Asset font for Hindi (hi)
+    'NotoSansBengali', // Asset font for Bengali (bn)
+    'Noto Sans',
+    'Noto Sans Devanagari',
+    'Noto Sans Bengali',
+    'Roboto',
+    'sans-serif',
+  ];
+
+  /// Get base text style with Tajawal + multi-script fallbacks
   static TextStyle _tajawal({
     double fontSize = 14,
     FontWeight fontWeight = FontWeight.w400,
@@ -21,6 +38,7 @@ abstract final class AlhaiTypography {
   }) {
     return TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,

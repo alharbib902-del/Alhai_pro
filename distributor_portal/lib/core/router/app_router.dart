@@ -1,30 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../ui/distributor_shell.dart';
+import '../../screens/dashboard/distributor_dashboard_screen.dart';
+import '../../screens/orders/distributor_orders_screen.dart';
+import '../../screens/orders/distributor_order_detail_screen.dart';
+import '../../screens/products/distributor_products_screen.dart';
+import '../../screens/pricing/distributor_pricing_screen.dart';
+import '../../screens/reports/distributor_reports_screen.dart';
+import '../../screens/settings/distributor_settings_screen.dart';
+
 class AppRouter {
   AppRouter._();
-  static final router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(path: '/', builder: (c, s) => const _P(t: 'Splash')),
-      GoRoute(path: '/login', builder: (c, s) => const _P(t: 'تسجيل الدخول')),
-      GoRoute(path: '/dashboard', builder: (c, s) => const _P(t: 'لوحة التحكم')),
-      GoRoute(path: '/products', builder: (c, s) => const _P(t: 'المنتجات')),
-      GoRoute(path: '/orders', builder: (c, s) => const _P(t: 'الطلبات')),
-      GoRoute(path: '/stores', builder: (c, s) => const _P(t: 'المتاجر')),
-      GoRoute(path: '/pricing', builder: (c, s) => const _P(t: 'الأسعار')),
-      GoRoute(path: '/reports', builder: (c, s) => const _P(t: 'التقارير')),
-      GoRoute(path: '/settings', builder: (c, s) => const _P(t: 'الإعدادات')),
-    ],
-  );
-}
 
-class _P extends StatelessWidget {
-  final String t;
-  const _P({required this.t});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(t)),
-    body: Center(child: Text(t, style: Theme.of(context).textTheme.headlineMedium)),
+  static final router = GoRouter(
+    initialLocation: '/dashboard',
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) => DistributorShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/dashboard',
+            name: 'distributor-dashboard',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorDashboardScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/orders',
+            name: 'distributor-orders',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorOrdersScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/orders/:id',
+            name: 'distributor-order-detail',
+            pageBuilder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: DistributorOrderDetailScreen(orderId: id),
+                transitionsBuilder: (c, a, sa, child) =>
+                    FadeTransition(opacity: a, child: child),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/products',
+            name: 'distributor-products',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorProductsScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/pricing',
+            name: 'distributor-pricing',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorPricingScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/reports',
+            name: 'distributor-reports',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorReportsScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/settings',
+            name: 'distributor-settings',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorSettingsScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+        ],
+      ),
+    ],
   );
 }

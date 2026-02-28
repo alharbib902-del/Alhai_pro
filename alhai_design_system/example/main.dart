@@ -346,12 +346,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
               children: [
                 Expanded(
                   child: AlhaiCard(
-                    child: AlhaiEmptyState.noOrders(compact: true),
+                    child: AlhaiEmptyState.noOrders(title: 'لا توجد طلبات', compact: true),
                   ),
                 ),
                 Expanded(
                   child: AlhaiCard(
-                    child: AlhaiEmptyState.noResults(compact: true),
+                    child: AlhaiEmptyState.noResults(title: 'لا توجد نتائج', compact: true),
                   ),
                 ),
               ],

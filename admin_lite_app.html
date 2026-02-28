@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الإدارة المبسطة — Admin Lite | الحي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #0ea5e9;
+  --accent-light: #38bdf8;
+  --green: #00d4aa;
+  --blue: #4facfe;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --pink: #f093fb;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(14, 165, 233, 0.15);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(14, 165, 233, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(79, 172, 254, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--accent-light); }
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ====== GLASS CARD ====== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-on-scroll.visible:nth-child(2) { transition-delay: 0.1s; }
+.animate-on-scroll.visible:nth-child(3) { transition-delay: 0.15s; }
+.animate-on-scroll.visible:nth-child(4) { transition-delay: 0.2s; }
+.animate-on-scroll.visible:nth-child(5) { transition-delay: 0.25s; }
+
+/* ====== NAV ====== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 12px 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(15, 15, 26, 0.85);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  transition: transform 0.3s;
+}
+
+.nav.visible { transform: translateY(0); }
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background: rgba(14, 165, 233, 0.1);
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+}
+
+/* ====== HERO SECTION ====== */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.back-link:hover { color: var(--accent); }
+.back-link i { font-size: 0.8rem; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  color: var(--accent-light);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--blue), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.hero-title-en {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  color: var(--text-muted);
+  direction: ltr;
+  margin-bottom: 16px;
+  font-family: 'Tajawal', monospace;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.9;
+}
+
+/* ====== COUNTER CARDS ====== */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.counter-card {
+  padding: 28px 16px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: default;
+}
+
+.counter-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.counter-icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.counter-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  direction: ltr;
+}
+
+.counter-card:nth-child(1) .counter-value { color: var(--accent); }
+.counter-card:nth-child(1) .counter-icon { color: var(--accent); }
+.counter-card:nth-child(2) .counter-value { color: var(--blue); }
+.counter-card:nth-child(2) .counter-icon { color: var(--blue); }
+.counter-card:nth-child(3) .counter-value { color: var(--green); }
+.counter-card:nth-child(3) .counter-icon { color: var(--green); }
+.counter-card:nth-child(4) .counter-value { color: var(--purple); }
+.counter-card:nth-child(4) .counter-icon { color: var(--purple); }
+
+.counter-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ====== SECTION ====== */
+.section {
+  padding: 60px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ====== TABS VISUALIZATION ====== */
+.bottom-nav-demo {
+  max-width: 640px;
+  margin: 0 auto 40px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.nav-bar-demo {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: rgba(15, 15, 26, 0.9);
+  padding: 12px 8px;
+  gap: 4px;
+}
+
+.nav-item-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  position: relative;
+}
+
+.nav-item-demo:hover {
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.nav-item-demo.active {
+  background: rgba(14, 165, 233, 0.15);
+}
+
+.nav-item-demo.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.nav-item-icon {
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+
+.nav-item-demo.active .nav-item-icon { color: var(--accent); }
+.nav-item-demo:hover .nav-item-icon { color: var(--accent-light); }
+
+.nav-item-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+
+.nav-item-demo.active .nav-item-label { color: var(--accent); }
+
+.nav-item-count {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 0.6rem;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* ====== TAB DETAIL CARDS ====== */
+.tab-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 20px;
+}
+
+.tab-detail-card {
+  padding: 28px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.tab-detail-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(14, 165, 233, 0.4);
+}
+
+.tab-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.tab-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.tab-card-info h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.tab-card-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.tab-card-badge {
+  margin-right: auto;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tab-card-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* ====== ROUTES SECTION ====== */
+.routes-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  flex-wrap: wrap;
+}
+
+.routes-tab-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.routes-tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.routes-tab-btn:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255,255,255,0.05);
+}
+
+.routes-tab-btn .btn-count {
+  font-size: 0.7rem;
+  background: rgba(255,255,255,0.2);
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-right: 4px;
+}
+
+.routes-tab-btn.active .btn-count {
+  background: rgba(255,255,255,0.25);
+}
+
+.routes-panel {
+  display: none;
+}
+
+.routes-panel.active {
+  display: block;
+  animation: fadeUp 0.3s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.route-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-xs);
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+.route-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.route-path {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  min-width: 200px;
+  flex-shrink: 0;
+  padding: 4px 10px;
+  background: rgba(14, 165, 233, 0.08);
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(14, 165, 233, 0.12);
+}
+
+.route-arrow {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.route-screen {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+.route-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-right: auto;
+}
+
+.route-group-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin: 20px 0 10px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.route-group-title i {
+  font-size: 0.8rem;
+}
+
+.route-group-count {
+  font-size: 0.72rem;
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+/* ====== ARCHITECTURE ====== */
+.arch-diagram {
+  max-width: 900px;
+  margin: 0 auto 36px;
+}
+
+.arch-layer {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.arch-layer-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.arch-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.arch-box {
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid;
+  text-align: center;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  transition: transform 0.3s;
+}
+
+.arch-box:hover { transform: translateY(-2px); }
+
+.arch-connector {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+.arch-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.arch-feature {
+  padding: 22px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: transform 0.3s;
+}
+
+.arch-feature:hover { transform: translateY(-2px); }
+
+.arch-feature-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.arch-feature-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.arch-feature-info p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ====== DEPENDENCIES ====== */
+.deps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 580px), 1fr));
+  gap: 20px;
+}
+
+.dep-panel {
+  padding: 28px;
+}
+
+.dep-panel-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dep-panel-title i {
+  color: var(--accent);
+}
+
+.dep-panel-title .dep-count {
+  font-size: 0.75rem;
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.dep-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dep-tag {
+  padding: 8px 16px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  transition: all 0.2s;
+}
+
+.dep-tag:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+  background: rgba(14, 165, 233, 0.06);
+}
+
+.dep-tag.highlight {
+  border-color: rgba(14, 165, 233, 0.3);
+  color: var(--accent-light);
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.dep-note {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: var(--radius-xs);
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dep-note i {
+  color: var(--red);
+  font-size: 1rem;
+}
+
+/* ====== TESTS ====== */
+.tests-panel {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.test-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.test-total {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--green);
+  direction: ltr;
+}
+
+.test-total span {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.test-files {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.test-file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+}
+
+.test-file:hover {
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+.test-file-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.test-file-info {
+  flex: 1;
+}
+
+.test-file-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+.test-file-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.test-file-count {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--green);
+  direction: ltr;
+}
+
+.test-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0 12px;
+  min-width: 80px;
+}
+
+.test-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 0%;
+}
+
+/* ====== COMPATIBILITY TABLE ====== */
+.compat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.compat-item {
+  padding: 20px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.compat-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+.compat-icon {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.compat-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.compat-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.compat-value.excellent { color: var(--green); }
+.compat-value.good { color: var(--blue); }
+.compat-value.yes { color: var(--green); }
+.compat-value.no { color: var(--text-muted); }
+
+/* ====== FOOTER ====== */
+.footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.footer-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.footer-back:hover {
+  background: rgba(14, 165, 233, 0.15);
+  border-color: rgba(14, 165, 233, 0.4);
+  color: var(--accent-light);
+}
+
+.footer-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.footer-stat {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.footer-stat span {
+  color: var(--accent);
+}
+
+/* ====== BACK TO TOP ====== */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--accent-light);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .container { padding: 0 14px; }
+  .hero { padding: 50px 0 40px; }
+  .counters-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .counter-card { padding: 18px 10px; }
+  .counter-value { font-size: 1.8rem; }
+  .section { padding: 40px 0; }
+  .tab-cards-grid { grid-template-columns: 1fr; }
+  .routes-tabs { gap: 4px; }
+  .routes-tab-btn { font-size: 0.78rem; padding: 8px 10px; min-width: 60px; }
+  .route-item { flex-wrap: wrap; gap: 8px; }
+  .route-path { min-width: auto; width: 100%; }
+  .deps-grid { grid-template-columns: 1fr; }
+  .arch-features { grid-template-columns: 1fr; }
+  .nav-bar-demo { gap: 2px; padding: 8px 4px; }
+  .nav-item-label { font-size: 0.65rem; }
+}
+
+@media (max-width: 480px) {
+  .counters-grid { grid-template-columns: repeat(2, 1fr); }
+  .counter-value { font-size: 1.5rem; }
+  .compat-grid { grid-template-columns: repeat(2, 1fr); }
+  .arch-box { padding: 8px 12px; font-size: 0.78rem; }
+}
+
+/* ====== UTILITY ====== */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.text-accent { color: var(--accent); }
+.text-green { color: var(--green); }
+.text-blue { color: var(--blue); }
+.text-purple { color: var(--purple); }
+.text-yellow { color: var(--yellow); }
+.text-pink { color: var(--pink); }
+.text-red { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ====== NAV ====== -->
+<nav class="nav" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">الإدارة المبسطة</div>
+    <div class="nav-links">
+      <a href="#tabs" class="nav-link">التبويبات</a>
+      <a href="#routes" class="nav-link">المسارات</a>
+      <a href="#architecture" class="nav-link">الهيكلة</a>
+      <a href="#dependencies" class="nav-link">التبعيات</a>
+      <a href="#tests" class="nav-link">الاختبارات</a>
+      <a href="#compatibility" class="nav-link">التوافق</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+  <div class="container">
+    <a href="project_report.html" class="back-link">
+      <i class="fas fa-arrow-right"></i>
+      العودة للتقرير الرئيسي
+    </a>
+
+    <div class="hero-badge">
+      <i class="fas fa-feather-pointed"></i>
+      admin_pos_lite
+    </div>
+
+    <h1 class="hero-title">الإدارة المبسطة</h1>
+    <p class="hero-title-en">Admin Lite</p>
+    <p class="hero-subtitle">
+      تطبيق إدارة خفيف للجوال مع 5 تبويبات — مراقبة وتقارير وذكاء اصطناعي و55 مسار
+    </p>
+
+    <div class="counters-grid">
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-icon"><i class="fas fa-route"></i></div>
+        <div class="counter-value" data-target="55">0</div>
+        <div class="counter-label">مسار</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-icon"><i class="fas fa-vial"></i></div>
+        <div class="counter-value" data-target="57">0</div>
+        <div class="counter-label">اختبار</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-icon"><i class="fas fa-file-code"></i></div>
+        <div class="counter-value" data-target="7">0</div>
+        <div class="counter-label">ملفات</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-icon"><i class="fas fa-layer-group"></i></div>
+        <div class="counter-value" data-target="5">0</div>
+        <div class="counter-label">تبويبات</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== TABS SECTION ====== -->
+<section class="section" id="tabs">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(14,165,233,0.15); color: var(--accent);">
+        <i class="fas fa-layer-group"></i>
+      </div>
+      <h2 class="section-title">التبويبات الخمسة</h2>
+      <p class="section-subtitle">نظام التنقل السفلي — Bottom Navigation مع 5 تبويبات رئيسية</p>
+    </div>
+
+    <!-- Bottom Nav Demo -->
+    <div class="bottom-nav-demo glass animate-on-scroll">
+      <div style="padding: 40px 24px; text-align: center; background: rgba(14,165,233,0.03);">
+        <i class="fas fa-mobile-screen-button" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 8px; display: block;"></i>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">LiteShell — الواجهة الرئيسية</span>
+      </div>
+      <div class="nav-bar-demo">
+        <div class="nav-item-demo active" onclick="setActiveTab(this)">
+          <i class="fas fa-chart-pie nav-item-icon"></i>
+          <span class="nav-item-label">لوحة التحكم</span>
+        </div>
+        <div class="nav-item-demo" onclick="setActiveTab(this)">
+          <i class="fas fa-chart-bar nav-item-icon"></i>
+          <span class="nav-item-label">التقارير</span>
+          <span class="nav-item-count">13</span>
+        </div>
+        <div class="nav-item-demo" onclick="setActiveTab(this)">
+          <i class="fas fa-wand-magic-sparkles nav-item-icon"></i>
+          <span class="nav-item-label">الذكاء</span>
+          <span class="nav-item-count">15</span>
+        </div>
+        <div class="nav-item-demo" onclick="setActiveTab(this)">
+          <i class="fas fa-heart-pulse nav-item-icon"></i>
+          <span class="nav-item-label">المراقبة</span>
+        </div>
+        <div class="nav-item-demo" onclick="setActiveTab(this)">
+          <i class="fas fa-ellipsis nav-item-icon"></i>
+          <span class="nav-item-label">المزيد</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Detail Cards -->
+    <div class="tab-cards-grid">
+      <!-- Tab 1 -->
+      <div class="tab-detail-card glass animate-on-scroll">
+        <div class="tab-card-header">
+          <div class="tab-card-icon" style="background: rgba(14,165,233,0.15); color: var(--accent);">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <div class="tab-card-info">
+            <h3>لوحة التحكم</h3>
+            <p>Dashboard</p>
+          </div>
+        </div>
+        <p class="tab-card-desc">
+          الشاشة الرئيسية — ملخص سريع للمبيعات والمخزون والأداء العام. نقطة البداية لكل مستخدم.
+        </p>
+      </div>
+
+      <!-- Tab 2 -->
+      <div class="tab-detail-card glass animate-on-scroll">
+        <div class="tab-card-header">
+          <div class="tab-card-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <div class="tab-card-info">
+            <h3>التقارير</h3>
+            <p>Reports</p>
+          </div>
+          <span class="tab-card-badge" style="background: rgba(79,172,254,0.12); color: var(--blue);">13 تقرير</span>
+        </div>
+        <p class="tab-card-desc">
+          تقارير شاملة: مبيعات يومية، أرباح، ضرائب، مخزون، عملاء، أفضل المنتجات، تحليلات متقدمة، ساعات الذروة، الديون، والشكاوى.
+        </p>
+      </div>
+
+      <!-- Tab 3 -->
+      <div class="tab-detail-card glass animate-on-scroll">
+        <div class="tab-card-header">
+          <div class="tab-card-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+            <i class="fas fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="tab-card-info">
+            <h3>الذكاء الاصطناعي</h3>
+            <p>AI</p>
+          </div>
+          <span class="tab-card-badge" style="background: rgba(168,85,247,0.12); color: var(--purple);">15 خدمة</span>
+        </div>
+        <p class="tab-card-desc">
+          مساعد ذكي، تنبؤ بالمبيعات، تسعير ذكي، كشف احتيال، تحليل السلة، توصيات العملاء، المخزون الذكي، تحليل المنافسين، والمزيد.
+        </p>
+      </div>
+
+      <!-- Tab 4 -->
+      <div class="tab-detail-card glass animate-on-scroll">
+        <div class="tab-card-header">
+          <div class="tab-card-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+            <i class="fas fa-heart-pulse"></i>
+          </div>
+          <div class="tab-card-info">
+            <h3>المراقبة</h3>
+            <p>Monitoring</p>
+          </div>
+        </div>
+        <p class="tab-card-desc">
+          مركز المراقبة — تنبيهات المخزون، تتبع الصلاحية، إدارة الورديات، وتصفح المنتجات. مراقبة لحظية للعمليات.
+        </p>
+      </div>
+
+      <!-- Tab 5 -->
+      <div class="tab-detail-card glass animate-on-scroll">
+        <div class="tab-card-header">
+          <div class="tab-card-icon" style="background: rgba(245,158,11,0.15); color: var(--yellow);">
+            <i class="fas fa-ellipsis"></i>
+          </div>
+          <div class="tab-card-info">
+            <h3>المزيد</h3>
+            <p>More</p>
+          </div>
+        </div>
+        <p class="tab-card-desc">
+          العملاء، الموردون، الطلبات، الفواتير، المصروفات، الإشعارات، الملف الشخصي، الإعدادات، المزامنة — كل ما لا يندرج تحت التبويبات الأخرى.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== ROUTES SECTION ====== -->
+<section class="section" id="routes">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fas fa-route"></i>
+      </div>
+      <h2 class="section-title">جميع المسارات — 55 مسار</h2>
+      <p class="section-subtitle">كل مسارات التطبيق مصنفة حسب التبويب</p>
+    </div>
+
+    <div class="glass animate-on-scroll" style="padding: 28px;">
+      <!-- Tabs -->
+      <div class="routes-tabs">
+        <button class="routes-tab-btn active" onclick="switchRoutesTab(this, 'tab-dashboard')">
+          <i class="fas fa-chart-pie"></i> لوحة التحكم <span class="btn-count">2</span>
+        </button>
+        <button class="routes-tab-btn" onclick="switchRoutesTab(this, 'tab-reports')">
+          <i class="fas fa-chart-bar"></i> التقارير <span class="btn-count">13</span>
+        </button>
+        <button class="routes-tab-btn" onclick="switchRoutesTab(this, 'tab-ai')">
+          <i class="fas fa-wand-magic-sparkles"></i> الذكاء <span class="btn-count">15</span>
+        </button>
+        <button class="routes-tab-btn" onclick="switchRoutesTab(this, 'tab-monitoring')">
+          <i class="fas fa-heart-pulse"></i> المراقبة <span class="btn-count">8</span>
+        </button>
+        <button class="routes-tab-btn" onclick="switchRoutesTab(this, 'tab-more')">
+          <i class="fas fa-ellipsis"></i> المزيد <span class="btn-count">15</span>
+        </button>
+        <button class="routes-tab-btn" onclick="switchRoutesTab(this, 'tab-auth')">
+          <i class="fas fa-lock"></i> Auth <span class="btn-count">2</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: Dashboard -->
+      <div class="routes-panel active" id="tab-dashboard">
+        <div class="route-group-title">
+          <i class="fas fa-chart-pie"></i>
+          لوحة التحكم — Dashboard
+          <span class="route-group-count">2 مسارات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">DashboardScreen</span>
+          <span class="route-desc">الصفحة الرئيسية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/dashboard</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">DashboardScreen</span>
+          <span class="route-desc">لوحة التحكم</span>
+        </div>
+      </div>
+
+      <!-- Tab 2: Reports -->
+      <div class="routes-panel" id="tab-reports">
+        <div class="route-group-title">
+          <i class="fas fa-chart-bar"></i>
+          التقارير — Reports
+          <span class="route-group-count">13 مسار</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ReportsScreen</span>
+          <span class="route-desc">قائمة التقارير</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/daily-sales</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">DailySalesReportScreen</span>
+          <span class="route-desc">المبيعات اليومية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/profit</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ProfitReportScreen</span>
+          <span class="route-desc">الأرباح</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/tax</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">TaxReportScreen</span>
+          <span class="route-desc">الضرائب</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/vat</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">VatReportScreen</span>
+          <span class="route-desc">ضريبة القيمة المضافة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/inventory</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">InventoryReportScreen</span>
+          <span class="route-desc">المخزون</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/customers</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">CustomerReportScreen</span>
+          <span class="route-desc">العملاء</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/top-products</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">TopProductsReportScreen</span>
+          <span class="route-desc">أفضل المنتجات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/sales-analytics</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">SalesAnalyticsScreen</span>
+          <span class="route-desc">تحليل المبيعات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/staff-performance</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">StaffPerformanceScreen</span>
+          <span class="route-desc">أداء الموظفين</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/peak-hours</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">PeakHoursReportScreen</span>
+          <span class="route-desc">ساعات الذروة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/debts</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">DebtsReportScreen</span>
+          <span class="route-desc">الديون</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/reports/complaints</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ComplaintsReportScreen</span>
+          <span class="route-desc">الشكاوى</span>
+        </div>
+      </div>
+
+      <!-- Tab 3: AI -->
+      <div class="routes-panel" id="tab-ai">
+        <div class="route-group-title">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          الذكاء الاصطناعي — AI
+          <span class="route-group-count">15 مسار</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/assistant</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiAssistantScreen</span>
+          <span class="route-desc">المساعد الذكي</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/sales-forecasting</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiSalesForecastingScreen</span>
+          <span class="route-desc">التنبؤ بالمبيعات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/smart-pricing</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiSmartPricingScreen</span>
+          <span class="route-desc">التسعير الذكي</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/fraud-detection</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiFraudDetectionScreen</span>
+          <span class="route-desc">كشف الاحتيال</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/basket-analysis</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiBasketAnalysisScreen</span>
+          <span class="route-desc">تحليل السلة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/customer-recommendations</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiCustomerRecommendationsScreen</span>
+          <span class="route-desc">توصيات العملاء</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/smart-inventory</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiSmartInventoryScreen</span>
+          <span class="route-desc">المخزون الذكي</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/competitor-analysis</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiCompetitorAnalysisScreen</span>
+          <span class="route-desc">تحليل المنافسين</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/smart-reports</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiSmartReportsScreen</span>
+          <span class="route-desc">التقارير الذكية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/staff-analytics</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiStaffAnalyticsScreen</span>
+          <span class="route-desc">تحليلات الموظفين</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/product-recognition</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiProductRecognitionScreen</span>
+          <span class="route-desc">التعرف على المنتجات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/sentiment-analysis</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiSentimentAnalysisScreen</span>
+          <span class="route-desc">تحليل المشاعر</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/return-prediction</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiReturnPredictionScreen</span>
+          <span class="route-desc">توقع المرتجعات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/promotion-designer</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiPromotionDesignerScreen</span>
+          <span class="route-desc">مصمم العروض</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/ai/chat-with-data</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">AiChatWithDataScreen</span>
+          <span class="route-desc">محادثة مع البيانات</span>
+        </div>
+      </div>
+
+      <!-- Tab 4: Monitoring -->
+      <div class="routes-panel" id="tab-monitoring">
+        <div class="route-group-title">
+          <i class="fas fa-heart-pulse"></i>
+          المراقبة — Monitoring
+          <span class="route-group-count">8 مسارات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/monitoring</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">_MonitoringHubScreen</span>
+          <span class="route-desc">مركز المراقبة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/monitoring/inventory-alerts</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">InventoryAlertsScreen</span>
+          <span class="route-desc">تنبيهات المخزون</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/inventory</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">InventoryScreen</span>
+          <span class="route-desc">المخزون</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/expiry-tracking</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ExpiryTrackingScreen</span>
+          <span class="route-desc">تتبع الصلاحية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/shifts</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ShiftsScreen</span>
+          <span class="route-desc">الورديات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/shifts/summary</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ShiftSummaryScreen</span>
+          <span class="route-desc">ملخص الوردية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/products</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ProductsScreen</span>
+          <span class="route-desc">المنتجات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/products/:id</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ProductDetailScreen</span>
+          <span class="route-desc">تفاصيل المنتج</span>
+        </div>
+      </div>
+
+      <!-- Tab 5: More -->
+      <div class="routes-panel" id="tab-more">
+        <div class="route-group-title">
+          <i class="fas fa-ellipsis"></i>
+          المزيد — More
+          <span class="route-group-count">15 مسار</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/more</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">_MoreMenuScreen</span>
+          <span class="route-desc">القائمة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/customers</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">CustomersScreen</span>
+          <span class="route-desc">العملاء</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/customers/:id</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">CustomerDetailScreen</span>
+          <span class="route-desc">تفاصيل العميل</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/suppliers</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">SuppliersScreen</span>
+          <span class="route-desc">الموردون</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/suppliers/:id</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">SupplierDetailScreen</span>
+          <span class="route-desc">تفاصيل المورد</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/orders</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">OrdersScreen</span>
+          <span class="route-desc">الطلبات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/invoices</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">InvoicesScreen</span>
+          <span class="route-desc">الفواتير</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/invoices/:id</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">InvoiceDetailScreen</span>
+          <span class="route-desc">تفاصيل الفاتورة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/expenses</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ExpensesScreen</span>
+          <span class="route-desc">المصروفات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/expense-categories</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ExpenseCategoriesScreen</span>
+          <span class="route-desc">فئات المصروفات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/profile</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ProfileScreen</span>
+          <span class="route-desc">الملف الشخصي</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/settings</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">_LiteSettingsScreen</span>
+          <span class="route-desc">الإعدادات</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/settings/language</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">LanguageScreen</span>
+          <span class="route-desc">اللغة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/settings/theme</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">ThemeScreen</span>
+          <span class="route-desc">المظهر</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/sync-status</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">SyncStatusScreen</span>
+          <span class="route-desc">حالة المزامنة</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/notifications</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">NotificationsScreen</span>
+          <span class="route-desc">الإشعارات</span>
+        </div>
+      </div>
+
+      <!-- Auth -->
+      <div class="routes-panel" id="tab-auth">
+        <div class="route-group-title">
+          <i class="fas fa-lock"></i>
+          المصادقة — Auth (خارج Shell)
+          <span class="route-group-count">2 مسار</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/splash</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">_LiteSplashScreen</span>
+          <span class="route-desc">شاشة البداية</span>
+        </div>
+        <div class="route-item">
+          <span class="route-path">/login</span>
+          <span class="route-arrow"><i class="fas fa-arrow-left"></i></span>
+          <span class="route-screen">_LiteLoginPlaceholder</span>
+          <span class="route-desc">تسجيل الدخول</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== ARCHITECTURE SECTION ====== -->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+        <i class="fas fa-cubes"></i>
+      </div>
+      <h2 class="section-title">الهيكلة المعمارية</h2>
+      <p class="section-subtitle">بنية خفيفة للقراءة فقط — Riverpod + GoRouter + GetIt</p>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="arch-diagram glass animate-on-scroll" style="padding: 32px;">
+      <div class="arch-layer">
+        <div class="arch-layer-label">UI Layer — الواجهات</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: rgba(14,165,233,0.4); background: rgba(14,165,233,0.06); color: var(--accent-light);">
+            LiteShell
+          </div>
+          <div class="arch-box" style="border-color: rgba(14,165,233,0.3); background: rgba(14,165,233,0.04); color: var(--accent-light);">
+            5 Bottom Tabs
+          </div>
+          <div class="arch-box" style="border-color: rgba(79,172,254,0.3); background: rgba(79,172,254,0.04); color: var(--blue);">
+            55 Screens
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fas fa-arrow-down"></i></div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-label">State Management — إدارة الحالة</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.06); color: var(--purple);">
+            Riverpod
+          </div>
+          <div class="arch-box" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.04); color: var(--purple);">
+            GoRouter
+          </div>
+          <div class="arch-box" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.04); color: var(--purple);">
+            GetIt DI
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fas fa-arrow-down"></i></div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-label">Data Layer — طبقة البيانات (قراءة فقط)</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: rgba(0,212,170,0.4); background: rgba(0,212,170,0.06); color: var(--green);">
+            Read-Only Repos
+          </div>
+          <div class="arch-box" style="border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.04); color: var(--green);">
+            Drift (SQLite)
+          </div>
+          <div class="arch-box" style="border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.04); color: var(--green);">
+            Supabase
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture Features -->
+    <div class="arch-features">
+      <div class="arch-feature glass animate-on-scroll">
+        <div class="arch-feature-icon" style="background: rgba(14,165,233,0.15); color: var(--accent);">
+          <i class="fas fa-eye"></i>
+        </div>
+        <div class="arch-feature-info">
+          <h4>للقراءة فقط (Read-focused)</h4>
+          <p>لا يوجد repos للكتابة (مبيعات/مشتريات). التطبيق مصمم للمراقبة والتقارير فقط — بدون عمليات بيع أو شراء.</p>
+        </div>
+      </div>
+
+      <div class="arch-feature glass animate-on-scroll">
+        <div class="arch-feature-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+          <i class="fas fa-feather"></i>
+        </div>
+        <div class="arch-feature-info">
+          <h4>حقن تبعيات خفيف (Lightweight DI)</h4>
+          <p>فقط المستودعات الضرورية للقراءة — بدون POS services أو sale services أو print services.</p>
+        </div>
+      </div>
+
+      <div class="arch-feature glass animate-on-scroll">
+        <div class="arch-feature-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <div class="arch-feature-info">
+          <h4>LiteShell مع 5 تبويبات</h4>
+          <p>Bottom Navigation مع IndexedStack — تنقل سريع بين التبويبات مع الحفاظ على حالة كل تبويب.</p>
+        </div>
+      </div>
+
+      <div class="arch-feature glass animate-on-scroll">
+        <div class="arch-feature-icon" style="background: rgba(245,158,11,0.15); color: var(--yellow);">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <div class="arch-feature-info">
+          <h4>أداء عالي</h4>
+          <p>بنية خفيفة بدون خدمات ثقيلة — بدء أسرع، استهلاك أقل للذاكرة، تجربة مستخدم سلسة.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== DEPENDENCIES SECTION ====== -->
+<section class="section" id="dependencies">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+        <i class="fas fa-puzzle-piece"></i>
+      </div>
+      <h2 class="section-title">التبعيات</h2>
+      <p class="section-subtitle">10 حزم داخلية + 6 حزم خارجية</p>
+    </div>
+
+    <div class="deps-grid">
+      <!-- Internal -->
+      <div class="dep-panel glass animate-on-scroll">
+        <div class="dep-panel-title">
+          <i class="fas fa-cubes"></i>
+          الحزم الداخلية
+          <span class="dep-count">10</span>
+        </div>
+        <div class="dep-items">
+          <span class="dep-tag highlight">alhai_core</span>
+          <span class="dep-tag highlight">alhai_services</span>
+          <span class="dep-tag highlight">alhai_design_system</span>
+          <span class="dep-tag highlight">alhai_database</span>
+          <span class="dep-tag highlight">alhai_sync</span>
+          <span class="dep-tag highlight">alhai_l10n</span>
+          <span class="dep-tag highlight">alhai_auth</span>
+          <span class="dep-tag highlight">alhai_shared_ui</span>
+          <span class="dep-tag highlight">alhai_ai</span>
+          <span class="dep-tag highlight">alhai_reports</span>
+        </div>
+        <div class="dep-note">
+          <i class="fas fa-circle-xmark"></i>
+          <span>لا يتضمن <strong>alhai_pos</strong> — لا توجد وظائف نقاط البيع (POS) في هذا التطبيق</span>
+        </div>
+      </div>
+
+      <!-- External -->
+      <div class="dep-panel glass animate-on-scroll">
+        <div class="dep-panel-title">
+          <i class="fas fa-box-open"></i>
+          الحزم الخارجية
+          <span class="dep-count">6</span>
+        </div>
+        <div class="dep-items">
+          <span class="dep-tag">go_router</span>
+          <span class="dep-tag">flutter_riverpod</span>
+          <span class="dep-tag">get_it</span>
+          <span class="dep-tag">supabase_flutter</span>
+          <span class="dep-tag">shared_preferences</span>
+          <span class="dep-tag">firebase_core</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== TESTS SECTION ====== -->
+<section class="section" id="tests">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fas fa-vial"></i>
+      </div>
+      <h2 class="section-title">الاختبارات</h2>
+      <p class="section-subtitle">57 اختبار موزعة على 3 ملفات</p>
+    </div>
+
+    <div class="tests-panel glass animate-on-scroll">
+      <div class="test-header">
+        <div>
+          <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;">ملفات الاختبار</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">جميع الاختبارات ناجحة</p>
+        </div>
+        <div class="test-total">
+          57 <span>اختبار</span>
+        </div>
+      </div>
+
+      <div class="test-files">
+        <div class="test-file">
+          <div class="test-file-icon" style="background: rgba(14,165,233,0.15); color: var(--accent);">
+            <i class="fas fa-route"></i>
+          </div>
+          <div class="test-file-info">
+            <div class="test-file-name">router_test.dart</div>
+            <div class="test-file-desc">اختبارات التوجيه — جميع المسارات الـ 55</div>
+          </div>
+          <div class="test-bar">
+            <div class="test-bar-fill" data-width="79"></div>
+          </div>
+          <div class="test-file-count">45</div>
+        </div>
+
+        <div class="test-file">
+          <div class="test-file-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+            <i class="fas fa-syringe"></i>
+          </div>
+          <div class="test-file-info">
+            <div class="test-file-name">injection_test.dart</div>
+            <div class="test-file-desc">اختبارات حقن التبعيات — GetIt</div>
+          </div>
+          <div class="test-bar">
+            <div class="test-bar-fill" data-width="16"></div>
+          </div>
+          <div class="test-file-count">9</div>
+        </div>
+
+        <div class="test-file">
+          <div class="test-file-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+            <i class="fas fa-mobile-screen"></i>
+          </div>
+          <div class="test-file-info">
+            <div class="test-file-name">lite_shell_test.dart</div>
+            <div class="test-file-desc">اختبارات الواجهة الرئيسية — LiteShell</div>
+          </div>
+          <div class="test-bar">
+            <div class="test-bar-fill" data-width="5"></div>
+          </div>
+          <div class="test-file-count">5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== COMPATIBILITY SECTION ====== -->
+<section class="section" id="compatibility">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(245,158,11,0.15); color: var(--yellow);">
+        <i class="fas fa-check-double"></i>
+      </div>
+      <h2 class="section-title">التوافقية</h2>
+      <p class="section-subtitle">حالة التوافق مع الأنظمة والمكونات</p>
+    </div>
+
+    <div class="compat-grid animate-on-scroll" style="max-width: 900px; margin: 0 auto;">
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-mobile-screen-button" style="color: var(--accent);"></i></div>
+        <div class="compat-label">الجوال (Mobile)</div>
+        <div class="compat-value excellent">ممتاز</div>
+      </div>
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-gauge-high" style="color: var(--blue);"></i></div>
+        <div class="compat-label">الأداء (Performance)</div>
+        <div class="compat-value good">جيد</div>
+      </div>
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-database" style="color: var(--green);"></i></div>
+        <div class="compat-label">Drift (SQLite)</div>
+        <div class="compat-value yes"><i class="fas fa-check-circle"></i> مدعوم</div>
+      </div>
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-cloud" style="color: var(--purple);"></i></div>
+        <div class="compat-label">Supabase</div>
+        <div class="compat-value yes"><i class="fas fa-check-circle"></i> مدعوم</div>
+      </div>
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-language" style="color: var(--yellow);"></i></div>
+        <div class="compat-label">الترجمة (L10n)</div>
+        <div class="compat-value yes"><i class="fas fa-check-circle"></i> مدعوم</div>
+      </div>
+      <div class="compat-item glass">
+        <div class="compat-icon"><i class="fas fa-palette" style="color: var(--pink);"></i></div>
+        <div class="compat-label">تجربة المستخدم (UX)</div>
+        <div class="compat-value good">جيد</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+  <div class="container">
+    <a href="project_report.html" class="footer-back">
+      <i class="fas fa-arrow-right"></i>
+      العودة للتقرير الرئيسي
+    </a>
+    <p>الإدارة المبسطة — Admin Lite</p>
+    <p style="font-size: 0.82rem;">جزء من منصة <strong style="color: var(--accent);">الحي</strong> — Alhai POS Monorepo</p>
+    <div class="footer-stats">
+      <span class="footer-stat"><span>55</span> مسار</span>
+      <span class="footer-stat"><span>57</span> اختبار</span>
+      <span class="footer-stat"><span>5</span> تبويبات</span>
+      <span class="footer-stat"><span>16</span> تبعية</span>
+    </div>
+    <p style="margin-top: 16px; font-size: 0.78rem; color: var(--text-muted);">
+      تاريخ التقرير: ٢٠ فبراير ٢٠٢٦
+    </p>
+  </div>
+</footer>
+
+<!-- ====== BACK TO TOP ====== -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ====== SCRIPTS ====== -->
+<script>
+// ====== Scroll Animations ======
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+// ====== Counter Animation ======
+function animateCounters() {
+  document.querySelectorAll('.counter-value[data-target]').forEach(counter => {
+    const target = parseInt(counter.dataset.target);
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        counter.textContent = target;
+        clearInterval(timer);
+      } else {
+        counter.textContent = Math.floor(current);
+      }
+    }, 16);
+  });
+}
+
+// Start counters when hero is visible
+const heroObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    animateCounters();
+    heroObserver.disconnect();
+  }
+}, { threshold: 0.3 });
+
+heroObserver.observe(document.querySelector('.hero'));
+
+// ====== Nav Visibility ======
+let lastScroll = 0;
+const nav = document.getElementById('navbar');
+const backToTop = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset;
+
+  if (currentScroll > 300) {
+    nav.classList.add('visible');
+    backToTop.classList.add('visible');
+  } else {
+    nav.classList.remove('visible');
+    backToTop.classList.remove('visible');
+  }
+
+  lastScroll = currentScroll;
+});
+
+// ====== Routes Tabs ======
+function switchRoutesTab(btn, panelId) {
+  // Remove active from all buttons
+  btn.parentElement.querySelectorAll('.routes-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Hide all panels
+  document.querySelectorAll('.routes-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ====== Bottom Nav Demo ======
+function setActiveTab(el) {
+  el.parentElement.querySelectorAll('.nav-item-demo').forEach(item => item.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ====== Test Bar Animation ======
+const testBarObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.test-bar-fill').forEach(bar => {
+        const width = bar.dataset.width;
+        setTimeout(() => {
+          bar.style.width = width + '%';
+        }, 300);
+      });
+      testBarObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.tests-panel').forEach(el => testBarObserver.observe(el));
+
+// ====== Smooth scroll for nav links ======
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>

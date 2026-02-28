@@ -1,0 +1,823 @@
+/// Cashier Purchase Request Screen - Quick purchase request
+///
+/// Allows cashier to search products from DB, add them to a request list,
+/// specify quantities, add notes, and submit as a draft purchase.
+/// Supports: RTL Arabic, dark/light theme, responsive layout.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
+import 'package:get_it/get_it.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_database/alhai_database.dart';
+// alhai_design_system is re-exported via alhai_shared_ui
+
+const _uuid = Uuid();
+
+// ─── Request Item Model ──────────────────────────────────────────
+
+class _RequestItem {
+  final ProductsTableData product;
+  final TextEditingController qtyController;
+
+  _RequestItem({required this.product})
+      : qtyController = TextEditingController(text: '1');
+
+  int get quantity => int.tryParse(qtyController.text) ?? 0;
+
+  void dispose() {
+    qtyController.dispose();
+  }
+}
+
+// ─── Screen ──────────────────────────────────────────────────────
+
+/// شاشة طلب شراء سريع
+class CashierPurchaseRequestScreen extends ConsumerStatefulWidget {
+  const CashierPurchaseRequestScreen({super.key});
+
+  @override
+  ConsumerState<CashierPurchaseRequestScreen> createState() =>
+      _CashierPurchaseRequestScreenState();
+}
+
+class _CashierPurchaseRequestScreenState
+    extends ConsumerState<CashierPurchaseRequestScreen> {
+  final _db = GetIt.I<AppDatabase>();
+  final _searchController = TextEditingController();
+  final _notesController = TextEditingController();
+
+  List<ProductsTableData> _searchResults = [];
+  final List<_RequestItem> _requestItems = [];
+  bool _isSearching = false;
+  bool _isSending = false;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _notesController.dispose();
+    for (final item in _requestItems) {
+      item.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _searchProducts(String query) async {
+    if (query.length < 2) {
+      setState(() => _searchResults = []);
+      return;
+    }
+    setState(() => _isSearching = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final products = await _db.productsDao.searchProducts(query, storeId);
+      if (mounted) {
+        // Exclude already added products
+        final addedIds = _requestItems.map((i) => i.product.id).toSet();
+        setState(() {
+          _searchResults =
+              products.where((p) => !addedIds.contains(p.id)).toList();
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isSearching = false);
+    }
+  }
+
+  void _addProduct(ProductsTableData product) {
+    setState(() {
+      _requestItems.add(_RequestItem(product: product));
+      _searchResults = [];
+      _searchController.clear();
+    });
+  }
+
+  void _removeProduct(int index) {
+    setState(() {
+      _requestItems[index].dispose();
+      _requestItems.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isWideScreen = size.width > 900;
+    final isMediumScreen = size.width > 600;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+
+    return Column(
+      children: [
+        AppHeader(
+          title: 'طلب شراء سريع',
+          subtitle: _getDateSubtitle(l10n),
+          showSearch: false,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: user?.name ?? l10n.cashCustomer,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: isWideScreen
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            _buildSearchSection(isDark, l10n),
+                            const SizedBox(height: 24),
+                            _buildItemsList(isDark, l10n),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            _buildSummaryCard(isDark, l10n),
+                            const SizedBox(height: 24),
+                            _buildNotesSection(isDark, l10n),
+                            const SizedBox(height: 24),
+                            _buildSendButton(isDark, l10n),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildSearchSection(isDark, l10n),
+                      SizedBox(height: isMediumScreen ? 24 : 16),
+                      _buildItemsList(isDark, l10n),
+                      SizedBox(height: isMediumScreen ? 24 : 16),
+                      _buildSummaryCard(isDark, l10n),
+                      const SizedBox(height: 16),
+                      _buildNotesSection(isDark, l10n),
+                      const SizedBox(height: 24),
+                      _buildSendButton(isDark, l10n),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDateSubtitle(AppLocalizations l10n) {
+    final now = DateTime.now();
+    return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
+  }
+
+  // ─── Search Section ────────────────────────────────────────────
+
+  Widget _buildSearchSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.search_rounded,
+                    color: AppColors.primary, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.searchProduct,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _searchController,
+            onChanged: _searchProducts,
+            style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            decoration: InputDecoration(
+              hintText: l10n.searchByNameOrBarcode,
+              hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
+              prefixIcon: Icon(Icons.search_rounded,
+                  color: AppColors.getTextMuted(isDark)),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.close_rounded,
+                          color: AppColors.getTextMuted(isDark)),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchResults = []);
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: AppColors.getSurfaceVariant(isDark),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+          if (_isSearching)
+            const Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          if (_searchResults.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(
+                color: AppColors.getSurfaceVariant(isDark),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.getBorder(isDark)),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: _searchResults.take(5).map((product) {
+                  return InkWell(
+                    onTap: () => _addProduct(product),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.getBorder(isDark)
+                                .withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color:
+                                  AppColors.primary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.inventory_2_outlined,
+                                color: AppColors.primary, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.name,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.getTextPrimary(isDark),
+                                  ),
+                                ),
+                                Text(
+                                  '${l10n.stock}: ${product.stockQty}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: _getStockColor(product.stockQty),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.add_circle_outline_rounded,
+                              color: AppColors.primary, size: 22),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStockColor(int qty) {
+    if (qty <= 0) return AppColors.error;
+    if (qty < 10) return AppColors.warning;
+    return AppColors.success;
+  }
+
+  // ─── Items List ────────────────────────────────────────────────
+
+  Widget _buildItemsList(bool isDark, AppLocalizations l10n) {
+    if (_requestItems.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.getBorder(isDark),
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(Icons.add_shopping_cart_rounded,
+                size: 48, color: AppColors.getTextMuted(isDark)),
+            const SizedBox(height: 12),
+            Text(
+              'ابحث عن منتجات وأضفها للطلب',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.shopping_cart_rounded,
+                      color: AppColors.secondary, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'المنتجات المطلوبة',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${_requestItems.length} منتج',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          ...List.generate(_requestItems.length, (index) {
+            final item = _requestItems[index];
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                border: index < _requestItems.length - 1
+                    ? Border(
+                        bottom: BorderSide(
+                          color: AppColors.getBorder(isDark)
+                              .withValues(alpha: 0.5),
+                        ),
+                      )
+                    : null,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.product.name,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Icon(Icons.inventory_2_outlined,
+                                size: 12,
+                                color: _getStockColor(item.product.stockQty)),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${l10n.currentStock}: ${item.product.stockQty}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _getStockColor(item.product.stockQty),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      controller: item.qtyController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      onChanged: (_) => setState(() {}),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 10),
+                        filled: true,
+                        fillColor: AppColors.getSurfaceVariant(isDark),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide:
+                              BorderSide(color: AppColors.getBorder(isDark)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide:
+                              BorderSide(color: AppColors.getBorder(isDark)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                              color: AppColors.primary, width: 2),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: () => _removeProduct(index),
+                    icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                    color: AppColors.error,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // ─── Summary Card ──────────────────────────────────────────────
+
+  Widget _buildSummaryCard(bool isDark, AppLocalizations l10n) {
+    final totalItems = _requestItems.length;
+    final totalQty =
+        _requestItems.fold<int>(0, (sum, item) => sum + item.quantity);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.summarize_rounded,
+                    color: AppColors.primary, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'ملخص الطلب',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _summaryItem(
+                  'عدد المنتجات',
+                  '$totalItems',
+                  AppColors.info,
+                  isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _summaryItem(
+                  'إجمالي الكمية',
+                  '$totalQty',
+                  AppColors.secondary,
+                  isDark,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _summaryItem(
+      String label, String value, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Notes Section ─────────────────────────────────────────────
+
+  Widget _buildNotesSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.info.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.note_alt_rounded,
+                    color: AppColors.info, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.noteLabel,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _notesController,
+            maxLines: 3,
+            style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            decoration: InputDecoration(
+              hintText: 'أضف ملاحظات للمدير (اختياري)...',
+              hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
+              filled: true,
+              fillColor: AppColors.getSurfaceVariant(isDark),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.getBorder(isDark)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
+              ),
+              contentPadding: const EdgeInsets.all(16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Send Button ───────────────────────────────────────────────
+
+  Widget _buildSendButton(bool isDark, AppLocalizations l10n) {
+    final hasItems = _requestItems.isNotEmpty &&
+        _requestItems.every((item) => item.quantity > 0);
+
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: _isSending || !hasItems ? null : _sendRequest,
+        icon: _isSending
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
+              )
+            : const Icon(Icons.send_rounded, size: 20),
+        label: const Text('إرسال الطلب',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
+
+  // ─── Send Request Logic ────────────────────────────────────────
+
+  Future<void> _sendRequest() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (_requestItems.isEmpty) return;
+    if (_requestItems.any((item) => item.quantity <= 0)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('يرجى إدخال كمية صحيحة لجميع المنتجات'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSending = true);
+
+    try {
+      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+      final purchaseId = _uuid.v4();
+      final purchaseNumber = 'PO-${DateTime.now().millisecondsSinceEpoch}';
+      final now = DateTime.now();
+
+      // Calculate subtotal
+      final subtotal = _requestItems.fold<double>(
+        0,
+        (sum, item) => sum + (item.product.price * item.quantity),
+      );
+
+      // 1. Insert purchase
+      await _db.purchasesDao.insertPurchase(
+        PurchasesTableCompanion.insert(
+          id: purchaseId,
+          storeId: storeId,
+          purchaseNumber: purchaseNumber,
+          status: const Value('draft'),
+          subtotal: Value(subtotal),
+          total: Value(subtotal),
+          notes: Value(_notesController.text.isNotEmpty
+              ? _notesController.text.trim()
+              : null),
+          createdAt: now,
+          updatedAt: Value(now),
+        ),
+      );
+
+      // 2. Insert purchase items
+      final purchaseItems = _requestItems.map((item) {
+        return PurchaseItemsTableCompanion.insert(
+          id: _uuid.v4(),
+          purchaseId: purchaseId,
+          productId: item.product.id,
+          productName: item.product.name,
+          productBarcode: Value(item.product.barcode),
+          qty: item.quantity,
+          unitCost: item.product.price,
+          total: item.product.price * item.quantity,
+        );
+      }).toList();
+
+      await _db.purchasesDao.insertPurchaseItems(purchaseItems);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إرسال الطلب للمدير'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+
+      // Clear form
+      setState(() {
+        for (final item in _requestItems) {
+          item.dispose();
+        }
+        _requestItems.clear();
+        _notesController.clear();
+        _searchController.clear();
+        _searchResults = [];
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorWithDetails('$e')),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+}

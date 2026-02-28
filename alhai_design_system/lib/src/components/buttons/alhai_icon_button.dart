@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../responsive/context_ext.dart';
 import '../../tokens/alhai_durations.dart';
 import '../../tokens/alhai_motion.dart';
 import '../../tokens/alhai_spacing.dart';
@@ -66,9 +67,16 @@ class _AlhaiIconButtonState extends State<AlhaiIconButton>
       duration: AlhaiDurations.quick,
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: AlhaiMotion.buttonPress),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.duration =
+        context.prefersReducedMotion ? Duration.zero : AlhaiDurations.quick;
   }
 
   @override

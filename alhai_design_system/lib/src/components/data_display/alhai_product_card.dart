@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../responsive/context_ext.dart';
 import '../../tokens/alhai_colors.dart';
 import '../../tokens/alhai_durations.dart';
 import '../../tokens/alhai_radius.dart';
@@ -229,7 +230,9 @@ class AlhaiProductCard extends StatelessWidget {
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
           if (wasSynchronouslyLoaded) return child;
           return AnimatedSwitcher(
-            duration: AlhaiDurations.standard,
+            duration: context.prefersReducedMotion
+                ? Duration.zero
+                : AlhaiDurations.standard,
             child: frame != null ? child : _buildPlaceholder(colorScheme),
           );
         },

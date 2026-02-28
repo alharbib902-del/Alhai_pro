@@ -41,8 +41,8 @@
 ```
 alhai/
 ├── .env.example          ← قالب للمطورين
-├── pos_app/
-│   └── .env              ← خاص بـ pos_app
+├── cashier/
+│   └── .env              ← خاص بـ cashier
 ├── customer_app/
 │   └── .env              ← خاص بـ customer_app
 └── ...
@@ -78,7 +78,7 @@ SMS_API_KEY=
 **المطلوب حسب TEAM_WORKFLOW.md:**
 
 ```
-pos_app/
+cashier/
 └── .context/
     ├── A1_SESSION.md
     ├── A2_SESSION.md
@@ -101,7 +101,7 @@ customer_app/
 
 **الوضع الحالي:**
 ```
-pos_app/lib/
+cashier/lib/
 ├── main.dart
 ├── core/router/
 └── di/
@@ -114,9 +114,9 @@ customer_app/lib/
 └── shared/
 ```
 
-**المطلوب (كمثال لـ pos_app):**
+**المطلوب (كمثال لـ cashier):**
 ```
-pos_app/lib/
+cashier/lib/
 ├── main.dart
 ├── core/
 │   ├── router/
@@ -177,7 +177,7 @@ pos_app/lib/
 ### 🖥️ الجهاز A - فريق POS
 
 **التطبيقات المملوكة:**
-- `pos_app` (تطبيق نقطة البيع) ← **الأولوية القصوى**
+- `cashier` (تطبيق نقطة البيع) ← **الأولوية القصوى**
 - `admin_pos` (لوحة التحكم)
 - `super_admin` (المشرف العام)
 
@@ -185,9 +185,9 @@ pos_app/lib/
 
 | الأسبوع | التطبيق | المهام |
 |---------|---------|--------|
-| 1-2 | pos_app | Auth, Sales, Cart, Checkout |
-| 3 | pos_app | Offline, Sync, PIN |
-| 4 | pos_app | Refunds, Cash Movement |
+| 1-2 | cashier | Auth, Sales, Cart, Checkout |
+| 3 | cashier | Offline, Sync, PIN |
+| 4 | cashier | Refunds, Cash Movement |
 | 5 | admin_pos | Dashboard MVP |
 | 6-7 | admin_pos | Full Features |
 | 8-9 | super_admin | Platform Admin |

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../tokens/alhai_spacing.dart';
 
@@ -98,8 +99,8 @@ class AlhaiPriceText extends StatelessWidget {
         break;
     }
 
-    final priceText = _formatPrice(amount, currency);
-    final originalText = hasDiscount ? _formatPrice(originalAmount!, currency) : null;
+    final priceText = _formatPrice(context, amount, currency);
+    final originalText = hasDiscount ? _formatPrice(context, originalAmount!, currency) : null;
 
     if (!hasDiscount) {
       return Text(
@@ -127,10 +128,17 @@ class AlhaiPriceText extends StatelessWidget {
     );
   }
 
-  String _formatPrice(double value, String currency) {
-    // Simple formatting - can be enhanced
-    final formatted = value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2);
-    return '$formatted $currency';
+  String _formatPrice(BuildContext context, double value, String currencyLabel) {
+    // M160: Locale-aware formatting with thousands separators
+    final locale = Localizations.localeOf(context).toString();
+    final decimals = value.truncateToDouble() == value ? 0 : 2;
+    final format = NumberFormat.currency(
+      locale: locale,
+      symbol: '',
+      decimalDigits: decimals,
+    );
+    final formatted = format.format(value).trim();
+    return '$formatted $currencyLabel';
   }
 }
 

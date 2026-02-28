@@ -33,7 +33,7 @@ class UserResponse with _$UserResponse {
       name: name,
       role: UserRoleX.fromApi(role),
       storeId: storeId,
-      createdAt: DateTime.parse(createdAt),
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
     );
   }
 }

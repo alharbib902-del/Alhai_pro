@@ -41,7 +41,7 @@ class SlowMovingProductResponse {
       stockQty: stockQty,
       stockValue: stockValue,
       suggestedDiscount: suggestedDiscount ?? 0,
-      lastSaleDate: lastSaleDate != null ? DateTime.parse(lastSaleDate!) : null,
+      lastSaleDate: lastSaleDate != null ? DateTime.tryParse(lastSaleDate!) : null,
     );
   }
 }

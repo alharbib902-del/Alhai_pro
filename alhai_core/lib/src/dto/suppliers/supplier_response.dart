@@ -49,8 +49,8 @@ class SupplierResponse {
       notes: notes,
       isActive: isActive,
       balance: balance,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

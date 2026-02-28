@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/debts/debt_response.dart';
 import '../../dto/debts/create_debt_request.dart';
 import '../../dto/debts/debt_payment_response.dart';
@@ -11,7 +12,7 @@ abstract class DebtsRemoteDataSource {
     String? type,
     bool? overdueOnly,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets a debt by ID

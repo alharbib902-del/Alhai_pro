@@ -1,0 +1,58 @@
+name: alhai_shared_ui
+description: Shared widgets, layout, and common screens for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Internal packages
+  alhai_core:
+    path: ../../alhai_core
+  alhai_services:
+    path: ../../alhai_services
+  alhai_design_system:
+    path: ../../alhai_design_system
+  alhai_l10n:
+    path: ../alhai_l10n
+  alhai_database:
+    path: ../alhai_database
+  alhai_sync:
+    path: ../alhai_sync
+  alhai_auth:
+    path: ../alhai_auth
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+  get_it: ^7.7.0
+
+  # Routing
+  go_router: ^13.0.0
+
+  # Database
+  drift: ^2.14.1
+
+  # Backend
+  supabase_flutter: ^2.3.4
+
+  # Storage
+  shared_preferences: ^2.2.2
+
+  # UI helpers
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.1
+
+  # Utils
+  intl: ^0.20.2
+  uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4

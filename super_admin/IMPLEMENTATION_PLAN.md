@@ -146,7 +146,7 @@ gantt
 - admin_pos_lite (20 شاشة)
 - customer_app (80 شاشة)
 - driver_app (18 شاشة)
-- pos_app (79 شاشة)
+- cashier (79 شاشة)
 
 **Total Platform: ~303 شاشة**
 

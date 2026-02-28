@@ -176,7 +176,7 @@ class OrderFactory {
   }) {
     _counter++;
     final orderItems = items ?? [OrderItemFactory.create()];
-    final sub = subtotal ?? orderItems.fold(0.0, (sum, i) => sum + i.lineTotal);
+    final double sub = subtotal ?? orderItems.fold<double>(0.0, (sum, i) => sum + i.lineTotal);
 
     return Order(
       id: id ?? 'order-$_counter',
@@ -188,7 +188,7 @@ class OrderFactory {
       subtotal: sub,
       discount: discount ?? 0,
       deliveryFee: deliveryFee ?? 0,
-      total: total ?? (sub - (discount ?? 0) + (deliveryFee ?? 0)),
+      total: total ?? (sub - (discount ?? 0.0) + (deliveryFee ?? 0.0)),
       paymentMethod: paymentMethod ?? PaymentMethod.cash,
       isPaid: isPaid ?? false,
       createdAt: createdAt ?? DateTime.now(),

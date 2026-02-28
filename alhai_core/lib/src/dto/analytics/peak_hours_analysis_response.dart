@@ -28,8 +28,8 @@ class PeakHoursAnalysisResponse {
   /// Converts to domain model
   PeakHoursAnalysis toDomain() {
     return PeakHoursAnalysis(
-      hourlyRevenue: hourlyRevenue.map((k, v) => MapEntry(int.parse(k), v)),
-      hourlyOrders: hourlyOrders.map((k, v) => MapEntry(int.parse(k), v)),
+      hourlyRevenue: hourlyRevenue.map((k, v) => MapEntry(int.tryParse(k) ?? 0, v)),
+      hourlyOrders: hourlyOrders.map((k, v) => MapEntry(int.tryParse(k) ?? 0, v)),
       peakHour: peakHour,
       slowestHour: slowestHour,
       peakHourRevenue: peakHourRevenue,

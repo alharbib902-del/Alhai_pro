@@ -15,14 +15,14 @@
 | `Order` | الطلبات | جميع التطبيقات |
 | `User` | المستخدمين | جميع التطبيقات |
 | `Store` | المتاجر | admin_pos, super_admin |
-| `Category` | الأقسام | pos_app, customer_app, admin_pos |
-| `Cart` | السلة | customer_app, pos_app |
+| `Category` | الأقسام | cashier, customer_app, admin_pos |
+| `Cart` | السلة | customer_app, cashier |
 | `Address` | العناوين | customer_app, driver_app |
 | `Delivery` | التوصيل | driver_app, customer_app |
-| `Shift` | الورديات | pos_app, admin_pos |
-| `CashMovement` | حركة النقد | pos_app |
-| `Refund` | المرتجعات | pos_app, admin_pos |
-| `Debt` | الديون | pos_app, admin_pos |
+| `Shift` | الورديات | cashier, admin_pos |
+| `CashMovement` | حركة النقد | cashier |
+| `Refund` | المرتجعات | cashier, admin_pos |
+| `Debt` | الديون | cashier, admin_pos |
 | `Supplier` | الموردين | admin_pos |
 | `PurchaseOrder` | أوامر الشراء | admin_pos, admin_pos_lite |
 | `Analytics` | التحليلات | admin_pos, admin_pos_lite, super_admin |
@@ -30,7 +30,7 @@
 | `Distributor` | الموزعين | distributor_portal, admin_pos |
 | `WholesaleOrder` | طلبات الجملة | distributor_portal, admin_pos |
 | `PricingTier` | مستويات الأسعار | distributor_portal |
-| `Promotion` | العروض | customer_app, pos_app |
+| `Promotion` | العروض | customer_app, cashier |
 | `LoyaltyPoints` | نقاط الولاء | customer_app |
 | `CustomerAccount` | حساب العميل | customer_app |
 | `ChatMessage` | الرسائل | driver_app, customer_app |
@@ -101,7 +101,7 @@
 ┌─────────────────────┬─────────────┬────────────────────┐
 │ التطبيق             │ alhai_core  │ alhai_design_system│
 ├─────────────────────┼─────────────┼────────────────────┤
-│ pos_app             │ ✅ متوافق  │ ✅ متوافق         │
+│ cashier             │ ✅ متوافق  │ ✅ متوافق         │
 │ customer_app        │ ✅ متوافق  │ ✅ متوافق         │
 │ driver_app          │ ✅ متوافق  │ ✅ متوافق         │
 │ admin_pos           │ ✅ متوافق  │ ✅ متوافق         │

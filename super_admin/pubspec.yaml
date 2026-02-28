@@ -4,7 +4,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.10.0'
 
 dependencies:
   flutter:
@@ -18,10 +19,12 @@ dependencies:
     path: ../alhai_services
   alhai_design_system:
     path: ../alhai_design_system
+  alhai_auth:
+    path: ../packages/alhai_auth
 
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
-  get_it: ^7.6.4
+  get_it: ^7.7.0
   injectable: ^2.3.2
   go_router: ^13.0.0
   supabase_flutter: ^2.3.4
@@ -30,9 +33,22 @@ dependencies:
   intl: ^0.20.2
 
   # Charts & Tables for multi-tenant dashboard
+  #
+  # L41: License policy for charting libraries
+  # ─────────────────────────────────────────
+  # fl_chart (MIT license) is the canonical charting library for all Alhai apps.
+  #
+  # Do NOT add syncfusion_flutter_charts. Syncfusion uses a proprietary license:
+  #   - Community license: free ONLY for companies with < $1M annual gross revenue
+  #     AND < 5 developers. Must register at syncfusion.com/products/communitylicense.
+  #   - Commercial license: required for all others (~$995/dev/year).
+  #   - Redistributing without a valid license key triggers a watermark overlay.
+  #
+  # If advanced chart types are needed that fl_chart does not support (e.g., stock
+  # charts, heatmaps), evaluate graphic (BSD) or community_charts_flutter (Apache 2.0)
+  # before considering Syncfusion.
   fl_chart: ^0.65.0
   data_table_2: ^2.5.10
-  syncfusion_flutter_charts: ^31.1.19
 
 dev_dependencies:
   flutter_test:

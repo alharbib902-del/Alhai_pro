@@ -12,7 +12,7 @@
 | 2 | admin_pos_lite | 28 | Mobile | ✅ تم التخطيط | ✅ | 5% |
 | 3 | customer_app | 80 | Mobile | ✅ تم التخطيط | ✅ | 5% |
 | 4 | driver_app | 18 | Mobile | ✅ تم التخطيط | ✅ | 5% |
-| 5 | pos_app | 79 | Desktop/Tablet | ✅ تم التخطيط | ✅ | 5% |
+| 5 | cashier | 79 | Desktop/Tablet | ✅ تم التخطيط | ✅ | 5% |
 | 6 | super_admin | 52 | Web | ✅ تم التخطيط | ✅ | 5% |
 | 7 | distributor_portal | 25 | Web | ✅ تم التخطيط | ✅ | 5% |
 
@@ -40,7 +40,7 @@
 4. ⏳ alhai_design_system - واجهات المستخدم
 
 ### المرحلة 2: التطبيقات الأساسية
-5. ✅ pos_app - نقاط البيع (79 شاشة) ← تم التخطيط!
+5. ✅ cashier - نقاط البيع (79 شاشة) ← تم التخطيط!
 6. ✅ customer_app - تطبيق العملاء (80 شاشة) ← تم التخطيط!
 7. ✅ driver_app - تطبيق السائقين (18 شاشة) ← تم التخطيط!
 

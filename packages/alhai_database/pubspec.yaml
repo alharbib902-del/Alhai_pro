@@ -1,0 +1,37 @@
+name: alhai_database
+description: Shared Drift database, tables, DAOs, FTS, and seeders for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  alhai_core:
+    path: ../../alhai_core
+
+  drift: ^2.14.1
+  drift_flutter: ^0.2.4
+  sqlcipher_flutter_libs: ^0.6.5
+  # sqlite3_flutter_libs removed — sqlcipher_flutter_libs is the drop-in replacement
+  path: ^1.8.3
+  path_provider: ^2.1.1
+  uuid: ^4.4.0
+  # L42: CANONICAL location for CSV parsing in the monorepo.
+  # All apps that need CSV import/export should depend on alhai_database
+  # and use its seeder/export utilities rather than adding csv directly.
+  # For Excel (.xlsx) support, use the 'excel' package in distributor_portal
+  # only (server-side B2B exports). Do NOT add 'excel' to mobile apps.
+  csv: ^6.0.0
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.7
+  drift_dev: ^2.14.1
+  mocktail: ^1.0.4

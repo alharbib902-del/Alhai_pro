@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة نقاط الولاء والمكافآت
-/// تستخدم من: pos_app, customer_app
+/// تستخدم من: cashier, customer_app
 class LoyaltyService {
   final LoyaltyRepository _loyaltyRepo;
 

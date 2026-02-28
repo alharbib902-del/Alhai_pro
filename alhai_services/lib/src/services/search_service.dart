@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة البحث الموحد
-/// تستخدم من: pos_app, admin_pos, customer_app
+/// تستخدم من: cashier, admin_pos, customer_app
 class SearchService {
   final ProductsRepository _productsRepo;
   final OrdersRepository _ordersRepo;

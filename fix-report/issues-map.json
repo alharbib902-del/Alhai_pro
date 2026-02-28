@@ -1,0 +1,3105 @@
+{
+  "meta": {
+    "source": "audit-report/SUMMARY.md",
+    "date": "2026-02-26",
+    "overall_score": "6.24/10",
+    "audit_areas": 18,
+    "detailed_reports_processed": ["deployment", "database-functions", "database-schema", "testing", "code-quality", "database-relations", "ux", "dependencies", "security", "performance", "input-validation", "file-storage", "responsive", "dark-mode", "animations", "architecture", "api-endpoints", "localization"],
+    "remaining_reports": 0
+  },
+  "total_issues": 364,
+  "summary": {
+    "critical": 95,
+    "high": 162,
+    "medium": 107,
+    "low": 0
+  },
+  "by_area": {
+    "security":            { "score": 7.5,  "critical": 3,  "high": 7,  "low": 6,  "total": 16 },
+    "input_validation":    { "score": 7.5,  "critical": 4,  "high": 8,  "low": 7,  "total": 19 },
+    "database_schema":     { "score": 6.5,  "critical": 7,  "high": 12, "low": 9,  "total": 28 },
+    "database_relations":  { "score": 4.5,  "critical": 6,  "high": 9,  "low": 5,  "total": 20 },
+    "database_functions":  { "score": 7.2,  "critical": 8,  "high": 12, "low": 9,  "total": 29 },
+    "file_storage":        { "score": 5.5,  "critical": 6,  "high": 8,  "low": 5,  "total": 19 },
+    "testing":             { "score": 6.5,  "critical": 7,  "high": 8,  "low": 5,  "total": 20 },
+    "code_quality":        { "score": 6.5,  "critical": 7,  "high": 9,  "low": 0,  "total": 16 },
+    "responsive":          { "score": 6.5,  "critical": 5,  "high": 12, "low": 6,  "total": 23 },
+    "dark_mode":           { "score": 6.5,  "critical": 6,  "high": 8,  "low": 5,  "total": 19 },
+    "ux":                  { "score": 6.5,  "critical": 7,  "high": 14, "low": 6,  "total": 27 },
+    "animations":          { "score": 7.0,  "critical": 4,  "high": 8,  "low": 6,  "total": 18 },
+    "architecture":        { "score": 7.7,  "critical": 4,  "high": 5,  "low": 3,  "total": 12 },
+    "api_endpoints":       { "score": 6.5,  "critical": 5,  "high": 9,  "low": 7,  "total": 21 },
+    "performance":         { "score": 6.5,  "critical": 5,  "high": 18, "low": 15, "total": 38 },
+    "localization":        { "score": 5.5,  "critical": 3,  "high": 8,  "low": 6,  "total": 17 },
+    "dependencies":        { "score": 5.5,  "critical": 7,  "high": 12, "low": 9,  "total": 28 },
+    "deployment":          { "score": 2.5,  "critical": 14, "high": 15, "low": 8,  "total": 37 }
+  },
+  "critical": [
+    {
+      "id": "C01",
+      "issue": "com.example.* as applicationId in all apps",
+      "file": "android/app/build.gradle.kts (all 7 apps)",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Google Play and App Store will reject all apps immediately",
+      "fix": "Replace com.example.* with production identifiers (e.g. com.alhai.*)"
+    },
+    {
+      "id": "C02",
+      "issue": "Debug signing keys used for all apps",
+      "file": "android/ settings in all apps",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Cannot publish to any app store",
+      "fix": "Create production keystores + key.properties for each app"
+    },
+    {
+      "id": "C03",
+      "issue": ".dart_define.env not excluded from Git",
+      "file": ".gitignore",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Secret keys and credentials leaked in public repository",
+      "fix": "Add .dart_define.env to .gitignore + purge from Git history if present"
+    },
+    {
+      "id": "C04",
+      "issue": "No Firebase config files exist",
+      "file": "google-services.json / GoogleService-Info.plist (missing)",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "All Firebase features (notifications, analytics, Crashlytics) non-functional",
+      "fix": "Create Firebase projects + download config files for each app"
+    },
+    {
+      "id": "C05",
+      "issue": "CORS wildcard * in Edge Functions",
+      "file": "supabase/functions/_shared/cors.ts",
+      "line": 2,
+      "report": "security",
+      "phase": 1,
+      "impact": "Any website can call the platform's API",
+      "fix": "Replace * with specific allowed domains (e.g. https://app.alhai.sa)"
+    },
+    {
+      "id": "C06",
+      "issue": "SQL injection in public-products endpoint",
+      "file": "supabase/functions/public-products/index.ts",
+      "line": 116,
+      "report": "database_functions",
+      "phase": 1,
+      "impact": "Read/modify/delete any data in the database",
+      "fix": "Sanitize input: search.replace(/[%,.()]/g, '') before use in filter"
+    },
+    {
+      "id": "C07",
+      "issue": "XSS vulnerability in HTML receipt generation",
+      "file": "Receipt generation service",
+      "line": 0,
+      "report": "security",
+      "phase": 1,
+      "impact": "Malicious code execution in user browser via product data",
+      "fix": "Apply HTML encoding on all inputs in receipt templates"
+    },
+    {
+      "id": "C08",
+      "issue": "73 missing foreign keys in Drift database",
+      "file": "packages/alhai_database/lib/src/tables/ (all Drift tables)",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "impact": "No data integrity guarantees - orphan records possible",
+      "fix": "Add references() to all FK columns in Drift table definitions"
+    },
+    {
+      "id": "C09",
+      "issue": "No database transactions for compound operations",
+      "file": "packages/alhai_database/lib/src/daos/",
+      "line": 0,
+      "report": "database_relations",
+      "phase": 2,
+      "impact": "Partial financial operations on mid-process failure",
+      "fix": "Wrap sales, returns, transfers in database.transaction()"
+    },
+    {
+      "id": "C10",
+      "issue": "Race conditions in financial operations (AccountsDao + LoyaltyDao)",
+      "file": "packages/alhai_database/lib/src/daos/accounts_dao.dart",
+      "line": 71,
+      "report": "database_functions",
+      "phase": 2,
+      "impact": "Lost updates on concurrent balance/points changes",
+      "fix": "Use atomic SQL: UPDATE accounts SET balance = balance + ? WHERE id = ?"
+    },
+    {
+      "id": "C11",
+      "issue": "~245 files with hardcoded colors bypassing theme system",
+      "file": "Various app screens (~245 files)",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "impact": "Dark mode broken in most screens",
+      "fix": "Replace Color(0xFF...) with Theme.of(context).colorScheme references"
+    },
+    {
+      "id": "C12",
+      "issue": "883 missing translation keys in 5 languages",
+      "file": "ARB files (en, ur, hi, bn, fil, id)",
+      "line": 0,
+      "report": "localization",
+      "phase": 5,
+      "impact": "5 languages at only 70% - poor UX for non-Arabic users",
+      "fix": "Complete all ARB files for missing keys"
+    },
+    {
+      "id": "C13",
+      "issue": "LazyScreen built but never used - no code splitting",
+      "file": "pos_app/lib/",
+      "line": 0,
+      "report": "performance",
+      "phase": 3,
+      "impact": "Wasted infrastructure - no web code splitting",
+      "fix": "Enable LazyScreen with deferred loading for web"
+    },
+    {
+      "id": "C14",
+      "issue": "4 apps have only dummy/placeholder tests",
+      "file": "apps/admin/, apps/admin_lite/, apps/cashier/, super_admin/",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "impact": "Zero effective test coverage - undetected bugs",
+      "fix": "Write real Widget and Unit tests for all 4 apps"
+    },
+    {
+      "id": "C15",
+      "issue": "Missing auth guards in 3 apps",
+      "file": "apps/admin/, apps/admin_lite/, super_admin/",
+      "line": 0,
+      "report": "ux",
+      "phase": 5,
+      "impact": "Unauthenticated users can access protected screens",
+      "fix": "Add GoRouter redirect to check auth state"
+    },
+    {
+      "id": "C16",
+      "issue": "No production Flavors (dev/staging/prod)",
+      "file": "Build configs in all apps",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Cannot separate environments - risk of production data corruption",
+      "fix": "Create flavor configs + .dart_define files for each environment"
+    },
+    {
+      "id": "C17",
+      "issue": "No code obfuscation enabled",
+      "file": "Build commands",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Source code easily reverse-engineered",
+      "fix": "Enable --obfuscate --split-debug-info in build commands"
+    },
+    {
+      "id": "C18",
+      "issue": "Missing iOS folders for 3 apps",
+      "file": "apps/cashier/, apps/admin/, apps/admin_lite/ (missing ios/)",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Cannot build or deploy iOS versions",
+      "fix": "flutter create + migrate settings"
+    },
+    {
+      "id": "C19",
+      "issue": "CI/CD only covers 1 of 7 apps",
+      "file": ".github/workflows/flutter_ci.yml",
+      "line": 47,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "6 apps have no automated build/test pipeline",
+      "fix": "Extend GitHub Actions workflows to cover all 7 apps"
+    },
+    {
+      "id": "C20",
+      "issue": "No CASCADE rules for foreign key operations",
+      "file": "Drift table definitions",
+      "line": 0,
+      "report": "database_relations",
+      "phase": 2,
+      "impact": "Orphan records on parent deletion",
+      "fix": "Define CASCADE, SET NULL, or RESTRICT for each FK relationship"
+    },
+    {
+      "id": "C21",
+      "issue": "No Storage Bucket policies configured",
+      "file": "Supabase Storage buckets",
+      "line": 0,
+      "report": "file_storage",
+      "phase": 2,
+      "impact": "Unrestricted file upload/download access",
+      "fix": "Define upload/read permissions for each storage bucket"
+    },
+    {
+      "id": "C22",
+      "issue": "No server-side file type/size validation",
+      "file": "File upload middleware",
+      "line": 0,
+      "report": "file_storage",
+      "phase": 2,
+      "impact": "Malicious or oversized files can be uploaded",
+      "fix": "Add MIME type and file size validation middleware"
+    },
+    {
+      "id": "C23",
+      "issue": "double.parse/int.parse without try-catch in 30+ locations",
+      "file": "Various files (30+ locations)",
+      "line": 0,
+      "report": "input_validation",
+      "phase": 2,
+      "impact": "Unhandled FormatException crashes on invalid input",
+      "fix": "Replace with double.tryParse/int.tryParse"
+    },
+    {
+      "id": "C24",
+      "issue": "35 empty catch blocks",
+      "file": "Various files",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "impact": "Errors silently swallowed - impossible to debug",
+      "fix": "Add proper error logging in all catch blocks"
+    },
+    {
+      "id": "C25",
+      "issue": "497 generic catch(e) blocks without specific exception types",
+      "file": "Various files",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "impact": "All exceptions caught indiscriminately - hides real bugs",
+      "fix": "Replace with specific exception types"
+    },
+    {
+      "id": "C26",
+      "issue": "Dual DI system (Riverpod + GetIt) causing confusion",
+      "file": "Various (providers + injection files)",
+      "line": 0,
+      "report": "architecture",
+      "phase": 3,
+      "impact": "Inconsistent dependency injection, harder maintenance",
+      "fix": "Choose one DI system and remove the other"
+    },
+    {
+      "id": "C27",
+      "issue": "Dart SDK version conflicts between packages",
+      "file": "pubspec.yaml (multiple packages)",
+      "line": 0,
+      "report": "dependencies",
+      "phase": 6,
+      "impact": "Build failures and incompatibilities",
+      "fix": "Unify Dart SDK constraints across all packages"
+    },
+    {
+      "id": "C28",
+      "issue": "Drift version conflicts between packages",
+      "file": "pubspec.yaml (multiple packages)",
+      "line": 0,
+      "report": "dependencies",
+      "phase": 6,
+      "impact": "Incompatible database code between packages",
+      "fix": "Align drift version across all pubspec.yaml files"
+    },
+    {
+      "id": "C29",
+      "issue": "Missing Privacy Usage Descriptions in iOS Info.plist",
+      "file": "customer_app/ios/Runner/Info.plist",
+      "line": 0,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "App Store will reject apps missing NSLocationWhenInUseUsageDescription, NSCameraUsageDescription",
+      "fix": "Add all required privacy keys to Info.plist for each app"
+    },
+    {
+      "id": "C30",
+      "issue": "No environment variables passed in CI/CD builds",
+      "file": ".github/workflows/flutter_ci.yml",
+      "line": 73,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "App builds with empty SUPABASE_URL and SUPABASE_ANON_KEY values",
+      "fix": "Use GitHub Secrets: --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}"
+    },
+    {
+      "id": "C31",
+      "issue": "Supabase URL hardcoded in Python config",
+      "file": "ai_server/config.py",
+      "line": 11,
+      "report": "deployment",
+      "phase": 1,
+      "impact": "Real Supabase URL visible in source code",
+      "fix": "Move to environment variables only: os.environ.get('SUPABASE_URL')"
+    },
+    {
+      "id": "C32",
+      "issue": "Missing authorization check in upload-product-images",
+      "file": "supabase/functions/upload-product-images/index.ts",
+      "line": 7,
+      "report": "database_functions",
+      "phase": 1,
+      "impact": "Authenticated user can update products they don't own if RLS incomplete",
+      "fix": "Verify user is store member/admin before allowing product image upload"
+    },
+    {
+      "id": "C33",
+      "issue": "Missing input size validation in upload-product-images",
+      "file": "supabase/functions/upload-product-images/index.ts",
+      "line": 45,
+      "report": "database_functions",
+      "phase": 1,
+      "impact": "No max size limit - DoS via extremely large image uploads",
+      "fix": "Validate required fields exist and limit each image to 5MB max"
+    },
+    {
+      "id": "C34",
+      "issue": "No pagination in get_store_products RPC function",
+      "file": "supabase/sync_rpc_functions.sql",
+      "line": 56,
+      "report": "database_functions",
+      "phase": 2,
+      "impact": "Returns ALL products as single JSONB - massive memory usage with thousands of products",
+      "fix": "Add p_limit/p_offset parameters with LIMIT/OFFSET to query"
+    },
+    {
+      "id": "C35",
+      "issue": "Missing automatic updated_at trigger in Supabase",
+      "file": "supabase/ (all tables)",
+      "line": 0,
+      "report": "database_functions",
+      "phase": 2,
+      "impact": "App must manually set updated_at - risk of forgotten updates breaking sync",
+      "fix": "Create universal BEFORE UPDATE trigger function for all tables"
+    },
+    {
+      "id": "C36",
+      "issue": "Major Drift-Supabase schema mismatch (IDs, table names, columns)",
+      "file": "packages/alhai_database/lib/src/tables/*.dart vs supabase/supabase_init.sql",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "impact": "ID type mismatches (TEXT vs UUID), table name differences (purchases vs purchase_orders), column mismatches break sync",
+      "fix": "Create Drift-Supabase mapping document and implement bidirectional type conversion layer"
+    },
+    {
+      "id": "C37",
+      "issue": "Soft delete pattern completely missing from all 50 tables",
+      "file": "packages/alhai_database/lib/src/tables/ (all tables)",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "impact": "No is_deleted/deleted_at column - data recovery impossible after deletion",
+      "fix": "Add deleted_at nullable DateTime to all main tables with partial index WHERE deleted_at IS NULL"
+    },
+    {
+      "id": "C38",
+      "issue": "orders.updatedAt is non-nullable (inconsistent with all other tables)",
+      "file": "packages/alhai_database/lib/src/tables/orders_table.dart",
+      "line": 69,
+      "report": "database_schema",
+      "phase": 2,
+      "impact": "Requires updatedAt value even for new inserts, unlike all other tables",
+      "fix": "Change to: DateTimeColumn get updatedAt => dateTime().nullable()()"
+    },
+    {
+      "id": "C39",
+      "issue": "Missing UNIQUE constraints on receipt/order/purchase/return numbers",
+      "file": "packages/alhai_database/lib/src/tables/sales_table.dart, orders_table.dart, purchases_table.dart, returns_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "impact": "Duplicate receipt numbers, order numbers, coupon codes possible - no DB-level enforcement",
+      "fix": "Add composite unique constraints: (storeId, receiptNo) UNIQUE for sales, similar for others"
+    },
+    {
+      "id": "C40",
+      "issue": "7 completely duplicated file groups across packages",
+      "file": "packages/alhai_auth/, packages/alhai_pos/, apps/admin/, apps/admin_lite/, apps/cashier/",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "impact": "secure_http_client.dart, production_logger.dart, whatsapp_config.dart, theme_provider.dart, local_products_repository.dart, local_categories_repository.dart, supabase_config.dart all duplicated 2-3 times",
+      "fix": "Move to alhai_core shared package and import from single source"
+    },
+    {
+      "id": "C41",
+      "issue": "24 god files over 1000 lines (up to 2,677 lines)",
+      "file": "packages/alhai_pos/lib/src/screens/pos/pos_screen.dart (2677), customer_detail_screen.dart (2502), payment_screen.dart (1853), and 21 more",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "impact": "Unmaintainable code, high cognitive load, merge conflicts",
+      "fix": "Split each file into focused widgets (max 500 lines). Priority: pos_screen, customer_detail, payment_screen"
+    },
+    {
+      "id": "C42",
+      "issue": "Missing UNIQUE constraints on junction tables (org_members, user_stores, favorites)",
+      "file": "packages/alhai_database/lib/src/tables/org_members_table.dart, favorites_table.dart",
+      "line": 0,
+      "report": "database_relations",
+      "phase": 2,
+      "impact": "Duplicate memberships, favorites, loyalty records possible",
+      "fix": "Add UNIQUE(orgId, userId), UNIQUE(userId, storeId), UNIQUE(storeId, productId), UNIQUE(customerId, storeId)"
+    },
+    {
+      "id": "C43",
+      "issue": "AppScaffold forces RTL with hardcoded TextDirection.rtl - breaks 5 LTR languages",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/layout/app_scaffold.dart",
+      "line": 177,
+      "report": "responsive",
+      "phase": 4,
+      "impact": "English, Hindi, Bengali, Filipino, Indonesian users see reversed layout",
+      "fix": "Replace TextDirection.rtl with Directionality.of(context) to respect current locale"
+    },
+    {
+      "id": "C44",
+      "issue": "Colors.white used ~1,153 times in apps/ without dark mode check",
+      "file": "apps/admin/ (79 in customer_ledger alone), apps/cashier/, apps/admin_lite/",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "impact": "Blinding white backgrounds in dark mode across most screens",
+      "fix": "Replace Colors.white with colorScheme.surface or Theme.of(context).colorScheme.surface"
+    },
+    {
+      "id": "C45",
+      "issue": "colorScheme usage only ~3% - 13 uses vs 2,193 Colors.* and 245 Color(0x...) in apps/",
+      "file": "All app screens",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "impact": "Theme system completely bypassed - dark mode fundamentally broken",
+      "fix": "Migrate to colorScheme references: surface, onSurface, primary, error, etc."
+    },
+    {
+      "id": "C46",
+      "issue": "Color(0xFF1E293B) hardcoded 332 times - differs from both surfaceDark token systems",
+      "file": "150+ files across apps/ and packages/ (isDark ? Color(0xFF1E293B) : Colors.white pattern)",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "impact": "3 different dark surface colors: #1E1E1E (design_system), #1F2937 (shared_ui), #1E293B (hardcoded)",
+      "fix": "Create shared AppCard widget using colorScheme.surface, replace all 332 occurrences"
+    },
+    {
+      "id": "C47",
+      "issue": "Colors.white used ~443 times in packages/ without dark mode check",
+      "file": "packages/alhai_shared_ui/, alhai_pos/, alhai_reports/, alhai_ai/, alhai_auth/",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "impact": "Shared components break dark mode for all apps that use them",
+      "fix": "Replace with colorScheme.surface in shared package components"
+    },
+    {
+      "id": "C48",
+      "issue": "No AnimatedList anywhere in project - items appear/disappear abruptly",
+      "file": "All list screens (cart, products, customers, invoices)",
+      "line": 0,
+      "report": "animations",
+      "phase": 4,
+      "impact": "Poor UX when adding/removing cart items, list items appear/disappear without animation",
+      "fix": "Use AnimatedList/SliverAnimatedList for cart and other dynamic lists"
+    },
+    {
+      "id": "C49",
+      "issue": "No global Error Boundary (FlutterError.onError, PlatformDispatcher.onError, runZonedGuarded)",
+      "file": "apps/cashier/lib/main.dart, apps/admin/lib/main.dart, apps/admin_lite/lib/main.dart",
+      "line": 0,
+      "report": "architecture",
+      "phase": 3,
+      "impact": "Unhandled errors crash the app silently - no crash reporting in production",
+      "fix": "Add runZonedGuarded + FlutterError.onError + PlatformDispatcher.instance.onError in every main()"
+    },
+    {
+      "id": "C50",
+      "issue": "SQL injection via dynamic table/column names in sync operations (5 files)",
+      "file": "packages/alhai_sync/lib/src/realtime_listener.dart:200, pull_strategy.dart:196, bidirectional_strategy.dart:323, initial_sync.dart:285, stock_delta_sync.dart:230",
+      "line": 0,
+      "report": "api_endpoints",
+      "phase": 1,
+      "impact": "Table names from Supabase responses injected directly into SQL - potential data manipulation",
+      "fix": "Add whitelist of allowed table names; validate tableName before customStatement"
+    },
+    {
+      "id": "C51",
+      "issue": "No timeout for any Supabase SDK calls (select/upsert/rpc) across sync and auth",
+      "file": "packages/alhai_sync/lib/src/ (all strategies), packages/alhai_auth/lib/src/screens/store_select_screen.dart",
+      "line": 0,
+      "report": "api_endpoints",
+      "phase": 1,
+      "impact": "Server delay freezes entire UI indefinitely - no user feedback or recovery",
+      "fix": "Add .timeout(Duration(seconds: 30)) to all Supabase SDK calls"
+    }
+  ],
+  "high": [
+    {
+      "id": "H01",
+      "issue": "schema.json outdated - contains 10 tables while actual DB has 50",
+      "file": "packages/alhai_database/lib/src/schema.json",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Regenerate: dart run drift_dev schema dump lib/src/app_database.dart lib/src/schema.json"
+    },
+    {
+      "id": "H02",
+      "issue": "Missing indexes on order_items and other tables",
+      "file": "packages/alhai_database/lib/src/tables/order_items_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Add @TableIndex for orderId and productId columns on order_items and similar tables"
+    },
+    {
+      "id": "H03",
+      "issue": "No JOIN queries - 27 DAOs use multiple separate queries",
+      "file": "packages/alhai_database/lib/src/daos/ (27 DAOs)",
+      "line": 0,
+      "report": "database_relations",
+      "phase": 2,
+      "fix": "Refactor DAOs to use JOIN queries where appropriate"
+    },
+    {
+      "id": "H04",
+      "issue": "37 ListView should be ListView.builder for performance",
+      "file": "Various screens (37 locations)",
+      "line": 0,
+      "report": "performance",
+      "phase": 3,
+      "fix": "Replace ListView with ListView.builder for long lists"
+    },
+    {
+      "id": "H05",
+      "issue": "Image.network used instead of CachedNetworkImage in 7 files",
+      "file": "Various files (7 locations)",
+      "line": 0,
+      "report": "performance",
+      "phase": 3,
+      "fix": "Replace with CachedNetworkImage for image caching"
+    },
+    {
+      "id": "H06",
+      "issue": "pos_screen.dart is 2,677 lines - too large",
+      "file": "pos_app/lib/screens/pos/pos_screen.dart",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Split into smaller widget files (max 500 lines each)"
+    },
+    {
+      "id": "H07",
+      "issue": "Code duplication between 7 apps",
+      "file": "Multiple app directories",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Move shared code to alhai_core/alhai_services/alhai_shared_ui packages"
+    },
+    {
+      "id": "H08",
+      "issue": "8 packages missing analysis_options.yaml",
+      "file": "8 service packages",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Copy and adapt analysis_options.yaml from existing package"
+    },
+    {
+      "id": "H09",
+      "issue": "No global Error Boundary for unhandled exceptions",
+      "file": "App-level (main.dart files)",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Add FlutterError.onError + runZonedGuarded error boundary"
+    },
+    {
+      "id": "H10",
+      "issue": "Duplicate color systems: AlhaiColors + AppColors",
+      "file": "Theme/color definition files",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "fix": "Keep one color system and remove the other"
+    },
+    {
+      "id": "H11",
+      "issue": "3 different breakpoint systems in use",
+      "file": "Various responsive utility files",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Choose one breakpoint system and standardize"
+    },
+    {
+      "id": "H12",
+      "issue": "194 old MediaQuery.of usages instead of modern alternatives",
+      "file": "Various screens (194 locations)",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Replace with LayoutBuilder or custom responsive utilities"
+    },
+    {
+      "id": "H13",
+      "issue": "15 responsive tools built but never used",
+      "file": "Responsive utility files",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Wire up existing responsive tools to screens"
+    },
+    {
+      "id": "H14",
+      "issue": "No OrientationBuilder for main screens",
+      "file": "Main screen files",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Add OrientationBuilder for critical screens"
+    },
+    {
+      "id": "H15",
+      "issue": "3 different animation systems need unification",
+      "file": "Animation token files",
+      "line": 0,
+      "report": "animations",
+      "phase": 4,
+      "fix": "Merge into single animation token system"
+    },
+    {
+      "id": "H16",
+      "issue": "No Hero Animations for product list/detail transitions",
+      "file": "Product screens",
+      "line": 0,
+      "report": "animations",
+      "phase": 4,
+      "fix": "Add Hero widgets for product list-to-detail navigation"
+    },
+    {
+      "id": "H17",
+      "issue": "No page transitions in Admin app",
+      "file": "apps/admin/ router",
+      "line": 0,
+      "report": "animations",
+      "phase": 4,
+      "fix": "Add page transition animations"
+    },
+    {
+      "id": "H18",
+      "issue": "~735 hardcoded Arabic text strings not in localization files",
+      "file": "Various screens (~735 locations)",
+      "line": 0,
+      "report": "localization",
+      "phase": 5,
+      "fix": "Extract to ARB files and replace with AppLocalizations references"
+    },
+    {
+      "id": "H19",
+      "issue": "No plural/gender forms in translations",
+      "file": "ARB files",
+      "line": 0,
+      "report": "localization",
+      "phase": 5,
+      "fix": "Add ICU plural/gender syntax for numbers"
+    },
+    {
+      "id": "H20",
+      "issue": "Skeleton/Shimmer loading components built but not used",
+      "file": "Loading component files",
+      "line": 0,
+      "report": "ux",
+      "phase": 5,
+      "fix": "Enable shimmer loading in data-fetching screens"
+    },
+    {
+      "id": "H21",
+      "issue": "No pagination for long lists (products, customers, orders)",
+      "file": "List screens",
+      "line": 0,
+      "report": "ux",
+      "phase": 5,
+      "fix": "Add infinite scroll / load-more pagination"
+    },
+    {
+      "id": "H22",
+      "issue": "Poor accessibility - no Semantics labels on interactive elements",
+      "file": "Various screens",
+      "line": 0,
+      "report": "ux",
+      "phase": 5,
+      "fix": "Add Semantics widgets to buttons, inputs, and interactive elements"
+    },
+    {
+      "id": "H23",
+      "issue": "37 services have zero test coverage",
+      "file": "Various service files (37 services)",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Write unit tests for critical services (sales, inventory, sync)"
+    },
+    {
+      "id": "H24",
+      "issue": "No code coverage setup (lcov)",
+      "file": "CI/CD config",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Setup lcov with minimum 60% threshold"
+    },
+    {
+      "id": "H25",
+      "issue": "No performance tests",
+      "file": "Test directories",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Add load time, list scrolling, and search performance tests"
+    },
+    {
+      "id": "H26",
+      "issue": "No integration tests for end-to-end flows",
+      "file": "integration_test/ directories",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Write login -> sale -> receipt integration scenarios"
+    },
+    {
+      "id": "H27",
+      "issue": "No timeouts on Supabase API calls",
+      "file": "Various service files",
+      "line": 0,
+      "report": "performance",
+      "phase": 6,
+      "fix": "Add 30-second timeout to all network calls"
+    },
+    {
+      "id": "H28",
+      "issue": "Orphan images accumulating in Cloudflare R2",
+      "file": "Cloudflare R2 storage",
+      "line": 0,
+      "report": "file_storage",
+      "phase": 6,
+      "fix": "Create cron job to clean unlinked images"
+    },
+    {
+      "id": "H29",
+      "issue": "Commercial license compliance unchecked (Syncfusion)",
+      "file": "pubspec.yaml files",
+      "line": 0,
+      "report": "dependencies",
+      "phase": 6,
+      "fix": "Verify Syncfusion license compliance for commercial use"
+    },
+    {
+      "id": "H30",
+      "issue": "Inconsistent .named() pattern in Loyalty tables vs rest of codebase",
+      "file": "packages/alhai_database/lib/src/tables/loyalty_table.dart",
+      "line": 21,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Remove .named() from loyalty tables to use automatic camelCase->snake_case conversion like all other 47 tables"
+    },
+    {
+      "id": "H31",
+      "issue": "Inconsistent createdAt default values - only 3 tables use .withDefault(currentDateAndTime)",
+      "file": "packages/alhai_database/lib/src/tables/loyalty_table.dart",
+      "line": 39,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Add .withDefault(currentDateAndTime) to createdAt in all tables or remove from loyalty tables"
+    },
+    {
+      "id": "H32",
+      "issue": "Inconsistent quantity column types: IntColumn qty vs RealColumn quantity",
+      "file": "packages/alhai_database/lib/src/tables/sale_items_table.dart, order_items_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Standardize to RealColumn get qty => real()() across all tables for fractional quantity support"
+    },
+    {
+      "id": "H33",
+      "issue": "Barcode not unique within store - missing composite unique index",
+      "file": "packages/alhai_database/lib/src/tables/products_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "phase": 2,
+      "fix": "Add @TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode}, unique: true)"
+    },
+    {
+      "id": "H34",
+      "issue": "alhai_reports: 15 report screens with zero test coverage",
+      "file": "packages/alhai_reports/lib/src/screens/reports/ (15 screens)",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Write screen tests for complaints, sales_analytics, debts, staff_performance, balance_sheet, cash_flow, comparison, zakat, purchase, customer, peak_hours, daily_sales, profit, tax, vat reports"
+    },
+    {
+      "id": "H35",
+      "issue": "Integration tests are superficial - only check MaterialApp/ProviderScope/Scaffold exist",
+      "file": "apps/cashier/integration_test/critical_flow_test.dart",
+      "line": 28,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Write full flow tests: complete sale, return flow, shift close, offline sync conflict"
+    },
+    {
+      "id": "H36",
+      "issue": "Screen tests too shallow - no user interactions, no data flow testing",
+      "file": "apps/admin/test/screens/, apps/cashier/test/screens/",
+      "line": 0,
+      "report": "testing",
+      "phase": 6,
+      "fix": "Convert to interactive tests: tap buttons, enter input, verify navigation, test error and loading states"
+    },
+    {
+      "id": "H37",
+      "issue": "10 files with 10+ classes in single file",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_sizes.dart (18 classes), pos_screen.dart (17), app_header.dart (15), wasender_models.dart (14), app_sidebar.dart (13)",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Extract each class into its own file following single-responsibility principle"
+    },
+    {
+      "id": "H38",
+      "issue": "45 TODO comments marking incomplete implementations across services",
+      "file": "alhai_services/ (ai_service 7, print_service 6, payment_gateway 6, sms_service 2, backup_service 2, geo_notification 3, auth screens 3, shared_ui 5, others 11)",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Complete or create tickets for: payment gateway SDK integration, print service bluetooth, AI service API calls, geo-notification FCM"
+    },
+    {
+      "id": "H39",
+      "issue": "Excessive setState usage (1,252 calls in 106 StatefulWidgets) instead of Riverpod",
+      "file": "Various screens - top offenders: pos_settings_screen (31), payment_screen (23), customers_screen (19), quick_sale_screen (19)",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Migrate StatefulWidgets to ConsumerStatefulWidget with Riverpod providers for state management"
+    },
+    {
+      "id": "H40",
+      "issue": "716 force unwrap (!) operator usages creating crash risks",
+      "file": "Various files across codebase",
+      "line": 0,
+      "report": "code_quality",
+      "phase": 3,
+      "fix": "Replace with ?? operator for defaults, proper null checks, or .let()/.map() patterns"
+    },
+    {
+      "id": "H41",
+      "issue": "SafeArea used in only 40 of 195 screens (20.5%) - notch/status bar overlap risk",
+      "file": "All standalone screens not using LazyScreen or AppScaffold shell",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Add SafeArea to all screens that don't inherit it from shell pattern"
+    },
+    {
+      "id": "H42",
+      "issue": "Distributor Portal wraps every screen with Directionality(textDirection: TextDirection.rtl) instead of global",
+      "file": "distributor_portal/lib/screens/ (5 screens: settings, reports, products, pricing, order_detail)",
+      "line": 0,
+      "report": "responsive",
+      "phase": 4,
+      "fix": "Apply RTL globally in main.dart like cashier/admin apps, remove per-screen Directionality wrappers"
+    },
+    {
+      "id": "H43",
+      "issue": "TabBarTheme, IconButton hover, and Chip selectedColor use fixed light-mode colors",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart",
+      "line": 414,
+      "report": "dark_mode",
+      "phase": 4,
+      "fix": "Make unselectedLabelColor, hoverColor, highlightColor, selectedColor vary with isDark parameter"
+    },
+    {
+      "id": "H44",
+      "issue": "176 BoxShadow locations invisible in dark mode (Colors.black alpha on dark background)",
+      "file": "155 in packages/ + 21 in apps/",
+      "line": 0,
+      "report": "dark_mode",
+      "phase": 4,
+      "fix": "Create AppShadow.of(context) helper that returns theme-aware shadows"
+    }
+  ],
+  "medium": [
+    {
+      "id": "M01",
+      "issue": "Minification disabled in Android release builds",
+      "file": "apps/cashier/android/app/build.gradle.kts",
+      "line": 38,
+      "report": "deployment",
+      "fix": "Set isMinifyEnabled = true, isShrinkResources = true with proper ProGuard rules"
+    },
+    {
+      "id": "M02",
+      "issue": "Firebase versions inconsistent across apps (v2 vs v3)",
+      "file": "pubspec.yaml (multiple apps)",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Update all to firebase_core ^3.x.x"
+    },
+    {
+      "id": "M03",
+      "issue": "4 apps missing Supabase config (customer_app, driver_app, distributor_portal, super_admin)",
+      "file": "customer_app/, driver_app/, distributor_portal/, super_admin/",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Create supabase_config.dart using String.fromEnvironment() in each app"
+    },
+    {
+      "id": "M04",
+      "issue": "Web deployment strategy inadequate - only GitHub Pages for cashier",
+      "file": ".github/workflows/flutter_ci.yml",
+      "line": 139,
+      "report": "deployment",
+      "fix": "Setup CDN (Cloudflare Pages/Vercel/Netlify) for all web apps"
+    },
+    {
+      "id": "M05",
+      "issue": "Web manifest and index.html generic ('A new Flutter project')",
+      "file": "apps/cashier/web/index.html",
+      "line": 21,
+      "report": "deployment",
+      "fix": "Customize each app's name, description, and meta tags"
+    },
+    {
+      "id": "M06",
+      "issue": "No custom app icons - all use Flutter defaults",
+      "file": "web/icons/ and icon configuration",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Use flutter_launcher_icons package to generate custom icons"
+    },
+    {
+      "id": "M07",
+      "issue": "No Web security headers (CSP, X-Frame-Options, X-Content-Type-Options)",
+      "file": "apps/cashier/web/index.html",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Add Content-Security-Policy and other security headers to web server config or HTML"
+    },
+    {
+      "id": "M08",
+      "issue": "AI Server Dockerfile not production-ready (no .dockerignore, no multi-stage, no health check)",
+      "file": "ai_server/Dockerfile",
+      "line": 1,
+      "report": "deployment",
+      "fix": "Implement multi-stage build, health checks, non-root user, .dockerignore"
+    },
+    {
+      "id": "M09",
+      "issue": "ProGuard rules exist but minification disabled - rules broken",
+      "file": "apps/cashier/android/app/proguard-rules.pro",
+      "line": 443,
+      "report": "deployment",
+      "fix": "Enable minification AND expand rules for Supabase, Riverpod, GoRouter"
+    },
+    {
+      "id": "M10",
+      "issue": "App display names generic (android:label='cashier' instead of 'Alhai Cashier')",
+      "file": "apps/cashier/android/app/src/main/AndroidManifest.xml",
+      "line": 3,
+      "report": "deployment",
+      "fix": "Use proper display names: 'Alhai Cashier', 'Alhai Admin' etc."
+    },
+    {
+      "id": "M11",
+      "issue": "melos scripts limited - only 3 apps have build scripts, no iOS builds",
+      "file": "melos.yaml",
+      "line": 38,
+      "report": "deployment",
+      "fix": "Add complete build scripts for all 7 apps with --dart-define support"
+    },
+    {
+      "id": "M12",
+      "issue": "GitHub Actions workflow not modular - single monolithic file",
+      "file": ".github/workflows/flutter_ci.yml",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Split into: build.yml, release.yml, security-scan.yml, dependency-audit.yml"
+    },
+    {
+      "id": "M13",
+      "issue": "Supabase URL exposed in .env.example with real production URL",
+      "file": "ai_server/.env.example",
+      "line": 2,
+      "report": "deployment",
+      "fix": "Replace with placeholder: SUPABASE_URL=https://your-project.supabase.co"
+    },
+    {
+      "id": "M14",
+      "issue": "Android INTERNET permission not declared in main manifest",
+      "file": "apps/cashier/android/app/src/main/AndroidManifest.xml",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Add <uses-permission android:name='android.permission.INTERNET' /> to main manifest"
+    },
+    {
+      "id": "M15",
+      "issue": "In-memory rate limiter only - bypassed in serverless environment",
+      "file": "supabase/functions/public-products/index.ts",
+      "line": 4,
+      "report": "database_functions",
+      "fix": "Use Redis or Supabase KV Store for distributed rate limiting"
+    },
+    {
+      "id": "M16",
+      "issue": "Rate limiter memory leak - rateLimitMap never cleaned",
+      "file": "supabase/functions/public-products/index.ts",
+      "line": 8,
+      "report": "database_functions",
+      "fix": "Add periodic cleanup or use LRU cache with size limits"
+    },
+    {
+      "id": "M17",
+      "issue": "deduct_stock_on_order_confirm missing cancellation logic - stock never returned",
+      "file": "supabase/supabase_init.sql",
+      "line": 571,
+      "report": "database_functions",
+      "fix": "Add trigger to restore stock when order status changes to 'cancelled'"
+    },
+    {
+      "id": "M18",
+      "issue": "voidSale sets updated_at to NULL instead of current time",
+      "file": "packages/alhai_database/lib/src/daos/sales_dao.dart",
+      "line": 76,
+      "report": "database_functions",
+      "fix": "Change to Value(DateTime.now()) to preserve edit history and sync"
+    },
+    {
+      "id": "M19",
+      "issue": "Missing input validation in RPC functions (NULL/empty store_id accepted)",
+      "file": "supabase/sync_rpc_functions.sql",
+      "line": 10,
+      "report": "database_functions",
+      "fix": "Add: IF p_store_id IS NULL OR p_store_id = '' THEN RAISE EXCEPTION 'store_id is required'; END IF;"
+    },
+    {
+      "id": "M20",
+      "issue": "LIKE pattern injection in ProductsDao - special chars %, _ not escaped",
+      "file": "packages/alhai_database/lib/src/daos/products_dao.dart",
+      "line": 60,
+      "report": "database_functions",
+      "fix": "Escape: query.replaceAll('%', '\\\\%').replaceAll('_', '\\\\_')"
+    },
+    {
+      "id": "M21",
+      "issue": "Duplicate function definitions across 3 SQL files (is_super_admin, is_store_member, is_store_admin)",
+      "file": "supabase/supabase_init.sql, supabase/migrations/20260119_secure_public_products.sql, supabase/migrations/20260223_tighten_rls_write_policies.sql",
+      "line": 512,
+      "report": "database_functions",
+      "fix": "Define once in supabase_init.sql, remove duplicates from migration files"
+    },
+    {
+      "id": "M22",
+      "issue": "Conflicting RLS policies on store_members - 4 different SELECT policies",
+      "file": "supabase/supabase_init.sql, supabase/fix_rls_recursion.sql, supabase/get_my_stores.sql",
+      "line": 824,
+      "report": "database_functions",
+      "fix": "Consolidate into single file, remove conflicting policies"
+    },
+    {
+      "id": "M23",
+      "issue": "Missing transaction in InventoryDao complex operations (recordSaleMovement, recordPurchaseMovement)",
+      "file": "packages/alhai_database/lib/src/daos/inventory_dao.dart",
+      "line": 43,
+      "report": "database_functions",
+      "fix": "Wrap movement recording + quantity update in single database.transaction()"
+    },
+    {
+      "id": "M24",
+      "issue": "Missing INDEX on FTS table for JOIN performance with products table",
+      "file": "packages/alhai_database/lib/src/fts/products_fts.dart",
+      "line": 98,
+      "report": "database_functions",
+      "fix": "Ensure proper index for FTS-products JOIN, consider using content_rowid"
+    },
+    {
+      "id": "M25",
+      "issue": "audit_log ID based only on timestamp - collision risk",
+      "file": "packages/alhai_database/lib/src/daos/audit_log_dao.dart",
+      "line": 69,
+      "report": "database_functions",
+      "fix": "Use UUID v4 instead of DateTime.now().millisecondsSinceEpoch"
+    },
+    {
+      "id": "M26",
+      "issue": "Missing Foreign Key on store_members.store_id to stores.id",
+      "file": "supabase/supabase_init.sql",
+      "line": 93,
+      "report": "database_functions",
+      "fix": "ALTER TABLE store_members ADD CONSTRAINT fk_store_members_store_id FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE"
+    },
+    {
+      "id": "M27",
+      "issue": "Missing updatedAt in 10 tables (sale_items, favorites, held_invoices, order_items, etc.)",
+      "file": "packages/alhai_database/lib/src/tables/ (10 tables)",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add DateTimeColumn get updatedAt => dateTime().nullable()() to held_invoices, customer_addresses, returns, product_expiry, purchase_items, expense_categories"
+    },
+    {
+      "id": "M28",
+      "issue": "Missing syncedAt in 11 sync-required tables",
+      "file": "packages/alhai_database/lib/src/tables/ (11 tables)",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add syncedAt to order_items, order_status_history, customer_addresses, return_items, purchase_items, daily_summaries"
+    },
+    {
+      "id": "M29",
+      "issue": "10 JSON columns stored as TEXT without validation (discounts, promotions, stock_takes, etc.)",
+      "file": "packages/alhai_database/lib/src/tables/discounts_table.dart, promotions_table.dart, stock_takes_table.dart, held_invoices_table.dart, audit_log_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add JSON validation in DAO/Repository layer using json.decode() wrapper in getters"
+    },
+    {
+      "id": "M30",
+      "issue": "No ENUM validation - TEXT status/type columns accept any value",
+      "file": "packages/alhai_database/lib/src/tables/ (all tables with status/type columns)",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add .check(status.isIn(['created','confirmed','preparing','ready','delivered'])) or validate in DAOs"
+    },
+    {
+      "id": "M31",
+      "issue": "Missing onOpen callback in MigrationStrategy - PRAGMA foreign_keys not enabled",
+      "file": "packages/alhai_database/lib/src/app_database.dart",
+      "line": 122,
+      "report": "database_schema",
+      "fix": "Add onOpen: (details) async { await customStatement('PRAGMA foreign_keys = ON'); }"
+    },
+    {
+      "id": "M32",
+      "issue": "DriversTable and 8 other tables missing orgId for multi-tenant isolation",
+      "file": "packages/alhai_database/lib/src/tables/drivers_table.dart",
+      "line": 11,
+      "report": "database_schema",
+      "fix": "Add TextColumn get orgId => text().nullable()() to drivers, held_invoices, favorites, stock_takes, stock_transfers, settings, order_status_history, whatsapp_messages, whatsapp_templates"
+    },
+    {
+      "id": "M33",
+      "issue": "Missing composite index on stores(orgId, storeId) for multi-tenant queries",
+      "file": "packages/alhai_database/lib/src/app_database.dart",
+      "line": 204,
+      "report": "database_schema",
+      "fix": "Add @TableIndex(name: 'idx_stores_org_id_store_id', columns: {#orgId, #storeId})"
+    },
+    {
+      "id": "M34",
+      "issue": "HeldInvoicesTable missing syncedAt and updatedAt for cross-device sync",
+      "file": "packages/alhai_database/lib/src/tables/held_invoices_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add syncedAt and updatedAt columns"
+    },
+    {
+      "id": "M35",
+      "issue": "Mismatched default values: products.min_qty = 0 (Supabase) vs 1 (Drift)",
+      "file": "packages/alhai_database/lib/src/tables/products_table.dart",
+      "line": 40,
+      "report": "database_schema",
+      "fix": "Align to same default in both (choose based on business logic)"
+    },
+    {
+      "id": "M36",
+      "issue": "Column name mismatch: orders.discount (Drift) vs discount_amount (Supabase)",
+      "file": "packages/alhai_database/lib/src/tables/orders_table.dart",
+      "line": 38,
+      "report": "database_schema",
+      "fix": "Standardize naming or add mapping in sync layer"
+    },
+    {
+      "id": "M37",
+      "issue": "REAL vs DECIMAL precision risk for financial data (floating-point errors)",
+      "file": "packages/alhai_database/lib/src/tables/sales_table.dart, orders_table.dart, transactions_table.dart, accounts_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Convert monetary values to integer smallest units (fils/cents) in DAO layer, or use Decimal package"
+    },
+    {
+      "id": "M38",
+      "issue": "Inconsistent lint rules across modules (alhai_core vs alhai_design_system vs alhai_services)",
+      "file": "alhai_core/analysis_options.yaml, alhai_design_system/analysis_options.yaml, alhai_services/analysis_options.yaml",
+      "line": 0,
+      "report": "code_quality",
+      "fix": "Create shared lint configuration and standardize rules across all modules"
+    },
+    {
+      "id": "M39",
+      "issue": "print() in production code (3 files)",
+      "file": "alhai_services/lib/src/services/pin_validation_service_impl.dart, packages/alhai_auth/lib/src/core/network/secure_http_client.dart, packages/alhai_pos/lib/src/core/network/secure_http_client.dart",
+      "line": 249,
+      "report": "code_quality",
+      "fix": "Replace with ProductionLogger.log() or ProductionLogger.logDebug()"
+    },
+    {
+      "id": "M40",
+      "issue": "40 dynamic type usages across codebase",
+      "file": "packages/alhai_sync/lib/src/json_converter.dart, alhai_core/lib/src/exceptions/error_mapper.dart, admin screens (employee_profile, damaged_goods, customer_groups, whatsapp_management)",
+      "line": 0,
+      "report": "code_quality",
+      "fix": "Replace dynamic with proper type definitions using Freezed or data classes"
+    },
+    {
+      "id": "M41",
+      "issue": "10+ hardcoded URLs in source code (WhatsApp API, SMS APIs, Backend, AI server)",
+      "file": "alhai_services/lib/src/services/whatsapp_service_impl.dart, sms_service.dart, customer_app/lib/core/constants/app_constants.dart, packages/alhai_ai/lib/src/services/",
+      "line": 0,
+      "report": "code_quality",
+      "fix": "Centralize all URLs in EnvironmentConfig using String.fromEnvironment()"
+    },
+    {
+      "id": "M42",
+      "issue": "142 files between 500-1000 lines need review for splitting",
+      "file": "Various files across all packages",
+      "line": 0,
+      "report": "code_quality",
+      "fix": "Gradually refactor large files by extracting reusable widgets and components"
+    },
+    {
+      "id": "M43",
+      "issue": "Self-referential categories lack cycle protection (A->B->A possible)",
+      "file": "packages/alhai_database/lib/src/tables/categories_table.dart",
+      "line": 26,
+      "report": "database_relations",
+      "fix": "Add FK constraint + implement wouldCreateCycle() cycle detection in DAO"
+    },
+    {
+      "id": "M44",
+      "issue": "14 Supabase references without explicit ON DELETE rules (default NO ACTION)",
+      "file": "supabase/supabase_init.sql (role_audit_log, stores, orders, debts, customer_accounts, loyalty_points, stock_adjustments, purchase_orders, shifts)",
+      "line": 0,
+      "report": "database_relations",
+      "fix": "Define explicit rules: RESTRICT for audit, SET NULL for optional, CASCADE for dependent"
+    },
+    {
+      "id": "M45",
+      "issue": "Missing RLS policies for 5 POS tables when synced to Supabase",
+      "file": "supabase/supabase_init.sql",
+      "line": 744,
+      "report": "database_relations",
+      "fix": "Create RLS policies for sales, sale_items, inventory_movements, returns, return_items when added to Supabase"
+    },
+    {
+      "id": "M46",
+      "issue": "Customer model mismatch: Drift has separate customers table, Supabase uses users with role='customer'",
+      "file": "packages/alhai_database/lib/src/tables/customers_table.dart vs supabase/supabase_init.sql",
+      "line": 0,
+      "report": "database_relations",
+      "fix": "Create mapping/transformation layer for sync between Drift customers and Supabase users"
+    },
+    {
+      "id": "M47",
+      "issue": "Golden tests limited to 4 components (badge, button, quantity_control, text_field)",
+      "file": "alhai_design_system/test/golden/",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add golden tests for AlhaiProductCard, AlhaiOrderCard, AlhaiCartItem, AlhaiDialog, AlhaiAppBar"
+    },
+    {
+      "id": "M48",
+      "issue": "Missing critical business logic tests (payment, refund, debt services)",
+      "file": "alhai_services/lib/src/services/payment_service.dart, refund_service.dart, debt_service.dart",
+      "line": 0,
+      "report": "testing",
+      "fix": "Create comprehensive tests for payment processing, refund flow, debt tracking, credit limit enforcement"
+    },
+    {
+      "id": "M49",
+      "issue": "No E2E offline sync testing - only unit tests for alhai_sync",
+      "file": "packages/alhai_sync/test/",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add end-to-end tests for conflict resolution, network recovery, data consistency verification"
+    },
+    {
+      "id": "M50",
+      "issue": "Duplicate tests in design system (AlhaiButton: 22 cases + 16 cases in two locations)",
+      "file": "alhai_design_system/test/",
+      "line": 0,
+      "report": "testing",
+      "fix": "Consolidate duplicate test files, keep the more comprehensive version"
+    },
+    {
+      "id": "M51",
+      "issue": "Inconsistent test naming patterns across packages",
+      "file": "Multiple test files across codebase",
+      "line": 0,
+      "report": "testing",
+      "fix": "Standardize all tests to use descriptive 'should [verb] [behavior]' naming convention"
+    },
+    {
+      "id": "M52",
+      "issue": "Error page in Admin Router uses hardcoded English text instead of l10n",
+      "file": "apps/admin/lib/router/admin_router.dart",
+      "line": 257,
+      "report": "ux",
+      "fix": "Replace hardcoded 'Error', 'Page not found', 'Home' with AppLocalizations references"
+    },
+    {
+      "id": "M53",
+      "issue": "Error page in Cashier Router uses hardcoded English text instead of l10n",
+      "file": "apps/cashier/lib/router/cashier_router.dart",
+      "line": 157,
+      "report": "ux",
+      "fix": "Replace hardcoded English strings with l10n (like admin_lite already does)"
+    },
+    {
+      "id": "M54",
+      "issue": "Admin Router missing custom page transitions (unlike Cashier FadeTransition)",
+      "file": "apps/admin/lib/router/admin_router.dart",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add FadeTransition or similar custom transitions for smoother navigation"
+    },
+    {
+      "id": "M55",
+      "issue": "AlhaiEmptyState texts hardcoded in Arabic without l10n - non-Arabic users see Arabic strings",
+      "file": "alhai_design_system/lib/src/components/feedback/alhai_empty_state.dart",
+      "line": 46,
+      "report": "ux",
+      "fix": "Pass l10n strings as parameters or use context-based localization"
+    },
+    {
+      "id": "M56",
+      "issue": "Onboarding screen exists only in Admin app - missing from Cashier and Admin Lite",
+      "file": "apps/cashier/, apps/admin_lite/",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add simplified onboarding (2 steps) for Cashier and Admin Lite"
+    },
+    {
+      "id": "M57",
+      "issue": "Onboarding not auto-redirected for new users in Admin router guard",
+      "file": "apps/admin/lib/router/admin_router.dart",
+      "line": 244,
+      "report": "ux",
+      "fix": "Check SharedPreferences for first-run flag in _guardRedirect and redirect to /onboarding"
+    },
+    {
+      "id": "M58",
+      "issue": "Form validators used in only 14 of ~195 screen files",
+      "file": "Various form screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add validators to all input forms, especially settings and configuration screens"
+    },
+    {
+      "id": "M59",
+      "issue": "TextInputAction.next not consistently applied across multi-field forms",
+      "file": "Various form screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add TextInputAction.next to all TextFields except the last one in each form"
+    },
+    {
+      "id": "M60",
+      "issue": "Pull-to-refresh in only 20 of ~195 screens (10%) - missing from invoices, expenses, suppliers, shifts",
+      "file": "Various list screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add RefreshIndicator to all dynamic data list screens"
+    },
+    {
+      "id": "M61",
+      "issue": "No load-more indicator at end of scrollable lists",
+      "file": "Various list screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add loading indicator at bottom of lists when fetching more data"
+    },
+    {
+      "id": "M62",
+      "issue": "No scroll-to-top button in long scrollable lists",
+      "file": "Various list screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add FloatingActionButton with scroll-to-top on long lists"
+    },
+    {
+      "id": "M63",
+      "issue": "Search debounce only in POS InstantSearchField - missing from products, customers, invoices search",
+      "file": "packages/alhai_shared_ui/ search screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add 300ms debounce to all search fields using Timer or debounce package"
+    },
+    {
+      "id": "M64",
+      "issue": "Swipe-to-delete gesture inconsistent - available in some lists but not all",
+      "file": "Various list screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Standardize Dismissible usage with confirmation dialogs on all deletable lists"
+    },
+    {
+      "id": "M65",
+      "issue": "PopScope used in only 3 files - form data lost on accidental back navigation",
+      "file": "Product, supplier, purchase form screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add PopScope with unsaved-changes warning to ProductForm, SupplierForm, PurchaseForm, ShiftClose screens"
+    },
+    {
+      "id": "M66",
+      "issue": "4 different Dart SDK constraint patterns across 19 modules (>=3.0.0, >=3.4.0, ^3.8.0)",
+      "file": "All pubspec.yaml files",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Unify all modules to >=3.4.0 <4.0.0 or ^3.8.0"
+    },
+    {
+      "id": "M67",
+      "issue": "Package version conflicts: get_it (^7.6.4 vs ^7.7.0), injectable (^2.3.2 vs ^2.5.0), flutter_lints (^3.0.1 vs ^6.0.0)",
+      "file": "Various pubspec.yaml files",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Align all declared versions to latest compatible across modules"
+    },
+    {
+      "id": "M68",
+      "issue": "Resolved versions differ across lock files (dio 5.9.0 vs 5.9.1, json_annotation 4.9.0 vs 4.11.0)",
+      "file": "Various pubspec.lock files",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Run melos bootstrap to synchronize lock files or adopt Dart workspaces"
+    },
+    {
+      "id": "M69",
+      "issue": "Heavy image package (4.7.2) in alhai_core - may not need full image processing",
+      "file": "alhai_core/pubspec.yaml",
+      "line": 22,
+      "report": "dependencies",
+      "fix": "Verify usage; if only for loading images, remove and use cached_network_image instead"
+    },
+    {
+      "id": "M70",
+      "issue": "syncfusion_flutter_charts requires commercial license + duplicate with fl_chart in super_admin",
+      "file": "super_admin/pubspec.yaml",
+      "line": 35,
+      "report": "dependencies",
+      "fix": "Remove syncfusion_flutter_charts and use fl_chart exclusively (MIT license)"
+    },
+    {
+      "id": "M71",
+      "issue": "flutter_background_geolocation requires Transistor Software commercial license for production",
+      "file": "driver_app/pubspec.yaml",
+      "line": 65,
+      "report": "dependencies",
+      "fix": "Verify commercial license is obtained before production deployment"
+    },
+    {
+      "id": "M72",
+      "issue": "3 different linting packages across modules (flutter_lints ^3.0.1, lints ^3.0.0, none for alhai_sync)",
+      "file": "Various pubspec.yaml and analysis_options.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Standardize to lints: ^3.0.0 with shared analysis_options.yaml at root level"
+    },
+    {
+      "id": "M73",
+      "issue": "Dual mocking frameworks: mocktail (13 modules) vs mockito (customer_app, driver_app)",
+      "file": "customer_app/pubspec.yaml, driver_app/pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Standardize to mocktail (no code generation required)"
+    },
+    {
+      "id": "M74",
+      "issue": "build_runner missing from admin, admin_lite, cashier dev_dependencies despite using Drift",
+      "file": "apps/admin/pubspec.yaml, apps/admin_lite/pubspec.yaml, apps/cashier/pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Add build_runner and drift_dev if code generation is needed in these apps"
+    },
+    {
+      "id": "M75",
+      "issue": "13 common packages (flutter_riverpod, get_it, go_router, etc.) duplicated across 7+ modules",
+      "file": "Various pubspec.yaml files",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Declare shared dependencies once in alhai_core or create alhai_deps shared package"
+    },
+    {
+      "id": "M76",
+      "issue": "4 apps (customer_app, driver_app, distributor_portal, super_admin) excluded from melos.yaml",
+      "file": "melos.yaml",
+      "line": 3,
+      "report": "dependencies",
+      "fix": "Add these paths to melos.yaml packages list for consistent tooling"
+    },
+    {
+      "id": "M77",
+      "issue": "alhai_shared_ui depends on 7 internal packages creating overly complex dependency tree",
+      "file": "packages/alhai_shared_ui/pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Remove unnecessary dependencies (e.g., alhai_sync) to simplify the tree"
+    },
+    {
+      "id": "M78",
+      "issue": "flutter_secure_storage uses insecure localStorage with base64 on web platform",
+      "file": "Various pubspec.yaml (7 modules use flutter_secure_storage)",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Use encrypted cookies or Supabase session management for web apps"
+    },
+    {
+      "id": "M79",
+      "issue": "Local OTP verification creates UUID-based tokens without cryptographic signature",
+      "file": "packages/alhai_auth/lib/src/providers/auth_providers.dart",
+      "line": 258,
+      "report": "security",
+      "fix": "Use HMAC to sign local tokens or always require Supabase signInWithOtp"
+    },
+    {
+      "id": "M80",
+      "issue": "Stores public read policy exposes sensitive data (phone, email, tax_number) to anonymous users",
+      "file": "supabase/supabase_init.sql",
+      "line": 803,
+      "report": "security",
+      "fix": "Create restricted VIEW or column-level security hiding sensitive fields from public"
+    },
+    {
+      "id": "M81",
+      "issue": "CORS allows x-user-id and x-store-id custom headers enabling potential identity spoofing",
+      "file": "supabase/functions/_shared/cors.ts",
+      "line": 3,
+      "report": "security",
+      "fix": "Remove x-user-id and x-store-id from allowed headers; extract identity from JWT only"
+    },
+    {
+      "id": "M82",
+      "issue": "Rate limiting for OTP and PIN is client-side only - bypassable by clearing app data",
+      "file": "packages/alhai_auth/lib/src/security/otp_service.dart",
+      "line": 10,
+      "report": "security",
+      "fix": "Implement server-side rate limiting via Supabase Edge Function or Redis"
+    },
+    {
+      "id": "M83",
+      "issue": "Default store_demo_001 fallback in AI providers allows potential cross-store data access",
+      "file": "packages/alhai_ai/lib/src/providers/",
+      "line": 0,
+      "report": "security",
+      "fix": "Throw StateError('Store ID not set') instead of using fallback ID"
+    },
+    {
+      "id": "M84",
+      "issue": "No JWT expiry validation on client side - expired tokens sent to server unnecessarily",
+      "file": "packages/alhai_auth/lib/src/providers/auth_providers.dart",
+      "line": 0,
+      "report": "security",
+      "fix": "Add local JWT expiry check before API calls to avoid unnecessary failed requests"
+    },
+    {
+      "id": "M85",
+      "issue": "Certificate Pinning not applied on web platform due to browser limitations",
+      "file": "packages/alhai_auth/lib/src/core/network/secure_http_client.dart",
+      "line": 62,
+      "report": "security",
+      "fix": "Document as known limitation; add additional web security measures (CSP, SRI)"
+    },
+    {
+      "id": "M86",
+      "issue": "No deferred loading (deferred as) in any Dart file - no web code splitting",
+      "file": "apps/cashier/lib/router/cashier_router.dart, apps/admin/lib/router/admin_router.dart",
+      "line": 0,
+      "report": "performance",
+      "fix": "Use deferred as for secondary screens (AI, Reports, Settings) to split JS bundles"
+    },
+    {
+      "id": "M87",
+      "issue": "Sequential initialization in main.dart - Firebase, Supabase, SharedPrefs not parallel",
+      "file": "apps/cashier/lib/main.dart",
+      "line": 19,
+      "report": "performance",
+      "fix": "Use Future.wait([Firebase.initializeApp(), Supabase.initialize(), SharedPreferences.getInstance()]) for ~30-40% faster startup"
+    },
+    {
+      "id": "M88",
+      "issue": "No HTTP response caching (ETag, If-Modified-Since, Cache-Control) on API calls",
+      "file": "packages/alhai_sync/lib/src/sync_api_service.dart, alhai_services/",
+      "line": 0,
+      "report": "performance",
+      "fix": "Add dio_cache_interceptor or manual ETag/Cache-Control handling"
+    },
+    {
+      "id": "M89",
+      "issue": "No LRU cache for frequently accessed data - productsMapProvider rebuilds on every change",
+      "file": "packages/alhai_shared_ui/lib/src/providers/products_providers.dart",
+      "line": 187,
+      "report": "performance",
+      "fix": "Use lru_map package or select() to minimize rebuilds"
+    },
+    {
+      "id": "M90",
+      "issue": "No cacheWidth/cacheHeight for product images - full resolution loaded for thumbnails",
+      "file": "packages/alhai_pos/lib/src/screens/pos/pos_screen.dart",
+      "line": 1244,
+      "report": "performance",
+      "fix": "Add cacheWidth/cacheHeight to CachedNetworkImage and Image.network calls for ~30% memory reduction"
+    },
+    {
+      "id": "M91",
+      "issue": "getAllProducts() and getAllSales() methods load all data without limits",
+      "file": "packages/alhai_database/lib/src/daos/products_dao.dart, sales_dao.dart",
+      "line": 21,
+      "report": "performance",
+      "fix": "Deprecate unbounded methods; force callers to use paginated versions"
+    },
+    {
+      "id": "M92",
+      "issue": "GridView.count without .builder in 5 files - builds all children eagerly",
+      "file": "distributor_portal/.../distributor_dashboard_screen.dart, packages/alhai_shared_ui/.../quick_actions_panel.dart, 3 more",
+      "line": 0,
+      "report": "performance",
+      "fix": "Replace GridView.count with GridView.builder for dynamic content"
+    },
+    {
+      "id": "M93",
+      "issue": "ref.watch() at root build level in POS screen causes full subtree rebuilds",
+      "file": "packages/alhai_pos/lib/src/screens/pos/pos_screen.dart",
+      "line": 580,
+      "report": "performance",
+      "fix": "Extract sub-widgets with their own Consumer/ConsumerWidget for selective rebuilds"
+    },
+    {
+      "id": "M94",
+      "issue": "No HTTP retry strategy or exponential backoff for API calls",
+      "file": "alhai_services/lib/src/services/",
+      "line": 0,
+      "report": "performance",
+      "fix": "Add retry interceptor with exponential backoff (3 retries, 1s/2s/4s)"
+    },
+    {
+      "id": "M95",
+      "issue": "No Service Worker or PWA caching strategy for web deployment",
+      "file": "apps/cashier/web/",
+      "line": 0,
+      "report": "performance",
+      "fix": "Configure Flutter's service worker or custom SW for offline-capable web app"
+    },
+    {
+      "id": "M96",
+      "issue": "No compute()/Isolate.run() for heavy operations (CSV parsing, FTS rebuild)",
+      "file": "apps/cashier/lib/main.dart, packages/alhai_auth/lib/src/screens/splash_screen.dart",
+      "line": 46,
+      "report": "performance",
+      "fix": "Move CSV parsing, FTS initialization, and database seeding to Isolate.run()"
+    },
+    {
+      "id": "M97",
+      "issue": "All 100+ routes registered eagerly in GoRouter - no lazy route loading",
+      "file": "apps/cashier/lib/router/cashier_router.dart",
+      "line": 1,
+      "report": "performance",
+      "fix": "Use LazyRouteHelper or deferred loading for infrequently-used routes"
+    },
+    {
+      "id": "M98",
+      "issue": "ScreenPreloader static cache without size limits (dead code with memory risk)",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/common/lazy_screen.dart",
+      "line": 220,
+      "report": "performance",
+      "fix": "Either activate with LRU eviction or remove dead code (594 lines)"
+    },
+    {
+      "id": "M99",
+      "issue": "Simple validation in quick_add_product_screen instead of centralized FormValidators",
+      "file": "apps/cashier/lib/screens/products/quick_add_product_screen.dart",
+      "line": 206,
+      "report": "input_validation",
+      "fix": "Replace isEmpty checks with FormValidators.requiredField(), FormValidators.price(), etc."
+    },
+    {
+      "id": "M100",
+      "issue": "Barcode field without validator in quick_add_product_screen",
+      "file": "apps/cashier/lib/screens/products/quick_add_product_screen.dart",
+      "line": 275,
+      "report": "input_validation",
+      "fix": "Add validator: FormValidators.barcode(required: false)"
+    },
+    {
+      "id": "M101",
+      "issue": "No InputSanitizer.sanitize() in quick_add_product_screen before saving",
+      "file": "apps/cashier/lib/screens/products/quick_add_product_screen.dart",
+      "line": 533,
+      "report": "input_validation",
+      "fix": "Add InputSanitizer.sanitize() to name and barcode before database insert"
+    },
+    {
+      "id": "M102",
+      "issue": "Notes field without maxLength or dangerous content check in receiving_goods_screen",
+      "file": "apps/admin/lib/screens/purchases/receiving_goods_screen.dart",
+      "line": 526,
+      "report": "input_validation",
+      "fix": "Add validator: FormValidators.notes(maxLength: 500) and maxLength: 500"
+    },
+    {
+      "id": "M103",
+      "issue": "Password validator defaults all strength requirements to false",
+      "file": "alhai_design_system/lib/src/utils/validators.dart",
+      "line": 185,
+      "report": "input_validation",
+      "fix": "Change defaults: requireUppercase=true, requireDigit=true for minimum password strength"
+    },
+    {
+      "id": "M104",
+      "issue": "Login screen only checks phone length (< 9 digits), not Saudi format (05xxxxxxxx)",
+      "file": "packages/alhai_auth/lib/src/screens/login_screen.dart",
+      "line": 94,
+      "report": "input_validation",
+      "fix": "Use PhoneValidator.validateMobile() based on selected country"
+    },
+    {
+      "id": "M105",
+      "issue": "No XSS/sanitization check on instant search field input",
+      "file": "packages/alhai_pos/lib/src/widgets/pos/instant_search.dart",
+      "line": 18,
+      "report": "input_validation",
+      "fix": "Add InputSanitizer.sanitize() on search query before use"
+    },
+    {
+      "id": "M106",
+      "issue": "containsDangerousContent() used in only 5 files - not enforced across input forms",
+      "file": "packages/alhai_shared_ui/lib/src/core/validators/input_sanitizer.dart",
+      "line": 164,
+      "report": "input_validation",
+      "fix": "Apply containsDangerousContent check in all form screens accepting text input"
+    },
+    {
+      "id": "M107",
+      "issue": "Dual storage system (R2 + Supabase Storage) without clear unification strategy",
+      "file": "alhai_core/lib/src/services/image_service.dart, supabase/functions/upload-product-images/index.ts",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Choose R2 as primary and deprecate Supabase Storage path, or document when each is used"
+    },
+    {
+      "id": "M108",
+      "issue": "Image format conflict: Dart ImageService outputs JPEG, Edge Function expects WebP",
+      "file": "alhai_core/lib/src/services/image_service.dart (line 159), supabase/functions/upload-product-images/index.ts (line 59)",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Standardize on WebP for all image storage (better compression)",
+      "status": "fixed",
+      "fixed_by": "Added detectImageFormat() magic-byte detection in Edge Function to accept JPEG/PNG/WebP; corrected content-type and file extension to match actual image data; fixed misleading comment in Dart ImageService"
+    },
+    {
+      "id": "M109",
+      "issue": "No cleanup of temporary files (PDF receipts, CSV exports) after sharing",
+      "file": "packages/alhai_pos/lib/src/services/whatsapp_receipt_service.dart (line 179), packages/alhai_reports/lib/src/utils/csv_export_helper.dart (line 76)",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Add finally block to delete temp files after share/send completes"
+    },
+    {
+      "id": "M110",
+      "issue": "No URL validation for image URLs - no HTTPS or domain whitelist check",
+      "file": "packages/alhai_shared_ui/lib/src/screens/products/products_screen.dart, multiple files",
+      "line": 867,
+      "report": "file_storage",
+      "fix": "Create validateImageUrl() wrapper checking HTTPS and allowed domains (cdn.alhai.sa, supabase)"
+    },
+    {
+      "id": "M111",
+      "issue": "No storage quota management per store (no size tracking or limits)",
+      "file": "No implementation exists",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Add storage tracking table with per-store limits tied to subscription plan"
+    },
+    {
+      "id": "M112",
+      "issue": "No post-capture file size validation in AI invoice import",
+      "file": "apps/admin/lib/screens/purchases/ai_invoice_import_screen.dart",
+      "line": 198,
+      "report": "file_storage",
+      "fix": "Add maxHeight and file size check after image capture"
+    },
+    {
+      "id": "M113",
+      "issue": "No input sanitization in receiving_goods_screen before saving to DB",
+      "file": "apps/admin/lib/screens/purchases/receiving_goods_screen.dart",
+      "line": 590,
+      "report": "input_validation",
+      "fix": "Add InputSanitizer.sanitize() to receivedBy and receiveNotes fields"
+    },
+    {
+      "id": "M114",
+      "issue": "DateTime.parse() without try-catch in 30+ locations (DTOs, sync, backup)",
+      "file": "alhai_core/lib/src/dto/ (10+ files), packages/alhai_sync/, alhai_services/",
+      "line": 0,
+      "report": "input_validation",
+      "fix": "Replace DateTime.parse() with DateTime.tryParse() ?? DateTime.now() in all DTOs"
+    },
+    {
+      "id": "M115",
+      "issue": "DashboardShell uses hardcoded breakpoint > 900 instead of unified breakpoint system",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/layout/dashboard_shell.dart",
+      "line": 218,
+      "report": "responsive",
+      "fix": "Replace hardcoded > 900 with AppBreakpoints.isDesktop(context)"
+    },
+    {
+      "id": "M116",
+      "issue": "Shell breakpoint inconsistency: dashboard_shell > 900, cashier_shell >= 768, distributor_shell >= 768",
+      "file": "dashboard_shell.dart, cashier_shell.dart, distributor_shell.dart",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Unify sidebar/drawer breakpoint to single value from AlhaiBreakpoints across all shells"
+    },
+    {
+      "id": "M117",
+      "issue": "ResponsiveBuilder duplicated in 2 packages with incompatible APIs",
+      "file": "alhai_design_system/lib/src/responsive/responsive_builder.dart, packages/alhai_shared_ui/lib/src/widgets/responsive/responsive_builder.dart",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Keep one ResponsiveBuilder and re-export from the other, or rename to avoid confusion"
+    },
+    {
+      "id": "M118",
+      "issue": "Hardcoded dimensions with magic numbers in AI and report screens",
+      "file": "ai_staff_analytics_screen.dart (340, 28), ai_customer_recommendations_screen.dart (380, 80), custom_report_screen.dart (44), interest_settings_screen.dart (200), complaints_report_screen.dart (180)",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Replace magic numbers with named constants from AppSpacing/AppSidebarSize"
+    },
+    {
+      "id": "M119",
+      "issue": "Chat message bubble maxWidth = 65% of screen - 1248px on desktop (too wide)",
+      "file": "packages/alhai_ai/lib/src/widgets/ai/chat_message_bubble.dart",
+      "line": 106,
+      "report": "responsive",
+      "fix": "Add maxWidth cap: min(MediaQuery.sizeOf(context).width * 0.65, 600)"
+    },
+    {
+      "id": "M120",
+      "issue": "Invoice DataTable uses hardcoded sidebar width (340/80) for minWidth calculation",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/invoices/invoice_data_table.dart",
+      "line": 81,
+      "report": "responsive",
+      "fix": "Use LayoutBuilder instead of MediaQuery minus hardcoded sidebar values"
+    },
+    {
+      "id": "M121",
+      "issue": "Overflow handling partial - only 59 of 195 screens use SingleChildScrollView",
+      "file": "Various form and content screens",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Add scroll wrapping to all form screens and long-content screens"
+    },
+    {
+      "id": "M122",
+      "issue": "LayoutBuilder used in only 27 of 195 screens - most use MediaQuery.of instead",
+      "file": "Various screens",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Prefer LayoutBuilder for adaptive layouts that depend on available space"
+    },
+    {
+      "id": "M123",
+      "issue": "context.isMobile, context.isTablet, context.responsive<T>() extensions built but never used",
+      "file": "alhai_design_system/lib/src/responsive/context_ext.dart",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Adopt context extensions in screens instead of manual MediaQuery width checks"
+    },
+    {
+      "id": "M124",
+      "issue": "ResponsiveLayout, ResponsiveValue, ResponsiveRowColumn, ResponsiveGridView, ResponsivePadding, ResponsiveText, ResponsiveGap, ResponsiveConstraints all built but never used",
+      "file": "alhai_design_system/lib/src/responsive/, packages/alhai_shared_ui/lib/src/widgets/responsive/",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Wire up existing responsive widgets or remove dead code to avoid confusion"
+    },
+    {
+      "id": "M125",
+      "issue": "TabBarTheme uses fixed AppColors.textSecondary (dark grey for light mode) in dark mode",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart",
+      "line": 416,
+      "report": "dark_mode",
+      "fix": "Change to isDark ? AppColors.textSecondaryDark : AppColors.textSecondary"
+    },
+    {
+      "id": "M126",
+      "issue": "IconButton hover/highlight uses AppColors.primarySurface (#ECFDF5) - too light for dark mode",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart",
+      "line": 228,
+      "report": "dark_mode",
+      "fix": "Use isDark ? AppColors.primarySurfaceDark : AppColors.primarySurface"
+    },
+    {
+      "id": "M127",
+      "issue": "Chip selectedColor/secondarySelectedColor fixed to AppColors.primarySurface",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart",
+      "line": 376,
+      "report": "dark_mode",
+      "fix": "Add dark variant: isDark ? Color(0xFF064E3B) : AppColors.primarySurface"
+    },
+    {
+      "id": "M128",
+      "issue": "Colors.grey used 158 times in apps/ without theme tokens",
+      "file": "Various app screens (grey.shade200, grey[600], etc.)",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Replace with AppColors.getTextSecondary(isDark) or colorScheme.outline"
+    },
+    {
+      "id": "M129",
+      "issue": "Direct Material colors (Colors.red/green/blue/orange) used 185 times in apps/ bypassing semantic tokens",
+      "file": "employee_profile_screen (20), whatsapp_management_screen (15), customer_groups_screen (13), attendance_screen (13), and 20+ more",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Replace with colorScheme.error, AppColors.success, colorScheme.primary, AppColors.warning"
+    },
+    {
+      "id": "M130",
+      "issue": "Weak outline contrast in dark mode - #424242 on #1E1E1E = 2.1:1 ratio (barely visible)",
+      "file": "alhai_design_system/lib/src/theme/alhai_color_scheme.dart",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Change outlineDark from #424242 to #555555 for minimum 3:1 contrast ratio"
+    },
+    {
+      "id": "M131",
+      "issue": "BottomSheet dragHandleColor uses fixed AppColors.grey600/grey300 instead of colorScheme.outline",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart",
+      "line": 349,
+      "report": "dark_mode",
+      "fix": "Replace with colorScheme.outline for consistent theming"
+    },
+    {
+      "id": "M132",
+      "issue": "Primary color same (#10B981) for both light and dark in shared_ui, but different (#00897B light, primaryLight dark) in design_system",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_theme.dart vs alhai_design_system/lib/src/theme/alhai_color_scheme.dart",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Align primary color strategy between both theme systems"
+    },
+    {
+      "id": "M133",
+      "issue": "~65% of animation durations use hardcoded values instead of design tokens",
+      "file": "modern_card.dart, shimmer_loading.dart, gradient_button.dart, order_notification.dart, payment_success_dialog.dart, pin_numpad.dart, otp_input_field.dart, cashier screens, and more",
+      "line": 0,
+      "report": "animations",
+      "fix": "Replace Duration(milliseconds: X) with AlhaiDurations.* or AlhaiMotion.* tokens"
+    },
+    {
+      "id": "M134",
+      "issue": "Button press scale values inconsistent: AlhaiButton 0.95, AlhaiIconButton 0.9, ModernCard 0.98",
+      "file": "alhai_button.dart, alhai_icon_button.dart, gradient_button.dart, modern_card.dart, quick_action_grid.dart, pin_numpad.dart",
+      "line": 0,
+      "report": "animations",
+      "fix": "Define AlhaiMotion.scalePressed = 0.95 and AlhaiMotion.scalePressedSubtle = 0.98 tokens"
+    },
+    {
+      "id": "M135",
+      "issue": "No Lottie animations - missing rich visual feedback for success, error, empty states",
+      "file": "No lottie_flutter in any pubspec.yaml",
+      "line": 0,
+      "report": "animations",
+      "fix": "Add lottie_flutter and use for payment success, error pages, empty cart"
+    },
+    {
+      "id": "M136",
+      "issue": "No Rive animations - mascot_widget.dart uses manual AnimationController instead",
+      "file": "packages/alhai_auth/lib/src/widgets/branding/mascot_widget.dart",
+      "line": 0,
+      "report": "animations",
+      "fix": "Consider Rive for mascot character - more performant and design-friendly"
+    },
+    {
+      "id": "M137",
+      "issue": "Reduce Motion respected by only 6 widgets - 25+ AnimationControllers ignore disableAnimations",
+      "file": "Only packages/alhai_shared_ui/lib/src/widgets/common/smart_animations.dart respects it",
+      "line": 0,
+      "report": "animations",
+      "fix": "Check MediaQuery.of(context).disableAnimations in all AnimationController initState()"
+    },
+    {
+      "id": "M138",
+      "issue": "No staggered animations when loading lists - all items appear simultaneously",
+      "file": "Product lists, customer lists, invoice lists across all apps",
+      "line": 0,
+      "report": "animations",
+      "fix": "Add staggered fade-in with 50ms delay per item for list loading"
+    },
+    {
+      "id": "M139",
+      "issue": "159 showDialog/showModalBottomSheet all use default transitions - no branded animation",
+      "file": "Various screens across all apps",
+      "line": 0,
+      "report": "animations",
+      "fix": "Create AlhaiDialog.show() and AlhaiBottomSheet.show() with custom SlideTransition"
+    },
+    {
+      "id": "M140",
+      "issue": "Most Curves.* used directly instead of AlhaiMotion.* tokens (easeInOut vs AlhaiMotion.standard)",
+      "file": "cashier_router.dart, modern_card.dart, shimmer_loading.dart, gradient_button.dart, payment_screen.dart, and more",
+      "line": 0,
+      "report": "animations",
+      "fix": "Replace Curves.easeInOut with AlhaiMotion.standard, Curves.elasticOut with AlhaiMotion.spring"
+    },
+    {
+      "id": "M141",
+      "issue": "ThemeProvider duplicated identically in 3 locations (alhai_auth, alhai_shared_ui, admin/main.dart)",
+      "file": "packages/alhai_auth/lib/src/providers/theme_provider.dart, packages/alhai_shared_ui/lib/src/providers/theme_provider.dart, apps/admin/lib/main.dart:19",
+      "line": 0,
+      "report": "architecture",
+      "fix": "Keep ThemeProvider in one package (alhai_shared_ui) and re-export from others"
+    },
+    {
+      "id": "M142",
+      "issue": "PaymentMethod and PaymentResult defined in multiple files causing barrel export hide directives",
+      "file": "packages/alhai_pos/lib/alhai_pos.dart:47,50,53",
+      "line": 47,
+      "report": "architecture",
+      "fix": "Unify PaymentMethod enum in alhai_core/lib/src/models/enums/ and remove duplicate definitions from widgets"
+    },
+    {
+      "id": "M143",
+      "issue": "alhai_shared_ui became God Package (142 exports, 7 internal deps) - high coupling and slow builds",
+      "file": "packages/alhai_shared_ui/lib/alhai_shared_ui.dart",
+      "line": 0,
+      "report": "architecture",
+      "fix": "Split into alhai_shared_providers, alhai_shared_screens, alhai_shared_widgets or use sub-libraries"
+    },
+    {
+      "id": "M144",
+      "issue": "AuthNotifier + guardRedirect pattern duplicated in 3 router files",
+      "file": "apps/cashier/lib/router/cashier_router.dart, apps/admin/lib/router/admin_router.dart, apps/admin_lite/lib/router/lite_router.dart",
+      "line": 0,
+      "report": "architecture",
+      "fix": "Extract to packages/alhai_auth/lib/src/router/auth_guard.dart as reusable class"
+    },
+    {
+      "id": "M145",
+      "issue": "4 incomplete stub apps (customer_app, driver_app, super_admin, distributor_portal) not using shared packages",
+      "file": "customer_app/, driver_app/, super_admin/, distributor_portal/",
+      "line": 0,
+      "report": "architecture",
+      "fix": "Either integrate with shared packages (alhai_database, alhai_sync, alhai_l10n) or document as planned stubs"
+    },
+    {
+      "id": "M146",
+      "issue": "No response size limit - InitialSync loads 500-record pages without max page count",
+      "file": "packages/alhai_sync/lib/src/initial_sync.dart:56,216-238",
+      "line": 56,
+      "report": "api_endpoints",
+      "fix": "Add maxPages parameter (e.g. 200) to prevent OOM on stores with millions of records"
+    },
+    {
+      "id": "M147",
+      "issue": "Missing type safety in RPC responses - cast to dynamic without shape validation",
+      "file": "packages/alhai_auth/lib/src/screens/store_select_screen.dart:197-213",
+      "line": 197,
+      "report": "api_endpoints",
+      "fix": "Create DTOs with Freezed for RPC responses and validate shape before casting"
+    },
+    {
+      "id": "M148",
+      "issue": "SyncEngine retries every 30s without exponential backoff on persistent failures",
+      "file": "packages/alhai_sync/lib/src/sync_engine.dart:123,336-341",
+      "line": 123,
+      "report": "api_endpoints",
+      "fix": "Add exponential backoff (30s, 60s, 120s, 300s) with max retry cap when sync errors persist"
+    },
+    {
+      "id": "M149",
+      "issue": "RealtimeListener does not validate JWT session or reconnect on token expiry",
+      "file": "packages/alhai_sync/lib/src/realtime_listener.dart:86-103",
+      "line": 86,
+      "report": "api_endpoints",
+      "fix": "Check session validity before subscribing; handle JWT expiry with automatic re-subscribe"
+    },
+    {
+      "id": "M150",
+      "issue": "Edge Function upload-product-images leaks error.message in production responses",
+      "file": "supabase/functions/upload-product-images/index.ts:99-105",
+      "line": 99,
+      "report": "api_endpoints",
+      "fix": "Return generic error message in production; log details server-side only"
+    },
+    {
+      "id": "M151",
+      "issue": "No rate limiting in AI API client or server (except public-products Edge Function)",
+      "file": "packages/alhai_ai/lib/src/services/ai_api_service.dart, ai_server/main.py",
+      "line": 0,
+      "report": "api_endpoints",
+      "fix": "Add client-side throttle (10 req/min) and server-side rate limiting middleware"
+    },
+    {
+      "id": "M152",
+      "issue": "_cleanPayload function duplicated in 4 sync files with slight variations",
+      "file": "packages/alhai_sync/lib/src/sync_api_service.dart:72, org_sync_service.dart:144, push_strategy.dart:174, bidirectional_strategy.dart:511",
+      "line": 0,
+      "report": "api_endpoints",
+      "fix": "Extract to single shared utility function in alhai_sync"
+    },
+    {
+      "id": "M153",
+      "issue": "ImageService does not validate image file size before decoding (client-side OOM risk)",
+      "file": "alhai_core/lib/src/services/image_service.dart:22-30",
+      "line": 22,
+      "report": "api_endpoints",
+      "fix": "Check file size (max 10MB) before calling img.decodeImage to prevent memory exhaustion"
+    },
+    {
+      "id": "M154",
+      "issue": "Edge Function upload-product-images missing CORS headers in response (blocks web apps)",
+      "file": "supabase/functions/upload-product-images/index.ts:86-98",
+      "line": 86,
+      "report": "api_endpoints",
+      "fix": "Add ...corsHeaders to response headers like public-products does"
+    },
+    {
+      "id": "M155",
+      "issue": "EdgeInsets.only(left/right) used instead of EdgeInsetsDirectional - breaks RTL",
+      "file": "apps/admin/screens/marketing/gift_cards_screen.dart:307, settings/whatsapp_management_screen.dart:357, ecommerce/online_orders_screen.dart:204",
+      "line": 0,
+      "report": "localization",
+      "fix": "Replace EdgeInsets.only(left:) with EdgeInsetsDirectional.only(start:) and right with end"
+    },
+    {
+      "id": "M156",
+      "issue": "TextDirection.rtl hardcoded in 21 AI widget locations - breaks 5 LTR languages",
+      "file": "packages/alhai_ai/lib/src/widgets/ai/market_position_chart.dart:312,323,334,344,374,453,468 and 14 more in other AI widgets",
+      "line": 0,
+      "report": "localization",
+      "fix": "Replace TextDirection.rtl with Directionality.of(context) to respect current locale"
+    },
+    {
+      "id": "M157",
+      "issue": "516 instances of EdgeInsets.fromLTRB and Alignment.centerLeft/Right in 107 files may break RTL",
+      "file": "Various files across apps/ and packages/ (107 files, 516 instances)",
+      "line": 0,
+      "report": "localization",
+      "fix": "Review and replace text/icon alignment instances with Directional variants"
+    },
+    {
+      "id": "M158",
+      "issue": "DateFormat used without locale parameter in 4+ files - always shows format for default locale",
+      "file": "packages/alhai_pos/lib/src/services/receipt_pdf_generator.dart:82, alhai_shared_ui expiry_tracking_screen.dart:189, distributor_portal pricing/orders screens",
+      "line": 0,
+      "report": "localization",
+      "fix": "Pass current locale to DateFormat: DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode)"
+    },
+    {
+      "id": "M159",
+      "issue": "Currency symbol (ر.س / ريال) hardcoded in 10+ locations instead of using l10n keys",
+      "file": "apps/cashier/widgets/cash/denomination_counter_widget.dart:121,222,323, apps/admin/screens/ecommerce,inventory,products,subscription",
+      "line": 0,
+      "report": "localization",
+      "fix": "Use AppLocalizations.of(context)!.sar or .currency key for all currency symbols"
+    },
+    {
+      "id": "M160",
+      "issue": "No NumberFormat used anywhere - numbers always in Western format regardless of locale",
+      "file": "All screens using toStringAsFixed() for currency/number display",
+      "line": 0,
+      "report": "localization",
+      "fix": "Use NumberFormat.currency(locale: currentLocale, symbol: l10n.sar) for monetary values"
+    },
+    {
+      "id": "M161",
+      "issue": "Missing dedicated fonts for Hindi (Noto Sans Devanagari) and Bengali (Noto Sans Bengali)",
+      "file": "alhai_design_system/assets/fonts/ (only has Tajawal)",
+      "line": 0,
+      "report": "localization",
+      "fix": "Add Noto Sans Devanagari and Noto Sans Bengali fonts; configure fontFamilyFallback per locale"
+    },
+    {
+      "id": "M162",
+      "issue": "SnackBar error messages hardcoded in multiple languages (mix of Arabic and English) across screens",
+      "file": "apps/admin/screens/ecommerce/ecommerce_screen.dart:108,135, categories_screen.dart:207, employees/employee_profile_screen.dart:226, and more",
+      "line": 0,
+      "report": "localization",
+      "fix": "Replace all hardcoded SnackBar messages with AppLocalizations references"
+    }
+  ],
+  "low": [
+    {
+      "id": "L01",
+      "issue": "Flutter version pinned to 3.24.0 in CI",
+      "file": ".github/workflows/flutter_ci.yml",
+      "line": 24,
+      "report": "deployment",
+      "fix": "Update to latest stable Flutter version regularly"
+    },
+    {
+      "id": "L02",
+      "issue": "Java version inconsistency (17 in apps/* vs 11 in customer_app/driver_app)",
+      "file": "Build config files (build.gradle.kts)",
+      "line": 14,
+      "report": "deployment",
+      "fix": "Standardize to Java 17 across all apps"
+    },
+    {
+      "id": "L03",
+      "issue": "Gradle version inconsistency (8.14 vs 8.12)",
+      "file": "gradle-wrapper.properties files",
+      "line": 5,
+      "report": "deployment",
+      "fix": "Update all to same latest stable Gradle version"
+    },
+    {
+      "id": "L04",
+      "issue": "No version management system - all apps at 1.0.0+1",
+      "file": "pubspec.yaml (all apps)",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Implement semantic versioning with Git tags and auto changelog"
+    },
+    {
+      "id": "L05",
+      "issue": "No Supabase CLI config for local development",
+      "file": "supabase/config.toml (missing)",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Create supabase/config.toml with project reference"
+    },
+    {
+      "id": "L06",
+      "issue": "SQL migrations scattered - mix of numbered and standalone files",
+      "file": "supabase/migrations/ and supabase/*.sql",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Move all SQL into timestamped migration files in migrations/ folder"
+    },
+    {
+      "id": "L07",
+      "issue": "No build helper scripts (Makefile or scripts/ folder)",
+      "file": "Project root",
+      "line": 0,
+      "report": "deployment",
+      "fix": "Create Makefile or scripts/ folder with build, test, deploy scripts"
+    },
+    {
+      "id": "L08",
+      "issue": "CDN domain hardcoded without DNS documentation",
+      "file": "supabase/functions/upload-product-images/index.ts",
+      "line": 63,
+      "report": "deployment",
+      "fix": "Document DNS configuration and CNAME record setup for cdn.alhai.sa"
+    },
+    {
+      "id": "L09",
+      "issue": "Duplicate handle_new_user trigger function in 2 files",
+      "file": "supabase/fix_auth.sql, supabase/supabase_owner_only.sql",
+      "line": 36,
+      "report": "database_functions",
+      "fix": "Keep only in supabase_owner_only.sql, remove from fix_auth.sql"
+    },
+    {
+      "id": "L10",
+      "issue": "Hardcoded UUIDs in fix_auth.sql hotfix",
+      "file": "supabase/fix_auth.sql",
+      "line": 7,
+      "report": "database_functions",
+      "fix": "Move to scripts/hotfixes/ folder with comment indicating already executed"
+    },
+    {
+      "id": "L11",
+      "issue": "Missing VOLATILE declaration on trigger functions",
+      "file": "supabase/supabase_init.sql",
+      "line": 544,
+      "report": "database_functions",
+      "fix": "Add explicit VOLATILE keyword to all trigger function definitions"
+    },
+    {
+      "id": "L12",
+      "issue": "Missing COMMENT ON FUNCTION documentation for stored functions",
+      "file": "Multiple SQL files",
+      "line": 0,
+      "report": "database_functions",
+      "fix": "Add COMMENT ON FUNCTION for all functions explaining purpose and usage"
+    },
+    {
+      "id": "L13",
+      "issue": "Deprecated image_url column still present in Supabase products table",
+      "file": "supabase/migrations/20260115_add_r2_images.sql",
+      "line": 19,
+      "report": "database_functions",
+      "fix": "Plan migration to drop column after confirming no usage"
+    },
+    {
+      "id": "L14",
+      "issue": "Missing INDEX on stock_deltas.sync_status",
+      "file": "packages/alhai_database/lib/src/daos/stock_deltas_dao.dart",
+      "line": 0,
+      "report": "database_functions",
+      "fix": "CREATE INDEX idx_stock_deltas_sync_status ON stock_deltas(sync_status)"
+    },
+    {
+      "id": "L15",
+      "issue": "No retry attempt limit in SyncQueueDao.retryItem - infinite retries possible",
+      "file": "packages/alhai_database/lib/src/daos/sync_queue_dao.dart",
+      "line": 180,
+      "report": "database_functions",
+      "fix": "Add MAX_RETRIES check before retrying; mark as permanently failed if exceeded"
+    },
+    {
+      "id": "L16",
+      "issue": "Missing INDEX on orders.order_date locally",
+      "file": "packages/alhai_database/lib/src/daos/orders_dao.dart",
+      "line": 0,
+      "report": "database_functions",
+      "fix": "Add index definition in Drift table schema for order_date column"
+    },
+    {
+      "id": "L17",
+      "issue": "isFtsTableExists always returns true even when table doesn't exist (bug)",
+      "file": "packages/alhai_database/lib/src/fts/products_fts.dart",
+      "line": 225,
+      "report": "database_functions",
+      "fix": "Check actual query result: return result != null instead of returning true from try block"
+    },
+    {
+      "id": "L18",
+      "issue": "SyncMetadataTable uses non-standard primary key (tableName_ instead of UUID id)",
+      "file": "packages/alhai_database/lib/src/tables/sync_metadata_table.dart",
+      "line": 38,
+      "report": "database_schema",
+      "fix": "Document as exception or standardize with id UUID + UNIQUE(tableName_)"
+    },
+    {
+      "id": "L19",
+      "issue": "sync_queue table never cleaned - grows indefinitely",
+      "file": "packages/alhai_database/lib/src/tables/sync_queue_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add periodic cleanup: DELETE FROM sync_queue WHERE status='synced' AND syncedAt < datetime('now', '-30 days')"
+    },
+    {
+      "id": "L20",
+      "issue": "DateTime stored as Unix integers not user-readable in SQLite browser",
+      "file": "packages/alhai_database/lib/src/schema.json",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Document design decision; consider ISO8601 text storage if debugging readability needed"
+    },
+    {
+      "id": "L21",
+      "issue": "Supplier.rating lacks range validation (no CHECK 0-5)",
+      "file": "packages/alhai_database/lib/src/tables/suppliers_table.dart",
+      "line": 21,
+      "report": "database_schema",
+      "fix": "Add .check(rating.isBetweenValues(0, 5)) or validate in DAO"
+    },
+    {
+      "id": "L22",
+      "issue": "Supabase products table missing key Drift columns (pin, authUid, roleId)",
+      "file": "supabase/supabase_init.sql vs packages/alhai_database/lib/src/tables/products_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Verify if columns are intentionally excluded or need to be added to Supabase schema"
+    },
+    {
+      "id": "L23",
+      "issue": "Supabase orders table missing Drift delivery columns (deliveryLat/Lng, driverId, preparingAt, readyAt)",
+      "file": "supabase/supabase_init.sql vs packages/alhai_database/lib/src/tables/orders_table.dart",
+      "line": 0,
+      "report": "database_schema",
+      "fix": "Add missing columns to Supabase or confirm they are intentionally absent"
+    },
+    {
+      "id": "L24",
+      "issue": "Inconsistent naming of user reference columns (userId vs createdBy)",
+      "file": "packages/alhai_database/lib/src/tables/audit_log_table.dart (userId), expenses_table.dart (createdBy), cash_movements_table.dart (createdBy), stock_takes_table.dart (createdBy), returns_table.dart (createdBy)",
+      "line": 0,
+      "report": "database_relations",
+      "fix": "Standardize to either userId or createdBy consistently across all tables"
+    },
+    {
+      "id": "L25",
+      "issue": "Missing Receipt PDF generation tests",
+      "file": "packages/alhai_pos/lib/src/services/receipt_pdf_generator.dart",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add tests for PDF generation: correct data formatting, Arabic RTL handling, image embedding"
+    },
+    {
+      "id": "L26",
+      "issue": "Missing comprehensive ZATCA compliance tests",
+      "file": "packages/alhai_pos/test/ (zatca_service_test.dart has basic only)",
+      "line": 0,
+      "report": "testing",
+      "fix": "Expand ZATCA tests: invoice signing, timestamp validation, compliance reporting, error handling"
+    },
+    {
+      "id": "L27",
+      "issue": "Multi-tenant isolation insufficient testing (only 8 test cases)",
+      "file": "packages/alhai_database/test/ (cross_tenant_test.dart)",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add tests for: store data isolation, org data isolation, user permissions, cross-store data leakage"
+    },
+    {
+      "id": "L28",
+      "issue": "WhatsApp integration has only basic tests - no end-to-end delivery testing",
+      "file": "packages/alhai_pos/lib/src/services/whatsapp/",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add comprehensive tests: message queuing, delivery verification, webhook handling, template validation"
+    },
+    {
+      "id": "L29",
+      "issue": "Missing delivery service tests for full delivery flow",
+      "file": "alhai_services/lib/src/services/delivery_service.dart",
+      "line": 0,
+      "report": "testing",
+      "fix": "Add tests: delivery assignment, route optimization, status tracking, driver updates, customer notifications"
+    },
+    {
+      "id": "L30",
+      "issue": "AI Invoice Review fallback screen lacks l10n translations",
+      "file": "apps/admin/lib/router/admin_router.dart",
+      "line": 636,
+      "report": "ux",
+      "fix": "Replace hardcoded fallback text with AppLocalizations references"
+    },
+    {
+      "id": "L31",
+      "issue": "Some SnackBars use raw ScaffoldMessenger instead of unified AlhaiSnackbar component",
+      "file": "Various screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Replace direct SnackBar usage with AlhaiSnackbar.show() for consistent styling"
+    },
+    {
+      "id": "L32",
+      "issue": "Some Dismissible widgets delete without confirmation dialog",
+      "file": "Various list screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add AlhaiDialog.destructive() confirmation before Dismissible delete actions"
+    },
+    {
+      "id": "L33",
+      "issue": "Onboarding uses hardcoded path '/login' instead of AppRoutes.login constant",
+      "file": "apps/admin/lib/screens/onboarding/onboarding_screen.dart",
+      "line": 98,
+      "report": "ux",
+      "fix": "Replace context.go('/login') with context.go(AppRoutes.login)"
+    },
+    {
+      "id": "L34",
+      "issue": "No recent searches or search suggestions feature in any search screen",
+      "file": "Various search screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Add recent searches list using SharedPreferences with 10-item limit"
+    },
+    {
+      "id": "L35",
+      "issue": "Keyboard shortcuts limited to POS and shared screens only (acceptable for POS focus)",
+      "file": "Various screens",
+      "line": 0,
+      "report": "ux",
+      "fix": "Consider adding shortcuts for admin report screens in future iteration"
+    },
+    {
+      "id": "L36",
+      "issue": "Path dependencies use different relative paths for apps inside vs outside apps/ folder",
+      "file": "Various pubspec.yaml files",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Move customer_app, driver_app, distributor_portal, super_admin under apps/ for consistent paths"
+    },
+    {
+      "id": "L37",
+      "issue": "alhai_sync package has no linting configuration",
+      "file": "packages/alhai_sync/pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Add lints: ^3.0.0 to dev_dependencies and create analysis_options.yaml"
+    },
+    {
+      "id": "L38",
+      "issue": "Version constraints too loose (supabase_flutter ^2.0.0 in alhai_core allows 12+ minor versions)",
+      "file": "alhai_core/pubspec.yaml",
+      "line": 20,
+      "report": "dependencies",
+      "fix": "Tighten to ^2.3.4 or higher to match actual minimum requirements"
+    },
+    {
+      "id": "L39",
+      "issue": "8 internal packages missing version field in pubspec.yaml (resolved as 0.0.0)",
+      "file": "alhai_ai, alhai_auth, alhai_database, alhai_l10n, alhai_pos, alhai_reports, alhai_shared_ui, alhai_sync",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Add version: 1.0.0 to each package's pubspec.yaml"
+    },
+    {
+      "id": "L40",
+      "issue": "flutter_localizations not explicitly declared in some packages that may need it",
+      "file": "alhai_core, alhai_design_system, alhai_services, alhai_ai",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Add flutter_localizations SDK dependency where l10n is used directly"
+    },
+    {
+      "id": "L41",
+      "issue": "Duplicate chart libraries: fl_chart + syncfusion_flutter_charts in super_admin",
+      "file": "super_admin/pubspec.yaml",
+      "line": 33,
+      "report": "dependencies",
+      "fix": "Choose fl_chart (MIT, lighter) and remove syncfusion"
+    },
+    {
+      "id": "L42",
+      "issue": "Duplicate CSV/Excel packages across modules (csv in database+cashier, excel in distributor)",
+      "file": "Various pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Centralize export functionality in shared package"
+    },
+    {
+      "id": "L43",
+      "issue": "crypto package explicitly declared but already transitive dependency from supabase_flutter",
+      "file": "alhai_core, alhai_services, alhai_auth pubspec.yaml",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Verify direct usage; if not needed, rely on transitive dependency"
+    },
+    {
+      "id": "L44",
+      "issue": "Most modules (17 of 19) missing Flutter SDK version constraint in pubspec.yaml",
+      "file": "17 of 19 modules",
+      "line": 0,
+      "report": "dependencies",
+      "fix": "Add flutter: '>=3.10.0' SDK constraint to all modules"
+    },
+    {
+      "id": "L45",
+      "issue": "customStatement in pull_strategy uses server-provided table/column names (theoretical injection risk)",
+      "file": "packages/alhai_sync/lib/src/strategies/pull_strategy.dart",
+      "line": 209,
+      "report": "security",
+      "fix": "Validate table/column names against allowlist before use in SQL"
+    },
+    {
+      "id": "L46",
+      "issue": "Manual JSON string construction in kiosk_screen instead of jsonEncode",
+      "file": "packages/alhai_pos/lib/src/screens/pos/kiosk_screen.dart",
+      "line": 173,
+      "report": "security",
+      "fix": "Replace template literal JSON with jsonEncode() for proper escaping"
+    },
+    {
+      "id": "L47",
+      "issue": "CSRF protection only implicit via Bearer tokens - no explicit CSRF tokens implemented",
+      "file": "Authentication system",
+      "line": 0,
+      "report": "security",
+      "fix": "Current JWT-based protection is sufficient; add explicit CSRF if cookies are used in future"
+    },
+    {
+      "id": "L48",
+      "issue": "No maximum concurrent sessions limit per user account",
+      "file": "Session management (no active_sessions table)",
+      "line": 0,
+      "report": "security",
+      "fix": "Add active_sessions table with 3-device limit per account"
+    },
+    {
+      "id": "L49",
+      "issue": "InputSanitizer comprehensive but not enforced via lint rules or wrappers",
+      "file": "packages/alhai_shared_ui/lib/src/core/validators/input_sanitizer.dart",
+      "line": 0,
+      "report": "security",
+      "fix": "Create custom lint rule or wrapper widget to enforce sanitization on user inputs"
+    },
+    {
+      "id": "L50",
+      "issue": "No automatic certificate fingerprint rotation in CI/CD pipeline",
+      "file": "CI/CD pipeline",
+      "line": 0,
+      "report": "security",
+      "fix": "Add certificate fingerprint check/rotation step to deployment pipeline"
+    },
+    {
+      "id": "L51",
+      "issue": "Barrel imports without 'show' keyword - imports entire package unnecessarily",
+      "file": "apps/cashier/lib/main.dart (line 9), apps/admin_lite/lib/main.dart (line 9), packages/alhai_pos/.../pos_screen.dart (line 10)",
+      "line": 0,
+      "report": "performance",
+      "fix": "Add show clause to barrel imports like admin/main.dart already does"
+    },
+    {
+      "id": "L52",
+      "issue": "--no-tree-shake-icons required, adding ~400KB of unused Material icons",
+      "file": ".github/workflows/flutter_ci.yml (line 137)",
+      "line": 137,
+      "report": "performance",
+      "fix": "Audit icon usage and replace dynamic icons with static references to enable tree shaking"
+    },
+    {
+      "id": "L53",
+      "issue": "prefer_const_constructors lint rule disabled in alhai_core and alhai_design_system",
+      "file": "alhai_core/analysis_options.yaml (line 21), alhai_design_system/analysis_options.yaml (line 12)",
+      "line": 0,
+      "report": "performance",
+      "fix": "Enable prefer_const_constructors to reduce unnecessary widget rebuilds"
+    },
+    {
+      "id": "L54",
+      "issue": "FTS initialization and database seeding run on main thread in splash screen",
+      "file": "packages/alhai_auth/lib/src/screens/splash_screen.dart",
+      "line": 46,
+      "report": "performance",
+      "fix": "Move to background isolate or use compute() to prevent UI jank"
+    },
+    {
+      "id": "L55",
+      "issue": "Future.delayed(5 min) in categoriesProvider cannot be cancelled on provider dispose",
+      "file": "packages/alhai_shared_ui/lib/src/providers/products_providers.dart",
+      "line": 214,
+      "report": "performance",
+      "fix": "Use Timer instead of Future.delayed and cancel in ref.onDispose()"
+    },
+    {
+      "id": "L56",
+      "issue": "No RepaintBoundary used anywhere in the project for complex screens",
+      "file": "packages/alhai_pos/lib/src/screens/pos/pos_screen.dart, packages/alhai_reports/",
+      "line": 0,
+      "report": "performance",
+      "fix": "Wrap list items and chart widgets in RepaintBoundary to reduce repaints"
+    },
+    {
+      "id": "L57",
+      "issue": "No AutomaticKeepAliveClientMixin for TabBarView content - rebuilds on tab switch",
+      "file": "Various tabbed screens",
+      "line": 0,
+      "report": "performance",
+      "fix": "Add AutomaticKeepAliveClientMixin to tab content widgets"
+    },
+    {
+      "id": "L58",
+      "issue": "lowStockProductsProvider re-filters entire products list on every change",
+      "file": "packages/alhai_shared_ui/lib/src/providers/products_providers.dart",
+      "line": 193,
+      "report": "performance",
+      "fix": "Use ref.watch(productsListProvider.select(...)) to minimize rebuilds"
+    },
+    {
+      "id": "L59",
+      "issue": "SELECT * used in raw SQL queries instead of specifying needed columns",
+      "file": "packages/alhai_database/lib/src/daos/products_dao.dart",
+      "line": 110,
+      "report": "performance",
+      "fix": "Specify only required columns in raw queries to reduce data transfer"
+    },
+    {
+      "id": "L60",
+      "issue": "No request batching for multiple concurrent API calls",
+      "file": "Various service files",
+      "line": 0,
+      "report": "performance",
+      "fix": "Combine related API calls using batch endpoints or parallel Future.wait()"
+    },
+    {
+      "id": "L61",
+      "issue": "Future.delayed in LoginScreen cannot be cancelled - may execute after dispose",
+      "file": "packages/alhai_auth/lib/src/screens/login_screen.dart",
+      "line": 225,
+      "report": "performance",
+      "fix": "Replace with Timer and cancel in dispose(), or use mounted check"
+    },
+    {
+      "id": "L62",
+      "issue": "Dead code: LazyScreen, ScreenPreloader, 6 loading screens (594 lines) never used",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/common/lazy_screen.dart",
+      "line": 1,
+      "report": "performance",
+      "fix": "Either activate in routers or remove to reduce code bloat"
+    },
+    {
+      "id": "L63",
+      "issue": "No WebP or server-side image optimization for uploaded product images",
+      "file": "alhai_core/lib/src/services/image_service.dart",
+      "line": 35,
+      "report": "performance",
+      "fix": "Convert to WebP output and use Supabase Image Transform or Cloudflare Polish"
+    },
+    {
+      "id": "L64",
+      "issue": "CSV seeding loaded with rootBundle.loadString on main thread",
+      "file": "apps/cashier/lib/main.dart",
+      "line": 103,
+      "report": "performance",
+      "fix": "Move CSV parsing to isolate for large files"
+    },
+    {
+      "id": "L65",
+      "issue": "Dual validation systems: alhai_shared_ui validators vs alhai_design_system AlhaiValidators",
+      "file": "packages/alhai_shared_ui/lib/src/core/validators/, alhai_design_system/lib/src/utils/validators.dart",
+      "line": 0,
+      "report": "input_validation",
+      "fix": "Unify into single validation system or document when to use each"
+    },
+    {
+      "id": "L66",
+      "issue": "Email regex patterns differ between the two validation systems (61 vs 253 char limit)",
+      "file": "packages/alhai_shared_ui/.../email_validator.dart (line 14), alhai_design_system/.../validators.dart (line 70)",
+      "line": 0,
+      "report": "input_validation",
+      "fix": "Standardize to single RFC 5322 compliant regex"
+    },
+    {
+      "id": "L67",
+      "issue": "Receiver name validation in receiving_goods uses only isEmpty check",
+      "file": "apps/admin/lib/screens/purchases/receiving_goods_screen.dart",
+      "line": 510,
+      "report": "input_validation",
+      "fix": "Use FormValidators.name() for max length, allowed chars, and content checks"
+    },
+    {
+      "id": "L68",
+      "issue": "Credit limit hardcoded as 500.0 instead of reading from settings",
+      "file": "packages/alhai_pos/lib/src/widgets/pos/inline_payment.dart",
+      "line": 146,
+      "report": "input_validation",
+      "fix": "Read credit limit from customer or store settings"
+    },
+    {
+      "id": "L69",
+      "issue": "SQL injection detector gives false positives on common words (or, and, select, update)",
+      "file": "packages/alhai_shared_ui/lib/src/core/validators/input_sanitizer.dart",
+      "line": 177,
+      "report": "input_validation",
+      "fix": "Improve regex to match SQL patterns (e.g. 'OR 1=1') instead of standalone words"
+    },
+    {
+      "id": "L70",
+      "issue": "PBKDF2 100,000 iterations may cause 1-3s delay on older mobile devices",
+      "file": "packages/alhai_auth/lib/src/security/pin_service.dart",
+      "line": 33,
+      "report": "input_validation",
+      "fix": "Consider adaptive iterations based on device performance, or use 50,000 with Argon2"
+    },
+    {
+      "id": "L71",
+      "issue": "No image preloading system for offline mode - relies only on CachedNetworkImage 30-day cache",
+      "file": "alhai_design_system/lib/src/components/images/product_image.dart",
+      "line": 75,
+      "report": "file_storage",
+      "fix": "Add precacheImage() for most-used product images on app startup when online"
+    },
+    {
+      "id": "L72",
+      "issue": "Local DB stores image URLs only - no offline image binary storage",
+      "file": "packages/alhai_database/lib/src/tables/products_table.dart",
+      "line": 47,
+      "report": "file_storage",
+      "fix": "Document as known limitation; CachedNetworkImage 30-day cache provides partial offline support"
+    },
+    {
+      "id": "L73",
+      "issue": "admin and admin_lite apps don't register any assets in pubspec.yaml",
+      "file": "apps/admin/pubspec.yaml, apps/admin_lite/pubspec.yaml",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Add assets/images/ and assets/icons/ if local placeholder images are needed"
+    },
+    {
+      "id": "L74",
+      "issue": "BackupService uses base64 encoding instead of gzip compression (33% size increase)",
+      "file": "alhai_services/lib/src/services/backup_service.dart",
+      "line": 105,
+      "report": "file_storage",
+      "fix": "Replace base64Encode with dart:io gzip.encode for actual compression"
+    },
+    {
+      "id": "L75",
+      "issue": "NetworkImage for user avatars without custom CacheManager (5 locations)",
+      "file": "apps/cashier/.../users_permissions_screen.dart, packages/alhai_shared_ui/.../app_sidebar.dart, app_header.dart",
+      "line": 0,
+      "report": "file_storage",
+      "fix": "Use CachedNetworkImage with custom config or accept Flutter's default 100-image cache"
+    },
+    {
+      "id": "L76",
+      "issue": "4 EdgeInsets.only(left/right) usages that break RTL layout",
+      "file": "whatsapp_management_screen.dart:357, alhai_data_table.dart:130, gift_cards_screen.dart:307, online_orders_screen.dart:204",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Replace EdgeInsets.only(left/right) with EdgeInsetsDirectional.only(start/end)"
+    },
+    {
+      "id": "L77",
+      "issue": "Alignment.topLeft/bottomRight in mascot gradients instead of AlignmentDirectional",
+      "file": "packages/alhai_auth/lib/src/widgets/branding/mascot_widget.dart",
+      "line": 366,
+      "report": "responsive",
+      "fix": "Use AlignmentDirectional.topStart/bottomEnd for RTL-aware gradients"
+    },
+    {
+      "id": "L78",
+      "issue": "3 apps (driver_app, super_admin, customer_app) have no UI screens - cannot evaluate responsive",
+      "file": "driver_app/lib/, super_admin/lib/, customer_app/lib/",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Apply responsive patterns when building these apps' UI"
+    },
+    {
+      "id": "L79",
+      "issue": "Text scaling only available in cashier mode - not system-wide accessibility feature",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/common/cashier_mode_wrapper.dart",
+      "line": 27,
+      "report": "responsive",
+      "fix": "Consider extending text scaling support to all apps for accessibility compliance"
+    },
+    {
+      "id": "L80",
+      "issue": "No responsive tests for different screen sizes (320, 375, 768, 1024, 1440)",
+      "file": "No responsive test files exist",
+      "line": 0,
+      "report": "responsive",
+      "fix": "Add widget tests with different surface sizes to verify layout at each breakpoint"
+    },
+    {
+      "id": "L81",
+      "issue": "ThemeProvider code duplicated 100% in 2 locations (145 lines each)",
+      "file": "packages/alhai_shared_ui/lib/src/providers/theme_provider.dart, packages/alhai_auth/lib/src/providers/theme_provider.dart",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Keep one instance and delete the other, import from single source"
+    },
+    {
+      "id": "L82",
+      "issue": "Missing Surface Container variants (surfaceContainerLow/High, surfaceDim, surfaceBright) in dark ColorScheme",
+      "file": "alhai_design_system/lib/src/theme/alhai_color_scheme.dart",
+      "line": 55,
+      "report": "dark_mode",
+      "fix": "Define explicit values for Material 3 surface container variants"
+    },
+    {
+      "id": "L83",
+      "issue": "No dark mode gradient variants - AppColors gradients are fixed for light mode",
+      "file": "packages/alhai_shared_ui/lib/src/core/theme/app_colors.dart",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Add getGradient(isDark) methods returning appropriate dark mode gradients"
+    },
+    {
+      "id": "L84",
+      "issue": "Colors.transparent used 24+ times in apps/ and 67+ in packages/ instead of AlhaiColors.transparent",
+      "file": "Various files",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Acceptable but prefer centralized token for consistency"
+    },
+    {
+      "id": "L85",
+      "issue": "WhatsApp brand colors hardcoded (#25D366) in 6 locations",
+      "file": "packages/alhai_ai/lib/src/widgets/ai/whatsapp_recommendation_dialog.dart and 5 more",
+      "line": 0,
+      "report": "dark_mode",
+      "fix": "Technically correct (brand colors are fixed) but could be centralized as AppColors.whatsappGreen"
+    },
+    {
+      "id": "L86",
+      "issue": "~60+ AnimatedContainer use Duration(milliseconds: 200) explicitly instead of tokens",
+      "file": "Various widgets using AnimatedContainer",
+      "line": 0,
+      "report": "animations",
+      "fix": "Replace with AlhaiDurations.standard or AppDurations.normal"
+    },
+    {
+      "id": "L87",
+      "issue": "app_empty_state.dart implements own shimmer instead of using ShimmerLoading or SimpleShimmer",
+      "file": "packages/alhai_shared_ui/lib/src/widgets/common/app_empty_state.dart",
+      "line": 466,
+      "report": "animations",
+      "fix": "Reuse existing ShimmerLoading or SimpleShimmer component"
+    },
+    {
+      "id": "L88",
+      "issue": "TweenAnimationBuilder used only 4 times - missed opportunity to simplify many animations",
+      "file": "Various files using AnimationController for simple one-shot animations",
+      "line": 0,
+      "report": "animations",
+      "fix": "Use TweenAnimationBuilder instead of full AnimationController for simple implicit animations"
+    },
+    {
+      "id": "L89",
+      "issue": "AnimatedOpacity used only 2 times - many opacity transitions done without animation",
+      "file": "undo_system.dart, product_detail_screen.dart",
+      "line": 0,
+      "report": "animations",
+      "fix": "Use AnimatedOpacity for all visibility toggles instead of instant show/hide"
+    },
+    {
+      "id": "L90",
+      "issue": "Mascot animations use 2000-3000ms durations - potentially too slow for UX",
+      "file": "packages/alhai_auth/lib/src/widgets/branding/mascot_widget.dart",
+      "line": 122,
+      "report": "animations",
+      "fix": "Evaluate if shorter durations (1000-1500ms) improve perceived performance"
+    },
+    {
+      "id": "L91",
+      "issue": "No AnimatedScale/AnimatedRotation usage - manual Transform.scale + AnimationController used instead",
+      "file": "Various files with scale animations",
+      "line": 0,
+      "report": "animations",
+      "fix": "Use Flutter's implicit AnimatedScale/AnimatedRotation widgets for simpler code"
+    },
+    {
+      "id": "L92",
+      "issue": "Not using Riverpod v2 code generation (@riverpod) - longer boilerplate, no auto-dispose",
+      "file": "packages/*/providers/ (all StateNotifierProvider declarations)",
+      "line": 0,
+      "report": "architecture",
+      "fix": "Migrate to @riverpod annotations for AsyncNotifier pattern, auto-dispose, and type safety"
+    },
+    {
+      "id": "L93",
+      "issue": "Firebase and Supabase init errors silently swallowed in production (catch with debugPrint only)",
+      "file": "apps/cashier/lib/main.dart:23-33,37-54, apps/admin/lib/main.dart, apps/admin_lite/lib/main.dart",
+      "line": 23,
+      "report": "architecture",
+      "fix": "Add production logging service for init failures; at minimum log to console in release mode"
+    },
+    {
+      "id": "L94",
+      "issue": "alhai_shared_ui re-exports from alhai_auth and alhai_design_system creating indirect coupling",
+      "file": "packages/alhai_shared_ui/lib/alhai_shared_ui.dart:4,16",
+      "line": 4,
+      "report": "architecture",
+      "fix": "Import directly from source packages instead of re-exporting through alhai_shared_ui"
+    },
+    {
+      "id": "L95",
+      "issue": "Missing retry logic for Supabase RPC calls in store_select_screen (no retry on network failure)",
+      "file": "packages/alhai_auth/lib/src/screens/store_select_screen.dart:197,225,354,388",
+      "line": 197,
+      "report": "api_endpoints",
+      "fix": "Add retry with exponential backoff for RPC calls like AI API Service does"
+    },
+    {
+      "id": "L96",
+      "issue": "AI server development URL (http://10.0.2.2:8000) reveals internal network structure",
+      "file": "packages/alhai_ai/lib/src/services/ai_api_service.dart:21-23",
+      "line": 21,
+      "report": "api_endpoints",
+      "fix": "Move URLs to environment variables via --dart-define for all environments"
+    },
+    {
+      "id": "L97",
+      "issue": "No API versioning on any endpoint (AI server, Edge Functions, RPC)",
+      "file": "ai_server/main.py, supabase/functions/, supabase/sync_rpc_functions.sql",
+      "line": 0,
+      "report": "api_endpoints",
+      "fix": "Add version prefix: /v1/ai/forecast, /v1/public-products, etc."
+    },
+    {
+      "id": "L98",
+      "issue": "AI API cache stored unencrypted in SharedPreferences (sensitive business analytics)",
+      "file": "packages/alhai_ai/lib/src/services/ai_api_service.dart:161-171",
+      "line": 161,
+      "report": "api_endpoints",
+      "fix": "Use flutter_secure_storage or encrypt cache data before storing"
+    },
+    {
+      "id": "L99",
+      "issue": "PendingOperationsManager stores operations in memory only - lost on app restart",
+      "file": "packages/alhai_sync/lib/src/offline/offline_manager.dart:286",
+      "line": 286,
+      "report": "api_endpoints",
+      "fix": "Persist pending operations to database (sync_queue already handles most cases; verify coverage)"
+    },
+    {
+      "id": "L100",
+      "issue": "ConnectivityService uses deprecated ConnectivityResult (single) instead of List<ConnectivityResult>",
+      "file": "packages/alhai_sync/lib/src/connectivity_service.dart:10, offline/offline_manager.dart:106",
+      "line": 10,
+      "report": "api_endpoints",
+      "fix": "Update to connectivity_plus 6.x API: Stream<List<ConnectivityResult>>"
+    },
+    {
+      "id": "L101",
+      "issue": "SyncEngine does not health-check Supabase before starting sync - only checks internet connectivity",
+      "file": "packages/alhai_sync/lib/src/sync_engine.dart:188-209",
+      "line": 188,
+      "report": "api_endpoints",
+      "fix": "Add quick Supabase health check (e.g. select count from a small table) before full sync"
+    },
+    {
+      "id": "L102",
+      "issue": "l10n.yaml missing nullable-getter: false - forces AppLocalizations.of(context)! with bang operator everywhere",
+      "file": "packages/alhai_l10n/l10n.yaml",
+      "line": 0,
+      "report": "localization",
+      "fix": "Add nullable-getter: false to l10n.yaml to return non-null AppLocalizations"
+    },
+    {
+      "id": "L103",
+      "issue": "Locale provider saves locale with trailing underscore when no countryCode (e.g. 'ar_' instead of 'ar')",
+      "file": "packages/alhai_l10n/lib/src/locale_provider.dart:170",
+      "line": 170,
+      "report": "localization",
+      "fix": "Only append underscore when countryCode is non-null and non-empty"
+    },
+    {
+      "id": "L104",
+      "issue": "Language descriptions in language_selector.dart hardcoded in English only",
+      "file": "packages/alhai_auth/lib/src/widgets/language_selector.dart:226-244",
+      "line": 226,
+      "report": "localization",
+      "fix": "Move descriptions to ARB files or use native language names only"
+    },
+    {
+      "id": "L105",
+      "issue": "No automated tests to verify all ARB files have matching keys across languages",
+      "file": "packages/alhai_l10n/test/",
+      "line": 0,
+      "report": "localization",
+      "fix": "Add test that loads all ARB files and asserts key sets are identical"
+    },
+    {
+      "id": "L106",
+      "issue": "No golden/snapshot tests for RTL layout verification",
+      "file": "Test files across packages",
+      "line": 0,
+      "report": "localization",
+      "fix": "Add golden tests comparing LTR and RTL renders of critical screens"
+    },
+    {
+      "id": "L107",
+      "issue": "No lint rule to prevent hardcoded user-facing strings in Widget build methods",
+      "file": "analysis_options.yaml (all packages)",
+      "line": 0,
+      "report": "localization",
+      "fix": "Add custom lint or use l10n_lint package to flag hardcoded Text() strings"
+    }
+  ]
+}

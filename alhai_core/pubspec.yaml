@@ -4,7 +4,8 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.10.0'
 
 dependencies:
   flutter:
@@ -12,12 +13,13 @@ dependencies:
   dio: ^5.4.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
-  get_it: ^7.6.4
+  get_it: ^7.7.0
   injectable: ^2.3.2
   shared_preferences: ^2.2.2
   flutter_secure_storage: ^9.0.0
+  flutter_riverpod: ^2.4.9
   # R2 Image Storage
-  supabase_flutter: ^2.0.0
+  supabase_flutter: ^2.3.4
   crypto: ^3.0.3
   image: ^4.1.0
 

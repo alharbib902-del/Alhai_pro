@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة إدارة موظفي المتجر
-/// تستخدم من: admin_pos, pos_app
+/// تستخدم من: admin_pos, cashier
 class StoreMemberService {
   final StoreMembersRepository _membersRepo;
 

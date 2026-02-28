@@ -55,6 +55,51 @@ class ProductImage extends StatelessWidget {
     this.height,
   });
 
+  /// Pre-cache a list of product image URLs for offline availability.
+  ///
+  /// Call during app initialization (e.g., after store selection) to ensure
+  /// top-selling product images are available instantly when offline.
+  ///
+  /// ```dart
+  /// // In initState or after loading products:
+  /// final topProducts = products.take(50);
+  /// await ProductImage.precacheProducts(
+  ///   context,
+  ///   topProducts.map((p) => p.imageThumbnail).whereType<String>().toList(),
+  /// );
+  /// ```
+  static Future<void> precacheProducts(
+    BuildContext context,
+    List<String> imageUrls, {
+    int maxConcurrent = 5,
+  }) async {
+    // Process in batches to avoid overwhelming the network
+    for (var i = 0; i < imageUrls.length; i += maxConcurrent) {
+      final batch = imageUrls.skip(i).take(maxConcurrent);
+      await Future.wait(
+        batch.map((url) {
+          if (url.isEmpty) return Future<void>.value();
+          return precacheImage(
+            CachedNetworkImageProvider(url),
+            context,
+          ).catchError((_) {
+            // Silently ignore - precaching is best-effort
+          });
+        }),
+      );
+    }
+  }
+
+  /// Pre-cache a single image URL for offline availability.
+  static Future<void> precacheSingle(BuildContext context, String url) async {
+    if (url.isEmpty) return;
+    try {
+      await precacheImage(CachedNetworkImageProvider(url), context);
+    } catch (_) {
+      // Silently ignore - precaching is best-effort
+    }
+  }
+
   /// Select the appropriate image URL based on size with fallbacks
   String? get _imageUrl {
     return switch (size) {
@@ -77,6 +122,8 @@ class ProductImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
+      memCacheWidth: _getMemCacheSize(),
+      memCacheHeight: _getMemCacheSize(),
       placeholder: (context, url) => _buildPlaceholder(context),
       errorWidget: (context, url, error) => _buildError(context),
       cacheManager: CacheManager(
@@ -132,6 +179,15 @@ class ProductImage extends StatelessWidget {
       ImageSize.thumbnail => 32.0,
       ImageSize.medium => 48.0,
       ImageSize.large => 64.0,
+    };
+  }
+
+  /// Returns the memory cache size in pixels (2x display size for retina).
+  int _getMemCacheSize() {
+    return switch (size) {
+      ImageSize.thumbnail => 200,
+      ImageSize.medium => 400,
+      ImageSize.large => 800,
     };
   }
 }

@@ -59,8 +59,8 @@ class StoreResponse with _$StoreResponse {
       workingHours: workingHoursJson != null 
           ? WorkingHours.fromJson(workingHoursJson!) 
           : null,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

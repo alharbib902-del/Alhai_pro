@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../tokens/alhai_durations.dart';
 import '../../tokens/alhai_radius.dart';
@@ -107,8 +108,14 @@ class _AlhaiSearchFieldState extends State<AlhaiSearchField> {
       autofocus: widget.autofocus,
       enabled: widget.enabled,
       textInputAction: TextInputAction.search,
-      onChanged: widget.onChanged,
+      onChanged: (value) {
+        widget.onChanged?.call(value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), ''));
+      },
       onSubmitted: widget.onSubmitted,
+      inputFormatters: const [],
+      maxLength: 200,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+      buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: widget.hintText,

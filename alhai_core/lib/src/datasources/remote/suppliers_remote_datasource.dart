@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/suppliers/supplier_response.dart';
 import '../../dto/suppliers/create_supplier_request.dart';
 import '../../dto/suppliers/update_supplier_request.dart';
@@ -9,7 +10,7 @@ abstract class SuppliersRemoteDataSource {
     String storeId, {
     bool? activeOnly,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets a supplier by ID

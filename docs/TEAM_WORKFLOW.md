@@ -27,9 +27,9 @@
 ### Device A (POS App):
 | Account | Context File | Usage |
 |---------|--------------|-------|
-| A1 | `pos_app/.context/A1_SESSION.md` | Active |
-| A2 | `pos_app/.context/A2_SESSION.md` | Standby |
-| A3 | `pos_app/.context/A3_SESSION.md` | Standby |
+| A1 | `cashier/.context/A1_SESSION.md` | Active |
+| A2 | `cashier/.context/A2_SESSION.md` | Standby |
+| A3 | `cashier/.context/A3_SESSION.md` | Standby |
 
 ### Device B (Customer App):
 | Account | Context File | Usage |
@@ -85,7 +85,7 @@ git commit -m "wip(pos): checkpoint before account switch"
 
 ### Device A Owns:
 ```
-pos_app/
+cashier/
 ├── lib/
 ├── test/
 ├── pubspec.yaml
@@ -126,7 +126,7 @@ docs/
 git pull origin develop
 
 # 2. Read session file
-cat pos_app/.context/CURRENT_SESSION.md
+cat cashier/.context/CURRENT_SESSION.md
 
 # 3. Continue work
 git checkout pos/feat-xxx
@@ -179,7 +179,7 @@ Session files auto-communicate:
 
 | Rule | Description |
 |------|-------------|
-| **File Ownership** | A = pos_app only, B = customer_app only |
+| **File Ownership** | A = cashier only, B = customer_app only |
 | **Shared Changes** | Coordinate before editing |
 | **Session Handoff** | Update SESSION.md before switching |
 | **Git Branch** | pos/* for A, customer/* for B |

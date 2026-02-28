@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة إدارة المتاجر
-/// تستخدم من: pos_app, admin_pos, customer_app
+/// تستخدم من: cashier, admin_pos, customer_app
 class StoreService {
   final StoresRepository _storesRepo;
 

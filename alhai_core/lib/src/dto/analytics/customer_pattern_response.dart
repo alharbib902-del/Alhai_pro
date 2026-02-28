@@ -41,7 +41,7 @@ class CustomerPatternResponse {
       averageOrderValue: averageOrderValue,
       frequentProducts: frequentProducts,
       daysSinceLastOrder: daysSinceLastOrder,
-      lastOrderDate: lastOrderDate != null ? DateTime.parse(lastOrderDate!) : null,
+      lastOrderDate: lastOrderDate != null ? DateTime.tryParse(lastOrderDate!) : null,
     );
   }
 }

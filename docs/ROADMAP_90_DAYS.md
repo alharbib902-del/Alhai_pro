@@ -23,7 +23,7 @@
 │  👥 3 حسابات Pro              👥 3 حسابات Pro               │
 │                                                              │
 │  📱 التطبيقات:                 📱 التطبيقات:                 │
-│  ├── pos_app (نقطة البيع)     ├── customer_app (العميل)     │
+│  ├── cashier (نقطة البيع)     ├── customer_app (العميل)     │
 │  ├── admin_pos (لوحة التحكم)   ├── driver_app (المندوب)      │
 │  └── super_admin (الإدارة)     └── distributor_portal (B2B)  │
 │                                                              │
@@ -49,7 +49,7 @@
 
 ### 🗓️ الأسبوع 1-2 (اليوم 1-14): التطبيقات الرئيسية
 
-#### الجهاز A - تطبيق نقطة البيع (pos_app)
+#### الجهاز A - تطبيق نقطة البيع (cashier)
 
 | اليوم | المهام | القصص (US) | الاختبارات |
 |-------|--------|------------|-------------|
@@ -129,7 +129,7 @@ testWidgets('E2E: عملية بيع كاملة', (tester) async {
 });
 ```
 
-#### ✅ إنجاز المرحلة 1: pos_app MVP جاهز
+#### ✅ إنجاز المرحلة 1: cashier MVP جاهز
 
 ---
 
@@ -294,7 +294,7 @@ group('Refund Tests', () {
 | **27** | مركز الإشعارات | Notification center | ✅ Widget Test |
 | **28** | اختبارات وتنظيف | - | ✅ E2E Tests |
 
-#### ✅ إنجاز المرحلة 3: pos_app + customer_app كاملين
+#### ✅ إنجاز المرحلة 3: cashier + customer_app كاملين
 
 ---
 
@@ -415,7 +415,7 @@ group('Refund Tests', () {
 
 | اليوم | الجهاز A | الجهاز B |
 |-------|----------|----------|
-| **61-63** | E2E Testing: pos_app | E2E Testing: customer_app |
+| **61-63** | E2E Testing: cashier | E2E Testing: customer_app |
 | **64-66** | E2E Testing: admin_pos | E2E Testing: driver_app, distributor |
 | **67-68** | تحسين الأداء | تحسين الأداء |
 | **69-70** | تعزيز الأمان | تعزيز الأمان |
@@ -491,7 +491,7 @@ group('Refund Tests', () {
 │                    المعالم الرئيسية                          │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  اليوم 14  →  ✅ M1: pos_app MVP + customer_app MVP         │
+│  اليوم 14  →  ✅ M1: cashier MVP + customer_app MVP         │
 │  اليوم 21  →  ✅ M2: وضع Offline كامل                       │
 │  اليوم 28  →  ✅ M3: جميع الميزات الأساسية                  │
 │  اليوم 35  →  ✅ M4: admin_pos MVP + driver_app MVP         │
@@ -520,7 +520,7 @@ group('Refund Tests', () {
 | التطبيق | التغطية المستهدفة |
 |---------|-------------------|
 | `alhai_core` | 90%+ |
-| `pos_app` | 80%+ |
+| `cashier` | 80%+ |
 | `customer_app` | 80%+ |
 | `admin_pos` | 75%+ |
 | `driver_app` | 75%+ |

@@ -66,13 +66,13 @@ class OrderResponse with _$OrderResponse {
       addressId: addressId,
       notes: notes,
       cancellationReason: cancellationReason,
-      confirmedAt: confirmedAt != null ? DateTime.parse(confirmedAt!) : null,
-      preparingAt: preparingAt != null ? DateTime.parse(preparingAt!) : null,
-      readyAt: readyAt != null ? DateTime.parse(readyAt!) : null,
-      deliveredAt: deliveredAt != null ? DateTime.parse(deliveredAt!) : null,
-      cancelledAt: cancelledAt != null ? DateTime.parse(cancelledAt!) : null,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      confirmedAt: confirmedAt != null ? DateTime.tryParse(confirmedAt!) : null,
+      preparingAt: preparingAt != null ? DateTime.tryParse(preparingAt!) : null,
+      readyAt: readyAt != null ? DateTime.tryParse(readyAt!) : null,
+      deliveredAt: deliveredAt != null ? DateTime.tryParse(deliveredAt!) : null,
+      cancelledAt: cancelledAt != null ? DateTime.tryParse(cancelledAt!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

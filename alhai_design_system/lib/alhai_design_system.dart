@@ -7,6 +7,7 @@ library alhai_design_system;
 // ============================================
 
 export 'src/tokens/alhai_colors.dart';
+export 'src/tokens/app_colors.dart';
 export 'src/tokens/alhai_typography.dart';
 export 'src/tokens/alhai_spacing.dart';
 export 'src/tokens/alhai_radius.dart';

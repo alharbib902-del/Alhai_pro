@@ -1,8 +1,14 @@
 import 'dart:convert';
 
+import 'gzip_helper_stub.dart'
+    if (dart.library.io) 'gzip_helper_native.dart' as gzip_helper;
+
 /// خدمة النسخ الاحتياطي
-/// تستخدم من: admin_pos, pos_app
-/// 
+/// تستخدم من: admin_pos, cashier
+///
+/// Uses gzip compression on native platforms (via dart:io GZipCodec).
+/// Falls back to base64 encoding on web where dart:io is unavailable.
+///
 /// ملاحظة: تحتاج تنفيذ platform-specific للتخزين
 class BackupService {
   /// إنشاء نسخة احتياطية
@@ -23,7 +29,7 @@ class BackupService {
 
       final jsonData = jsonEncode(backup.toJson());
       final compressedData = _compress(jsonData);
-      
+
       return BackupResult(
         success: true,
         backup: backup,
@@ -61,10 +67,10 @@ class BackupService {
     try {
       final decompressed = _decompress(backupJson);
       final data = jsonDecode(decompressed) as Map<String, dynamic>;
-      
+
       // Check required fields
-      if (!data.containsKey('id') || 
-          !data.containsKey('storeId') || 
+      if (!data.containsKey('id') ||
+          !data.containsKey('storeId') ||
           !data.containsKey('data')) {
         return BackupValidationResult(
           isValid: false,
@@ -73,7 +79,7 @@ class BackupService {
       }
 
       final backup = BackupData.fromJson(data);
-      
+
       return BackupValidationResult(
         isValid: true,
         backupId: backup.id,
@@ -102,19 +108,48 @@ class BackupService {
     return 'backup_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.millisecondsSinceEpoch}';
   }
 
+  /// Compresses data using gzip (native) then base64-encodes for storage.
+  /// Output is prefixed with 'gz:' to distinguish from plain base64 data.
+  /// Falls back to plain base64 on web where gzip is unavailable.
+  ///
+  /// Typical compression ratios for JSON backup data:
+  /// - gzip: ~60-70% size reduction
+  /// - base64 only: ~33% size increase (no compression)
   String _compress(String data) {
-    // TODO: Implement actual compression (gzip)
-    // For now, just return base64 encoded
-    return base64Encode(utf8.encode(data));
+    final rawBytes = utf8.encode(data);
+    try {
+      final gzipBytes = gzip_helper.gzipEncode(rawBytes);
+      final compressed = 'gz:${base64Encode(gzipBytes)}';
+      final ratio = rawBytes.length > 0
+          ? (1 - gzipBytes.length / rawBytes.length) * 100
+          : 0;
+      // Log compression ratio in debug mode
+      assert(() {
+        // ignore: avoid_print
+        print('[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
+        return true;
+      }());
+      return compressed;
+    } catch (_) {
+      // Fallback to plain base64 if gzip is unavailable (e.g., web platform)
+      return base64Encode(rawBytes);
+    }
   }
 
+  /// Decompresses data. Supports both gzip-compressed ('gz:' prefix) and
+  /// plain base64-encoded backup formats for backward compatibility.
   String _decompress(String data) {
-    // TODO: Implement actual decompression
-    // For now, just decode base64
     try {
+      if (data.startsWith('gz:')) {
+        // Gzip-compressed format
+        final compressedBytes = base64Decode(data.substring(3));
+        final decompressedBytes = gzip_helper.gzipDecode(compressedBytes);
+        return utf8.decode(decompressedBytes);
+      }
+      // Legacy plain base64 format
       return utf8.decode(base64Decode(data));
-    } catch (e) {
-      // Assume it's not compressed
+    } catch (_) {
+      // Assume it's uncompressed plain text
       return data;
     }
   }
@@ -146,7 +181,7 @@ class BackupData {
       orElse: () => BackupType.full,
     ),
     data: json['data'] as Map<String, dynamic>,
-    createdAt: DateTime.parse(json['createdAt'] as String),
+    createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
     version: json['version'] as String,
   );
 

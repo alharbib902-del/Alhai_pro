@@ -1,0 +1,6 @@
+# Supabase CLI configuration
+# See: https://supabase.com/docs/guides/cli/config
+
+[project]
+# Replace with your actual Supabase project reference ID from the dashboard.
+id = "your-project-ref"

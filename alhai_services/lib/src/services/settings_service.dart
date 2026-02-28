@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة إعدادات المتجر
-/// تستخدم من: pos_app, admin_pos
+/// تستخدم من: cashier, admin_pos
 class SettingsService {
   final StoreSettingsRepository _settingsRepo;
 

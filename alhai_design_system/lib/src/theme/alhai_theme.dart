@@ -53,6 +53,9 @@ abstract final class AlhaiTheme {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       
       // تثبيت الخط عالميًا
+      // Note: ThemeData.fontFamily does not support fontFamilyFallback.
+      // Multi-script fallback (Hindi, Bengali) is applied via the textTheme
+      // where each TextStyle includes AlhaiTypography.fontFamilyFallback.
       fontFamily: AlhaiTypography.fontFamily,
       
       // Ripple/Splash موحّد
@@ -65,7 +68,7 @@ abstract final class AlhaiTheme {
       iconTheme: IconThemeData(color: colorScheme.onSurface),
       primaryIconTheme: IconThemeData(color: colorScheme.onSurface),
       
-      // materialTapTargetSize: يُفرض في pos_app فقط (MaterialTapTargetSize.padded)
+      // materialTapTargetSize: يُفرض في cashier فقط (MaterialTapTargetSize.padded)
       
       // Text Selection (Cursor/Selection موحّد)
       textSelectionTheme: TextSelectionThemeData(
@@ -74,7 +77,7 @@ abstract final class AlhaiTheme {
         selectionHandleColor: colorScheme.primary,
       ),
       
-      // Scrollbar (افتراضي - فعّل thumbVisibility في pos_app فقط)
+      // Scrollbar (افتراضي - فعّل thumbVisibility في cashier فقط)
       scrollbarTheme: ScrollbarThemeData(
         thickness: const WidgetStatePropertyAll(6),
         radius: const Radius.circular(999),
@@ -82,7 +85,7 @@ abstract final class AlhaiTheme {
       ),
       
       // pageTransitionsTheme: يُفرض في كل تطبيق حسب احتياجه
-      // pos_app يستخدم FadeUpwards، consumer/delivery يتركون iOS الافتراضي
+      // cashier يستخدم FadeUpwards، consumer/delivery يتركون iOS الافتراضي
 
       // App Bar
       appBarTheme: AppBarTheme(

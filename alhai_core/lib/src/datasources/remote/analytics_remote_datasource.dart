@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/analytics/slow_moving_product_response.dart';
 import '../../dto/analytics/sales_forecast_response.dart';
 import '../../dto/analytics/smart_alert_response.dart';
@@ -12,7 +13,7 @@ abstract class AnalyticsRemoteDataSource {
   Future<List<SlowMovingProductResponse>> getSlowMovingProducts(
     String storeId, {
     int daysThreshold = 30,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets sales forecast
@@ -25,7 +26,7 @@ abstract class AnalyticsRemoteDataSource {
   Future<List<SmartAlertResponse>> getSmartAlerts(
     String storeId, {
     bool unreadOnly = false,
-    int limit = 50,
+    int limit = AppLimits.alertsPageSize,
   });
 
   /// Marks an alert as read
@@ -50,7 +51,7 @@ abstract class AnalyticsRemoteDataSource {
   /// Gets customer patterns
   Future<List<CustomerPatternResponse>> getCustomerPatterns(
     String storeId, {
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets dashboard summary

@@ -1,4 +1,35 @@
-/// Validation patterns and validators for common use cases
+/// Validation patterns and validators for common use cases.
+///
+/// **DEPRECATION NOTICE (L65):** This class duplicates validation logic already
+/// available in `package:alhai_shared_ui` at
+/// `packages/alhai_shared_ui/lib/src/core/validators/`.
+///
+/// The canonical validation system is [FormValidators] and its backing
+/// individual validators (PhoneValidator, EmailValidator, PriceValidator,
+/// BarcodeValidator, IbanValidator, InputSanitizer) exported from
+/// `package:alhai_shared_ui/alhai_shared_ui.dart`.
+///
+/// **Migration guide:**
+/// ```dart
+/// // Before (deprecated):
+/// AlhaiValidators.saudiPhone(value);
+/// AlhaiValidators.email(value);
+/// AlhaiValidators.currency(value);
+///
+/// // After (canonical):
+/// import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+/// FormValidators.phone()(value);
+/// FormValidators.email()(value);
+/// FormValidators.price()(value);
+/// ```
+///
+/// New code should use `FormValidators` from `alhai_shared_ui`.
+/// This class will be removed in a future release.
+@Deprecated(
+  'Use FormValidators from package:alhai_shared_ui instead. '
+  'See packages/alhai_shared_ui/lib/src/core/validators/form_validators.dart '
+  'for the canonical validation system.',
+)
 abstract final class AlhaiValidators {
   // ============================================
   // Phone Validators
@@ -67,8 +98,9 @@ abstract final class AlhaiValidators {
       return errorMessage ?? 'البريد الإلكتروني مطلوب';
     }
 
+    // RFC 5322 compliant pattern (domain labels limited to 63 chars per RFC 1035)
     final emailPattern = RegExp(
-      r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$',
+      r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
     );
 
     if (!emailPattern.hasMatch(value)) {
@@ -185,10 +217,10 @@ abstract final class AlhaiValidators {
   static String? password(
     String? value, {
     int minLength = 8,
-    bool requireUppercase = false,
-    bool requireLowercase = false,
-    bool requireDigit = false,
-    bool requireSpecialChar = false,
+    bool requireUppercase = true,
+    bool requireLowercase = true,
+    bool requireDigit = true,
+    bool requireSpecialChar = true,
     String? errorMessage,
   }) {
     if (value == null || value.isEmpty) {

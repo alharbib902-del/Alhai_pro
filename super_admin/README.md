@@ -143,7 +143,7 @@ Annual: ~518,496 ر.س
 - **admin_pos_lite**: All mobile sessions
 - **customer_app**: Platform metrics
 - **driver_app**: Driver performance
-- **pos_app**: Cashier activity
+- **cashier**: Cashier activity
 
 ### Controls:
 - Subscriptions (all plans)

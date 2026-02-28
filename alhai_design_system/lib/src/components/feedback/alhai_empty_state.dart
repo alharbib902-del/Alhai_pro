@@ -43,7 +43,7 @@ class AlhaiEmptyState extends StatelessWidget {
   /// Common empty states
   factory AlhaiEmptyState.noData({
     Key? key,
-    String title = 'لا توجد بيانات',
+    required String title,
     String? description,
     String? actionText,
     VoidCallback? onAction,
@@ -60,8 +60,8 @@ class AlhaiEmptyState extends StatelessWidget {
 
   factory AlhaiEmptyState.noResults({
     Key? key,
-    String title = 'لا توجد نتائج',
-    String? description = 'جرب البحث بكلمات مختلفة',
+    required String title,
+    String? description,
     String? actionText,
     VoidCallback? onAction,
     bool compact = false,
@@ -79,8 +79,8 @@ class AlhaiEmptyState extends StatelessWidget {
 
   factory AlhaiEmptyState.noOrders({
     Key? key,
-    String title = 'لا توجد طلبات',
-    String? description = 'ستظهر طلباتك هنا',
+    required String title,
+    String? description,
     String? actionText,
     VoidCallback? onAction,
     bool compact = false,
@@ -98,9 +98,9 @@ class AlhaiEmptyState extends StatelessWidget {
 
   factory AlhaiEmptyState.noProducts({
     Key? key,
-    String title = 'لا توجد منتجات',
-    String? description = 'أضف منتجات لبدء البيع',
-    String? actionText = 'إضافة منتج',
+    required String title,
+    String? description,
+    String? actionText,
     VoidCallback? onAction,
   }) {
     return AlhaiEmptyState(
@@ -115,9 +115,9 @@ class AlhaiEmptyState extends StatelessWidget {
 
   factory AlhaiEmptyState.error({
     Key? key,
-    String title = 'حدث خطأ',
-    String? description = 'يرجى المحاولة مرة أخرى',
-    String? actionText = 'إعادة المحاولة',
+    required String title,
+    String? description,
+    String? actionText,
     VoidCallback? onAction,
   }) {
     return AlhaiEmptyState(
@@ -132,9 +132,9 @@ class AlhaiEmptyState extends StatelessWidget {
 
   factory AlhaiEmptyState.noConnection({
     Key? key,
-    String title = 'لا يوجد اتصال',
-    String? description = 'تحقق من اتصالك بالإنترنت',
-    String? actionText = 'إعادة المحاولة',
+    required String title,
+    String? description,
+    String? actionText,
     VoidCallback? onAction,
   }) {
     return AlhaiEmptyState(

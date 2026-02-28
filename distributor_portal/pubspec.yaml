@@ -4,7 +4,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.10.0'
 
 dependencies:
   flutter:
@@ -20,7 +21,7 @@ dependencies:
     path: ../alhai_design_system
 
   flutter_riverpod: ^2.4.9
-  get_it: ^7.6.4
+  get_it: ^7.7.0
   injectable: ^2.3.2
   go_router: ^13.0.0
   supabase_flutter: ^2.3.4
@@ -30,6 +31,10 @@ dependencies:
   fl_chart: ^0.65.0
   data_table_2: ^2.5.10
   file_picker: ^8.0.0
+  # L42: Excel (.xlsx) is only needed in distributor_portal for B2B bulk
+  # import/export. This is intentionally NOT in alhai_database because xlsx
+  # support adds ~2MB to bundle size and is only relevant for web portals.
+  # For CSV-only needs, depend on alhai_database instead (canonical location).
   excel: ^4.0.2
 
 dev_dependencies:

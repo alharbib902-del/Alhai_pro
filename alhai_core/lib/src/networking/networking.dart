@@ -3,3 +3,4 @@
 library networking;
 
 export 'api_dio_holder.dart';
+export 'secure_http_client.dart';

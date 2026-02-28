@@ -26,7 +26,7 @@ class SalesForecastResponse {
   /// Converts to domain model
   SalesForecast toDomain() {
     return SalesForecast(
-      date: DateTime.parse(date),
+      date: DateTime.tryParse(date) ?? DateTime.now(),
       predictedRevenue: predictedRevenue,
       predictedOrders: predictedOrders,
       confidence: confidence,

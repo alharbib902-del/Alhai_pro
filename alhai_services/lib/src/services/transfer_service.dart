@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة نقل المخزون بين الفروع
-/// تستخدم من: pos_app, admin_pos
+/// تستخدم من: cashier, admin_pos
 class TransferService {
   final TransfersRepository _transfersRepo;
 

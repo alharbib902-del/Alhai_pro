@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/purchases/purchase_order_response.dart';
 import '../../dto/purchases/create_purchase_order_request.dart';
 import '../../dto/purchases/receive_items_request.dart';
@@ -10,7 +11,7 @@ abstract class PurchasesRemoteDataSource {
     String? status,
     String? supplierId,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets a purchase order by ID

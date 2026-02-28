@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحي - تقرير المشروع الشامل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #6c63ff;
+  --accent-light: #8b83ff;
+  --green: #00d4aa;
+  --blue: #4facfe;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --pink: #f093fb;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(108, 99, 255, 0.15);
+  --glass-bg: rgba(26, 26, 46, 0.7);
+  --glass-border: rgba(108, 99, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(108, 99, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(79, 172, 254, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ====== GLASS CARD ====== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-on-scroll.visible:nth-child(2) { transition-delay: 0.1s; }
+.animate-on-scroll.visible:nth-child(3) { transition-delay: 0.15s; }
+.animate-on-scroll.visible:nth-child(4) { transition-delay: 0.2s; }
+.animate-on-scroll.visible:nth-child(5) { transition-delay: 0.25s; }
+.animate-on-scroll.visible:nth-child(6) { transition-delay: 0.3s; }
+
+/* ====== HERO SECTION ====== */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--blue), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.hero-desc {
+  max-width: 800px;
+  margin: 0 auto 48px;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+/* ====== COUNTER CARDS ====== */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.counter-card {
+  padding: 28px 16px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: default;
+}
+
+.counter-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.counter-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  direction: ltr;
+}
+
+.counter-card:nth-child(2) .counter-value { color: var(--blue); }
+.counter-card:nth-child(3) .counter-value { color: var(--green); }
+.counter-card:nth-child(4) .counter-value { color: #00d4aa; }
+.counter-card:nth-child(5) .counter-value { color: var(--yellow); }
+.counter-card:nth-child(6) .counter-value { color: var(--pink); }
+
+.counter-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ====== SECTION ====== */
+.section {
+  padding: 60px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent);
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ====== PROGRESS SECTION ====== */
+.progress-section {
+  padding: 40px 0 60px;
+}
+
+.overall-progress {
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.progress-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.progress-percent {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.progress-bar-outer {
+  height: 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  border-radius: 7px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  width: 0%;
+  transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.progress-bar-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.3s;
+}
+
+.stat-card:hover { transform: translateY(-3px); }
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.stat-info h4 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  direction: ltr;
+  text-align: right;
+}
+
+.stat-info p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ====== BAR CHART ====== */
+.chart-container {
+  padding: 32px;
+}
+
+.chart-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.bar-label {
+  width: 160px;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  font-family: 'Tajawal', monospace;
+  direction: ltr;
+}
+
+.bar-track {
+  flex: 1;
+  height: 28px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  width: 0%;
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  min-width: fit-content;
+}
+
+.bar-count {
+  width: 50px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+  direction: ltr;
+}
+
+/* ====== PACKAGES SECTION ====== */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 600px), 1fr));
+  gap: 16px;
+}
+
+.pkg-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.pkg-card:hover {
+  border-color: rgba(108, 99, 255, 0.4);
+}
+
+.pkg-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.pkg-header:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.pkg-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.pkg-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pkg-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.pkg-name-en {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  direction: ltr;
+  display: inline;
+  font-family: 'Tajawal', monospace;
+}
+
+.pkg-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pkg-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-tests {
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent-light);
+}
+
+.badge-pass {
+  background: rgba(0, 212, 170, 0.15);
+  color: var(--green);
+}
+
+.pkg-chevron {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+
+.pkg-card.expanded .pkg-chevron {
+  transform: rotate(90deg);
+}
+
+.pkg-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.pkg-card.expanded .pkg-body {
+  max-height: 2000px;
+}
+
+.pkg-body-inner {
+  padding: 0 24px 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: 16px 0;
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tab-btn:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255,255,255,0.05);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+  animation: fadeUp 0.3s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+.item-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.item-name-en {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+.item-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.item-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  direction: ltr;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Compat grid */
+.compat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.compat-item {
+  padding: 12px;
+  border-radius: var(--radius-xs);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.compat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.compat-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.compat-value.good { color: var(--green); }
+.compat-value.ok { color: var(--yellow); }
+.compat-value.na { color: var(--text-muted); }
+.compat-value.yes { color: var(--green); }
+.compat-value.no { color: var(--text-muted); }
+
+/* ====== DATABASE SECTION ====== */
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr));
+  gap: 20px;
+}
+
+.db-panel {
+  padding: 28px;
+}
+
+.db-panel-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-group {
+  margin-bottom: 18px;
+}
+
+.db-group-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-group-count {
+  font-size: 0.75rem;
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.db-tables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.db-tag {
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+}
+
+/* ====== LOCALIZATION ====== */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.lang-card {
+  padding: 22px 18px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.lang-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+.lang-flag {
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.lang-name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.lang-code {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  direction: ltr;
+}
+
+.lang-detail {
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  margin-top: 4px;
+}
+
+.lang-card.primary {
+  border-color: var(--accent);
+  background: rgba(108, 99, 255, 0.08);
+}
+
+/* ====== ARCHITECTURE ====== */
+.arch-diagram {
+  max-width: 900px;
+  margin: 0 auto 36px;
+}
+
+.arch-layer {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.arch-layer-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.arch-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.arch-box {
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid;
+  text-align: center;
+  direction: ltr;
+  font-family: 'Tajawal', monospace;
+  transition: transform 0.3s;
+}
+
+.arch-box:hover { transform: translateY(-2px); }
+
+.arch-connector {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tech-badge {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  direction: ltr;
+}
+
+/* ====== FOOTER ====== */
+.footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.footer-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.footer-stat {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.footer-stat span {
+  color: var(--accent);
+}
+
+/* ====== BACK TO TOP ====== */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--accent-light);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .container { padding: 0 14px; }
+  .hero { padding: 50px 0 40px; }
+  .counters-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .counter-card { padding: 18px 10px; }
+  .counter-value { font-size: 1.8rem; }
+  .bar-label { width: 110px; font-size: 0.75rem; }
+  .bar-fill { font-size: 0.7rem; }
+  .pkg-header { flex-wrap: wrap; gap: 10px; }
+  .pkg-badges { width: 100%; justify-content: flex-start; }
+  .db-grid { grid-template-columns: 1fr; }
+  .tabs { flex-wrap: wrap; }
+  .tab-btn { font-size: 0.78rem; padding: 6px 8px; }
+  .lang-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .section { padding: 40px 0; }
+}
+
+@media (max-width: 480px) {
+  .counters-grid { grid-template-columns: repeat(2, 1fr); }
+  .counter-value { font-size: 1.5rem; }
+  .stats-row { grid-template-columns: 1fr; }
+  .bar-label { width: 85px; font-size: 0.7rem; }
+  .bar-count { width: 40px; font-size: 0.8rem; }
+  .pkg-header { padding: 16px; }
+  .arch-box { padding: 8px 12px; font-size: 0.78rem; }
+}
+
+/* ====== NAV ====== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 12px 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(15, 15, 26, 0.85);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  transition: transform 0.3s;
+}
+
+.nav.visible { transform: translateY(0); }
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+}
+
+/* ====== APPS COMPARISON ====== */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+@media (max-width: 900px) {
+  .apps-grid { grid-template-columns: 1fr; }
+}
+.app-card {
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.app-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.app-card-icon {
+  width: 72px; height: 72px;
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 16px;
+}
+.app-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.app-card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.app-card-stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.app-stat {
+  text-align: center;
+}
+.app-stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.app-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+.app-features {
+  text-align: right;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.app-features li {
+  padding: 6px 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.app-features li:last-child { border-bottom: none; }
+.app-features li i { color: var(--green); font-size: 0.75rem; }
+.app-card-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* ====== DEPENDENCY MAP ====== */
+.dep-map {
+  margin-top: 32px;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+.dep-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.dep-layer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.dep-layer-label {
+  min-width: 130px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: left;
+  flex-shrink: 0;
+}
+.dep-layer-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+}
+.dep-node {
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s;
+}
+.dep-node:hover { transform: scale(1.05); }
+.dep-node i { font-size: 0.9rem; }
+.dep-arrow {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  padding: 4px 0;
+}
+.dep-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.dep-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.dep-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+@media (max-width: 768px) {
+  .dep-layer { flex-direction: column; align-items: flex-start; }
+  .dep-layer-label { min-width: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-brand">الحي</div>
+    <div class="nav-links">
+      <a href="#progress" class="nav-link">التقدم</a>
+      <a href="#tests-chart" class="nav-link">الاختبارات</a>
+      <a href="#packages" class="nav-link">الحزم</a>
+      <a href="#apps" class="nav-link">التطبيقات</a>
+      <a href="#deps" class="nav-link">التبعيات</a>
+      <a href="#database" class="nav-link">قاعدة البيانات</a>
+      <a href="#localization" class="nav-link">الترجمة</a>
+      <a href="#architecture" class="nav-link">البنية</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title">الحي</h1>
+    <p class="hero-subtitle">نظام نقاط بيع متكامل | Flutter Monorepo</p>
+    <p class="hero-desc">
+      نظام الحي هو منصة نقاط بيع متكاملة مبنية بتقنية Flutter، مصممة خصيصاً للبقالات والمتاجر في المملكة العربية السعودية. يدعم النظام العمل بدون إنترنت بشكل كامل مع مزامنة تلقائية، ويوفر 15 خدمة ذكاء اصطناعي، و7 لغات، وتوافق مع هيئة الزكاة والضريبة (ZATCA).
+    </p>
+    <div class="counters-grid">
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="14">0</div>
+        <div class="counter-label">حزمة</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="123">0</div>
+        <div class="counter-label">شاشة</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="5415" data-format="comma">0</div>
+        <div class="counter-label">اختبار</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="100" data-suffix="%">0</div>
+        <div class="counter-label">نجاح</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="7">0</div>
+        <div class="counter-label">لغات</div>
+      </div>
+      <div class="counter-card glass animate-on-scroll">
+        <div class="counter-value" data-target="50">0</div>
+        <div class="counter-label">جدول</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRESS SECTION -->
+<section class="section progress-section" id="progress">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <h2 class="section-title">تقدم المشروع</h2>
+      <p class="section-subtitle">نظرة عامة على حالة التطوير والإنجاز</p>
+    </div>
+
+    <div class="overall-progress glass animate-on-scroll">
+      <div class="progress-header">
+        <span class="progress-title">التقدم الإجمالي</span>
+        <span class="progress-percent" data-target="85">0%</span>
+      </div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" data-width="85"></div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(108,99,255,0.15); color: var(--accent);">
+          <i class="fa-solid fa-file-code"></i>
+        </div>
+        <div class="stat-info">
+          <h4>1,362+</h4>
+          <p>ملفات المصدر</p>
+        </div>
+      </div>
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+          <i class="fa-solid fa-vial"></i>
+        </div>
+        <div class="stat-info">
+          <h4>361+</h4>
+          <p>ملفات الاختبار</p>
+        </div>
+      </div>
+      <div class="stat-card glass animate-on-scroll">
+        <div class="stat-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+          <i class="fa-solid fa-code"></i>
+        </div>
+        <div class="stat-info">
+          <h4>28,000+</h4>
+          <p>سطر كود</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST DISTRIBUTION CHART -->
+<section class="section" id="tests-chart">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fa-solid fa-chart-bar"></i>
+      </div>
+      <h2 class="section-title">توزيع الاختبارات</h2>
+      <p class="section-subtitle">عدد الاختبارات لكل حزمة من إجمالي 5,415 اختبار</p>
+    </div>
+
+    <div class="chart-container glass animate-on-scroll" id="barChart">
+      <!-- bars injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES SECTION -->
+<section class="section" id="packages">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(168,85,247,0.15); color: var(--purple);">
+        <i class="fa-solid fa-cubes"></i>
+      </div>
+      <h2 class="section-title">الحزم (14 حزمة)</h2>
+      <p class="section-subtitle">تفاصيل كل حزمة - الشاشات والوظائف والاختبارات والتوافق</p>
+    </div>
+
+    <div class="packages-grid" id="packagesGrid">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- APPS COMPARISON SECTION -->
+<section class="section" id="apps">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <h2 class="section-title">التطبيقات الثلاثة</h2>
+      <p class="section-subtitle">ثلاثة تطبيقات مستقلة تشترك في نفس الحزم الأساسية مع اختلاف الوظائف والصلاحيات</p>
+    </div>
+
+    <div class="apps-grid">
+      <!-- Admin App -->
+      <a href="admin_app.html" class="app-card glass animate-on-scroll" style="text-decoration:none;color:inherit;cursor:pointer;">
+        <div class="app-card-badge" style="background: rgba(59,130,246,0.2); color: #3b82f6;">كامل الصلاحيات</div>
+        <div class="app-card-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;">
+          <i class="fa-solid fa-gauge-high"></i>
+        </div>
+        <div class="app-card-title">لوحة الإدارة</div>
+        <div class="app-card-subtitle">admin — التطبيق الكامل</div>
+        <div class="app-card-stats">
+          <div class="app-stat"><div class="app-stat-value" style="color:#3b82f6;">90+</div><div class="app-stat-label">مسار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#3b82f6;">59</div><div class="app-stat-label">اختبار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#3b82f6;">123</div><div class="app-stat-label">شاشة</div></div>
+        </div>
+        <ul class="app-features">
+          <li><i class="fa-solid fa-check"></i> جميع شاشات الإدارة والمبيعات</li>
+          <li><i class="fa-solid fa-check"></i> نقطة البيع + المرتجعات + الإيصالات</li>
+          <li><i class="fa-solid fa-check"></i> 15 خدمة ذكاء اصطناعي</li>
+          <li><i class="fa-solid fa-check"></i> 13 تقرير + تصدير PDF</li>
+          <li><i class="fa-solid fa-check"></i> شريط جانبي + إدارة كاملة</li>
+          <li><i class="fa-solid fa-check"></i> مزامنة + إعدادات متقدمة</li>
+        </ul>
+        <div style="text-align:center;margin-top:16px;color:#3b82f6;font-size:0.85rem;font-weight:600;">
+          <i class="fa-solid fa-arrow-left"></i> عرض التفاصيل الكاملة
+        </div>
+      </a>
+
+      <!-- Admin Lite App -->
+      <a href="admin_lite_app.html" class="app-card glass animate-on-scroll" style="text-decoration:none;color:inherit;cursor:pointer;">
+        <div class="app-card-badge" style="background: rgba(14,165,233,0.2); color: #0ea5e9;">إدارة خفيفة</div>
+        <div class="app-card-icon" style="background: rgba(14,165,233,0.15); color: #0ea5e9;">
+          <i class="fa-solid fa-mobile-screen"></i>
+        </div>
+        <div class="app-card-title">الإدارة المبسطة</div>
+        <div class="app-card-subtitle">admin_lite — للجوال</div>
+        <div class="app-card-stats">
+          <div class="app-stat"><div class="app-stat-value" style="color:#0ea5e9;">55</div><div class="app-stat-label">مسار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#0ea5e9;">57</div><div class="app-stat-label">اختبار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#0ea5e9;">5</div><div class="app-stat-label">تبويبات</div></div>
+        </div>
+        <ul class="app-features">
+          <li><i class="fa-solid fa-check"></i> مراقبة المبيعات والمخزون</li>
+          <li><i class="fa-solid fa-check"></i> التقارير الأساسية</li>
+          <li><i class="fa-solid fa-check"></i> الذكاء الاصطناعي</li>
+          <li><i class="fa-solid fa-check"></i> إدارة العملاء والموردين</li>
+          <li><i class="fa-solid fa-check"></i> شريط تنقل سفلي (5 تبويبات)</li>
+          <li><i class="fa-solid fa-check"></i> مصمم للاستخدام السريع</li>
+        </ul>
+        <div style="text-align:center;margin-top:16px;color:#0ea5e9;font-size:0.85rem;font-weight:600;">
+          <i class="fa-solid fa-arrow-left"></i> عرض التفاصيل الكاملة
+        </div>
+      </a>
+
+      <!-- Cashier App -->
+      <a href="cashier_app.html" class="app-card glass animate-on-scroll" style="text-decoration:none;color:inherit;cursor:pointer;">
+        <div class="app-card-badge" style="background: rgba(249,115,22,0.2); color: #f97316;">100% Offline</div>
+        <div class="app-card-icon" style="background: rgba(249,115,22,0.15); color: #f97316;">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div class="app-card-title">تطبيق الكاشير</div>
+        <div class="app-card-subtitle">cashier — بدون إنترنت</div>
+        <div class="app-card-stats">
+          <div class="app-stat"><div class="app-stat-value" style="color:#f97316;">28</div><div class="app-stat-label">مسار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#f97316;">36</div><div class="app-stat-label">اختبار</div></div>
+          <div class="app-stat"><div class="app-stat-value" style="color:#f97316;">3</div><div class="app-stat-label">شاشات</div></div>
+        </div>
+        <ul class="app-features">
+          <li><i class="fa-solid fa-check"></i> نقطة بيع كاملة بدون إنترنت</li>
+          <li><i class="fa-solid fa-check"></i> فتح/إغلاق الوردية</li>
+          <li><i class="fa-solid fa-check"></i> مزامنة تلقائية عند الاتصال</li>
+          <li><i class="fa-solid fa-check"></i> طباعة إيصالات + إرسال واتساب</li>
+          <li><i class="fa-solid fa-check"></i> قاعدة بيانات محلية (Drift)</li>
+          <li><i class="fa-solid fa-check"></i> أسرع أداء — موارد أقل</li>
+        </ul>
+        <div style="text-align:center;margin-top:16px;color:#f97316;font-size:0.85rem;font-weight:600;">
+          <i class="fa-solid fa-arrow-left"></i> عرض التفاصيل الكاملة
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- DEPENDENCY MAP SECTION -->
+<section class="section" id="deps">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(108,99,255,0.15); color: var(--accent);">
+        <i class="fa-solid fa-diagram-project"></i>
+      </div>
+      <h2 class="section-title">خريطة التبعيات</h2>
+      <p class="section-subtitle">كيف تعتمد الحزم والتطبيقات على بعضها البعض</p>
+    </div>
+
+    <div class="dep-map glass animate-on-scroll">
+      <div class="dep-layers">
+        <!-- Layer 1: Apps -->
+        <div class="dep-layer">
+          <div class="dep-layer-label"><i class="fa-solid fa-mobile-screen-button"></i> التطبيقات</div>
+          <div class="dep-layer-items">
+            <div class="dep-node" style="background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);">
+              <i class="fa-solid fa-gauge-high"></i> admin
+            </div>
+            <div class="dep-node" style="background: rgba(14,165,233,0.15); color: #0ea5e9; border: 1px solid rgba(14,165,233,0.3);">
+              <i class="fa-solid fa-mobile-screen"></i> admin_lite
+            </div>
+            <div class="dep-node" style="background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3);">
+              <i class="fa-solid fa-store"></i> cashier
+            </div>
+          </div>
+        </div>
+        <div class="dep-arrow">
+          <i class="fa-solid fa-arrows-down-to-line"></i> يعتمد على
+        </div>
+        <!-- Layer 2: Feature Packages -->
+        <div class="dep-layer">
+          <div class="dep-layer-label"><i class="fa-solid fa-cubes"></i> حزم الميزات</div>
+          <div class="dep-layer-items">
+            <div class="dep-node" style="background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);">
+              <i class="fa-solid fa-cash-register"></i> alhai_pos
+            </div>
+            <div class="dep-node" style="background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3);">
+              <i class="fa-solid fa-brain"></i> alhai_ai
+            </div>
+            <div class="dep-node" style="background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3);">
+              <i class="fa-solid fa-chart-pie"></i> alhai_reports
+            </div>
+            <div class="dep-node" style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3);">
+              <i class="fa-solid fa-shield-halved"></i> alhai_auth
+            </div>
+          </div>
+        </div>
+        <div class="dep-arrow">
+          <i class="fa-solid fa-arrows-down-to-line"></i> يعتمد على
+        </div>
+        <!-- Layer 3: Shared Packages -->
+        <div class="dep-layer">
+          <div class="dep-layer-label"><i class="fa-solid fa-layer-group"></i> حزم مشتركة</div>
+          <div class="dep-layer-items">
+            <div class="dep-node" style="background: rgba(79,172,254,0.15); color: #4facfe; border: 1px solid rgba(79,172,254,0.3);">
+              <i class="fa-solid fa-puzzle-piece"></i> alhai_shared_ui
+            </div>
+            <div class="dep-node" style="background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3);">
+              <i class="fa-solid fa-gears"></i> alhai_services
+            </div>
+            <div class="dep-node" style="background: rgba(240,147,251,0.15); color: #f093fb; border: 1px solid rgba(240,147,251,0.3);">
+              <i class="fa-solid fa-palette"></i> alhai_design_system
+            </div>
+            <div class="dep-node" style="background: rgba(6,182,212,0.15); color: #06b6d4; border: 1px solid rgba(6,182,212,0.3);">
+              <i class="fa-solid fa-language"></i> alhai_l10n
+            </div>
+          </div>
+        </div>
+        <div class="dep-arrow">
+          <i class="fa-solid fa-arrows-down-to-line"></i> يعتمد على
+        </div>
+        <!-- Layer 4: Core & Data -->
+        <div class="dep-layer">
+          <div class="dep-layer-label"><i class="fa-solid fa-microchip"></i> الطبقة الأساسية</div>
+          <div class="dep-layer-items">
+            <div class="dep-node" style="background: rgba(108,99,255,0.15); color: #6c63ff; border: 1px solid rgba(108,99,255,0.3);">
+              <i class="fa-solid fa-microchip"></i> alhai_core
+            </div>
+            <div class="dep-node" style="background: rgba(0,212,170,0.15); color: #00d4aa; border: 1px solid rgba(0,212,170,0.3);">
+              <i class="fa-solid fa-database"></i> alhai_database
+            </div>
+            <div class="dep-node" style="background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3);">
+              <i class="fa-solid fa-arrows-rotate"></i> alhai_sync
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dep-legend">
+        <div class="dep-legend-item">
+          <div class="dep-legend-dot" style="background: #3b82f6;"></div>
+          تطبيقات (3)
+        </div>
+        <div class="dep-legend-item">
+          <div class="dep-legend-dot" style="background: #ef4444;"></div>
+          حزم الميزات (4)
+        </div>
+        <div class="dep-legend-item">
+          <div class="dep-legend-dot" style="background: #4facfe;"></div>
+          حزم مشتركة (4)
+        </div>
+        <div class="dep-legend-item">
+          <div class="dep-legend-dot" style="background: #6c63ff;"></div>
+          الطبقة الأساسية (3)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATABASE SECTION -->
+<section class="section" id="database">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(0,212,170,0.15); color: var(--green);">
+        <i class="fa-solid fa-database"></i>
+      </div>
+      <h2 class="section-title">قاعدة البيانات</h2>
+      <p class="section-subtitle">البنية المحلية (Drift) والسحابية (Supabase)</p>
+    </div>
+
+    <div class="db-grid">
+      <!-- Drift Panel -->
+      <div class="db-panel glass animate-on-scroll">
+        <div class="db-panel-title">
+          <i class="fa-solid fa-hard-drive" style="color: var(--green);"></i>
+          Drift (محلي) - 50 جدول
+        </div>
+
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-user-shield"></i> المصادقة والمستخدمين <span class="db-group-count">6</span></div>
+          <div class="db-tables">
+            <span class="db-tag">users</span><span class="db-tag">organizations</span><span class="db-tag">org_members</span><span class="db-tag">pos_terminals</span><span class="db-tag">stores</span><span class="db-tag">favorites</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-box"></i> المنتجات <span class="db-group-count">4</span></div>
+          <div class="db-tables">
+            <span class="db-tag">products</span><span class="db-tag">categories</span><span class="db-tag">product_expiry</span><span class="db-tag">product_images</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-receipt"></i> المبيعات <span class="db-group-count">3</span></div>
+          <div class="db-tables">
+            <span class="db-tag">sales</span><span class="db-tag">sale_items</span><span class="db-tag">held_invoices</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-warehouse"></i> المخزون <span class="db-group-count">4</span></div>
+          <div class="db-tables">
+            <span class="db-tag">inventory_movements</span><span class="db-tag">stock_deltas</span><span class="db-tag">stock_takes</span><span class="db-tag">stock_transfers</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-users"></i> العملاء <span class="db-group-count">2</span></div>
+          <div class="db-tables">
+            <span class="db-tag">customers</span><span class="db-tag">customer_addresses</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-cart-shopping"></i> الطلبات <span class="db-group-count">4</span></div>
+          <div class="db-tables">
+            <span class="db-tag">orders</span><span class="db-tag">order_items</span><span class="db-tag">order_status_history</span><span class="db-tag">drivers</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-coins"></i> المالية <span class="db-group-count">10</span></div>
+          <div class="db-tables">
+            <span class="db-tag">accounts</span><span class="db-tag">transactions</span><span class="db-tag">expenses</span><span class="db-tag">expense_categories</span><span class="db-tag">purchases</span><span class="db-tag">purchase_items</span><span class="db-tag">returns</span><span class="db-tag">return_items</span><span class="db-tag">daily_summaries</span><span class="db-tag">cash_movements</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-gears"></i> العمليات <span class="db-group-count">4</span></div>
+          <div class="db-tables">
+            <span class="db-tag">shifts</span><span class="db-tag">pos_terminals</span><span class="db-tag">notifications</span><span class="db-tag">suppliers</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-tags"></i> التسويق <span class="db-group-count">6</span></div>
+          <div class="db-tables">
+            <span class="db-tag">discounts</span><span class="db-tag">coupons</span><span class="db-tag">promotions</span><span class="db-tag">loyalty_points</span><span class="db-tag">loyalty_transactions</span><span class="db-tag">loyalty_rewards</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-sliders"></i> الإعدادات <span class="db-group-count">1</span></div>
+          <div class="db-tables">
+            <span class="db-tag">settings</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-arrows-rotate"></i> المزامنة <span class="db-group-count">2</span></div>
+          <div class="db-tables">
+            <span class="db-tag">sync_queue</span><span class="db-tag">sync_metadata</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-brands fa-whatsapp"></i> واتساب <span class="db-group-count">2</span></div>
+          <div class="db-tables">
+            <span class="db-tag">whatsapp_messages</span><span class="db-tag">whatsapp_templates</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supabase Panel -->
+      <div class="db-panel glass animate-on-scroll">
+        <div class="db-panel-title">
+          <i class="fa-solid fa-cloud" style="color: var(--blue);"></i>
+          Supabase (سحابي) - 49 جدول | التوافق: 46/50 (92%)
+        </div>
+
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-download"></i> Pull - سحب من السيرفر <span class="db-group-count">12</span></div>
+          <div class="db-tables">
+            <span class="db-tag">categories</span><span class="db-tag">products</span><span class="db-tag">stores</span><span class="db-tag">roles</span><span class="db-tag">settings</span><span class="db-tag">users</span><span class="db-tag">discounts</span><span class="db-tag">coupons</span><span class="db-tag">promotions</span><span class="db-tag">loyalty_rewards</span><span class="db-tag">drivers</span><span class="db-tag">expense_categories</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-upload"></i> Push - دفع للسيرفر <span class="db-group-count">10</span></div>
+          <div class="db-tables">
+            <span class="db-tag">sales</span><span class="db-tag">sale_items</span><span class="db-tag">orders</span><span class="db-tag">order_items</span><span class="db-tag">cash_movements</span><span class="db-tag">audit_log</span><span class="db-tag">inventory_movements</span><span class="db-tag">order_status_history</span><span class="db-tag">daily_summaries</span><span class="db-tag">whatsapp_messages</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-arrows-left-right"></i> Bidirectional - ثنائي الاتجاه <span class="db-group-count">18</span></div>
+          <div class="db-tables">
+            <span class="db-tag">customers</span><span class="db-tag">expenses</span><span class="db-tag">returns</span><span class="db-tag">return_items</span><span class="db-tag">purchases</span><span class="db-tag">purchase_items</span><span class="db-tag">shifts</span><span class="db-tag">suppliers</span><span class="db-tag">notifications</span><span class="db-tag">loyalty_points</span><span class="db-tag">loyalty_transactions</span><span class="db-tag">customer_addresses</span><span class="db-tag">accounts</span><span class="db-tag">transactions</span><span class="db-tag">product_expiry</span><span class="db-tag">stock_takes</span><span class="db-tag">stock_transfers</span><span class="db-tag">whatsapp_templates</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-building"></i> خاص (OrgSync + StockDelta) <span class="db-group-count">6</span></div>
+          <div class="db-tables">
+            <span class="db-tag">stock_deltas</span><span class="db-tag">organizations</span><span class="db-tag">subscriptions</span><span class="db-tag">org_members</span><span class="db-tag">user_stores</span><span class="db-tag">pos_terminals</span>
+          </div>
+        </div>
+        <div class="db-group">
+          <div class="db-group-title"><i class="fa-solid fa-hard-drive"></i> محلي فقط <span class="db-group-count">4</span></div>
+          <div class="db-tables">
+            <span class="db-tag">sync_queue</span><span class="db-tag">sync_metadata</span><span class="db-tag">held_invoices</span><span class="db-tag">favorites</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCALIZATION SECTION -->
+<section class="section" id="localization">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(6,182,212,0.15); color: #06b6d4;">
+        <i class="fa-solid fa-language"></i>
+      </div>
+      <h2 class="section-title">الترجمة (7 لغات)</h2>
+      <p class="section-subtitle">دعم متعدد اللغات شامل مع أكثر من 3,000 مفتاح ترجمة</p>
+    </div>
+
+    <div class="lang-grid">
+      <div class="lang-card glass primary animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="Saudi Arabia">&#x1F1F8;&#x1F1E6;</span>
+        <div class="lang-name">العربية</div>
+        <div class="lang-code">(ar)</div>
+        <div class="lang-detail">اللغة الأساسية | 3,039 مفتاح ترجمة</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="United Kingdom">&#x1F1EC;&#x1F1E7;</span>
+        <div class="lang-name">English</div>
+        <div class="lang-code">(en)</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="Bangladesh">&#x1F1E7;&#x1F1E9;</span>
+        <div class="lang-name">বাংলা</div>
+        <div class="lang-code">(bn)</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="Philippines">&#x1F1F5;&#x1F1ED;</span>
+        <div class="lang-name">Filipino</div>
+        <div class="lang-code">(fil)</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="India">&#x1F1EE;&#x1F1F3;</span>
+        <div class="lang-name">हिन्दी</div>
+        <div class="lang-code">(hi)</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="Indonesia">&#x1F1EE;&#x1F1E9;</span>
+        <div class="lang-name">Bahasa Indonesia</div>
+        <div class="lang-code">(id)</div>
+      </div>
+      <div class="lang-card glass animate-on-scroll">
+        <span class="lang-flag" role="img" aria-label="Pakistan">&#x1F1F5;&#x1F1F0;</span>
+        <div class="lang-name">اردو</div>
+        <div class="lang-code">(ur)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE SECTION -->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-icon" style="background: rgba(79,172,254,0.15); color: var(--blue);">
+        <i class="fa-solid fa-sitemap"></i>
+      </div>
+      <h2 class="section-title">بنية المشروع</h2>
+      <p class="section-subtitle">هيكل ثلاثي الطبقات - الأساس والميزات والتطبيقات</p>
+    </div>
+
+    <div class="arch-diagram animate-on-scroll">
+      <!-- Layer 3: Apps -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">الطبقة الثالثة - التطبيقات</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: #3b82f6; background: rgba(59,130,246,0.1); color: #3b82f6;">admin</div>
+          <div class="arch-box" style="border-color: #0ea5e9; background: rgba(14,165,233,0.1); color: #0ea5e9;">admin_lite</div>
+          <div class="arch-box" style="border-color: #f97316; background: rgba(249,115,22,0.1); color: #f97316;">cashier</div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fa-solid fa-arrow-up"></i></div>
+
+      <!-- Layer 2: Features -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">الطبقة الثانية - الميزات</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: #00d4aa; background: rgba(0,212,170,0.1); color: #00d4aa;">alhai_database</div>
+          <div class="arch-box" style="border-color: #f59e0b; background: rgba(245,158,11,0.1); color: #f59e0b;">alhai_sync</div>
+          <div class="arch-box" style="border-color: #10b981; background: rgba(16,185,129,0.1); color: #10b981;">alhai_auth</div>
+          <div class="arch-box" style="border-color: #06b6d4; background: rgba(6,182,212,0.1); color: #06b6d4;">alhai_l10n</div>
+          <div class="arch-box" style="border-color: #a855f7; background: rgba(168,85,247,0.1); color: #a855f7;">alhai_ai</div>
+          <div class="arch-box" style="border-color: #ef4444; background: rgba(239,68,68,0.1); color: #ef4444;">alhai_pos</div>
+          <div class="arch-box" style="border-color: #8b5cf6; background: rgba(139,92,246,0.1); color: #8b5cf6;">alhai_reports</div>
+          <div class="arch-box" style="border-color: #4facfe; background: rgba(79,172,254,0.1); color: #4facfe;">alhai_shared_ui</div>
+        </div>
+      </div>
+
+      <div class="arch-connector"><i class="fa-solid fa-arrow-up"></i></div>
+
+      <!-- Layer 1: Foundation -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">الطبقة الأولى - الأساس</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="border-color: #6c63ff; background: rgba(108,99,255,0.1); color: #6c63ff;">alhai_core</div>
+          <div class="arch-box" style="border-color: #f093fb; background: rgba(240,147,251,0.1); color: #f093fb;">alhai_design_system</div>
+          <div class="arch-box" style="border-color: #64748b; background: rgba(100,116,139,0.1); color: #94a3b8;">alhai_services</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-badges animate-on-scroll">
+      <span class="tech-badge">Flutter 3.10+</span>
+      <span class="tech-badge">Dart 3.4+</span>
+      <span class="tech-badge">Riverpod 2.x</span>
+      <span class="tech-badge">Drift 2.14+</span>
+      <span class="tech-badge">Supabase</span>
+      <span class="tech-badge">GoRouter 13+</span>
+      <span class="tech-badge">Mocktail</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p><i class="fa-solid fa-robot"></i> تم إنشاء هذا التقرير تلقائياً بتاريخ <span id="reportDate"></span></p>
+    <div class="footer-stats">
+      <div class="footer-stat"><span>5,415</span> اختبار</div>
+      <div class="footer-stat"><span>100%</span> نجاح</div>
+      <div class="footer-stat"><span>14</span> حزمة</div>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" aria-label="العودة للأعلى">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script>
+// =============================================
+// DATA
+// =============================================
+const PACKAGES = [
+  {
+    id:"core",name:"alhai_core",nameAr:"النواة",icon:"fa-microchip",color:"#6c63ff",
+    desc:"297 ملف - النماذج والمستودعات وخدمات البيانات - العمود الفقري بـ Freezed + Injectable + Dio + Supabase",
+    srcFiles:297,testFiles:56,tests:530,passRate:100,
+    screens:[],
+    services:[
+      {name:"AuthRepository",desc:"مستودع المصادقة وإدارة التوكنات مع Supabase"},
+      {name:"ProductsRepository",desc:"مستودع المنتجات - CRUD والبحث والتصفية"},
+      {name:"OrdersRepository",desc:"مستودع الطلبات - دورة حياة كاملة"},
+      {name:"CustomersRepository",desc:"مستودع العملاء والحسابات والديون"},
+      {name:"SuppliersRepository",desc:"مستودع الموردين والمشتريات"},
+      {name:"CategoriesRepository",desc:"مستودع التصنيفات الهرمية"},
+      {name:"InventoryRepository",desc:"مستودع المخزون والحركات والجرد"},
+      {name:"ShiftsRepository",desc:"مستودع الورديات وحركات الصندوق"},
+      {name:"SalesRepository",desc:"مستودع المبيعات والفواتير"},
+      {name:"ReportsRepository",desc:"مستودع التقارير والإحصائيات"},
+      {name:"DeliveryRepository",desc:"مستودع التوصيل والسائقين"},
+      {name:"LoyaltyRepository",desc:"مستودع نقاط الولاء والمكافآت"},
+      {name:"RefundsRepository",desc:"مستودع المرتجعات والاستردادات"},
+      {name:"DebtsRepository",desc:"مستودع الديون والسداد"},
+      {name:"ExpensesRepository",desc:"مستودع المصروفات والفئات"},
+      {name:"StoresRepository",desc:"مستودع المتاجر والفروع"},
+      {name:"ImageService",desc:"خدمة رفع ومعالجة الصور"},
+      {name:"RemoteDataSources",desc:"18 مصدر بيانات بعيد (Supabase PostgREST)"}
+    ],
+    testFilesList:[
+      {name:"app_exception_test.dart",count:40},{name:"status_enums_test.dart",count:5},
+      {name:"product_test.dart",count:4},{name:"order_test.dart",count:21},
+      {name:"store_test.dart",count:11},{name:"shift_test.dart",count:17},
+      {name:"supplier_test.dart",count:9},{name:"refund_test.dart",count:16},
+      {name:"debt_test.dart",count:18},{name:"promotion_test.dart",count:23},
+      {name:"analytics_test.dart",count:18},{name:"auth_repository_test.dart",count:13},
+      {name:"products_repository_test.dart",count:12},{name:"orders_repository_test.dart",count:8},
+      {name:"stores_repository_test.dart",count:10},{name:"suppliers_repository_test.dart",count:6}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:true,l10n:false,ux:"غير متاح"}
+  },
+  {
+    id:"shared_ui",name:"alhai_shared_ui",nameAr:"الواجهات المشتركة",icon:"fa-puzzle-piece",color:"#4facfe",
+    desc:"27 شاشة مشتركة مع المحققات والمكونات - العمود الفقري لواجهات التطبيقات الثلاثة",
+    srcFiles:108,testFiles:17,tests:374,passRate:100,
+    screens:[
+      {name:"DashboardScreen",nameAr:"لوحة التحكم",desc:"ملخص المبيعات والإحصائيات والرسوم البيانية"},
+      {name:"CustomersScreen",nameAr:"العملاء",desc:"قائمة العملاء مع بحث وتصفية"},
+      {name:"CustomerDetailScreen",nameAr:"تفاصيل العميل",desc:"عرض بيانات العميل الكاملة"},
+      {name:"CustomerDebtScreen",nameAr:"ديون العميل",desc:"متابعة وتسجيل ديون العميل"},
+      {name:"CustomerAnalyticsScreen",nameAr:"تحليلات العميل",desc:"إحصائيات مشتريات العميل"},
+      {name:"ExpensesScreen",nameAr:"المصروفات",desc:"تسجيل وتتبع المصروفات"},
+      {name:"ExpenseCategoriesScreen",nameAr:"فئات المصروفات",desc:"إدارة فئات المصروفات"},
+      {name:"InventoryScreen",nameAr:"المخزون",desc:"إدارة المخزون والحركات"},
+      {name:"InventoryAlertsScreen",nameAr:"تنبيهات المخزون",desc:"تنبيهات النقص والفائض"},
+      {name:"ExpiryTrackingScreen",nameAr:"تتبع الصلاحية",desc:"متابعة تواريخ الصلاحية"},
+      {name:"InvoicesScreen",nameAr:"الفواتير",desc:"عرض سجل الفواتير"},
+      {name:"InvoiceDetailScreen",nameAr:"تفاصيل الفاتورة",desc:"عرض تفصيلي للفاتورة"},
+      {name:"OrdersScreen",nameAr:"الطلبات",desc:"إدارة الطلبات الواردة"},
+      {name:"OrderHistoryScreen",nameAr:"سجل الطلبات",desc:"أرشيف الطلبات السابقة"},
+      {name:"OrderTrackingScreen",nameAr:"تتبع الطلبات",desc:"متابعة حالة الطلب"},
+      {name:"NotificationsScreen",nameAr:"الإشعارات",desc:"مركز الإشعارات والتنبيهات"},
+      {name:"ProductsScreen",nameAr:"المنتجات",desc:"عرض وبحث المنتجات مع FTS"},
+      {name:"ProductDetailScreen",nameAr:"تفاصيل المنتج",desc:"عرض تفصيلي للمنتج"},
+      {name:"ProfileScreen",nameAr:"الملف الشخصي",desc:"بيانات المستخدم والإعدادات"},
+      {name:"SuppliersScreen",nameAr:"الموردون",desc:"إدارة بيانات الموردين"},
+      {name:"SupplierDetailScreen",nameAr:"تفاصيل المورد",desc:"عرض تفصيلي للمورد"},
+      {name:"ShiftsScreen",nameAr:"الورديات",desc:"سجل الورديات وإدارتها"},
+      {name:"ShiftSummaryScreen",nameAr:"ملخص الوردية",desc:"تقرير ملخص نهاية الوردية"},
+      {name:"LanguageScreen",nameAr:"اختيار اللغة",desc:"تغيير لغة التطبيق (7 لغات)"},
+      {name:"ThemeScreen",nameAr:"المظهر",desc:"التبديل بين الوضع الفاتح والداكن"},
+      {name:"SyncStatusScreen",nameAr:"حالة المزامنة",desc:"عرض حالة مزامنة البيانات"},
+      {name:"StockTakeScreen",nameAr:"الجرد",desc:"جرد المخزون يدوياً"}
+    ],
+    services:[
+      {name:"PhoneValidator",desc:"التحقق من أرقام الهاتف السعودية"},
+      {name:"EmailValidator",desc:"التحقق من البريد الإلكتروني"},
+      {name:"BarcodeValidator",desc:"التحقق من الباركود EAN-13/EAN-8"},
+      {name:"PriceValidator",desc:"التحقق من الأسعار والمبالغ"},
+      {name:"IbanValidator",desc:"التحقق من IBAN السعودي"},
+      {name:"InputSanitizer",desc:"تنظيف المدخلات من XSS/Injection"},
+      {name:"FormValidators",desc:"محققات النماذج الموحدة"},
+      {name:"ThemeProvider",desc:"مزود المظهر (فاتح/داكن)"},
+      {name:"DashboardProviders",desc:"مزودات لوحة التحكم"}
+    ],
+    testFilesList:[
+      {name:"phone_validator_test.dart",count:30},{name:"email_validator_test.dart",count:28},
+      {name:"barcode_validator_test.dart",count:30},{name:"price_validator_test.dart",count:50},
+      {name:"iban_validator_test.dart",count:24},{name:"input_sanitizer_test.dart",count:75},
+      {name:"form_validators_test.dart",count:67},{name:"app_sizes_test.dart",count:17},
+      {name:"theme_provider_test.dart",count:19},{name:"products_providers_test.dart",count:8},
+      {name:"dashboard_providers_test.dart",count:12},{name:"app_button_test.dart",count:20},
+      {name:"app_empty_state_test.dart",count:31},{name:"app_input_test.dart",count:25},
+      {name:"error_widget_test.dart",count:16},{name:"loading_widget_test.dart",count:8}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:false,supabase:false,l10n:true,ux:"ممتاز"}
+  },
+  {
+    id:"design",name:"alhai_design_system",nameAr:"نظام التصميم",icon:"fa-palette",color:"#f093fb",
+    desc:"57 مكوّن UI إنتاجي مع Design Tokens - خط تجوال + Golden Tests + وضع داكن/فاتح",
+    srcFiles:57,testFiles:33,tests:142,passRate:100,screens:[],
+    services:[
+      {name:"AlhaiButton",desc:"زر بأنماط متعددة (أساسي، ثانوي، خطر)"},
+      {name:"AlhaiTextField",desc:"حقل إدخال مع تحقق ودعم RTL"},
+      {name:"AlhaiCard",desc:"بطاقة بنمط Glass-morphism"},
+      {name:"AlhaiAppBar",desc:"شريط علوي موحد"},
+      {name:"AlhaiDialog",desc:"نافذة حوار مخصصة"},
+      {name:"AlhaiAvatar",desc:"صورة رمزية بأحجام متعددة"},
+      {name:"AlhaiTheme",desc:"نظام الثيمات (فاتح/داكن)"},
+      {name:"AppColors",desc:"ألوان التصميم الموحدة"},
+      {name:"AlhaiTypography",desc:"أنماط الخطوط (خط تجوال)"},
+      {name:"AlhaiBreakpoints",desc:"نقاط التجاوب (جوال/تابلت/سطح مكتب)"}
+    ],
+    testFilesList:[
+      {name:"alhai_button_test.dart",count:16},{name:"alhai_text_field_test.dart",count:19},
+      {name:"alhai_card_test.dart",count:8},{name:"alhai_app_bar_test.dart",count:8},
+      {name:"alhai_avatar_test.dart",count:14},{name:"alhai_badge_test.dart",count:14},
+      {name:"alhai_checkbox_test.dart",count:9},{name:"alhai_switch_test.dart",count:10},
+      {name:"alhai_dialog_test.dart",count:4},{name:"alhai_theme_test.dart",count:25},
+      {name:"app_colors_test.dart",count:64},{name:"app_typography_test.dart",count:49}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:false,supabase:false,l10n:false,ux:"ممتاز"}
+  },
+  {
+    id:"ai",name:"alhai_ai",nameAr:"الذكاء الاصطناعي",icon:"fa-brain",color:"#a855f7",
+    desc:"15 شاشة + 18 خدمة ذكاء اصطناعي - تنبؤات ذكية وتسعير وكشف احتيال وتحليل سلة ومحادثة بيانات",
+    srcFiles:88,testFiles:24,tests:381,passRate:100,
+    screens:[
+      {name:"AiAssistantScreen",nameAr:"المساعد الذكي",desc:"محادثة ذكية للإجابة على الأسئلة"},
+      {name:"AiSalesForecastingScreen",nameAr:"التنبؤ بالمبيعات",desc:"توقعات مبيعات مستقبلية"},
+      {name:"AiSmartPricingScreen",nameAr:"التسعير الذكي",desc:"اقتراحات أسعار تنافسية"},
+      {name:"AiFraudDetectionScreen",nameAr:"كشف الاحتيال",desc:"رصد العمليات المشبوهة"},
+      {name:"AiBasketAnalysisScreen",nameAr:"تحليل السلة",desc:"أنماط شراء العملاء"},
+      {name:"AiCustomerRecommendationsScreen",nameAr:"توصيات العملاء",desc:"اقتراحات مخصصة لكل عميل"},
+      {name:"AiSmartInventoryScreen",nameAr:"المخزون الذكي",desc:"توصيات إعادة الطلب"},
+      {name:"AiCompetitorAnalysisScreen",nameAr:"تحليل المنافسين",desc:"مقارنة الأسعار"},
+      {name:"AiSmartReportsScreen",nameAr:"التقارير الذكية",desc:"تقارير مولدة بالذكاء الاصطناعي"},
+      {name:"AiStaffAnalyticsScreen",nameAr:"تحليلات الموظفين",desc:"أداء الموظفين"},
+      {name:"AiProductRecognitionScreen",nameAr:"التعرف على المنتجات",desc:"تحديد المنتجات بالكاميرا"},
+      {name:"AiSentimentAnalysisScreen",nameAr:"تحليل المشاعر",desc:"آراء العملاء ورضاهم"},
+      {name:"AiReturnPredictionScreen",nameAr:"توقع المرتجعات",desc:"تنبؤ بالمنتجات المحتمل إرجاعها"},
+      {name:"AiPromotionDesignerScreen",nameAr:"مصمم العروض",desc:"إنشاء عروض ذكية"},
+      {name:"AiChatWithDataScreen",nameAr:"محادثة مع البيانات",desc:"استعلام بلغة طبيعية"}
+    ],
+    services:[
+      {name:"AiApiService",desc:"عميل HTTP للاتصال بخادم الذكاء الاصطناعي"},
+      {name:"AiAnalyticsService",desc:"تحليلات متقدمة للبيانات"},
+      {name:"AiAssistantService",desc:"المساعد الذكي التفاعلي"},
+      {name:"AiSalesForecastingService",desc:"التنبؤ بالمبيعات المستقبلية"},
+      {name:"AiSmartPricingService",desc:"التسعير الذكي بناءً على الطلب"},
+      {name:"AiFraudDetectionService",desc:"كشف الاحتيال والعمليات المشبوهة"},
+      {name:"AiBasketAnalysisService",desc:"تحليل سلة المشتريات"},
+      {name:"AiCustomerRecommendationsService",desc:"توصيات مخصصة للعملاء"},
+      {name:"AiSmartInventoryService",desc:"إدارة مخزون ذكية"},
+      {name:"AiCompetitorAnalysisService",desc:"تحليل المنافسين والسوق"},
+      {name:"AiSmartReportsService",desc:"إنشاء تقارير ذكية"},
+      {name:"AiStaffAnalyticsService",desc:"تحليل أداء الموظفين"},
+      {name:"AiProductRecognitionService",desc:"التعرف على المنتجات بالصور"},
+      {name:"AiSentimentAnalysisService",desc:"تحليل مشاعر العملاء"},
+      {name:"AiReturnPredictionService",desc:"توقع المرتجعات المحتملة"},
+      {name:"AiPromotionDesignerService",desc:"تصميم العروض الترويجية"},
+      {name:"AiChatWithDataService",desc:"محادثة بالبيانات بلغة طبيعية"},
+      {name:"AiInvoiceService",desc:"استيراد الفواتير بالذكاء الاصطناعي"}
+    ],
+    testFilesList:[
+      {name:"ai_api_service_test.dart",count:7},{name:"ai_analytics_service_test.dart",count:26},
+      {name:"ai_assistant_service_test.dart",count:19},{name:"ai_sales_forecasting_service_test.dart",count:20},
+      {name:"ai_smart_pricing_service_test.dart",count:19},{name:"ai_fraud_detection_service_test.dart",count:17},
+      {name:"ai_basket_analysis_service_test.dart",count:12},{name:"ai_customer_recommendations_service_test.dart",count:12},
+      {name:"ai_smart_inventory_service_test.dart",count:16},{name:"ai_competitor_analysis_service_test.dart",count:19},
+      {name:"ai_smart_reports_service_test.dart",count:26},{name:"ai_staff_analytics_service_test.dart",count:24},
+      {name:"ai_product_recognition_service_test.dart",count:21},{name:"ai_sentiment_analysis_service_test.dart",count:25},
+      {name:"ai_return_prediction_service_test.dart",count:24},{name:"ai_promotion_designer_service_test.dart",count:17},
+      {name:"ai_chat_with_data_service_test.dart",count:21},{name:"ai_invoice_service_test.dart",count:13}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:true,l10n:true,ux:"ممتاز"}
+  },
+  {
+    id:"database",name:"alhai_database",nameAr:"قاعدة البيانات",icon:"fa-database",color:"#00d4aa",
+    desc:"قاعدة بيانات Drift/SQLite المحلية - 50 جدول + 29 DAO + بحث نصي كامل FTS5 + بيانات تجريبية",
+    srcFiles:104,testFiles:29,tests:294,passRate:100,screens:[],
+    services:[
+      {name:"ProductsDao",desc:"CRUD المنتجات مع FTS والتصفية"},
+      {name:"SalesDao",desc:"إدارة المبيعات والفواتير"},
+      {name:"CustomersDao",desc:"إدارة بيانات العملاء والديون"},
+      {name:"OrdersDao",desc:"إدارة الطلبات وحالاتها"},
+      {name:"InventoryDao",desc:"حركات المخزون والتنبيهات"},
+      {name:"CategoriesDao",desc:"تصنيفات المنتجات"},
+      {name:"ShiftsDao",desc:"الورديات وحركات الصندوق"},
+      {name:"SyncQueueDao",desc:"طابور المزامنة (offline-first)"},
+      {name:"SyncMetadataDao",desc:"بيانات المزامنة الوصفية"},
+      {name:"LoyaltyDao",desc:"نقاط الولاء والمكافآت"},
+      {name:"ProductsFtsService",desc:"بحث نصي كامل FTS5 بالعربية"},
+      {name:"DatabaseSeeder",desc:"بيانات تجريبية شاملة"}
+    ],
+    testFilesList:[
+      {name:"app_database_test.dart",count:7},{name:"products_dao_test.dart",count:22},
+      {name:"sales_dao_test.dart",count:12},{name:"customers_dao_test.dart",count:12},
+      {name:"orders_dao_test.dart",count:13},{name:"categories_dao_test.dart",count:11},
+      {name:"inventory_dao_test.dart",count:8},{name:"shifts_dao_test.dart",count:8},
+      {name:"sync_queue_dao_test.dart",count:12},{name:"sync_metadata_dao_test.dart",count:15},
+      {name:"users_dao_test.dart",count:13},{name:"loyalty_dao_test.dart",count:12},
+      {name:"whatsapp_messages_dao_test.dart",count:16},{name:"audit_log_dao_test.dart",count:10}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:false,l10n:false,ux:"غير متاح"}
+  },
+  {
+    id:"sync",name:"alhai_sync",nameAr:"المزامنة",icon:"fa-arrows-rotate",color:"#f59e0b",
+    desc:"محرك مزامنة شامل يغطي 46 جدول من أصل 50 عبر 4 استراتيجيات (Pull 12 + Push 10 + Bidirectional 18 + StockDelta 1 + OrgSync 5) مع Realtime و Initial Sync",
+    srcFiles:18,testFiles:14,tests:226,passRate:100,screens:[],
+    services:[
+      {name:"SyncEngine",desc:"محرك المزامنة الرئيسي - 4 مراحل، 46 جدول"},
+      {name:"SyncManager",desc:"مدير المزامنة - جدولة وإدارة"},
+      {name:"SyncService",desc:"خدمة المزامنة العامة"},
+      {name:"SyncApiService",desc:"اتصال Supabase PostgREST"},
+      {name:"PullStrategy",desc:"سحب من السيرفر - 12 جدول (categories, products, stores, roles, settings, users, discounts, coupons, promotions, loyalty_rewards, drivers, expense_categories)"},
+      {name:"PushStrategy",desc:"دفع للسيرفر - 10 جداول (sales, sale_items, orders, order_items, cash_movements, audit_log, inventory_movements, order_status_history, daily_summaries, whatsapp_messages)"},
+      {name:"BidirectionalStrategy",desc:"مزامنة ثنائية - 18 جدول (customers, expenses, returns, return_items, purchases, purchase_items, shifts, suppliers, notifications, loyalty_points, loyalty_transactions, customer_addresses, accounts, transactions, product_expiry, stock_takes, stock_transfers, whatsapp_templates)"},
+      {name:"StockDeltaSync",desc:"مزامنة دلتا المخزون عبر الأجهزة"},
+      {name:"OrgSyncService",desc:"مزامنة 5 جداول تنظيمية (organizations, subscriptions, org_members, user_stores, pos_terminals)"},
+      {name:"RealtimeListener",desc:"مراقبة فورية - 6 جداول (products, categories, orders, notifications, shifts, inventory_movements)"},
+      {name:"InitialSync",desc:"تحميل أولي - 23 جدول بترتيب التبعيات"},
+      {name:"OfflineManager",desc:"إدارة العمل بدون إنترنت"},
+      {name:"ConnectivityService",desc:"مراقبة حالة الاتصال"},
+      {name:"SyncStatusTracker",desc:"تتبع حالة المزامنة"},
+      {name:"JsonConverter",desc:"تحويل البيانات JSON"}
+    ],
+    testFilesList:[
+      {name:"sync_service_test.dart",count:23},{name:"json_converter_test.dart",count:29},
+      {name:"offline_manager_test.dart",count:26},{name:"sync_status_tracker_test.dart",count:24},
+      {name:"sync_engine_test.dart",count:18},{name:"sync_manager_test.dart",count:17},
+      {name:"sync_api_service_test.dart",count:18},{name:"initial_sync_test.dart",count:16},
+      {name:"connectivity_service_test.dart",count:5},{name:"org_sync_service_test.dart",count:12},
+      {name:"push_strategy_test.dart",count:12},{name:"bidirectional_strategy_test.dart",count:11},
+      {name:"stock_delta_sync_test.dart",count:9},{name:"pull_strategy_test.dart",count:6}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:true,l10n:false,ux:"غير متاح"}
+  },
+  {
+    id:"pos",name:"alhai_pos",nameAr:"نقطة البيع",icon:"fa-cash-register",color:"#ef4444",
+    desc:"13 شاشة لنقطة البيع - الدفع والإيصالات والمرتجعات وواتساب وZATCA وإدارة النقد",
+    srcFiles:54,testFiles:9,tests:207,passRate:100,
+    screens:[
+      {name:"PosScreen",nameAr:"شاشة البيع",desc:"واجهة نقطة البيع الرئيسية مع سلة المشتريات"},
+      {name:"PaymentScreen",nameAr:"الدفع",desc:"معالجة الدفع (نقد، مدى، آبل باي، STC Pay)"},
+      {name:"ReceiptScreen",nameAr:"الإيصال",desc:"عرض وطباعة وإرسال الإيصال"},
+      {name:"QuickSaleScreen",nameAr:"البيع السريع",desc:"بيع مباشر بسعر مخصص"},
+      {name:"FavoritesScreen",nameAr:"المفضلة",desc:"المنتجات المفضلة للوصول السريع"},
+      {name:"HoldInvoicesScreen",nameAr:"الفواتير المعلقة",desc:"تعليق واسترجاع الفواتير"},
+      {name:"ReturnsScreen",nameAr:"المرتجعات",desc:"إدارة عمليات الإرجاع"},
+      {name:"RefundRequestScreen",nameAr:"طلب استرداد",desc:"إنشاء طلب إرجاع جديد"},
+      {name:"RefundReasonScreen",nameAr:"سبب الإرجاع",desc:"تحديد سبب المرتجع"},
+      {name:"RefundReceiptScreen",nameAr:"إيصال المرتجع",desc:"طباعة إيصال عملية الإرجاع"},
+      {name:"VoidTransactionScreen",nameAr:"إلغاء عملية",desc:"إلغاء عملية بيع بموافقة المدير"},
+      {name:"CashDrawerScreen",nameAr:"درج النقود",desc:"سحب وإيداع وتسوية النقد"},
+      {name:"BarcodeScannerScreen",nameAr:"ماسح الباركود",desc:"مسح باركود بالكاميرا مع بحث"}
+    ],
+    services:[
+      {name:"SaleService",desc:"خدمة المبيعات مع دعم offline"},
+      {name:"PaymentGateway",desc:"بوابات الدفع (مدى، آبل باي، STC Pay)"},
+      {name:"ZatcaService",desc:"توافق هيئة الزكاة والضريبة"},
+      {name:"ReceiptPdfGenerator",desc:"إنشاء إيصالات PDF احترافية"},
+      {name:"ReceiptPrinterService",desc:"طباعة الإيصالات"},
+      {name:"WhatsAppReceiptService",desc:"إرسال إيصالات عبر واتساب"},
+      {name:"ManagerApprovalService",desc:"موافقة المدير على العمليات الحساسة"},
+      {name:"PhoneValidationService",desc:"التحقق من أرقام الهاتف"},
+      {name:"CartProviders",desc:"مزودات سلة المشتريات"}
+    ],
+    testFilesList:[
+      {name:"cart_providers_test.dart",count:50},{name:"payment_gateway_test.dart",count:39},
+      {name:"app_exceptions_test.dart",count:28},{name:"online_order_test.dart",count:24},
+      {name:"online_orders_provider_test.dart",count:19},{name:"zatca_service_test.dart",count:14},
+      {name:"phone_validation_service_test.dart",count:12},{name:"manager_approval_service_test.dart",count:11},
+      {name:"whatsapp_receipt_service_test.dart",count:10}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:true,l10n:true,ux:"ممتاز"}
+  },
+  {
+    id:"auth",name:"alhai_auth",nameAr:"المصادقة",icon:"fa-shield-halved",color:"#10b981",
+    desc:"نظام مصادقة متكامل - OTP/WhatsApp + PIN + البصمة/FaceID + جلسات مع Timeout تلقائي",
+    srcFiles:26,testFiles:7,tests:150,passRate:100,
+    screens:[
+      {name:"LoginScreen",nameAr:"تسجيل الدخول",desc:"المصادقة بالهاتف وOTP"},
+      {name:"SplashScreen",nameAr:"شاشة البداية",desc:"التحقق من حالة المصادقة"},
+      {name:"StoreSelectScreen",nameAr:"اختيار المتجر",desc:"اختيار الفرع"},
+      {name:"ManagerApprovalScreen",nameAr:"موافقة المدير",desc:"طلب صلاحية"}
+    ],
+    services:[
+      {name:"SecureStorageService",desc:"تخزين مشفر للبيانات الحساسة"},
+      {name:"SessionManager",desc:"إدارة الجلسات مع timeout تلقائي"},
+      {name:"BiometricService",desc:"البصمة وFace ID"},
+      {name:"PinService",desc:"رمز الدخول السري"},
+      {name:"OtpService",desc:"رمز التحقق OTP"},
+      {name:"SecurityLogger",desc:"تسجيل الأحداث الأمنية"},
+      {name:"WhatsAppOtpService",desc:"إرسال OTP عبر واتساب"}
+    ],
+    testFilesList:[
+      {name:"security_logger_test.dart",count:34},{name:"otp_service_test.dart",count:24},
+      {name:"whatsapp_otp_service_test.dart",count:21},{name:"secure_storage_service_test.dart",count:19},
+      {name:"pin_service_test.dart",count:19},{name:"auth_providers_test.dart",count:17},
+      {name:"session_manager_test.dart",count:16}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:false,supabase:true,l10n:true,ux:"ممتاز"}
+  },
+  {
+    id:"l10n",name:"alhai_l10n",nameAr:"الترجمة",icon:"fa-language",color:"#06b6d4",
+    desc:"نظام ترجمة شامل - 7 لغات + 3,039 مفتاح ترجمة + RTL/LTR + تعدد الصيغ والتواريخ",
+    srcFiles:10,testFiles:3,tests:64,passRate:100,screens:[],
+    services:[
+      {name:"LocaleProvider",desc:"مزود اللغة - تغيير وحفظ لغة التطبيق"},
+      {name:"SupportedLocales",desc:"اللغات المدعومة وإعداداتها"},
+      {name:"TextDirection",desc:"اتجاه النص (RTL/LTR)"}
+    ],
+    testFilesList:[
+      {name:"supported_locales_test.dart",count:31},{name:"locale_provider_test.dart",count:17},
+      {name:"text_direction_test.dart",count:16}
+    ],
+    compat:{mobile:"ممتاز",perf:"جيد",drift:false,supabase:false,l10n:true,ux:"ممتاز"}
+  },
+  {
+    id:"reports",name:"alhai_reports",nameAr:"التقارير",icon:"fa-chart-pie",color:"#8b5cf6",
+    desc:"13 شاشة تقارير احترافية - مبيعات وأرباح وضرائب ومخزون وموظفين مع تصدير PDF",
+    srcFiles:16,testFiles:2,tests:54,passRate:100,
+    screens:[
+      {name:"ReportsScreen",nameAr:"التقارير",desc:"القائمة الرئيسية للتقارير"},
+      {name:"DailySalesReportScreen",nameAr:"المبيعات اليومية",desc:"تقرير مبيعات اليوم"},
+      {name:"ProfitReportScreen",nameAr:"الأرباح",desc:"تحليل الأرباح والهوامش"},
+      {name:"TaxReportScreen",nameAr:"الضرائب",desc:"تقرير الضرائب المستحقة"},
+      {name:"VatReportScreen",nameAr:"ضريبة القيمة المضافة",desc:"تقرير VAT"},
+      {name:"InventoryReportScreen",nameAr:"المخزون",desc:"حالة المخزون"},
+      {name:"CustomerReportScreen",nameAr:"العملاء",desc:"تحليل سلوك العملاء"},
+      {name:"TopProductsReportScreen",nameAr:"أفضل المنتجات",desc:"ترتيب حسب المبيعات"},
+      {name:"SalesAnalyticsScreen",nameAr:"تحليل المبيعات",desc:"رسوم بيانية متقدمة"},
+      {name:"StaffPerformanceScreen",nameAr:"أداء الموظفين",desc:"تقييم الأداء"},
+      {name:"PeakHoursReportScreen",nameAr:"ساعات الذروة",desc:"أوقات النشاط"},
+      {name:"DebtsReportScreen",nameAr:"الديون",desc:"متابعة الديون"},
+      {name:"ComplaintsReportScreen",nameAr:"الشكاوى",desc:"تحليل الشكاوى"}
+    ],
+    services:[
+      {name:"ReportsService",desc:"خدمة التقارير المتقدمة - تقارير متعددة الفترات"},
+      {name:"ReportsProviders",desc:"مزودات التقارير والفلترة"}
+    ],
+    testFilesList:[
+      {name:"reports_service_test.dart",count:46},{name:"reports_providers_test.dart",count:8}
+    ],
+    compat:{mobile:"جيد",perf:"جيد",drift:true,supabase:false,l10n:true,ux:"جيد"}
+  },
+  {
+    id:"admin",name:"admin",nameAr:"لوحة الإدارة",icon:"fa-gauge-high",color:"#3b82f6",
+    desc:"تطبيق الإدارة الكامل مع جميع الشاشات والـ 90+ مسار وشريط جانبي متكامل",
+    srcFiles:8,testFiles:3,tests:59,passRate:100,
+    screens:[
+      {name:"AdminDashboardShell",nameAr:"الغلاف الرئيسي",desc:"الشريط الجانبي والتنقل"},
+      {name:"AdminHomeScreen",nameAr:"الشاشة الرئيسية",desc:"لوحة تحكم المشرف"}
+    ],
+    services:[
+      {name:"injection.dart",desc:"حقن التبعيات مع AppDatabase"},
+      {name:"admin_router.dart",desc:"إعدادات التوجيه - 90+ مسار"},
+      {name:"supabase_config.dart",desc:"إعدادات Supabase"},
+      {name:"LocalProductsRepository",desc:"مستودع المنتجات المحلي"},
+      {name:"LocalCategoriesRepository",desc:"مستودع الأصناف المحلي"}
+    ],
+    testFilesList:[
+      {name:"router_test.dart",count:46},{name:"injection_test.dart",count:10},
+      {name:"dashboard_shell_test.dart",count:3}
+    ],
+    compat:{mobile:"ممتاز",perf:"جيد",drift:true,supabase:true,l10n:true,ux:"جيد"}
+  },
+  {
+    id:"admin_lite",name:"admin_lite",nameAr:"الإدارة المبسطة",icon:"fa-mobile-screen",color:"#0ea5e9",
+    desc:"تطبيق إدارة خفيف للجوال مع 5 تبويبات - مراقبة وتقارير وذكاء اصطناعي و55 مسار",
+    srcFiles:7,testFiles:3,tests:57,passRate:100,
+    screens:[
+      {name:"LiteShell",nameAr:"الغلاف",desc:"شريط التنقل السفلي مع 5 تبويبات"},
+      {name:"MonitoringHubScreen",nameAr:"المراقبة",desc:"تنبيهات المخزون والورديات"},
+      {name:"MoreMenuScreen",nameAr:"المزيد",desc:"العملاء والموردين والإعدادات"}
+    ],
+    services:[
+      {name:"injection.dart",desc:"حقن التبعيات"},
+      {name:"lite_router.dart",desc:"إعدادات التوجيه - 55 مسار"},
+      {name:"supabase_config.dart",desc:"إعدادات Supabase"}
+    ],
+    testFilesList:[
+      {name:"router_test.dart",count:45},{name:"injection_test.dart",count:9},
+      {name:"lite_shell_test.dart",count:5}
+    ],
+    compat:{mobile:"ممتاز",perf:"جيد",drift:true,supabase:true,l10n:true,ux:"جيد"}
+  },
+  {
+    id:"cashier",name:"cashier",nameAr:"تطبيق الكاشير",icon:"fa-store",color:"#f97316",
+    desc:"تطبيق كاشير احترافي يعمل 100% بدون إنترنت (Offline-First) مع مزامنة تلقائية عند الاتصال",
+    srcFiles:10,testFiles:3,tests:36,passRate:100,
+    screens:[
+      {name:"CashierShell",nameAr:"غلاف الكاشير",desc:"الشريط الجانبي والتنقل"},
+      {name:"ShiftOpenScreen",nameAr:"فتح الوردية",desc:"إدخال الرصيد الافتتاحي"},
+      {name:"ShiftCloseScreen",nameAr:"إغلاق الوردية",desc:"عد النقود والتسوية"}
+    ],
+    services:[
+      {name:"injection.dart",desc:"حقن التبعيات - offline-first"},
+      {name:"cashier_router.dart",desc:"إعدادات التوجيه - 28 مسار"},
+      {name:"LocalProductsRepository",desc:"مستودع المنتجات المحلي"},
+      {name:"LocalCategoriesRepository",desc:"مستودع الأصناف المحلي"}
+    ],
+    testFilesList:[
+      {name:"router_test.dart",count:25},{name:"injection_test.dart",count:8},
+      {name:"cashier_shell_test.dart",count:6}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:true,supabase:false,l10n:true,ux:"جيد"}
+  },
+  {
+    id:"services",name:"alhai_services",nameAr:"طبقة الخدمات",icon:"fa-gears",color:"#64748b",
+    desc:"38 خدمة أعمال مشتركة تغطي المصادقة والمنتجات والطلبات والمدفوعات والتحليلات والتصدير",
+    srcFiles:42,testFiles:1,tests:18,passRate:100,screens:[],
+    services:[
+      {name:"AuthService",desc:"خدمة المصادقة وإدارة الجلسات"},
+      {name:"ProductService",desc:"إدارة المنتجات والتصنيفات"},
+      {name:"OrderService",desc:"إدارة الطلبات والسلة المحلية"},
+      {name:"PaymentService",desc:"المدفوعات والورديات وحركات الصندوق"},
+      {name:"ReportService",desc:"التقارير والإحصائيات المتقدمة"},
+      {name:"CacheService",desc:"التخزين المؤقت مع TTL تلقائي"},
+      {name:"BarcodeService",desc:"إنشاء والتحقق من EAN-13/EAN-8"},
+      {name:"SearchService",desc:"بحث شامل FTS في البيانات"},
+      {name:"BackupService",desc:"النسخ الاحتياطي والاستعادة"},
+      {name:"AIService",desc:"OCR وتحليل بيانات بالذكاء الاصطناعي"},
+      {name:"ExportService",desc:"تصدير PDF وExcel والطباعة"},
+      {name:"ImportService",desc:"استيراد منتجات من ملفات CSV/Excel"},
+      {name:"AnalyticsService",desc:"تحليلات الأعمال والإحصائيات"},
+      {name:"NotificationService",desc:"الإشعارات المحلية والدفع"}
+    ],
+    testFilesList:[
+      {name:"services_test.dart",count:18}
+    ],
+    compat:{mobile:"ممتاز",perf:"ممتاز",drift:false,supabase:false,l10n:false,ux:"غير متاح"}
+  }
+];
+
+const CHART_DATA = [
+  {name:"alhai_core",count:530,color:"#6c63ff"},
+  {name:"alhai_ai",count:381,color:"#a855f7"},
+  {name:"alhai_shared_ui",count:374,color:"#4facfe"},
+  {name:"alhai_database",count:294,color:"#00d4aa"},
+  {name:"alhai_sync",count:226,color:"#f59e0b"},
+  {name:"alhai_pos",count:207,color:"#ef4444"},
+  {name:"alhai_auth",count:150,color:"#10b981"},
+  {name:"alhai_design_system",count:142,color:"#f093fb"},
+  {name:"alhai_l10n",count:64,color:"#06b6d4"},
+  {name:"admin",count:59,color:"#3b82f6"},
+  {name:"admin_lite",count:57,color:"#0ea5e9"},
+  {name:"alhai_reports",count:54,color:"#8b5cf6"},
+  {name:"cashier",count:36,color:"#f97316"},
+  {name:"alhai_services",count:18,color:"#64748b"}
+];
+
+// =============================================
+// RENDER BAR CHART
+// =============================================
+(function renderChart() {
+  const container = document.getElementById('barChart');
+  const maxCount = Math.max(...CHART_DATA.map(d => d.count));
+  let html = '';
+  CHART_DATA.forEach(d => {
+    const pct = (d.count / maxCount * 100).toFixed(1);
+    html += '<div class="bar-row">' +
+      '<span class="bar-label">' + d.name + '</span>' +
+      '<div class="bar-track"><div class="bar-fill" data-width="' + pct + '" style="background:' + d.color + ';"></div></div>' +
+      '<span class="bar-count">' + d.count + '</span>' +
+    '</div>';
+  });
+  container.innerHTML = html;
+})();
+
+// =============================================
+// RENDER PACKAGES
+// =============================================
+(function renderPackages() {
+  const grid = document.getElementById('packagesGrid');
+  let html = '';
+  PACKAGES.forEach((pkg, idx) => {
+    const hasScreens = pkg.screens && pkg.screens.length > 0;
+    const testList = pkg.testFilesList || [];
+
+    html += '<div class="pkg-card glass animate-on-scroll" data-pkg="' + idx + '">';
+
+    // Header
+    html += '<div class="pkg-header" onclick="togglePkg(' + idx + ')">' +
+      '<div class="pkg-icon" style="background:' + pkg.color + '20; color:' + pkg.color + ';">' +
+        '<i class="fa-solid ' + pkg.icon + '"></i>' +
+      '</div>' +
+      '<div class="pkg-info">' +
+        '<div class="pkg-name">' + pkg.nameAr + ' <span class="pkg-name-en">' + pkg.name + '</span></div>' +
+        '<div class="pkg-desc">' + pkg.desc + '</div>' +
+      '</div>' +
+      '<div class="pkg-badges">' +
+        '<span class="badge badge-tests">' + pkg.tests + ' اختبار</span>' +
+        '<span class="badge badge-pass">' + pkg.passRate + '%</span>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-left pkg-chevron"></i>' +
+    '</div>';
+
+    // Body
+    html += '<div class="pkg-body"><div class="pkg-body-inner">';
+
+    // Tabs
+    html += '<div class="tabs">' +
+      '<button class="tab-btn active" onclick="switchTab(this,' + idx + ',\'screens\')">الشاشات</button>' +
+      '<button class="tab-btn" onclick="switchTab(this,' + idx + ',\'services\')">الوظائف</button>' +
+      '<button class="tab-btn" onclick="switchTab(this,' + idx + ',\'tests\')">الاختبارات</button>' +
+      '<button class="tab-btn" onclick="switchTab(this,' + idx + ',\'compat\')">التوافق</button>' +
+    '</div>';
+
+    // Screens Tab
+    html += '<div class="tab-panel active" data-tab="screens-' + idx + '">';
+    if (hasScreens) {
+      pkg.screens.forEach(s => {
+        html += '<div class="item-row">' +
+          '<div><div class="item-name">' + s.nameAr + ' <span class="item-name-en">' + s.name + '</span></div>' +
+          '<div class="item-desc">' + s.desc + '</div></div></div>';
+      });
+    } else {
+      html += '<div class="empty-msg">هذه الحزمة لا تحتوي على شاشات (حزمة خدمات)</div>';
+    }
+    html += '</div>';
+
+    // Services Tab
+    html += '<div class="tab-panel" data-tab="services-' + idx + '">';
+    pkg.services.forEach(s => {
+      html += '<div class="item-row">' +
+        '<div><div class="item-name"><span class="item-name-en">' + s.name + '</span></div>' +
+        '<div class="item-desc">' + s.desc + '</div></div></div>';
+    });
+    html += '</div>';
+
+    // Tests Tab
+    html += '<div class="tab-panel" data-tab="tests-' + idx + '">';
+    testList.forEach(t => {
+      html += '<div class="item-row">' +
+        '<div class="item-name"><span class="item-name-en">' + t.name + '</span></div>' +
+        '<div class="item-count">' + t.count + ' اختبار</div></div>';
+    });
+    html += '</div>';
+
+    // Compat Tab
+    const c = pkg.compat;
+    html += '<div class="tab-panel" data-tab="compat-' + idx + '">';
+    html += '<div class="compat-grid">';
+    html += compatItem('الجوال', c.mobile);
+    html += compatItem('الأداء', c.perf);
+    html += compatItem('Drift', c.drift);
+    html += compatItem('Supabase', c.supabase);
+    html += compatItem('الترجمة', c.l10n);
+    html += compatItem('تجربة المستخدم', c.ux);
+    html += '</div></div>';
+
+    html += '</div></div>'; // body-inner, body
+    html += '</div>'; // card
+  });
+  grid.innerHTML = html;
+})();
+
+function compatItem(label, value) {
+  let cls = 'na', display = '';
+  if (typeof value === 'boolean') {
+    cls = value ? 'yes' : 'no';
+    display = value ? 'نعم' : 'لا';
+  } else {
+    if (value === 'ممتاز') cls = 'good';
+    else if (value === 'جيد') cls = 'ok';
+    else cls = 'na';
+    display = value;
+  }
+  return '<div class="compat-item"><div class="compat-label">' + label + '</div><div class="compat-value ' + cls + '">' + display + '</div></div>';
+}
+
+function togglePkg(idx) {
+  const card = document.querySelector('[data-pkg="' + idx + '"]');
+  card.classList.toggle('expanded');
+}
+
+function switchTab(btn, idx, tab) {
+  const card = document.querySelector('[data-pkg="' + idx + '"]');
+  card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  card.querySelector('[data-tab="' + tab + '-' + idx + '"]').classList.add('active');
+}
+
+// =============================================
+// SCROLL ANIMATIONS (IntersectionObserver)
+// =============================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+
+      // Trigger bar fills
+      entry.target.querySelectorAll('.bar-fill[data-width]').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+      });
+
+      // Trigger progress bar
+      entry.target.querySelectorAll('.progress-bar-inner[data-width]').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 300);
+      });
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+// =============================================
+// COUNTER ANIMATION
+// =============================================
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const useComma = el.dataset.format === 'comma';
+      const duration = 2000;
+      const start = performance.now();
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        let current = Math.round(eased * target);
+        el.textContent = (useComma ? current.toLocaleString('en-US') : current) + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.counter-value[data-target]').forEach(el => counterObserver.observe(el));
+
+// Progress percent counter
+const progressPercent = document.querySelector('.progress-percent[data-target]');
+if (progressPercent) {
+  const pObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = parseInt(progressPercent.dataset.target);
+        const duration = 2000;
+        const start = performance.now();
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          progressPercent.textContent = Math.round(eased * target) + '%';
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+        pObserver.unobserve(progressPercent);
+      }
+    });
+  }, { threshold: 0.3 });
+  pObserver.observe(progressPercent);
+}
+
+// =============================================
+// NAV SHOW/HIDE
+// =============================================
+const nav = document.getElementById('mainNav');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const current = window.scrollY;
+  if (current > 300) {
+    nav.classList.add('visible');
+  } else {
+    nav.classList.remove('visible');
+  }
+  lastScroll = current;
+}, { passive: true });
+
+// =============================================
+// BACK TO TOP
+// =============================================
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 600) {
+    backBtn.classList.add('visible');
+  } else {
+    backBtn.classList.remove('visible');
+  }
+}, { passive: true });
+backBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// =============================================
+// DATE
+// =============================================
+document.getElementById('reportDate').textContent = new Date().toLocaleDateString('ar-SA', {
+  year: 'numeric', month: 'long', day: 'numeric',
+  calendar: 'gregory'
+});
+</script>
+</body>
+</html>

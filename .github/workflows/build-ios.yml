@@ -1,0 +1,56 @@
+# M12: Split from monolithic flutter_ci.yml
+# iOS build workflow - triggers after Analyze & Test passes on main branch.
+
+name: Build iOS
+
+on:
+  workflow_run:
+    workflows: ["Analyze & Test"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  # ============================================================================
+  # BUILD iOS (apps that have ios/ folder)
+  # ============================================================================
+  build-ios:
+    name: Build iOS - ${{ matrix.app }}
+    runs-on: macos-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [customer_app, driver_app]
+        include:
+          - app: customer_app
+            path: customer_app
+          - app: driver_app
+            path: driver_app
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Build iOS (no codesign)
+        run: |
+          cd ${{ matrix.path }}
+          flutter build ios --release --no-codesign \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}

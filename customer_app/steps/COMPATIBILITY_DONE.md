@@ -101,7 +101,7 @@ ChatConversation // 👈 جديد
 - Injectable added
 - Patterns متطابقة
 
-### ✅ pos_app: 100%
+### ✅ cashier: 100%
 - نفس البنية تماماً
 
 ---

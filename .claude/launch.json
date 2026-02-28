@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cashier",
+      "runtimeExecutable": "C:\\src\\flutter\\bin\\flutter.bat",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8080", "--dart-define-from-file=../../.dart_define.env"],
+      "cwd": "apps/cashier",
+      "autoPort": false,
+      "port": 8080
+    },
+    {
+      "name": "ai-server",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8000"],
+      "cwd": "ai_server",
+      "port": 8000
+    }
+  ]
+}

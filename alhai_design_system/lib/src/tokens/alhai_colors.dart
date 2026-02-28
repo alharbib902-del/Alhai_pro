@@ -1,87 +1,95 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
+
 /// Semantic color tokens for Alhai Design System
-/// Use these tokens instead of raw colors in UI code
+///
+/// Delegates to [AppColors] for overlapping values to avoid duplicate color
+/// definitions (see H10). [AppColors] is the canonical, comprehensive color
+/// system. This class adds design-system-specific tokens (on-colors, outlines,
+/// scrim, shadow, disabled states) that [AppColors] does not provide.
+///
+/// Use these tokens instead of raw colors in UI code.
 abstract final class AlhaiColors {
   // ============================================
-  // Brand Colors
+  // Brand Colors  (delegated to AppColors)
   // ============================================
 
-  /// Primary brand color (Alhai teal/green)
-  static const Color primary = Color(0xFF00897B);
-  static const Color primaryLight = Color(0xFF4DB6AC);
-  static const Color primaryDark = Color(0xFF00695C);
+  /// Primary brand color
+  static const Color primary = AppColors.primary;
+  static const Color primaryLight = AppColors.primaryLight;
+  static const Color primaryDark = AppColors.primaryDark;
 
   /// Secondary accent color
-  static const Color secondary = Color(0xFF5C6BC0);
-  static const Color secondaryLight = Color(0xFF8E99F3);
-  static const Color secondaryDark = Color(0xFF26418F);
+  static const Color secondary = AppColors.secondary;
+  static const Color secondaryLight = AppColors.secondaryLight;
+  static const Color secondaryDark = AppColors.secondaryDark;
 
   // ============================================
-  // Semantic Colors
+  // Semantic Colors  (delegated to AppColors)
   // ============================================
 
   /// Success states
-  static const Color success = Color(0xFF43A047);
-  static const Color successLight = Color(0xFFE8F5E9);
-  static const Color successDark = Color(0xFF2E7D32);
+  static const Color success = AppColors.success;
+  static const Color successLight = AppColors.successLight;
+  static const Color successDark = Color(0xFF16A34A);
 
   /// Warning states
-  static const Color warning = Color(0xFFFFA726);
-  static const Color warningLight = Color(0xFFFFF3E0);
-  static const Color warningDark = Color(0xFFEF6C00);
+  static const Color warning = AppColors.warning;
+  static const Color warningLight = AppColors.warningLight;
+  static const Color warningDark = Color(0xFFD97706);
 
   /// Error states
-  static const Color error = Color(0xFFE53935);
-  static const Color errorLight = Color(0xFFFFEBEE);
-  static const Color errorDark = Color(0xFFC62828);
+  static const Color error = AppColors.error;
+  static const Color errorLight = AppColors.errorLight;
+  static const Color errorDark = Color(0xFFDC2626);
 
   /// Info states
-  static const Color info = Color(0xFF29B6F6);
-  static const Color infoLight = Color(0xFFE1F5FE);
-  static const Color infoDark = Color(0xFF0288D1);
+  static const Color info = AppColors.info;
+  static const Color infoLight = AppColors.infoLight;
+  static const Color infoDark = Color(0xFF2563EB);
 
   // ============================================
-  // Neutral Colors (Light Theme)
-  // ============================================
-
-  /// Background colors
-  static const Color backgroundLight = Color(0xFFFAFAFA);
-  static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color surfaceVariantLight = Color(0xFFF5F5F5);
-
-  /// Text colors
-  static const Color onBackgroundLight = Color(0xFF212121);
-  static const Color onSurfaceLight = Color(0xFF212121);
-  static const Color onSurfaceVariantLight = Color(0xFF757575);
-
-  /// Border/Divider
-  static const Color outlineLight = Color(0xFFE0E0E0);
-  static const Color outlineVariantLight = Color(0xFFEEEEEE);
-
-  // ============================================
-  // Neutral Colors (Dark Theme)
+  // Neutral Colors (Light Theme)  (delegated to AppColors)
   // ============================================
 
   /// Background colors
-  static const Color backgroundDark = Color(0xFF121212);
-  static const Color surfaceDark = Color(0xFF1E1E1E);
-  static const Color surfaceVariantDark = Color(0xFF2C2C2C);
+  static const Color backgroundLight = AppColors.backgroundLight;
+  static const Color surfaceLight = AppColors.surfaceLight;
+  static const Color surfaceVariantLight = AppColors.surfaceVariant;
 
   /// Text colors
-  static const Color onBackgroundDark = Color(0xFFE0E0E0);
-  static const Color onSurfaceDark = Color(0xFFE0E0E0);
-  static const Color onSurfaceVariantDark = Color(0xFF9E9E9E);
+  static const Color onBackgroundLight = AppColors.textPrimaryLight;
+  static const Color onSurfaceLight = AppColors.textPrimaryLight;
+  static const Color onSurfaceVariantLight = AppColors.textSecondaryLight;
 
   /// Border/Divider
-  static const Color outlineDark = Color(0xFF424242);
-  static const Color outlineVariantDark = Color(0xFF444444); // محسّن للتباين
+  static const Color outlineLight = AppColors.borderLight;
+  static const Color outlineVariantLight = AppColors.divider;
+
+  // ============================================
+  // Neutral Colors (Dark Theme)  (delegated to AppColors)
+  // ============================================
+
+  /// Background colors
+  static const Color backgroundDark = AppColors.backgroundDark;
+  static const Color surfaceDark = AppColors.surfaceDark;
+  static const Color surfaceVariantDark = AppColors.surfaceVariantDark;
+
+  /// Text colors
+  static const Color onBackgroundDark = AppColors.textPrimaryDark;
+  static const Color onSurfaceDark = AppColors.textPrimaryDark;
+  static const Color onSurfaceVariantDark = AppColors.textSecondaryDark;
+
+  /// Border/Divider
+  static const Color outlineDark = AppColors.borderDark;
+  static const Color outlineVariantDark = Color(0xFF616161);
 
   // ============================================
   // On-Colors (for text/icons on colored backgrounds)
   // ============================================
 
-  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color onPrimary = AppColors.textOnPrimary;
   static const Color onSecondary = Color(0xFFFFFFFF);
   static const Color onSuccess = Color(0xFFFFFFFF);
   static const Color onWarning = Color(0xFF212121);
@@ -108,7 +116,7 @@ abstract final class AlhaiColors {
   // Technical/Utility
   // ============================================
 
-  /// Transparent (استثناء تقني لـ surfaceTint وغيرها)
+  /// Transparent
   static const Color transparent = Color(0x00000000);
 
   /// Disabled opacity (Material standard: 0.38)

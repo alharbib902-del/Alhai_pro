@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../config/app_limits.dart';
 import '../../dto/orders/create_order_request.dart';
 import '../../dto/orders/order_response.dart';
 
@@ -16,7 +17,7 @@ abstract class OrdersRemoteDataSource {
   Future<List<OrderResponse>> getOrders({
     String? status,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Updates order status
@@ -51,7 +52,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   Future<List<OrderResponse>> getOrders({
     String? status,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   }) async {
     // Build query parameters, only include status if not null
     final queryParams = <String, dynamic>{

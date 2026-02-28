@@ -1,0 +1,38 @@
+name: alhai_auth
+description: Authentication screens, providers, and security for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  alhai_core:
+    path: ../../alhai_core
+  alhai_database:
+    path: ../alhai_database
+  alhai_l10n:
+    path: ../alhai_l10n
+  alhai_design_system:
+    path: ../../alhai_design_system
+
+  go_router: ^13.0.0
+  flutter_riverpod: ^2.4.9
+  flutter_secure_storage: ^9.0.0
+  local_auth: ^2.1.8
+  shared_preferences: ^2.2.2
+  crypto: ^3.0.3
+  dio: ^5.4.0
+  drift: ^2.14.1
+  supabase_flutter: ^2.3.4
+  uuid: ^4.4.0
+  cached_network_image: ^3.3.1
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4

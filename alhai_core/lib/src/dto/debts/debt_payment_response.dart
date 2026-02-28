@@ -36,7 +36,7 @@ class DebtPaymentResponse {
       amount: amount,
       paymentMethod: paymentMethod,
       notes: notes,
-      createdAt: DateTime.parse(createdAt),
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
     );
   }
 }

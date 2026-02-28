@@ -5,15 +5,20 @@ import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
 import 'di/injection.dart';
 
+// L78: This app uses a router with placeholder screens per route.
+// Responsive layout patterns (ResponsiveBuilder, breakpoints, adaptive
+// navigation) should be applied when building real UI screens.
+// See alhai_design_system responsive tokens and alhai_shared_ui ResponsiveScaffold.
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize DI
   configureDependencies();
-  
+
   // Initialize location service
   await LocationService.instance.initialize();
-  
+
   runApp(
     const ProviderScope(
       child: DriverApp(),
@@ -36,12 +41,12 @@ class DriverApp extends StatelessWidget {
       // Multi-language Support (6 languages)
       locale: const Locale('ar'),
       supportedLocales: const [
-        Locale('ar'),      // العربية
-        Locale('en'),      // English
-        Locale('ur'),      // اردو
-        Locale('hi'),      // हिंदी
-        Locale('id'),      // Indonesia
-        Locale('bn'),      // বাংলা
+        Locale('ar'), // العربية
+        Locale('en'), // English
+        Locale('ur'), // اردو
+        Locale('hi'), // हिंदी
+        Locale('id'), // Indonesia
+        Locale('bn'), // বাংলা
       ],
     );
   }

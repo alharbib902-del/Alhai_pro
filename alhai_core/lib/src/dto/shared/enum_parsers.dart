@@ -23,11 +23,22 @@ extension OrderStatusX on OrderStatus {
       case 'outfordelivery':
       case 'out_for_delivery':
         return OrderStatus.outForDelivery;
+      case 'delivered':
+        return OrderStatus.delivered;
+      case 'pickedup':
+      case 'picked_up':
+        return OrderStatus.pickedUp;
       case 'completed':
         return OrderStatus.completed;
       case 'cancelled':
       case 'canceled':
         return OrderStatus.cancelled;
+      case 'refunded':
+        return OrderStatus.refunded;
+      case 'pending':
+        return OrderStatus.created;
+      case 'delivering':
+        return OrderStatus.outForDelivery;
       default:
         return OrderStatus.created;
     }

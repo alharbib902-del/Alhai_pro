@@ -26,19 +26,19 @@ Alhai is a comprehensive multi-tenant SaaS platform for grocery stores, includin
 
 ## 📱 Applications
 
-### 1. admin_pos (106 screens)
-**Platform**: Web + Mobile + Desktop  
-**User**: Store Owner  
+### 1. admin (106 screens)
+**Platform**: Web + Mobile + Desktop
+**User**: Store Owner
 **Purpose**: Complete store management + B2B ordering
 
-[Documentation →](./admin_pos/)
+[Documentation →](./apps/admin/)
 
-### 2. admin_pos_lite (28 screens)
-**Platform**: Mobile Only  
-**User**: Store Owner  
+### 2. admin_lite (28 screens)
+**Platform**: Mobile Only
+**User**: Store Owner
 **Purpose**: Quick decisions + AI auto-reorder
 
-[Documentation →](./admin_pos_lite/)
+[Documentation →](./apps/admin_lite/)
 
 ### 3. customer_app (40 screens)
 **Platform**: Mobile  
@@ -54,12 +54,12 @@ Alhai is a comprehensive multi-tenant SaaS platform for grocery stores, includin
 
 [Documentation →](./driver_app/)
 
-### 5. pos_app (79 screens)
-**Platform**: Desktop/Tablet  
-**User**: Cashier  
+### 5. cashier (POS)
+**Platform**: Desktop/Tablet
+**User**: Cashier
 **Purpose**: Point of Sale + Split Payment
 
-[Documentation →](./pos_app/)
+[Documentation →](./apps/cashier/)
 
 ### 6. super_admin (52 screens)
 **Platform**: Web  
@@ -140,12 +140,12 @@ Revenue:           106,358 ر.س/month
 
 ```
 Alhai/
-├── admin_pos/
+├── apps/admin/
 │   ├── PRD_FINAL.md (106 screens)
 │   ├── ADMIN_API_CONTRACT.md
 │   ├── ADMIN_ARCHITECTURE.md
 │   └── steps/
-├── admin_pos_lite/
+├── apps/admin_lite/
 │   ├── PRD_FINAL.md (28 screens)
 │   ├── AI_SMART_REORDER.md
 │   └── steps/
@@ -155,9 +155,8 @@ Alhai/
 ├── driver_app/
 │   ├── PRD_FINAL.md (18 screens)
 │   └── steps/
-├── pos_app/
-│   ├── POS_APP_SPEC.md (79 screens)
-│   └── SPLIT_PAYMENT_SUMMARY.md
+├── apps/cashier/
+│   └── (POS - 79 screens)
 ├── super_admin/
 │   ├── PRD_FINAL.md (52 screens)
 │   ├── SUPER_ADMIN_VISION.md

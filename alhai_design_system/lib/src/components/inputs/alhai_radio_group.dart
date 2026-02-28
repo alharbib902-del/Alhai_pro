@@ -75,38 +75,46 @@ class AlhaiRadioGroup<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveSpacing = spacing ?? AlhaiSpacing.xs;
 
-    if (direction == Axis.horizontal) {
-      return Wrap(
-        spacing: effectiveSpacing,
-        runSpacing: effectiveSpacing,
-        children: [
-          for (final option in options)
-            _RadioOptionWidget<T>(
-              option: option,
-              groupValue: value,
-              isGroupEnabled: enabled,
-              onTap: onChanged,
-              padding: padding,
-            ),
-        ],
-      );
-    }
+    final content = direction == Axis.horizontal
+        ? Wrap(
+            spacing: effectiveSpacing,
+            runSpacing: effectiveSpacing,
+            children: [
+              for (final option in options)
+                _RadioOptionWidget<T>(
+                  option: option,
+                  groupValue: value,
+                  isGroupEnabled: enabled,
+                  onTap: onChanged,
+                  padding: padding,
+                ),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (int i = 0; i < options.length; i++) ...[
+                if (i > 0) SizedBox(height: effectiveSpacing),
+                _RadioOptionWidget<T>(
+                  option: options[i],
+                  groupValue: value,
+                  isGroupEnabled: enabled,
+                  onTap: onChanged,
+                  padding: padding,
+                ),
+              ],
+            ],
+          );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (int i = 0; i < options.length; i++) ...[
-          if (i > 0) SizedBox(height: effectiveSpacing),
-          _RadioOptionWidget<T>(
-            option: options[i],
-            groupValue: value,
-            isGroupEnabled: enabled,
-            onTap: onChanged,
-            padding: padding,
-          ),
-        ],
-      ],
+    return RadioGroup<T>(
+      groupValue: value,
+      onChanged: (T? newValue) {
+        if (newValue != null && onChanged != null && enabled) {
+          onChanged!(newValue);
+        }
+      },
+      child: content,
     );
   }
 }
@@ -140,11 +148,9 @@ class _RadioOptionWidget<T> extends StatelessWidget {
           vertical: AlhaiSpacing.sm,
         );
 
-    // Build radio with correct groupValue
+    // Build radio - groupValue and onChanged managed by RadioGroup ancestor
     final radio = Radio<T>(
       value: option.value,
-      groupValue: groupValue,
-      onChanged: isDisabled ? null : (_) => onTap?.call(option.value),
       activeColor: colorScheme.primary,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,

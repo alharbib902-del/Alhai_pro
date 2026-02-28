@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/products/create_product_request.dart';
 import '../../dto/products/product_response.dart';
 import '../../dto/products/update_product_request.dart';
@@ -12,7 +13,7 @@ abstract class ProductsRemoteDataSource {
   Future<List<ProductResponse>> getProducts(
     String storeId, {
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
     String? categoryId,
     String? searchQuery,
   });

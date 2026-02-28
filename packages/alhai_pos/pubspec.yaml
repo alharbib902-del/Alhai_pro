@@ -1,0 +1,66 @@
+name: alhai_pos
+description: POS screens, cart, payments, returns for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Internal packages
+  alhai_core:
+    path: ../../alhai_core
+  alhai_services:
+    path: ../../alhai_services
+  alhai_design_system:
+    path: ../../alhai_design_system
+  alhai_l10n:
+    path: ../alhai_l10n
+  alhai_database:
+    path: ../alhai_database
+  alhai_sync:
+    path: ../alhai_sync
+  alhai_auth:
+    path: ../alhai_auth
+  alhai_shared_ui:
+    path: ../alhai_shared_ui
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+  get_it: ^7.7.0
+
+  # Routing
+  go_router: ^13.0.0
+
+  # Database
+  drift: ^2.14.1
+
+  # Backend
+  supabase_flutter: ^2.3.4
+
+  # Storage
+  shared_preferences: ^2.2.2
+
+  # Images
+  cached_network_image: ^3.3.1
+
+  # PDF & Printing
+  pdf: ^3.10.8
+  printing: ^5.12.0
+  qr_flutter: ^4.1.0
+
+  # Utils
+  intl: ^0.20.2
+  uuid: ^4.4.0
+  url_launcher: ^6.2.4
+  dio: ^5.4.0
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4

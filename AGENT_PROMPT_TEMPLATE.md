@@ -188,8 +188,8 @@
 # التطبيقات المتاحة
 # ═══════════════════════════════════════════════════════════════════════════════
 
-## 1. pos_app
-- المجلد: `C:\Users\basem\OneDrive\Desktop\Alhai\pos_app`
+## 1. cashier
+- المجلد: `C:\Users\basem\OneDrive\Desktop\Alhai\cashier`
 - الوصف: نظام نقاط البيع للكاشير
 - المنصة: Desktop/Tablet
 - الشاشات: 79

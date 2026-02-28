@@ -1,3 +1,4 @@
+import '../../config/app_limits.dart';
 import '../../dto/inventory/stock_adjustment_response.dart';
 import '../../dto/inventory/low_stock_product_response.dart';
 import '../../dto/inventory/adjust_stock_request.dart';
@@ -8,7 +9,7 @@ abstract class InventoryRemoteDataSource {
   Future<List<StockAdjustmentResponse>> getAdjustments(
     String productId, {
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Gets all adjustments for a store
@@ -16,7 +17,7 @@ abstract class InventoryRemoteDataSource {
     String storeId, {
     String? type,
     int page = 1,
-    int limit = 20,
+    int limit = AppLimits.defaultPageSize,
   });
 
   /// Adjusts stock for a product

@@ -59,7 +59,7 @@ class Store with _$Store {
     if (time == null) return null;
     final parts = time.split(':');
     if (parts.length != 2) return null;
-    return int.parse(parts[0]) * 60 + int.parse(parts[1]);
+    return (int.tryParse(parts[0]) ?? 0) * 60 + (int.tryParse(parts[1]) ?? 0);
   }
 }
 

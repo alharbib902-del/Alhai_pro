@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة توليد الفواتير
-/// تستخدم من: pos_app
+/// تستخدم من: cashier
 class ReceiptService {
   /// توليد محتوى الفاتورة كنص
   String generateReceiptText({
@@ -104,29 +104,29 @@ class ReceiptService {
     buffer.writeln('</head>');
     buffer.writeln('<body>');
 
-    // Header
+    // Header - all user data is HTML-escaped to prevent XSS
     buffer.writeln('<div class="header">');
     if (settings?.receiptHeader != null) {
-      buffer.writeln('<p>${settings!.receiptHeader}</p>');
+      buffer.writeln('<p>${_escapeHtml(settings!.receiptHeader!)}</p>');
     }
-    buffer.writeln('<h2>${store.name}</h2>');
-    buffer.writeln('<p>${store.address}</p>');
-    if (store.phone != null) buffer.writeln('<p>هاتف: ${store.phone}</p>');
+    buffer.writeln('<h2>${_escapeHtml(store.name)}</h2>');
+    buffer.writeln('<p>${_escapeHtml(store.address)}</p>');
+    if (store.phone != null) buffer.writeln('<p>هاتف: ${_escapeHtml(store.phone!)}</p>');
     buffer.writeln('</div>');
 
     buffer.writeln('<div class="divider"></div>');
 
     // Order info
-    buffer.writeln('<p>رقم الفاتورة: ${order.displayNumber}</p>');
+    buffer.writeln('<p>رقم الفاتورة: ${_escapeHtml(order.displayNumber)}</p>');
     buffer.writeln('<p>التاريخ: ${_formatDate(order.createdAt)} ${_formatTime(order.createdAt)}</p>');
-    if (cashierName != null) buffer.writeln('<p>الكاشير: $cashierName</p>');
+    if (cashierName != null) buffer.writeln('<p>الكاشير: ${_escapeHtml(cashierName)}</p>');
 
     buffer.writeln('<div class="divider"></div>');
 
     // Items
     for (final item in order.items) {
       buffer.writeln('<div class="item">');
-      buffer.writeln('<span>${item.name}</span>');
+      buffer.writeln('<span>${_escapeHtml(item.name)}</span>');
       buffer.writeln('<span>${item.qty} x ${_formatPrice(item.unitPrice)} = ${_formatPrice(item.lineTotal)}</span>');
       buffer.writeln('</div>');
     }
@@ -146,7 +146,7 @@ class ReceiptService {
 
     // Footer
     buffer.writeln('<div class="footer">');
-    buffer.writeln('<p>${settings?.receiptFooter ?? 'شكراً لزيارتكم'}</p>');
+    buffer.writeln('<p>${_escapeHtml(settings?.receiptFooter ?? 'شكراً لزيارتكم')}</p>');
     buffer.writeln('</div>');
 
     buffer.writeln('</body></html>');
@@ -156,7 +156,17 @@ class ReceiptService {
 
   // ==================== Helpers ====================
 
-  String _formatPrice(double price) => '${price.toStringAsFixed(2)} ر.س';
+  /// HTML-encode a string to prevent XSS
+  String _escapeHtml(String input) {
+    return input
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#x27;');
+  }
+
+  String _formatPrice(double price) => '${price.toStringAsFixed(2)} ${StoreSettings.defaultCurrencySymbol}';
 
   String _formatDate(DateTime date) =>
       '${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}';

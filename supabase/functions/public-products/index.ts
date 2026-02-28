@@ -7,6 +7,16 @@ const RATE_LIMIT_WINDOW = 60000;  // 1 minute in ms
 // Simple in-memory rate limiter (use Redis in production for distributed)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
+// تنظيف دوري للسجلات المنتهية (M16 fix - منع تسرب الذاكرة)
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of rateLimitMap) {
+        if (now >= value.resetAt) {
+            rateLimitMap.delete(key);
+        }
+    }
+}, RATE_LIMIT_WINDOW);
+
 Deno.serve(async (req) => {
     // Handle CORS preflight
     if (req.method === 'OPTIONS') {
@@ -103,7 +113,7 @@ Deno.serve(async (req) => {
     // 5. Query products with ENFORCED store_id filter
     let query = supabase
         .from('products')
-        .select('id, name, name_ar, barcode, sku, category_id, price, image_thumbnail, image_medium, stock_qty, min_stock_level, is_active, created_at', { count: 'exact' })
+        .select('id, name, sku, barcode, category_id, price, image_thumbnail, stock_qty, min_qty, is_active, created_at', { count: 'exact' })
         .eq('store_id', storeId)
         .eq('is_active', true)
         .order('name')
@@ -113,7 +123,11 @@ Deno.serve(async (req) => {
         query = query.eq('category_id', categoryId);
     }
     if (search) {
-        query = query.or(`name.ilike.%${search}%,name_ar.ilike.%${search}%,barcode.eq.${search}`);
+        // Sanitize search input to prevent PostgREST filter injection
+        const sanitized = search.replace(/[%_(),."'\\]/g, '').trim().slice(0, 100);
+        if (sanitized.length > 0) {
+            query = query.or(`name.ilike.%${sanitized}%,barcode.eq.${sanitized},sku.eq.${sanitized}`);
+        }
     }
 
     const { data: products, error, count } = await query;

@@ -148,7 +148,7 @@ Cost:
 - View invoices
 - Make payments
 
-### With pos_app:
+### With cashier:
 - Delivery confirmation
 - Split payment processing
 - Inventory update

@@ -1,7 +1,7 @@
 # ✅ تقرير التوافق مع الحزم الموجودة
 
 **التاريخ**: 2026-01-15  
-**المراجعة**: alhai_core + alhai_design_system + pos_app + DEVELOPER_STANDARDS
+**المراجعة**: alhai_core + alhai_design_system + cashier + DEVELOPER_STANDARDS
 
 ---
 
@@ -14,7 +14,7 @@
 | **alhai_core** | ✅ 100% | جاهز للاستخدام |
 | **alhai_design_system** | ✅ 100% | جاهز للاستخدام |
 | **DEVELOPER_STANDARDS** | ✅ 95% | تعديلات بسيطة |
-| **pos_app patterns** | ✅ 90% | نفس البنية |
+| **cashier patterns** | ✅ 90% | نفس البنية |
 
 ---
 
@@ -394,12 +394,12 @@ ProductImage(
 
 ---
 
-## 4️⃣ التوافق مع pos_app
+## 4️⃣ التوافق مع cashier
 
-### النمط المتبع في pos_app:
+### النمط المتبع في cashier:
 
 ```dart
-// pos_app/lib/features/products/presentation/screens/
+// cashier/lib/features/products/presentation/screens/
 class ProductsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -431,8 +431,8 @@ class ProductsScreen extends ConsumerWidget {
 [ ] تحديث alhai_core إلى v3.4 (إضافة Store, CustomerAccount, Chat models)
 [ ] التأكد من alhai_design_system v1.x في pubspec
 [ ] مراجعة DEVELOPER_STANDARDS
-[ ] استخدام نفس folder structure من pos_app
-[ ] استخدام GetIt + Riverpod (كما في pos_app)
+[ ] استخدام نفس folder structure من cashier
+[ ] استخدام GetIt + Riverpod (كما في cashier)
 [ ] استخدام go_router
 [ ] استخدام ProductImage من design_system
 [ ] استخدام Product model من alhai_core
@@ -459,7 +459,7 @@ dependencies:
   alhai_design_system:
     path: ../alhai_design_system
   
-  # State Management (مثل pos_app)
+  # State Management (مثل cashier)
   flutter_riverpod: ^2.4.9
   get_it: ^7.6.4  # ⭐ إضافة
   injectable: ^2.3.2  # ⭐ إضافة
@@ -540,7 +540,7 @@ import 'package:alhai_core/alhai_core.dart';
 - ✅ alhai_core (Models + Repositories الأساسية)
 - ✅ alhai_design_system (كل Components)
 - ✅ DEVELOPER_STANDARDS (Patterns واضحة)
-- ✅ pos_app (نفس البنية)
+- ✅ cashier (نفس البنية)
 
 **ما يحتاج عمل**:
 - 🔄 تحديث alhai_core (4 models جديدة)

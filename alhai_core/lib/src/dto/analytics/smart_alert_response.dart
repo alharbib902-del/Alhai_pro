@@ -47,7 +47,7 @@ class SmartAlertResponse {
       actionRoute: actionRoute,
       metadata: metadata,
       isRead: isRead,
-      createdAt: DateTime.parse(createdAt),
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
     );
   }
 }

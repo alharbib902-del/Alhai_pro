@@ -14,9 +14,12 @@ class PinValidationServiceImpl implements PinValidationService {
   // Failed attempts tracking
   final Map<String, int> _failedAttempts = {};
   final Map<String, DateTime> _lockouts = {};
-  
+
   // Emergency codes storage
   final Map<String, EmergencyCode> _emergencyCodes = {};
+
+  // Local audit log for PIN validation attempts
+  final List<PinAuditLogEntry> _auditLog = [];
   
   // Configuration
   static const int _maxAttempts = 3;
@@ -241,12 +244,56 @@ class PinValidationServiceImpl implements PinValidationService {
     required bool success,
     String? ipAddress,
   }) async {
-    // In production, log to server
-    // For now, just print for debugging
-    final timestamp = DateTime.now().toIso8601String();
-    final status = success ? 'SUCCESS' : 'FAILED';
-    // ignore: avoid_print
-    print('[$timestamp] PIN Validation: $userId - ${action.name} - $status');
+    final entry = PinAuditLogEntry(
+      id: 'audit_${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
+      action: action,
+      success: success,
+      ipAddress: ipAddress,
+      timestamp: DateTime.now(),
+      failedAttemptCount: _failedAttempts[userId] ?? 0,
+      isLockedOut: _isLockedOut(userId),
+    );
+
+    _auditLog.add(entry);
+
+    // Keep only the last 1000 entries in memory to prevent unbounded growth
+    if (_auditLog.length > 1000) {
+      _auditLog.removeRange(0, _auditLog.length - 1000);
+    }
+  }
+
+  /// Returns a read-only copy of the local audit log.
+  /// Entries are ordered chronologically (oldest first).
+  List<PinAuditLogEntry> getAuditLog() {
+    return List.unmodifiable(_auditLog);
+  }
+
+  /// Returns audit log entries filtered by [userId].
+  List<PinAuditLogEntry> getAuditLogForUser(String userId) {
+    return List.unmodifiable(
+      _auditLog.where((entry) => entry.userId == userId),
+    );
+  }
+
+  /// Returns only failed audit log entries, optionally filtered by date range.
+  List<PinAuditLogEntry> getFailedAttempts({
+    DateTime? since,
+    DateTime? until,
+  }) {
+    return List.unmodifiable(
+      _auditLog.where((entry) {
+        if (entry.success) return false;
+        if (since != null && entry.timestamp.isBefore(since)) return false;
+        if (until != null && entry.timestamp.isAfter(until)) return false;
+        return true;
+      }),
+    );
+  }
+
+  /// Exports the audit log as a list of JSON-serializable maps.
+  List<Map<String, dynamic>> exportAuditLog() {
+    return _auditLog.map((entry) => entry.toJson()).toList();
   }
   
   @override
@@ -317,4 +364,58 @@ class PinValidationServiceImpl implements PinValidationService {
         return ['shift.close'];
     }
   }
+}
+
+/// Structured audit log entry for PIN validation attempts.
+/// Stores all relevant context for security auditing and compliance.
+class PinAuditLogEntry {
+  final String id;
+  final String userId;
+  final PinActionType action;
+  final bool success;
+  final String? ipAddress;
+  final DateTime timestamp;
+  final int failedAttemptCount;
+  final bool isLockedOut;
+
+  const PinAuditLogEntry({
+    required this.id,
+    required this.userId,
+    required this.action,
+    required this.success,
+    this.ipAddress,
+    required this.timestamp,
+    required this.failedAttemptCount,
+    required this.isLockedOut,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'userId': userId,
+    'action': action.name,
+    'success': success,
+    'ipAddress': ipAddress,
+    'timestamp': timestamp.toIso8601String(),
+    'failedAttemptCount': failedAttemptCount,
+    'isLockedOut': isLockedOut,
+  };
+
+  factory PinAuditLogEntry.fromJson(Map<String, dynamic> json) =>
+      PinAuditLogEntry(
+        id: json['id'] as String,
+        userId: json['userId'] as String,
+        action: PinActionType.values.firstWhere(
+          (a) => a.name == json['action'],
+        ),
+        success: json['success'] as bool,
+        ipAddress: json['ipAddress'] as String?,
+        timestamp: DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now(),
+        failedAttemptCount: json['failedAttemptCount'] as int,
+        isLockedOut: json['isLockedOut'] as bool,
+      );
+
+  @override
+  String toString() =>
+      'PinAuditLogEntry(userId: $userId, action: ${action.name}, '
+      'success: $success, timestamp: ${timestamp.toIso8601String()})';
 }

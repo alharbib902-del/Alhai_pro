@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../responsive/context_ext.dart';
 import '../../tokens/alhai_durations.dart';
 import '../../tokens/alhai_radius.dart';
 import '../../tokens/alhai_spacing.dart';
@@ -461,10 +462,27 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final effectiveDuration =
+        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    if (_controller.duration != effectiveDuration) {
+      _controller.duration = effectiveDuration;
+      if (widget.enabled) {
+        _controller
+          ..stop()
+          ..repeat();
+      }
+    }
+  }
+
+  @override
   void didUpdateWidget(AlhaiShimmer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.duration != oldWidget.duration) {
-      _controller.duration = widget.duration;
+      final effectiveDuration =
+          context.prefersReducedMotion ? Duration.zero : widget.duration;
+      _controller.duration = effectiveDuration;
       if (widget.enabled) {
         _controller
           ..stop()

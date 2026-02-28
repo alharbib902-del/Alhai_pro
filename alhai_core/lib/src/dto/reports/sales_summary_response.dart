@@ -34,7 +34,7 @@ class SalesSummaryResponse {
   /// Converts to domain model
   SalesSummary toDomain() {
     return SalesSummary(
-      date: DateTime.parse(date),
+      date: DateTime.tryParse(date) ?? DateTime.now(),
       ordersCount: ordersCount,
       itemsSold: itemsSold,
       revenue: revenue,

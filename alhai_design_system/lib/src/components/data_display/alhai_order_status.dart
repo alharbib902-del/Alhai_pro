@@ -157,10 +157,10 @@ class AlhaiOrderStatusTimeline extends StatelessWidget {
       effectiveSteps = currentStatus == AlhaiOrderStatus.cancelled
           ? [AlhaiOrderStatus.cancelled]
           : [
-              AlhaiOrderStatus.new_,
-              AlhaiOrderStatus.accepted,
+              AlhaiOrderStatus.created,
+              AlhaiOrderStatus.confirmed,
               AlhaiOrderStatus.preparing,
-              AlhaiOrderStatus.delivering,
+              AlhaiOrderStatus.outForDelivery,
               AlhaiOrderStatus.delivered,
             ];
     }

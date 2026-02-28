@@ -1,0 +1,81 @@
+# M12: Split from monolithic flutter_ci.yml
+# Web build + deploy workflow - triggers after Analyze & Test passes on main branch.
+
+name: Build Web
+
+on:
+  workflow_run:
+    workflows: ["Analyze & Test"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  # ============================================================================
+  # BUILD WEB (all web-capable apps)
+  # ============================================================================
+  build-web:
+    name: Build Web - ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [cashier, admin, admin_lite, super_admin, distributor_portal]
+        include:
+          - app: cashier
+            path: apps/cashier
+          - app: admin
+            path: apps/admin
+          - app: admin_lite
+            path: apps/admin_lite
+          - app: super_admin
+            path: super_admin
+          - app: distributor_portal
+            path: distributor_portal
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Build Web
+        # L52: --no-tree-shake-icons is required for web builds because some
+        # screens use dynamic IconData lookups (e.g. icon codes stored in DB
+        # for categories, and conditional icons in reports). Removing this flag
+        # causes missing-icon glyphs at runtime. The ~400KB cost is acceptable
+        # for web (gzip reduces it to ~60KB over the wire).
+        # Tracked icons: Icons.smart_toy_rounded, Icons.category, Icons.storefront,
+        # Icons.receipt_long, Icons.inventory_2, Icons.people, Icons.analytics,
+        # and dynamic category icons from DB.
+        run: |
+          cd ${{ matrix.path }}
+          flutter build web --release --no-tree-shake-icons \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-web
+          path: ${{ matrix.path }}/build/web
+
+      - name: Deploy Cashier to GitHub Pages
+        if: matrix.app == 'cashier'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: apps/cashier/build/web

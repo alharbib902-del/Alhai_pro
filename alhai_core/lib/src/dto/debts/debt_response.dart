@@ -56,9 +56,9 @@ class DebtResponse {
       remainingAmount: remainingAmount,
       orderId: orderId,
       notes: notes,
-      dueDate: dueDate != null ? DateTime.parse(dueDate!) : null,
-      createdAt: DateTime.parse(createdAt),
-      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      dueDate: dueDate != null ? DateTime.tryParse(dueDate!) : null,
+      createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt!) : null,
     );
   }
 }

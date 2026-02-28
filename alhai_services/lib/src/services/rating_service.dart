@@ -1,7 +1,7 @@
 import 'package:alhai_core/alhai_core.dart';
 
 /// خدمة التقييمات
-/// تستخدم من: customer_app, pos_app
+/// تستخدم من: customer_app, cashier
 class RatingService {
   final RatingsRepository _ratingsRepo;
 

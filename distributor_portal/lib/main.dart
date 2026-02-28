@@ -22,6 +22,12 @@ class DistributorPortalApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       routerConfig: AppRouter.router,
       locale: const Locale('ar'),
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

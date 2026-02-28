@@ -127,7 +127,7 @@ class AlhaiDataTable<T> extends StatelessWidget {
           return Expanded(
             child: Container(
               height: 16,
-              margin: const EdgeInsets.only(left: 16),
+              margin: const EdgeInsetsDirectional.only(start: 16),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(4),

@@ -275,7 +275,7 @@ gantt
 
 | التطبيق | نقاط التكامل |
 |---------|--------------|
-| `pos_app` | Orders sync |
+| `cashier` | Orders sync |
 | `driver_app` | Tracking, Chat |
 
 ### مع الخدمات الخارجية

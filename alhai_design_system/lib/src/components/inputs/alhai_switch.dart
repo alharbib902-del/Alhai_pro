@@ -61,7 +61,7 @@ class AlhaiSwitch extends StatelessWidget {
     final switchWidget = Switch(
       value: value,
       onChanged: isDisabled ? null : onChanged,
-      activeColor: colorScheme.primary,
+      activeThumbColor: colorScheme.primary,
       activeTrackColor: colorScheme.primaryContainer,
       inactiveThumbColor: colorScheme.outline,
       inactiveTrackColor: colorScheme.surfaceContainerHighest,

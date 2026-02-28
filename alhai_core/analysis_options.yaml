@@ -2,23 +2,17 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    # Ignore deprecation warnings in generated files
     - '**/*.g.dart'
     - '**/*.freezed.dart'
   errors:
-    # Suppress JsonKey warnings on freezed constructor parameters
     invalid_annotation_target: ignore
-    # Suppress constructor ordering (common in DI and impl classes)
     sort_constructors_first: ignore
-    # Suppress dangling doc comments
     dangling_library_doc_comments: ignore
-    # Suppress deprecated member use in same package (for imageUrl migration)
     deprecated_member_use_from_same_package: info
 
 linter:
   rules:
-    avoid_print: false  # Allowed in example files
-    prefer_const_constructors: false  # Too strict for Duration() etc.
+    avoid_print: true
+    prefer_const_constructors: true
     prefer_const_declarations: true
     prefer_final_fields: true
-    use_super_parameters: false  # Optional style

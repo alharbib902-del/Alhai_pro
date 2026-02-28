@@ -8,6 +8,13 @@ part 'store_settings.g.dart';
 class StoreSettings with _$StoreSettings {
   const StoreSettings._();
 
+  /// Default currency symbol (Saudi Riyal).
+  /// Use this constant instead of hardcoding 'ر.س' throughout the codebase.
+  static const String defaultCurrencySymbol = 'ر.س';
+
+  /// Default currency code
+  static const String defaultCurrencyCode = 'SAR';
+
   const factory StoreSettings({
     required String id,
     required String storeId,
@@ -38,7 +45,7 @@ class StoreSettings with _$StoreSettings {
   String get currencySymbol {
     switch (currency) {
       case 'SAR':
-        return 'ر.س';
+        return defaultCurrencySymbol;
       case 'USD':
         return '\$';
       case 'EUR':

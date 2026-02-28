@@ -1,0 +1,368 @@
+/// Active Offers Screen - Read-only list of current promotions
+///
+/// List of active offers/promotions with type, validity dates,
+/// auto-applied indicator. Read-only for cashier.
+/// Supports: RTL Arabic, dark/light theme, responsive layout.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:get_it/get_it.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_database/alhai_database.dart';
+// alhai_design_system is re-exported via alhai_shared_ui
+
+/// شاشة العروض النشطة
+class ActiveOffersScreen extends ConsumerStatefulWidget {
+  const ActiveOffersScreen({super.key});
+
+  @override
+  ConsumerState<ActiveOffersScreen> createState() =>
+      _ActiveOffersScreenState();
+}
+
+class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
+  final _db = GetIt.I<AppDatabase>();
+
+  List<DiscountsTableData> _offers = [];
+  bool _isLoading = true;
+  String _filterType = 'all';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOffers();
+  }
+
+  Future<void> _loadOffers() async {
+    setState(() => _isLoading = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final discounts = await _db.discountsDao.getActiveDiscounts(storeId);
+      if (mounted) {
+        setState(() {
+          _offers = discounts;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  List<DiscountsTableData> get _filteredOffers {
+    if (_filterType == 'all') return _offers;
+    return _offers.where((o) => o.type == _filterType).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isWideScreen = size.width > 900;
+    final isMediumScreen = size.width > 600;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+
+    return Column(
+      children: [
+        AppHeader(
+          title: l10n.activeOffers,
+          subtitle: '${_offers.length} ${l10n.activeOffers} \u2022 ${l10n.mainBranch}',
+          showSearch: false,
+          searchHint: l10n.searchPlaceholder,
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
+          onNotificationsTap: () => context.push('/notifications'),
+          notificationsCount: 3,
+          userName: user?.name ?? l10n.cashCustomer,
+          userRole: l10n.branchManager,
+          onUserTap: () {},
+        ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    // Filter chips
+                    Padding(
+                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      child: _buildFilterChips(isDark, l10n),
+                    ),
+                    // Offers list
+                    Expanded(
+                      child: _filteredOffers.isEmpty
+                          ? _buildEmptyState(isDark, l10n)
+                          : ListView.separated(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: isMediumScreen ? 24 : 16,
+                                  vertical: 8),
+                              itemCount: _filteredOffers.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 12),
+                              itemBuilder: (context, index) =>
+                                  _buildOfferCard(
+                                      _filteredOffers[index], isDark, l10n),
+                            ),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _buildChip(l10n.allPeriods, _filterType == 'all',
+              () => setState(() => _filterType = 'all'), isDark),
+          const SizedBox(width: 8),
+          _buildChip('Percentage Off', _filterType == 'percentage',
+              () => setState(() => _filterType = 'percentage'), isDark),
+          const SizedBox(width: 8),
+          _buildChip(l10n.fixedAmount, _filterType == 'fixed',
+              () => setState(() => _filterType = 'fixed'), isDark),
+          const SizedBox(width: 8),
+          _buildChip(l10n.buyXGetY, _filterType == 'buy_x_get_y',
+              () => setState(() => _filterType = 'buy_x_get_y'), isDark),
+          const SizedBox(width: 8),
+          _buildChip(l10n.bundle, _filterType == 'bundle',
+              () => setState(() => _filterType = 'bundle'), isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChip(
+      String label, bool isSelected, VoidCallback onTap, bool isDark) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary
+              : AppColors.getSurfaceVariant(isDark),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.getBorder(isDark)),
+        ),
+        child: Text(label,
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? Colors.white
+                    : AppColors.getTextSecondary(isDark))),
+      ),
+    );
+  }
+
+  Widget _buildOfferCard(
+      DiscountsTableData offer, bool isDark, AppLocalizations l10n) {
+    final typeColor = _getTypeColor(offer.type);
+    final isAutoApplied = offer.appliesTo == 'all';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: typeColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Icon(_getTypeIcon(offer.type),
+                    color: typeColor, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(offer.name,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
+                            color: AppColors.getTextPrimary(isDark))),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: typeColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        _getTypeLabel(offer.type, l10n),
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: typeColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (isAutoApplied)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.auto_awesome_rounded,
+                          size: 14, color: AppColors.success),
+                      SizedBox(width: 4),
+                      Text('Auto Applied',
+                          style: TextStyle(fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.success)),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Discount value
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.getSurfaceVariant(isDark),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.local_offer_rounded, size: 18, color: typeColor),
+                const SizedBox(width: 10),
+                Text(
+                  _getDiscountValue(offer, l10n),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: typeColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Validity dates
+          Row(
+            children: [
+              Icon(Icons.calendar_today_rounded, size: 14,
+                  color: AppColors.getTextMuted(isDark)),
+              const SizedBox(width: 8),
+              if (offer.startDate != null) Text(
+                'Valid From: ${_formatDate(offer.startDate!)}',
+                style: TextStyle(fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark)),
+              ),
+              if (offer.endDate != null) ...[
+                const SizedBox(width: 16),
+                Icon(Icons.event_rounded, size: 14,
+                    color: AppColors.getTextMuted(isDark)),
+                const SizedBox(width: 8),
+                Text(
+                  'Valid Until: ${_formatDate(offer.endDate!)}',
+                  style: TextStyle(fontSize: 12,
+                      color: AppColors.getTextSecondary(isDark)),
+                ),
+              ],
+            ],
+          ),
+          if (offer.nameEn != null && offer.nameEn!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(offer.nameEn!,
+                style: TextStyle(fontSize: 13,
+                    color: AppColors.getTextSecondary(isDark)),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.local_offer_outlined, size: 64,
+              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+          const SizedBox(height: 16),
+          Text('No active offers',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
+                  color: AppColors.getTextMuted(isDark))),
+        ],
+      ),
+    );
+  }
+
+  Color _getTypeColor(String type) {
+    switch (type) {
+      case 'percentage': return AppColors.success;
+      case 'fixed': return AppColors.info;
+      case 'buy_x_get_y': return const Color(0xFF8B5CF6);
+      case 'bundle': return const Color(0xFFF97316);
+      default: return AppColors.primary;
+    }
+  }
+
+  IconData _getTypeIcon(String type) {
+    switch (type) {
+      case 'percentage': return Icons.percent_rounded;
+      case 'fixed': return Icons.attach_money_rounded;
+      case 'buy_x_get_y': return Icons.card_giftcard_rounded;
+      case 'bundle': return Icons.inventory_2_rounded;
+      default: return Icons.local_offer_rounded;
+    }
+  }
+
+  String _getTypeLabel(String type, AppLocalizations l10n) {
+    switch (type) {
+      case 'percentage': return 'Percentage Off';
+      case 'fixed': return l10n.fixedAmount;
+      case 'buy_x_get_y': return l10n.buyXGetY;
+      case 'bundle': return l10n.bundle;
+      default: return type;
+    }
+  }
+
+  String _getDiscountValue(DiscountsTableData offer, AppLocalizations l10n) {
+    if (offer.type == 'percentage') {
+      return '${offer.value.toStringAsFixed(0)}% Off';
+    } else if (offer.type == 'fixed') {
+      return '${offer.value.toStringAsFixed(0)} ${l10n.sar} Off';
+    }
+    return offer.value.toStringAsFixed(0);
+  }
+
+  String _formatDate(DateTime date) =>
+      '${date.day}/${date.month}/${date.year}';
+}

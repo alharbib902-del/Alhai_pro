@@ -25,7 +25,7 @@ class WhatsAppServiceImpl implements WhatsAppService {
     String? baseUrl,
   })  : _accessToken = accessToken,
         _phoneNumberId = phoneNumberId,
-        _baseUrl = baseUrl ?? 'https://graph.facebook.com/v17.0';
+        _baseUrl = baseUrl ?? AppEndpoints.whatsAppGraph;
   
   @override
   Future<WhatsAppReceiptResponse> sendReceipt(WhatsAppReceiptRequest request) async {
@@ -113,7 +113,7 @@ class WhatsAppServiceImpl implements WhatsAppService {
   Future<String> getReceiptUrl(String orderId) async {
     // Generate a URL for the receipt
     // In production, this would be a public URL to view the receipt
-    return 'https://alhai.app/receipt/$orderId';
+    return AppEndpoints.receiptUrl(orderId);
   }
   
   @override

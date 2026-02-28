@@ -1,0 +1,59 @@
+id,store_id,name,name_en,sort_order,is_active
+74fe3a8f-25dc-4fcc-b702-2b5d908bab92,b10f215e-2c70-4832-a37e-a42a74406a8d,الفواكه والخضروات,Fruits & Vegetables,0,true
+89df4340-b432-4803-a717-29ca5a8022a0,b10f215e-2c70-4832-a37e-a42a74406a8d,الدجاج و اللحوم,Chicken and Meat,1,true
+d9053340-27cd-4d3e-bc43-fad7d180eceb,b10f215e-2c70-4832-a37e-a42a74406a8d,مستوردة,Imported,2,true
+c658cd02-71a0-40ff-ae66-8aaa8eab60f9,b10f215e-2c70-4832-a37e-a42a74406a8d,المخبوزات,Bread & Bakery,3,true
+3e0a00b7-9d38-4c10-a931-ec92a29fd8cf,b10f215e-2c70-4832-a37e-a42a74406a8d,منتجات الألبان والبيض,Dairy & Eggs,4,true
+0eecdc1d-e6f5-4b58-b52f-617dd7a586ae,b10f215e-2c70-4832-a37e-a42a74406a8d,الحليب واللبن,Milk & Laban,5,true
+cb228eb2-e4b7-4804-ade7-4f531817f2be,b10f215e-2c70-4832-a37e-a42a74406a8d,شوكولاتة,Chocolate,6,true
+c3ab6183-f2cd-45ee-aaf8-12152bb9b2e9,b10f215e-2c70-4832-a37e-a42a74406a8d,أجبان وأطعمة قابلة للدهن,Cheese & Spreads,7,true
+b324a43f-e04d-4491-9abb-aa312996d65c,b10f215e-2c70-4832-a37e-a42a74406a8d,الإفطار,Breakfast,8,true
+02ca3bfe-9c75-497b-a972-3e2f094becc1,b10f215e-2c70-4832-a37e-a42a74406a8d,المشروبات الباردة,Cold Drinks,9,true
+9b1967af-1a49-444f-a3a7-c89ebcf13194,b10f215e-2c70-4832-a37e-a42a74406a8d,الجمال و العناية الشخصية,Beauty & Personal Care,10,true
+0ae183d1-a40b-4c33-8789-19097f0bcf3a,b10f215e-2c70-4832-a37e-a42a74406a8d,الآيسكريم,Ice Cream,11,true
+24570822-db49-492b-91fd-049e99340677,b10f215e-2c70-4832-a37e-a42a74406a8d,المياه والثلج,Water & Ice,12,true
+4550acaf-4275-4b25-a8c9-74ca36da59f7,b10f215e-2c70-4832-a37e-a42a74406a8d,المقرمشات,Salty Snacks,13,true
+4b73986c-b6fe-4497-9ec0-1cac5ae5a7ba,b10f215e-2c70-4832-a37e-a42a74406a8d,المكسرات والبذور,Nuts & Seeds,14,true
+99c688ba-fb5d-4ebe-a900-0013f756ea9b,b10f215e-2c70-4832-a37e-a42a74406a8d,كوكيز وبسكويت,Cookies & Biscuits,15,true
+3d7e3b14-3ddb-4d3c-8d34-5732fad4f478,b10f215e-2c70-4832-a37e-a42a74406a8d,الحلوى والسكاكر,Candy & Sweets,16,true
+8fd044fa-16ba-465d-8883-6703c351d1c0,b10f215e-2c70-4832-a37e-a42a74406a8d,الأطعمة الجاهزة للأكل,Ready To Eat,17,true
+b2eb84a8-eebd-441d-bcdf-1c1beba8ff14,b10f215e-2c70-4832-a37e-a42a74406a8d,العضوي,Organic,18,true
+70cc5bd1-570b-42ee-8e69-bf351c5a034b,b10f215e-2c70-4832-a37e-a42a74406a8d,الصحة واللياقة,Health & Fitness,19,true
+6bea5529-b58e-46f4-8c50-e7d0f1d0db56,b10f215e-2c70-4832-a37e-a42a74406a8d,الأطعمة المجمدة,Frozen Food,20,true
+21aac579-c004-4c94-ac2f-b0aa8f61b8a8,b10f215e-2c70-4832-a37e-a42a74406a8d,الطبخ,Cooking,21,true
+707913ab-73f8-41a1-96d5-067b1990bc45,b10f215e-2c70-4832-a37e-a42a74406a8d,الأرز والمعكرونة والحبوب,"Rice, Pasta, & Grains",22,true
+28bba054-365f-4b57-b11f-219aaa9b659b,b10f215e-2c70-4832-a37e-a42a74406a8d,البهارات و التوابل,Condiments,23,true
+e05ce22c-60b2-4c48-baf2-2fe5893c6011,b10f215e-2c70-4832-a37e-a42a74406a8d,الشاي والقهوة,Coffee & Tea,24,true
+08eaf01e-3b10-47bd-9fb4-811f82c8c91c,b10f215e-2c70-4832-a37e-a42a74406a8d,الأطعمة المعلبة,Canned Food,25,true
+598173c2-238a-4803-ad4d-bbe8cb839816,b10f215e-2c70-4832-a37e-a42a74406a8d,المواد الاستهلاكية و الورقيات,Disposables & Papers,26,true
+3d3c1da8-54ea-4340-8088-5e71bf913cd1,b10f215e-2c70-4832-a37e-a42a74406a8d,التنظيف و الغسيل,Cleaning & Laundry,27,true
+e81fe7bd-5add-41b7-8857-d919b6a1490a,b10f215e-2c70-4832-a37e-a42a74406a8d,مستلزمات المنزل,Home Essentials,28,true
+e059a2e6-d781-47b3-9d69-f372e227b4e3,b10f215e-2c70-4832-a37e-a42a74406a8d,العناية بالشعر,Hair Care,29,true
+d4506893-f489-49fe-b3ad-6e6e774f628e,b10f215e-2c70-4832-a37e-a42a74406a8d,مستحضرات التجميل,Cosmetics,30,true
+740d2124-6bd9-48e3-891c-ae8e7b4c5ae0,b10f215e-2c70-4832-a37e-a42a74406a8d,الصيدلية,Pharmacy,31,true
+09a9f6bf-46a4-42bd-a614-e75b3d8e317c,b10f215e-2c70-4832-a37e-a42a74406a8d,متجر الحيوانات الأليفة,Pet Shop,32,true
+1fdfc7d7-3f53-4772-b649-1016bbb1851e,b10f215e-2c70-4832-a37e-a42a74406a8d,مستلزمات الأطفال,Baby,33,true
+a9b0b53b-b540-4207-a532-c39afa52350e,b10f215e-2c70-4832-a37e-a42a74406a8d,اكسسورات الجوال,Mobile Accessories,34,true
+f14a30b6-214f-41ec-b1db-bc1c40ce3d99,b10f215e-2c70-4832-a37e-a42a74406a8d,ألعاب و قرطاسية,Toys & Stationery,35,true
+b29082fb-9ca7-4d8c-808f-5302488e6103,b10f215e-2c70-4832-a37e-a42a74406a8d,Everyday Roastery,Everyday Roastery,36,true
+c47c8078-d019-479e-a0fa-2937723e8598,b10f215e-2c70-4832-a37e-a42a74406a8d,منتجات طازجة,Fresh,37,true
+f10ac141-5e10-43e2-9966-7a2ddc4a4779,b10f215e-2c70-4832-a37e-a42a74406a8d,الأطعمة الأساسية,Food Basics,38,true
+9aaa3238-ba88-4ad8-9e9a-f68f9f7edf80,b10f215e-2c70-4832-a37e-a42a74406a8d,مستلزمات الطبخ,Cooking Essentials,39,true
+4cd40eda-8c61-4764-803f-db5cacd378e9,b10f215e-2c70-4832-a37e-a42a74406a8d,ركن الحلويات,Candy Corner,40,true
+822ce604-6342-44e8-b238-796bb5319591,b10f215e-2c70-4832-a37e-a42a74406a8d,كشتة,Kashta,41,true
+028b19d0-a3da-4d31-8e48-e294c3717836,b10f215e-2c70-4832-a37e-a42a74406a8d,المنتجات الصحية,Health & Wellness,42,true
+6219e304-7511-439e-ba07-a79271658239,b10f215e-2c70-4832-a37e-a42a74406a8d,جاهز للأكل,Ready to Eat,43,true
+6e80a2a7-18ed-4f0a-ab2a-95c99dd3dc91,b10f215e-2c70-4832-a37e-a42a74406a8d,المخبوزات,Bakery,44,true
+6d105b30-7c44-4a45-9bf3-3111614f680d,b10f215e-2c70-4832-a37e-a42a74406a8d,المجمدات,Frozen,45,true
+aedaddd5-6e3c-4242-9d47-1c7c86343788,b10f215e-2c70-4832-a37e-a42a74406a8d,المشروبات,Beverages,46,true
+b6dfa4e8-2b73-489f-b381-574df30949ef,b10f215e-2c70-4832-a37e-a42a74406a8d,الوجبات الخفيفة,Snacks,47,true
+cat_fruits,store-001,فواكه,Fruits,1,true
+cat_vegetables,store-001,خضروات,Vegetables,2,true
+cat_dairy,store-001,ألبان وأجبان,Dairy,3,true
+cat_meat,store-001,لحوم ودواجن,Meat & Poultry,4,true
+cat_bakery,store-001,مخبوزات,Bakery,5,true
+cat_drinks,store-001,مشروبات,Beverages,6,true
+cat_snacks,store-001,سناكس وحلويات,Snacks & Sweets,7,true
+cat_cleaning,store-001,تنظيف ومنزلية,Cleaning & Home,8,true
+cat_grains,store-001,حبوب وبقوليات,Grains & Legumes,9,true
+cat_frozen,store-001,مجمدات,Frozen,10,true

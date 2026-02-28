@@ -1,0 +1,26 @@
+name: alhai_sync
+description: Sync engine, strategies, offline manager, and connectivity for Alhai apps
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  alhai_database:
+    path: ../alhai_database
+
+  connectivity_plus: ^5.0.2
+  supabase_flutter: ^2.3.4
+  drift: ^2.14.1
+  uuid: ^4.4.0
+  shared_preferences: ^2.2.3
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4

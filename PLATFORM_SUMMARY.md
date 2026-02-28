@@ -22,7 +22,7 @@ After B2B + AI:  348 screens (+60)
 | **admin_pos_lite** | 20 | 28 | +8 |
 | **customer_app** | 40 | 40 | — |
 | **driver_app** | 18 | 18 | — |
-| **pos_app** | 71 | 79 | +8 |
+| **cashier** | 71 | 79 | +8 |
 | **super_admin** | 45 | 52 | +7 |
 | **distributor_portal** | 0 | 25 | +25 (NEW!) |
 | **TOTAL** | **288** | **348** | **+60** |
@@ -45,7 +45,7 @@ After B2B + AI:  348 screens (+60)
 
 ## 🎯 New Features
 
-### 1. Split Payment (pos_app)
+### 1. Split Payment (cashier)
 - Multiple payment methods
 - Cash + Cards + Credit
 - Enhanced receipts

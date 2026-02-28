@@ -24,7 +24,7 @@ class AuthTokensResponse with _$AuthTokensResponse {
     return AuthTokens(
       accessToken: accessToken,
       refreshToken: refreshToken,
-      expiresAt: DateTime.parse(expiresAt),
+      expiresAt: DateTime.tryParse(expiresAt) ?? DateTime.now(),
     );
   }
 }

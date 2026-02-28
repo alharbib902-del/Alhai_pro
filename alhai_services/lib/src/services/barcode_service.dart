@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 /// خدمة الباركود
-/// تستخدم من: pos_app, admin_pos
+/// تستخدم من: cashier, admin_pos
 class BarcodeService {
   final Random _random = Random();
 

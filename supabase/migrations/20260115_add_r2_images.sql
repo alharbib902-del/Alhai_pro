@@ -1,6 +1,8 @@
 -- Migration: Add R2 Image Storage Columns
 -- Created: 2026-01-15
 -- Description: Adds support for multiple image sizes stored on Cloudflare R2
+-- NOTE: The image_url column is deprecated and pending removal in a future migration.
+--       Use image_thumbnail, image_medium, or image_large instead.
 
 -- Add new image columns
 ALTER TABLE products 

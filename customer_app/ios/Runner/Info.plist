@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى الكاميرا لمسح الباركود والتقاط الصور</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى معرض الصور لاختيار صور المنتجات</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>يحتاج التطبيق لتحديد موقعك لعرض المتاجر القريبة وتتبع التوصيل</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>يحتاج التطبيق لاستخدام الميكروفون للبحث الصوتي</string>
 </dict>
 </plist>

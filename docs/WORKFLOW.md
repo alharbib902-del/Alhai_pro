@@ -17,7 +17,7 @@
 ```
 alhai-platform/                 ← GitHub Repo (Private)
 ├── apps/
-│   ├── pos_app/                ← Device A يملك
+│   ├── cashier/                ← Device A يملك
 │   └── customer_app/           ← Device B يملك
 ├── packages/
 │   ├── alhai_core/             ← مشترك (تنسيق مطلوب)
@@ -88,7 +88,7 @@ main                        # Production-ready code
 
 ### Device A Owns (POS App)
 ```
-pos_app/                    ← A owns exclusively
+cashier/                    ← A owns exclusively
 ├── lib/
 ├── test/
 ├── pubspec.yaml
@@ -111,7 +111,7 @@ alhai_design_system/        ← تنسيق مطلوب
 docs/                       ← تنسيق مطلوب
 ```
 
-> ⚠️ **قاعدة ذهبية**: لا يعدل Device A على `customer_app/` ولا يعدل Device B على `pos_app/`
+> ⚠️ **قاعدة ذهبية**: لا يعدل Device A على `customer_app/` ولا يعدل Device B على `cashier/`
 
 ---
 

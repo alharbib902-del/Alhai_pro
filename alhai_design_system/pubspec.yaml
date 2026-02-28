@@ -4,14 +4,16 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  # Locale-aware number formatting
+  intl: ^0.20.2
   # R2 Image Storage & Caching
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
   flutter_cache_manager: ^3.3.1
   # Optional: google_fonts for dev/fallback only
   # google_fonts: ^6.1.0
@@ -35,6 +37,25 @@ flutter:
           weight: 700
         - asset: assets/fonts/Tajawal-Light.ttf
           weight: 300
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansDevanagari-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
+          weight: 700
+    - family: NotoSansBengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansBengali-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansBengali-Bold.ttf
+          weight: 700
 
-# Download fonts from: https://fonts.google.com/specimen/Tajawal
+# Download fonts from:
+# Arabic: https://fonts.google.com/specimen/Tajawal
+# Hindi: https://fonts.google.com/noto/specimen/Noto+Sans+Devanagari
+# Bengali: https://fonts.google.com/noto/specimen/Noto+Sans+Bengali
 # Place files in: assets/fonts/
