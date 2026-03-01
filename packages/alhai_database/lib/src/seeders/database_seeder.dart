@@ -271,10 +271,28 @@ class DatabaseSeeder {
     debugPrint('👥 إضافة العملاء...');
 
     final now = DateTime.now();
-    final accounts = _accountsData.map((acc) {
+
+    // 1) إنشاء سجلات العملاء أولاً في جدول customers
+    final customers = <CustomersTableCompanion>[];
+    final accounts = <AccountsTableCompanion>[];
+
+    for (final acc in _accountsData) {
       final customerId = 'cust_${_uuid.v4().substring(0, 8)}';
-      return AccountsTableCompanion.insert(
-        id: 'acc_${_uuid.v4().substring(0, 8)}',
+      final accountId = 'acc_${_uuid.v4().substring(0, 8)}';
+
+      // سجل العميل
+      customers.add(CustomersTableCompanion.insert(
+        id: customerId,
+        storeId: defaultStoreId,
+        name: acc['name'],
+        phone: Value(acc['phone']),
+        isActive: const Value(true),
+        createdAt: now,
+      ));
+
+      // سجل الحساب المرتبط
+      accounts.add(AccountsTableCompanion.insert(
+        id: accountId,
         storeId: defaultStoreId,
         type: 'receivable',
         customerId: Value(customerId),
@@ -284,9 +302,15 @@ class DatabaseSeeder {
         creditLimit: Value(acc['limit'].toDouble()),
         isActive: const Value(true),
         createdAt: now,
-      );
-    }).toList();
+      ));
+    }
 
+    // إدخال العملاء أولاً (لتحقيق شرط Foreign Key)
+    await _db.batch((batch) {
+      batch.insertAllOnConflictUpdate(_db.customersTable, customers);
+    });
+
+    // ثم إدخال الحسابات
     await _db.batch((batch) {
       batch.insertAllOnConflictUpdate(_db.accountsTable, accounts);
     });

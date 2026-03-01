@@ -12,7 +12,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:supabase_flutter/supabase_flutter.dart' hide User, AuthException;
 import 'package:uuid/uuid.dart';
 import '../security/secure_storage_service.dart';
 import '../security/session_manager.dart';
@@ -340,6 +340,93 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(error: e.toString());
       rethrow;
+    }
+  }
+
+  // ==========================================================================
+  // REAL AUTH: Phone → Email/Password → OTP (3-step flow)
+  // ==========================================================================
+
+  /// الخطوة 1: فحص الكاشير بالهاتف - يرجع بيانات المستخدم لو موجود
+  Future<Map<String, dynamic>> checkCashierByPhone(String phone) async {
+    try {
+      if (_supabaseClient == null) {
+        return {'exists': false, 'error': 'Supabase غير متاح'};
+      }
+
+      // تنظيف الرقم: إزالة + لأن Supabase يخزّن بدون +
+      final cleanPhone = phone.replaceAll('+', '');
+
+      if (kDebugMode) {
+        debugPrint('Checking cashier by phone: $cleanPhone');
+      }
+
+      final result = await _supabaseClient.rpc(
+        'check_cashier_by_phone',
+        params: {'p_phone': cleanPhone},
+      );
+
+      if (result is Map<String, dynamic>) {
+        return result;
+      }
+
+      // لو الـ RPC رجع JSON string
+      return {'exists': false};
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Check cashier by phone failed: $e');
+      }
+      return {'exists': false, 'error': e.toString()};
+    }
+  }
+
+  /// الخطوة 2: تسجيل الدخول بالإيميل والباسورد
+  Future<({bool success, String? error})> signInWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      if (_supabaseClient == null) {
+        return (success: false, error: 'Supabase غير متاح');
+      }
+
+      final response = await _supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (response.session != null) {
+        // حفظ الـ session مؤقتاً - لا نكمل الدخول إلا بعد OTP
+        final expiry = DateTime.now().add(kSessionDuration);
+        await SecureStorageService.saveTokens(
+          accessToken: response.session!.accessToken,
+          refreshToken: response.session!.refreshToken ?? '',
+          expiry: expiry,
+        );
+        await SecureStorageService.saveUserData(
+          userId: response.user?.id ?? '',
+          storeId: '',
+        );
+        return (success: true, error: null);
+      }
+
+      return (success: false, error: 'فشل تسجيل الدخول');
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Sign in with password failed: $e');
+      }
+      final msg = e.toString();
+      // ترجمة رسائل Supabase Auth للعربية
+      if (msg.contains('Invalid login credentials')) {
+        return (success: false, error: 'كلمة المرور غير صحيحة');
+      }
+      if (msg.contains('Email not confirmed')) {
+        return (success: false, error: 'البريد الإلكتروني غير مؤكد');
+      }
+      if (msg.contains('SocketException') || msg.contains('ClientException')) {
+        return (success: false, error: 'حدث خطأ في الاتصال');
+      }
+      return (success: false, error: 'فشل تسجيل الدخول: $msg');
     }
   }
 

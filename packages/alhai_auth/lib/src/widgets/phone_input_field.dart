@@ -269,7 +269,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                       letterSpacing: 1,
                     ),
                     decoration: InputDecoration(
-                      hintText: '5X XXX XXXX',
+                      hintText: '05X XXX XXXX',
                       hintStyle: TextStyle(
                         color: isDarkMode ? Colors.white38 : AppColors.textTertiary,
                         fontSize: 18,
@@ -283,7 +283,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(9),
+                      LengthLimitingTextInputFormatter(10),
                       _PhoneNumberFormatter(),
                     ],
                     onChanged: widget.onChanged,
@@ -323,7 +323,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
   }
 }
 
-/// منسق رقم الجوال (5X XXX XXXX)
+/// منسق رقم الجوال (05X XXX XXXX)
 class _PhoneNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -334,7 +334,8 @@ class _PhoneNumberFormatter extends TextInputFormatter {
     final buffer = StringBuffer();
 
     for (int i = 0; i < text.length; i++) {
-      if (i == 2 || i == 5) {
+      // Format: 05X XXX XXXX → spaces after index 3 and 6
+      if (i == 3 || i == 6) {
         buffer.write(' ');
       }
       buffer.write(text[i]);

@@ -18,9 +18,15 @@ import '../widgets/phone_input_field.dart';
 import '../widgets/otp_input_field.dart';
 import '../widgets/common/language_selector.dart';
 
-/// شاشة تسجيل الدخول بـ OTP عبر WhatsApp
+/// خطوات تسجيل الدخول (خطوتين فقط أمام المستخدم)
+enum LoginStep { phone, otp }
+
+/// شاشة تسجيل الدخول - خطوتين
 ///
-/// تسمح للمستخدم بإدخال رقم الجوال واستلام رمز التحقق عبر WhatsApp
+/// 1. إدخال رقم الجوال → فحص الحساب
+/// 2. إدخال رمز التحقق OTP → إكمال الدخول
+///
+/// في الخلفية: بعد تأكيد OTP → تسجيل دخول بالإيميل تلقائياً
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -32,42 +38,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _phoneController = TextEditingController();
   final _otpKey = GlobalKey<OtpInputFieldState>();
   String _otpValue = '';
-  bool _otpSent = false;
   bool _isLoading = false;
   bool _otpVerified = false;
   CountryData _selectedCountry = CountryData.saudiArabia;
 
+  // === حالة الخطوات ===
+  LoginStep _currentStep = LoginStep.phone;
+  String? _userEmail;
+  String? _userName;
+  String? _storeName;
+
+  /// رمز التحقق الثابت (للتطوير)
+  static const String _devOtp = '123456';
+
   String? _error;
   int _remainingAttempts = 3;
-  Duration _resendCooldown = Duration.zero;
-  Timer? _cooldownTimer;
 
   @override
   void dispose() {
-    _cooldownTimer?.cancel();
     _phoneController.dispose();
     super.dispose();
   }
 
-  void _startCooldownTimer() {
-    _cooldownTimer?.cancel();
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        final cooldown = WhatsAppOtpService.getCooldownRemaining(
-          '${_selectedCountry.dialCode}${_phoneController.text.replaceAll(' ', '')}',
-        );
-        setState(() {
-          _resendCooldown = cooldown ?? Duration.zero;
-        });
-        if (_resendCooldown == Duration.zero) {
-          _cooldownTimer?.cancel();
-        }
-      }
-    });
-  }
-
   String get _fullPhoneNumber {
-    return '${_selectedCountry.dialCode}${_phoneController.text.replaceAll(' ', '')}';
+    var digits = _phoneController.text.replaceAll(' ', '');
+    // إزالة الصفر الأول من الأرقام المحلية السعودية
+    // 0500000001 → 500000001
+    if (_selectedCountry.dialCode == '+966' && digits.startsWith('0')) {
+      digits = digits.substring(1);
+    }
+    return '${_selectedCountry.dialCode}$digits';
   }
 
   /// تحديث بيانات المستخدم في قاعدة البيانات المحلية بعد نجاح التحقق
@@ -89,15 +89,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<void> _sendOtp() async {
+  // ==========================================================================
+  // الخطوة 1: فحص رقم الجوال
+  // ==========================================================================
+
+  Future<void> _checkPhone() async {
     final l10n = AppLocalizations.of(context);
     final phoneDigits = _phoneController.text.replaceAll(' ', '');
-    // Basic length check
+
+    // التحقق من طول الرقم
     if (phoneDigits.length < 9) {
       setState(() => _error = l10n?.pleaseEnterValidPhone ?? 'يرجى إدخال رقم جوال صحيح');
       return;
     }
-    // Saudi format check: must start with 05 and be exactly 10 digits
+
+    // التحقق من صيغة الرقم السعودي
     if (_selectedCountry.dialCode == '+966') {
       final saudiPattern = RegExp(r'^0[5][0-9]{8}$');
       if (!saudiPattern.hasMatch(phoneDigits)) {
@@ -111,97 +117,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
 
-    // Try Supabase OTP first
-    final supabaseSent = await ref.read(authStateProvider.notifier).sendSupabaseOtp(_fullPhoneNumber);
-
-    if (supabaseSent && mounted) {
-      setState(() {
-        _isLoading = false;
-        _otpSent = true;
-        _startCooldownTimer();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n?.otpSentViaWhatsApp ?? 'تم إرسال رمز التحقق'),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return;
-    }
-
-    // Fallback to WhatsApp OTP
-    final result = await WhatsAppOtpService.sendOtp(
-      phone: _fullPhoneNumber,
-    );
+    // فحص الكاشير في Supabase
+    final result = await ref.read(authStateProvider.notifier).checkCashierByPhone(_fullPhoneNumber);
 
     if (!mounted) return;
 
     setState(() {
       _isLoading = false;
-      if (result.isSuccess) {
-        _otpSent = true;
-        _startCooldownTimer();
 
-        // في وضع التطوير: عرض OTP في SnackBar مع زر نسخ
-        if (result.devOtp != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n?.devOtpMessage(result.devOtp!) ?? 'رمز التطوير: ${result.devOtp}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.copy_rounded, color: Colors.white),
-                    tooltip: l10n?.copyCode ?? 'نسخ',
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: result.devOtp!));
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    },
-                  ),
-                ],
-              ),
-              backgroundColor: AppColors.primary,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 30),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n?.otpSentViaWhatsApp ?? 'تم إرسال رمز التحقق عبر WhatsApp'),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        }
-      } else {
-        _error = result.error;
-        if (result.blockedUntil != null) {
-          final remaining = result.blockedUntil!.difference(DateTime.now());
-          _error = l10n?.waitMinutes(remaining.inMinutes) ?? 'تم تجاوز الحد الأقصى. انتظر ${remaining.inMinutes} دقيقة';
-        } else if (result.cooldown != null) {
-          _error = l10n?.waitSeconds(result.cooldown!.inSeconds) ?? 'يرجى الانتظار ${result.cooldown!.inSeconds} ثانية';
-        }
+      final exists = result['exists'] == true;
+      if (!exists) {
+        _error = 'لا يوجد حساب مرتبط بهذا الرقم';
+        return;
       }
+
+      final hasEmail = result['has_email'] == true;
+      if (!hasEmail) {
+        _error = 'الحساب غير مكتمل. يرجى مراجعة المدير لإضافة البريد الإلكتروني';
+        return;
+      }
+
+      // الحساب موجود وعنده إيميل → ننتقل مباشرة لخطوة OTP
+      _userEmail = result['email'] as String?;
+      _userName = result['name'] as String?;
+      _storeName = result['store_name'] as String?;
+      _currentStep = LoginStep.otp;
+      _error = null;
     });
+
+    // عرض رسالة الترحيب
+    if (_currentStep == LoginStep.otp && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('مرحباً ${_userName ?? ''}! أدخل رمز التحقق'),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
   }
+
+  // ==========================================================================
+  // الخطوة 2: التحقق من OTP + دخول بالإيميل في الخلفية
+  // ==========================================================================
 
   Future<void> _verifyOtp([String? otp]) async {
     final l10n = AppLocalizations.of(context);
@@ -217,115 +176,94 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
 
-    // Try Supabase verification first
-    final supabaseVerified = await ref.read(authStateProvider.notifier).verifySupabaseOtp(
-      phone: _fullPhoneNumber,
-      otp: otpToVerify,
-    );
+    // التحقق من الرمز الثابت (للتطوير)
+    if (otpToVerify == _devOtp) {
+      if (kDebugMode) {
+        debugPrint('✅ OTP verified (dev mode): $_devOtp');
+      }
 
-    if (supabaseVerified && mounted) {
-      // تحديث بيانات المستخدم في قاعدة البيانات المحلية
+      // === إنشاء جلسة محلية (مطلوب لـ Router Guard) ===
+      final authNotifier = ref.read(authStateProvider.notifier);
+
+      // محاولة الدخول بالإيميل في الخلفية (Supabase)
+      bool supabaseSignedIn = false;
+      if (_userEmail != null) {
+        try {
+          if (kDebugMode) {
+            debugPrint('🔐 Background sign-in with email: $_userEmail');
+          }
+          final signInResult = await authNotifier.signInWithEmailPassword(
+            email: _userEmail!,
+            password: _devOtp,
+          );
+          supabaseSignedIn = signInResult.success;
+          if (kDebugMode) {
+            debugPrint('🔐 Background sign-in result: $supabaseSignedIn');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('⚠️ Background sign-in failed: $e');
+          }
+        }
+      }
+
+      // لو Supabase ما نجح → ننشئ جلسة محلية عبر verifyLocalOtp
+      if (!supabaseSignedIn) {
+        if (kDebugMode) {
+          debugPrint('📝 Creating local session...');
+        }
+        await authNotifier.verifyLocalOtp(
+          phone: _fullPhoneNumber,
+          otpResult: WhatsAppOtpVerifyResult.success(),
+        );
+      }
+
+      // تحديث بيانات المستخدم المحلي
       await _updateLocalUserOnLogin(_fullPhoneNumber);
+
       if (!mounted) return;
+
       setState(() {
         _isLoading = false;
         _otpVerified = true;
       });
+
+      // الانتقال لاختيار المتجر
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          context.go('/store-select');
-        }
+        if (mounted) context.go('/store-select');
       });
       return;
     }
 
-    // Fallback to WhatsApp OTP verification
-    final result = await WhatsAppOtpService.verifyOtp(
-      phone: _fullPhoneNumber,
-      otp: otpToVerify,
-    );
-
+    // الرمز غير صحيح
     if (!mounted) return;
-
-    // تحديث حالة المصادقة عبر AuthNotifier
-    if (result.isSuccess) {
-      await ref.read(authStateProvider.notifier).verifyLocalOtp(
-        phone: _fullPhoneNumber,
-        otpResult: result,
-      );
-      // تحديث بيانات المستخدم في قاعدة البيانات المحلية
-      await _updateLocalUserOnLogin(_fullPhoneNumber);
-    }
-
-    if (!mounted) return;
-
     setState(() {
       _isLoading = false;
-      if (result.isSuccess) {
-        _otpVerified = true;
-        // انتظر قليلاً لإظهار حالة النجاح
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            context.go('/store-select');
-          }
-        });
-      } else {
-        _error = result.error;
-        _remainingAttempts = result.remainingAttempts ?? 0;
-        if (result.remainingAttempts == 0) {
-          _otpSent = false;
-          _otpValue = '';
-          _otpKey.currentState?.clear();
-          _error = l10n?.maxAttemptsReached ?? 'تم تجاوز الحد الأقصى. يرجى طلب رمز جديد';
-        }
-      }
-    });
-  }
-
-  Future<void> _resendOtp() async {
-    if (_resendCooldown > Duration.zero) return;
-
-    final l10n = AppLocalizations.of(context);
-
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    final result = await WhatsAppOtpService.resendOtp(
-      phone: _fullPhoneNumber,
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-      if (result.isSuccess) {
-        _startCooldownTimer();
-        _remainingAttempts = 3;
-        _error = null;
+      _remainingAttempts--;
+      if (_remainingAttempts <= 0) {
+        _error = l10n?.maxAttemptsReached ?? 'تم تجاوز الحد الأقصى. يرجى المحاولة لاحقاً';
         _otpValue = '';
         _otpKey.currentState?.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n?.otpResent ?? 'تم إعادة إرسال رمز التحقق'),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
+        _remainingAttempts = 3;
       } else {
-        _error = result.error;
+        _error = 'رمز التحقق غير صحيح';
       }
     });
   }
 
-  String _formatDuration(Duration d) {
-    final minutes = d.inMinutes;
-    final seconds = d.inSeconds % 60;
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  /// الرجوع لخطوة الهاتف
+  void _goBack() {
+    setState(() {
+      _error = null;
+      _currentStep = LoginStep.phone;
+      _otpValue = '';
+      _otpKey.currentState?.clear();
+      _remainingAttempts = 3;
+      _otpVerified = false;
+      _userEmail = null;
+      _userName = null;
+      _storeName = null;
+    });
   }
 
   @override
@@ -333,9 +271,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isWideScreen = context.isDesktop;
 
     return Scaffold(
-      body: isWideScreen
-          ? _buildWideLayout()
-          : _buildNarrowLayout(),
+      body: isWideScreen ? _buildWideLayout() : _buildNarrowLayout(),
     );
   }
 
@@ -350,7 +286,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  // شعار Al-Hal POS في الأعلى
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Row(
@@ -381,8 +316,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ],
                     ),
                   ),
-
-                  // المحتوى المركزي
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
@@ -391,16 +324,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // الـ Mascot - حجم أصغر لإظهار العناصر تحته
                             const MascotWidget(
                               size: MascotSize.medium,
                               pose: MascotPose.waving,
                               animate: true,
                             ),
-
                             const SizedBox(height: 32),
-
-                            // النص الترحيبي
                             Builder(
                               builder: (context) {
                                 final l10n = AppLocalizations.of(context);
@@ -417,8 +346,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
-                                      l10n?.welcomeSubtitle ??
-                                          'سجّل دخولك لإدارة متجرك بسهولة وسرعة',
+                                      l10n?.welcomeSubtitle ?? 'سجّل دخولك لإدارة متجرك',
                                       style: TextStyle(
                                         color: Colors.white.withValues(alpha: 0.9),
                                         fontSize: 16,
@@ -429,10 +357,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 );
                               },
                             ),
-
                             const SizedBox(height: 40),
-
-                            // شارات المميزات
                             const FeatureBadgesRow(
                               types: [
                                 FeatureBadgeType.fast,
@@ -453,7 +378,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         ),
-
         // الجانب الأيمن - نموذج تسجيل الدخول
         Expanded(
           flex: 4,
@@ -468,7 +392,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // الهيدر مع الـ Mascot
           LoginBackground(
             height: 280,
             child: SafeArea(
@@ -487,7 +410,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return Column(
                         children: [
                           Text(
-                            l10n?.welcomeTitle ?? 'مرحباً بك في نظام الحل',
+                            l10n?.welcomeTitle ?? 'مرحباً بك مجدداً! 👋',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -496,7 +419,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            l10n?.welcomeSubtitleShort ?? 'نظام نقاط البيع المتكامل',
+                            l10n?.welcomeSubtitleShort ?? 'سجّل دخولك لإدارة متجرك',
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 14,
@@ -510,8 +433,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
-
-          // نموذج تسجيل الدخول
           _buildLoginForm(isMobile: true),
         ],
       ),
@@ -534,25 +455,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // زر الوضع الليلي واللغة (في الأعلى)
+                // زر اللغة والوضع الليلي
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // اختيار اللغة - الآن ديناميكي
-                    const LanguageSelectorButton(
-                      showLabel: true,
-                      compact: false,
-                    ),
-
-                    // زر الوضع الليلي
+                    const LanguageSelectorButton(showLabel: true, compact: false),
                     IconButton(
-                      onPressed: () {
-                        ref.read(themeProvider.notifier).toggleDarkMode();
-                      },
+                      onPressed: () => ref.read(themeProvider.notifier).toggleDarkMode(),
                       icon: Icon(
-                        isDarkMode
-                            ? Icons.light_mode_rounded
-                            : Icons.dark_mode_rounded,
+                        isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
                         color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
                       ),
                       tooltip: isDarkMode
@@ -564,132 +475,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 SizedBox(height: isMobile ? 24 : 48),
 
-                // العنوان
-                Text(
-                  l10n?.login ?? 'تسجيل الدخول',
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n?.enterPhoneToContinue ?? 'أدخل رقم جوالك للمتابعة',
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
-                    fontSize: 15,
-                  ),
-                ),
+                // مؤشر الخطوات + العنوان
+                _buildStepHeader(),
 
                 const SizedBox(height: 32),
 
-                // حقل رقم الجوال
-                PhoneInputField(
-                  controller: _phoneController,
-                  initialCountry: _selectedCountry,
-                  enabled: !_otpSent,
-                  errorText: !_otpSent ? _error : null,
-                  onCountryChanged: (country) {
-                    setState(() => _selectedCountry = country);
-                  },
-                  onSubmitted: _otpSent ? null : _sendOtp,
-                ),
-
-                if (_otpSent) ...[
-                  const SizedBox(height: 24),
-
-                  // حقل رمز التحقق
-                  _buildOtpField(),
-                ],
+                // محتوى الخطوة الحالية
+                _buildCurrentStepContent(),
 
                 const SizedBox(height: 24),
 
-                // زر الإرسال/التحقق
-                WhatsAppOtpButton(
-                  onPressed: _otpSent ? _verifyOtp : _sendOtp,
-                  isLoading: _isLoading,
-                  enabled: !_isLoading,
-                ),
+                // زر الإجراء
+                _buildActionButton(),
 
-                if (_otpSent) ...[
-                  const SizedBox(height: 16),
-
-                  // أزرار إعادة الإرسال وتغيير الرقم
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: _resendCooldown > Duration.zero || _isLoading
-                            ? null
-                            : _resendOtp,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.refresh_rounded,
-                              size: 16,
-                              color: _resendCooldown > Duration.zero
-                                  ? AppColors.textTertiary
-                                  : AppColors.primary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _resendCooldown > Duration.zero
-                                  ? (l10n?.resendIn(_formatDuration(_resendCooldown)) ?? 'إعادة الإرسال (${_formatDuration(_resendCooldown)})')
-                                  : (l10n?.resendCode ?? 'إعادة إرسال الرمز'),
-                              style: TextStyle(
-                                color: _resendCooldown > Duration.zero
-                                    ? AppColors.textTertiary
-                                    : AppColors.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 20,
-                        color: AppColors.border,
-                        margin: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                      TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                setState(() {
-                                  _otpSent = false;
-                                  _otpValue = '';
-                                  _otpVerified = false;
-                                  _error = null;
-                                  _remainingAttempts = 3;
-                                });
-                              },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.edit_rounded,
-                              size: 16,
-                              color: AppColors.primary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              l10n?.changeNumber ?? 'تغيير الرقم',
-                              style: const TextStyle(
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                // أزرار إضافية (رجوع)
+                _buildStepActions(),
 
                 SizedBox(height: isMobile ? 32 : 48),
 
-                // Footer
                 _buildFooter(),
               ],
             ),
@@ -699,13 +502,138 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  /// حقل رمز التحقق - 6 خانات منفصلة
-  Widget _buildOtpField() {
+  /// عنوان الخطوة الحالية
+  Widget _buildStepHeader() {
     final l10n = AppLocalizations.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    String title;
+    String subtitle;
+
+    switch (_currentStep) {
+      case LoginStep.phone:
+        title = l10n?.login ?? 'تسجيل الدخول';
+        subtitle = l10n?.enterPhoneToContinue ?? 'أدخل رقم جوالك للمتابعة';
+      case LoginStep.otp:
+        title = 'رمز التحقق';
+        subtitle = _storeName != null
+            ? '🏪 $_storeName'
+            : 'أدخل رمز التحقق للمتابعة';
+    }
+
+    // مؤشر الخطوات (نقطتين)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            for (int i = 0; i < 2; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              Container(
+                width: i == _currentStep.index ? 24 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: i <= _currentStep.index
+                      ? AppColors.primary
+                      : (isDarkMode ? Colors.white24 : AppColors.border),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          title,
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : AppColors.textPrimary,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+            fontSize: 15,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// محتوى الخطوة الحالية
+  Widget _buildCurrentStepContent() {
+    switch (_currentStep) {
+      case LoginStep.phone:
+        return _buildPhoneStep();
+      case LoginStep.otp:
+        return _buildOtpStep();
+    }
+  }
+
+  /// الخطوة 1: حقل الهاتف
+  Widget _buildPhoneStep() {
+    return PhoneInputField(
+      controller: _phoneController,
+      initialCountry: _selectedCountry,
+      enabled: !_isLoading,
+      errorText: _error,
+      onCountryChanged: (country) {
+        setState(() => _selectedCountry = country);
+      },
+      onSubmitted: _checkPhone,
+    );
+  }
+
+  /// الخطوة 2: حقل OTP
+  Widget _buildOtpStep() {
+    final l10n = AppLocalizations.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // رقم الجوال (قراءة فقط)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: isDarkMode
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.grey.withValues(alpha: 0.05),
+            border: Border.all(
+              color: isDarkMode ? Colors.white12 : AppColors.border,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.phone_android_rounded,
+                color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  _phoneController.text,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Text(
+                _selectedCountry.flag,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
         Text(
           l10n?.verificationCode ?? 'رمز التحقق',
           style: TextStyle(
@@ -716,21 +644,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         const SizedBox(height: 12),
 
-        // 6 خانات منفصلة مع التحقق التلقائي
         OtpInputField(
           key: _otpKey,
           onCompleted: (otp) {
             _otpValue = otp;
-            // التحقق التلقائي عند إكمال الإدخال
             _verifyOtp(otp);
           },
           onChanged: (value) {
             setState(() {
               _otpValue = value;
-              // مسح الخطأ عند بدء الكتابة
-              if (_error != null && value.isNotEmpty) {
-                _error = null;
-              }
+              if (_error != null && value.isNotEmpty) _error = null;
             });
           },
           isError: _error != null,
@@ -739,7 +662,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
 
         // رسالة الخطأ
-        if (_error != null && _otpSent) ...[
+        if (_error != null) ...[
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -750,19 +673,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.error_outline_rounded,
-                  color: AppColors.error,
-                  size: 20,
-                ),
+                const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     _error!,
-                    style: const TextStyle(
-                      color: AppColors.error,
-                      fontSize: 13,
-                    ),
+                    style: const TextStyle(color: AppColors.error, fontSize: 13),
                   ),
                 ),
               ],
@@ -782,19 +698,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             child: const Row(
               children: [
-                Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: AppColors.success,
-                  size: 20,
-                ),
+                Icon(Icons.check_circle_outline_rounded, color: AppColors.success, size: 20),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'تم التحقق بنجاح',
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 13,
-                    ),
+                    'تم التحقق بنجاح! جاري الدخول...',
+                    style: TextStyle(color: AppColors.success, fontSize: 13),
                   ),
                 ),
               ],
@@ -809,15 +718,136 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Text(
               l10n?.remainingAttempts(_remainingAttempts) ?? 'المحاولات المتبقية: $_remainingAttempts',
               style: TextStyle(
-                color: _remainingAttempts == 1
-                    ? AppColors.error
-                    : AppColors.warning,
+                color: _remainingAttempts == 1 ? AppColors.error : AppColors.warning,
                 fontSize: 12,
               ),
             ),
           ),
         ],
+
+        // تلميح رمز التطوير
+        if (kDebugMode) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.info.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.developer_mode_rounded, color: AppColors.info, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'وضع التطوير - الرمز: $_devOtp',
+                    style: const TextStyle(color: AppColors.info, fontSize: 12),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.copy_rounded, color: AppColors.info, size: 16),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    Clipboard.setData(const ClipboardData(text: _devOtp));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('تم نسخ الرمز'),
+                        backgroundColor: AppColors.info,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
+    );
+  }
+
+  /// زر الإجراء الرئيسي حسب الخطوة
+  Widget _buildActionButton() {
+    final l10n = AppLocalizations.of(context);
+
+    switch (_currentStep) {
+      case LoginStep.phone:
+        return ElevatedButton(
+          onPressed: _isLoading ? null : _checkPhone,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 0,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                )
+              : Text(
+                  l10n?.next ?? 'التالي',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+        );
+
+      case LoginStep.otp:
+        return ElevatedButton.icon(
+          onPressed: _isLoading || _otpVerified ? null : () => _verifyOtp(),
+          icon: _isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                )
+              : const Icon(Icons.verified_user_rounded),
+          label: Text(
+            _otpVerified
+                ? 'تم التحقق ✓'
+                : 'تحقق',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _otpVerified ? AppColors.success : AppColors.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 0,
+          ),
+        );
+    }
+  }
+
+  /// أزرار إضافية (رجوع)
+  Widget _buildStepActions() {
+    final l10n = AppLocalizations.of(context);
+
+    if (_currentStep == LoginStep.phone) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Center(
+        child: TextButton(
+          onPressed: _isLoading ? null : _goBack,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.arrow_back_rounded, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Text(
+                l10n?.changeNumber ?? 'تغيير الرقم',
+                style: const TextStyle(color: AppColors.primary),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -830,104 +860,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Column(
       children: [
-        // شعارات المميزات (للموبايل فقط)
         if (!context.isDesktop) ...[
           const FeatureBadgesRow(
-            types: [
-              FeatureBadgeType.fast,
-              FeatureBadgeType.secure,
-              FeatureBadgeType.cloud,
-            ],
+            types: [FeatureBadgeType.fast, FeatureBadgeType.secure, FeatureBadgeType.cloud],
             compact: true,
             light: false,
             spacing: 12,
           ),
           const SizedBox(height: 16),
         ],
-
-        // الروابط مع أيقونات
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 2,
           runSpacing: 4,
           children: [
-            // الدعم الفني
             TextButton.icon(
-              onPressed: () {
-                // TODO: Open support page
-              },
-              icon: Icon(
-                Icons.support_agent_rounded,
-                size: 16,
-                color: footerTextColor,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.support_agent_rounded, size: 16, color: footerTextColor),
               label: Text(
                 l10n?.technicalSupport ?? 'الدعم الفني',
-                style: TextStyle(
-                  color: footerTextColor,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),
-            Text(
-              '•',
-              style: TextStyle(color: footerDotColor),
-            ),
-            // سياسة الخصوصية
+            Text('•', style: TextStyle(color: footerDotColor)),
             TextButton.icon(
-              onPressed: () {
-                // TODO: Open privacy policy
-              },
-              icon: Icon(
-                Icons.privacy_tip_outlined,
-                size: 16,
-                color: footerTextColor,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.privacy_tip_outlined, size: 16, color: footerTextColor),
               label: Text(
                 l10n?.privacyPolicy ?? 'سياسة الخصوصية',
-                style: TextStyle(
-                  color: footerTextColor,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),
-            Text(
-              '•',
-              style: TextStyle(color: footerDotColor),
-            ),
-            // الشروط والأحكام
+            Text('•', style: TextStyle(color: footerDotColor)),
             TextButton.icon(
-              onPressed: () {
-                // TODO: Open terms
-              },
-              icon: Icon(
-                Icons.description_outlined,
-                size: 16,
-                color: footerTextColor,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.description_outlined, size: 16, color: footerTextColor),
               label: Text(
                 l10n?.termsAndConditions ?? 'الشروط والأحكام',
-                style: TextStyle(
-                  color: footerTextColor,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: footerTextColor, fontSize: 13),
               ),
             ),
           ],
         ),
-
         const SizedBox(height: 8),
-
-        // حقوق النشر - يدعم الوضع الفاتح والداكن
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isDarkMode 
-                ? const Color(0xFF0F172A) // Slate-900 للداكن
-                : const Color(0xFFF1F5F9), // Slate-100 للفاتح
-            border: isDarkMode 
-                ? null 
+            color: isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+            border: isDarkMode
+                ? null
                 : Border(top: BorderSide(color: Theme.of(context).colorScheme.surfaceContainerLow)),
           ),
           child: Text(

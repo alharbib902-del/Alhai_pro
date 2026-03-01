@@ -65,7 +65,7 @@ class MascotWidget extends StatelessWidget {
     this.pose = MascotPose.withLaptop,
     this.animate = true,
     this.use3DImage = true,
-    this.useLocalAsset = true,
+    this.useLocalAsset = false,
     this.customImageUrl,
   });
 

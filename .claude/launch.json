@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "cashier",
-      "runtimeExecutable": "C:\\src\\flutter\\bin\\flutter.bat",
-      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8080", "--dart-define-from-file=../../.dart_define.env"],
+      "runtimeExecutable": "C:/src/flutter/bin/flutter.bat",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8080", "--no-web-resources-cdn", "--dart-define-from-file=../../.dart_define.env"],
       "cwd": "apps/cashier",
       "autoPort": false,
       "port": 8080
