@@ -5,6 +5,7 @@ from auth import AuthenticatedUser, verify_store_access
 from models.schemas import AssistantRequest, AssistantResponse, SuggestedAction
 from services.ml_service import get_assistant_response
 from services.openai_service import chat_completion
+from i18n.translations import t
 
 router = APIRouter()
 
@@ -23,17 +24,17 @@ async def smart_assistant(
     """
     try:
         # Try OpenAI first
-        ai_reply = chat_completion(request.query, context=request.context)
+        ai_reply = chat_completion(request.query, context=request.context, language=request.language)
         if ai_reply:
             return AssistantResponse(
                 answer=ai_reply,
                 confidence=0.90,
                 data=None,
                 actions=[
-                    SuggestedAction(action="sales_summary", label="ملخص المبيعات", route="/ai/reports"),
-                    SuggestedAction(action="inventory_check", label="فحص المخزون", route="/ai/inventory"),
+                    SuggestedAction(action="sales_summary", label=t("action_sales_summary", request.language), route="/ai/reports"),
+                    SuggestedAction(action="inventory_check", label=t("action_inventory_check", request.language), route="/ai/inventory"),
                 ],
-                related_topics=["المبيعات", "المخزون", "الموظفين"],
+                related_topics=[t("topic_sales", request.language), t("topic_inventory", request.language), t("topic_employees", request.language)],
             )
 
         # Fallback to mock data
@@ -42,6 +43,7 @@ async def smart_assistant(
             store_id=request.store_id,
             query=request.query,
             context=request.context,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في المساعد الذكي: {e}")

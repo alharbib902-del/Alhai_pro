@@ -16,6 +16,7 @@ class BaseRequest(BaseModel):
     """Base request with required org/store IDs."""
     org_id: str = Field(..., description="معرّف المنظمة - Organization ID")
     store_id: str = Field(..., description="معرّف المتجر - Store ID")
+    language: str = Field("ar", description="Language: ar/en/ur/hi/bn/fil/id")
 
 
 class ConfidenceScore(BaseModel):
@@ -469,7 +470,6 @@ class ChatRequest(BaseRequest):
     """طلب الدردشة مع البيانات"""
     message: str = Field(..., description="رسالة المستخدم")
     conversation_id: str | None = Field(None, description="معرّف المحادثة (لاستمرار السياق)")
-    language: str = Field("ar", description="اللغة: ar/en")
 
 
 class ChatDataPoint(BaseModel):

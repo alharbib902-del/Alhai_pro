@@ -22,6 +22,7 @@ async def competitor_analysis(
         return analyze_competitors(
             org_id=request.org_id,
             store_id=request.store_id,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في تحليل المنافسين: {e}")

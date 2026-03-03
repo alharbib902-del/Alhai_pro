@@ -24,6 +24,7 @@ async def sentiment_analysis(
             org_id=request.org_id,
             store_id=request.store_id,
             text=request.text,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في تحليل المشاعر: {e}")

@@ -25,6 +25,7 @@ async def get_recommendations(
             store_id=request.store_id,
             customer_id=request.customer_id,
             top_n=request.top_n,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في التوصيات: {e}")

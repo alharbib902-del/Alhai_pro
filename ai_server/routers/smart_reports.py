@@ -23,6 +23,7 @@ async def smart_reports(
             org_id=request.org_id,
             store_id=request.store_id,
             report_type=request.report_type,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في إنشاء التقرير: {e}")

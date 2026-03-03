@@ -2,6 +2,7 @@
 
 from openai import OpenAI
 from config import get_settings
+from i18n.translations import get_language_prompt
 
 _client: OpenAI | None = None
 
@@ -17,24 +18,20 @@ def get_client() -> OpenAI | None:
     return _client
 
 
-SYSTEM_PROMPT = """أنت مساعد ذكي لنظام نقاط البيع "الحي" (Alhai POS).
-تساعد أصحاب المتاجر والبقالات في السعودية بتحليل المبيعات والمخزون والموظفين والعملاء.
-- أجب بالعربية دائماً
-- كن مختصراً ومفيداً
-- قدم أرقام وإحصائيات عند الإمكان
-- اقترح إجراءات عملية
-- استخدم عملة الريال السعودي (ر.س)"""
-
-
-def chat_completion(message: str, context: str = "general") -> str | None:
+def chat_completion(message: str, context: str = "general",
+                    language: str = "ar") -> str | None:
     """Send a message to OpenAI and get a response. Returns None if not configured."""
     client = get_client()
     if client is None:
         return None
 
-    system = SYSTEM_PROMPT
+    system = get_language_prompt(language)
     if context != "general":
-        system += f"\n\nالسياق الحالي: {context}"
+        context_label = {"ar": "السياق الحالي", "en": "Current context",
+                         "ur": "موجودہ سیاق", "hi": "वर्तमान संदर्भ",
+                         "bn": "বর্তমান প্রসঙ্গ", "fil": "Kasalukuyang konteksto",
+                         "id": "Konteks saat ini"}.get(language, "Context")
+        system += f"\n\n{context_label}: {context}"
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",

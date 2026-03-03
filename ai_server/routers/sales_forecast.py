@@ -25,6 +25,7 @@ async def forecast_sales(
             store_id=request.store_id,
             days_ahead=request.days_ahead,
             product_ids=request.product_ids,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في التنبؤ بالمبيعات: {e}")

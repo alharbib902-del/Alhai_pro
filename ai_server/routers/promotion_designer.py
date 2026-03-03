@@ -25,6 +25,7 @@ async def design_promotions_endpoint(
             store_id=request.store_id,
             goal=request.goal,
             duration_days=request.duration_days,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في تصميم العروض: {e}")

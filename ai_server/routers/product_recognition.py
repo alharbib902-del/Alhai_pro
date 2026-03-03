@@ -26,6 +26,7 @@ async def recognize(
             store_id=request.store_id,
             barcode=request.barcode,
             description=request.description,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في التعرف على المنتج: {e}")

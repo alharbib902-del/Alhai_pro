@@ -23,6 +23,7 @@ async def predict_returns_endpoint(
             org_id=request.org_id,
             store_id=request.store_id,
             days_ahead=request.days_ahead,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في التنبؤ بالمرتجعات: {e}")

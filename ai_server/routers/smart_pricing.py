@@ -24,6 +24,7 @@ async def smart_pricing(
             store_id=request.store_id,
             product_ids=request.product_ids,
             strategy=request.strategy,
+            language=request.language,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"خطأ في التسعير الذكي: {e}")
