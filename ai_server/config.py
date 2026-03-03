@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     # JWT
     jwt_secret: str = ""
 
+    # OpenAI
+    openai_api_key: str = ""
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8000

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ChatRequest, ChatResponse
 from services.ml_service import chat_with_data
+from services.openai_service import chat_completion
 
 router = APIRouter()
 
@@ -15,11 +16,25 @@ async def chat(
 ):
     """
     دردشة ذكية مع بيانات المتجر - اسأل أي سؤال بالعربية أو الإنجليزية.
+    يستخدم OpenAI إذا كان مفتاح API متاحاً، وإلا يعود للبيانات الافتراضية.
 
     - **message**: رسالة المستخدم
     - **conversation_id**: لاستمرار محادثة سابقة
     """
     try:
+        # Try OpenAI first
+        ai_reply = chat_completion(request.message, context="chat_with_data")
+        if ai_reply:
+            conv_id = request.conversation_id or "conv_ai"
+            return ChatResponse(
+                reply=ai_reply,
+                data=None,
+                chart_type=None,
+                suggestions=["كم مبيعات اليوم؟", "ما حالة المخزون؟", "من أفضل موظف؟"],
+                conversation_id=conv_id,
+            )
+
+        # Fallback to mock data
         return chat_with_data(
             org_id=request.org_id,
             store_id=request.store_id,
