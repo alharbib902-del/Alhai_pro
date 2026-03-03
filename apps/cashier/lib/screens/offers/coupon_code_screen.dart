@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة كود الكوبون
 class CouponCodeScreen extends ConsumerStatefulWidget {
@@ -51,7 +52,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -478,10 +479,10 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             _discountDetails = {
               'type': discount.type == 'percentage'
                   ? 'Percentage Off'
-                  : AppLocalizations.of(context)!.fixedAmount,
+                  : AppLocalizations.of(context).fixedAmount,
               'value': discount.type == 'percentage'
                   ? '${discount.value.toStringAsFixed(0)}%'
-                  : '${discount.value.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
+                  : '${discount.value.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
               'validUntil': discount.endDate != null
                   ? '${discount.endDate!.day}/${discount.endDate!.month}/${discount.endDate!.year}'
                   : 'No Expiry',
@@ -495,10 +496,11 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
           });
         }
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Validate coupon code');
       if (mounted) {
         setState(() {
-          _validationError = AppLocalizations.of(context)!.errorWithDetails('$e');
+          _validationError = AppLocalizations.of(context).errorWithDetails('$e');
         });
       }
     } finally {
@@ -507,7 +509,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
   }
 
   void _applyCoupon() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.couponCode), backgroundColor: AppColors.success),
     );

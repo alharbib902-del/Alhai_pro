@@ -144,7 +144,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
     final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
     final dao = getIt<AppDatabase>().categoriesDao;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
 
     final sanitizedName =
@@ -215,7 +215,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   Future<void> _deleteCategory() async {
     if (_selectedCategoryId == null) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => ConstrainedBox(
@@ -281,7 +281,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -1127,7 +1127,7 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                     style: TextStyle(
                       color: widget.isSelected
                           ? AppColors.primary
-                          : (widget.Theme.of(context).colorScheme.onSurface),
+                          : (Theme.of(context).colorScheme.onSurface),
                       fontSize: 14,
                       fontWeight: widget.isSelected
                           ? FontWeight.w600

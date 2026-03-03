@@ -144,7 +144,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   String? _error;
 
   // ---------- Tier management ----------
-  List<LoyaltyTierConfig> _tiers = List.from(_defaultTiers);
+  final List<LoyaltyTierConfig> _tiers = List.from(_defaultTiers);
 
   @override
   void initState() {
@@ -196,7 +196,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -318,7 +318,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   // ===========================================================================
 
   Widget _buildMembersTab(bool isMediumScreen, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -435,7 +435,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   // ===========================================================================
 
   Widget _buildRewardsTab(bool isMediumScreen, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -524,7 +524,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   // ===========================================================================
 
   Widget _buildTiersTab(bool isMediumScreen, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -553,10 +553,10 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       color: AppColors.primary.withValues(alpha: 0.2)),
                 ),
                 child: Row(
-                  children: [
-                    const Icon(Icons.info_outline,
+                  children: const [
+                    Icon(Icons.info_outline,
                         color: AppColors.primary, size: 18),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'يمكنك تخصيص مستويات برنامج الولاء وتحديد النقاط والمزايا لكل مستوى.',
@@ -773,7 +773,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   // ===========================================================================
 
   Widget _buildSettingsTab(bool isMediumScreen, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -984,7 +984,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
 
   /// نافذة تعديل مستوى موجود
   void _showEditTierDialog(int index, LoyaltyTierConfig tier, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController(text: tier.name);
     final nameEnController = TextEditingController(text: tier.nameEn);
     final minPointsController =
@@ -1127,7 +1127,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
 
   /// نافذة إضافة مستوى جديد
   void _showAddTierDialog(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final nameEnController = TextEditingController();
     final minPointsController = TextEditingController();
@@ -1315,8 +1315,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   // ===========================================================================
 
   void _showMemberDetails(LoyaltyPointsTableData member) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final memberTier = _getTierForPoints(member.currentPoints, _tiers);
 
     showModalBottomSheet(
@@ -1426,7 +1425,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   }
 
   void _redeemPoints(LoyaltyPointsTableData member) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1483,7 +1482,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   }
 
   void _addReward() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final pointsController = TextEditingController();
     String type = 'discount_percentage';

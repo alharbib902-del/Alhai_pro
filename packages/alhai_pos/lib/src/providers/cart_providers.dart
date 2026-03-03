@@ -1,11 +1,12 @@
 /// مزودات السلة - Cart Providers
 ///
 /// توفر حالة سلة المشتريات لنقطة البيع مع دعم:
-/// - حفظ السلة تلقائياً
-/// - استعادة السلة عند إعادة فتح التطبيق
+/// - حفظ السلة تلقائياً (مع debounce 2 ثانية)
+/// - استعادة السلة عند إعادة فتح التطبيق مع تأكيد
 /// - تعليق الفواتير (Hold Invoice)
 library cart_providers;
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -307,30 +308,71 @@ class CartPersistenceService {
 // CART NOTIFIER
 // ============================================================================
 
-/// مُدير حالة السلة مع دعم الحفظ التلقائي
+/// مُدير حالة السلة مع دعم الحفظ التلقائي (debounce 2 ثانية)
 class CartNotifier extends StateNotifier<CartState> {
   final CartPersistenceService _persistence;
   bool _isInitialized = false;
+  Timer? _debounceTimer;
+
+  /// سلة محفوظة بانتظار تأكيد المستخدم
+  CartState? _pendingDraft;
 
   CartNotifier(this._persistence) : super(const CartState()) {
     _init();
   }
 
-  /// تهيئة واستعادة السلة المحفوظة
+  /// تهيئة — يحمّل السلة المحفوظة لكن لا يستعيدها تلقائياً
+  /// بل يحفظها في [_pendingDraft] لحين تأكيد المستخدم
   Future<void> _init() async {
     if (_isInitialized) return;
 
     final savedCart = await _persistence.loadCart();
     if (savedCart != null && savedCart.isNotEmpty) {
-      state = savedCart;
-      debugPrint('[Cart] Restored ${savedCart.itemCount} items from storage');
+      _pendingDraft = savedCart;
+      debugPrint('[Cart] Found draft with ${savedCart.itemCount} items — awaiting user confirmation');
     }
     _isInitialized = true;
   }
 
-  /// حفظ السلة (يُستدعى تلقائياً عند التغيير)
-  Future<void> _saveCart() async {
-    await _persistence.saveCart(state);
+  /// هل يوجد مسودة محفوظة بانتظار التأكيد
+  bool get hasPendingDraft => _pendingDraft != null;
+
+  /// عدد عناصر المسودة المعلقة
+  int get pendingDraftItemCount => _pendingDraft?.itemCount ?? 0;
+
+  /// إجمالي المسودة المعلقة
+  double get pendingDraftTotal => _pendingDraft?.total ?? 0;
+
+  /// قبول المسودة المحفوظة واستعادتها
+  void acceptDraft() {
+    if (_pendingDraft != null) {
+      state = _pendingDraft!;
+      _pendingDraft = null;
+      debugPrint('[Cart] Draft restored — ${state.itemCount} items');
+    }
+  }
+
+  /// تجاهل المسودة المحفوظة ومسحها
+  void discardDraft() {
+    _pendingDraft = null;
+    _persistence.clearCart();
+    debugPrint('[Cart] Draft discarded');
+  }
+
+  /// حفظ السلة مع debounce (2 ثانية) — يُستدعى تلقائياً عند التغيير
+  void _saveCart() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 2), () {
+      _persistence.saveCart(state);
+    });
+  }
+
+  @override
+  void dispose() {
+    // حفظ فوري عند الإغلاق (بدون debounce)
+    _debounceTimer?.cancel();
+    _persistence.saveCart(state);
+    super.dispose();
   }
 
   /// إضافة منتج للسلة
@@ -586,4 +628,9 @@ final cartItemByProductIdProvider =
 /// مزود عدد الفواتير المعلقة
 final heldInvoicesCountProvider = Provider<int>((ref) {
   return ref.watch(heldInvoicesProvider).length;
+});
+
+/// مزود التحقق من وجود مسودة محفوظة بانتظار التأكيد
+final hasPendingDraftProvider = Provider<bool>((ref) {
+  return ref.read(cartStateProvider.notifier).hasPendingDraft;
 });

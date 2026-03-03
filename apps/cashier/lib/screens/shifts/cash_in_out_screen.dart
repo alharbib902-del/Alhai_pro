@@ -13,6 +13,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة إيداع/سحب نقدي
 class CashInOutScreen extends ConsumerStatefulWidget {
@@ -41,7 +43,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -72,8 +74,11 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                     shift, isWideScreen, isMediumScreen, isDark, l10n),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            loading: () => const AppLoadingState(),
+            error: (e, _) => AppErrorState.general(
+              message: '$e',
+              onRetry: () => ref.invalidate(openShiftProvider),
+            ),
           ),
         ),
       ],
@@ -577,6 +582,23 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         createdBy: user?.name,
       );
 
+      // Audit log
+      final storeId = ref.read(currentStoreIdProvider)!;
+      auditService.logCashDrawer(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        type: _isCashIn ? 'cash_in' : 'cash_out',
+        amount: amount,
+        reason: _reasonController.text.isNotEmpty ? _reasonController.text : null,
+      );
+
+      addBreadcrumb(
+        message: _isCashIn ? 'Cash deposit' : 'Cash withdrawal',
+        category: 'shift',
+        data: {'amount': double.tryParse(_amountController.text)},
+      );
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -591,7 +613,8 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       _amountController.clear();
       _reasonController.clear();
       setState(() {});
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save cash in/out');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

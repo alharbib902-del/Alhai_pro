@@ -38,7 +38,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -118,7 +118,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildSupplierCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final suppliersAsync = ref.watch(activeSuppliersProvider);
 
     return Container(
@@ -170,7 +170,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildItemsCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -240,7 +240,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildPaymentCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -275,7 +275,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Widget _buildTotalCard(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -303,7 +303,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   void _addProduct() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) {
@@ -348,7 +348,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   }
 
   Future<void> _savePurchase() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_selectedSupplierId == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.selectSupplierRequired)));
       return;
@@ -370,7 +370,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           purchaseId: const Value(''),
           productId: Value(item.productId),
           productName: Value(item.productName),
-          qty: Value(item.qty),
+          qty: Value(item.qty.toDouble()),
           unitCost: Value(item.cost),
           total: Value(item.total),
         );
@@ -403,8 +403,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 id: uuid.v4(),
                 productId: item.productId,
                 storeId: storeId ?? '',
-                qty: item.qty,
-                previousQty: previousQty,
+                qty: item.qty.toDouble(),
+                previousQty: previousQty.toDouble(),
                 purchaseId: purchaseId,
               );
             }

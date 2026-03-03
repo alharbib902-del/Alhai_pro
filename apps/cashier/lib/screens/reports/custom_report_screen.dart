@@ -14,6 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة التقارير المخصصة
 class CustomReportScreen extends ConsumerStatefulWidget {
@@ -92,13 +93,20 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
           _hasGenerated = true;
         });
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Generate custom report');
       if (mounted) {
         setState(() {
           _isLoading = false;
           _hasGenerated = true;
           _results = [];
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     }
   }
@@ -240,7 +248,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -293,7 +301,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
                 if (_isLoading)
                   const Padding(
                     padding: EdgeInsets.all(48),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: AppLoadingState(),
                   )
                 else if (_hasGenerated)
                   _buildResults(isWideScreen, isMediumScreen, isDark, l10n),

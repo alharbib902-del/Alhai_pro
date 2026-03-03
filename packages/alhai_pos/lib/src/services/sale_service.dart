@@ -92,7 +92,7 @@ class SaleService {
           productId: item.product.id,
           productName: item.product.name,
           unitPrice: item.effectivePrice,
-          qty: item.quantity,
+          qty: item.quantity.toDouble(),
           subtotal: item.effectivePrice * item.quantity,
           discount: const Value(0),
           total: item.total,
@@ -104,8 +104,8 @@ class SaleService {
           id: movementId,
           productId: item.product.id,
           storeId: storeId,
-          qty: item.quantity,
-          previousQty: freshProduct.stockQty,
+          qty: item.quantity.toDouble(),
+          previousQty: freshProduct.stockQty.toDouble(),
           saleId: saleId,
         );
 

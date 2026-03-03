@@ -32,11 +32,14 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixi
     return (delete(saleItemsTable)..where((i) => i.saleId.equals(saleId))).go();
   }
   
-  /// الحصول على إجمالي مبيعات منتج
-  Future<double> getProductSalesCount(String productId) async {
+  /// الحصول على إجمالي مبيعات منتج (مع فلتر المتجر)
+  Future<double> getProductSalesCount(String productId, String storeId) async {
     final result = await customSelect(
-      'SELECT COALESCE(SUM(qty), 0) as total FROM sale_items WHERE product_id = ?',
-      variables: [Variable.withString(productId)],
+      '''SELECT COALESCE(SUM(si.qty), 0) as total
+         FROM sale_items si
+         INNER JOIN sales s ON si.sale_id = s.id
+         WHERE si.product_id = ? AND s.store_id = ?''',
+      variables: [Variable.withString(productId), Variable.withString(storeId)],
     ).getSingle();
 
     return _toDouble(result.data['total']);

@@ -29,7 +29,7 @@ class _CashierSettingsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -152,6 +152,13 @@ class _CashierSettingsScreenState
         subtitle: 'Auto backup & restore',
         color: AppColors.error,
         route: AppRoutes.settingsBackup,
+      ),
+      const _SettingsItem(
+        icon: Icons.privacy_tip_rounded,
+        title: 'سياسة الخصوصية',
+        subtitle: 'Privacy & Data Rights',
+        color: AppColors.info,
+        route: AppRoutes.settingsPrivacy,
       ),
       _SettingsItem(
         icon: Icons.language_rounded,

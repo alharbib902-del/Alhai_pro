@@ -11,6 +11,8 @@ import 'package:uuid/uuid.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 
+AuditLogDao get _auditDao => GetIt.I<AppDatabase>().auditLogDao;
+
 const _uuid = Uuid();
 
 // ============================================================================
@@ -86,6 +88,18 @@ final openShiftActionProvider = Provider<
       idempotencyKey: 'shift_open_$id',
     );
 
+    // Audit log - shift open
+    _auditDao.log(
+      storeId: storeId,
+      userId: cashierId,
+      userName: cashierName,
+      action: AuditAction.shiftOpen,
+      entityType: 'shift',
+      entityId: id,
+      newValue: {'openingCash': openingCash},
+      description: 'فتح وردية برصيد $openingCash ر.س',
+    );
+
     ref.invalidate(openShiftProvider);
     ref.invalidate(todayShiftsProvider);
     return id;
@@ -139,6 +153,25 @@ final closeShiftActionProvider = Provider<
       idempotencyKey: 'shift_close_$shiftId',
     );
 
+    // Audit log - shift close
+    final user = ref.read(currentUserProvider);
+    _auditDao.log(
+      storeId: ref.read(currentStoreIdProvider) ?? '',
+      userId: user?.id ?? 'unknown',
+      userName: user?.name ?? 'unknown',
+      action: AuditAction.shiftClose,
+      entityType: 'shift',
+      entityId: shiftId,
+      newValue: {
+        'closingCash': closingCash,
+        'expectedCash': expectedCash,
+        'difference': difference,
+        'totalSales': totalSales,
+        'totalSalesAmount': totalSalesAmount,
+      },
+      description: 'إغلاق وردية - نقد فعلي: $closingCash ر.س، فرق: $difference ر.س',
+    );
+
     ref.invalidate(openShiftProvider);
     ref.invalidate(todayShiftsProvider);
   };
@@ -184,6 +217,24 @@ final addCashMovementProvider = Provider<
       operation: 'CREATE',
       payload: '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amount}',
       idempotencyKey: 'cash_movement_$movementId',
+    );
+
+    // Audit log - cash movement
+    _auditDao.log(
+      storeId: storeId,
+      userId: createdBy ?? 'unknown',
+      userName: createdBy ?? 'unknown',
+      action: AuditAction.cashDrawerOpen,
+      entityType: 'cash_movement',
+      entityId: movementId,
+      newValue: {
+        'type': type,
+        'amount': amount,
+        if (reason != null) 'reason': reason,
+      },
+      description: type == 'cash_in'
+          ? 'إيداع نقدي $amount ر.س'
+          : 'سحب نقدي $amount ر.س',
     );
 
     ref.invalidate(shiftMovementsProvider(shiftId));

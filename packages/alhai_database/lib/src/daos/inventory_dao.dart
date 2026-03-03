@@ -10,11 +10,16 @@ part 'inventory_dao.g.dart';
 class InventoryDao extends DatabaseAccessor<AppDatabase> with _$InventoryDaoMixin {
   InventoryDao(super.db);
   
-  /// الحصول على حركات منتج
-  Future<List<InventoryMovementsTableData>> getMovementsByProduct(String productId) {
+  /// الحصول على حركات منتج (مع فلتر المتجر)
+  Future<List<InventoryMovementsTableData>> getMovementsByProduct(String productId, {String? storeId}) {
     return (select(inventoryMovementsTable)
-      ..where((m) => m.productId.equals(productId))
-      ..orderBy([(m) => OrderingTerm.desc(m.createdAt)]))
+      ..where((m) {
+        var condition = m.productId.equals(productId);
+        if (storeId != null) condition = condition & m.storeId.equals(storeId);
+        return condition;
+      })
+      ..orderBy([(m) => OrderingTerm.desc(m.createdAt)])
+      ..limit(200))
       .get();
   }
   
@@ -120,8 +125,12 @@ class InventoryDao extends DatabaseAccessor<AppDatabase> with _$InventoryDaoMixi
   }
   
   /// الحصول على الحركات غير المزامنة
-  Future<List<InventoryMovementsTableData>> getUnsyncedMovements() {
-    return (select(inventoryMovementsTable)..where((m) => m.syncedAt.isNull())).get();
+  Future<List<InventoryMovementsTableData>> getUnsyncedMovements({String? storeId}) {
+    final q = select(inventoryMovementsTable)..where((m) => m.syncedAt.isNull());
+    if (storeId != null) {
+      q.where((m) => m.storeId.equals(storeId));
+    }
+    return (q..limit(500)).get();
   }
 
   // ============================================================================

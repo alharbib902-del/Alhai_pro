@@ -28,7 +28,7 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
   }
 
   Future<List<ShiftsTableData>> getShiftsByDateRange(String storeId, DateTime startDate, DateTime endDate) {
-    return (select(shiftsTable)..where((s) => s.storeId.equals(storeId) & s.openedAt.isBiggerOrEqualValue(startDate) & s.openedAt.isSmallerThanValue(endDate))..orderBy([(s) => OrderingTerm.desc(s.openedAt)])).get();
+    return (select(shiftsTable)..where((s) => s.storeId.equals(storeId) & s.openedAt.isBiggerOrEqualValue(startDate) & s.openedAt.isSmallerThanValue(endDate))..orderBy([(s) => OrderingTerm.desc(s.openedAt)])..limit(500)).get();
   }
 
   Future<int> openShift(ShiftsTableCompanion shift) => into(shiftsTable).insert(shift);

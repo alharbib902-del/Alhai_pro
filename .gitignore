@@ -12,6 +12,7 @@
 .env
 .dart_define.env
 *.env.local
+node_modules/
 __pycache__/
 *.pyc
 .pytest_cache/

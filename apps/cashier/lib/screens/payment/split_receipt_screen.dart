@@ -13,6 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../widgets/zatca_qr_widget.dart';
 
 /// شاشة إيصال الدفع المجزأ
 class SplitReceiptScreen extends ConsumerStatefulWidget {
@@ -28,7 +30,9 @@ class SplitReceiptScreen extends ConsumerStatefulWidget {
 class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   final _db = GetIt.I<AppDatabase>();
   OrdersTableData? _order;
+  StoresTableData? _store;
   bool _isLoading = true;
+  String? _error;
   bool _isPrinting = false;
 
   // Simulated split payment data
@@ -41,12 +45,22 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final order = await _db.ordersDao.getOrderById(widget.orderId);
+      // Load store data for ZATCA QR
+      final storeId = ref.read(currentStoreIdProvider);
+      StoresTableData? store;
+      if (storeId != null) {
+        store = await _db.storesDao.getStoreById(storeId);
+      }
       if (mounted) {
         setState(() {
           _order = order;
+          _store = store;
           if (order != null) {
             // Build payment splits from order data
             _splits = _buildSplits(order);
@@ -54,8 +68,14 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load split receipt data');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -85,7 +105,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Column(
@@ -93,10 +113,13 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           _buildTopBar(isDark, l10n),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _order == null
-                    ? _buildNotFound(isDark)
-                    : SingleChildScrollView(
+                ? const AppLoadingState()
+                : _error != null
+                    ? AppErrorState.general(
+                        message: _error!, onRetry: _loadData)
+                    : _order == null
+                        ? _buildNotFound(isDark)
+                        : SingleChildScrollView(
                         padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                         child: isWideScreen
                             ? _buildWideLayout(isDark, l10n)
@@ -418,6 +441,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   }
 
   Widget _buildQrCodeCard(bool isDark, AppLocalizations l10n) {
+    final order = _order!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -440,7 +464,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'QR Code',
+                'ZATCA QR',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -450,29 +474,13 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.getBorder(isDark), width: 2),
-            ),
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: 120,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Scan to verify receipt',
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.getTextMuted(isDark),
-            ),
+          ZatcaQrWidget(
+            sellerName: _store?.name ?? 'Al-HAI Store',
+            vatNumber: _store?.taxNumber ?? '300000000000003',
+            timestamp: order.createdAt,
+            totalWithVat: order.total,
+            vatAmount: order.taxAmount,
+            size: 140,
           ),
         ],
       ),
@@ -533,6 +541,8 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     setState(() => _isPrinting = true);
     try {
       await Future.delayed(const Duration(seconds: 1));
+      addBreadcrumb(message: 'Receipt printed', category: 'sale');
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -540,7 +550,8 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Print split receipt');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

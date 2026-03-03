@@ -1,0 +1,22 @@
+{
+  "name": "alhai-cashier-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:login": "playwright test e2e/tests/login.spec.ts",
+    "test:pos": "playwright test e2e/tests/pos.spec.ts",
+    "test:nav": "playwright test e2e/tests/navigation.spec.ts",
+    "test:critical": "playwright test --grep @critical",
+    "test:high": "playwright test --grep @high",
+    "test:medium": "playwright test --grep @medium",
+    "test:priorities": "playwright test --grep \"@critical|@high|@medium\"",
+    "test:cashier:all": "npm run test:critical && npm run test:high && npm run test:medium",
+    "test:full": "powershell -ExecutionPolicy Bypass -File ./scripts/run-cashier-full-suite.ps1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

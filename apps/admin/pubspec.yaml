@@ -50,6 +50,9 @@ dependencies:
   # Security
   flutter_secure_storage: ^9.0.0
 
+  # Formatting
+  intl: any
+
   # App infra
   go_router: ^13.0.0
   flutter_riverpod: ^2.4.9

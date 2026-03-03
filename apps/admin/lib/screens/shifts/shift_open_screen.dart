@@ -30,7 +30,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -406,7 +406,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
   }
 
   Future<void> _openShift() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final openingCash = double.tryParse(_openingCashController.text);
 
     if (openingCash == null || openingCash <= 0) {

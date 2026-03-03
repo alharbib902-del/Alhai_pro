@@ -1,18 +1,20 @@
 /// Printer Settings Screen - Printer configuration and management
 ///
-/// List of configured printers, add printer form, test print,
-/// default printer toggle. Supports: RTL Arabic, dark/light theme, responsive.
+/// Real ESC/POS printer discovery (Bluetooth/Network/Sunmi), test print,
+/// default printer toggle, auto-print setting, paper size selection.
+/// Supports: RTL Arabic, dark/light theme, responsive.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-// alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../services/printing/print_service.dart';
+import '../../services/printing/printing_providers.dart'
+    hide autoPrintEnabledProvider;
 
 /// Printer settings screen
 class PrinterSettingsScreen extends ConsumerStatefulWidget {
@@ -25,290 +27,229 @@ class PrinterSettingsScreen extends ConsumerStatefulWidget {
 
 class _PrinterSettingsScreenState
     extends ConsumerState<PrinterSettingsScreen> {
-  final _db = GetIt.I<AppDatabase>();
-  bool _isLoading = true;
-  List<_PrinterConfig> _printers = [];
-  String _defaultPrinterId = '';
+  bool _isScanning = false;
+  bool _isTesting = false;
+  List<DiscoveredPrinter> _discoveredPrinters = [];
+  String _selectedConnectionType = 'bluetooth'; // bluetooth, network, sunmi
+  String? _networkIp;
 
   @override
   void initState() {
     super.initState();
-    _loadPrinters();
+    // Load auto-print preference
+    PrintServiceNotifier.isAutoPrintEnabled().then((enabled) {
+      if (mounted) {
+        ref.read(autoPrintEnabledProvider.notifier).state = enabled;
+      }
+    });
   }
 
-  Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
-    final id = 'setting_${storeId}_$key';
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
-      SettingsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        key: key,
-        value: value,
-        updatedAt: DateTime.now(),
-      ),
-    );
-  }
+  Future<void> _scanPrinters() async {
+    setState(() {
+      _isScanning = true;
+      _discoveredPrinters = [];
+    });
 
-  Future<void> _loadPrinters() async {
-    setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
-      final settings = await (
-        _db.select(_db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId))
-      ).get();
-      final List<_PrinterConfig> loaded = [];
+      // Ensure service matches connection type
+      await ref
+          .read(printServiceProvider.notifier)
+          .setServiceType(_selectedConnectionType);
 
-      for (final s in settings) {
-        if (s.key.startsWith('printer_config_')) {
-          final parts = s.value.split('|');
-          if (parts.length >= 3) {
-            loaded.add(_PrinterConfig(
-              id: s.key.replaceFirst('printer_config_', ''),
-              name: parts[0],
-              type: parts[1],
-              connection: parts[2],
-            ));
-          }
+      final service = ref.read(printServiceProvider);
+      if (service == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('فشل تهيئة خدمة الطباعة'),
+              backgroundColor: AppColors.error,
+            ),
+          );
         }
-        if (s.key == 'default_printer') {
-          _defaultPrinterId = s.value;
-        }
+        return;
       }
 
-      // Default printers if none configured
-      if (loaded.isEmpty) {
-        loaded.addAll([
-          const _PrinterConfig(
-            id: 'thermal_1',
-            name: 'Thermal Receipt',
-            type: 'Thermal',
-            connection: 'USB',
-          ),
-          const _PrinterConfig(
-            id: 'a4_1',
-            name: 'Office A4',
-            type: 'A4',
-            connection: 'Network',
-          ),
-        ]);
-        _defaultPrinterId = 'thermal_1';
-      }
+      final printers = await service.scanForPrinters(
+        timeout: const Duration(seconds: 10),
+      );
 
       if (mounted) {
-        setState(() => _printers = loaded);
-      }
-    } catch (_) {
-      // Use defaults
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
+        setState(() => _discoveredPrinters = printers);
 
-  Future<void> _setDefaultPrinter(String printerId) async {
-    setState(() => _defaultPrinterId = printerId);
-    try {
-      await _upsertSetting('default_printer', printerId);
+        if (printers.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('لم يتم العثور على طابعات'),
+              backgroundColor: AppColors.warning,
+            ),
+          );
+        }
+      }
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Scan printers');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Default printer set'),
-            backgroundColor: AppColors.success,
+          SnackBar(
+            content: Text('خطأ في البحث: $e'),
+            backgroundColor: AppColors.error,
           ),
         );
       }
-    } catch (_) {}
+    } finally {
+      if (mounted) setState(() => _isScanning = false);
+    }
   }
 
-  Future<void> _testPrint(String printerName) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Test print sent to $printerName'),
-        backgroundColor: AppColors.info,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  Future<void> _connectPrinter(DiscoveredPrinter printer) async {
+    try {
+      final success = await ref
+          .read(printServiceProvider.notifier)
+          .connectAndSave(printer);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              success
+                  ? 'تم الاتصال بـ ${printer.name}'
+                  : 'فشل الاتصال بـ ${printer.name}',
+            ),
+            backgroundColor: success ? AppColors.success : AppColors.error,
+          ),
+        );
+        setState(() {}); // Refresh UI
+      }
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Connect printer');
+    }
   }
 
-  void _showAddPrinterDialog(bool isDark, AppLocalizations l10n) {
-    final nameCtrl = TextEditingController();
-    String type = 'Thermal';
-    String connection = 'USB';
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: AppColors.getSurface(isDark),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            'Add Printer',
-            style: TextStyle(color: AppColors.getTextPrimary(isDark)),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Printer Name',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.getTextSecondary(isDark),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: nameCtrl,
-                  style: TextStyle(
-                    color: AppColors.getTextPrimary(isDark),
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'e.g. Receipt Printer',
-                    hintStyle:
-                        TextStyle(color: AppColors.getTextMuted(isDark)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: AppColors.getBorder(isDark)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: AppColors.getBorder(isDark)),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.getSurfaceVariant(isDark),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.printerType,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.getTextSecondary(isDark),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: ['Thermal', 'A4'].map((t) {
-                    final isSelected = type == t;
-                    return ChoiceChip(
-                      label: Text(t),
-                      selected: isSelected,
-                      onSelected: (_) =>
-                          setDialogState(() => type = t),
-                      selectedColor:
-                          AppColors.primary.withValues(alpha: 0.15),
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.getTextPrimary(isDark),
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.getBorder(isDark),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Connection Type',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.getTextSecondary(isDark),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: ['USB', 'Bluetooth', 'Network'].map((c) {
-                    final isSelected = connection == c;
-                    return ChoiceChip(
-                      label: Text(c),
-                      selected: isSelected,
-                      onSelected: (_) =>
-                          setDialogState(() => connection = c),
-                      selectedColor:
-                          AppColors.info.withValues(alpha: 0.15),
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? AppColors.info
-                            : AppColors.getTextPrimary(isDark),
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
-                          color: isSelected
-                              ? AppColors.info
-                              : AppColors.getBorder(isDark),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () async {
-                if (nameCtrl.text.isEmpty) return;
-                final id = DateTime.now().millisecondsSinceEpoch.toString();
-                try {
-                  await _upsertSetting(
-                    'printer_config_$id',
-                    '${nameCtrl.text}|$type|$connection',
-                  );
-                } catch (_) {}
-                if (ctx.mounted) {
-                  Navigator.pop(ctx);
-                  _loadPrinters();
-                }
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-              ),
-              child: Text(l10n.add),
-            ),
-          ],
+  Future<void> _connectNetworkPrinter() async {
+    final ip = _networkIp?.trim();
+    if (ip == null || ip.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('أدخل عنوان IP للطابعة'),
+          backgroundColor: AppColors.warning,
         ),
-      ),
+      );
+      return;
+    }
+
+    await ref
+        .read(printServiceProvider.notifier)
+        .setServiceType('network');
+
+    final printer = DiscoveredPrinter(
+      id: ip,
+      name: 'Network Printer ($ip)',
+      type: PrinterConnectionType.network,
+      address: ip,
     );
+
+    await _connectPrinter(printer);
+  }
+
+  Future<void> _testPrint() async {
+    final service = ref.read(printServiceProvider);
+    if (service == null || service.status != PrinterStatus.connected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('الطابعة غير متصلة'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isTesting = true);
+    try {
+      final result = await service.printTestPage();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              result.success
+                  ? 'تم إرسال صفحة الاختبار بنجاح'
+                  : 'فشل الاختبار: ${result.error}',
+            ),
+            backgroundColor:
+                result.success ? AppColors.success : AppColors.error,
+          ),
+        );
+      }
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Test print');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('خطأ: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isTesting = false);
+    }
+  }
+
+  Future<void> _openCashDrawer() async {
+    final service = ref.read(printServiceProvider);
+    if (service == null || service.status != PrinterStatus.connected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('الطابعة غير متصلة'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    final result = await service.openCashDrawer();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result.success ? 'تم فتح درج النقود' : 'فشل: ${result.error}',
+          ),
+          backgroundColor:
+              result.success ? AppColors.success : AppColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _disconnect() async {
+    await ref.read(printServiceProvider.notifier).disconnectAndClear();
+    if (mounted) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم قطع الاتصال'),
+          backgroundColor: AppColors.info,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+
+    final service = ref.watch(printServiceProvider);
+    final isConnected = service?.status == PrinterStatus.connected;
+    final autoPrint = ref.watch(autoPrintEnabledProvider);
 
     return Column(
       children: [
         AppHeader(
           title: l10n.printerSettings,
-          subtitle: '${_printers.length} printers configured',
+          subtitle: isConnected
+              ? 'متصل: ${service?.connectedPrinterName ?? ""}'
+              : 'غير متصل',
           showSearch: false,
           leading: IconButton(
             icon: Icon(
@@ -317,81 +258,63 @@ class _PrinterSettingsScreenState
             ),
             onPressed: () => context.pop(),
           ),
-          actions: [
-            FilledButton.icon(
-              onPressed: () => _showAddPrinterDialog(isDark, l10n),
-              icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Add Printer'),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-          ],
-          onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
+          onNotificationsTap: () =>
+              context.push(AppRoutes.notificationsCenter),
           userName:
               ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.cashier,
           onUserTap: () => context.push(AppRoutes.profile),
         ),
         Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                  child: _buildContent(
-                      isWideScreen, isMediumScreen, isDark, l10n),
-                ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ═══════════════════════════════
+                // CONNECTION STATUS
+                // ═══════════════════════════════
+                _buildStatusCard(isDark, isConnected, service, l10n),
+                const SizedBox(height: 16),
+
+                // ═══════════════════════════════
+                // CONNECT NEW PRINTER
+                // ═══════════════════════════════
+                _buildConnectCard(isDark, l10n),
+                const SizedBox(height: 16),
+
+                // ═══════════════════════════════
+                // DISCOVERED PRINTERS
+                // ═══════════════════════════════
+                if (_discoveredPrinters.isNotEmpty)
+                  _buildDiscoveredList(isDark, l10n),
+
+                // ═══════════════════════════════
+                // SETTINGS
+                // ═══════════════════════════════
+                const SizedBox(height: 16),
+                _buildSettingsCard(isDark, autoPrint, service, l10n),
+              ],
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildContent(
-    bool isWideScreen,
-    bool isMediumScreen,
+  // ─── Status Card ───────────────────────────────────
+
+  Widget _buildStatusCard(
     bool isDark,
+    bool isConnected,
+    ThermalPrintService? service,
     AppLocalizations l10n,
   ) {
-    if (isWideScreen) {
-      return GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.8,
-        ),
-        itemCount: _printers.length,
-        itemBuilder: (context, index) =>
-            _buildPrinterCard(_printers[index], isDark, l10n),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: _printers.map((printer) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _buildPrinterCard(printer, isDark, l10n),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildPrinterCard(
-    _PrinterConfig printer,
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
-    final isDefault = printer.id == _defaultPrinterId;
-    final typeColor =
-        printer.type == 'Thermal' ? AppColors.warning : AppColors.info;
+    final statusColor = isConnected ? AppColors.success : AppColors.error;
+    final statusIcon =
+        isConnected ? Icons.check_circle_rounded : Icons.cancel_rounded;
+    final statusText =
+        isConnected ? 'متصل بالطابعة' : 'لا توجد طابعة متصلة';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -399,136 +322,513 @@ class _PrinterSettingsScreenState
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDefault
-              ? AppColors.primary.withValues(alpha: 0.5)
-              : AppColors.getBorder(isDark),
-          width: isDefault ? 2 : 1,
+          color: statusColor.withValues(alpha: 0.3),
+          width: 2,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
-                  color: typeColor.withValues(alpha: isDark ? 0.2 : 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: statusColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  printer.type == 'Thermal'
-                      ? Icons.receipt_long_rounded
-                      : Icons.print_rounded,
-                  color: typeColor,
-                  size: 22,
-                ),
+                child: Icon(statusIcon, color: statusColor, size: 28),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          printer.name,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.getTextPrimary(isDark),
-                          ),
-                        ),
-                        if (isDefault) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary
-                                  .withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              l10n.defaultLabel,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 4),
                     Text(
-                      '${printer.type} - ${printer.connection}',
+                      statusText,
                       style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextMuted(isDark),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
+                    if (isConnected) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        service?.connectedPrinterName ?? '',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _testPrint(printer.name),
-                  icon: const Icon(Icons.print_rounded, size: 16),
-                  label: Text(l10n.testPrint),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.info,
-                    side: BorderSide(
-                        color: AppColors.info.withValues(alpha: 0.5)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              if (!isDefault)
+          if (isConnected) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => _setDefaultPrinter(printer.id),
-                    icon: const Icon(Icons.star_rounded, size: 16),
-                    label: const Text('Set Default'),
+                    onPressed: _isTesting ? null : _testPrint,
+                    icon: _isTesting
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.print_rounded, size: 16),
+                    label: Text(l10n.testPrint),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
+                      foregroundColor: AppColors.info,
                       side: BorderSide(
-                          color: AppColors.primary.withValues(alpha: 0.5)),
+                          color: AppColors.info.withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _openCashDrawer,
+                    icon: const Icon(Icons.point_of_sale_rounded, size: 16),
+                    label: const Text('فتح الدرج'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.warning,
+                      side: BorderSide(
+                          color: AppColors.warning.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _disconnect,
+                    icon: const Icon(Icons.link_off_rounded, size: 16),
+                    label: const Text('قطع'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: BorderSide(
+                          color: AppColors.error.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ─── Connect Card ──────────────────────────────────
+
+  Widget _buildConnectCard(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'اتصال بطابعة',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Connection type selector
+          Text(
+            'نوع الاتصال',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            children: [
+              _connectionChip('bluetooth', 'بلوتوث', Icons.bluetooth, isDark),
+              _connectionChip(
+                  'network', 'شبكة', Icons.wifi_rounded, isDark),
+              _connectionChip(
+                  'sunmi', 'Sunmi', Icons.smartphone_rounded, isDark),
             ],
+          ),
+          const SizedBox(height: 16),
+
+          // Network IP input (only for network type)
+          if (_selectedConnectionType == 'network') ...[
+            Text(
+              'عنوان IP للطابعة',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    textDirection: TextDirection.ltr,
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => _networkIp = v,
+                    decoration: InputDecoration(
+                      hintText: '192.168.1.100',
+                      hintStyle:
+                          TextStyle(color: AppColors.getTextMuted(isDark)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      isDense: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: _connectNetworkPrinter,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('اتصال'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Scan button (for bluetooth and sunmi)
+          if (_selectedConnectionType != 'network')
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _isScanning ? null : _scanPrinters,
+                icon: _isScanning
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.search_rounded, size: 18),
+                label: Text(_isScanning ? 'جاري البحث...' : 'بحث عن طابعات'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _connectionChip(
+      String value, String label, IconData icon, bool isDark) {
+    final isSelected = _selectedConnectionType == value;
+    return ChoiceChip(
+      avatar: Icon(icon, size: 18),
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) => setState(() => _selectedConnectionType = value),
+      selectedColor: AppColors.primary.withValues(alpha: 0.15),
+      labelStyle: TextStyle(
+        color: isSelected
+            ? AppColors.primary
+            : AppColors.getTextPrimary(isDark),
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: isSelected ? AppColors.primary : AppColors.getBorder(isDark),
+        ),
+      ),
+    );
+  }
+
+  // ─── Discovered Printers List ──────────────────────
+
+  Widget _buildDiscoveredList(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'الطابعات المكتشفة (${_discoveredPrinters.length})',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ..._discoveredPrinters.map((printer) {
+            final connectedName =
+                ref.read(printServiceProvider)?.connectedPrinterName;
+            final isThisConnected = connectedName == printer.name;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isThisConnected
+                    ? AppColors.success.withValues(alpha: 0.05)
+                    : AppColors.getSurfaceVariant(isDark),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isThisConnected
+                      ? AppColors.success.withValues(alpha: 0.3)
+                      : AppColors.getBorder(isDark),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _iconForType(printer.type),
+                    color: isThisConnected
+                        ? AppColors.success
+                        : AppColors.getTextMuted(isDark),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          printer.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
+                        ),
+                        if (printer.address != null)
+                          Text(
+                            printer.address!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.getTextMuted(isDark),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (isThisConnected)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'متصل',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    )
+                  else
+                    OutlinedButton(
+                      onPressed: () => _connectPrinter(printer),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('اتصال'),
+                    ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  IconData _iconForType(PrinterConnectionType type) {
+    switch (type) {
+      case PrinterConnectionType.bluetooth:
+        return Icons.bluetooth;
+      case PrinterConnectionType.network:
+        return Icons.wifi_rounded;
+      case PrinterConnectionType.sunmi:
+        return Icons.smartphone_rounded;
+      case PrinterConnectionType.usb:
+        return Icons.usb_rounded;
+    }
+  }
+
+  // ─── Settings Card ─────────────────────────────────
+
+  Widget _buildSettingsCard(
+    bool isDark,
+    bool autoPrint,
+    ThermalPrintService? service,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'إعدادات الطباعة',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Auto-print toggle
+          _settingsRow(
+            isDark,
+            icon: Icons.auto_fix_high_rounded,
+            title: 'طباعة تلقائية',
+            subtitle: 'طباعة الفاتورة تلقائياً بعد كل عملية بيع',
+            trailing: Switch(
+              value: autoPrint,
+              onChanged: (value) async {
+                ref.read(autoPrintEnabledProvider.notifier).state = value;
+                await PrintServiceNotifier.setAutoPrint(value);
+              },
+              activeTrackColor: AppColors.primary,
+            ),
+          ),
+          Divider(color: AppColors.getBorder(isDark), height: 24),
+
+          // Paper size selector
+          _settingsRow(
+            isDark,
+            icon: Icons.straighten_rounded,
+            title: 'حجم الورق',
+            subtitle: 'عرض ورق الطباعة الحرارية',
+            trailing: SegmentedButton<PaperSize>(
+              segments: const [
+                ButtonSegment(
+                  value: PaperSize.mm58,
+                  label: Text('58mm'),
+                ),
+                ButtonSegment(
+                  value: PaperSize.mm80,
+                  label: Text('80mm'),
+                ),
+              ],
+              selected: {service?.paperSize ?? PaperSize.mm80},
+              onSelectionChanged: (sizes) async {
+                await ref
+                    .read(printServiceProvider.notifier)
+                    .setPaperSize(sizes.first);
+                setState(() {});
+              },
+              style: ButtonStyle(
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-/// Printer configuration data model
-class _PrinterConfig {
-  final String id;
-  final String name;
-  final String type;
-  final String connection;
-
-  const _PrinterConfig({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.connection,
-  });
+  Widget _settingsRow(
+    bool isDark, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Widget trailing,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          trailing,
+        ],
+      ),
+    );
+  }
 }

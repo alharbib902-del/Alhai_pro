@@ -79,7 +79,7 @@ void main() {
       // The saveSetting function builds id as 'setting_${storeId}_$key'
       const storeId = 'store-1';
       const key = 'theme_mode';
-      final expectedId = 'setting_${storeId}_$key';
+      const expectedId = 'setting_${storeId}_$key';
 
       expect(expectedId, 'setting_store-1_theme_mode');
     });

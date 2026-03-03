@@ -79,7 +79,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     final isWideScreen = size.width >= 1200;
     final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(
@@ -424,7 +424,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     _vatController.text = vat;
     _crController.text = cr;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_currentStoreId != null) {
       try {

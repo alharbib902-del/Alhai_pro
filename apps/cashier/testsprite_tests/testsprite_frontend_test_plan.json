@@ -1,0 +1,4500 @@
+[
+  {
+    "id": "TC001",
+    "title": "Skip onboarding immediately and land on Login",
+    "description": "Verifies a user can skip onboarding from the first screen and is taken to the login screen.",
+    "category": "Onboarding",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /onboarding"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Skip\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Skip\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Login screen\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Retry on onboarding asset load error then skip to Login",
+    "description": "Verifies that when an onboarding asset fails to load, an error placeholder is shown, Retry is available, and Skip still navigates to Login.",
+    "category": "Onboarding",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /onboarding"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Onboarding asset error placeholder\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Retry\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Retry\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Skip\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Skip\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/login\""
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Complete a standard POS sale from product browse to payment screen",
+    "description": "Verifies a cashier can browse products, add to cart, adjust quantity, apply a discount, hold the invoice, and proceed to the payment screen.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first visible product in the product list/grid"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cart\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cart items list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"+\" (increase quantity) for the first cart item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Qty\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Discount\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"5\" into the discount value field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Discount\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Hold Invoice\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invoice held\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Proceed to Payment\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos/payment\""
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Search products by name and add a result to the cart",
+    "description": "Verifies searching by product name returns results and a product can be added to the cart from search results.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the product search field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"milk\" into the product search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Search results list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product in the search results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cart items list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Browse products by category and ensure product list updates",
+    "description": "Verifies switching categories changes the visible product list on the POS screen.",
+    "category": "Point of Sale (POS)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product category chip/tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Product list/grid\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on a different product category chip/tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Product list/grid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Adjust cart item quantity down to minimum and verify it does not go negative",
+    "description": "Verifies decreasing item quantity stops at the minimum allowed (e.g., 1) and does not display invalid quantity.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first visible product in the product list/grid"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cart items list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"-\" (decrease quantity) for the first cart item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Qty\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"-\" (decrease quantity) for the first cart item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Qty\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Apply a percentage discount and verify discount is shown on the cart/summary",
+    "description": "Verifies a discount can be applied and the UI reflects the discount in the order summary before payment.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first visible product in the product list/grid"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Discount\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Percentage\" from the discount type dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type \"10\" into the discount value field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"10\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Discount\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Hold an invoice and verify it appears in Hold Invoices list",
+    "description": "Verifies a cart can be held and is visible in the held invoices list for later retrieval.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first visible product in the product list/grid"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Hold Invoice\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invoice held\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Hold Invoices\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos/hold-invoices\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Held invoices list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Search with no matching products shows 'No products found' message",
+    "description": "Verifies the POS search displays a clear empty state when no products match the query.",
+    "category": "Point of Sale (POS)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the product search field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"zzzz-nonexistent-item\" into the product search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No products found\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Barcode scanner flow: Product not found then quick-add a product and add it to cart",
+    "description": "Verifies scanning an unknown barcode shows 'Product not found', then a new product can be created via quick add and added to the cart.",
+    "category": "Point of Sale (POS)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Barcode Scanner\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos/barcode-scanner\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the barcode input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"0000000000000\" into the barcode input field"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Product not found\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Quick Add Product\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/quick-add\"},{"
+      },
+      {
+        "type": "action",
+        "description": "Type \"New Test Product\" into the product name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"10\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"0000000000000\" into the barcode field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Product saved\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Go to POS\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the product search field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"New Test Product\" into the product search field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"New Test Product\" in the results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cart items list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Sales History: View sales list and open a sale detail",
+    "description": "Verifies a logged-in cashier can view the sales history list and open a sale to see its details.",
+    "category": "Sales History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Sales\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Sales History: Apply date filter and verify filtered results update",
+    "description": "Verifies that applying a date filter updates the visible sales list accordingly.",
+    "category": "Sales History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the date filter control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Date range\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Sales History: Open sale detail and verify totals and payment method are visible",
+    "description": "Verifies that the sale detail view displays the sale totals and payment method information.",
+    "category": "Sales History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale in the sales list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Payment method\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Sales History: Reprint receipt from sale detail and confirm print preview/confirmation",
+    "description": "Verifies a user can initiate receipt reprint from sale detail and reach the reprint screen to confirm.",
+    "category": "Sales History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale in the sales list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reprint receipt\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/sales/reprint\""
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Sales History: Process a product exchange from a sale",
+    "description": "Verifies a cashier can start the product exchange flow for a sale and reach the exchange screen.",
+    "category": "Sales History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale in the sales list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Exchange\" or \"Process exchange\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/sales/exchange\""
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Sales History: Apply date filter that yields no results and verify empty state message",
+    "description": "Verifies the UI shows an empty state message when the selected date period has no sales.",
+    "category": "Sales History",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sales\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the date filter control"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Custom\" from the date range dropdown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No sales for selected period\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Open Customers and search by name or phone",
+    "description": "Verifies a logged-in user can open the Customers screen and filter the customer list using search.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Customers\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Customer list loads and shows basic customer rows",
+    "description": "Verifies the customer list is visible and shows customer entries after opening Customers.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customer list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Search returns matching customers",
+    "description": "Verifies searching by a common term narrows the list to matching customers.",
+    "category": "Customer Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Type \"a\" into the customer search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customer list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Open a customer details page and view account balance",
+    "description": "Verifies selecting a customer opens details and shows the account balance section.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first customer in the customer list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Account balance\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Open customer ledger from customer details",
+    "description": "Verifies the ledger view can be opened for a customer and ledger content is shown.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first customer in the customer list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Ledger\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Transaction ledger\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Create a manual transaction from the ledger and save",
+    "description": "Verifies a user can start a manual transaction from a customer ledger and save it successfully.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first customer in the customer list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Ledger\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"New transaction\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-accounts/transaction\""
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Manual transaction validation: cannot save with missing required fields",
+    "description": "Verifies manual transaction form shows visible validation when attempting to save without required inputs.",
+    "category": "Customer Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first customer in the customer list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Ledger\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"New transaction\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Search no results and start create new customer flow",
+    "description": "Verifies that searching for a non-existent customer shows an empty state and provides a create-new action.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Type \"zzzz-no-such-customer\" into the customer search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Customer not found\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Create new customer\""
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Create new customer: show validation error for missing phone then save after correction",
+    "description": "Verifies the create-customer form enforces phone requirement and can be saved after correcting inputs.",
+    "category": "Customer Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Type \"zzzz-no-such-customer\" into the customer search field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Create new customer\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Customer\" into the customer name field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Phone is required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Apply interest to customer balance from customer accounts area",
+    "description": "Verifies the apply-interest screen can be opened and shows the interest application UI.",
+    "category": "Customer Management",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a store from the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customer Accounts\" in the main navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-accounts\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Apply interest\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-accounts/interest\""
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Add stock to an inventory item and verify stock level updates in list",
+    "description": "Verifies a cashier can add stock for a selected product and see the updated stock level reflected back in the inventory list.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory\""
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Add stock: select product, add quantity, confirm, and verify updated stock is visible",
+    "description": "Verifies the full add-stock workflow: select an item, add quantity, confirm, and see the updated stock on return to the inventory list.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Add Stock\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory/add\""
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Add stock: confirm increases stock and returns to list showing new value",
+    "description": "Verifies adding stock with a valid quantity completes successfully and the inventory list shows the new stock value for that item.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Add Stock\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"5\" into the quantity field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Confirm\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory\""
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Transfer stock shows 'Invalid destination' then succeeds after correction",
+    "description": "Verifies transfer validation: submitting with an invalid destination shows the expected error, then correcting destination allows successful transfer.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Transfer\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory/transfer\""
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Transfer stock: submit invalid destination and verify validation message is visible",
+    "description": "Verifies the transfer form blocks submission with an invalid destination and displays the 'Invalid destination' validation error.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Transfer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"2\" into the transfer quantity field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Invalid destination\" from the destination location dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Submit Transfer\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid destination\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Transfer stock: correct destination and submit successfully",
+    "description": "Verifies that after correcting the destination location, the transfer submits successfully and the user returns to inventory context.",
+    "category": "Inventory Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Transfer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"2\" into the transfer quantity field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Invalid destination\" from the destination location dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Submit Transfer\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid destination\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Main Store\" from the destination location dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Submit Transfer\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory\""
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Remove stock: open remove screen and verify required UI elements are visible",
+    "description": "Verifies the remove stock flow is accessible from an inventory item and the remove form is displayed.",
+    "category": "Inventory Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product row in the inventory list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Remove Stock\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory/remove\""
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Wastage: record wastage with valid quantity and verify success return",
+    "description": "Verifies a cashier can record product wastage with a valid quantity and is returned to inventory context after submission.",
+    "category": "Inventory Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Wastage\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory/wastage\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"1\" into the wastage quantity field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory\""
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Stock take: start physical stock count and verify stock take screen loads",
+    "description": "Verifies the stock-take workflow is accessible and the stock-take screen is displayed for counting inventory.",
+    "category": "Inventory Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Stock Take\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory/stock-take\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Stock Take\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Low-stock alerts: verify inventory alerts section is visible from inventory list",
+    "description": "Verifies low-stock alerts are visible from the inventory list screen when the alerts UI is present.",
+    "category": "Inventory Management",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Inventory\" section in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/inventory\""
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the \"Low Stock Alerts\" section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Low Stock\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Quick Add creates a new product and it appears in the products catalog",
+    "description": "Verifies a cashier can create a new product via Quick Add and see it listed in the catalog.",
+    "category": "Product Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Quick Add\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/quick-add\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"E2E Test Product\" into the product name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"12.50\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1234567890123\" into the barcode field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"E2E Test Product\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Quick Add validation: missing required fields prevents saving",
+    "description": "Verifies the Quick Add form blocks saving when required fields are missing and shows an on-screen validation message.",
+    "category": "Product Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Quick Add\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/quick-add\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/quick-add\""
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Quick Add accepts barcode-only entry after adding name and price",
+    "description": "Verifies the barcode field can be filled and saved when other required fields are present.",
+    "category": "Product Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Quick Add\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Barcode Product\" into the product name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1.00\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"9990001112223\" into the barcode field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Barcode Product\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Edit product selling price updates the displayed price in the catalog",
+    "description": "Verifies a cashier can open the edit price screen for a product and the new price is reflected in the UI.",
+    "category": "Product Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product in the product list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Edit Price\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Edit Price\" button/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Edit Price\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"9.99\" into the selling price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"9.99\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Edit price validation: non-numeric price shows an error and does not save",
+    "description": "Verifies the edit price form rejects invalid price input and displays a visible validation message.",
+    "category": "Product Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product in the product list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Edit Price\" button/menu item"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"abc\" into the selling price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Edit Price\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Manage categories: add a new category and see it in the categories list",
+    "description": "Verifies a cashier can create a new product category and it appears in the category management screen.",
+    "category": "Product Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Categories\" on the Products screen"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/categories\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Add Category\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"E2E Snacks\" into the category name field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"E2E Snacks\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Print barcode labels shows web print preview message (stub printer)",
+    "description": "Verifies the barcode printing flow shows a preview and displays the web limitation message about physical printing being disabled.",
+    "category": "Product Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product in the product list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Print Barcode\" button/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/print-barcode\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Default\" from the label size/options dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Print\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Printing preview available; physical printing disabled on web\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Print barcode validation: printing without selecting a product shows an error",
+    "description": "Verifies the print barcode screen prevents printing when no product is selected and shows an on-screen error.",
+    "category": "Product Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Print Barcode\" on the Products screen"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/print-barcode\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Print\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Select product\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Generate price label sheets and verify a preview is shown",
+    "description": "Verifies the user can open the price labels feature, generate labels, and see a visible preview/result screen.",
+    "category": "Product Management",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Products\" in the app navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Price Labels\" on the Products screen"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/products/price-labels\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate\" or \"Create Labels\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Preview\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Open a new shift with an opening cash amount",
+    "description": "Verifies a cashier can log in, reach Shifts, and open a shift by entering an opening cash amount.",
+    "category": "Shift Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP or password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Verify\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\" or \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Shifts\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Open Shift\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/shifts/open\""
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Confirm opening shift after entering opening cash",
+    "description": "Verifies the shift open screen accepts an opening cash amount and confirms shift opening.",
+    "category": "Shift Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP or password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Verify\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\" or \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Shifts\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Open Shift\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"100\" into the \"Opening cash\" amount field"
+      }
+    ]
+  },
+  {
+    "id": "TC048",
+    "title": "Opening cash validation for empty or invalid amount",
+    "description": "Verifies opening a shift is blocked and a visible validation message appears when opening cash is invalid.",
+    "category": "Shift Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP or password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Verify\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\" or \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Shifts\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Open Shift\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Confirm\" or \"Open Shift\""
+      }
+    ]
+  },
+  {
+    "id": "TC049",
+    "title": "Navigate to Users & Permissions for manager discrepancy resolution",
+    "description": "Verifies a manager can reach the Users & Permissions screen from Settings to resolve shift discrepancy approval tasks.",
+    "category": "Shift Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP or password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Verify\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\" or \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Settings\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Users\" or \"Users & Permissions\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings/users\""
+      }
+    ]
+  },
+  {
+    "id": "TC050",
+    "title": "Generate Daily Sales report with date range and view payment breakdown",
+    "description": "Verifies a cashier can generate the Daily Sales report for a chosen date range and view payment breakdown by method.",
+    "category": "Reports & Analytics",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Daily Sales\" from the report type dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Date range\" field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Payment breakdown\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cash\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Card\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC051",
+    "title": "Daily Sales report validation: end date earlier than start date shows an error",
+    "description": "Verifies the report screen blocks generation or shows an error when an invalid date range is selected.",
+    "category": "Reports & Analytics",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Daily Sales\" from the report type dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Date range\" field"
+      },
+      {
+        "type": "action",
+        "description": "Select a start date that is later than the end date"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid date range\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC052",
+    "title": "Daily Sales report with no data returns an empty-state message",
+    "description": "Verifies the report shows a clear empty state when the selected date range has no sales data.",
+    "category": "Reports & Analytics",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Daily Sales\" from the report type dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Date range\" field"
+      },
+      {
+        "type": "action",
+        "description": "Select a date range far in the past"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No data\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC053",
+    "title": "Open Custom Report Builder from Reports and generate with multiple filters",
+    "description": "Verifies a cashier can open the custom report builder and run a report after adding multiple filters.",
+    "category": "Reports & Analytics",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Custom report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports/custom\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Date\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Between\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type a valid start date into the start date field"
+      },
+      {
+        "type": "action",
+        "description": "Type a valid end date into the end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Payment method\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Equals\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cash\" from the value dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Results\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC054",
+    "title": "Custom report heavy query shows 'Report generation failed' and Retry works",
+    "description": "Verifies the custom report builder shows a failure message for a heavy query and allows retrying generation.",
+    "category": "Reports & Analytics",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Custom report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports/custom\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Date\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Between\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type a very wide start date into the start date field"
+      },
+      {
+        "type": "action",
+        "description": "Type today's date into the end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Product\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Contains\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type a broad value like \"a\" into the value field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Report generation failed\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Retry\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Generating\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC055",
+    "title": "Custom report failure can be resolved by reducing filters and regenerating",
+    "description": "Verifies a user can reduce filter complexity after a failure and successfully generate a custom report.",
+    "category": "Reports & Analytics",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Custom report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports/custom\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Date\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Between\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type a very wide start date into the start date field"
+      },
+      {
+        "type": "action",
+        "description": "Type today's date into the end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Report generation failed\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Clear filters\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No filters applied\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Add filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Date\" from the filter field dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Today\" from the condition dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Generate report\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Results\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC056",
+    "title": "Update store information and save successfully",
+    "description": "Verifies a cashier can update store name and address in Store settings and save changes.",
+    "category": "Settings & Configuration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Store\""
+      }
+    ]
+  },
+  {
+    "id": "TC057",
+    "title": "Save store information changes persists on revisit",
+    "description": "Verifies store name/address changes remain visible after saving and revisiting Store settings.",
+    "category": "Settings & Configuration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Store\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings/store\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Store Information\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC058",
+    "title": "Update VAT (ZATCA) tax settings and save successfully",
+    "description": "Verifies a cashier can update VAT settings under Tax configuration and save.",
+    "category": "Settings & Configuration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Tax\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings/tax\""
+      }
+    ]
+  },
+  {
+    "id": "TC059",
+    "title": "Tax settings validation: prevent saving with invalid VAT value",
+    "description": "Verifies the Tax settings screen blocks saving when VAT inputs are invalid and shows a visible error message.",
+    "category": "Settings & Configuration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Tax\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"-5\" into the \"VAT\" or \"VAT Rate\" field"
+      }
+    ]
+  },
+  {
+    "id": "TC060",
+    "title": "Navigate through key Settings sections without errors",
+    "description": "Verifies the Settings menu can open major configuration pages (Store, Tax, Receipt, Printer) and each page renders visible header content.",
+    "category": "Settings & Configuration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receipt\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/settings/receipt\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Back\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Printer\""
+      }
+    ]
+  },
+  {
+    "id": "TC061",
+    "title": "Backup screen shows actionable options when opened",
+    "description": "Verifies the Backup settings screen displays key controls like Backup/Restore options to the user.",
+    "category": "Settings & Configuration",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the OTP/password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Settings\" option in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Backup\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Backup\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Restore\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC062",
+    "title": "Refund an item from an existing sale and complete return receipt flow",
+    "description": "Verifies a cashier can find an original sale, select return items, choose a reason, process a refund to the original payment method, and reach the return receipt screen.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/returns\""
+      }
+    ]
+  },
+  {
+    "id": "TC063",
+    "title": "Locate original sale from Returns screen using search",
+    "description": "Verifies the original sale can be searched and selected from the Returns screen.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Type \"INV\" into the \"Search sale\" / \"Invoice\" search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Sale\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC064",
+    "title": "Select items to return from the original sale details",
+    "description": "Verifies the user can select one or more items from a sale for return processing.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Items\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC065",
+    "title": "Choose a return reason before refund processing",
+    "description": "Verifies a return reason can be selected and is required prior to completing a refund.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the checkbox/toggle for the first item to return"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Return reason\" dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Damaged\" from the return reason dropdown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Damaged\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC066",
+    "title": "Process refund to the original payment method and show return receipt",
+    "description": "Verifies refund completion to original payment method and successful navigation to the return receipt screen.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the checkbox/toggle for the first item to return"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Return reason\" dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Not needed\" from the return reason dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Refund to original payment method\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Return Receipt\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC067",
+    "title": "Validate refund amount cannot exceed original amount",
+    "description": "Verifies that entering a refund amount greater than the original amount shows the validation error.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the checkbox/toggle for the first item to return"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"999999\" into the \"Refund amount\" field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Refund exceeds original amount\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC068",
+    "title": "Correct an excessive refund amount and proceed successfully",
+    "description": "Verifies the user can fix an excessive refund value to a valid amount and the validation error disappears allowing continuation.",
+    "category": "Returns & Refunds",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the checkbox/toggle for the first item to return"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"999999\" into the \"Refund amount\" field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Refund exceeds original amount\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"1\" into the \"Refund amount\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Refund to original payment method\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Return Receipt\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC069",
+    "title": "Attempt to proceed without selecting any items to return",
+    "description": "Verifies the system prevents processing a return when no items are selected and shows a visible message.",
+    "category": "Returns & Refunds",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Refund to original payment method\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Select items to return\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC070",
+    "title": "Attempt to process return without selecting a return reason",
+    "description": "Verifies the system requires a return reason before refund processing and shows a visible message.",
+    "category": "Returns & Refunds",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" / \"Sign in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Returns\" in the main navigation/menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first sale result in the search results list"
+      },
+      {
+        "type": "action",
+        "description": "Click on the checkbox/toggle for the first item to return"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Refund to original payment method\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Return reason is required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC071",
+    "title": "Receive goods from an existing purchase order and confirm completion",
+    "description": "Verifies a cashier can open the receiving screen, choose an existing purchase order, enter received quantities, and confirm receiving.",
+    "category": "Purchases & Receiving",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Purchases\" or \"Receiving\" in the main menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/purchases/receiving\""
+      }
+    ]
+  },
+  {
+    "id": "TC072",
+    "title": "Create a receiving record without selecting a purchase order (direct receiving)",
+    "description": "Verifies a cashier can create a new receiving record and add items before confirming receipt.",
+    "category": "Purchases & Receiving",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Receiving\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC073",
+    "title": "Receive goods with quantity entry and confirm receive updates the receiving status",
+    "description": "Verifies that after entering received quantities and confirming, the UI shows a successful receive confirmation.",
+    "category": "Purchases & Receiving",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Select Purchase Order\" or \"Choose PO\""
+      }
+    ]
+  },
+  {
+    "id": "TC074",
+    "title": "Validation: entering a negative quantity shows 'Invalid quantity' error",
+    "description": "Verifies the receiving screen blocks negative quantities and shows the expected validation message.",
+    "category": "Purchases & Receiving",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"-1\" into the quantity received field for the first item"
+      }
+    ]
+  },
+  {
+    "id": "TC075",
+    "title": "Recovery: correct invalid quantity and successfully confirm receive",
+    "description": "Verifies that after seeing 'Invalid quantity', the cashier can correct the quantity and complete receiving.",
+    "category": "Purchases & Receiving",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"-1\" into the quantity received field for the first item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid quantity\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC076",
+    "title": "Select supplier and add received items to a receiving record",
+    "description": "Verifies a cashier can pick a supplier and add at least one item to the receiving list before quantity entry.",
+    "category": "Purchases & Receiving",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Select Supplier\""
+      }
+    ]
+  },
+  {
+    "id": "TC077",
+    "title": "Prevent confirmation when required fields are missing (no items or no quantities)",
+    "description": "Verifies the receiving screen blocks confirmation when nothing is added/entered and shows a visible prompt or error.",
+    "category": "Purchases & Receiving",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Confirm Receive\""
+      }
+    ]
+  },
+  {
+    "id": "TC078",
+    "title": "Receiving screen loads and shows core UI sections (sanity check)",
+    "description": "Verifies the receiving screen renders key sections such as supplier/PO selection and received items list area.",
+    "category": "Purchases & Receiving",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone or username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password or OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\" or \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first available store in the store list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Receiving\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Supplier\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC079",
+    "title": "Edit an active offer and verify it can be saved from Active Offers screen",
+    "description": "Verifies a cashier can open an offer from the Active Offers list, change its active state, and save successfully.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Active Offers\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active Offers\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC080",
+    "title": "Toggle offer active status and confirm it persists on returning to list",
+    "description": "Verifies activating or deactivating an offer persists after saving and returning to the list.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Active Offers\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first offer in the list"
+      }
+    ]
+  },
+  {
+    "id": "TC081",
+    "title": "Save changes on an offer and verify confirmation message appears",
+    "description": "Verifies saving an edited offer shows a visible success confirmation or updated state in the UI.",
+    "category": "Offers & Promotions",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Active Offers\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first offer in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Save\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC082",
+    "title": "Verify offer changes reflect in POS checkout (discount indicator visible)",
+    "description": "Verifies that after editing an offer, the POS screen shows an offer/discount indicator during checkout.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"POS\" entry in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/pos\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first product in the product catalog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cart\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC083",
+    "title": "Start creating a coupon and trigger invalid expiry date validation",
+    "description": "Verifies creating a coupon with an expiry date in the past shows the validation error message.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Coupon Codes\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Coupon\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC084",
+    "title": "Invalid expiry date shows exact error message and blocks saving",
+    "description": "Verifies the UI displays \"Expiry date must be in the future\" and prevents saving until corrected.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Coupon Codes\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create\" or \"New Coupon\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Expiry date\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC085",
+    "title": "Correct the expiry date and successfully save the coupon",
+    "description": "Verifies that after correcting the expiry date to a future date, the coupon can be saved and appears in the list.",
+    "category": "Offers & Promotions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Coupon Codes\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create\" or \"New Coupon\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"TESTCOUPON10\" into the \"Coupon code\" field"
+      }
+    ]
+  },
+  {
+    "id": "TC086",
+    "title": "Bundle Deals screen loads and shows bundle deals list or empty state",
+    "description": "Verifies the Bundle Deals management page is reachable and shows a visible list or a clear empty-state message.",
+    "category": "Offers & Promotions",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the phone/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password/OTP field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/store-select\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Offers\" entry in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Bundle Deals\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bundle\" is visible"
+      }
+    ]
+  }
+]

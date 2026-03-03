@@ -11,11 +11,11 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase> with _$DiscountsDaoMixi
   DiscountsDao(super.db);
 
   Future<List<DiscountsTableData>> getAllDiscounts(String storeId) {
-    return (select(discountsTable)..where((d) => d.storeId.equals(storeId))..orderBy([(d) => OrderingTerm.desc(d.createdAt)])).get();
+    return (select(discountsTable)..where((d) => d.storeId.equals(storeId))..orderBy([(d) => OrderingTerm.desc(d.createdAt)])..limit(200)).get();
   }
 
   Future<List<DiscountsTableData>> getActiveDiscounts(String storeId) {
-    return (select(discountsTable)..where((d) => d.storeId.equals(storeId) & d.isActive.equals(true))).get();
+    return (select(discountsTable)..where((d) => d.storeId.equals(storeId) & d.isActive.equals(true))..limit(200)).get();
   }
 
   Future<int> insertDiscount(DiscountsTableCompanion discount) => into(discountsTable).insert(discount);
@@ -24,7 +24,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase> with _$DiscountsDaoMixi
 
   // Coupons
   Future<List<CouponsTableData>> getAllCoupons(String storeId) {
-    return (select(couponsTable)..where((c) => c.storeId.equals(storeId))..orderBy([(c) => OrderingTerm.desc(c.createdAt)])).get();
+    return (select(couponsTable)..where((c) => c.storeId.equals(storeId))..orderBy([(c) => OrderingTerm.desc(c.createdAt)])..limit(200)).get();
   }
 
   Future<CouponsTableData?> getCouponByCode(String code, String storeId) {
@@ -37,7 +37,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase> with _$DiscountsDaoMixi
 
   // Promotions
   Future<List<PromotionsTableData>> getAllPromotions(String storeId) {
-    return (select(promotionsTable)..where((p) => p.storeId.equals(storeId))..orderBy([(p) => OrderingTerm.desc(p.createdAt)])).get();
+    return (select(promotionsTable)..where((p) => p.storeId.equals(storeId))..orderBy([(p) => OrderingTerm.desc(p.createdAt)])..limit(200)).get();
   }
 
   Future<List<PromotionsTableData>> getActivePromotions(String storeId) {

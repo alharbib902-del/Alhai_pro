@@ -12,8 +12,10 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// Add payment device form screen
 class AddPaymentDeviceScreen extends ConsumerStatefulWidget {
@@ -50,7 +52,7 @@ class _AddPaymentDeviceScreenState
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+    final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
       SettingsTableCompanion.insert(
@@ -84,7 +86,8 @@ class _AddPaymentDeviceScreenState
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Test payment device connection');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -104,8 +107,7 @@ class _AddPaymentDeviceScreenState
     setState(() => _isSaving = true);
 
     try {
-      final deviceId =
-          DateTime.now().millisecondsSinceEpoch.toString();
+      final deviceId = const Uuid().v4();
       final value =
           '${_nameController.text}|$_selectedType|$_connectionMethod|$_testPassed';
 
@@ -132,7 +134,8 @@ class _AddPaymentDeviceScreenState
         );
         context.pop();
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save payment device');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -152,7 +155,7 @@ class _AddPaymentDeviceScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [

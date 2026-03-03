@@ -101,8 +101,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
           blendMode: BlendMode.srcATop,
           shaderCallback: (bounds) {
             return LinearGradient(
-              begin: AlignmentDirectional.topStart,
-              end: AlignmentDirectional.bottomEnd,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
               colors: [
                 baseColor,
                 highlightColor,
@@ -431,7 +431,7 @@ class ShimmerStats extends StatelessWidget {
               ],
             ),
           );
-        }),
+        },
       ),
     );
   }

@@ -923,7 +923,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                       children: [
                         const Icon(Icons.check_circle_rounded, color: Colors.white),
                         const SizedBox(width: AppSizes.sm),
-                        Text(l10n.customerAddedSuccess),
+                        Text(l10n.customerAddedSuccess(nameController.text)),
                       ],
                     ),
                     backgroundColor: AppColors.success,

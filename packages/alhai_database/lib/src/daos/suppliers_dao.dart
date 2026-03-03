@@ -36,11 +36,11 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
   static int clampRating(int rating) => rating.clamp(minRating, maxRating);
 
   Future<List<SuppliersTableData>> getAllSuppliers(String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId))..orderBy([(s) => OrderingTerm.asc(s.name)])).get();
+    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId))..orderBy([(s) => OrderingTerm.asc(s.name)])..limit(500)).get();
   }
 
   Future<List<SuppliersTableData>> getActiveSuppliers(String storeId) {
-    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId) & s.isActive.equals(true))..orderBy([(s) => OrderingTerm.asc(s.name)])).get();
+    return (select(suppliersTable)..where((s) => s.storeId.equals(storeId) & s.isActive.equals(true))..orderBy([(s) => OrderingTerm.asc(s.name)])..limit(500)).get();
   }
 
   Future<SuppliersTableData?> getSupplierById(String id) => (select(suppliersTable)..where((s) => s.id.equals(id))).getSingleOrNull();

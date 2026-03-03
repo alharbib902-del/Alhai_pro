@@ -81,7 +81,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -316,7 +316,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
   }
 
   void _showConfirmationDialog() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final selectedCustomers = _customers.where((c) => c.isSelected).toList();
     final totalInterest = selectedCustomers.fold<double>(0, (sum, c) => sum + c.expectedInterest);
 
@@ -354,7 +354,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
   }
 
   Future<void> _processMonthlyClose() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isProcessing = true);
 
     try {

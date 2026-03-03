@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة إضافة منتج سريع
 class QuickAddProductScreen extends ConsumerStatefulWidget {
@@ -45,6 +48,7 @@ class _QuickAddProductScreenState
   bool _isLoading = false;
   bool _isSaving = false;
   bool _isDirty = false; // M65: unsaved changes tracking
+  String? _error;
 
   @override
   void initState() {
@@ -66,7 +70,10 @@ class _QuickAddProductScreenState
   }
 
   Future<void> _loadCategories() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -77,8 +84,14 @@ class _QuickAddProductScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load categories for quick add product');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -88,7 +101,7 @@ class _QuickAddProductScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return PopScope(
@@ -135,8 +148,10 @@ class _QuickAddProductScreenState
           ),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
+                ? const AppLoadingState()
+                : _error != null
+                    ? AppErrorState.general(message: _error!, onRetry: _loadCategories)
+                    : SingleChildScrollView(
                     padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                     child: Center(
                       child: ConstrainedBox(
@@ -563,7 +578,7 @@ class _QuickAddProductScreenState
 
   void _scanBarcode() {
     // Barcode scanning placeholder - will use camera/scanner
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.enterBarcodeManually),
@@ -576,13 +591,13 @@ class _QuickAddProductScreenState
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSaving = true);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) throw Exception('No store selected');
 
-      final productId = 'PRD-${DateTime.now().millisecondsSinceEpoch}';
+      final productId = const Uuid().v4();
       final price = double.tryParse(InputSanitizer.sanitizeDecimal(_priceController.text)) ?? 0.0;
       final quantity = int.tryParse(InputSanitizer.sanitizeNumeric(_quantityController.text)) ?? 0;
       final sanitizedName = InputSanitizer.sanitize(_nameController.text.trim());
@@ -604,6 +619,17 @@ class _QuickAddProductScreenState
         ),
       );
 
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      auditService.logProductCreate(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: productId,
+        productName: sanitizedName,
+        price: price,
+      );
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -622,7 +648,8 @@ class _QuickAddProductScreenState
         _selectedCategoryId = null;
         _isDirty = false;
       });
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save quick add product');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

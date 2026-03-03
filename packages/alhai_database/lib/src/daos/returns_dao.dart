@@ -10,18 +10,18 @@ part 'returns_dao.g.dart';
 class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
   ReturnsDao(super.db);
 
-  Future<List<ReturnsTableData>> getAllReturns(String storeId) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])).get();
+  Future<List<ReturnsTableData>> getAllReturns(String storeId, {int limit = 1000}) {
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
-  Future<List<ReturnsTableData>> getReturnsByDateRange(String storeId, DateTime startDate, DateTime endDate) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])).get();
+  Future<List<ReturnsTableData>> getReturnsByDateRange(String storeId, DateTime startDate, DateTime endDate, {int limit = 5000}) {
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
   Future<ReturnsTableData?> getReturnById(String id) => (select(returnsTable)..where((r) => r.id.equals(id))).getSingleOrNull();
 
-  Future<List<ReturnsTableData>> getReturnsBySaleId(String saleId) {
-    return (select(returnsTable)..where((r) => r.saleId.equals(saleId))).get();
+  Future<List<ReturnsTableData>> getReturnsBySaleId(String saleId, String storeId) {
+    return (select(returnsTable)..where((r) => r.saleId.equals(saleId) & r.storeId.equals(storeId))).get();
   }
 
   Future<int> insertReturn(ReturnsTableCompanion returnData) => into(returnsTable).insert(returnData);

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:cashier/ui/cashier_shell.dart';
 
 void main() {
@@ -47,6 +48,9 @@ void main() {
         ProviderScope(
           child: MaterialApp.router(
             routerConfig: router,
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
         ),
       );
@@ -119,14 +123,17 @@ void main() {
         ProviderScope(
           child: MaterialApp.router(
             routerConfig: router,
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
         ),
       );
 
       await tester.pumpAndSettle();
 
-      // Verify desktop sidebar navigation items are shown
-      expect(find.text('POS'), findsOneWidget);
+      // Verify desktop sidebar navigation items are shown (English l10n values)
+      expect(find.text('Point of Sale'), findsOneWidget);
       expect(find.text('Customers'), findsOneWidget);
       expect(find.text('Shifts'), findsOneWidget);
       expect(find.text('Returns'), findsOneWidget);
@@ -200,6 +207,9 @@ void main() {
         ProviderScope(
           child: MaterialApp.router(
             routerConfig: router,
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
         ),
       );

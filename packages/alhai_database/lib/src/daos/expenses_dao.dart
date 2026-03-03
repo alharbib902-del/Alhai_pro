@@ -11,11 +11,11 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase> with _$ExpensesDaoMixin 
   ExpensesDao(super.db);
 
   Future<List<ExpensesTableData>> getAllExpenses(String storeId) {
-    return (select(expensesTable)..where((e) => e.storeId.equals(storeId))..orderBy([(e) => OrderingTerm.desc(e.createdAt)])).get();
+    return (select(expensesTable)..where((e) => e.storeId.equals(storeId))..orderBy([(e) => OrderingTerm.desc(e.createdAt)])..limit(500)).get();
   }
 
   Future<List<ExpensesTableData>> getExpensesByDateRange(String storeId, DateTime startDate, DateTime endDate) {
-    return (select(expensesTable)..where((e) => e.storeId.equals(storeId) & e.expenseDate.isBiggerOrEqualValue(startDate) & e.expenseDate.isSmallerThanValue(endDate))..orderBy([(e) => OrderingTerm.desc(e.expenseDate)])).get();
+    return (select(expensesTable)..where((e) => e.storeId.equals(storeId) & e.expenseDate.isBiggerOrEqualValue(startDate) & e.expenseDate.isSmallerThanValue(endDate))..orderBy([(e) => OrderingTerm.desc(e.expenseDate)])..limit(1000)).get();
   }
 
   Future<double> getTodayExpensesTotal(String storeId) async {

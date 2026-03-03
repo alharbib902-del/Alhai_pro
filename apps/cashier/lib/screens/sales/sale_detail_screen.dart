@@ -13,6 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../widgets/zatca_qr_widget.dart';
 
 /// شاشة تفاصيل البيع
 class SaleDetailScreen extends ConsumerStatefulWidget {
@@ -28,7 +30,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   final _db = GetIt.I<AppDatabase>();
   OrdersTableData? _order;
   List<SaleItemsTableData> _items = [];
+  StoresTableData? _store;
   bool _isLoading = true;
+  String? _error;
   bool _isPrinting = false;
 
   @override
@@ -38,22 +42,38 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   }
 
   Future<void> _loadSaleData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final order = await _db.ordersDao.getOrderById(widget.saleId);
       List<SaleItemsTableData> items = [];
       if (order != null) {
         items = await _db.saleItemsDao.getItemsBySaleId(widget.saleId);
       }
+      // Load store data for ZATCA QR
+      final storeId = ref.read(currentStoreIdProvider);
+      StoresTableData? store;
+      if (storeId != null) {
+        store = await _db.storesDao.getStoreById(storeId);
+      }
       if (mounted) {
         setState(() {
           _order = order;
           _items = items;
+          _store = store;
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load sale detail');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -63,7 +83,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Column(
@@ -71,10 +91,13 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           _buildTopBar(isDark, l10n),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _order == null
-                    ? _buildNotFound(isDark, l10n)
-                    : SingleChildScrollView(
+                ? const AppLoadingState()
+                : _error != null
+                    ? AppErrorState.general(
+                        message: _error!, onRetry: _loadSaleData)
+                    : _order == null
+                        ? _buildNotFound(isDark, l10n)
+                        : SingleChildScrollView(
                         padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                         child: isWideScreen
                             ? _buildWideLayout(isDark, l10n)
@@ -183,6 +206,8 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
             children: [
               _buildTotalsCard(isDark, l10n),
               const SizedBox(height: 24),
+              _buildZatcaQrCard(isDark),
+              const SizedBox(height: 24),
               _buildActionsCard(isDark, l10n),
             ],
           ),
@@ -201,6 +226,8 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
         _buildItemsCard(isDark, l10n),
         SizedBox(height: isMediumScreen ? 24 : 16),
         _buildTotalsCard(isDark, l10n),
+        SizedBox(height: isMediumScreen ? 24 : 16),
+        _buildZatcaQrCard(isDark),
         const SizedBox(height: 24),
         _buildActionsCard(isDark, l10n),
         const SizedBox(height: 24),
@@ -538,7 +565,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               fontSize: 13, color: AppColors.getTextSecondary(isDark)),
         ),
         Text(
-          '${value.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+          '${value.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -546,6 +573,31 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildZatcaQrCard(bool isDark) {
+    final order = _order!;
+    final storeName = _store?.name ?? 'Al-HAI Store';
+    final vatNumber = _store?.taxNumber ?? '300000000000003';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Center(
+        child: ZatcaQrWidget(
+          sellerName: storeName,
+          vatNumber: vatNumber,
+          timestamp: order.createdAt,
+          totalWithVat: order.total,
+          vatAmount: order.taxAmount,
+          size: 120,
+        ),
+      ),
     );
   }
 
@@ -610,7 +662,8 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Reprint sale receipt');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

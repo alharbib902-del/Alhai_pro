@@ -83,7 +83,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoadingData = false);
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.errorWithDetails('$e'))),
         );
@@ -118,7 +118,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return PopScope(
       canPop: !_isDirty,
@@ -752,7 +752,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   // ──────────────────────────────────────────────────────────────────────
 
   Future<void> _saveSupplier() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     // Security: Check for dangerous content in text fields
@@ -877,7 +877,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
   void _showDeleteConfirmation() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => ConstrainedBox(
@@ -933,7 +933,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   }
 
   Future<void> _deleteSupplier() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isLoading = true);
 
     try {

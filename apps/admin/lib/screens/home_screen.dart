@@ -33,7 +33,7 @@ class AdminHomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              l10n?.home ?? 'Admin Home',
+              l10n.home,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,

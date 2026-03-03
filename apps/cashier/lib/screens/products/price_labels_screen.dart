@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة ملصقات الأسعار
 class PriceLabelsScreen extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
   final Set<String> _selectedIds = {};
   bool _isLoading = true;
   bool _isPrinting = false;
+  String? _error;
   String _labelSize = 'medium'; // small, medium, large
 
   @override
@@ -49,7 +51,10 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
   }
 
   Future<void> _loadProducts() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -61,8 +66,14 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load products for price labels');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -85,7 +96,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -107,8 +118,10 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadProducts)
+                  : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
     );
@@ -614,7 +627,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
   }
 
   Future<void> _printLabels() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isPrinting = true);
 
     try {
@@ -629,7 +642,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Print price labels');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

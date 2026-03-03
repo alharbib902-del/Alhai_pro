@@ -91,7 +91,7 @@ class _SecuritySettingsScreenState
     final isWideScreen = size.width >= 1200;
     final isMediumScreen = size.width >= 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     final user = ref.watch(currentUserProvider);
@@ -183,7 +183,7 @@ class _SecuritySettingsScreenState
   }
 
   void _showPinOptions() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(context: context, builder: (context) => SafeArea(child: Column(mainAxisSize: MainAxisSize.min, children: [
       if (_pinEnabled) ...[
         ListTile(leading: const Icon(Icons.edit), title: Text(l10n.changePinOption), onTap: () { Navigator.pop(context); _showChangePinDialog(); }),
@@ -195,7 +195,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showCreatePinDialog() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     String? newPin; String? confirmPin; String? error;
     await showDialog(context: context, builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(title: Text(l10n.createPinTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -223,7 +223,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showChangePinDialog() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     String? currentPin; String? newPin; String? error;
     await showDialog(context: context, builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(title: Text(l10n.changePinTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -248,7 +248,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showRemovePinConfirmation() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.removePinTitle), content: Text(l10n.removePinConfirm),
       actions: [
@@ -265,7 +265,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _toggleBiometric(bool enable) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (enable) {
       final success = await BiometricService.enable();
       if (success) {
@@ -284,7 +284,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showLogoutConfirmation() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.logoutAllTitle), content: Text(l10n.logoutAllConfirm),
       actions: [
@@ -299,7 +299,7 @@ class _SecuritySettingsScreenState
   }
 
   Future<void> _showClearAllConfirmation() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.clearDataTitle), content: Text(l10n.clearDataConfirm),
       actions: [

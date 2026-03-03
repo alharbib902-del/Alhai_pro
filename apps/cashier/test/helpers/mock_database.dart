@@ -92,6 +92,12 @@ class MockSyncMetadataDao extends Mock implements SyncMetadataDao {}
 class MockStockDeltasDao extends Mock implements StockDeltasDao {}
 
 // ============================================================================
+// MOCK TABLES (for screens that use direct table queries)
+// ============================================================================
+
+class MockSettingsTable extends Mock implements $SettingsTableTable {}
+
+// ============================================================================
 // FAKE CLASSES (for mocktail registerFallbackValue)
 // ============================================================================
 
@@ -245,7 +251,10 @@ MockAppDatabase setupMockDatabase({
   when(() => db.loyaltyDao).thenReturn(loyaltyDao ?? MockLoyaltyDao());
 
   // Business DAOs
-  when(() => db.storesDao).thenReturn(storesDao ?? MockStoresDao());
+  final effectiveStoresDao = storesDao ?? MockStoresDao();
+  when(() => db.storesDao).thenReturn(effectiveStoresDao);
+  when(() => effectiveStoresDao.getStoreById(any()))
+      .thenAnswer((_) async => null);
   when(() => db.usersDao).thenReturn(usersDao ?? MockUsersDao());
   when(() => db.customersDao).thenReturn(customersDao ?? MockCustomersDao());
   when(() => db.suppliersDao).thenReturn(suppliersDao ?? MockSuppliersDao());
@@ -276,6 +285,9 @@ MockAppDatabase setupMockDatabase({
       .thenReturn(syncMetadataDao ?? MockSyncMetadataDao());
   when(() => db.stockDeltasDao)
       .thenReturn(stockDeltasDao ?? MockStockDeltasDao());
+
+  // Table accessors (for screens that use direct table queries)
+  when(() => db.settingsTable).thenReturn(MockSettingsTable());
 
   return db;
 }

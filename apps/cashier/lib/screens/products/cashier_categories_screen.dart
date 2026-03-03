@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة التصنيفات للكاشير
 class CashierCategoriesScreen extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _CashierCategoriesScreenState
   List<CategoriesTableData> _filteredCategories = [];
   Map<String, int> _productCounts = {};
   bool _isLoading = true;
+  String? _error;
 
   // Selected category for product view
   CategoriesTableData? _selectedCategory;
@@ -53,7 +55,10 @@ class _CashierCategoriesScreenState
   }
 
   Future<void> _loadCategories() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -66,7 +71,8 @@ class _CashierCategoriesScreenState
           final products =
               await _db.productsDao.getProductsByCategory(cat.id, storeId);
           counts[cat.id] = products.length;
-        } catch (_) {
+        } catch (e, stack) {
+          reportError(e, stackTrace: stack, hint: 'Count products in category');
           counts[cat.id] = 0;
         }
       }
@@ -79,8 +85,14 @@ class _CashierCategoriesScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load categories');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -111,8 +123,17 @@ class _CashierCategoriesScreenState
           _isLoadingProducts = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoadingProducts = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load category products');
+      if (mounted) {
+        setState(() => _isLoadingProducts = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -121,7 +142,7 @@ class _CashierCategoriesScreenState
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -143,8 +164,10 @@ class _CashierCategoriesScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadCategories)
+                  : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
     );
@@ -371,7 +394,7 @@ class _CashierCategoriesScreenState
         // Products list
         Expanded(
           child: _isLoadingProducts
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
               : _categoryProducts.isEmpty
                   ? Center(
                       child: Column(

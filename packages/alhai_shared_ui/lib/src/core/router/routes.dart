@@ -544,6 +544,9 @@ class AppRoutes {
   /// ZATCA compliance
   static const String settingsZatca = '/settings/zatca';
 
+  /// Privacy policy
+  static const String settingsPrivacy = '/settings/privacy';
+
   /// Help & support
   static const String settingsHelp = '/settings/help';
 

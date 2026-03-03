@@ -18,7 +18,7 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width >= 1200;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(

@@ -11,6 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة فتح الوردية
 class ShiftOpenScreen extends ConsumerStatefulWidget {
@@ -36,7 +37,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -390,7 +391,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
   }
 
   Future<void> _openShift() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final openingCash = double.tryParse(_openingCashController.text);
 
     if (openingCash == null || openingCash <= 0) {
@@ -417,6 +418,12 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
 
       if (!mounted) return;
 
+      addBreadcrumb(
+        message: 'Shift opened',
+        category: 'shift',
+        data: {'openingCash': openingCash},
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.shiftOpenedWithAmount(
@@ -426,7 +433,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       );
 
       context.go(AppRoutes.pos);
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Open shift');
       if (!mounted) return;
       showDialog(
         context: context,

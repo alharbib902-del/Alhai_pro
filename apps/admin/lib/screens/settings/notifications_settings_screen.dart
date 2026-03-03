@@ -85,7 +85,7 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
         ref: ref,
       );
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -107,7 +107,7 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
       return Column(

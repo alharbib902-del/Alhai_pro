@@ -11,11 +11,11 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase> with _$PurchasesDaoMixi
   PurchasesDao(super.db);
 
   Future<List<PurchasesTableData>> getAllPurchases(String storeId) {
-    return (select(purchasesTable)..where((p) => p.storeId.equals(storeId))..orderBy([(p) => OrderingTerm.desc(p.createdAt)])).get();
+    return (select(purchasesTable)..where((p) => p.storeId.equals(storeId))..orderBy([(p) => OrderingTerm.desc(p.createdAt)])..limit(500)).get();
   }
 
   Future<List<PurchasesTableData>> getPurchasesByStatus(String storeId, String status) {
-    return (select(purchasesTable)..where((p) => p.storeId.equals(storeId) & p.status.equals(status))).get();
+    return (select(purchasesTable)..where((p) => p.storeId.equals(storeId) & p.status.equals(status))..limit(500)).get();
   }
 
   Future<PurchasesTableData?> getPurchaseById(String id) => (select(purchasesTable)..where((p) => p.id.equals(id))).getSingleOrNull();

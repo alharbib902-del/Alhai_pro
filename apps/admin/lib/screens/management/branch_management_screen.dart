@@ -56,7 +56,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -212,7 +212,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
   }
 
   void _addBranch() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final addressController = TextEditingController();
     final phoneController = TextEditingController();
@@ -264,7 +264,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
 
   void _showBranchDetails(StoresTableData store) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -338,7 +338,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
   }
 
   Future<void> _deleteStore(StoresTableData store) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

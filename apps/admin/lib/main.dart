@@ -14,7 +14,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'di/injection.dart';
 import 'dart:async';
-import 'dart:ui';
 import 'router/admin_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 

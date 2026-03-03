@@ -35151,7 +35151,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index idxProductsIsActive = Index('idx_products_is_active',
       'CREATE INDEX idx_products_is_active ON products (is_active)');
   late final Index idxProductsStoreBarcode = Index('idx_products_store_barcode',
-      'CREATE UNIQUE INDEX idx_products_store_barcode ON products (store_id, barcode)');
+      'CREATE INDEX idx_products_store_barcode ON products (store_id, barcode)');
   late final Index idxSalesStoreId = Index('idx_sales_store_id',
       'CREATE INDEX idx_sales_store_id ON sales (store_id)');
   late final Index idxSalesCashierId = Index('idx_sales_cashier_id',

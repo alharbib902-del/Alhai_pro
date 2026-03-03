@@ -13,6 +13,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة الاستبدال
@@ -69,8 +71,16 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           }
         });
       }
-    } catch (e) {
-      debugPrint('Exchange search error: $e');
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Exchange search');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -133,7 +143,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -595,6 +605,24 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     try {
       // Simulate exchange processing
       await Future.delayed(const Duration(seconds: 1));
+
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      auditService.logExchange(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        returnCount: _returnItems.length,
+        newCount: _newItems.length,
+      );
+
+      addBreadcrumb(
+        message: 'Exchange completed',
+        category: 'sale',
+        data: {'returnItems': _returnItems.length, 'newItems': _newItems.length},
+      );
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -606,7 +634,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         _returnItems.clear();
         _newItems.clear();
       });
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Submit exchange');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

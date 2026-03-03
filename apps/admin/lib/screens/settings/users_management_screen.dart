@@ -47,7 +47,7 @@ class _UsersManagementScreenState
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width >= 1200;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final padding = size.width < 600 ? 12.0 : isWideScreen ? 24.0 : 16.0;
 
     return Column(children: [
@@ -87,7 +87,7 @@ class _UsersManagementScreenState
   }
 
   Widget _buildUserTile(_User user, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ListTile(
       leading: Stack(children: [
         CircleAvatar(backgroundColor: _getRoleColor(user.role).withValues(alpha: 0.1),
@@ -111,9 +111,9 @@ class _UsersManagementScreenState
         icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
         onSelected: (action) => _handleUserAction(user, action),
         itemBuilder: (context) {
-          final l10n = AppLocalizations.of(context)!;
+          final l10n = AppLocalizations.of(context);
           return [
-            PopupMenuItem(value: 'profile', child: Row(children: [const Icon(Icons.person_rounded, size: 18), const SizedBox(width: 8), const Text('الملف الوظيفي')])),
+            PopupMenuItem(value: 'profile', child: Row(children: const [Icon(Icons.person_rounded, size: 18), SizedBox(width: 8), Text('الملف الوظيفي')])),
             PopupMenuItem(value: 'edit', child: Text(l10n.editMenuAction)),
             PopupMenuItem(value: user.active ? 'disable' : 'enable', child: Text(user.active ? l10n.disableMenuAction : l10n.enableMenuAction)),
             if (user.role != 'owner') PopupMenuItem(value: 'delete', child: Text(l10n.delete, style: const TextStyle(color: AppColors.error))),
@@ -129,7 +129,7 @@ class _UsersManagementScreenState
   }
 
   String _getRoleName(String role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (role) { case 'owner': return l10n.ownerRole; case 'manager': return l10n.managerRole; case 'supervisor': return l10n.supervisorRole; case 'cashier': return l10n.cashierRole; default: return role; }
   }
 
@@ -165,7 +165,7 @@ class _UsersManagementScreenState
   void _addUser() {
     final nameController = TextEditingController(); final phoneController = TextEditingController(); String role = 'cashier';
     showDialog(context: context, builder: (context) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       return StatefulBuilder(builder: (context, setDialogState) => AlertDialog(title: Text(l10n.addUserTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.nameRequired, prefixIcon: const Icon(Icons.person), border: const OutlineInputBorder())),
         const SizedBox(height: 12),
@@ -198,7 +198,7 @@ class _UsersManagementScreenState
   void _editUser(_User user) {
     final nameController = TextEditingController(text: user.name); final phoneController = TextEditingController(text: user.phone); String role = user.role;
     showDialog(context: context, builder: (context) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       return StatefulBuilder(builder: (context, setDialogState) => AlertDialog(title: Text(l10n.editUserTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.nameRequired, prefixIcon: const Icon(Icons.person), border: const OutlineInputBorder())),
         const SizedBox(height: 12),
@@ -229,8 +229,7 @@ class _UsersManagementScreenState
   }
 
   void _showUserDetails(_User user) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(context: context, builder: (context) => Container(
       color: Theme.of(context).colorScheme.surface, padding: const EdgeInsets.all(24),
       child: Column(mainAxisSize: MainAxisSize.min, children: [

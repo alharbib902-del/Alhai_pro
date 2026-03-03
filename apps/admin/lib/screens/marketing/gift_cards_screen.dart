@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 import 'dart:math';
 
 /// شاشة إدارة بطاقات الهدايا والقسائم
@@ -94,7 +95,7 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
   String _generateCode() {
     final rng = Random();
-    final chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final code = List.generate(8, (_) => chars[rng.nextInt(chars.length)]).join();
     return 'GC-$code';
   }
@@ -221,8 +222,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
               Navigator.pop(ctx);
               if (card == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('لا توجد بطاقة بهذا الكود'),
+                  SnackBar(
+                    content: const Text('لا توجد بطاقة بهذا الكود'),
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
                 );

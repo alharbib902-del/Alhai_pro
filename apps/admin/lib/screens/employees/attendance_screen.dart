@@ -104,7 +104,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     if (d == null) return '--';
     final h = d.inHours;
     final m = d.inMinutes.remainder(60);
-    return '${h}س ${m}د';
+    return '$hس $mد';
   }
 
   Future<void> _selectDate() async {

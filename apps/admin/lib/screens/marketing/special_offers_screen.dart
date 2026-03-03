@@ -16,7 +16,7 @@ class SpecialOffersScreen extends ConsumerWidget {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final promotionsAsync = ref.watch(promotionsListProvider);
 
     return Column(
@@ -86,11 +86,11 @@ class _OffersContent extends ConsumerWidget {
         const SizedBox(height: 20),
         Row(
           children: [
-            Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${promotions.length}', AppColors.info, isDark)),
+            Expanded(child: _buildStatCard(context, Icons.local_offer, l10n.totalLabel, '${promotions.length}', AppColors.info, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.check_circle, l10n.active, '${promotions.where((p) => p.isActive).length}', AppColors.success, isDark)),
+            Expanded(child: _buildStatCard(context, Icons.check_circle, l10n.active, '${promotions.where((p) => p.isActive).length}', AppColors.success, isDark)),
             SizedBox(width: isMediumScreen ? 16 : 12),
-            Expanded(child: _buildStatCard(Icons.timer, l10n.expiringSoon, '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}', AppColors.secondary, isDark)),
+            Expanded(child: _buildStatCard(context, Icons.timer, l10n.expiringSoon, '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}', AppColors.secondary, isDark)),
           ],
         ),
         const SizedBox(height: 20),
@@ -146,7 +146,7 @@ class _OffersContent extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(IconData icon, String label, String value, Color color, bool isDark) {
+  Widget _buildStatCard(BuildContext context, IconData icon, String label, String value, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

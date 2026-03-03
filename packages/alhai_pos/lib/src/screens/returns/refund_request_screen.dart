@@ -154,7 +154,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                       value: isSelected,
                       onChanged: (v) => _toggleItem(item, v ?? false),
                       title: Text(item.productName),
-                      subtitle: Text(AppLocalizations.of(context)!.quantityTimesPrice(item.qty, item.unitPrice.toStringAsFixed(2))),
+                      subtitle: Text(AppLocalizations.of(context)!.quantityTimesPrice(item.qty.toInt(), item.unitPrice.toStringAsFixed(2))),
                       secondary: CircleAvatar(
                         backgroundColor: isSelected ? AppColors.success.withValues(alpha: 0.15) : Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: Icon(

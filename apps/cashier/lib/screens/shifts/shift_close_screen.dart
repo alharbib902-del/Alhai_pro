@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة إغلاق الوردية
 class ShiftCloseScreen extends ConsumerStatefulWidget {
@@ -60,7 +61,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.defaultUserName;
 
@@ -98,13 +99,18 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                     l10n,
                   ),
                 ),
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('$e')),
+                loading: () => const AppLoadingState(),
+                error: (e, _) => AppErrorState.general(
+                  message: '$e',
+                  onRetry: () => ref.invalidate(shiftMovementsProvider(shift.id)),
+                ),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            loading: () => const AppLoadingState(),
+            error: (e, _) => AppErrorState.general(
+              message: '$e',
+              onRetry: () => ref.invalidate(openShiftProvider),
+            ),
           ),
         ),
       ],
@@ -615,7 +621,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   }
 
   Future<void> _closeShift(ShiftsTableData shift, double expectedCash) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final actualCash = double.tryParse(_actualCashController.text) ?? 0;
     final difference = actualCash - expectedCash;
 
@@ -683,9 +689,20 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         notes: null,
       );
 
+      addBreadcrumb(
+        message: 'Shift closed',
+        category: 'shift',
+        data: {
+          'closingCash': actualCash,
+          'difference': difference,
+          'totalSales': shift.totalSales,
+        },
+      );
+
       if (!mounted) return;
       context.push(AppRoutes.shiftSummary);
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Close shift');
       if (!mounted) return;
       showDialog(
         context: context,

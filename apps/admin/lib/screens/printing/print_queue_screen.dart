@@ -22,7 +22,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final jobs = ref.watch(printQueueProvider);
 
     return Column(
@@ -317,7 +317,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
   }
 
   Future<void> _printJob(PrintJob job) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(printQueueProvider.notifier);
     notifier.markPrinting(job.id);
 
@@ -379,7 +379,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
     if (!mounted) return;
     setState(() => _isPrinting = false);
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.allJobsPrinted),
@@ -389,7 +389,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
   }
 
   void _clearAll() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

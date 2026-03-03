@@ -26,7 +26,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -50,7 +50,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
   }
 
   Widget _buildUploadView(bool isWideScreen, bool isMediumScreen, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
       child: Column(
@@ -118,7 +118,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
   }
 
   Widget _buildPreviewView(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         Expanded(
@@ -170,7 +170,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
   }
 
   Widget _buildProcessingView(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Container(
         padding: const EdgeInsets.all(48),
@@ -203,7 +203,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.failedCapture(e)), backgroundColor: AppColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).failedCapture(e)), backgroundColor: AppColors.error),
         );
       }
     }
@@ -218,7 +218,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.failedPickImage(e)), backgroundColor: AppColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).failedPickImage(e)), backgroundColor: AppColors.error),
         );
       }
     }
@@ -236,7 +236,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
     final fileSize = await imageFile.length();
     if (fileSize > _maxFileSizeBytes) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorWithDetails('File exceeds 10MB limit')),
@@ -269,7 +269,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
       setState(() => _isProcessing = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.failedProcessInvoice(e)), backgroundColor: AppColors.error, behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 4)),
+        SnackBar(content: Text(AppLocalizations.of(context).failedProcessInvoice(e)), backgroundColor: AppColors.error, behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 4)),
       );
     }
   }

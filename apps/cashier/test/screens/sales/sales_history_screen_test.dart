@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
 import '../../helpers/mock_database.dart';
 import '../../helpers/test_factories.dart';
@@ -38,7 +39,8 @@ void main() {
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Screen uses ShimmerList for loading state (not CircularProgressIndicator)
+      expect(find.byType(ShimmerList), findsOneWidget);
     });
 
     testWidgets('shows empty state when no orders match', (tester) async {

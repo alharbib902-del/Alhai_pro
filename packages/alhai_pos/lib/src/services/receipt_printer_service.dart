@@ -28,8 +28,8 @@ class ReceiptPrinterService {
       if (sale == null) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('الفاتورة غير موجودة'),
+            SnackBar(
+              content: const Text('الفاتورة غير موجودة'),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );

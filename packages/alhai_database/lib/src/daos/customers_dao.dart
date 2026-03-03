@@ -11,7 +11,7 @@ class CustomersDao extends DatabaseAccessor<AppDatabase> with _$CustomersDaoMixi
   CustomersDao(super.db);
 
   Future<List<CustomersTableData>> getAllCustomers(String storeId) {
-    return (select(customersTable)..where((c) => c.storeId.equals(storeId))..orderBy([(c) => OrderingTerm.asc(c.name)])).get();
+    return (select(customersTable)..where((c) => c.storeId.equals(storeId))..orderBy([(c) => OrderingTerm.asc(c.name)])..limit(500)).get();
   }
 
   // ============================================================================
@@ -55,7 +55,7 @@ class CustomersDao extends DatabaseAccessor<AppDatabase> with _$CustomersDaoMixi
   }
 
   Future<List<CustomersTableData>> getActiveCustomers(String storeId) {
-    return (select(customersTable)..where((c) => c.storeId.equals(storeId) & c.isActive.equals(true) & c.deletedAt.isNull())..orderBy([(c) => OrderingTerm.asc(c.name)])).get();
+    return (select(customersTable)..where((c) => c.storeId.equals(storeId) & c.isActive.equals(true) & c.deletedAt.isNull())..orderBy([(c) => OrderingTerm.asc(c.name)])..limit(500)).get();
   }
 
   Future<CustomersTableData?> getCustomerById(String id) => (select(customersTable)..where((c) => c.id.equals(id))).getSingleOrNull();
@@ -102,7 +102,7 @@ class CustomersDao extends DatabaseAccessor<AppDatabase> with _$CustomersDaoMixi
   }
 
   /// عميل مع إحصائيات المشتريات
-  Future<CustomerWithStats?> getCustomerWithStats(String customerId) async {
+  Future<CustomerWithStats?> getCustomerWithStats(String customerId, String storeId) async {
     final customer = await getCustomerById(customerId);
     if (customer == null) return null;
 
@@ -112,8 +112,8 @@ class CustomersDao extends DatabaseAccessor<AppDatabase> with _$CustomersDaoMixi
            COALESCE(SUM(total), 0) as total_spent,
            MAX(created_at) as last_purchase_date
          FROM sales
-         WHERE customer_id = ? AND status = 'completed' ''',
-      variables: [Variable.withString(customerId)],
+         WHERE customer_id = ? AND store_id = ? AND status = 'completed' ''',
+      variables: [Variable.withString(customerId), Variable.withString(storeId)],
     ).getSingle();
 
     return CustomerWithStats(

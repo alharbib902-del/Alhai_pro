@@ -88,17 +88,29 @@ void main() {
     });
 
     test('getProductSalesCount sums quantities', () async {
+      // Insert sales records for the JOIN
+      await db.salesDao.insertSale(SalesTableCompanion.insert(
+        id: 'sale-1', storeId: 'store-1', receiptNo: 'R001',
+        total: 11.0, paymentMethod: 'cash', status: 'completed',
+        cashierId: 'cashier-1', createdAt: DateTime.now(),
+      ));
+      await db.salesDao.insertSale(SalesTableCompanion.insert(
+        id: 'sale-2', storeId: 'store-1', receiptNo: 'R002',
+        total: 27.5, paymentMethod: 'cash', status: 'completed',
+        cashierId: 'cashier-1', createdAt: DateTime.now(),
+      ));
+
       await db.saleItemsDao
           .insertItem(_makeItem(id: 'item-1', qty: 3, productId: 'prod-1'));
       await db.saleItemsDao.insertItem(_makeItem(
           id: 'item-2', saleId: 'sale-2', qty: 5, productId: 'prod-1'));
 
-      final count = await db.saleItemsDao.getProductSalesCount('prod-1');
+      final count = await db.saleItemsDao.getProductSalesCount('prod-1', 'store-1');
       expect(count, 8);
     });
 
     test('getProductSalesCount returns 0 for no sales', () async {
-      final count = await db.saleItemsDao.getProductSalesCount('prod-unknown');
+      final count = await db.saleItemsDao.getProductSalesCount('prod-unknown', 'store-1');
       expect(count, 0);
     });
   });

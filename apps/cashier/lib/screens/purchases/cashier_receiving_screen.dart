@@ -14,6 +14,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة استلام بضاعة
 class CashierReceivingScreen extends ConsumerStatefulWidget {
@@ -53,7 +55,8 @@ class _CashierReceivingScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load purchases for receiving');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -64,7 +67,7 @@ class _CashierReceivingScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -354,8 +357,8 @@ class _CashierReceivingScreenState
     List<PurchaseItemsTableData> items = [];
     try {
       items = await _db.purchasesDao.getPurchaseItems(purchase.id);
-    } catch (e) {
-      // If DB call fails, show empty
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load purchase items for detail');
     }
 
     if (!mounted) return;
@@ -577,22 +580,33 @@ class _CashierReceivingScreenState
     setState(() => _receivingId = purchase.id);
 
     try {
-      // 1. Mark purchase as received
-      await _db.purchasesDao.receivePurchase(purchase.id);
+      await _db.transaction(() async {
+        // 1. Mark purchase as received
+        await _db.purchasesDao.receivePurchase(purchase.id);
 
-      // 2. Update stock for each item
-      final items = await _db.purchasesDao.getPurchaseItems(purchase.id);
-      for (final item in items) {
-        try {
+        // 2. Update stock for each item
+        final items = await _db.purchasesDao.getPurchaseItems(purchase.id);
+        for (final item in items) {
           final product = await _db.productsDao.getProductById(item.productId);
           if (product != null) {
-            final newStock = product.stockQty + item.qty;
+            final newStock = product.stockQty + item.qty.toInt();
             await _db.productsDao.updateStock(item.productId, newStock);
           }
-        } catch (_) {
-          // Continue with other items if one fails
         }
-      }
+      });
+
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final receivedItems = await _db.purchasesDao.getPurchaseItems(purchase.id);
+      auditService.logStockReceive(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        purchaseId: purchase.id,
+        purchaseNumber: purchase.purchaseNumber,
+        itemCount: receivedItems.length,
+      );
 
       if (!mounted) return;
 
@@ -605,12 +619,21 @@ class _CashierReceivingScreenState
 
       // 3. Refresh the list
       await _loadPurchases();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Confirm purchase receipt');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
         ),
       );
     } finally {

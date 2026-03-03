@@ -145,3 +145,18 @@ final pendingPrintCountProvider = Provider<int>((ref) {
   final jobs = ref.watch(printQueueProvider);
   return jobs.where((j) => j.status == 'pending' || j.status == 'failed').length;
 });
+
+/// Callback type for auto-printing a receipt by sale ID
+///
+/// Implementations should fetch sale data from the database and print
+/// using the configured thermal printer (ESC/POS).
+typedef AutoPrintCallback = Future<bool> Function(String saleId);
+
+/// Provider for the auto-print callback, set by the app layer (e.g. cashier).
+/// When non-null and auto-print is enabled, the POS screen will automatically
+/// print a receipt after each successful payment.
+final autoPrintCallbackProvider =
+    StateProvider<AutoPrintCallback?>((ref) => null);
+
+/// Whether auto-print is enabled
+final autoPrintEnabledProvider = StateProvider<bool>((ref) => false);

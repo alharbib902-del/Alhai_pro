@@ -203,7 +203,7 @@ void runReceiptPdfTests() {
     });
 
     test('receipt number follows POS-YYYYMMDD-NNNN format', () {
-      final receiptNo = 'POS-20260115-0001';
+      const receiptNo = 'POS-20260115-0001';
       expect(
         RegExp(r'^POS-\d{8}-\d{4,}$').hasMatch(receiptNo),
         isTrue,
@@ -307,7 +307,7 @@ void runZatcaComplianceTests() {
     test('VAT rate is 15% for standard items', () {
       const standardVatRate = 0.15;
       const subtotal = 100.0;
-      final vat = subtotal * standardVatRate;
+      const vat = subtotal * standardVatRate;
 
       expect(vat, equals(15.0));
     });
@@ -315,7 +315,7 @@ void runZatcaComplianceTests() {
     test('zero-rated items have 0% VAT', () {
       const zeroRatedVatRate = 0.0;
       const subtotal = 100.0;
-      final vat = subtotal * zeroRatedVatRate;
+      const vat = subtotal * zeroRatedVatRate;
 
       expect(vat, equals(0.0));
     });

@@ -196,7 +196,7 @@ class _RolesPermissionsScreenState
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
               children: [
@@ -237,7 +237,7 @@ class _RolesPermissionsScreenState
             );
   }
   Widget _buildRolesTab(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -269,7 +269,7 @@ class _RolesPermissionsScreenState
   }
 
   Widget _buildRoleCard(Role role, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -375,7 +375,7 @@ class _RolesPermissionsScreenState
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
                 onSelected: (value) => _handleRoleAction(value, role),
                 itemBuilder: (context) {
-                  final l10n = AppLocalizations.of(context)!;
+                  final l10n = AppLocalizations.of(context);
                   return [
                     PopupMenuItem(value: 'edit', child: Text(l10n.editRoleMenu)),
                     PopupMenuItem(value: 'duplicate', child: Text(l10n.duplicateRoleMenu)),
@@ -408,7 +408,7 @@ class _RolesPermissionsScreenState
   }
 
   Widget _buildPermissionCategory(PermissionCategory category, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final permissions =
         Permission.values.where((p) => p.category == category).toList();
 
@@ -482,7 +482,7 @@ class _RolesPermissionsScreenState
 
   void _showRoleDetails(Role role) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -656,7 +656,7 @@ class _RolesPermissionsScreenState
   }
 
   void _showAddRoleDialog() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => _RoleFormDialog(
@@ -673,7 +673,7 @@ class _RolesPermissionsScreenState
   }
 
   void _showEditRoleDialog(Role role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => _RoleFormDialog(
@@ -708,7 +708,7 @@ class _RolesPermissionsScreenState
   }
 
   void _duplicateRole(Role role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     HapticFeedback.mediumImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -720,7 +720,7 @@ class _RolesPermissionsScreenState
 
   void _showRoleUsers(Role role) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -763,7 +763,7 @@ class _RolesPermissionsScreenState
   }
 
   void _deleteRole(Role role) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -833,7 +833,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Dialog(
       child: Container(
         width: 500,

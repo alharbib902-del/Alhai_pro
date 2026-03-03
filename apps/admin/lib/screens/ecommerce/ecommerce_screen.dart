@@ -144,7 +144,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -370,7 +370,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                   runSpacing: 4,
                   children: [
                     Text(
-                      '${product.price.toStringAsFixed(2)}',
+                      product.price.toStringAsFixed(2),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -443,7 +443,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     );
   }
 
-  AppLocalizations get l10n => AppLocalizations.of(context)!;
+  AppLocalizations get l10n => AppLocalizations.of(context);
 
   // ─── Online Orders Tab ─────────────────────────────────────────
 

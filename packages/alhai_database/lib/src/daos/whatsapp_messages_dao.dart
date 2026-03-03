@@ -340,10 +340,12 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على جميع الرسائل (للعرض الشامل)
   Future<List<WhatsAppMessagesTableData>> getAllMessages({
+    required String storeId,
     int limit = 100,
     int offset = 0,
   }) {
     return (select(whatsAppMessagesTable)
+          ..where((q) => q.storeId.equals(storeId))
           ..orderBy([(q) => OrderingTerm.desc(q.createdAt)])
           ..limit(limit, offset: offset))
         .get();

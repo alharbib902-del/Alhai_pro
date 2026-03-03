@@ -99,14 +99,14 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       List<InventoryMovementsTableData> movements = [];
       try {
         movements =
-            await db.inventoryDao.getMovementsByProduct(widget.productId);
+            await db.inventoryDao.getMovementsByProduct(widget.productId, storeId: productData.storeId);
       } catch (_) {}
 
       // 4. Load total sales count
       int salesCount = 0;
       try {
         final count =
-            await db.saleItemsDao.getProductSalesCount(widget.productId);
+            await db.saleItemsDao.getProductSalesCount(widget.productId, productData.storeId);
         salesCount = count.toInt();
       } catch (_) {}
 

@@ -33,11 +33,11 @@ class ImageService {
     if (preferWebP) {
       try {
         final webpBytes = Uint8List.fromList(
-          img.encodeWebP(image, quality: quality),
+          img.encodeJpg(image, quality: quality),
         );
-        // Sanity check: WebP should be smaller or at least valid
+        // Sanity check: should be valid
         if (webpBytes.length > 4) {
-          return (bytes: webpBytes, ext: 'webp', mimeType: 'image/webp');
+          return (bytes: webpBytes, ext: 'jpg', mimeType: 'image/jpeg');
         }
       } catch (_) {
         // WebP encoding failed, fall back to JPEG

@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة عروض الباقات
 class BundleDealsScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
 
   List<DiscountsTableData> _bundles = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -37,7 +39,10 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
   }
 
   Future<void> _loadBundles() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -50,8 +55,14 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load bundle deals');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -61,7 +72,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -82,10 +93,12 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _bundles.isEmpty
-                  ? _buildEmptyState(isDark, l10n)
-                  : _buildBundlesList(isMediumScreen, isDark, l10n),
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadBundles)
+                  : _bundles.isEmpty
+                      ? _buildEmptyState(isDark, l10n)
+                      : _buildBundlesList(isMediumScreen, isDark, l10n),
         ),
       ],
     );

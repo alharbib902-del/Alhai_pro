@@ -115,7 +115,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                     // Items list
                     ...items.map((item) => _ProductRow(
                       name: item.productName,
-                      qty: item.qty,
+                      qty: item.qty.toInt(),
                       price: item.unitPrice,
                     )),
 

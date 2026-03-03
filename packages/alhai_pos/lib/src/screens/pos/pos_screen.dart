@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
-import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../core/utils/keyboard_shortcuts.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -56,7 +56,64 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         ref.read(productsStateProvider.notifier)
             .loadProducts(storeId: storeId, refresh: true);
       }
+      // التحقق من وجود مسودة سلة محفوظة واستعادتها مع تأكيد
+      _checkPendingDraft();
     });
+  }
+
+  /// عرض dialog تأكيد لاستعادة سلة محفوظة من جلسة سابقة
+  Future<void> _checkPendingDraft() async {
+    final cartNotifier = ref.read(cartStateProvider.notifier);
+    if (!cartNotifier.hasPendingDraft) return;
+
+    // انتظر الفريم الأول ليكون السياق جاهزاً
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final itemCount = cartNotifier.pendingDraftItemCount;
+    final total = cartNotifier.pendingDraftTotal;
+
+    final restore = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        final colorScheme = Theme.of(ctx).colorScheme;
+        final dialogL10n = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          icon: Icon(Icons.shopping_cart_outlined,
+              color: colorScheme.primary, size: 36),
+          title: Text(dialogL10n.cart),
+          content: Text(
+            '${dialogL10n.nItems(itemCount)} • ${CurrencyFormatter.formatWithContext(context, total)}\n\n'
+            '${dialogL10n.restoreAction}?',
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton.icon(
+              onPressed: () => Navigator.pop(ctx, false),
+              icon: const Icon(Icons.delete_outline, size: 18),
+              label: Text(dialogL10n.cancel),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(ctx, true),
+              icon: const Icon(Icons.restore, size: 18),
+              label: Text(dialogL10n.restoreAction),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted) return;
+    if (restore == true) {
+      cartNotifier.acceptDraft();
+      _showSnackBar(context, '${l10n.cart} — ${l10n.nItems(itemCount)}',
+          isSuccess: true);
+    } else {
+      cartNotifier.discardDraft();
+    }
   }
 
   @override
@@ -274,7 +331,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     String receiptNumber = 'ORD-${_orderCounter.toString().padLeft(4, '0')}';
     try {
       final saleService = ref.read(saleServiceProvider);
-      final storeId = ref.read(currentStoreIdProvider) ?? 'store_demo_001';
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        throw StateError('No store selected — cannot create sale');
+      }
       saleId = await saleService.createSale(
         storeId: storeId,
         cashierId: 'cashier_001',
@@ -298,13 +358,26 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       debugPrint('Save sale error: $e');
     }
 
-    // 2. مسح السلة
+    // 2. طباعة تلقائية بعد الدفع (ESC/POS)
+    if (saleId != null) {
+      final autoPrint = ref.read(autoPrintEnabledProvider);
+      final autoPrintCallback = ref.read(autoPrintCallbackProvider);
+      if (autoPrint && autoPrintCallback != null) {
+        try {
+          await autoPrintCallback(saleId);
+        } catch (e) {
+          debugPrint('Auto-print error: $e');
+        }
+      }
+    }
+
+    // 3. مسح السلة
     ref.read(cartStateProvider.notifier).clear();
     setState(() => _orderCounter++);
 
     if (!mounted) return;
 
-    // 3. عرض dialog النجاح مع saleId (الطباعة تتم داخل Dialog)
+    // 4. عرض dialog النجاح مع saleId (الطباعة تتم داخل Dialog)
     await PaymentSuccessDialog.show(
       context: context,
       receiptNumber: receiptNumber,
@@ -438,8 +511,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                 onUserTap: () {},
               ),
 
-              // Offline banner
-              const OfflineBanner(),
+              // Offline + Sync pending banners
+              const StatusBanners(),
 
               // Orders panel + main content
               Expanded(

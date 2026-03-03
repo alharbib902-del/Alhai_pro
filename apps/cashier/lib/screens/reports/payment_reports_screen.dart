@@ -15,6 +15,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'dart:math' as math;
+import '../../core/services/sentry_service.dart';
 
 /// شاشة تقارير المدفوعات
 class PaymentReportsScreen extends ConsumerStatefulWidget {
@@ -30,6 +31,7 @@ class _PaymentReportsScreenState
   final _db = GetIt.I<AppDatabase>();
 
   bool _isLoading = true;
+  String? _error;
   String _dateFilter = 'today';
   DateTimeRange? _customRange;
 
@@ -48,7 +50,10 @@ class _PaymentReportsScreenState
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -99,8 +104,14 @@ class _PaymentReportsScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load payment reports');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -113,7 +124,7 @@ class _PaymentReportsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -134,8 +145,10 @@ class _PaymentReportsScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadData)
+                  : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),

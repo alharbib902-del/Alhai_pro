@@ -55,7 +55,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.defaultUserName;
 
@@ -640,7 +640,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   }
 
   Future<void> _closeShift(ShiftsTableData shift, double expectedCash) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final actualCash = double.tryParse(_actualCashController.text) ?? 0;
     final difference = actualCash - expectedCash;
 

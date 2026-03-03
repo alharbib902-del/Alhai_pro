@@ -351,31 +351,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<Map<String, dynamic>> checkCashierByPhone(String phone) async {
     try {
       if (_supabaseClient == null) {
+        debugPrint('❌ checkCashierByPhone: _supabaseClient is NULL');
         return {'exists': false, 'error': 'Supabase غير متاح'};
       }
 
       // تنظيف الرقم: إزالة + لأن Supabase يخزّن بدون +
       final cleanPhone = phone.replaceAll('+', '');
 
-      if (kDebugMode) {
-        debugPrint('Checking cashier by phone: $cleanPhone');
-      }
+      debugPrint('📞 checkCashierByPhone: phone=$phone → cleanPhone=$cleanPhone');
 
       final result = await _supabaseClient.rpc(
         'check_cashier_by_phone',
         params: {'p_phone': cleanPhone},
       );
 
+      debugPrint('📦 RPC result type: ${result.runtimeType}');
+      debugPrint('📦 RPC result value: $result');
+
       if (result is Map<String, dynamic>) {
+        debugPrint('✅ Result is Map<String, dynamic>');
         return result;
       }
 
-      // لو الـ RPC رجع JSON string
+      // لو الـ RPC رجع نوع ثاني (مثل _JsonMap)
+      if (result is Map) {
+        debugPrint('⚠️ Result is Map but not Map<String, dynamic>, casting...');
+        return Map<String, dynamic>.from(result);
+      }
+
+      debugPrint('❌ Result is NOT a Map: ${result.runtimeType}');
       return {'exists': false};
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Check cashier by phone failed: $e');
-      }
+      debugPrint('❌ checkCashierByPhone EXCEPTION: $e');
       return {'exists': false, 'error': e.toString()};
     }
   }

@@ -5,10 +5,12 @@
 library;
 
 import 'package:alhai_core/alhai_core.dart';
-import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService, kDefaultStoreId;
+import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService;
 import 'package:drift/drift.dart';
 
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
+import '../../core/services/sentry_service.dart';
 
 /// Local implementation of ProductsRepository
 class LocalProductsRepository implements ProductsRepository {
@@ -102,9 +104,14 @@ class LocalProductsRepository implements ProductsRepository {
     // جلب store_id ديناميكياً من SecureStorage (المتجر المختار حالياً)
     String storeId;
     try {
-      storeId = await SecureStorageService.getStoreId() ?? kDefaultStoreId;
-    } catch (_) {
-      storeId = kDefaultStoreId;
+      final resolved = await SecureStorageService.getStoreId();
+      if (resolved == null) {
+        throw StateError('No store selected — cannot look up barcode');
+      }
+      storeId = resolved;
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Get store ID for barcode lookup');
+      rethrow;
     }
     final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
     return data != null ? _toProduct(data) : null;
@@ -112,7 +119,7 @@ class LocalProductsRepository implements ProductsRepository {
 
   @override
   Future<Product> createProduct(CreateProductParams params) async {
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    final id = const Uuid().v4();
     final now = DateTime.now();
 
     final companion = ProductsTableCompanion.insert(

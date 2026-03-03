@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -21,7 +22,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
 
   List<_SupplierOption> _suppliers = [];
   _SupplierOption? _selectedSupplier;
-  List<_ReturnItem> _items = [];
+  final List<_ReturnItem> _items = [];
 
   final _noteController = TextEditingController();
   String _returnReason = 'damaged';
@@ -205,7 +206,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
             const Uuid().v4(),
             storeId,
             -item.qty,
-            '${_returnReason}: ${item.productName}',
+            '$_returnReason: ${item.productName}',
             returnId,
             now.toIso8601String(),
           ],
@@ -373,8 +374,8 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                     ],
                   ),
                   if (_items.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
                         child: Text('لم تتم إضافة أصناف بعد',
                             style: TextStyle(color: Theme.of(context).hintColor)),

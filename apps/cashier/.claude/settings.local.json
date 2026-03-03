@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dart analyze:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub add:*)",
+      "Bash(grep:*)",
+      "Bash(xargs:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter test:*)",
+      "Bash(dart test:*)",
+      "WebSearch",
+      "WebFetch(domain:pub.dev)",
+      "Bash(for f in NotoSansDevanagari-Regular.ttf NotoSansDevanagari-Medium.ttf NotoSansDevanagari-Bold.ttf)",
+      "Bash(do cp \"C:/Users/basem/OneDrive/Desktop/Alhai/alhai_design_system/assets/fonts/Tajawal-Regular.ttf\" \"C:/Users/basem/OneDrive/Desktop/Alhai/alhai_design_system/assets/fonts/$f\")",
+      "Bash(done)",
+      "Bash(for f in NotoSansBengali-Regular.ttf NotoSansBengali-Medium.ttf NotoSansBengali-Bold.ttf)",
+      "Bash(claude mcp add-json --scope user TestSprite '{\"\"command\"\":\"\"npx\"\",\"\"args\"\":[\"\"@testsprite/testsprite-mcp@latest\"\"],\"\"env\"\":{\"\"API_KEY\"\":\"\"sk-user-jI2RKt_ggautFYxc7KDqm3f49jj7hsmq6f-7utiOI2U1bEYJ8qeXaX8bR5mU0l9zTBdE1a6sgUUR7WOXT5wZ53JvwMRcZQBT6sVIsKEQ_eR1itHwv0BSqckUt477HFz5LLU\"\"}}')",
+      "mcp__TestSprite__testsprite_bootstrap",
+      "mcp__TestSprite__testsprite_generate_code_summary",
+      "mcp__TestSprite__testsprite_generate_standardized_prd",
+      "mcp__TestSprite__testsprite_generate_frontend_test_plan",
+      "mcp__TestSprite__testsprite_generate_code_and_execute",
+      "Bash(node:*)",
+      "mcp__TestSprite__testsprite_rerun_tests",
+      "Bash(curl:*)"
+    ]
+  }
+}

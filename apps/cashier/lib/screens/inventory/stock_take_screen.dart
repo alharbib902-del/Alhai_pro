@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة الجرد
 class StockTakeScreen extends ConsumerStatefulWidget {
@@ -32,6 +35,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   String? _selectedCategoryId;
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
 
   // Map productId -> counted quantity (user input)
   final Map<String, TextEditingController> _countControllers = {};
@@ -51,7 +55,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -70,8 +77,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           }
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load stock take data');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -101,7 +114,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -122,8 +135,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadData)
+                  : Column(
                   children: [
                     // Summary bar
                     Padding(
@@ -468,7 +483,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   }
 
   Future<void> _saveCount() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.success), backgroundColor: AppColors.success),
     );
@@ -478,47 +493,69 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+      final storeId = ref.read(currentStoreIdProvider)!;
 
-      for (final product in _filteredProducts) {
-        final ctrl = _countControllers[product.id];
-        if (ctrl == null || ctrl.text.isEmpty) continue;
+      final adjustedProducts = <ProductsTableData>[];
 
-        final counted = int.tryParse(ctrl.text);
-        if (counted == null) continue;
+      await _db.transaction(() async {
+        for (final product in _filteredProducts) {
+          final ctrl = _countControllers[product.id];
+          if (ctrl == null || ctrl.text.isEmpty) continue;
 
-        final systemQty = product.stockQty;
-        if (counted != systemQty) {
-          final movementId = 'STK-${DateTime.now().millisecondsSinceEpoch}-${product.id.hashCode.abs() % 10000}';
-          await _db.inventoryDao.insertMovement(
-            InventoryMovementsTableCompanion.insert(
-              id: movementId,
-              storeId: storeId,
-              productId: product.id,
-              type: 'stock_take',
-              qty: (counted - systemQty).toDouble(),
-              previousQty: systemQty.toDouble(),
-              newQty: counted.toDouble(),
-              reason: const Value('stock_take'),
-              createdAt: DateTime.now(),
-            ),
-          );
+          final counted = int.tryParse(ctrl.text);
+          if (counted == null) continue;
 
-          await _db.productsDao.updateStock(product.id, counted);
+          final systemQty = product.stockQty;
+          if (counted != systemQty) {
+            final movementId = const Uuid().v4();
+            await _db.inventoryDao.insertMovement(
+              InventoryMovementsTableCompanion.insert(
+                id: movementId,
+                storeId: storeId,
+                productId: product.id,
+                type: 'stock_take',
+                qty: (counted - systemQty).toDouble(),
+                previousQty: systemQty.toDouble(),
+                newQty: counted.toDouble(),
+                reason: const Value('stock_take'),
+                createdAt: DateTime.now(),
+              ),
+            );
+            await _db.productsDao.updateStock(product.id, counted);
+            adjustedProducts.add(product);
+          }
         }
+      });
+
+      // Audit log for each adjusted product
+      final user = ref.read(currentUserProvider);
+      for (final product in adjustedProducts) {
+        final ctrl = _countControllers[product.id];
+        final counted = int.tryParse(ctrl?.text ?? '') ?? 0;
+        auditService.logStockAdjust(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          productId: product.id,
+          productName: product.name,
+          oldQty: product.stockQty.toDouble(),
+          newQty: counted.toDouble(),
+          reason: 'جرد',
+        );
       }
 
       if (!mounted) return;
 
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.success), backgroundColor: AppColors.success),
       );
 
       await _loadData();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save stock take');
       if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.errorWithDetails('$e')), backgroundColor: AppColors.error),
       );

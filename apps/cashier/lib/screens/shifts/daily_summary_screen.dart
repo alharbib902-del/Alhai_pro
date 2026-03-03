@@ -23,7 +23,7 @@ class DailySummaryScreen extends ConsumerWidget {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -49,8 +49,11 @@ class DailySummaryScreen extends ConsumerWidget {
               child: _buildContent(
                   context, ref, shifts, isWideScreen, isMediumScreen, isDark, l10n),
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            loading: () => const AppLoadingState(),
+            error: (e, _) => AppErrorState.general(
+              message: '$e',
+              onRetry: () => ref.invalidate(todayShiftsProvider),
+            ),
           ),
         ),
       ],

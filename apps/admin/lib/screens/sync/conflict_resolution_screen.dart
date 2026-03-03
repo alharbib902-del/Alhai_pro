@@ -27,7 +27,7 @@ class _ConflictResolutionScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final conflictItemsAsync = ref.watch(conflictSyncItemsProvider);
 
@@ -225,7 +225,7 @@ class _ConflictResolutionScreenState
       SyncQueueTableData conflict, String choice) async {
     setState(() => _isResolving = true);
     final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     try {
       final syncService = ref.read(syncServiceProvider);
@@ -252,7 +252,7 @@ class _ConflictResolutionScreenState
 
   Future<void> _retryConflict(SyncQueueTableData conflict) async {
     final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     try {
       final syncService = ref.read(syncServiceProvider);
@@ -272,7 +272,7 @@ class _ConflictResolutionScreenState
   }
 
   void _deleteConflict(SyncQueueTableData conflict) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,
@@ -306,7 +306,7 @@ class _ConflictResolutionScreenState
   }
 
   void _resolveAll(List<SyncQueueTableData> conflicts, String choice) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final choiceLabel =
         choice == 'local' ? l10n.useLocalValues : l10n.useServerValues;
     showDialog(

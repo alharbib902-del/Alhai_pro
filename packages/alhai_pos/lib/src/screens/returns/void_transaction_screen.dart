@@ -150,7 +150,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
         name: item.productName,
         sku: item.productSku ?? item.productBarcode ?? '',
         icon: Icons.shopping_bag_outlined,
-        qty: item.qty,
+        qty: item.qty.toInt(),
         price: item.unitPrice,
       )).toList();
 

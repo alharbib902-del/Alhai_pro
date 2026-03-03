@@ -1,0 +1,57 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic [ref=e5]:
+            - generic: Al-Hal POS
+          - group:
+            - img [ref=e6]
+            - generic [ref=e7]:
+              - generic: مرحباً بك مجدداً! 👋
+            - generic [ref=e8]:
+              - generic: سجّل دخولك لإدارة متجرك بسهولة وسرعة
+            - generic [ref=e9]:
+              - generic: سريع جداً
+            - generic [ref=e10]:
+              - generic: آمن ومحمي
+            - generic [ref=e11]:
+              - generic: سحابي
+          - group:
+            - button "🇸🇦 العربية" [ref=e12]
+            - button "الوضع الليلي" [ref=e13]
+            - generic [ref=e14]:
+              - generic: رمز التحقق
+            - generic [ref=e15]:
+              - generic: 🏪 سوبرماركت الحي
+            - generic [ref=e16]:
+              - generic: 050 000 0001
+            - generic [ref=e17]:
+              - generic: 🇸🇦
+            - generic [ref=e18]:
+              - generic: رمز التحقق
+            - button "لصق الرمز" [ref=e19]
+            - textbox [ref=e21]: "1"
+            - textbox [ref=e23]: "2"
+            - textbox [ref=e25]: "3"
+            - textbox [ref=e27]: "4"
+            - textbox [active] [ref=e29]: "5"
+            - textbox [ref=e31]: "6"
+            - generic [ref=e32]:
+              - generic: "وضع التطوير - الرمز: 123456"
+            - button [ref=e33]
+            - button "تحقق" [ref=e34]
+            - button "تغيير الرقم" [ref=e35]
+            - button "الدعم الفني" [ref=e36]
+            - generic [ref=e37]:
+              - generic: •
+            - button "سياسة الخصوصية" [ref=e38]
+            - generic [ref=e39]:
+              - generic: •
+            - button "الشروط والأحكام" [ref=e40]
+            - generic [ref=e41]:
+              - generic: جميع الحقوق محفوظة © 2026 نظام الحي الذكي
+```

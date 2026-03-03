@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// Receipt settings screen
 class ReceiptSettingsScreen extends ConsumerStatefulWidget {
@@ -54,7 +55,7 @@ class _ReceiptSettingsScreenState
   Future<void> _loadSettings() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+      final storeId = ref.read(currentStoreIdProvider)!;
       final settings = await (
         _db.select(_db.settingsTable)
           ..where((s) => s.storeId.equals(storeId))
@@ -77,15 +78,15 @@ class _ReceiptSettingsScreenState
             _receiptWidth = s.value;
         }
       }
-    } catch (_) {
-      // Use defaults
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load receipt settings');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+    final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
     await _db.into(_db.settingsTable).insertOnConflictUpdate(
       SettingsTableCompanion.insert(
@@ -114,7 +115,7 @@ class _ReceiptSettingsScreenState
         await _upsertSetting(entry.key, entry.value);
       }
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.settingsSaved),
@@ -122,7 +123,8 @@ class _ReceiptSettingsScreenState
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save receipt settings');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -142,7 +144,7 @@ class _ReceiptSettingsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [

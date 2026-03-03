@@ -104,7 +104,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       );
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.taxSettingsSaved),
@@ -115,7 +115,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${l10n.errorSaving}: $e'),
@@ -141,7 +141,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
       return Column(

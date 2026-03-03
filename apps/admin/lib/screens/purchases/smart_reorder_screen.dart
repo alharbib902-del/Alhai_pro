@@ -62,7 +62,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -164,7 +164,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   Widget _buildFormSection(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -226,7 +226,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   Widget _buildResultsSection(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_suggestions.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(48),
@@ -302,7 +302,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   Future<void> _calculateSuggestions() async {
     final budget = double.tryParse(_budgetController.text) ?? 0;
     if (budget <= 0) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.enterValidBudget)));
       return;
     }
@@ -369,7 +369,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   void _sendOrder() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -392,7 +392,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
   }
 
   void _sendVia(String method) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.sendingOrderVia(method == 'whatsapp' ? 'WhatsApp' : l10n.emailLabel))),
     );
@@ -452,7 +452,7 @@ class _ReorderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),

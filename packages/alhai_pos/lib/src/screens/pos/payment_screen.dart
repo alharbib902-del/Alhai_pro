@@ -18,7 +18,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_database/alhai_database.dart' hide PaymentMethod;
 import '../../providers/sale_providers.dart';
 import '../../providers/cart_providers.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -43,6 +43,8 @@ class PaymentScreen extends ConsumerStatefulWidget {
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen>
     with SingleTickerProviderStateMixin {
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
+
   PaymentMethod _selectedMethod = PaymentMethod.cash;
   final _cashReceivedController = TextEditingController();
   final _cardRrnController = TextEditingController();
@@ -1061,7 +1063,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           id: newId,
           customerId: customerId,
           storeId: storeId,
-          createdAt: Value(DateTime.now()),
+          createdAt: DateTime.now(),
         ));
         account = await db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
         if (account == null) return;
@@ -1091,7 +1093,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               saleAmount: Value(saleAmount),
               description: Value('استبدال نقاط - فاتورة $saleId'),
               cashierId: Value(cashierId),
-              createdAt: Value(DateTime.now()),
+              createdAt: DateTime.now(),
             ),
           );
         }
@@ -1117,7 +1119,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             saleAmount: Value(saleAmount),
             description: Value('نقاط مكتسبة - فاتورة $saleId'),
             cashierId: Value(cashierId),
-            createdAt: Value(DateTime.now()),
+            createdAt: DateTime.now(),
           ),
         );
       }

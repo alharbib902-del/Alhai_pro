@@ -11,15 +11,16 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   SalesDao(super.db);
   
   /// الحصول على جميع المبيعات للمتجر (باستثناء المحذوفة)
-  Future<List<SalesTableData>> getAllSales(String storeId) {
+  Future<List<SalesTableData>> getAllSales(String storeId, {int limit = 1000}) {
     return (select(salesTable)
       ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)]))
+      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+      ..limit(limit))
       .get();
   }
   
   /// الحصول على مبيعات بتاريخ (باستثناء المحذوفة)
-  Future<List<SalesTableData>> getSalesByDate(String storeId, DateTime date) {
+  Future<List<SalesTableData>> getSalesByDate(String storeId, DateTime date, {int limit = 1000}) {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
@@ -30,7 +31,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
         s.createdAt.isBiggerOrEqualValue(startOfDay) &
         s.createdAt.isSmallerThanValue(endOfDay)
       )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)]))
+      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+      ..limit(limit))
       .get();
   }
   
@@ -38,8 +40,9 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   Future<List<SalesTableData>> getSalesByDateRange(
     String storeId,
     DateTime startDate,
-    DateTime endDate,
-  ) {
+    DateTime endDate, {
+    int limit = 5000,
+  }) {
     return (select(salesTable)
       ..where((s) =>
         s.storeId.equals(storeId) &
@@ -47,7 +50,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
         s.createdAt.isBiggerOrEqualValue(startDate) &
         s.createdAt.isSmallerOrEqualValue(endDate)
       )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)]))
+      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+      ..limit(limit))
       .get();
   }
   
@@ -185,10 +189,14 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }
   
   /// الحصول على المبيعات غير المزامنة
-  Future<List<SalesTableData>> getUnsyncedSales() {
-    return (select(salesTable)..where((s) => s.syncedAt.isNull())).get();
+  Future<List<SalesTableData>> getUnsyncedSales({String? storeId}) {
+    final q = select(salesTable)..where((s) => s.syncedAt.isNull());
+    if (storeId != null) {
+      q.where((s) => s.storeId.equals(storeId));
+    }
+    return (q..limit(500)).get();
   }
-  
+
   /// مراقبة المبيعات (Stream)
   Stream<List<SalesTableData>> watchTodaySales(String storeId) {
     final today = DateTime.now();

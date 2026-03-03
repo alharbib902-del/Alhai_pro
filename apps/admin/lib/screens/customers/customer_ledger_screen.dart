@@ -141,7 +141,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isMobile = context.isMobile;
     final isDesktop = context.isDesktop;
     final isWideScreen = context.isDesktop;

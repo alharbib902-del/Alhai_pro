@@ -135,7 +135,6 @@ class _CashierShellState extends State<CashierShell> {
   /// الحصول على النص المترجم لعنصر القائمة
   String _getLocalizedLabel(BuildContext context, _NavItem item) {
     final l10n = AppLocalizations.of(context);
-    if (l10n == null) return item.label;
     switch (item.id) {
       case 'pos': return l10n.pos;
       case 'sales': return l10n.salesHistory;
@@ -204,7 +203,7 @@ class _CashierShellState extends State<CashierShell> {
           SystemNavigator.pop();
         } else {
           _lastBackPress = now;
-          final l10n = AppLocalizations.of(context)!;
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.pressBackAgainToExit),

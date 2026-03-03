@@ -6,7 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder, ResponsiveVisibility, AlhaiContextExtensions;
+import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder, ResponsiveVisibility;
 import '../../core/theme/app_sizes.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../providers/theme_provider.dart';

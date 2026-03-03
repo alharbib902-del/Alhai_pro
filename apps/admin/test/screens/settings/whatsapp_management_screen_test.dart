@@ -23,7 +23,7 @@ void main() {
     );
     setupTestGetIt(mockDb: db);
 
-    when(() => waMessagesDao.getAllMessages())
+    when(() => waMessagesDao.getAllMessages(storeId: any(named: 'storeId')))
         .thenAnswer((_) async => []);
     when(() => waTemplatesDao.getAllTemplates(any()))
         .thenAnswer((_) async => []);

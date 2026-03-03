@@ -14,6 +14,9 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import 'package:alhai_auth/alhai_auth.dart';
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة استرداد الدفع المجزأ
 class SplitRefundScreen extends ConsumerStatefulWidget {
@@ -29,6 +32,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   final _db = GetIt.I<AppDatabase>();
   OrdersTableData? _order;
   bool _isLoading = true;
+  String? _error;
   bool _isSubmitting = false;
 
   // Original payment methods and amounts
@@ -41,7 +45,10 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final order = await _db.ordersDao.getOrderById(widget.orderId);
       if (mounted) {
@@ -53,8 +60,14 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load split refund data');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -118,7 +131,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Column(
@@ -126,10 +139,13 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           _buildTopBar(isDark, l10n),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _order == null
-                    ? _buildNotFound(isDark)
-                    : SingleChildScrollView(
+                ? const AppLoadingState()
+                : _error != null
+                    ? AppErrorState.general(
+                        message: _error!, onRetry: _loadData)
+                    : _order == null
+                        ? _buildNotFound(isDark)
+                        : SingleChildScrollView(
                         padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                         child: isWideScreen
                             ? _buildWideLayout(isDark, l10n)
@@ -597,6 +613,21 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     setState(() => _isSubmitting = true);
     try {
       await Future.delayed(const Duration(seconds: 1));
+
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      auditService.logRefund(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        saleId: widget.orderId,
+        amount: 0, // TODO: replace with actual refund amount when implemented
+        reason: 'مرتجع مجزأ',
+      );
+
+      addBreadcrumb(message: 'Refund processed', category: 'payment');
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -605,7 +636,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         ),
       );
       context.pop();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Submit split refund');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -81,28 +81,17 @@ class ScreenSizeBuilder extends StatelessWidget {
 }
 
 /// امتدادات للـ BuildContext للوصول السريع لمعلومات الشاشة
+///
+/// ملاحظة: الخصائص الأساسية (screenWidth, screenHeight, isMobile, isTablet, isDesktop)
+/// موجودة في [AlhaiContextExtensions] من alhai_design_system.
+/// هذا الامتداد يضيف خصائص خاصة بنقطة البيع فقط.
 extension ResponsiveExtension on BuildContext {
-  /// عرض الشاشة
-  double get screenWidth => MediaQuery.sizeOf(this).width;
-  
-  /// ارتفاع الشاشة
-  double get screenHeight => MediaQuery.sizeOf(this).height;
-  
   /// نوع الجهاز
-  DeviceType get deviceType => getDeviceType(screenWidth);
-  
-  /// هل هو هاتف؟
-  bool get isMobile => deviceType.isMobile;
-  
-  /// هل هو تابلت؟
-  bool get isTablet => deviceType.isTablet;
-  
-  /// هل هو سطح مكتب؟
-  bool get isDesktop => deviceType.isDesktop;
-  
+  DeviceType get deviceType => getDeviceType(MediaQuery.sizeOf(this).width);
+
   /// عدد أعمدة المنتجات المناسب
-  int get productGridColumns => getProductGridColumns(screenWidth);
-  
+  int get productGridColumns => getProductGridColumns(MediaQuery.sizeOf(this).width);
+
   /// هل يجب عرض السلة في BottomSheet؟
   bool get showCartInBottomSheet => deviceType.showCartInBottomSheet;
 }

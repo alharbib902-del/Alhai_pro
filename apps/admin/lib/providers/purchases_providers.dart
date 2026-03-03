@@ -218,7 +218,7 @@ Future<void> receivePurchaseWithDetails(
     final product = await db.productsDao.getProductById(item.productId);
     if (product != null) {
       final newStock = product.stockQty + receivedQty;
-      await db.productsDao.updateStock(item.productId, newStock);
+      await db.productsDao.updateStock(item.productId, newStock.toInt());
 
       // تسجيل حركة المخزون
       if (storeId != null) {
@@ -226,8 +226,8 @@ Future<void> receivePurchaseWithDetails(
           id: _uuid.v4(),
           productId: item.productId,
           storeId: storeId,
-          qty: receivedQty,
-          previousQty: product.stockQty,
+          qty: receivedQty.toDouble(),
+          previousQty: product.stockQty.toDouble(),
           purchaseId: purchaseId,
         );
       }

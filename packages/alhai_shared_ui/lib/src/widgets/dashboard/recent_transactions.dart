@@ -147,7 +147,7 @@ class RecentTransactionsList extends StatelessWidget {
           // TABLE CONTENT
           // =================================================================
           if (transactions.isEmpty)
-            _buildEmptyState(isDarkMode)
+            _buildEmptyState(context, isDarkMode)
           else
             _buildTable(context, isDarkMode, isMobile, l10n),
         ],
@@ -156,7 +156,7 @@ class RecentTransactionsList extends StatelessWidget {
   }
 
   /// حالة فارغة عند عدم وجود معاملات
-  Widget _buildEmptyState(bool isDarkMode) {
+  Widget _buildEmptyState(BuildContext context, bool isDarkMode) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),

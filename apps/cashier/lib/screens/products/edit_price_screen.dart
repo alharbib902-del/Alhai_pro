@@ -15,6 +15,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة تعديل السعر
 class EditPriceScreen extends ConsumerStatefulWidget {
@@ -34,6 +36,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
   ProductsTableData? _product;
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
   final List<Map<String, dynamic>> _priceHistory = [];
 
   @override
@@ -50,7 +53,10 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
   }
 
   Future<void> _loadProduct() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final product = await _db.productsDao.getProductById(widget.productId);
       if (mounted && product != null) {
@@ -72,8 +78,14 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
       } else {
         if (mounted) setState(() => _isLoading = false);
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load product for price edit');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -83,7 +95,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -104,10 +116,12 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _product == null
-                  ? _buildNotFound(colorScheme, l10n)
-                  : SingleChildScrollView(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadProduct)
+                  : _product == null
+                      ? _buildNotFound(colorScheme, l10n)
+                      : SingleChildScrollView(
                       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                       child: _buildContent(
                           isWideScreen, isMediumScreen, colorScheme, l10n),
@@ -609,7 +623,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
   Future<void> _savePrice() async {
     final newPrice = double.tryParse(_newPriceController.text);
     final costPrice = double.tryParse(_costPriceController.text);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (newPrice == null || newPrice <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -633,6 +647,19 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
         ),
       );
 
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      auditService.logPriceChange(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: currentProduct.id,
+        productName: currentProduct.name,
+        oldPrice: currentProduct.price,
+        newPrice: newPrice,
+      );
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -643,7 +670,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
       );
 
       context.pop();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save price update');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

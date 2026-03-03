@@ -15,6 +15,8 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة إنشاء فاتورة
@@ -88,8 +90,16 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       if (mounted) {
         setState(() => _searchResults = results.take(5).toList());
       }
-    } catch (e) {
-      debugPrint('Product search error: $e');
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Product search');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Product search failed: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -106,8 +116,16 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       if (mounted) {
         setState(() => _customerResults = results.take(5).toList());
       }
-    } catch (e) {
-      debugPrint('Customer search error: $e');
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Customer search');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Customer search failed: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -159,7 +177,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -844,6 +862,27 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       // Simulate saving invoice
       await Future.delayed(const Duration(seconds: 1));
 
+      // Audit log (only for finalized invoices)
+      if (!isDraft) {
+        final user = ref.read(currentUserProvider);
+        final storeId = ref.read(currentStoreIdProvider)!;
+        final total = _items.fold<double>(0, (sum, i) => sum + i.price * i.qty);
+        auditService.logSaleCreate(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          saleId: 'invoice-${DateTime.now().millisecondsSinceEpoch}',
+          total: total,
+          paymentMethod: 'credit',
+        );
+      }
+
+      addBreadcrumb(
+        message: isDraft ? 'Invoice saved as draft' : 'Invoice finalized',
+        category: 'sale',
+        data: {'items': _items.length, 'customer': _selectedCustomer?.name},
+      );
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -862,7 +901,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           _discountController.text = '0';
         });
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save invoice');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

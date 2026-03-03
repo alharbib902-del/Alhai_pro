@@ -16,7 +16,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   Future<List<OrdersTableData>> getOrders(String storeId) {
     return (select(ordersTable)
           ..where((o) => o.storeId.equals(storeId))
-          ..orderBy([(o) => OrderingTerm.desc(o.orderDate)]))
+          ..orderBy([(o) => OrderingTerm.desc(o.orderDate)])
+          ..limit(500))
         .get();
   }
 
@@ -67,7 +68,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   Future<List<OrdersTableData>> getOrdersByStatus(String storeId, String status) {
     return (select(ordersTable)
           ..where((o) => o.storeId.equals(storeId) & o.status.equals(status))
-          ..orderBy([(o) => OrderingTerm.desc(o.orderDate)]))
+          ..orderBy([(o) => OrderingTerm.desc(o.orderDate)])
+          ..limit(500))
         .get();
   }
 
@@ -77,7 +79,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
           ..where((o) =>
               o.storeId.equals(storeId) &
               o.status.isIn(['created', 'confirmed', 'preparing', 'ready', 'out_for_delivery']))
-          ..orderBy([(o) => OrderingTerm.asc(o.orderDate)]))
+          ..orderBy([(o) => OrderingTerm.asc(o.orderDate)])
+          ..limit(200))
         .get();
   }
 
@@ -87,10 +90,14 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
         .getSingleOrNull();
   }
 
-  /// جلب طلب برقمه
-  Future<OrdersTableData?> getOrderByNumber(String orderNumber) {
+  /// جلب طلب برقمه (مع فلتر المتجر)
+  Future<OrdersTableData?> getOrderByNumber(String orderNumber, {String? storeId}) {
     return (select(ordersTable)
-          ..where((o) => o.orderNumber.equals(orderNumber)))
+          ..where((o) {
+            var condition = o.orderNumber.equals(orderNumber);
+            if (storeId != null) condition = condition & o.storeId.equals(storeId);
+            return condition;
+          }))
         .getSingleOrNull();
   }
 

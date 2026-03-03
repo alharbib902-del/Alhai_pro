@@ -13,6 +13,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../widgets/zatca_qr_widget.dart';
 
 /// شاشة إعادة طباعة الفاتورة
 class ReprintReceiptScreen extends ConsumerStatefulWidget {
@@ -28,7 +30,9 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   final _db = GetIt.I<AppDatabase>();
   List<OrdersTableData> _allOrders = [];
   List<OrdersTableData> _filteredOrders = [];
+  StoresTableData? _store;
   bool _isLoading = true;
+  String? _error;
   String? _selectedOrderId;
   bool _isPrinting = false;
 
@@ -46,7 +50,10 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Future<void> _loadOrders() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -54,16 +61,25 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       // Sort most recent first, limit to recent 100
       orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       final recentOrders = orders.take(100).toList();
+      // Load store data for ZATCA QR
+      final store = await _db.storesDao.getStoreById(storeId);
 
       if (mounted) {
         setState(() {
           _allOrders = recentOrders;
           _filteredOrders = recentOrders;
+          _store = store;
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load orders for reprint');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -88,7 +104,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -109,10 +125,13 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : isWideScreen
-                  ? _buildWideLayout(isDark, l10n, isMediumScreen)
-                  : _buildNarrowLayout(isDark, l10n, isMediumScreen),
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(
+                      message: _error!, onRetry: _loadOrders)
+                  : isWideScreen
+                      ? _buildWideLayout(isDark, l10n, isMediumScreen)
+                      : _buildNarrowLayout(isDark, l10n, isMediumScreen),
         ),
       ],
     );
@@ -462,7 +481,19 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          // ZATCA QR Code
+          Center(
+            child: ZatcaQrWidget(
+              sellerName: _store?.name ?? 'Al-HAI Store',
+              vatNumber: _store?.taxNumber ?? '300000000000003',
+              timestamp: order.createdAt,
+              totalWithVat: order.total,
+              vatAmount: order.taxAmount,
+              size: 100,
+            ),
+          ),
+          const SizedBox(height: 16),
           // Print button
           SizedBox(
             width: double.infinity,
@@ -580,7 +611,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Reprint receipt');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

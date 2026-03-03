@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:49981",
+  "executionArgs": {
+    "projectName": "cashier",
+    "projectPath": "C:\\Users\\basem\\OneDrive\\Desktop\\Alhai\\apps\\cashier",
+    "testIds": [],
+    "additionalInstruction": "The app is a Flutter web POS (point-of-sale) application. It uses Arabic as the primary language (RTL layout). The app is already running and accessible at http://localhost:49981. No login is required - the app should be in a state where POS features are directly accessible. The app uses Material Design with Flutter's rendering engine (CanvasKit on web).",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-dlzACXXfPB47yL3_mlKdTCYWpMAW_3C1H2N91rF7YqF9bCwC50XaJ9JVb_nQiHoJndQznN1cjKSTOqR4AaLc0xx4PqE_p8Xdg9D65L0Pnewevt2ukRVFID2zca_rkQeu-ug"
+    }
+  },
+  "serverPort": 62729,
+  "proxy": "http://e2c23733-100e-4f64-8004-b66096f703c0:qOF1Wm8UNcwxys8Zap4W6n2spKxcJXOB@tun.testsprite.com:8080"
+}

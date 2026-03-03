@@ -15,6 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// Users and permissions screen
 class UsersPermissionsScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class _UsersPermissionsScreenState
     extends ConsumerState<UsersPermissionsScreen> {
   final _db = GetIt.I<AppDatabase>();
   bool _isLoading = true;
+  String? _error;
   List<_UserInfo> _users = [];
   String _selectedRole = 'all';
 
@@ -39,7 +41,10 @@ class _UsersPermissionsScreenState
   }
 
   Future<void> _loadUsers() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final currentUser = ref.read(currentUserProvider);
       final storeId = currentUser?.storeId ?? '';
@@ -87,8 +92,9 @@ class _UsersPermissionsScreenState
           ),
         ];
       }
-    } catch (_) {
-      // Use fallback
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load users and permissions');
+      _error = '$e';
       _users = [
         _UserInfo(
           id: '1',
@@ -276,7 +282,7 @@ class _UsersPermissionsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -299,8 +305,10 @@ class _UsersPermissionsScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadUsers)
+                  : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),

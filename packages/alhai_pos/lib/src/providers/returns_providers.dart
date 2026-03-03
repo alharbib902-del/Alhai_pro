@@ -53,7 +53,8 @@ final returnDetailProvider = FutureProvider.autoDispose
 final returnsBySaleProvider = FutureProvider.autoDispose
     .family<List<ReturnsTableData>, String>((ref, saleId) async {
   final db = GetIt.I<AppDatabase>();
-  return db.returnsDao.getReturnsBySaleId(saleId);
+  final storeId = ref.read(currentStoreIdProvider)!;
+  return db.returnsDao.getReturnsBySaleId(saleId, storeId);
 });
 
 // ============================================================================

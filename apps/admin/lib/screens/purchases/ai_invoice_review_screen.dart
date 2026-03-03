@@ -38,7 +38,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -90,7 +90,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   }
 
   Widget _buildInvoiceHeader(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -144,7 +144,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   }
 
   Widget _buildProgressBar(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final progress = _items.isEmpty ? 0.0 : _confirmedCount / _items.length;
 
     return Container(
@@ -188,7 +188,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   }
 
   Widget _buildItemCard(AiInvoiceItem item, int index, bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final needsReview = item.needsReview && !item.isConfirmed;
 
     return Container(
@@ -289,7 +289,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   }
 
   Widget _buildBottomBar(bool isDark) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final allConfirmed = _confirmedCount == _items.length;
 
     return Container(
@@ -354,9 +354,9 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(children: [
-                Text(AppLocalizations.of(context)!.matchLabel(item.rawName), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(AppLocalizations.of(context).matchLabel(item.rawName), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 8),
-                TextField(decoration: InputDecoration(hintText: AppLocalizations.of(context)!.search, prefixIcon: const Icon(Icons.search), border: const OutlineInputBorder())),
+                TextField(decoration: InputDecoration(hintText: AppLocalizations.of(context).search, prefixIcon: const Icon(Icons.search), border: const OutlineInputBorder())),
               ]),
             ),
             Expanded(
@@ -365,13 +365,13 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
                 itemCount: 5,
                 itemBuilder: (context, i) => ListTile(
                   leading: const CircleAvatar(child: Icon(Icons.inventory_2)),
-                  title: Text(AppLocalizations.of(context)!.suggestedProduct(i + 1)),
-                  subtitle: Text(AppLocalizations.of(context)!.barcodeLabel),
+                  title: Text(AppLocalizations.of(context).suggestedProduct(i + 1)),
+                  subtitle: Text(AppLocalizations.of(context).barcodeLabel),
                   trailing: const Icon(Icons.chevron_left),
                   onTap: () {
                     setState(() {
                       _items[index].matchedProductId = 'product_$i';
-                      _items[index].matchedProductName = AppLocalizations.of(context)!.suggestedProduct(i + 1);
+                      _items[index].matchedProductName = AppLocalizations.of(context).suggestedProduct(i + 1);
                       _items[index].isConfirmed = true;
                     });
                     Navigator.pop(context);
@@ -387,7 +387,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
                   _showCreateProductDialog(item, index);
                 },
                 icon: const Icon(Icons.add),
-                label: Text(AppLocalizations.of(context)!.addProduct),
+                label: Text(AppLocalizations.of(context).addProduct),
                 style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
               ),
             ),
@@ -401,23 +401,23 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.addProduct),
+        title: Text(AppLocalizations.of(context).addProduct),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.productNameLabel, hintText: item.rawName, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).productNameLabel, hintText: item.rawName, border: const OutlineInputBorder()),
               controller: TextEditingController(text: item.rawName),
             ),
             const SizedBox(height: 16),
             TextField(
-              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.purchasePriceLabel, hintText: item.unitPrice.toString(), border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).purchasePriceLabel, hintText: item.unitPrice.toString(), border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.cancelLabel)),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context).cancelLabel)),
           FilledButton(
             onPressed: () {
               setState(() {
@@ -427,7 +427,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               });
               Navigator.pop(context);
             },
-            child: Text(AppLocalizations.of(context)!.addLabel),
+            child: Text(AppLocalizations.of(context).addLabel),
           ),
         ],
       ),
@@ -447,13 +447,13 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
                 purchaseId: const Value(''),
                 productId: Value(item.matchedProductId ?? ''),
                 productName: Value(item.rawName),
-                qty: Value(item.quantity.toInt()),
+                qty: Value(item.quantity.toDouble()),
                 unitCost: Value(item.unitPrice),
                 total: Value(item.total),
               ))
           .toList();
 
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       await createPurchase(
         ref,
         supplierId: '',
@@ -477,7 +477,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
       setState(() => _isProcessing = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.errorWithDetails(e.toString())), backgroundColor: AppColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).errorWithDetails(e.toString())), backgroundColor: AppColors.error),
         );
       }
     }

@@ -183,6 +183,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
 
+            // Privacy policy link
+            TextButton(
+              onPressed: () => context.push(AppRoutes.settingsPrivacy),
+              child: Text(
+                'سياسة الخصوصية | Privacy Policy',
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+
             // Navigation buttons
             Padding(
               padding: const EdgeInsets.all(AppSizes.xl),

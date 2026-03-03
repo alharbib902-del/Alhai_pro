@@ -14,23 +14,26 @@ class AccountsDao extends DatabaseAccessor<AppDatabase> with _$AccountsDaoMixin 
   Future<List<AccountsTableData>> getAllAccounts(String storeId) {
     return (select(accountsTable)
       ..where((a) => a.storeId.equals(storeId))
-      ..orderBy([(a) => OrderingTerm.asc(a.name)]))
+      ..orderBy([(a) => OrderingTerm.asc(a.name)])
+      ..limit(500))
       .get();
   }
-  
+
   /// الحصول على حسابات العملاء (الديون)
   Future<List<AccountsTableData>> getReceivableAccounts(String storeId) {
     return (select(accountsTable)
       ..where((a) => a.storeId.equals(storeId) & a.type.equals('receivable'))
-      ..orderBy([(a) => OrderingTerm.asc(a.name)]))
+      ..orderBy([(a) => OrderingTerm.asc(a.name)])
+      ..limit(500))
       .get();
   }
-  
+
   /// الحصول على حسابات الموردين
   Future<List<AccountsTableData>> getPayableAccounts(String storeId) {
     return (select(accountsTable)
       ..where((a) => a.storeId.equals(storeId) & a.type.equals('payable'))
-      ..orderBy([(a) => OrderingTerm.asc(a.name)]))
+      ..orderBy([(a) => OrderingTerm.asc(a.name)])
+      ..limit(500))
       .get();
   }
   

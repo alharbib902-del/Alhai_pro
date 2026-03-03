@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة العروض النشطة
 class ActiveOffersScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
 
   List<DiscountsTableData> _offers = [];
   bool _isLoading = true;
+  String? _error;
   String _filterType = 'all';
 
   @override
@@ -38,7 +40,10 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
   }
 
   Future<void> _loadOffers() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -49,8 +54,14 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load active offers');
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -65,7 +76,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -86,8 +97,10 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadOffers)
+                  : Column(
                   children: [
                     // Filter chips
                     Padding(

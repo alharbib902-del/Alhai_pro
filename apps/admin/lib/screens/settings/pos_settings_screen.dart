@@ -125,7 +125,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
       return Column(children: [
@@ -347,13 +347,13 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         _kSoundEffects: _soundEffects.toString(), _kHapticFeedback: _hapticFeedback.toString(),
       }, ref: ref);
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsSaved),
           backgroundColor: AppColors.success, behavior: SnackBarBehavior.floating));
       }
     } catch (e) {
       if (mounted) {
-        final l10nErr = AppLocalizations.of(context)!;
+        final l10nErr = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${l10nErr.errorSaving}: $e'),
           backgroundColor: AppColors.error, behavior: SnackBarBehavior.floating));
       }
@@ -362,7 +362,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
 
   void _showKeyboardShortcuts() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.keyboardShortcuts),
       content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -392,7 +392,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   }
 
   void _showResetConfirmation() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.resetSettings), content: Text(l10n.resetSettingsConfirm),
       actions: [
@@ -413,7 +413,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       _enableHoldInvoice = true; _maxHoldInvoices = 10; _enableQuickSale = true; _soundEffects = true; _hapticFeedback = true;
     });
     _saveSettings();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsReset),
       backgroundColor: AppColors.info, behavior: SnackBarBehavior.floating));
   }

@@ -76,7 +76,7 @@ class ExpensesScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Stat cards
-        _buildStatsSection(isWideScreen, isMediumScreen, isDark, l10n, expenses),
+        _buildStatsSection(context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
         SizedBox(height: isMediumScreen ? 24 : 16),
 
         // Categories row - تحميل التصنيفات من قاعدة البيانات
@@ -89,13 +89,14 @@ class ExpensesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsSection(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
+  Widget _buildStatsSection(BuildContext context, bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, List<ExpensesTableData> expenses) {
     final thisMonth = expenses.fold(0.0, (sum, e) => sum + e.amount);
     final categoriesCount = expenses.map((e) => e.categoryId).toSet().length;
     final avgExpense = expenses.isNotEmpty ? thisMonth / expenses.length : 0.0;
 
     final cards = [
       _buildStatCard(
+        context: context,
         title: l10n.totalExpenses,
         value: thisMonth.toStringAsFixed(0),
         icon: Icons.account_balance_wallet_rounded,
@@ -103,6 +104,7 @@ class ExpensesScreen extends ConsumerWidget {
         isDark: isDark,
       ),
       _buildStatCard(
+        context: context,
         title: l10n.thisMonth,
         value: '${expenses.length}',
         icon: Icons.receipt_long_rounded,
@@ -110,6 +112,7 @@ class ExpensesScreen extends ConsumerWidget {
         isDark: isDark,
       ),
       _buildStatCard(
+        context: context,
         title: l10n.categories,
         value: '$categoriesCount',
         icon: Icons.category_rounded,
@@ -117,6 +120,7 @@ class ExpensesScreen extends ConsumerWidget {
         isDark: isDark,
       ),
       _buildStatCard(
+        context: context,
         title: l10n.averageExpense,
         value: avgExpense.toStringAsFixed(0),
         icon: Icons.trending_down_rounded,
@@ -164,6 +168,7 @@ class ExpensesScreen extends ConsumerWidget {
   }
 
   Widget _buildStatCard({
+    required BuildContext context,
     required String title,
     required String value,
     required IconData icon,
@@ -495,7 +500,7 @@ class ExpensesScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                initialValue: category,
+                value: category,
                 decoration: InputDecoration(
                   labelText: l10n.categoryLabel,
                   prefixIcon: const Icon(Icons.category),

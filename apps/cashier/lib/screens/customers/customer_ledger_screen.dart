@@ -13,8 +13,10 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 // alhai_auth is re-exported via alhai_shared_ui
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:drift/drift.dart' show Value;
+import '../../core/services/sentry_service.dart';
 
 /// شاشة كشف حساب العميل
 class CustomerLedgerScreen extends ConsumerStatefulWidget {
@@ -32,6 +34,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   AccountsTableData? _account;
   List<TransactionsTableData> _transactions = [];
   bool _isLoading = true;
+  bool _isAdjusting = false;
+  String? _error;
 
   // Filters
   String _dateFilter = 'all';
@@ -45,7 +49,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
       final account = await _db.accountsDao.getAccountById(widget.id);
@@ -59,8 +66,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load customer ledger data');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -133,19 +146,24 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isMobile = context.isMobile;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAdjustmentDialog(colorScheme, l10n),
-        backgroundColor: AppColors.primary,
+        onPressed: _isAdjusting ? null : () => _showAdjustmentDialog(colorScheme, l10n),
+        backgroundColor: _isAdjusting ? AppColors.primary.withValues(alpha: 0.5) : AppColors.primary,
         foregroundColor: colorScheme.onPrimary,
-        icon: const Icon(Icons.tune_rounded, size: 20),
+        icon: _isAdjusting
+            ? const SizedBox(width: 20, height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+            : const Icon(Icons.tune_rounded, size: 20),
         label: Text(l10n.manualAdjustment),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const AppLoadingState()
+          : _error != null
+          ? AppErrorState.general(message: _error, onRetry: _loadData)
           : Column(
               children: [
                 _buildTopBar(colorScheme, l10n),
@@ -985,27 +1003,31 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
   Future<void> _handleSaveAdjustment(
       String type, double amount, String reason, DateTime date, AppLocalizations l10n) async {
+    setState(() => _isAdjusting = true);
+
     final isDebit = type == 'debit';
     final currentBal = _account?.balance ?? 0.0;
     final signedAmount = isDebit ? amount : -amount;
     final newBalance = currentBal + signedAmount;
-    final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+    final storeId = ref.read(currentStoreIdProvider)!;
 
     try {
-      final txnId = 'ADJ-${DateTime.now().millisecondsSinceEpoch}';
-      await _db.transactionsDao.insertTransaction(
-        TransactionsTableCompanion.insert(
-          id: txnId,
-          storeId: storeId,
-          accountId: widget.id,
-          type: 'adjustment',
-          amount: signedAmount,
-          balanceAfter: newBalance,
-          description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
-          createdAt: date,
-        ),
-      );
-      await _db.accountsDao.updateBalance(widget.id, newBalance);
+      final txnId = const Uuid().v4();
+      await _db.transaction(() async {
+        await _db.transactionsDao.insertTransaction(
+          TransactionsTableCompanion.insert(
+            id: txnId,
+            storeId: storeId,
+            accountId: widget.id,
+            type: 'adjustment',
+            amount: signedAmount,
+            balanceAfter: newBalance,
+            description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
+            createdAt: date,
+          ),
+        );
+        await _db.accountsDao.updateBalance(widget.id, newBalance);
+      });
       await _loadData();
 
       if (mounted) {
@@ -1013,12 +1035,26 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           SnackBar(content: Text(l10n.adjustmentSaved), backgroundColor: AppColors.success),
         );
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save ledger adjustment');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+            title: Text(l10n.error),
+            content: Text(l10n.errorWithDetails('$e')),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.close),
+              ),
+            ],
+          ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isAdjusting = false);
     }
   }
 

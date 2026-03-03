@@ -27,7 +27,7 @@ import 'categories_table.dart';
 @TableIndex(name: 'idx_products_name', columns: {#name})
 @TableIndex(name: 'idx_products_synced_at', columns: {#syncedAt})
 @TableIndex(name: 'idx_products_is_active', columns: {#isActive})
-@TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode}, unique: true)
+@TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode})
 class ProductsTable extends Table {
   @override
   String get tableName => 'products';

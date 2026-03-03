@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة نقل المخزون
 class TransferInventoryScreen extends ConsumerStatefulWidget {
@@ -38,6 +41,7 @@ class _TransferInventoryScreenState
   ProductsTableData? _selectedProduct;
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
 
   @override
   void initState() {
@@ -54,7 +58,10 @@ class _TransferInventoryScreenState
   }
 
   Future<void> _loadStores() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final stores = await _db.storesDao.getAllStores();
       final currentStoreId = ref.read(currentStoreIdProvider);
@@ -64,8 +71,14 @@ class _TransferInventoryScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load stores for transfer');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -83,8 +96,13 @@ class _TransferInventoryScreenState
           _searchResults = products;
         });
       }
-    } catch (_) {
-      // Search failed silently
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Search products in transfer');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+        );
+      }
     }
   }
 
@@ -94,7 +112,7 @@ class _TransferInventoryScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -115,8 +133,10 @@ class _TransferInventoryScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadStores)
+                  : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                   child: _buildContent(isWideScreen, isMediumScreen, colorScheme, l10n),
                 ),
@@ -543,34 +563,48 @@ class _TransferInventoryScreenState
   }
 
   Future<void> _submitTransfer() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final quantity = int.tryParse(_quantityController.text) ?? 0;
     if (quantity <= 0) return;
 
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
-      final movementId = 'TRF-${DateTime.now().millisecondsSinceEpoch}';
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final movementId = const Uuid().v4();
       final currentStock = _selectedProduct!.stockQty;
       final newStock = currentStock - quantity;
 
-      await _db.inventoryDao.insertMovement(
-        InventoryMovementsTableCompanion.insert(
-          id: movementId,
-          storeId: storeId,
-          productId: _selectedProduct!.id,
-          type: 'transfer_out',
-          qty: (-quantity).toDouble(),
-          previousQty: currentStock.toDouble(),
-          newQty: newStock.toDouble(),
-          reason: Value('transfer_to_$_toStoreId'),
-          notes: Value(_noteController.text.isNotEmpty ? _noteController.text : null),
-          createdAt: DateTime.now(),
-        ),
-      );
+      await _db.transaction(() async {
+        await _db.inventoryDao.insertMovement(
+          InventoryMovementsTableCompanion.insert(
+            id: movementId,
+            storeId: storeId,
+            productId: _selectedProduct!.id,
+            type: 'transfer_out',
+            qty: (-quantity).toDouble(),
+            previousQty: currentStock.toDouble(),
+            newQty: newStock.toDouble(),
+            reason: Value('transfer_to_$_toStoreId'),
+            notes: Value(_noteController.text.isNotEmpty ? _noteController.text : null),
+            createdAt: DateTime.now(),
+          ),
+        );
+        await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+      });
 
-      await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      auditService.logStockAdjust(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: _selectedProduct!.id,
+        productName: _selectedProduct!.name,
+        oldQty: currentStock.toDouble(),
+        newQty: newStock.toDouble(),
+        reason: 'نقل إلى فرع آخر',
+      );
 
       if (!mounted) return;
 
@@ -585,7 +619,8 @@ class _TransferInventoryScreenState
         _quantityController.clear();
         _noteController.clear();
       });
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save inventory transfer');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.errorWithDetails('$e')), backgroundColor: AppColors.error),

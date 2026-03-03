@@ -15,96 +15,107 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'di/injection.dart';
 import 'dart:async';
-import 'dart:ui';
 import 'router/cashier_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'core/services/sentry_service.dart';
+import 'services/printing/auto_print_setup.dart';
+import 'services/session_manager.dart';
 
 void main() {
-  runZonedGuarded(() async {
+  initSentry(appRunner: () async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Global error handlers
+    // Global error handlers — send to Sentry
     FlutterError.onError = (details) {
       FlutterError.presentError(details);
-      debugPrint('FlutterError: ${details.exceptionAsString()}');
+      reportError(
+        details.exception,
+        stackTrace: details.stack,
+        hint: 'FlutterError: ${details.library}',
+      );
     };
     PlatformDispatcher.instance.onError = (error, stack) {
-      debugPrint('PlatformError: $error\n$stack');
+      reportError(error, stackTrace: stack, hint: 'PlatformDispatcher');
       return true;
     };
 
-  // تهيئة Firebase + Supabase + مفتاح التشفير بالتوازي (M87 fix)
-  final dbKeyFuture = _getOrCreateDbKey();
-  final prefsFuture = SharedPreferences.getInstance();
+    // تهيئة Firebase + Supabase + مفتاح التشفير بالتوازي (M87 fix)
+    final dbKeyFuture = _getOrCreateDbKey();
+    final prefsFuture = SharedPreferences.getInstance();
 
-  final firebaseFuture = () async {
-    try {
-      await Firebase.initializeApp();
-      if (kDebugMode) debugPrint('Firebase initialized successfully');
-    } catch (e) {
-      // L93: Log in both debug and release so production errors are visible
-      debugPrint('Firebase not configured: $e');
-    }
-  }();
-
-  final supabaseFuture = () async {
-    try {
-      if (!SupabaseConfig.isConfigured) {
-        throw StateError(
-          'Supabase not configured. ${SupabaseConfig.configurationError}',
-        );
+    final firebaseFuture = () async {
+      // Skip Firebase on web debug (JS SDK can't load without internet to gstatic.com)
+      if (kIsWeb && kDebugMode) {
+        debugPrint('Firebase init skipped (web debug mode)');
+        return;
       }
-      await Supabase.initialize(
-        url: SupabaseConfig.url,
-        anonKey: SupabaseConfig.anonKey,
-        debug: SupabaseConfig.enableDebugLogs,
-      );
-      if (kDebugMode) debugPrint('Supabase initialized successfully');
-    } catch (e) {
-      // L93: Log in both debug and release so production errors are visible
-      debugPrint('Supabase initialization failed: $e');
-    }
-  }();
+      try {
+        await Firebase.initializeApp();
+        if (kDebugMode) debugPrint('Firebase initialized successfully');
+      } catch (e, stack) {
+        reportError(e, stackTrace: stack, hint: 'Firebase init');
+      }
+    }();
 
-  // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences معاً
-  final results = await Future.wait([
-    firebaseFuture,
-    supabaseFuture,
-    dbKeyFuture,
-    prefsFuture,
-  ]);
+    final supabaseFuture = () async {
+      try {
+        debugPrint('🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}');
+        if (!SupabaseConfig.isConfigured) {
+          throw StateError(
+            'Supabase not configured. ${SupabaseConfig.configurationError}',
+          );
+        }
+        await Supabase.initialize(
+          url: SupabaseConfig.url,
+          anonKey: SupabaseConfig.anonKey,
+          debug: SupabaseConfig.enableDebugLogs,
+        );
+        debugPrint('✅ Supabase initialized successfully');
+      } catch (e, stack) {
+        debugPrint('❌ Supabase init FAILED: $e');
+        reportError(e, stackTrace: stack, hint: 'Supabase init');
+      }
+    }();
 
-  final dbKey = results[2] as String;
-  setDatabaseEncryptionKey(dbKey);
+    // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences معاً
+    final results = await Future.wait([
+      firebaseFuture,
+      supabaseFuture,
+      dbKeyFuture,
+      prefsFuture,
+    ]);
 
-  // DI must run before runApp (Riverpod providers use getIt synchronously)
-  await configureDependencies();
+    final dbKey = results[2] as String;
+    setDatabaseEncryptionKey(dbKey);
 
-  // Seed database from CSV assets (first launch only)
-  await _seedDatabaseFromCsv();
+    // DI must run before runApp (Riverpod providers use getIt synchronously)
+    await configureDependencies();
 
-  final prefs = results[3] as SharedPreferences;
-  final savedTheme = prefs.getString('app_theme_mode');
-  final initialThemeMode = switch (savedTheme) {
-    'dark' => ThemeMode.dark,
-    'light' => ThemeMode.light,
-    _ => ThemeMode.system,
-  };
+    // Seed database from CSV assets (first launch only)
+    await _seedDatabaseFromCsv();
 
-  // M57: Pre-load onboarding state so router guard can check synchronously
-  final hasSeenOnboardingFlag = prefs.getBool(kOnboardingSeenKey) ?? false;
+    final prefs = results[3] as SharedPreferences;
+    final savedTheme = prefs.getString('app_theme_mode');
+    final initialThemeMode = switch (savedTheme) {
+      'dark' => ThemeMode.dark,
+      'light' => ThemeMode.light,
+      _ => ThemeMode.system,
+    };
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-        onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
-      ],
-      child: const CashierApp(),
-    ),
-  );
-  }, (error, stack) {
-    debugPrint('Uncaught error: $error\n$stack');
+    // M57: Pre-load onboarding state so router guard can check synchronously
+    final hasSeenOnboardingFlag = prefs.getBool(kOnboardingSeenKey) ?? false;
+
+    addBreadcrumb(message: 'App initialized', category: 'lifecycle');
+
+    runApp(
+      ProviderScope(
+        overrides: [
+          themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+          onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
+        ],
+        child: const CashierApp(),
+      ),
+    );
   });
 }
 
@@ -152,7 +163,7 @@ Future<void> _seedDatabaseFromCsv() async {
     final seeder = DatabaseSeeder(db);
 
     if (await seeder.isDatabaseEmpty()) {
-      debugPrint('Loading store data from CSV...');
+      addBreadcrumb(message: 'Seeding database from CSV', category: 'data');
 
       // Load CSV strings from assets (must be on main thread for rootBundle)
       final categoriesCsv =
@@ -176,8 +187,8 @@ Future<void> _seedDatabaseFromCsv() async {
         );
       }
     }
-  } catch (e) {
-    debugPrint('CSV seeding failed: $e');
+  } catch (e, stack) {
+    reportError(e, stackTrace: stack, hint: 'CSV seeding');
   }
 }
 
@@ -221,11 +232,30 @@ _CsvOutput? _parseCsvInBackground(_CsvInput input) {
   }
 }
 
-class CashierApp extends ConsumerWidget {
+class CashierApp extends ConsumerStatefulWidget {
   const CashierApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CashierApp> createState() => _CashierAppState();
+}
+
+class _CashierAppState extends ConsumerState<CashierApp> {
+  bool _autoPrintInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize auto-print after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_autoPrintInitialized) {
+        _autoPrintInitialized = true;
+        initializeAutoPrint(ref);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeState = ref.watch(themeProvider);
     final localeState = ref.watch(localeProvider);
 
@@ -247,7 +277,9 @@ class CashierApp extends ConsumerWidget {
       builder: (context, child) {
         return Directionality(
           textDirection: localeState.textDirection,
-          child: child ?? const SizedBox.shrink(),
+          child: SessionTimeoutWrapper(
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
     );

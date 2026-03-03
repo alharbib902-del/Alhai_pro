@@ -46,7 +46,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final activePromotionsAsync = ref.watch(activePromotionsProvider);
     final lowStockAsync = ref.watch(_lowStockProductsProvider);

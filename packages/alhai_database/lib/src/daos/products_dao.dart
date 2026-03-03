@@ -26,10 +26,11 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   ProductsFtsService get ftsService => _ftsService;
   
   /// الحصول على جميع المنتجات للمتجر (باستثناء المحذوفة)
-  Future<List<ProductsTableData>> getAllProducts(String storeId) {
+  Future<List<ProductsTableData>> getAllProducts(String storeId, {int limit = 5000}) {
     return (select(productsTable)
       ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
-      ..orderBy([(p) => OrderingTerm.asc(p.name)]))
+      ..orderBy([(p) => OrderingTerm.asc(p.name)])
+      ..limit(limit))
       .get();
   }
   
@@ -71,7 +72,8 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
         p.storeId.equals(storeId) &
         (p.name.like('%$escaped%') | p.barcode.like('%$escaped%') | p.sku.like('%$escaped%'))
       )
-      ..orderBy([(p) => OrderingTerm.asc(p.name)]))
+      ..orderBy([(p) => OrderingTerm.asc(p.name)])
+      ..limit(200))
       .get();
   }
 
@@ -124,7 +126,8 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
                 category_id, is_active, track_inventory,
                 created_at, updated_at, synced_at, deleted_at
          FROM products
-         WHERE store_id = ? AND stock_qty <= min_qty AND is_active = 1''',
+         WHERE store_id = ? AND stock_qty <= min_qty AND is_active = 1
+         LIMIT 500''',
       variables: [Variable.withString(storeId)],
       readsFrom: {productsTable},
     ).map((row) => productsTable.map(row.data)).get();
@@ -166,10 +169,14 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   }
   
   /// الحصول على المنتجات غير المزامنة
-  Future<List<ProductsTableData>> getUnsyncedProducts() {
-    return (select(productsTable)..where((p) => p.syncedAt.isNull())).get();
+  Future<List<ProductsTableData>> getUnsyncedProducts({String? storeId}) {
+    final q = select(productsTable)..where((p) => p.syncedAt.isNull());
+    if (storeId != null) {
+      q.where((p) => p.storeId.equals(storeId));
+    }
+    return (q..limit(500)).get();
   }
-  
+
   /// مراقبة المنتجات (Stream) - باستثناء المحذوفة
   Stream<List<ProductsTableData>> watchProducts(String storeId) {
     return (select(productsTable)

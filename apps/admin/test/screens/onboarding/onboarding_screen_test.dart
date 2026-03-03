@@ -58,7 +58,7 @@ void main() {
           createTestWidget(const OnboardingScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.point_of_sale_rounded), findsWidgets);
+      expect(find.byIcon(Icons.dashboard_rounded), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

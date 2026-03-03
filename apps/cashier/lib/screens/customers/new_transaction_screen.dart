@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة حركة حساب جديدة
 class NewTransactionScreen extends ConsumerStatefulWidget {
@@ -36,6 +39,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   bool _isDebt = true;
   bool _isLoading = false;
   bool _isSubmitting = false;
+  String? _error;
 
   List<AccountsTableData> _allAccounts = [];
   List<AccountsTableData> _filteredAccounts = [];
@@ -58,7 +62,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   }
 
   Future<void> _loadAccounts() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -80,8 +87,14 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           }
         }
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load customer accounts');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -105,7 +118,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -126,8 +139,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadAccounts)
+                  : SingleChildScrollView(
                   padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                   child: isWideScreen
                       ? Row(
@@ -741,25 +756,45 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       final account = _selectedAccount!;
       final signedAmount = _isDebt ? amount : -amount;
       final newBalance = account.balance + signedAmount;
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+      final storeId = ref.read(currentStoreIdProvider)!;
       final user = ref.read(currentUserProvider);
-      final txnId = 'TXN-${DateTime.now().millisecondsSinceEpoch}';
+      final txnId = const Uuid().v4();
 
-      await _db.transactionsDao.insertTransaction(
-        TransactionsTableCompanion.insert(
-          id: txnId,
-          storeId: storeId,
-          accountId: account.id,
-          type: _isDebt ? 'invoice' : 'payment',
-          amount: signedAmount,
-          balanceAfter: newBalance,
-          description: Value(
-              _noteController.text.isEmpty ? null : _noteController.text),
-          createdBy: Value(user?.name),
-          createdAt: DateTime.now(),
-        ),
+      await _db.transaction(() async {
+        await _db.transactionsDao.insertTransaction(
+          TransactionsTableCompanion.insert(
+            id: txnId,
+            storeId: storeId,
+            accountId: account.id,
+            type: _isDebt ? 'invoice' : 'payment',
+            amount: signedAmount,
+            balanceAfter: newBalance,
+            description: Value(
+                _noteController.text.isEmpty ? null : _noteController.text),
+            createdBy: Value(user?.name),
+            createdAt: DateTime.now(),
+          ),
+        );
+        await _db.accountsDao.updateBalance(account.id, newBalance);
+      });
+
+      // Audit log
+      auditService.logTransaction(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        transactionId: txnId,
+        accountName: account.name,
+        type: _isDebt ? 'invoice' : 'payment',
+        amount: signedAmount,
+        balanceAfter: newBalance,
       );
-      await _db.accountsDao.updateBalance(account.id, newBalance);
+
+      addBreadcrumb(
+        message: _isDebt ? 'Debt recorded' : 'Payment recorded',
+        category: 'payment',
+        data: {'amount': signedAmount, 'accountId': account.id},
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -773,12 +808,21 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       _amountController.clear();
       _noteController.clear();
       await _loadAccounts();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save new transaction');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
         ),
       );
     } finally {

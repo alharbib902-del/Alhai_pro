@@ -25,7 +25,7 @@ class _PendingTransactionsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final pendingItemsAsync = ref.watch(pendingSyncItemsProvider);
 
@@ -357,7 +357,7 @@ class _PendingTransactionsScreenState
   Future<void> _syncAll() async {
     setState(() => _isSyncing = true);
     final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     try {
       final manager = ref.read(syncManagerProvider);
       final result = await manager.syncPending();
@@ -390,7 +390,7 @@ class _PendingTransactionsScreenState
 
   Future<void> _retryItem(SyncQueueTableData item) async {
     final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     try {
       final syncService = ref.read(syncServiceProvider);
       await syncService.retryItem(item.id);
@@ -409,7 +409,7 @@ class _PendingTransactionsScreenState
   }
 
   void _deleteItem(SyncQueueTableData item) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,

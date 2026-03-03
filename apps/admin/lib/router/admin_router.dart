@@ -88,8 +88,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
         LanguageScreen,
         ThemeScreen,
         SyncStatusScreen,
-        ProfileScreen,
-        LazyScreen;
+        ProfileScreen;
 
 // Local screens
 import '../screens/home_screen.dart';
@@ -501,7 +500,7 @@ final List<RouteBase> _routes = [
         name: 'categories',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CategoriesScreen()),
+          child: const CategoriesScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -514,7 +513,7 @@ final List<RouteBase> _routes = [
         name: 'inventory',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const InventoryScreen()),
+          child: const InventoryScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -523,7 +522,7 @@ final List<RouteBase> _routes = [
         name: 'expiry-tracking',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ExpiryTrackingScreen()),
+          child: const ExpiryTrackingScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -559,7 +558,7 @@ final List<RouteBase> _routes = [
           final id = state.pathId();
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => CustomerLedgerScreen(customerId: id)),
+            child: CustomerLedgerScreen(customerId: id),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -582,7 +581,7 @@ final List<RouteBase> _routes = [
         name: 'supplier-form',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SupplierFormScreen()),
+          child: const SupplierFormScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -616,7 +615,7 @@ final List<RouteBase> _routes = [
         name: 'order-tracking',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const OrderTrackingScreen()),
+          child: const OrderTrackingScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -625,7 +624,7 @@ final List<RouteBase> _routes = [
         name: 'order-history',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const OrderHistoryScreen()),
+          child: const OrderHistoryScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -638,7 +637,7 @@ final List<RouteBase> _routes = [
         name: 'customer-analytics',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CustomerAnalyticsScreen()),
+          child: const CustomerAnalyticsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -689,7 +688,7 @@ final List<RouteBase> _routes = [
         name: 'returns',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ReturnsScreen()),
+          child: const ReturnsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -700,8 +699,8 @@ final List<RouteBase> _routes = [
           final orderId = state.queryParam('orderId');
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => RefundRequestScreen(
-                orderId: orderId.isEmpty ? null : orderId)),
+            child: RefundRequestScreen(
+                orderId: orderId.isEmpty ? null : orderId),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -711,7 +710,7 @@ final List<RouteBase> _routes = [
         name: 'refund-reason',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const RefundReasonScreen()),
+          child: const RefundReasonScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -722,7 +721,7 @@ final List<RouteBase> _routes = [
           final id = state.pathId();
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => RefundReceiptScreen(refundId: id)),
+            child: RefundReceiptScreen(refundId: id),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -732,7 +731,7 @@ final List<RouteBase> _routes = [
         name: 'void-transaction',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const VoidTransactionScreen()),
+          child: const VoidTransactionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -754,7 +753,7 @@ final List<RouteBase> _routes = [
         name: 'expense-categories',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ExpenseCategoriesScreen()),
+          child: const ExpenseCategoriesScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -767,7 +766,7 @@ final List<RouteBase> _routes = [
         name: 'cash-drawer',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CashDrawerScreen()),
+          child: const CashDrawerScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -780,7 +779,7 @@ final List<RouteBase> _routes = [
         name: 'monthly-close',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const MonthlyCloseScreen()),
+          child: const MonthlyCloseScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -802,7 +801,7 @@ final List<RouteBase> _routes = [
         name: 'shift-open',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ShiftOpenScreen()),
+          child: const ShiftOpenScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -811,7 +810,7 @@ final List<RouteBase> _routes = [
         name: 'shift-close',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ShiftCloseScreen()),
+          child: const ShiftCloseScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -820,7 +819,7 @@ final List<RouteBase> _routes = [
         name: 'shift-summary',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ShiftSummaryScreen()),
+          child: const ShiftSummaryScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -833,7 +832,7 @@ final List<RouteBase> _routes = [
         name: 'purchase-form',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PurchaseFormScreen()),
+          child: const PurchaseFormScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -842,7 +841,7 @@ final List<RouteBase> _routes = [
         name: 'smart-reorder',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SmartReorderScreen()),
+          child: const SmartReorderScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -851,7 +850,7 @@ final List<RouteBase> _routes = [
         name: 'ai-invoice-import',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiInvoiceImportScreen()),
+          child: const AiInvoiceImportScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -877,7 +876,7 @@ final List<RouteBase> _routes = [
               : AiInvoiceReviewScreen(invoiceData: invoiceData);
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => child),
+            child: child,
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -891,7 +890,7 @@ final List<RouteBase> _routes = [
         name: 'discounts',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DiscountsScreen()),
+          child: const DiscountsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -900,7 +899,7 @@ final List<RouteBase> _routes = [
         name: 'coupons',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CouponManagementScreen()),
+          child: const CouponManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -909,7 +908,7 @@ final List<RouteBase> _routes = [
         name: 'special-offers',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SpecialOffersScreen()),
+          child: const SpecialOffersScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -922,7 +921,7 @@ final List<RouteBase> _routes = [
         name: 'smart-promotions',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SmartPromotionsScreen()),
+          child: const SmartPromotionsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -935,7 +934,7 @@ final List<RouteBase> _routes = [
         name: 'loyalty',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const LoyaltyProgramScreen()),
+          child: const LoyaltyProgramScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -948,7 +947,7 @@ final List<RouteBase> _routes = [
         name: 'notifications',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const NotificationsScreen()),
+          child: const NotificationsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -961,7 +960,7 @@ final List<RouteBase> _routes = [
         name: 'print-queue',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PrintQueueScreen()),
+          child: const PrintQueueScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -974,7 +973,7 @@ final List<RouteBase> _routes = [
         name: 'sync-status',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SyncStatusScreen()),
+          child: const SyncStatusScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -983,7 +982,7 @@ final List<RouteBase> _routes = [
         name: 'pending-transactions',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PendingTransactionsScreen()),
+          child: const PendingTransactionsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -992,7 +991,7 @@ final List<RouteBase> _routes = [
         name: 'conflict-resolution',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ConflictResolutionScreen()),
+          child: const ConflictResolutionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1005,7 +1004,7 @@ final List<RouteBase> _routes = [
         name: 'drivers',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DriverManagementScreen()),
+          child: const DriverManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1018,7 +1017,7 @@ final List<RouteBase> _routes = [
         name: 'branches',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const BranchManagementScreen()),
+          child: const BranchManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1031,7 +1030,7 @@ final List<RouteBase> _routes = [
         name: 'employees',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const UsersManagementScreen()),
+          child: const UsersManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1057,7 +1056,7 @@ final List<RouteBase> _routes = [
         name: 'reports',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ReportsScreen()),
+          child: const ReportsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1066,7 +1065,7 @@ final List<RouteBase> _routes = [
         name: 'complaints-report',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ComplaintsReportScreen()),
+          child: const ComplaintsReportScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1079,7 +1078,7 @@ final List<RouteBase> _routes = [
         name: 'settings',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SettingsScreen()),
+          child: const SettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1088,7 +1087,7 @@ final List<RouteBase> _routes = [
         name: 'settings-printer',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PrinterSettingsScreen()),
+          child: const PrinterSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1097,7 +1096,7 @@ final List<RouteBase> _routes = [
         name: 'settings-language',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const LanguageScreen()),
+          child: const LanguageScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1106,7 +1105,7 @@ final List<RouteBase> _routes = [
         name: 'settings-theme',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ThemeScreen()),
+          child: const ThemeScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1115,7 +1114,7 @@ final List<RouteBase> _routes = [
         name: 'settings-store',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const StoreSettingsScreen()),
+          child: const StoreSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1124,7 +1123,7 @@ final List<RouteBase> _routes = [
         name: 'settings-pos',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PosSettingsScreen()),
+          child: const PosSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1133,7 +1132,7 @@ final List<RouteBase> _routes = [
         name: 'settings-payment-devices',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PaymentDevicesSettingsScreen()),
+          child: const PaymentDevicesSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1142,7 +1141,7 @@ final List<RouteBase> _routes = [
         name: 'settings-barcode',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const BarcodeSettingsScreen()),
+          child: const BarcodeSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1151,7 +1150,7 @@ final List<RouteBase> _routes = [
         name: 'settings-receipt',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ReceiptTemplateScreen()),
+          child: const ReceiptTemplateScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1160,7 +1159,7 @@ final List<RouteBase> _routes = [
         name: 'settings-tax',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const TaxSettingsScreen()),
+          child: const TaxSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1169,7 +1168,7 @@ final List<RouteBase> _routes = [
         name: 'settings-discounts',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DiscountsSettingsScreen()),
+          child: const DiscountsSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1178,7 +1177,7 @@ final List<RouteBase> _routes = [
         name: 'settings-interest',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const InterestSettingsScreen()),
+          child: const InterestSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1187,7 +1186,7 @@ final List<RouteBase> _routes = [
         name: 'settings-security',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SecuritySettingsScreen()),
+          child: const SecuritySettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1196,7 +1195,7 @@ final List<RouteBase> _routes = [
         name: 'settings-users',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const UsersManagementScreen()),
+          child: const UsersManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1205,7 +1204,7 @@ final List<RouteBase> _routes = [
         name: 'settings-roles',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const RolesPermissionsScreen()),
+          child: const RolesPermissionsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1214,7 +1213,7 @@ final List<RouteBase> _routes = [
         name: 'settings-activity-log',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ActivityLogScreen()),
+          child: const ActivityLogScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1223,7 +1222,7 @@ final List<RouteBase> _routes = [
         name: 'settings-backup',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const BackupSettingsScreen()),
+          child: const BackupSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1232,7 +1231,7 @@ final List<RouteBase> _routes = [
         name: 'settings-notifications',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const NotificationsSettingsScreen()),
+          child: const NotificationsSettingsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1241,7 +1240,7 @@ final List<RouteBase> _routes = [
         name: 'settings-zatca',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ZatcaComplianceScreen()),
+          child: const ZatcaComplianceScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1250,7 +1249,7 @@ final List<RouteBase> _routes = [
         name: 'settings-help',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const HelpSupportScreen()),
+          child: const HelpSupportScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1259,7 +1258,7 @@ final List<RouteBase> _routes = [
         name: 'settings-shipping',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const ShippingGatewaysScreen()),
+          child: const ShippingGatewaysScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1272,7 +1271,7 @@ final List<RouteBase> _routes = [
         name: 'ai-assistant',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiAssistantScreen()),
+          child: const AiAssistantScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1281,7 +1280,7 @@ final List<RouteBase> _routes = [
         name: 'ai-sales-forecasting',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiSalesForecastingScreen()),
+          child: const AiSalesForecastingScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1290,7 +1289,7 @@ final List<RouteBase> _routes = [
         name: 'ai-smart-pricing',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiSmartPricingScreen()),
+          child: const AiSmartPricingScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1299,7 +1298,7 @@ final List<RouteBase> _routes = [
         name: 'ai-fraud-detection',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiFraudDetectionScreen()),
+          child: const AiFraudDetectionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1308,7 +1307,7 @@ final List<RouteBase> _routes = [
         name: 'ai-basket-analysis',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiBasketAnalysisScreen()),
+          child: const AiBasketAnalysisScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1317,7 +1316,7 @@ final List<RouteBase> _routes = [
         name: 'ai-customer-recommendations',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiCustomerRecommendationsScreen()),
+          child: const AiCustomerRecommendationsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1326,7 +1325,7 @@ final List<RouteBase> _routes = [
         name: 'ai-smart-inventory',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiSmartInventoryScreen()),
+          child: const AiSmartInventoryScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1335,7 +1334,7 @@ final List<RouteBase> _routes = [
         name: 'ai-competitor-analysis',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiCompetitorAnalysisScreen()),
+          child: const AiCompetitorAnalysisScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1344,7 +1343,7 @@ final List<RouteBase> _routes = [
         name: 'ai-smart-reports',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiSmartReportsScreen()),
+          child: const AiSmartReportsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1353,7 +1352,7 @@ final List<RouteBase> _routes = [
         name: 'ai-staff-analytics',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiStaffAnalyticsScreen()),
+          child: const AiStaffAnalyticsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1362,7 +1361,7 @@ final List<RouteBase> _routes = [
         name: 'ai-product-recognition',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiProductRecognitionScreen()),
+          child: const AiProductRecognitionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1371,7 +1370,7 @@ final List<RouteBase> _routes = [
         name: 'ai-sentiment-analysis',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiSentimentAnalysisScreen()),
+          child: const AiSentimentAnalysisScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1380,7 +1379,7 @@ final List<RouteBase> _routes = [
         name: 'ai-return-prediction',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiReturnPredictionScreen()),
+          child: const AiReturnPredictionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1389,7 +1388,7 @@ final List<RouteBase> _routes = [
         name: 'ai-promotion-designer',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiPromotionDesignerScreen()),
+          child: const AiPromotionDesignerScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1398,7 +1397,7 @@ final List<RouteBase> _routes = [
         name: 'ai-chat-with-data',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AiChatWithDataScreen()),
+          child: const AiChatWithDataScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1411,7 +1410,7 @@ final List<RouteBase> _routes = [
         name: 'ecommerce',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const EcommerceScreen()),
+          child: const EcommerceScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1424,7 +1423,7 @@ final List<RouteBase> _routes = [
         name: 'wallet',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const WalletScreen()),
+          child: const WalletScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1437,7 +1436,7 @@ final List<RouteBase> _routes = [
         name: 'subscription',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SubscriptionScreen()),
+          child: const SubscriptionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1450,7 +1449,7 @@ final List<RouteBase> _routes = [
         name: 'media-library',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const MediaLibraryScreen()),
+          child: const MediaLibraryScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1463,7 +1462,7 @@ final List<RouteBase> _routes = [
         name: 'device-log',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DeviceLogScreen()),
+          child: const DeviceLogScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1476,7 +1475,7 @@ final List<RouteBase> _routes = [
         name: 'supplier-returns',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const SupplierReturnScreen()),
+          child: const SupplierReturnScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1485,7 +1484,7 @@ final List<RouteBase> _routes = [
         name: 'purchases-list',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PurchasesListScreen()),
+          child: const PurchasesListScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1496,7 +1495,7 @@ final List<RouteBase> _routes = [
           final id = state.pathParameters['id'] ?? '';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => PurchaseDetailScreen(purchaseId: id)),
+            child: PurchaseDetailScreen(purchaseId: id),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -1508,7 +1507,7 @@ final List<RouteBase> _routes = [
           final id = state.pathParameters['id'] ?? '';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => ReceivingGoodsScreen(purchaseId: id)),
+            child: ReceivingGoodsScreen(purchaseId: id),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -1520,7 +1519,7 @@ final List<RouteBase> _routes = [
           final id = state.pathParameters['id'] ?? '';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => SendToDistributorScreen(purchaseId: id)),
+            child: SendToDistributorScreen(purchaseId: id),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -1530,7 +1529,7 @@ final List<RouteBase> _routes = [
         name: 'gift-cards',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const GiftCardsScreen()),
+          child: const GiftCardsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1539,7 +1538,7 @@ final List<RouteBase> _routes = [
         name: 'employee-attendance',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const AttendanceScreen()),
+          child: const AttendanceScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1548,7 +1547,7 @@ final List<RouteBase> _routes = [
         name: 'employee-commissions',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CommissionScreen()),
+          child: const CommissionScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1557,7 +1556,7 @@ final List<RouteBase> _routes = [
         name: 'online-orders',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const OnlineOrdersScreen()),
+          child: const OnlineOrdersScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1566,7 +1565,7 @@ final List<RouteBase> _routes = [
         name: 'damaged-goods',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DamagedGoodsScreen()),
+          child: const DamagedGoodsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1575,7 +1574,7 @@ final List<RouteBase> _routes = [
         name: 'price-lists',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const PriceListsScreen()),
+          child: const PriceListsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1584,7 +1583,7 @@ final List<RouteBase> _routes = [
         name: 'customer-groups',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const CustomerGroupsScreen()),
+          child: const CustomerGroupsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1597,7 +1596,7 @@ final List<RouteBase> _routes = [
         name: 'delivery-zones',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const DeliveryZonesScreen()),
+          child: const DeliveryZonesScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1612,7 +1611,7 @@ final List<RouteBase> _routes = [
           final userId = state.pathParameters['userId'] ?? '';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LazyScreen(screenBuilder: () async => EmployeeProfileScreen(userId: userId)),
+            child: EmployeeProfileScreen(userId: userId),
             transitionsBuilder: _fadeTransition,
           );
         },
@@ -1626,7 +1625,7 @@ final List<RouteBase> _routes = [
         name: 'whatsapp-management',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const WhatsAppManagementScreen()),
+          child: const WhatsAppManagementScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),
@@ -1639,7 +1638,7 @@ final List<RouteBase> _routes = [
         name: 'kiosk',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: LazyScreen(screenBuilder: () async => const KioskScreen()),
+          child: const KioskScreen(),
           transitionsBuilder: _fadeTransition,
         ),
       ),

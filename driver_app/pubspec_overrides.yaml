@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: alhai_core,alhai_design_system,alhai_services
+dependency_overrides:
+  alhai_core:
+    path: ..\\alhai_core
+  alhai_design_system:
+    path: ..\\alhai_design_system
+  alhai_services:
+    path: ..\\alhai_services

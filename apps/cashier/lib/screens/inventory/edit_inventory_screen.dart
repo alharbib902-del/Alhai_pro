@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة تعديل المخزون
 class EditInventoryScreen extends ConsumerStatefulWidget {
@@ -36,6 +39,7 @@ class _EditInventoryScreenState
   ProductsTableData? _product;
   bool _isLoading = true;
   bool _isSaving = false;
+  String? _error;
   bool _isAdding = true; // true = add, false = subtract
   String _reason = 'received';
 
@@ -53,7 +57,10 @@ class _EditInventoryScreenState
   }
 
   Future<void> _loadProduct() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final product = await _db.productsDao.getProductById(widget.productId);
       if (mounted) {
@@ -62,8 +69,14 @@ class _EditInventoryScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load product for edit inventory');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -73,7 +86,7 @@ class _EditInventoryScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -94,14 +107,16 @@ class _EditInventoryScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _product == null
-                  ? _buildNotFound(isDark, l10n)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadProduct)
+                  : _product == null
+                      ? _buildNotFound(isDark, l10n)
+                      : SingleChildScrollView(
+                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          child: _buildContent(
+                              isWideScreen, isMediumScreen, isDark, l10n),
+                        ),
         ),
       ],
     );
@@ -623,38 +638,51 @@ class _EditInventoryScreenState
   }
 
   Future<void> _saveAdjustment() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final adjustment = int.tryParse(_adjustmentController.text) ?? 0;
     if (adjustment <= 0) return;
 
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+      final storeId = ref.read(currentStoreIdProvider)!;
       final currentStock = _product?.stockQty ?? 0;
       final signedAdjustment = _isAdding ? adjustment : -adjustment;
       final newStock = currentStock + signedAdjustment;
 
-      final movementId = 'MOV-${DateTime.now().millisecondsSinceEpoch}';
-      await _db.inventoryDao.insertMovement(
-        InventoryMovementsTableCompanion.insert(
-          id: movementId,
-          storeId: storeId,
-          productId: widget.productId,
-          type: _isAdding ? 'addition' : 'subtraction',
-          qty: signedAdjustment,
-          previousQty: currentStock,
-          newQty: newStock,
-          reason: Value(_reason),
-          notes: Value(_noteController.text.isNotEmpty
-              ? _noteController.text
-              : null),
-          createdAt: DateTime.now(),
-        ),
-      );
+      final movementId = const Uuid().v4();
+      await _db.transaction(() async {
+        await _db.inventoryDao.insertMovement(
+          InventoryMovementsTableCompanion.insert(
+            id: movementId,
+            storeId: storeId,
+            productId: widget.productId,
+            type: _isAdding ? 'addition' : 'subtraction',
+            qty: signedAdjustment.toDouble(),
+            previousQty: currentStock.toDouble(),
+            newQty: newStock.toDouble(),
+            reason: Value(_reason),
+            notes: Value(_noteController.text.isNotEmpty
+                ? _noteController.text
+                : null),
+            createdAt: DateTime.now(),
+          ),
+        );
+        await _db.productsDao.updateStock(widget.productId, newStock);
+      });
 
-      // Update product stock
-      await _db.productsDao.updateStock(widget.productId, newStock);
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      auditService.logStockAdjust(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: widget.productId,
+        productName: _product?.name ?? widget.productId,
+        oldQty: currentStock.toDouble(),
+        newQty: newStock.toDouble(),
+        reason: _reason,
+      );
 
       if (!mounted) return;
 
@@ -666,7 +694,8 @@ class _EditInventoryScreenState
       );
 
       context.pop();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save edit inventory adjustment');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

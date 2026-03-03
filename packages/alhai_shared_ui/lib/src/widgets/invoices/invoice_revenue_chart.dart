@@ -50,7 +50,7 @@ class InvoiceRevenueChart extends StatelessWidget {
             height: 220,
             child: CustomPaint(
               size: Size.infinite,
-              painter: _RevenueChartPainter(isDark: isDark),
+              painter: _RevenueChartPainter(isDark: isDark, gridLineColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
             ),
           ),
           const SizedBox(height: 12),
@@ -69,7 +69,8 @@ class InvoiceRevenueChart extends StatelessWidget {
 
 class _RevenueChartPainter extends CustomPainter {
   final bool isDark;
-  _RevenueChartPainter({required this.isDark});
+  final Color gridLineColor;
+  _RevenueChartPainter({required this.isDark, required this.gridLineColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -78,7 +79,7 @@ class _RevenueChartPainter extends CustomPainter {
 
     // Grid lines
     final gridPaint = Paint()
-      ..color = (Theme.of(context).colorScheme.onSurface).withValues(alpha: 0.05)
+      ..color = gridLineColor
       ..strokeWidth = 1;
 
     for (int i = 0; i <= 4; i++) {

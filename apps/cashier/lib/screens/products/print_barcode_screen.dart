@@ -13,6 +13,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة طباعة الباركود
 class PrintBarcodeScreen extends ConsumerStatefulWidget {
@@ -56,8 +57,17 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           _isSearching = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isSearching = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Search products for barcode print');
+      if (mounted) {
+        setState(() => _isSearching = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -67,7 +77,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -633,7 +643,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
   }
 
   Future<void> _printBarcode() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final qty = int.tryParse(_quantityController.text) ?? 1;
 
     setState(() => _isPrinting = true);
@@ -650,7 +660,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Print barcode labels');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

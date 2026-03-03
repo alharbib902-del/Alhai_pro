@@ -2,6 +2,7 @@ import 'package:alhai_core/alhai_core.dart' as core;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
+import '../core/services/audit_service.dart';
 
 /// GetIt instance - uses the same instance as alhai_core
 final getIt = core.getIt;
@@ -38,6 +39,9 @@ Future<void> configureDependencies({String? environment}) async {
   getIt.registerLazySingleton<core.CategoriesRepository>(
     () => LocalCategoriesRepository(db),
   );
+
+  // Register AuditService
+  getIt.registerLazySingleton<AuditService>(() => AuditService(db));
 
   // Register Supabase client (if initialized)
   try {

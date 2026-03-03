@@ -1,0 +1,3 @@
+@echo off
+echo Starting Alhai Cashier...
+flutter run -d chrome --web-port=51874 --dart-define-from-file=.dart_define.env

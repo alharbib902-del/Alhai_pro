@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// Payment devices list screen
 class PaymentDevicesScreen extends ConsumerStatefulWidget {
@@ -39,7 +40,7 @@ class _PaymentDevicesScreenState
   Future<void> _loadDevices() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
+      final storeId = ref.read(currentStoreIdProvider)!;
       final settings = await (
         _db.select(_db.settingsTable)
           ..where((s) => s.storeId.equals(storeId))
@@ -85,8 +86,8 @@ class _PaymentDevicesScreenState
       if (mounted) {
         setState(() => _devices = loaded);
       }
-    } catch (_) {
-      // Use defaults
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load payment devices');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -125,7 +126,7 @@ class _PaymentDevicesScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [

@@ -127,7 +127,7 @@ SaleItemsTableData createTestSaleItem({
     productName: productName,
     productSku: productSku,
     productBarcode: productBarcode,
-    qty: qty,
+    qty: qty.toDouble(),
     unitPrice: unitPrice,
     costPrice: costPrice,
     subtotal: subtotal,

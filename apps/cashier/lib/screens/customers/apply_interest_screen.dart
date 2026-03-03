@@ -14,6 +14,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة تطبيق الفائدة
 class ApplyInterestScreen extends ConsumerStatefulWidget {
@@ -31,6 +33,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
   final Set<String> _selectedIds = {};
   bool _isLoading = true;
   bool _isApplying = false;
+  String? _error;
 
   @override
   void initState() {
@@ -45,7 +48,10 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
   }
 
   Future<void> _loadAccounts() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -60,8 +66,14 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load accounts for interest');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -111,7 +123,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -132,8 +144,10 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _accounts.isEmpty
+              ? const AppLoadingState()
+              : _error != null
+                  ? AppErrorState.general(message: _error!, onRetry: _loadAccounts)
+                  : _accounts.isEmpty
                   ? _buildNoAccountsMessage(isDark, l10n)
                   : SingleChildScrollView(
                       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
@@ -642,31 +656,43 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     setState(() => _isApplying = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
+      final storeId = ref.read(currentStoreIdProvider)!;
       final user = ref.read(currentUserProvider);
       final now = DateTime.now();
       final periodKey =
           '${now.year}-${now.month.toString().padLeft(2, '0')}';
 
-      for (final accountId in _selectedIds) {
-        final account = _accounts.firstWhere((a) => a.id == accountId);
-        final interest = _calculateInterest(account.balance);
-        if (interest <= 0) continue;
+      await _db.transaction(() async {
+        for (final accountId in _selectedIds) {
+          final account = _accounts.firstWhere((a) => a.id == accountId);
+          final interest = _calculateInterest(account.balance);
+          if (interest <= 0) continue;
 
-        final newBalance = account.balance + interest;
-        final txnId = 'INT-${now.millisecondsSinceEpoch}-$accountId';
+          final newBalance = account.balance + interest;
+          final txnId = 'INT-${now.millisecondsSinceEpoch}-$accountId';
 
-        await _db.transactionsDao.recordInterest(
-          id: txnId,
-          storeId: storeId,
-          accountId: accountId,
-          amount: interest,
-          balanceAfter: newBalance,
-          periodKey: periodKey,
-          createdBy: user?.name,
-        );
-        await _db.accountsDao.updateBalance(accountId, newBalance);
-      }
+          await _db.transactionsDao.recordInterest(
+            id: txnId,
+            storeId: storeId,
+            accountId: accountId,
+            amount: interest,
+            balanceAfter: newBalance,
+            periodKey: periodKey,
+            createdBy: user?.name,
+          );
+          await _db.accountsDao.updateBalance(accountId, newBalance);
+        }
+      });
+
+      // Audit log
+      auditService.logInterestApply(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        accountCount: _selectedIds.length,
+        rate: _rate,
+        totalInterest: _totalInterest,
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -678,12 +704,21 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
 
       _selectedIds.clear();
       await _loadAccounts();
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Apply interest to accounts');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
         ),
       );
     } finally {

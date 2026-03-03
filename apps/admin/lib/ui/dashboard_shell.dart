@@ -99,7 +99,9 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     if (location.startsWith('/shifts')) return 'shifts';
     if (location.startsWith('/settings')) return 'settings';
     if (location.startsWith('/marketing') ||
-        location.startsWith('/promotions')) return 'marketing';
+        location.startsWith('/promotions')) {
+      return 'marketing';
+    }
     if (location.startsWith('/sync')) return 'sync';
     if (location.startsWith('/drivers')) return 'drivers';
     if (location.startsWith('/branches')) return 'branches';
@@ -207,7 +209,7 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
     // M115: Use shared breakpoint from design system (905px)
     final isDesktop = MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
     final selectedNavId = _getSelectedNavId(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final sidebarGroups = _getSidebarGroups(context);

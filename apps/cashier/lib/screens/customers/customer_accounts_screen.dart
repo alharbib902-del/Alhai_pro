@@ -15,6 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة حسابات العملاء
 class CustomerAccountsScreen extends ConsumerStatefulWidget {
@@ -32,6 +33,7 @@ class _CustomerAccountsScreenState
   List<AccountsTableData> _allAccounts = [];
   List<AccountsTableData> _filteredAccounts = [];
   bool _isLoading = true;
+  String? _error;
   String _statusFilter = 'all';
 
   @override
@@ -48,7 +50,10 @@ class _CustomerAccountsScreenState
   }
 
   Future<void> _loadAccounts() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -60,8 +65,14 @@ class _CustomerAccountsScreenState
         });
         _applyFilters();
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load customer accounts');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -105,7 +116,7 @@ class _CustomerAccountsScreenState
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -126,7 +137,12 @@ class _CustomerAccountsScreenState
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingState()
+              : _error != null
+              ? AppErrorState.general(
+                  message: _error,
+                  onRetry: _loadAccounts,
+                )
               : Column(
                   children: [
                     Padding(
@@ -522,21 +538,9 @@ class _CustomerAccountsScreenState
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.account_balance_wallet_outlined,
-              size: 64,
-              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
-          Text('No customer accounts found',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextMuted(isDark))),
-        ],
-      ),
+    return const AppEmptyState(
+      icon: Icons.account_balance_wallet_outlined,
+      title: 'No customer accounts found',
     );
   }
 

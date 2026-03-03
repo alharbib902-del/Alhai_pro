@@ -1,0 +1,406 @@
+/// BackupManager - Real backup/restore using database export
+///
+/// Bridges AppDatabase ↔ BackupService for actual data export/import.
+/// Supports: full JSON export, import with validation, share via platform share sheet.
+library;
+
+import 'dart:convert';
+
+import 'package:alhai_database/alhai_database.dart';
+import 'package:drift/drift.dart';
+
+import 'sentry_service.dart';
+
+/// Manages real backup/restore operations against the local database.
+class BackupManager {
+  final AppDatabase _db;
+
+  BackupManager(this._db);
+
+  // ===========================================================================
+  // EXPORT
+  // ===========================================================================
+
+  /// Export all store data as a JSON map.
+  ///
+  /// Returns a Map containing every table's rows scoped to [storeId].
+  /// Tables without a storeId column are exported in full (settings, etc.).
+  Future<BackupBundle> exportAsJson(String storeId) async {
+    try {
+      final now = DateTime.now();
+      final data = <String, dynamic>{};
+
+      // --- Core tables ---
+      data['products'] = await _queryRows(
+        'SELECT * FROM products WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['categories'] = await _queryRows(
+        'SELECT * FROM categories WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['sales'] = await _queryRows(
+        'SELECT * FROM sales WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['sale_items'] = await _queryRows(
+        'SELECT si.* FROM sale_items si INNER JOIN sales s ON si.sale_id = s.id WHERE s.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['customers'] = await _queryRows(
+        'SELECT * FROM customers WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['customer_addresses'] = await _queryRows(
+        'SELECT ca.* FROM customer_addresses ca INNER JOIN customers c ON ca.customer_id = c.id WHERE c.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Financial ---
+      data['accounts'] = await _queryRows(
+        'SELECT * FROM accounts WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['transactions'] = await _queryRows(
+        'SELECT * FROM transactions WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Inventory ---
+      data['inventory_movements'] = await _queryRows(
+        'SELECT * FROM inventory_movements WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['stock_transfers'] = await _queryRows(
+        'SELECT * FROM stock_transfers WHERE from_store_id = ? OR to_store_id = ?',
+        [Variable.withString(storeId), Variable.withString(storeId)],
+      );
+
+      // --- Orders ---
+      data['orders'] = await _queryRows(
+        'SELECT * FROM orders WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['order_items'] = await _queryRows(
+        'SELECT oi.* FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Returns ---
+      data['returns'] = await _queryRows(
+        'SELECT * FROM returns WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['return_items'] = await _queryRows(
+        'SELECT ri.* FROM return_items ri INNER JOIN returns r ON ri.return_id = r.id WHERE r.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Shifts ---
+      data['shifts'] = await _queryRows(
+        'SELECT * FROM shifts WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['cash_movements'] = await _queryRows(
+        'SELECT cm.* FROM cash_movements cm INNER JOIN shifts sh ON cm.shift_id = sh.id WHERE sh.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Suppliers & Purchases ---
+      data['suppliers'] = await _queryRows(
+        'SELECT * FROM suppliers WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['purchases'] = await _queryRows(
+        'SELECT * FROM purchases WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['purchase_items'] = await _queryRows(
+        'SELECT pi.* FROM purchase_items pi INNER JOIN purchases p ON pi.purchase_id = p.id WHERE p.store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Expenses ---
+      data['expenses'] = await _queryRows(
+        'SELECT * FROM expenses WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['expense_categories'] = await _queryRows(
+        'SELECT * FROM expense_categories WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Promotions ---
+      data['discounts'] = await _queryRows(
+        'SELECT * FROM discounts WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['coupons'] = await _queryRows(
+        'SELECT * FROM coupons WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['promotions'] = await _queryRows(
+        'SELECT * FROM promotions WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Settings ---
+      data['settings'] = await _queryRows(
+        'SELECT * FROM settings WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Held invoices ---
+      data['held_invoices'] = await _queryRows(
+        'SELECT * FROM held_invoices WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Loyalty ---
+      data['loyalty_points'] = await _queryRows(
+        'SELECT * FROM loyalty_points WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Favorites ---
+      data['favorites'] = await _queryRows(
+        'SELECT * FROM favorites WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Notifications ---
+      data['notifications'] = await _queryRows(
+        'SELECT * FROM notifications WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // --- Daily Summaries ---
+      data['daily_summaries'] = await _queryRows(
+        'SELECT * FROM daily_summaries WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
+      // Count total rows
+      int totalRows = 0;
+      for (final entry in data.entries) {
+        if (entry.value is List) totalRows += (entry.value as List).length;
+      }
+
+      final jsonString = jsonEncode({
+        'version': '1.0.0',
+        'storeId': storeId,
+        'createdAt': now.toIso8601String(),
+        'tableCount': data.length,
+        'totalRows': totalRows,
+        'data': data,
+      });
+
+      addBreadcrumb(
+        message: 'Backup exported: $totalRows rows, ${data.length} tables',
+        category: 'backup',
+      );
+
+      return BackupBundle(
+        jsonString: jsonString,
+        totalRows: totalRows,
+        tableCount: data.length,
+        sizeBytes: utf8.encode(jsonString).length,
+        createdAt: now,
+      );
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Export backup');
+      rethrow;
+    }
+  }
+
+  // ===========================================================================
+  // IMPORT / RESTORE
+  // ===========================================================================
+
+  /// Import data from a JSON backup string.
+  ///
+  /// Runs inside a database transaction so either everything succeeds or
+  /// nothing changes. Existing rows with the same primary key are replaced.
+  Future<RestoreReport> importFromJson(String jsonString) async {
+    try {
+      final map = jsonDecode(jsonString) as Map<String, dynamic>;
+      final version = map['version'] as String? ?? '1.0.0';
+      final dataMap = map['data'] as Map<String, dynamic>? ?? {};
+
+      if (dataMap.isEmpty) {
+        return const RestoreReport(success: false, error: 'Empty backup data');
+      }
+
+      int restoredRows = 0;
+      int restoredTables = 0;
+
+      await _db.transaction(() async {
+        // Restore order matters for FK constraints — parents first
+        const restoreOrder = [
+          'categories',
+          'products',
+          'customers',
+          'customer_addresses',
+          'suppliers',
+          'settings',
+          'expense_categories',
+          'accounts',
+          'shifts',
+          'cash_movements',
+          'sales',
+          'sale_items',
+          'orders',
+          'order_items',
+          'returns',
+          'return_items',
+          'transactions',
+          'inventory_movements',
+          'stock_transfers',
+          'purchases',
+          'purchase_items',
+          'expenses',
+          'discounts',
+          'coupons',
+          'promotions',
+          'held_invoices',
+          'loyalty_points',
+          'favorites',
+          'notifications',
+          'daily_summaries',
+        ];
+
+        for (final tableName in restoreOrder) {
+          final rows = dataMap[tableName];
+          if (rows == null || rows is! List || rows.isEmpty) continue;
+
+          for (final row in rows) {
+            if (row is! Map<String, dynamic>) continue;
+            await _insertOrReplace(tableName, row);
+            restoredRows++;
+          }
+          restoredTables++;
+        }
+      });
+
+      addBreadcrumb(
+        message: 'Backup restored: $restoredRows rows, $restoredTables tables (v$version)',
+        category: 'backup',
+      );
+
+      return RestoreReport(
+        success: true,
+        restoredRows: restoredRows,
+        restoredTables: restoredTables,
+      );
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Import backup');
+      return RestoreReport(success: false, error: '$e');
+    }
+  }
+
+  // ===========================================================================
+  // VALIDATE
+  // ===========================================================================
+
+  /// Quick-validate a backup JSON string without importing.
+  BackupInfo? validateBackup(String jsonString) {
+    try {
+      final map = jsonDecode(jsonString) as Map<String, dynamic>;
+      return BackupInfo(
+        version: map['version'] as String? ?? '?',
+        storeId: map['storeId'] as String? ?? '?',
+        createdAt: DateTime.tryParse(map['createdAt'] as String? ?? ''),
+        tableCount: map['tableCount'] as int? ?? 0,
+        totalRows: map['totalRows'] as int? ?? 0,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ===========================================================================
+  // HELPERS
+  // ===========================================================================
+
+  Future<List<Map<String, dynamic>>> _queryRows(
+    String sql,
+    List<Variable> vars,
+  ) async {
+    final result = await _db.customSelect(sql, variables: vars).get();
+    return result.map((r) => r.data).toList();
+  }
+
+  Future<void> _insertOrReplace(
+    String tableName,
+    Map<String, dynamic> row,
+  ) async {
+    final columns = row.keys.toList();
+    final placeholders = List.filled(columns.length, '?').join(', ');
+    final columnNames = columns.join(', ');
+
+    final variables = columns.map((col) {
+      final value = row[col];
+      if (value == null) return const Variable<String>(null);
+      if (value is int) return Variable.withInt(value);
+      if (value is double) return Variable.withReal(value);
+      if (value is bool) return Variable.withBool(value);
+      return Variable.withString(value.toString());
+    }).toList();
+
+    await _db.customStatement(
+      'INSERT OR REPLACE INTO $tableName ($columnNames) VALUES ($placeholders)',
+      variables,
+    );
+  }
+}
+
+/// Result of a backup export
+class BackupBundle {
+  final String jsonString;
+  final int totalRows;
+  final int tableCount;
+  final int sizeBytes;
+  final DateTime createdAt;
+
+  const BackupBundle({
+    required this.jsonString,
+    required this.totalRows,
+    required this.tableCount,
+    required this.sizeBytes,
+    required this.createdAt,
+  });
+
+  double get sizeMb => sizeBytes / (1024 * 1024);
+}
+
+/// Result of a restore operation
+class RestoreReport {
+  final bool success;
+  final String? error;
+  final int restoredRows;
+  final int restoredTables;
+
+  const RestoreReport({
+    required this.success,
+    this.error,
+    this.restoredRows = 0,
+    this.restoredTables = 0,
+  });
+}
+
+/// Quick info about a backup file
+class BackupInfo {
+  final String version;
+  final String storeId;
+  final DateTime? createdAt;
+  final int tableCount;
+  final int totalRows;
+
+  const BackupInfo({
+    required this.version,
+    required this.storeId,
+    this.createdAt,
+    required this.tableCount,
+    required this.totalRows,
+  });
+}

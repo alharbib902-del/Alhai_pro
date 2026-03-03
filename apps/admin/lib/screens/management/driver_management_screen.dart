@@ -76,7 +76,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -225,7 +225,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
   void _showTrackingMap() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -251,7 +251,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
   }
 
   void _addDriver() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final vehicleController = TextEditingController();
@@ -307,7 +307,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
   void _showDriverDetails(_Driver driver) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -418,7 +418,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
   }
 
   void _assignOrder(_Driver driver) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

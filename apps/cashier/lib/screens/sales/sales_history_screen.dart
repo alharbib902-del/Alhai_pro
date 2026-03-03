@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
 
 /// شاشة سجل المبيعات
 class SalesHistoryScreen extends ConsumerStatefulWidget {
@@ -30,6 +31,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   List<OrdersTableData> _orders = [];
   List<OrdersTableData> _filteredOrders = [];
   bool _isLoading = true;
+  String? _error;
   bool _showScrollToTop = false;
   String _dateFilter = 'today';
   DateTimeRange? _customRange;
@@ -53,7 +55,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   }
 
   Future<void> _loadOrders() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
@@ -65,8 +70,14 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
         });
         _applyFilters();
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load sales history');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = '$e';
+        });
+      }
     }
   }
 
@@ -115,7 +126,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Scaffold(
@@ -151,7 +162,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                   padding: EdgeInsets.all(16),
                   child: ShimmerList(itemCount: 6, itemHeight: 72),
                 )
-              : Column(
+              : _error != null
+                  ? AppErrorState.general(
+                      message: _error!, onRetry: _loadOrders)
+                  : Column(
                   children: [
                     // Filters & Search Bar
                     Padding(

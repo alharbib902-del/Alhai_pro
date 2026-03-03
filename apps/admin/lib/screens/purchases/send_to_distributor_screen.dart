@@ -37,7 +37,7 @@ class _SendToDistributorScreenState
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 900;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final asyncDetail = ref.watch(purchaseDetailProvider(widget.purchaseId));
     final asyncSuppliers = ref.watch(activeSuppliersProvider);

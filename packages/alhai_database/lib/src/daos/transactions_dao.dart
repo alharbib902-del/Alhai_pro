@@ -10,37 +10,53 @@ part 'transactions_dao.g.dart';
 class TransactionsDao extends DatabaseAccessor<AppDatabase> with _$TransactionsDaoMixin {
   TransactionsDao(super.db);
   
-  /// الحصول على حركات الحساب
-  Future<List<TransactionsTableData>> getAccountTransactions(String accountId) {
+  /// الحصول على حركات الحساب (مع فلتر المتجر)
+  Future<List<TransactionsTableData>> getAccountTransactions(String accountId, {String? storeId}) {
     return (select(transactionsTable)
-      ..where((t) => t.accountId.equals(accountId))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+      ..where((t) {
+        var condition = t.accountId.equals(accountId);
+        if (storeId != null) condition = condition & t.storeId.equals(storeId);
+        return condition;
+      })
+      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+      ..limit(200))
       .get();
   }
-  
+
   /// الحصول على حركات حساب مع فلترة النوع
   Future<List<TransactionsTableData>> getAccountTransactionsByType(
-    String accountId, 
-    String type,
-  ) {
+    String accountId,
+    String type, {
+    String? storeId,
+  }) {
     return (select(transactionsTable)
-      ..where((t) => t.accountId.equals(accountId) & t.type.equals(type))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+      ..where((t) {
+        var condition = t.accountId.equals(accountId) & t.type.equals(type);
+        if (storeId != null) condition = condition & t.storeId.equals(storeId);
+        return condition;
+      })
+      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+      ..limit(200))
       .get();
   }
-  
+
   /// الحصول على حركات فترة زمنية
   Future<List<TransactionsTableData>> getTransactionsInRange(
     String accountId,
     DateTime start,
-    DateTime end,
-  ) {
+    DateTime end, {
+    String? storeId,
+  }) {
     return (select(transactionsTable)
-      ..where((t) => 
-        t.accountId.equals(accountId) &
-        t.createdAt.isBiggerOrEqualValue(start) &
-        t.createdAt.isSmallerOrEqualValue(end))
-      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+      ..where((t) {
+        var condition = t.accountId.equals(accountId) &
+          t.createdAt.isBiggerOrEqualValue(start) &
+          t.createdAt.isSmallerOrEqualValue(end);
+        if (storeId != null) condition = condition & t.storeId.equals(storeId);
+        return condition;
+      })
+      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+      ..limit(500))
       .get();
   }
   

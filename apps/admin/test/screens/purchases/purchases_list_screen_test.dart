@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:admin/screens/purchases/purchases_list_screen.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -39,7 +40,7 @@ void main() {
           .pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      expect(find.byType(ShimmerList), findsWidgets);
     });
 
     testWidgets('renders with tab bar containing 5 tabs', (tester) async {

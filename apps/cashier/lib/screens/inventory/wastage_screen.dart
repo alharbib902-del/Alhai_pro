@@ -13,8 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
 // alhai_design_system is re-exported via alhai_shared_ui
+import '../../core/services/sentry_service.dart';
+import '../../core/services/audit_service.dart';
 
 /// شاشة الهدر والتالف
 class WastageScreen extends ConsumerStatefulWidget {
@@ -58,8 +61,13 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           _searchResults = products;
         });
       }
-    } catch (_) {
-      // Search failed silently
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Search products in wastage');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'), backgroundColor: AppColors.error),
+        );
+      }
     }
   }
 
@@ -69,7 +77,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -592,34 +600,48 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
   }
 
   Future<void> _saveWastage() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final quantity = int.tryParse(_quantityController.text) ?? 0;
     if (quantity <= 0 || _selectedProduct == null) return;
 
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider) ?? 'demo-store';
-      final movementId = 'WST-${DateTime.now().millisecondsSinceEpoch}';
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final movementId = const Uuid().v4();
       final currentStock = _selectedProduct!.stockQty;
       final newStock = currentStock - quantity;
 
-      await _db.inventoryDao.insertMovement(
-        InventoryMovementsTableCompanion.insert(
-          id: movementId,
-          storeId: storeId,
-          productId: _selectedProduct!.id,
-          type: 'wastage',
-          qty: (-quantity).toDouble(),
-          previousQty: currentStock.toDouble(),
-          newQty: newStock.toDouble(),
-          reason: Value(_reason),
-          notes: Value(_noteController.text.isNotEmpty ? _noteController.text : null),
-          createdAt: DateTime.now(),
-        ),
-      );
+      await _db.transaction(() async {
+        await _db.inventoryDao.insertMovement(
+          InventoryMovementsTableCompanion.insert(
+            id: movementId,
+            storeId: storeId,
+            productId: _selectedProduct!.id,
+            type: 'wastage',
+            qty: (-quantity).toDouble(),
+            previousQty: currentStock.toDouble(),
+            newQty: newStock.toDouble(),
+            reason: Value(_reason),
+            notes: Value(_noteController.text.isNotEmpty ? _noteController.text : null),
+            createdAt: DateTime.now(),
+          ),
+        );
+        await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+      });
 
-      await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+      // Audit log
+      final user = ref.read(currentUserProvider);
+      auditService.logStockAdjust(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: _selectedProduct!.id,
+        productName: _selectedProduct!.name,
+        oldQty: currentStock.toDouble(),
+        newQty: newStock.toDouble(),
+        reason: 'هدر: $_reason',
+      );
 
       if (!mounted) return;
 
@@ -635,7 +657,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         _reason = 'expired';
         _hasPhoto = false;
       });
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save wastage record');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.errorWithDetails('$e')), backgroundColor: AppColors.error),

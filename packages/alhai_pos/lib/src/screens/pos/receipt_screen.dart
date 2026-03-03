@@ -403,11 +403,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             version: QrVersions.auto,
                             size: 140,
                             backgroundColor: Colors.white,
-                            eyeStyle: const QrEyeStyle(
+                            eyeStyle: QrEyeStyle(
                               eyeShape: QrEyeShape.square,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
-                            dataModuleStyle: const QrDataModuleStyle(
+                            dataModuleStyle: QrDataModuleStyle(
                               dataModuleShape: QrDataModuleShape.square,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
@@ -569,7 +569,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         items: _items
             .map((i) => ReceiptLineItem(
                   name: i.productName,
-                  quantity: i.qty,
+                  quantity: i.qty.toInt(),
                   total: i.total,
                 ))
             .toList(),

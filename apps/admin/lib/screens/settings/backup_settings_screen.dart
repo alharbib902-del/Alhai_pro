@@ -80,7 +80,7 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
     final isWideScreen = size.width > 900;
     final isMediumScreen = size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_isLoading) {
       return Column(
@@ -230,14 +230,14 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
       setState(() => _isBackingUp = false);
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.backupCreated), backgroundColor: AppColors.success));
     }
   }
 
   void _showRestoreDialog() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(context: context, builder: (context) => AlertDialog(
       title: Text(l10n.restoreConfirmTitle),
       content: Text(l10n.restoreConfirmMessage),

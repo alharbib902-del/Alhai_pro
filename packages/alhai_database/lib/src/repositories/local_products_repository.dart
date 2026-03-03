@@ -98,7 +98,10 @@ class LocalProductsRepository implements ProductsRepository {
 
   @override
   Future<Product?> getByBarcode(String barcode) async {
-    final storeId = defaultStoreId ?? 'store_demo_001';
+    if (defaultStoreId == null) {
+      throw StateError('No store selected — cannot look up barcode without storeId');
+    }
+    final storeId = defaultStoreId!;
     final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
     return data != null ? _toProduct(data) : null;
   }
