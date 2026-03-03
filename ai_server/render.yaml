@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: alhai-ai-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    plan: free
+    envVars:
+      - key: SUPABASE_URL
+        value: https://jtgwboqushihwvvsdtud.supabase.co
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://alhai-cashier.vercel.app,https://alhai-admin.vercel.app,https://alhai-admin-lite.vercel.app
+      - key: PORT
+        value: "8000"
+      - key: DEBUG
+        value: "false"
+    healthCheckPath: /health
