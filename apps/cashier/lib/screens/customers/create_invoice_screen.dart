@@ -336,10 +336,13 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: colorScheme.onSurface)),
-                  Text(customer.phone ?? '',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant)),
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text(customer.phone ?? '',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurfaceVariant)),
+                  ),
                 ],
               ),
             ),
@@ -424,10 +427,13 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                   fontSize: 14,
                                   color: colorScheme.onSurface)),
                         ),
-                        Text(customer.phone ?? '',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.onSurfaceVariant)),
+                        Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Text(customer.phone ?? '',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurfaceVariant)),
+                        ),
                       ],
                     ),
                   ),

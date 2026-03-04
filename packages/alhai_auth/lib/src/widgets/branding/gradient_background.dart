@@ -305,7 +305,9 @@ class SplitBackground extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Container(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF1E293B)
+                      : Colors.white,
                   child: rightChild,
                 ),
               ),
@@ -328,7 +330,9 @@ class SplitBackground extends StatelessWidget {
             Expanded(
               flex: rightFlex.toInt(),
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF1E293B)
+                    : Colors.white,
                 child: rightChild,
               ),
             ),

@@ -454,6 +454,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
         }
       } catch (catError) {
         debugPrint('[Sync] ❌ خطأ في مزامنة التصنيفات: $catError');
+        rethrow;
       }
 
       // --- 2. مزامنة المنتجات ---
@@ -498,11 +499,13 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
         }
       } catch (prodError) {
         debugPrint('[Sync] ❌ خطأ في مزامنة المنتجات: $prodError');
+        rethrow;
       }
 
       debugPrint('[Sync] ✅ اكتملت المزامنة');
     } catch (e) {
       debugPrint('[Sync] ❌ خطأ عام في المزامنة: $e');
+      rethrow;
     }
   }
 
@@ -726,7 +729,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.smart_toy_rounded,
+              Icons.storefront_rounded,
               size: 100,
               color: Colors.white,
             ),
@@ -852,7 +855,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
-              Icons.smart_toy_rounded,
+              Icons.storefront_rounded,
               size: 32,
               color: Colors.white,
             ),

@@ -616,11 +616,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  _phoneController.text,
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
-                    fontSize: 16,
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Text(
+                    _phoneController.text,
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),

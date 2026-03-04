@@ -508,9 +508,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge),
-                      Text(debt.phone ?? '',
-                          style: TextStyle(
-                              color: colorScheme.onSurfaceVariant)),
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Text(debt.phone ?? '',
+                            style: TextStyle(
+                                color: colorScheme.onSurfaceVariant)),
+                      ),
                     ],
                   ),
                 ),

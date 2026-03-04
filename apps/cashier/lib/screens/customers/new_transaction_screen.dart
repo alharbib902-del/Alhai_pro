@@ -290,10 +290,13 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                           fontWeight: FontWeight.w700,
                           color: colorScheme.onSurface)),
                   if (account.phone != null)
-                    Text(account.phone!,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurfaceVariant)),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Text(account.phone!,
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurfaceVariant)),
+                    ),
                 ],
               ),
             ),
