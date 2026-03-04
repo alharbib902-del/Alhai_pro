@@ -28,8 +28,8 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _db = GetIt.I<AppDatabase>();
-  List<OrdersTableData> _orders = [];
-  List<OrdersTableData> _filteredOrders = [];
+  List<SalesTableData> _orders = [];
+  List<SalesTableData> _filteredOrders = [];
   bool _isLoading = true;
   String? _error;
   bool _showScrollToTop = false;
@@ -62,7 +62,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final orders = await _db.ordersDao.getOrders(storeId);
+      final orders = await _db.salesDao.getAllSales(storeId);
       if (mounted) {
         setState(() {
           _orders = orders;
@@ -411,7 +411,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   }
 
   Widget _buildOrderCard(
-      OrdersTableData order, bool isDark, AppLocalizations l10n) {
+      SalesTableData order, bool isDark, AppLocalizations l10n) {
     final time =
         '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
     final date =

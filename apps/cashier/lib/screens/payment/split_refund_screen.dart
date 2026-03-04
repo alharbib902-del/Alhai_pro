@@ -30,7 +30,7 @@ class SplitRefundScreen extends ConsumerStatefulWidget {
 
 class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   final _db = GetIt.I<AppDatabase>();
-  OrdersTableData? _order;
+  SalesTableData? _order;
   bool _isLoading = true;
   String? _error;
   bool _isSubmitting = false;
@@ -50,7 +50,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
       _error = null;
     });
     try {
-      final order = await _db.ordersDao.getOrderById(widget.orderId);
+      final order = await _db.salesDao.getSaleById(widget.orderId);
       if (mounted) {
         setState(() {
           _order = order;
@@ -71,8 +71,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     }
   }
 
-  List<_RefundMethod> _buildRefundMethods(OrdersTableData order) {
-    final method = order.paymentMethod ?? 'cash';
+  List<_RefundMethod> _buildRefundMethods(SalesTableData order) {
+    final method = order.paymentMethod;
     if (method == 'split') {
       final half = order.total / 2;
       return [

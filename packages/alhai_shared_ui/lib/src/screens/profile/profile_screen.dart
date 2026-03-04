@@ -114,7 +114,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(currentUserProvider);
     final userName = user?.name ?? l10n.unknownUserName;
     final userEmail = user?.email ?? '';
-    final userRole = (user?.role ?? l10n.defaultEmployeeRole).toString();
+    final userRole = user?.role?.name ?? l10n.defaultEmployeeRole;
 
     return Column(
               children: [

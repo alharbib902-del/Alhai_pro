@@ -29,7 +29,7 @@ class SplitReceiptScreen extends ConsumerStatefulWidget {
 
 class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   final _db = GetIt.I<AppDatabase>();
-  OrdersTableData? _order;
+  SalesTableData? _order;
   StoresTableData? _store;
   bool _isLoading = true;
   String? _error;
@@ -50,7 +50,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
       _error = null;
     });
     try {
-      final order = await _db.ordersDao.getOrderById(widget.orderId);
+      final order = await _db.salesDao.getSaleById(widget.orderId);
       // Load store data for ZATCA QR
       final storeId = ref.read(currentStoreIdProvider);
       StoresTableData? store;
@@ -79,10 +79,10 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     }
   }
 
-  List<_PaymentSplit> _buildSplits(OrdersTableData order) {
+  List<_PaymentSplit> _buildSplits(SalesTableData order) {
     // If the order has a single payment method, show it as one split
     // In a real app, this would come from a payments table
-    final method = order.paymentMethod ?? 'cash';
+    final method = order.paymentMethod;
     if (method == 'split') {
       // Simulate split payment
       final half = order.total / 2;
@@ -479,7 +479,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             vatNumber: _store?.taxNumber ?? '300000000000003',
             timestamp: order.createdAt,
             totalWithVat: order.total,
-            vatAmount: order.taxAmount,
+            vatAmount: order.tax,
             size: 140,
           ),
         ],

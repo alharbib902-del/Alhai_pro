@@ -17,8 +17,8 @@ class Breakpoints {
   /// التابلت: 600 - 904px
   static const double tablet = AlhaiBreakpoints.desktop; // 905
 
-  /// سطح المكتب: 905px وأكثر
-  static const double desktop = AlhaiBreakpoints.desktop; // 905
+  /// سطح المكتب الكبير: 1240px وأكثر
+  static const double desktop = AlhaiBreakpoints.desktopLarge; // 1240
 
   /// الهاتف المحمول الصغير
   static const double mobileSmall = 360;

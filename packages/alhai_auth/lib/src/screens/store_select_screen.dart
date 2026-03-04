@@ -346,7 +346,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
       _isSyncing = true;
     });
 
-    // حفظ store_id في Provider و SecureStorage
+    // Save store ID to Provider and SecureStorage
     ref.read(currentStoreIdProvider.notifier).state = store.id;
     final userId = await _getCurrentUserId() ?? '';
     await SecureStorageService.saveUserData(
@@ -354,12 +354,39 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
       storeId: store.id,
     );
 
-    // مزامنة البيانات من Supabase قبل الانتقال
-    await _syncStoreData(store.id);
+    // Sync with timeout - continue even if sync fails (offline-first)
+    try {
+      await _syncStoreData(store.id).timeout(const Duration(seconds: 15));
+    } catch (e) {
+      debugPrint('[StoreSelect] Sync failed or timed out: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.cloud_off_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'فشلت المزامنة، سيتم العمل بالبيانات المحلية',
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.orange,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSyncing = false);
+      }
+    }
 
     if (!mounted) return;
-
-    setState(() => _isSyncing = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

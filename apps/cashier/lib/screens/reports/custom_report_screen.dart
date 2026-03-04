@@ -113,8 +113,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
 
   Future<List<Map<String, dynamic>>> _generateSalesReport(
       String storeId) async {
-    final orders = await _db.ordersDao.getOrders(storeId);
-    final filtered = orders.where((o) {
+    final sales = await _db.salesDao.getAllSales(storeId);
+    final filtered = sales.where((o) {
       return o.createdAt.isAfter(_dateRange!.start) &&
           o.createdAt
               .isBefore(_dateRange!.end.add(const Duration(days: 1)));
@@ -176,8 +176,8 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
 
   Future<List<Map<String, dynamic>>> _generatePaymentsReport(
       String storeId) async {
-    final orders = await _db.ordersDao.getOrders(storeId);
-    final filtered = orders.where((o) {
+    final sales = await _db.salesDao.getAllSales(storeId);
+    final filtered = sales.where((o) {
       return o.createdAt.isAfter(_dateRange!.start) &&
           o.createdAt
               .isBefore(_dateRange!.end.add(const Duration(days: 1)));
@@ -187,7 +187,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
     final Map<String, double> byMethod = {};
     final Map<String, int> countByMethod = {};
     for (final order in filtered) {
-      final method = order.paymentMethod ?? 'cash';
+      final method = order.paymentMethod;
       byMethod[method] = (byMethod[method] ?? 0) + order.total;
       countByMethod[method] = (countByMethod[method] ?? 0) + 1;
     }

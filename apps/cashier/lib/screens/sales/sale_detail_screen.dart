@@ -28,7 +28,7 @@ class SaleDetailScreen extends ConsumerStatefulWidget {
 
 class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   final _db = GetIt.I<AppDatabase>();
-  OrdersTableData? _order;
+  SalesTableData? _order;
   List<SaleItemsTableData> _items = [];
   StoresTableData? _store;
   bool _isLoading = true;
@@ -47,7 +47,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
       _error = null;
     });
     try {
-      final order = await _db.ordersDao.getOrderById(widget.saleId);
+      final order = await _db.salesDao.getSaleById(widget.saleId);
       List<SaleItemsTableData> items = [];
       if (order != null) {
         items = await _db.saleItemsDao.getItemsBySaleId(widget.saleId);
@@ -305,7 +305,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               order.customerId ?? l10n.cashCustomer, isDark),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           _buildInfoRow(l10n.paymentMethod,
-              order.paymentMethod ?? l10n.cash, isDark),
+              order.paymentMethod, isDark),
         ],
       ),
     );
@@ -482,7 +482,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     final order = _order!;
     final subtotal =
         _items.fold<double>(0, (sum, item) => sum + (item.qty * item.unitPrice));
-    final tax = order.taxAmount;
+    final tax = order.tax;
     final discount = order.discount;
 
     return Container(
@@ -594,7 +594,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           vatNumber: vatNumber,
           timestamp: order.createdAt,
           totalWithVat: order.total,
-          vatAmount: order.taxAmount,
+          vatAmount: order.tax,
           size: 120,
         ),
       ),

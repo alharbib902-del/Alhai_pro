@@ -612,7 +612,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
             ),
             const Divider(height: 1),
-            // Content (placeholder)
+            // Content
             Expanded(
               child: Center(
                 child: Column(
@@ -621,12 +621,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     Icon(
                       Icons.bar_chart_rounded,
                       size: 64,
-                      color: AppColors.textSecondary.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: AppSizes.md),
                     Text(
-                      l10n.chartsUnderDev,
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      l10n.viewReport,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

@@ -28,8 +28,8 @@ class ReprintReceiptScreen extends ConsumerStatefulWidget {
 class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   final _searchController = TextEditingController();
   final _db = GetIt.I<AppDatabase>();
-  List<OrdersTableData> _allOrders = [];
-  List<OrdersTableData> _filteredOrders = [];
+  List<SalesTableData> _allOrders = [];
+  List<SalesTableData> _filteredOrders = [];
   StoresTableData? _store;
   bool _isLoading = true;
   String? _error;
@@ -57,7 +57,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final orders = await _db.ordersDao.getOrders(storeId);
+      final orders = await _db.salesDao.getAllSales(storeId);
       // Sort most recent first, limit to recent 100
       orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       final recentOrders = orders.take(100).toList();
@@ -256,7 +256,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Widget _buildOrderCard(
-      OrdersTableData order, bool isDark, AppLocalizations l10n) {
+      SalesTableData order, bool isDark, AppLocalizations l10n) {
     final isSelected = _selectedOrderId == order.id;
     final time =
         '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
@@ -460,7 +460,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           _buildPreviewRow(l10n.time,
               '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}', isDark),
           _buildPreviewRow(l10n.paymentMethod,
-              order.paymentMethod ?? l10n.cash, isDark),
+              order.paymentMethod, isDark),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -489,7 +489,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               vatNumber: _store?.taxNumber ?? '300000000000003',
               timestamp: order.createdAt,
               totalWithVat: order.total,
-              vatAmount: order.taxAmount,
+              vatAmount: order.tax,
               size: 100,
             ),
           ),
@@ -597,7 +597,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Future<void> _printReceipt(
-      OrdersTableData order, AppLocalizations l10n) async {
+      SalesTableData order, AppLocalizations l10n) async {
     setState(() => _isPrinting = true);
 
     try {

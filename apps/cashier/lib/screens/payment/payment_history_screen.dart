@@ -28,8 +28,8 @@ class PaymentHistoryScreen extends ConsumerStatefulWidget {
 class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
   final _searchController = TextEditingController();
   final _db = GetIt.I<AppDatabase>();
-  List<OrdersTableData> _allOrders = [];
-  List<OrdersTableData> _filteredOrders = [];
+  List<SalesTableData> _allOrders = [];
+  List<SalesTableData> _filteredOrders = [];
   bool _isLoading = true;
   String? _error;
   String _methodFilter = 'all';
@@ -55,7 +55,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final orders = await _db.ordersDao.getOrders(storeId);
+      final orders = await _db.salesDao.getAllSales(storeId);
       // Only completed orders
       final completed =
           orders.where((o) => o.status == 'completed').toList();
@@ -87,7 +87,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
         bool passMethod = true;
         if (_methodFilter != 'all') {
           passMethod =
-              (order.paymentMethod ?? 'cash') == _methodFilter;
+              order.paymentMethod == _methodFilter;
         }
 
         // Search filter
@@ -347,8 +347,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
   }
 
   Widget _buildPaymentCard(
-      OrdersTableData order, bool isDark, AppLocalizations l10n) {
-    final method = order.paymentMethod ?? 'cash';
+      SalesTableData order, bool isDark, AppLocalizations l10n) {
+    final method = order.paymentMethod;
     final icon = _getPaymentIcon(method);
     final color = _getPaymentColor(method);
     final label = _getPaymentLabel(method, l10n);

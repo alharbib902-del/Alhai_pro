@@ -1095,6 +1095,32 @@ class PosCartItemTile extends ConsumerWidget {
             ),
           ),
         ),
+        const SizedBox(width: 2),
+        // Delete button - always visible
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              ref.read(cartStateProvider.notifier).removeProduct(item.product.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.itemDeletedMsg),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.delete_outline_rounded,
+                size: 18,
+                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

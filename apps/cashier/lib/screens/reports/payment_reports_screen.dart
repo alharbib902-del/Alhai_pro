@@ -58,7 +58,7 @@ class _PaymentReportsScreenState
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
-      final orders = await _db.ordersDao.getOrders(storeId);
+      final orders = await _db.salesDao.getAllSales(storeId);
       final now = DateTime.now();
       final todayStart = DateTime(now.year, now.month, now.day);
 
@@ -80,7 +80,7 @@ class _PaymentReportsScreenState
       int cashC = 0, cardC = 0, creditC = 0;
 
       for (final order in filtered) {
-        final method = order.paymentMethod ?? 'cash';
+        final method = order.paymentMethod;
         if (method == 'cash') {
           cash += order.total;
           cashC++;

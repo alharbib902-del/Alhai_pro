@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 import '../core/monitoring/memory_monitor.dart';
 import '../core/monitoring/production_logger.dart';
 import '../security/secure_storage_service.dart';
@@ -99,44 +98,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   /// تحديد وجهة التنقل بناءً على حالة المصادقة والمتجر المحفوظ
   Future<String> _determineDestination() async {
-    // التحقق من جلسة Supabase
-    bool isAuthenticated = false;
+    // Wait for AuthNotifier to finish its own initialization
     try {
-      final session = Supabase.instance.client.auth.currentSession;
-      isAuthenticated = session != null;
-      AppLogger.debug(
-        'Supabase session: ${isAuthenticated ? "active" : "none"}',
-        tag: 'SPLASH',
-      );
+      final authNotifier = ref.read(authStateProvider.notifier);
+      await authNotifier.initComplete.timeout(const Duration(seconds: 10));
     } catch (e) {
-      AppLogger.debug('Supabase check failed: $e', tag: 'SPLASH');
+      AppLogger.debug('Auth init timeout: $e', tag: 'SPLASH');
     }
 
-    // إذا Supabase غير متاح → تحقق من SecureStorage (الوضع المحلي / Web)
-    if (!isAuthenticated) {
-      try {
-        final isSessionValid = await SecureStorageService.isSessionValid();
-        if (isSessionValid) {
-          isAuthenticated = true;
-          AppLogger.debug('SecureStorage session: active (local mode)', tag: 'SPLASH');
-        }
-      } catch (e) {
-        AppLogger.debug('SecureStorage session check failed: $e', tag: 'SPLASH');
-      }
-    }
+    final authState = ref.read(authStateProvider);
+    final isAuthenticated = authState.status == AuthStatus.authenticated;
 
-    // إذا غير مسجل → شاشة الدخول
+    AppLogger.debug(
+      'Auth status: ${authState.status}',
+      tag: 'SPLASH',
+    );
+
     if (!isAuthenticated) {
       return '/login';
     }
 
-    // مسجل دخول → هل عنده store_id محفوظ؟
+    // Authenticated - restore store ID
     try {
       final savedStoreId = await SecureStorageService.getStoreId();
       AppLogger.debug('Saved store_id: $savedStoreId', tag: 'SPLASH');
 
       if (savedStoreId != null && savedStoreId.isNotEmpty) {
-        // تعيين store_id في Provider
         ref.read(currentStoreIdProvider.notifier).state = savedStoreId;
         return '/pos';
       }
@@ -144,7 +131,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       AppLogger.debug('SecureStorage read failed: $e', tag: 'SPLASH');
     }
 
-    // مسجل لكن بدون متجر → شاشة اختيار المتجر
     return '/store-select';
   }
 

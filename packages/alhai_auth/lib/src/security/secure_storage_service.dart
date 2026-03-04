@@ -8,6 +8,7 @@ library;
 
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,13 +46,57 @@ class _NativeStorage implements StorageInterface {
   Future<void> deleteAll() => _storage.deleteAll();
 }
 
-/// Web fallback using SharedPreferences.
+/// Simple obfuscation for web storage values.
+/// Not cryptographically strong, but prevents casual reading from DevTools.
+class _WebCrypto {
+  static const _salt = 'alhai_pos_2026_web_storage';
+
+  static String _deriveKey() {
+    final keyMaterial = '$_salt|${Uri.base.origin}';
+    // Simple hash: sum of char codes modulo-shifted
+    final chars = keyMaterial.codeUnits;
+    final keyChars = <int>[];
+    for (var i = 0; i < 64; i++) {
+      keyChars.add((chars[i % chars.length] * 31 + i * 17) & 0xFF);
+    }
+    return String.fromCharCodes(keyChars);
+  }
+
+  static String obfuscate(String plaintext) {
+    final key = _deriveKey();
+    final bytes = utf8.encode(plaintext);
+    final keyBytes = key.codeUnits;
+    final result = Uint8List(bytes.length);
+    for (var i = 0; i < bytes.length; i++) {
+      result[i] = bytes[i] ^ keyBytes[i % keyBytes.length];
+    }
+    return base64Url.encode(result);
+  }
+
+  static String? deobfuscate(String encoded) {
+    try {
+      final key = _deriveKey();
+      final bytes = base64Url.decode(encoded);
+      final keyBytes = key.codeUnits;
+      final result = Uint8List(bytes.length);
+      for (var i = 0; i < bytes.length; i++) {
+        result[i] = bytes[i] ^ keyBytes[i % keyBytes.length];
+      }
+      return utf8.decode(result);
+    } catch (_) {
+      return null; // Failed to decode - might be legacy plaintext
+    }
+  }
+}
+
+/// Web fallback using SharedPreferences with obfuscation.
 /// Web storage is not as secure as native keychain. Sensitive data should
 /// use server-side storage in production. This fallback ensures the app
 /// is functional on web where FlutterSecureStorage has no native keychain.
 class _WebStorage implements StorageInterface {
   static const String _prefix = 'secure_storage_';
   SharedPreferences? _prefs;
+  final Map<String, String> _cache = {};
 
   Future<SharedPreferences> _getPrefs() async {
     _prefs ??= await SharedPreferences.getInstance();
@@ -60,24 +105,43 @@ class _WebStorage implements StorageInterface {
 
   @override
   Future<String?> read({required String key}) async {
+    // Check cache first
+    if (_cache.containsKey(key)) return _cache[key];
+
     final prefs = await _getPrefs();
-    return prefs.getString('$_prefix$key');
+    final stored = prefs.getString('$_prefix$key');
+    if (stored == null) return null;
+
+    // Try to deobfuscate
+    final decoded = _WebCrypto.deobfuscate(stored);
+    if (decoded != null) {
+      _cache[key] = decoded;
+      return decoded;
+    }
+
+    // Legacy plaintext - migrate by re-saving obfuscated
+    _cache[key] = stored;
+    await prefs.setString('$_prefix$key', _WebCrypto.obfuscate(stored));
+    return stored;
   }
 
   @override
   Future<void> write({required String key, required String value}) async {
+    _cache[key] = value;
     final prefs = await _getPrefs();
-    await prefs.setString('$_prefix$key', value);
+    await prefs.setString('$_prefix$key', _WebCrypto.obfuscate(value));
   }
 
   @override
   Future<void> delete({required String key}) async {
+    _cache.remove(key);
     final prefs = await _getPrefs();
     await prefs.remove('$_prefix$key');
   }
 
   @override
   Future<void> deleteAll() async {
+    _cache.clear();
     final prefs = await _getPrefs();
     final keys = prefs.getKeys().where((k) => k.startsWith(_prefix)).toList();
     for (final key in keys) {

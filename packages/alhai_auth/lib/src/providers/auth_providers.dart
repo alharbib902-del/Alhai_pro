@@ -138,6 +138,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _authRepository;
   final SupabaseClient? _supabaseClient;
   Timer? _sessionTimer;
+  final Completer<void> _initCompleter = Completer<void>();
+  Future<void> get initComplete => _initCompleter.future;
 
   AuthNotifier(this._authRepository, [this._supabaseClient]) : super(const AuthState()) {
     _checkAuthStatus();
@@ -172,6 +174,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
           state = AuthState(
             status: AuthStatus.authenticated,
+            user: User(
+              id: session.user.id,
+              phone: session.user.phone ?? '',
+              name: session.user.userMetadata?['name'] as String? ?? session.user.phone ?? '',
+              email: session.user.email,
+              role: UserRole.employee,
+              createdAt: DateTime.now(),
+            ),
             sessionExpiry: expiry,
           );
           _startSessionMonitor();
@@ -181,28 +191,28 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       // التحقق من الجلسة المحفوظة
       final isSessionValid = await SecureStorageService.isSessionValid();
-      
+
       if (!isSessionValid) {
         await SecureStorageService.clearSession();
         state = const AuthState(status: AuthStatus.unauthenticated);
         return;
       }
-      
+
       // التحقق من المصادقة
       final isAuthenticated = await _authRepository.isAuthenticated();
       if (isAuthenticated) {
         final user = await _authRepository.getCurrentUser();
         final expiry = await SecureStorageService.getSessionExpiry();
-        
+
         state = AuthState(
           status: AuthStatus.authenticated,
           user: user,
           sessionExpiry: expiry,
         );
-        
+
         // بدء مراقبة الجلسة
         _startSessionMonitor();
-        
+
         // تحقق من الحاجة لتجديد التوكن
         if (state.needsRefresh) {
           await _refreshToken();
@@ -215,6 +225,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         status: AuthStatus.unauthenticated,
         error: e.toString(),
       );
+    } finally {
+      if (!_initCompleter.isCompleted) {
+        _initCompleter.complete();
+      }
     }
   }
 
@@ -312,6 +326,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       state = AuthState(
         status: AuthStatus.authenticated,
+        user: User(
+          id: phone,
+          phone: phone,
+          name: phone,
+          role: UserRole.employee,
+          createdAt: DateTime.now(),
+        ),
         sessionExpiry: expiry,
       );
 

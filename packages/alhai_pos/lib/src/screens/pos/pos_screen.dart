@@ -543,10 +543,16 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                             );
                           }
 
+                          final isTablet = deviceType.isTablet;
                           // In landscape, give more space to products (70/30)
                           final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
-                          final productsFlex = isLandscape ? 70 : 65;
-                          final cartFlex = isLandscape ? 30 : 35;
+                          // Tablet: 55/45 split to give cart enough room; Desktop: 70/30 or 65/35
+                          final productsFlex = isTablet
+                              ? (isLandscape ? 60 : 55)
+                              : (isLandscape ? 70 : 65);
+                          final cartFlex = isTablet
+                              ? (isLandscape ? 40 : 45)
+                              : (isLandscape ? 30 : 35);
 
                           return Row(
                             children: [
@@ -559,9 +565,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                                         _selectedCategoryId,
                                     onCategorySelected:
                                         _onCategorySelected,
-                                    columns:
-                                        deviceType.isTablet ? 4 : 4,
-                                    showShortcutsBar: true,
+                                    // Tablet: 3 columns + horizontal category bar (no sidebar)
+                                    // Desktop: 4 columns + vertical category sidebar
+                                    columns: isTablet ? 3 : 4,
+                                    showShortcutsBar: !isTablet,
                                     onHoldInvoice: _holdCurrentInvoice,
                                     onShowHeldInvoices: _showHeldInvoices,
                                   ),
