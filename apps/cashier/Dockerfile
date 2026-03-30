@@ -39,6 +39,7 @@ ARG WASENDER_DEVICE_ID=
 ARG WASENDER_PHONE=
 ARG WASENDER_NAME=بقالة الحي
 ARG WASENDER_WEBHOOK_SECRET=
+ARG AI_SERVER_URL=https://believable-art-production-d981.up.railway.app
 ARG ENV=production
 
 RUN flutter build web --release --no-tree-shake-icons \
@@ -50,6 +51,7 @@ RUN flutter build web --release --no-tree-shake-icons \
     --dart-define=WASENDER_PHONE=${WASENDER_PHONE} \
     --dart-define=WASENDER_NAME=${WASENDER_NAME} \
     --dart-define=WASENDER_WEBHOOK_SECRET=${WASENDER_WEBHOOK_SECRET} \
+    --dart-define=AI_SERVER_URL=${AI_SERVER_URL} \
     --dart-define=ENV=${ENV}
 
 # ---- Serve stage: Nginx ----

@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # CORS
-    allowed_origins: str = "http://localhost:3000,http://localhost:8080"
+    allowed_origins: str = "http://localhost:3000,http://localhost:8080,https://basem-alhi-production.up.railway.app,https://alhai-cashier.pages.dev"
 
     @property
     def cors_origins(self) -> list[str]:
