@@ -1,5 +1,20 @@
 # ---- Build stage: Flutter Web ----
-FROM ghcr.io/cirruslabs/flutter:3.27.4 AS builder
+FROM debian:bookworm-slim AS builder
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl git unzip xz-utils zip ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Flutter SDK
+ENV FLUTTER_VERSION=3.27.4
+ENV FLUTTER_HOME=/opt/flutter
+ENV PATH="${FLUTTER_HOME}/bin:${PATH}"
+
+RUN git clone --depth 1 --branch ${FLUTTER_VERSION} https://github.com/flutter/flutter.git ${FLUTTER_HOME} \
+    && flutter precache --web \
+    && flutter config --no-analytics \
+    && dart --disable-analytics
 
 WORKDIR /app
 
@@ -10,8 +25,8 @@ COPY . .
 WORKDIR /app/apps/cashier
 RUN flutter pub get
 
-# Build web with environment variables (passed as build args)
-ARG SUPABASE_URL
+# Build web — environment variables baked in via ARG
+ARG SUPABASE_URL=https://jtgwboqushihwvvsdtud.supabase.co
 ARG SUPABASE_ANON_KEY
 ARG SENTRY_DSN=
 ARG WASENDER_API_TOKEN=
