@@ -71,7 +71,12 @@ class ReceiptPdfGenerator {
   }) async {
     await _loadFonts();
 
-    final pdf = pw.Document();
+    final pdf = pw.Document(
+      theme: pw.ThemeData.withFont(
+        base: _regularFont,
+        bold: _boldFont,
+      ),
+    );
     final pageWidth = paperWidth * PdfPageFormat.mm;
 
     // توليد QR Code بيانات ZATCA

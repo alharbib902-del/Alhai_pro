@@ -23,10 +23,14 @@ class DatabaseSeeder {
 
   DatabaseSeeder(this._db);
 
-  /// التحقق من أن قاعدة البيانات فارغة
+  /// التحقق من أن قاعدة البيانات فارغة (COUNT بدل تحميل كل المنتجات)
   Future<bool> isDatabaseEmpty() async {
-    final products = await _db.productsDao.getAllProducts(defaultStoreId);
-    return products.isEmpty;
+    final result = await _db.customSelect(
+      "SELECT EXISTS(SELECT 1 FROM products WHERE store_id = ? LIMIT 1) AS has_data",
+      variables: [Variable.withString(defaultStoreId)],
+      readsFrom: {},
+    ).getSingle();
+    return result.read<int>('has_data') == 0;
   }
 
   // ============================================================================

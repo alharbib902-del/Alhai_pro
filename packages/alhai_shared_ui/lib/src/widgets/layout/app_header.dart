@@ -11,6 +11,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../providers/theme_provider.dart';
 import '../common/language_selector.dart';
+import '../common/sync_status_indicator.dart';
 
 part 'app_header_widgets.dart';
 part 'app_breadcrumb.dart';
@@ -56,12 +57,14 @@ class AppHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeState = ref.watch(themeProvider);
-    final isDarkMode = themeState.isDarkMode;
+    // نراقب حالة الثيم لإعادة البناء عند التغيير
+    ref.watch(themeProvider);
+    // نستخدم brightness الفعلي من السياق (يشمل وضع النظام)
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF0F172A) : Colors.white,
+        color: isDarkMode ? AppColors.backgroundDark : Colors.white,
         border: showDivider
             ? Border(
                 bottom: BorderSide(
@@ -89,6 +92,7 @@ class AppHeader extends ConsumerWidget {
                 _HeaderIconButton(
                   icon: Icons.menu_rounded,
                   onTap: onMenuTap,
+                  isDark: isDarkMode,
                 ),
 
               // العنوان
@@ -101,8 +105,8 @@ class AppHeader extends ConsumerWidget {
                     children: [
                       Text(
                         title!,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
+                        style: TextStyle(
+                          color: AppColors.getTextPrimary(isDarkMode),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -111,8 +115,8 @@ class AppHeader extends ConsumerWidget {
                       if (subtitle != null)
                         Text(
                           subtitle!,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          style: TextStyle(
+                            color: AppColors.getTextSecondary(isDarkMode),
                             fontSize: 11,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -154,6 +158,7 @@ class AppHeader extends ConsumerWidget {
                     const SizedBox(width: 4),
                     _HeaderIconButton(
                       icon: Icons.fullscreen_rounded,
+                      isDark: isDarkMode,
                       onTap: () {
                         // يمكن تنفيذ ملء الشاشة لاحقاً
                       },
@@ -161,6 +166,10 @@ class AppHeader extends ConsumerWidget {
                   ],
                 ),
               ),
+
+              // مؤشر حالة المزامنة
+              const SizedBox(width: 4),
+              const SyncStatusIndicator(),
 
               // اختيار اللغة
               const SizedBox(width: 4),
@@ -184,6 +193,7 @@ class AppHeader extends ConsumerWidget {
                 _NotificationButton(
                   count: notificationsCount,
                   onTap: onNotificationsTap,
+                  isDark: isDarkMode,
                 ),
               ],
 

@@ -54,31 +54,34 @@ class LocalProductsRepository implements ProductsRepository {
   }) async {
     final offset = (page - 1) * limit;
 
-    final total = await _db.productsDao.getProductsCount(
-      storeId,
-      categoryId: categoryId,
-      activeOnly: true,
-    );
-
-    final List<ProductsTableData> paginatedData;
-
-    if (searchQuery != null && searchQuery.isNotEmpty) {
-      paginatedData = await _db.productsDao.searchProductsPaginated(
-        searchQuery,
+    // تشغيل COUNT و SELECT بالتوازي لتسريع التحميل
+    final isSearch = searchQuery != null && searchQuery.isNotEmpty;
+    final searchTerm = searchQuery; // capture for non-null use
+    final futures = await Future.wait([
+      _db.productsDao.getProductsCount(
         storeId,
-        offset: offset,
-        limit: limit,
-      );
-    } else {
-      paginatedData = await _db.productsDao.getProductsPaginated(
-        storeId,
-        offset: offset,
-        limit: limit,
         categoryId: categoryId,
         activeOnly: true,
-      );
-    }
+      ),
+      if (isSearch && searchTerm != null)
+        _db.productsDao.searchProductsPaginated(
+          searchTerm,
+          storeId,
+          offset: offset,
+          limit: limit,
+        )
+      else
+        _db.productsDao.getProductsPaginated(
+          storeId,
+          offset: offset,
+          limit: limit,
+          categoryId: categoryId,
+          activeOnly: true,
+        ),
+    ]);
 
+    final total = futures[0] as int;
+    final paginatedData = futures[1] as List<ProductsTableData>;
     final products = paginatedData.map(_toProduct).toList();
 
     return Paginated(

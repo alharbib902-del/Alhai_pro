@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, currentStoreIdProvider;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_sync/alhai_sync.dart';
@@ -64,12 +65,28 @@ final orgSyncServiceProvider = Provider<OrgSyncService?>((ref) {
   }
 });
 
+/// مزود خدمة السحب الدوري
+final pullSyncServiceProvider = Provider<PullSyncService?>((ref) {
+  final syncApi = ref.watch(syncApiServiceProvider);
+  if (syncApi == null) return null;
+
+  final db = ref.watch(appDatabaseProvider);
+  return PullSyncService(
+    syncApi: syncApi,
+    db: db,
+    metadataDao: db.syncMetadataDao,
+    syncQueueDao: db.syncQueueDao,
+  );
+});
+
 /// مزود مدير المزامنة (القديم - للتوافق)
 final syncManagerProvider = Provider<SyncManager>((ref) {
   final syncService = ref.watch(syncServiceProvider);
   final connectivity = ref.watch(connectivityServiceProvider);
   final syncApi = ref.watch(syncApiServiceProvider);
   final orgSync = ref.watch(orgSyncServiceProvider);
+  final pullSync = ref.watch(pullSyncServiceProvider);
+  final storeId = ref.watch(currentStoreIdProvider);
 
   final manager = SyncManager(
     syncService: syncService,
@@ -84,11 +101,78 @@ final syncManagerProvider = Provider<SyncManager>((ref) {
           }
         : null,
     orgSyncService: orgSync,
+    pullSyncService: pullSync,
+    storeId: storeId,
   );
 
   manager.initialize();
   ref.onDispose(() => manager.dispose());
   return manager;
+});
+
+// ─── مزامنة العملاء الموجودين لمرة واحدة ───
+
+/// يُفعّل مرة واحدة عند التشغيل لمزامنة العملاء الذين أُنشئوا محليًا
+/// قبل إضافة كود المزامنة. يتحقق عبر syncedAt == null
+final syncExistingCustomersProvider = FutureProvider<int>((ref) async {
+  final db = ref.watch(appDatabaseProvider);
+  final syncService = ref.watch(syncServiceProvider);
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return 0;
+
+  try {
+    // جلب العملاء الذين لم تتم مزامنتهم (syncedAt == null)
+    final unsyncedCustomers = await db.customersDao.getActiveCustomers(storeId);
+
+    // جلب org_id
+    String? orgId;
+    try {
+      final store = await db.storesDao.getStoreById(storeId);
+      orgId = store?.orgId;
+    } catch (_) {}
+
+    int count = 0;
+    for (final customer in unsyncedCustomers) {
+      // التحقق: هل يوجد بالفعل في sync_queue؟
+      final existing = await db.syncQueueDao.findByIdempotencyKey(
+        'customers_${customer.id}_CREATE',
+      );
+      if (existing != null) continue; // تخطي - موجود في الطابور بالفعل
+
+      await syncService.enqueueCreate(
+        tableName: 'customers',
+        recordId: customer.id,
+        data: {
+          'id': customer.id,
+          'orgId': orgId,
+          'storeId': customer.storeId,
+          'name': customer.name,
+          'phone': customer.phone,
+          'email': customer.email,
+          'address': customer.address,
+          'city': customer.city,
+          'taxNumber': customer.taxNumber,
+          'type': customer.type,
+          'notes': customer.notes,
+          'isActive': customer.isActive,
+          'createdAt': customer.createdAt.toIso8601String(),
+          'updatedAt': customer.updatedAt?.toIso8601String(),
+        },
+        priority: SyncPriority.high,
+      );
+      count++;
+    }
+
+    if (count > 0 && kDebugMode) {
+      debugPrint('[SyncCustomers] ✅ Enqueued $count existing customers for sync');
+    }
+    return count;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('[SyncCustomers] ❌ Error: $e');
+    }
+    return 0;
+  }
 });
 
 // ─── مزودات محرك المزامنة الجديد ───
@@ -167,6 +251,62 @@ final realtimeListenerProvider = Provider<RealtimeListener?>((ref) {
   }
 });
 
+/// مزود تفعيل المستمع الفوري (Realtime)
+///
+/// يُراقب حالة المصادقة ومعرّف المتجر.
+/// عند تسجيل الدخول واختيار المتجر: يبدأ الاستماع للتحديثات الفورية.
+/// عند تسجيل الخروج: يوقف الاستماع تلقائياً.
+///
+/// يُقرأ مرة واحدة من PosScreen عند التحميل لتفعيل الاشتراك.
+final realtimeActivationProvider = FutureProvider<void>((ref) async {
+  final authState = ref.watch(authStateProvider);
+  final storeId = ref.watch(currentStoreIdProvider);
+  final listener = ref.watch(realtimeListenerProvider);
+
+  // إيقاف المستمع عند تسجيل الخروج أو عدم توفر المتطلبات
+  if (!authState.isAuthenticated || storeId == null || listener == null) {
+    if (listener != null && listener.isActive) {
+      await listener.stop();
+      if (kDebugMode) {
+        debugPrint('[RealtimeActivation] Stopped (logged out or no store)');
+      }
+    }
+    return;
+  }
+
+  // لا تبدأ مرتين
+  if (listener.isActive) return;
+
+  // جلب org_id من بيانات المتجر في القاعدة المحلية
+  String orgId = '';
+  try {
+    final db = ref.read(appDatabaseProvider);
+    final store = await db.storesDao.getStoreById(storeId);
+    orgId = store?.orgId ?? '';
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('[RealtimeActivation] Failed to get store orgId: $e');
+    }
+  }
+
+  // بدء الاستماع
+  await listener.start(
+    orgId: orgId,
+    storeId: storeId,
+  );
+
+  if (kDebugMode) {
+    debugPrint('[RealtimeActivation] Started for store=$storeId, org=$orgId');
+  }
+
+  // إيقاف عند إلغاء الـ provider (تسجيل خروج / تغيير متجر)
+  ref.onDispose(() {
+    if (listener.isActive) {
+      listener.stop();
+    }
+  });
+});
+
 /// مزود المزامنة الأولية
 final initialSyncProvider = Provider<InitialSync?>((ref) {
   try {
@@ -186,6 +326,57 @@ final initialSyncProvider = Provider<InitialSync?>((ref) {
     }
     return null;
   }
+});
+
+/// مزود التزامن العام - يفعّل InitialSync + Realtime تلقائياً
+///
+/// يعمل عند وجود جلسة مصادقة + storeId.
+/// يُقرأ من CashierShell لضمان التشغيل بغض النظر عن الشاشة الأولى.
+final globalSyncActivationProvider = FutureProvider<void>((ref) async {
+  final authState = ref.watch(authStateProvider);
+  final storeId = ref.watch(currentStoreIdProvider);
+
+  // ليس مسجل دخول أو لا يوجد متجر
+  if (!authState.isAuthenticated || storeId == null) return;
+
+  // ─── 1. InitialSync ───
+  final initialSync = ref.watch(initialSyncProvider);
+  if (initialSync != null) {
+    final isComplete = await initialSync.isComplete();
+    if (!isComplete) {
+      // جلب org_id من بيانات المتجر
+      String orgId = '';
+      try {
+        final db = ref.read(appDatabaseProvider);
+        final store = await db.storesDao.getStoreById(storeId);
+        orgId = store?.orgId ?? '';
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('[GlobalSync] Failed to get store orgId: $e');
+        }
+      }
+
+      if (kDebugMode) {
+        debugPrint('[GlobalSync] Running InitialSync for store=$storeId, org=$orgId');
+      }
+
+      final result = await initialSync.execute(orgId: orgId, storeId: storeId);
+      if (kDebugMode) {
+        debugPrint(
+          '[GlobalSync] InitialSync done: ${result.totalRecords} records, '
+          '${result.errors.length} errors',
+        );
+      }
+    } else {
+      if (kDebugMode) {
+        debugPrint('[GlobalSync] InitialSync already complete');
+      }
+    }
+  }
+
+  // ─── 2. Realtime Listener ───
+  // تفعيل المستمع الفوري (سيتجاهل إذا كان يعمل بالفعل)
+  await ref.read(realtimeActivationProvider.future);
 });
 
 /// مزود حالة تقدم محرك المزامنة (Stream)

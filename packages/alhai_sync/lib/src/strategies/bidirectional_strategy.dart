@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
+import '../conflict_resolver.dart';
 import '../json_converter.dart';
 import '../sync_payload_utils.dart';
 import '../sync_table_validator.dart';
@@ -47,6 +48,7 @@ class BidirectionalStrategy {
   final AppDatabase _db;
   final SyncQueueDao _syncQueueDao;
   final SyncMetadataDao _metadataDao;
+  final ConflictResolver _conflictResolver;
   final JsonColumnConverter _jsonConverter = JsonColumnConverter.instance;
 
   /// تكوين الجداول ثنائية الاتجاه
@@ -135,10 +137,12 @@ class BidirectionalStrategy {
     required SupabaseClient client,
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
+    ConflictResolver conflictResolver = const ConflictResolver(),
   })  : _client = client,
         _db = db,
         _syncQueueDao = db.syncQueueDao,
-        _metadataDao = metadataDao;
+        _metadataDao = metadataDao,
+        _conflictResolver = conflictResolver;
 
   /// تنفيذ المزامنة ثنائية الاتجاه لجميع الجداول
   Future<List<BidirectionalResult>> syncAll({
@@ -242,12 +246,97 @@ class BidirectionalStrategy {
         await _syncQueueDao.markAsSynced(item.id);
         count++;
       } on PostgrestException catch (e) {
-        await _syncQueueDao.markAsFailed(item.id, 'DB ${e.code}: ${e.message}');
+        final errorMsg = 'DB ${e.code}: ${e.message}';
+        final payload = jsonDecode(item.payload) as Map<String, dynamic>;
+
         if (kDebugMode) {
           debugPrint('Bidirectional push DB error for $tableName/${item.recordId}: ${e.code} ${e.message}');
         }
+
+        // Duplicate key (23505): auto-resolve by converting to upsert
+        if (e.code == '23505') {
+          try {
+            await _client.from(tableName).upsert(
+              _cleanPayload(_jsonConverter.toRemote(tableName, payload)),
+              onConflict: 'id',
+            ).timeout(const Duration(seconds: 30));
+            await _syncQueueDao.markAsSynced(item.id);
+            count++;
+            if (kDebugMode) {
+              debugPrint('Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}');
+            }
+            continue;
+          } catch (_) {
+            // UPSERT fallback failed, fall through to mark as conflict
+          }
+        }
+
+        // Version conflict (409) or delete-update (record not found)
+        final isVersionConflict = e.code == '409' ||
+            (e.message.contains('conflict') || e.message.contains('409'));
+        final isDeleteUpdate = e.code == 'PGRST116' ||
+            (e.message.contains('not found') || e.message.contains('0 rows'));
+
+        if (isVersionConflict || isDeleteUpdate) {
+          // Fetch server data for conflict record
+          Map<String, dynamic>? serverData;
+          try {
+            serverData = await _client
+                .from(tableName)
+                .select()
+                .eq('id', item.recordId)
+                .maybeSingle()
+                .timeout(const Duration(seconds: 10));
+          } catch (_) {}
+
+          final conflict = SyncConflict(
+            syncQueueId: item.id,
+            tableName: tableName,
+            recordId: item.recordId,
+            type: isDeleteUpdate ? ConflictType.deleteUpdate : ConflictType.versionConflict,
+            operation: item.operation,
+            localData: payload,
+            serverData: serverData,
+            errorMessage: errorMsg,
+          );
+
+          final resolution = await _conflictResolver.resolve(conflict);
+          if (resolution.resolved && resolution.resolvedData != null) {
+            try {
+              final mappedPayload = mapColumnsToRemote(
+                tableName,
+                _cleanPayload(_jsonConverter.toRemote(tableName, resolution.resolvedData!)),
+              );
+              await _client.from(tableName).upsert(
+                mappedPayload,
+                onConflict: 'id',
+              ).timeout(const Duration(seconds: 30));
+              await _syncQueueDao.markAsSynced(item.id);
+              count++;
+              if (kDebugMode) {
+                debugPrint('Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
+                    'for $tableName/${item.recordId}');
+              }
+              continue;
+            } catch (_) {
+              // Resolution failed, mark as conflict
+            }
+          }
+
+          await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+        } else {
+          await _syncQueueDao.markAsFailed(item.id, errorMsg);
+        }
       } on TimeoutException {
-        await _syncQueueDao.markAsFailed(item.id, 'Network timeout');
+        final conflict = SyncConflict(
+          syncQueueId: item.id,
+          tableName: tableName,
+          recordId: item.recordId,
+          type: ConflictType.networkTimeout,
+          operation: item.operation,
+          errorMessage: 'Network timeout',
+        );
+        await _syncQueueDao.markAsFailed(item.id, conflict.toJsonString());
         if (kDebugMode) {
           debugPrint('Bidirectional push timeout for $tableName/${item.recordId}');
         }
@@ -380,7 +469,6 @@ class BidirectionalStrategy {
     final localRow = localRows.first;
     final localSyncedAt = localRow.data['synced_at'] as String?;
     final localTimeCol = localRow.data['time_col'] as String?;
-    final serverTimeCol = serverRecord[timeCol] as String?;
 
     // إذا لم يُعدل محلياً منذ آخر مزامنة، لا تعارض
     if (localSyncedAt != null && localTimeCol != null) {
@@ -393,28 +481,47 @@ class BidirectionalStrategy {
       }
     }
 
-    // يوجد تعارض: حل حسب السياسة
-    switch (conflictResolution) {
-      case ConflictResolution.lastWriteWins:
-        // مقارنة الأوقات
-        if (serverTimeCol != null && localTimeCol != null) {
-          final serverTime = DateTime.tryParse(serverTimeCol) ?? DateTime.now();
-          final localTime = DateTime.tryParse(localTimeCol) ?? DateTime.now();
-          if (serverTime.isAfter(localTime)) {
-            await _upsertRecord(tableName, serverRecord);
-            return _ApplyResult.pulled;
-          }
-        }
-        return _ApplyResult.conflict;
-
-      case ConflictResolution.localWins:
-        // المحلي يفوز: نتجاهل تغيير السيرفر
-        return _ApplyResult.conflict;
-
-      case ConflictResolution.deltaMerge:
-        // يُعالج بـ StockDeltaSync، لا نفعل شيئاً هنا
-        return _ApplyResult.conflict;
+    // يوجد تعارض: حل باستخدام ConflictResolver
+    // Fetch the full local record for merge/comparison
+    Map<String, dynamic>? localData;
+    try {
+      final fullLocalRows = await _db.customSelect(
+        'SELECT * FROM $tableName WHERE id = ?',
+        variables: [Variable.withString(recordId)],
+      ).get();
+      if (fullLocalRows.isNotEmpty) {
+        localData = fullLocalRows.first.data;
+      }
+    } catch (_) {
+      // Best effort to get local data
     }
+
+    final conflict = SyncConflict(
+      syncQueueId: '', // No sync queue item for pull conflicts
+      tableName: tableName,
+      recordId: recordId,
+      type: ConflictType.versionConflict,
+      operation: 'PULL',
+      localData: localData,
+      serverData: serverRecord,
+      errorMessage: 'Pull conflict: local has unpushed changes',
+    );
+
+    final resolution = await _conflictResolver.resolve(conflict);
+    if (resolution.resolved && resolution.resolvedData != null) {
+      await _upsertRecord(tableName, resolution.resolvedData!);
+      if (kDebugMode) {
+        debugPrint('BidirectionalStrategy: pull conflict auto-resolved '
+            '(${resolution.strategy.name}) for $tableName/$recordId');
+      }
+      return _ApplyResult.pulled;
+    }
+
+    if (kDebugMode) {
+      debugPrint('BidirectionalStrategy: pull conflict unresolved for '
+          '$tableName/$recordId (${resolution.description})');
+    }
+    return _ApplyResult.conflict;
   }
 
   /// جلب سجلات من السيرفر

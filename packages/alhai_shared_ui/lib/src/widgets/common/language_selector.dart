@@ -31,8 +31,8 @@ class LanguageSelectorButton extends ConsumerWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     // ألوان متوافقة مع الوضع الداكن
-    final backgroundColor = isDarkMode 
-        ? const Color(0xFF374151) // Gray-700
+    final backgroundColor = isDarkMode
+        ? AppColors.surfaceVariantDark
         : AppColors.backgroundSecondary;
     final textColor = isDarkMode 
         ? Colors.white 
@@ -115,8 +115,8 @@ class LanguagePickerSheet extends ConsumerWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     // ألوان متوافقة مع الوضع الفاتح والداكن
-    final backgroundColor = isDarkMode 
-        ? const Color(0xFF1E293B) // Slate-800
+    final backgroundColor = isDarkMode
+        ? AppColors.surfaceDark
         : Colors.white;
     final handleColor = isDarkMode 
         ? Colors.white24 
@@ -285,8 +285,8 @@ class LanguageSettingsScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     l10n?.languageChangeInfo ?? 'Choose your preferred display language. Changes will be applied immediately.',
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 13,
                     ),
                   ),
@@ -341,10 +341,10 @@ class _LanguageCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.05)
-                : Colors.white,
+                : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -376,7 +376,7 @@ class _LanguageCard extends StatelessWidget {
                     Text(
                       SupportedLocales.getNativeName(locale),
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                       ),
@@ -407,8 +407,8 @@ class _LanguageCard extends StatelessWidget {
                         ],
                         Text(
                           locale.countryCode ?? '',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),

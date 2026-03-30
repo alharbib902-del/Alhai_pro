@@ -22,7 +22,18 @@ class StoresDao extends DatabaseAccessor<AppDatabase> with _$StoresDaoMixin {
     return (select(storesTable)..where((s) => s.id.equals(id))).getSingleOrNull();
   }
 
-  Future<int> insertStore(StoresTableCompanion store) => into(storesTable).insert(store);
+  /// جلب عدة متاجر بقائمة معرفات (batch query بدلاً من loop)
+  Future<List<StoresTableData>> getStoresByIds(List<String> ids) {
+    if (ids.isEmpty) return Future.value([]);
+    return (select(storesTable)..where((s) => s.id.isIn(ids) & s.isActive.equals(true))).get();
+  }
+
+  /// إدراج أو تحديث متجر (UPSERT) - يمنع خطأ UNIQUE constraint
+  /// يستخدم ON CONFLICT DO UPDATE بدلاً من INSERT OR REPLACE
+  /// للحفاظ على الحقول المحلية (مثل synced_at) التي ليست في الـ Companion
+  Future<int> insertStore(StoresTableCompanion store) =>
+      into(storesTable).insertOnConflictUpdate(store);
+
   Future<bool> updateStore(StoresTableData store) => update(storesTable).replace(store);
   Future<int> deleteStore(String id) => (delete(storesTable)..where((s) => s.id.equals(id))).go();
 

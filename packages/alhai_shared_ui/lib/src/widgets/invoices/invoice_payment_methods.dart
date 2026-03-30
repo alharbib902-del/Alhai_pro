@@ -58,7 +58,7 @@ class InvoicePaymentMethods extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+          color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(

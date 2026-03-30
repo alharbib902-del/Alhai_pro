@@ -7,25 +7,30 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_database/alhai_database.dart';
+import 'package:get_it/get_it.dart';
 
 /// نافذة البحث عن عميل
 class CustomerSearchDialog extends StatefulWidget {
   final Function(CustomerSearchResult) onSelect;
   final VoidCallback? onAddNew;
+  final String storeId;
 
   const CustomerSearchDialog({
     super.key,
     required this.onSelect,
+    required this.storeId,
     this.onAddNew,
   });
 
   /// عرض النافذة
-  static Future<CustomerSearchResult?> show(BuildContext context) {
+  static Future<CustomerSearchResult?> show(BuildContext context, {required String storeId}) {
     return showModalBottomSheet<CustomerSearchResult>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => CustomerSearchDialog(
+        storeId: storeId,
         onSelect: (customer) => Navigator.pop(context, customer),
         onAddNew: () {
           Navigator.pop(context);
@@ -42,61 +47,46 @@ class CustomerSearchDialog extends StatefulWidget {
 class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
+  late final CustomersDao _customersDao;
 
-  // قائمة العملاء (بيانات تجريبية)
-  final List<CustomerSearchResult> _allCustomers = [
-    CustomerSearchResult(
-      id: '1',
-      name: 'أحمد محمد العلي',
-      phone: '0501234567',
-      balance: -250.00,
-      loyaltyPoints: 1250,
-      tier: 'gold',
-    ),
-    CustomerSearchResult(
-      id: '2',
-      name: 'سارة عبدالله الأحمد',
-      phone: '0559876543',
-      balance: 500.00,
-      loyaltyPoints: 800,
-      tier: 'silver',
-    ),
-    CustomerSearchResult(
-      id: '3',
-      name: 'محمد خالد السعيد',
-      phone: '0541112222',
-      balance: 0.00,
-      loyaltyPoints: 2500,
-      tier: 'diamond',
-    ),
-    CustomerSearchResult(
-      id: '4',
-      name: 'فاطمة علي الحربي',
-      phone: '0563334444',
-      balance: -1200.00,
-      loyaltyPoints: 350,
-      tier: 'bronze',
-    ),
-    CustomerSearchResult(
-      id: '5',
-      name: 'عمر حسين النجار',
-      phone: '0525556666',
-      balance: 150.00,
-      loyaltyPoints: 600,
-      tier: 'silver',
-    ),
-  ];
-
+  List<CustomerSearchResult> _allCustomers = [];
   List<CustomerSearchResult> _filteredCustomers = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _filteredCustomers = _allCustomers;
+    _customersDao = GetIt.I<AppDatabase>().customersDao;
     _searchController.addListener(_filterCustomers);
+    _loadCustomers();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+  }
+
+  /// تحميل العملاء من قاعدة البيانات
+  Future<void> _loadCustomers() async {
+    try {
+      final customers = await _customersDao.getActiveCustomers(widget.storeId);
+      if (!mounted) return;
+      setState(() {
+        _allCustomers = customers.map((c) => CustomerSearchResult(
+          id: c.id,
+          name: c.name,
+          phone: c.phone ?? '',
+          balance: 0, // سيتم تحديثه لاحقاً من حساب العميل
+          loyaltyPoints: 0,
+          tier: null,
+        )).toList();
+        _filteredCustomers = _allCustomers;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -116,16 +106,24 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       return; // listener will re-fire after text update
     }
     final query = sanitized.toLowerCase();
-    setState(() {
-      if (query.isEmpty) {
-        _filteredCustomers = _allCustomers;
-      } else {
-        _filteredCustomers = _allCustomers.where((customer) {
-          return customer.name.toLowerCase().contains(query) ||
-              customer.phone.contains(query);
-        }).toList();
-      }
-    });
+    if (query.isEmpty) {
+      setState(() => _filteredCustomers = _allCustomers);
+    } else {
+      // بحث من قاعدة البيانات مباشرة
+      _customersDao.searchCustomers(query, widget.storeId).then((results) {
+        if (!mounted) return;
+        setState(() {
+          _filteredCustomers = results.map((c) => CustomerSearchResult(
+            id: c.id,
+            name: c.name,
+            phone: c.phone ?? '',
+            balance: 0,
+            loyaltyPoints: 0,
+            tier: null,
+          )).toList();
+        });
+      });
+    }
   }
 
   @override
@@ -232,7 +230,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
 
           // Results
           Expanded(
-            child: _filteredCustomers.isEmpty
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredCustomers.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),

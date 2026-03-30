@@ -9,6 +9,8 @@ import '../../core/router/routes.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../widgets/common/app_empty_state.dart';
+import '../../providers/sync_providers.dart';
+import 'package:alhai_sync/alhai_sync.dart';
 
 /// شاشة حالة المزامنة
 class SyncStatusScreen extends ConsumerStatefulWidget {
@@ -24,8 +26,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
   bool _isSyncing = false;
   String? _error;
   int _pendingCount = 0;
+  int _conflictCount = 0;
   DateTime? _lastSyncTime;
-  final String _connectionStatus = 'online';
+  SyncHealthStatus _healthStatus = SyncHealthStatus.healthy;
 
   @override
   void initState() {
@@ -37,22 +40,41 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
     setState(() { _isLoading = true; _error = null; });
     try {
       final db = GetIt.I<AppDatabase>();
-      final pending = await db.syncQueueDao.getPendingItems();
+
+      // جلب عدد العناصر المعلقة
+      final pendingCount = await db.syncQueueDao.getPendingCount();
+
+      // جلب العناصر المتعارضة
+      final conflictItems = await db.syncQueueDao.getConflictItems();
+
+      // جلب آخر وقت مزامنة من SyncStatusTracker
+      final tracker = ref.read(syncStatusTrackerProvider);
+      await tracker.refreshAll();
+      final overview = tracker.currentOverview;
+
       setState(() {
-        _pendingCount = pending.length;
-        _lastSyncTime = DateTime.now().subtract(const Duration(minutes: 5));
+        _pendingCount = pendingCount;
+        _conflictCount = conflictItems.length;
+        _lastSyncTime = overview.lastFullSyncAt;
+        _healthStatus = overview.health;
         _isLoading = false;
       });
     } catch (e) {
+      debugPrint('SyncStatusScreen: Error loading status: $e');
       setState(() { _isLoading = false; _error = e.toString(); });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
     final isMediumScreen = !context.isMobile;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+
+    // مراقبة حالة الاتصال من المزود الحقيقي
+    final isOnlineAsync = ref.watch(isOnlineProvider);
+    final isOnline = isOnlineAsync.valueOrNull ?? true;
 
     return Column(
               children: [
@@ -79,16 +101,14 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       ? AppErrorState.general(message: _error, onRetry: _loadStatus)
                       : SingleChildScrollView(
                           padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                          child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, isOnline),
                         ),
                 ),
               ],
             );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
-    final isOnline = _connectionStatus == 'online';
-
+  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n, bool isOnline) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,6 +225,56 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
         ),
         const SizedBox(height: 16),
 
+        // Conflict items card (يظهر فقط إن وجدت تعارضات)
+        if (_conflictCount > 0) ...[
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? AppColors.error.withValues(alpha: 0.1)
+                  : AppColors.errorSurface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.error.withValues(alpha: 0.1),
+                  child: const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'تعارضات المزامنة',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        '$_conflictCount عنصر يحتاج مراجعة',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.error,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text('$_conflictCount', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
         // Sync info card
         Container(
           padding: const EdgeInsets.all(16),
@@ -224,17 +294,16 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              _InfoRow(label: l10n.device, value: 'POS-001', isDark: isDark),
-              Divider(height: 16, color: Theme.of(context).dividerColor),
-              _InfoRow(label: l10n.appVersion, value: '1.0.0', isDark: isDark),
+              _InfoRow(label: l10n.lastFullSync, value: _lastSyncTime != null ? _formatDate(_lastSyncTime!) : '-', isDark: isDark),
               Divider(height: 16, color: Theme.of(context).dividerColor),
               _InfoRow(
-                label: l10n.lastFullSync,
-                value: _lastSyncTime != null ? _formatDate(_lastSyncTime!) : '-',
+                label: l10n.databaseStatus,
+                value: _getHealthLabel(l10n),
                 isDark: isDark,
+                valueColor: _getHealthColor(),
               ),
               Divider(height: 16, color: Theme.of(context).dividerColor),
-              _InfoRow(label: l10n.databaseStatus, value: l10n.healthy, isDark: isDark),
+              _InfoRow(label: l10n.pendingOperations, value: '$_pendingCount', isDark: isDark),
             ],
           ),
         ),
@@ -255,6 +324,35 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       ],
     );
   }
+
+  /// تسمية صحة المزامنة
+  String _getHealthLabel(AppLocalizations l10n) {
+    switch (_healthStatus) {
+      case SyncHealthStatus.healthy:
+        return l10n.healthy;
+      case SyncHealthStatus.syncing:
+        return l10n.syncing;
+      case SyncHealthStatus.warning:
+        return 'يحتاج اهتمام';
+      case SyncHealthStatus.critical:
+        return 'مشاكل خطيرة';
+    }
+  }
+
+  /// لون صحة المزامنة
+  Color _getHealthColor() {
+    switch (_healthStatus) {
+      case SyncHealthStatus.healthy:
+        return AppColors.success;
+      case SyncHealthStatus.syncing:
+        return AppColors.info;
+      case SyncHealthStatus.warning:
+        return AppColors.warning;
+      case SyncHealthStatus.critical:
+        return AppColors.error;
+    }
+  }
+
   String _formatTime(DateTime time, AppLocalizations l10n) {
     final diff = DateTime.now().difference(time);
     if (diff.inMinutes < 1) return l10n.justNow;
@@ -269,14 +367,41 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
 
   Future<void> _forceSync() async {
     setState(() => _isSyncing = true);
-    await Future.delayed(const Duration(seconds: 2));
-    await _loadStatus();
-    setState(() => _isSyncing = false);
-    if (!mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.syncSuccessful), backgroundColor: AppColors.success),
-    );
+    try {
+      // تنفيذ المزامنة الحقيقية عبر SyncManager
+      final manager = ref.read(syncManagerProvider);
+      final result = await manager.syncPending();
+
+      // إعادة تحميل الحالة بعد المزامنة
+      await _loadStatus();
+
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+
+      if (result.hasErrors) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('تمت مزامنة ${result.successCount} عنصر، فشل ${result.failedCount}'),
+            backgroundColor: AppColors.warning,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.syncSuccessful), backgroundColor: AppColors.success),
+        );
+      }
+    } catch (e) {
+      debugPrint('SyncStatusScreen: Force sync error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('خطأ في المزامنة: $e'), backgroundColor: AppColors.error),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSyncing = false);
+      }
+    }
   }
 }
 
@@ -284,7 +409,8 @@ class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
   final bool isDark;
-  const _InfoRow({required this.label, required this.value, required this.isDark});
+  final Color? valueColor;
+  const _InfoRow({required this.label, required this.value, required this.isDark, this.valueColor});
 
   @override
   Widget build(BuildContext context) {
@@ -296,7 +422,7 @@ class _InfoRow extends StatelessWidget {
           value,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: valueColor ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

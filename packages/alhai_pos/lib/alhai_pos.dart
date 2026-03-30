@@ -29,6 +29,7 @@ export 'src/providers/returns_providers.dart';
 
 // ─── Services ───────────────────────────────────────────────────
 export 'src/services/sale_service.dart';
+export 'src/services/invoice_service.dart';
 export 'src/services/receipt_printer_service.dart';
 export 'src/services/receipt_pdf_generator.dart';
 export 'src/services/payment/payment_gateway.dart';

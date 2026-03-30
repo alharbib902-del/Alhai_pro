@@ -609,14 +609,14 @@ final isCartEmptyProvider = Provider<bool>((ref) {
 });
 
 /// مزود التحقق من وجود منتج في السلة
-final isProductInCartProvider = Provider.family<bool, String>((ref, productId) {
+final isProductInCartProvider = Provider.autoDispose.family<bool, String>((ref, productId) {
   final items = ref.watch(cartItemsProvider);
   return items.any((item) => item.product.id == productId);
 });
 
 /// مزود الحصول على عنصر سلة بـ ID المنتج
 final cartItemByProductIdProvider =
-    Provider.family<PosCartItem?, String>((ref, productId) {
+    Provider.autoDispose.family<PosCartItem?, String>((ref, productId) {
   final items = ref.watch(cartItemsProvider);
   try {
     return items.firstWhere((item) => item.product.id == productId);

@@ -372,90 +372,99 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Filter Section
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.md),
-            child: Row(
-              children: [
-                const Icon(Icons.filter_alt_rounded, size: 18, color: AppColors.textSecondary),
-                const SizedBox(width: AppSizes.xs),
-                Text(
-                  l10n.stockStatus,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+          // Scrollable filters + quick actions
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Filter Section
+                  Padding(
+                    padding: const EdgeInsets.all(AppSizes.md),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.filter_alt_rounded, size: 18, color: AppColors.textSecondary),
+                        const SizedBox(width: AppSizes.xs),
+                        Text(
+                          l10n.stockStatus,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  _buildFilterOption(
+                    l10n.all,
+                    Icons.inventory_2_rounded,
+                    _filterType == 'all',
+                    () => setState(() => _filterType = 'all'),
+                    count: total,
+                  ),
+                  _buildFilterOption(
+                    l10n.available,
+                    Icons.check_circle_rounded,
+                    _filterType == 'available',
+                    () => setState(() => _filterType = 'available'),
+                    color: AppColors.stockAvailable,
+                    count: availableCount,
+                  ),
+                  _buildFilterOption(
+                    l10n.lowStock,
+                    Icons.warning_rounded,
+                    _filterType == 'low',
+                    () => setState(() => _filterType = 'low'),
+                    color: AppColors.stockLow,
+                    count: lowStock,
+                  ),
+                  _buildFilterOption(
+                    l10n.outOfStock,
+                    Icons.error_rounded,
+                    _filterType == 'out',
+                    () => setState(() => _filterType = 'out'),
+                    color: AppColors.stockOut,
+                    count: outOfStock,
+                  ),
+                  const Divider(height: 1),
+                  // Quick Actions
+                  Padding(
+                    padding: const EdgeInsets.all(AppSizes.md),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.flash_on_rounded, size: 18, color: AppColors.textSecondary),
+                        const SizedBox(width: AppSizes.xs),
+                        Text(
+                          l10n.quickActions,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildQuickAction(
+                    l10n.exportInventoryReport,
+                    Icons.download_rounded,
+                    AppColors.primary,
+                    () {},
+                  ),
+                  _buildQuickAction(
+                    l10n.printOrderList,
+                    Icons.print_rounded,
+                    AppColors.textSecondary,
+                    () {},
+                  ),
+                  _buildQuickAction(
+                    l10n.inventoryMovementLog,
+                    Icons.history_rounded,
+                    AppColors.textSecondary,
+                    () {},
+                  ),
+                ],
+              ),
             ),
           ),
-          _buildFilterOption(
-            l10n.all,
-            Icons.inventory_2_rounded,
-            _filterType == 'all',
-            () => setState(() => _filterType = 'all'),
-            count: total,
-          ),
-          _buildFilterOption(
-            l10n.available,
-            Icons.check_circle_rounded,
-            _filterType == 'available',
-            () => setState(() => _filterType = 'available'),
-            color: AppColors.stockAvailable,
-            count: availableCount,
-          ),
-          _buildFilterOption(
-            l10n.lowStock,
-            Icons.warning_rounded,
-            _filterType == 'low',
-            () => setState(() => _filterType = 'low'),
-            color: AppColors.stockLow,
-            count: lowStock,
-          ),
-          _buildFilterOption(
-            l10n.outOfStock,
-            Icons.error_rounded,
-            _filterType == 'out',
-            () => setState(() => _filterType = 'out'),
-            color: AppColors.stockOut,
-            count: outOfStock,
-          ),
-          const Divider(height: 1),
-          // Quick Actions
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.md),
-            child: Row(
-              children: [
-                const Icon(Icons.flash_on_rounded, size: 18, color: AppColors.textSecondary),
-                const SizedBox(width: AppSizes.xs),
-                Text(
-                  l10n.quickActions,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _buildQuickAction(
-            l10n.exportInventoryReport,
-            Icons.download_rounded,
-            AppColors.primary,
-            () {},
-          ),
-          _buildQuickAction(
-            l10n.printOrderList,
-            Icons.print_rounded,
-            AppColors.textSecondary,
-            () {},
-          ),
-          _buildQuickAction(
-            l10n.inventoryMovementLog,
-            Icons.history_rounded,
-            AppColors.textSecondary,
-            () {},
-          ),
-          const Spacer(),
-          // Clear Selection
+          // Bulk selection actions (fixed at bottom)
           if (_selectedIds.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(AppSizes.md),

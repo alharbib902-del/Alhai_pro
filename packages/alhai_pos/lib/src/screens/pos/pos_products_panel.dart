@@ -12,7 +12,7 @@ import 'pos_product_shortcuts.dart';
 // =============================================================================
 
 /// لوحة المنتجات - تعرض شبكة المنتجات مع التصنيفات
-class PosProductsPanel extends ConsumerWidget {
+class PosProductsPanel extends ConsumerStatefulWidget {
   final String? selectedCategoryId;
   final ValueChanged<String?> onCategorySelected;
   final int columns;
@@ -31,7 +31,37 @@ class PosProductsPanel extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PosProductsPanel> createState() => _PosProductsPanelState();
+}
+
+class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId != null) {
+        ref.read(productsStateProvider.notifier).loadMore(storeId: storeId);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // M93: Use .select() to only rebuild when products/loading/error change,
     // not when currentPage, hasMore, searchQuery, or categoryId change alone
     final productsState = ref.watch(productsStateProvider.select((state) =>
@@ -40,7 +70,7 @@ class PosProductsPanel extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    final isDesktop = showShortcutsBar; // Desktop has shortcuts bar
+    final isDesktop = widget.showShortcutsBar; // Desktop has shortcuts bar
 
     // Reconstruct a minimal ProductsState for the grid builder
     final productsStateForGrid = ProductsState(
@@ -59,8 +89,8 @@ class PosProductsPanel extends ConsumerWidget {
               children: [
                 PosCategoryColumn(
                   categories: categoriesAsync,
-                  selectedCategoryId: selectedCategoryId,
-                  onCategorySelected: onCategorySelected,
+                  selectedCategoryId: widget.selectedCategoryId,
+                  onCategorySelected: widget.onCategorySelected,
                 ),
                 Expanded(
                   child: _buildProductsGrid(context, ref, productsStateForGrid, l10n),
@@ -73,8 +103,8 @@ class PosProductsPanel extends ConsumerWidget {
               children: [
                 PosCategoryBar(
                   categories: categoriesAsync,
-                  selectedCategoryId: selectedCategoryId,
-                  onCategorySelected: onCategorySelected,
+                  selectedCategoryId: widget.selectedCategoryId,
+                  onCategorySelected: widget.onCategorySelected,
                 ),
                 Expanded(
                   child: _buildProductsGrid(context, ref, productsStateForGrid, l10n),
@@ -83,14 +113,14 @@ class PosProductsPanel extends ConsumerWidget {
             ),
 
           // Desktop shortcuts bar
-          if (showShortcutsBar)
+          if (widget.showShortcutsBar)
             Positioned(
               bottom: 16,
               left: 0,
               right: 0,
               child: Center(child: PosShortcutsBar(
-                onHoldInvoice: onHoldInvoice,
-                onShowHeldInvoices: onShowHeldInvoices,
+                onHoldInvoice: widget.onHoldInvoice,
+                onShowHeldInvoices: widget.onShowHeldInvoices,
               )),
             ),
         ],
@@ -156,6 +186,7 @@ class PosProductsPanel extends ConsumerWidget {
       );
     }
 
+    final cols = widget.columns;
     return RefreshIndicator(
       onRefresh: () async {
         final storeId = ref.read(currentStoreIdProvider);
@@ -165,40 +196,45 @@ class PosProductsPanel extends ConsumerWidget {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.only(
+          left: 8, right: 8, top: 8,
+          bottom: widget.showShortcutsBar ? 80 : 8,
+        ),
         child: GridView.builder(
+          controller: _scrollController,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            childAspectRatio: columns <= 3 ? 0.9 : 1.3,
+            crossAxisCount: cols,
+            childAspectRatio: cols <= 3 ? 0.9 : 1.0,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
-          itemCount: state.products.length,
+          // +1 عنصر إضافي لعرض مؤشر التحميل عند التمرير
+          itemCount: state.products.length + (state.isLoading ? 1 : 0),
           itemBuilder: (context, index) {
+            // مؤشر تحميل في نهاية القائمة
+            if (index >= state.products.length) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: SizedBox(
+                    width: 24, height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              );
+            }
+
             final product = state.products[index];
             return PosProductCard(
               product: product,
               onAddToCart: () {
                 ref.read(cartStateProvider.notifier).addProduct(product);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${l10n.addedToCart}: ${product.name}'),
-                    duration: const Duration(milliseconds: 800),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                // لا SnackBar - الكارت يعرض المنتج المضاف كتأكيد بصري
               },
               onAddWithQuantity: () async {
                 final qty = await QuantityInputDialog.show(context, product);
                 if (qty != null && qty > 0 && context.mounted) {
                   ref.read(cartStateProvider.notifier).addProduct(product, quantity: qty);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${l10n.addedToCart}: ${product.name} x $qty'),
-                      duration: const Duration(milliseconds: 800),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
                 }
               },
             );

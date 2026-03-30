@@ -6,10 +6,13 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
+import 'package:alhai_pos/alhai_pos.dart' show cartStateProvider, heldInvoicesProvider;
 
 /// Navigation item model for the cashier shell
 class _NavItem {
@@ -27,17 +30,45 @@ class _NavItem {
 }
 
 /// Cashier shell with persistent sidebar/drawer navigation
-class CashierShell extends StatefulWidget {
+class CashierShell extends ConsumerStatefulWidget {
   final Widget child;
 
   const CashierShell({super.key, required this.child});
 
   @override
-  State<CashierShell> createState() => _CashierShellState();
+  ConsumerState<CashierShell> createState() => _CashierShellState();
 }
 
-class _CashierShellState extends State<CashierShell> {
+class _CashierShellState extends ConsumerState<CashierShell> {
   DateTime? _lastBackPress;
+
+  @override
+  void initState() {
+    super.initState();
+    // تفعيل التزامن العام (InitialSync + Realtime) عند فتح أي شاشة
+    // هذا يضمن تشغيل المزامنة بغض النظر عن الشاشة الأولى (/pos أو /sales أو غيرها)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(globalSyncActivationProvider);
+      // تفعيل مدير المزامنة (Push) لدفع المبيعات والبيانات المحلية إلى Supabase
+      // SyncManager يعمل كل 15 ثانية لرفع العناصر المعلقة في sync_queue
+      ref.read(syncManagerProvider);
+      // مزامنة العملاء الموجودين محليًا الذين لم يُرسلوا بعد
+      ref.read(syncExistingCustomersProvider);
+
+      // AUTH-GUARD: Clear user-specific state on logout (any logout path).
+      // This catches logouts from profile_screen, dashboard_shell, session
+      // timeout, etc. — all of which set authState to unauthenticated.
+      ref.listenManual(authStateProvider, (previous, next) {
+        if (previous?.status == AuthStatus.authenticated &&
+            next.status != AuthStatus.authenticated) {
+          // Cart must not survive across user sessions
+          ref.read(cartStateProvider.notifier).clear();
+          ref.invalidate(heldInvoicesProvider);
+          ref.read(performanceProvider.notifier).resetSession();
+        }
+      });
+    });
+  }
 
   static const _navItems = [
     _NavItem(
@@ -277,7 +308,15 @@ class _CashierShellState extends State<CashierShell> {
           ),
 
           // Main content
-          Expanded(child: widget.child),
+          Expanded(
+            child: Column(
+              children: [
+                // بانرات حالة الاتصال والمزامنة
+                const StatusBanners(),
+                Expanded(child: widget.child),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -400,7 +439,13 @@ class _CashierShellState extends State<CashierShell> {
           ),
         ),
       ),
-      body: widget.child,
+      body: Column(
+        children: [
+          // بانرات حالة الاتصال والمزامنة
+          const StatusBanners(),
+          Expanded(child: widget.child),
+        ],
+      ),
     );
   }
 }

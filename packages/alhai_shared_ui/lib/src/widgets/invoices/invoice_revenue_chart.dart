@@ -30,7 +30,7 @@ class InvoiceRevenueChart extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Theme.of(context).dividerColor),
                 ),
@@ -88,7 +88,7 @@ class _RevenueChartPainter extends CustomPainter {
     }
 
     // Y-axis labels
-    final textStyle = TextStyle(fontSize: 10, color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280));
+    final textStyle = TextStyle(fontSize: 10, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary);
     for (int i = 0; i <= 4; i++) {
       final value = (maxVal * i / 4).toInt();
       final label = '${(value / 1000).toStringAsFixed(0)}k';

@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_shifts_cashier_id', columns: {#cashierId})
 @TableIndex(name: 'idx_shifts_status', columns: {#status})
 @TableIndex(name: 'idx_shifts_opened_at', columns: {#openedAt})
+@TableIndex(name: 'idx_shifts_store_cashier_status', columns: {#storeId, #cashierId, #status})
 class ShiftsTable extends Table {
   @override
   String get tableName => 'shifts';

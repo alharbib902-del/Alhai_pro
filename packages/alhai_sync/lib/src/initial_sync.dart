@@ -60,6 +60,21 @@ class InitialSync {
   /// 200 صفحة × 500 سجل = 100,000 سجل كحد أقصى لكل جدول
   static const int _maxPagesPerTable = 200;
 
+  /// خريطة التبعيات: كل جدول يعتمد على الجداول المذكورة
+  /// إذا فشل أحد الجداول الأساسية، يتم تخطي الجداول التابعة
+  static const Map<String, List<String>> _tableDependencies = {
+    'stores': ['organizations'],
+    'users': ['organizations'],
+    'roles': ['stores'],
+    'categories': ['stores'],
+    'products': ['stores', 'categories'],
+    'customers': ['stores'],
+    'customer_addresses': ['customers'],
+    'shifts': ['stores', 'users'],
+    'sales': ['stores', 'users'],
+    'sale_items': ['sales', 'products'],
+  };
+
   /// ترتيب الجداول للتحميل (حسب التبعيات)
   /// الترتيب مهم: الجداول المرجعية أولاً، ثم الجداول التي تعتمد عليها
   static const List<String> downloadOrder = [
@@ -70,6 +85,7 @@ class InitialSync {
     'roles',
     // المرحلة 2: البيانات المرجعية
     'categories',
+    'org_products',
     'products',
     'settings',
     'expense_categories',
@@ -90,6 +106,9 @@ class InitialSync {
     'shifts',
     'notifications',
     'product_expiry',
+    // المرحلة 6: المبيعات (لاسترجاع البيانات بعد إعادة التشغيل)
+    'sales',
+    'sale_items',
   ];
 
   final _progressController =
@@ -147,9 +166,26 @@ class InitialSync {
     }
 
     final totalTables = tablesToSync.length;
+    final failedTables = <String>{};
 
     for (int i = 0; i < tablesToSync.length; i++) {
       final tableName = tablesToSync[i];
+
+      // تخطي الجدول إذا فشل أحد الجداول التي يعتمد عليها
+      final deps = _tableDependencies[tableName];
+      if (deps != null && deps.any((dep) => failedTables.contains(dep))) {
+        final failedDeps =
+            deps.where((dep) => failedTables.contains(dep)).toList();
+        final skipMsg =
+            '$tableName: skipped (dependency failed: ${failedDeps.join(", ")})';
+        errors.add(skipMsg);
+        failedTables.add(tableName);
+
+        if (kDebugMode) {
+          debugPrint('InitialSync: $skipMsg');
+        }
+        continue;
+      }
 
       _emitProgress(InitialSyncProgress(
         currentTable: tableName,
@@ -175,6 +211,7 @@ class InitialSync {
         );
       } catch (e) {
         errors.add('$tableName: $e');
+        failedTables.add(tableName);
         await _metadataDao.setError(tableName, e.toString());
 
         if (kDebugMode) {
@@ -283,29 +320,71 @@ class InitialSync {
     return _jsonConverter.batchToLocal(tableName, records);
   }
 
+  /// أعمدة التواريخ المعروفة التي يجب تحويلها من ISO 8601 إلى Unix seconds
+  static const Set<String> _dateTimeColumns = {
+    'created_at', 'updated_at', 'synced_at', 'deleted_at',
+    'opened_at', 'closed_at', 'issued_at', 'due_at', 'paid_at',
+    'expires_at', 'start_date', 'end_date', 'last_login',
+    'completed_at', 'confirmed_at', 'cancelled_at', 'delivered_at',
+    'shipped_at', 'refunded_at', 'voided_at', 'activated_at',
+    'deactivated_at', 'last_sync_at', 'last_pull_at', 'last_push_at',
+    // Additional datetime columns from database tables
+    'order_date', 'preparing_at', 'ready_at', 'delivering_at',
+    'received_at', 'approved_at', 'started_at', 'expiry_date',
+    'expense_date', 'read_at', 'sent_at', 'last_attempt_at',
+    'last_transaction_at', 'trial_ends_at', 'last_heartbeat_at',
+    'current_period_start', 'current_period_end',
+    'invited_at', 'joined_at', 'last_login_at',
+  };
+
+  /// تحويل ISO 8601 timestamps إلى Unix seconds (ما يتوقعه Drift)
+  dynamic _convertValue(String column, dynamic value) {
+    if (value == null) return null;
+    if (!_dateTimeColumns.contains(column)) return value;
+    if (value is int) return value; // بالفعل Unix seconds
+    if (value is String) {
+      try {
+        return DateTime.parse(value).millisecondsSinceEpoch ~/ 1000;
+      } catch (_) {
+        return null;
+      }
+    }
+    return value;
+  }
+
   /// إدراج مجموعة سجلات محلياً
+  /// يتم تعطيل Foreign Keys مؤقتاً أثناء المزامنة الأولية
+  /// لأن البيانات قادمة من السيرفر وسلامتها مضمونة
   Future<void> _insertBatch(
       String tableName, List<Map<String, dynamic>> records) async {
     if (records.isEmpty) return;
     validateTableName(tableName);
 
-    await _db.batch((batch) {
-      for (final record in records) {
-        final columns = record.keys.toList();
-        final placeholders = columns.map((_) => '?').join(', ');
-        final updates = columns
-            .where((c) => c != 'id')
-            .map((c) => '$c = excluded.$c')
-            .join(', ');
+    // تعطيل FK خارج الـ batch (PRAGMA لا يعمل داخل batch في WASM)
+    await _db.customStatement('PRAGMA foreign_keys = OFF');
 
-        batch.customStatement(
-          'INSERT INTO $tableName (${columns.join(', ')}) '
-          'VALUES ($placeholders) '
-          'ON CONFLICT(id) DO UPDATE SET $updates',
-          columns.map((c) => record[c]).toList(),
-        );
-      }
-    });
+    try {
+      await _db.batch((batch) {
+        for (final record in records) {
+          final columns = record.keys.toList();
+          final placeholders = columns.map((_) => '?').join(', ');
+          final updates = columns
+              .where((c) => c != 'id')
+              .map((c) => '$c = excluded.$c')
+              .join(', ');
+
+          batch.customStatement(
+            'INSERT INTO $tableName (${columns.join(', ')}) '
+            'VALUES ($placeholders) '
+            'ON CONFLICT(id) DO UPDATE SET $updates',
+            columns.map((c) => _convertValue(c, record[c])).toList(),
+          );
+        }
+      });
+    } finally {
+      // إعادة تفعيل FK دائماً
+      await _db.customStatement('PRAGMA foreign_keys = ON');
+    }
   }
 
   /// التحقق من سلامة البيانات بعد التحميل
@@ -332,19 +411,22 @@ class InitialSync {
 
   bool _hasOrgIdColumn(String tableName) {
     // هذه الجداول لديها org_id فعلياً في Supabase
+    // ملاحظة: drivers ليس لديها org_id (فقط store_id)
     const tablesWithOrgId = {
       'stores', 'users', 'categories', 'products',
       'customers', 'suppliers', 'expenses',
       // جداول جديدة
       'discounts', 'coupons', 'promotions', 'loyalty_rewards',
-      'drivers', 'customer_addresses', 'accounts',
+      'customer_addresses', 'accounts',
       'loyalty_points', 'shifts', 'notifications', 'product_expiry',
+      'org_products',
     };
     return tablesWithOrgId.contains(tableName);
   }
 
   bool _hasStoreIdColumn(String tableName) {
     // customer_addresses: ليس لديها store_id (مرتبطة بالعميل مباشرة)
+    // sale_items: ليس لديها store_id (مرتبطة بالبيع مباشرة)
     const tablesWithStoreId = {
       'products', 'categories', 'customers', 'settings',
       'suppliers', 'expense_categories', 'roles',
@@ -353,6 +435,8 @@ class InitialSync {
       'drivers', 'accounts',
       'loyalty_points', 'shifts', 'notifications',
       'product_expiry', 'whatsapp_templates',
+      // المبيعات
+      'sales',
     };
     return tablesWithStoreId.contains(tableName);
   }
@@ -362,6 +446,14 @@ class InitialSync {
     // جداول بدون created_at، فقط updated_at
     const updatedAtOnly = {'settings', 'whatsapp_templates'};
     if (updatedAtOnly.contains(tableName)) return 'updated_at';
+
+    // جداول بدون created_at - ترتيب بعمود opened_at
+    // shifts في Supabase لديها opened_at وليس created_at
+    if (tableName == 'shifts') return 'opened_at';
+
+    // sale_items ليس لديها created_at ولا updated_at، ترتيب بـ id
+    if (tableName == 'sale_items') return 'id';
+
     return 'created_at';
   }
 

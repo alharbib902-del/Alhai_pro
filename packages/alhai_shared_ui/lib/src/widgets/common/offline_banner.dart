@@ -41,48 +41,16 @@ class OfflineBanner extends ConsumerWidget {
   }
 }
 
-/// Banner للمزامنة المعلقة
+/// Banner للمزامنة المعلقة (مخفي - المزامنة تعمل في الخلفية بدون إزعاج المستخدم)
 class SyncPendingBanner extends ConsumerWidget {
   const SyncPendingBanner({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pendingCount = ref.watch(pendingSyncCountProvider);
-    
-    return pendingCount.when(
-      data: (count) {
-        if (count == 0) return const SizedBox.shrink();
-        
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: AlhaiColors.infoDark,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '$count عملية في انتظار المزامنة',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
+    // تفعيل مدير المزامنة لدفع العمليات المعلقة تلقائياً
+    ref.watch(syncManagerProvider);
+    // البانر مخفي - المزامنة تعمل بصمت في الخلفية
+    return const SizedBox.shrink();
   }
 }
 

@@ -8,8 +8,10 @@ import 'products_table.dart';
 /// Indexes:
 /// - idx_sale_items_sale_id: للربط السريع بالفاتورة
 /// - idx_sale_items_product_id: للتقارير حسب المنتج
+/// - idx_sale_items_product_sale: للـ JOIN مع sales في تقارير المبيعات
 @TableIndex(name: 'idx_sale_items_sale_id', columns: {#saleId})
 @TableIndex(name: 'idx_sale_items_product_id', columns: {#productId})
+@TableIndex(name: 'idx_sale_items_product_sale', columns: {#productId, #saleId})
 class SaleItemsTable extends Table {
   @override
   String get tableName => 'sale_items';

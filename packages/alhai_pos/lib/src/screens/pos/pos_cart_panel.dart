@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' hide Column;
-import 'package:alhai_database/alhai_database.dart' show CustomersTableCompanion;
+import 'package:alhai_database/alhai_database.dart' show CustomersTableCompanion, AccountsTableCompanion;
+import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -151,25 +152,29 @@ class PosCartPanel extends ConsumerWidget {
               child: Row(
                 children: [
                   // زر تطبيق خصم
-                  TextButton.icon(
-                    onPressed: () => _showDiscountDialog(context, ref, subtotal),
-                    icon: const Icon(Icons.percent_rounded, size: 16, color: AppColors.success),
-                    label: Text(
-                      l10n.discount,
-                      style: const TextStyle(
-                        color: AppColors.success,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: TextButton.icon(
+                      onPressed: () => _showDiscountDialog(context, ref, subtotal),
+                      icon: const Icon(Icons.percent_rounded, size: 16, color: AppColors.success),
+                      label: Text(
+                        l10n.discount,
+                        style: const TextStyle(
+                          color: AppColors.success,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 32),
                       ),
                     ),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 32),
-                    ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
                   // كوبون
-                  TextButton.icon(
+                  Flexible(
+                    child: TextButton.icon(
                     onPressed: () {
                       final codeController = TextEditingController();
                       showDialog<void>(
@@ -236,15 +241,18 @@ class PosCartPanel extends ConsumerWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(0, 32),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  ),
+                  const SizedBox(width: 8),
                   // ملاحظة
-                  TextButton.icon(
+                  Flexible(
+                    child: TextButton.icon(
                     onPressed: () async {
                       final result = await SaleNoteDialog.show(
                         context,
@@ -274,11 +282,13 @@ class PosCartPanel extends ConsumerWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(0, 32),
                     ),
+                  ),
                   ),
                 ],
               ),
@@ -427,7 +437,7 @@ class PosCartPanel extends ConsumerWidget {
           Expanded(
             child: GestureDetector(
               onTap: () async {
-                final result = await CustomerSearchDialog.show(context);
+                final result = await CustomerSearchDialog.show(context, storeId: ref.read(currentStoreIdProvider) ?? '');
                 if (result != null) {
                   ref.read(cartStateProvider.notifier).setCustomer(
                         result.id,
@@ -515,15 +525,66 @@ class PosCartPanel extends ConsumerWidget {
                         try {
                           final customerId = 'cust_${DateTime.now().millisecondsSinceEpoch}';
                           final phone = phoneCtrl.text.trim();
+                          final now = DateTime.now();
                           await db.customersDao.insertCustomer(
                             CustomersTableCompanion.insert(
                               id: customerId,
                               storeId: storeId,
                               name: name,
                               phone: phone.isEmpty ? const Value.absent() : Value(phone),
-                              createdAt: DateTime.now(),
+                              createdAt: now,
                             ),
                           );
+                          // إنشاء حساب مالي للعميل (ليظهر في شاشة العملاء)
+                          try {
+                            final accountId = 'acc_${DateTime.now().millisecondsSinceEpoch}';
+                            String? orgId;
+                            try {
+                              final store = await db.storesDao.getStoreById(storeId);
+                              orgId = store?.orgId;
+                            } catch (_) {}
+                            await db.accountsDao.insertAccount(
+                              AccountsTableCompanion.insert(
+                                id: accountId,
+                                storeId: storeId,
+                                orgId: Value(orgId),
+                                type: 'receivable',
+                                customerId: Value(customerId),
+                                name: name,
+                                phone: Value(phone.isEmpty ? null : phone),
+                                balance: const Value(0),
+                                createdAt: now,
+                              ),
+                            );
+                          } catch (e) {
+                            debugPrint('Error creating account for customer: $e');
+                          }
+                          // مزامنة العميل الجديد مع Supabase
+                          try {
+                            String? orgId;
+                            try {
+                              final store = await db.storesDao.getStoreById(storeId);
+                              orgId = store?.orgId;
+                            } catch (_) {}
+                            final syncService = ref.read(syncServiceProvider);
+                            await syncService.enqueueCreate(
+                              tableName: 'customers',
+                              recordId: customerId,
+                              data: {
+                                'id': customerId,
+                                'orgId': orgId,
+                                'storeId': storeId,
+                                'name': name,
+                                'phone': phone.isEmpty ? null : phone,
+                                'type': 'individual',
+                                'isActive': true,
+                                'createdAt': now.toIso8601String(),
+                              },
+                              priority: SyncPriority.high,
+                            );
+                          } catch (e) {
+                            debugPrint('Error syncing customer: $e');
+                          }
                           ref.read(cartStateProvider.notifier).setCustomer(customerId, customerName: name);
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.customerAddedSuccess(name)), backgroundColor: AppColors.success));
@@ -561,32 +622,34 @@ class PosCartPanel extends ConsumerWidget {
       BuildContext context, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 64,
-            color: colorScheme.outlineVariant,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            l10n.cartEmpty,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.shopping_cart_outlined,
+              size: 64,
+              color: colorScheme.outlineVariant,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.addProductsToStart,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+            const SizedBox(height: 16),
+            Text(
+              l10n.cartEmpty,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              l10n.addProductsToStart,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

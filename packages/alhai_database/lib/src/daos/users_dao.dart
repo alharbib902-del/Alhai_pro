@@ -26,6 +26,10 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
   }
 
   Future<int> insertUser(UsersTableCompanion user) => into(usersTable).insert(user);
+
+  /// إدراج أو تحديث مستخدم (UPSERT) - يمنع FOREIGN KEY errors
+  Future<int> ensureUser(UsersTableCompanion user) =>
+      into(usersTable).insertOnConflictUpdate(user);
   Future<bool> updateUser(UsersTableData user) => update(usersTable).replace(user);
   Future<int> deleteUser(String id) => (delete(usersTable)..where((u) => u.id.equals(id))).go();
 

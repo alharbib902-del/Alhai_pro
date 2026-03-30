@@ -988,18 +988,20 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Name
-                      Hero(
-                        tag: 'product-name-${widget.product.id}',
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            widget.product.name,
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
+                      Flexible(
+                        child: Hero(
+                          tag: 'product-name-${widget.product.id}',
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: Text(
+                              widget.product.name,
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),

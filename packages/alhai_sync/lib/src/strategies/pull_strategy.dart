@@ -56,6 +56,8 @@ const _allowedTables = {
   'customer_addresses',
   'product_expiry',
   'roles',
+  'org_products',
+  'stock_transfers',
 };
 
 /// Validates that [tableName] is in the local [_allowedTables] whitelist.
@@ -96,6 +98,7 @@ class PullStrategy {
     'loyalty_rewards',
     'drivers',
     'expense_categories',
+    'org_products',
   ];
 
   /// حجم الصفحة لجلب البيانات
@@ -231,7 +234,7 @@ class PullStrategy {
       'categories', 'products', 'stores',
       // جداول جديدة
       'users', 'discounts', 'coupons', 'promotions',
-      'loyalty_rewards', 'drivers',
+      'loyalty_rewards', 'drivers', 'org_products',
     };
     return tablesWithOrgId.contains(tableName);
   }

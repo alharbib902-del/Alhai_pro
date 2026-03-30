@@ -14,6 +14,9 @@ import '../app_database.dart';
 class ProductsFtsService {
   final AppDatabase _db;
 
+  /// كاش نتيجة فحص وجود جدول FTS (يُفحص مرة واحدة فقط)
+  static bool? _ftsTableExistsCache;
+
   ProductsFtsService(this._db);
 
   /// إنشاء جدول FTS5 للبحث السريع
@@ -57,6 +60,9 @@ class ProductsFtsService {
         VALUES (NEW.rowid, NEW.id, NEW.store_id, NEW.name, NEW.barcode, NEW.sku, NEW.description);
       END
     ''');
+
+    // تحديث الكاش بعد إنشاء الجدول بنجاح
+    _ftsTableExistsCache = true;
   }
 
   /// إعادة بناء فهرس FTS من البيانات الموجودة
@@ -221,15 +227,20 @@ class ProductsFtsService {
     return words.map((w) => '$w*').join(' ');
   }
 
-  /// التحقق من وجود جدول FTS
+  /// التحقق من وجود جدول FTS (مع كاش لتجنب الاستعلام المتكرر)
   Future<bool> isFtsTableExists() async {
+    // إرجاع النتيجة المخزنة إذا كانت متاحة
+    if (_ftsTableExistsCache != null) return _ftsTableExistsCache!;
+
     try {
       final result = await _db.customSelect(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='products_fts'",
         readsFrom: {},
       ).getSingleOrNull();
-      return result != null;
+      _ftsTableExistsCache = result != null;
+      return _ftsTableExistsCache!;
     } catch (_) {
+      _ftsTableExistsCache = false;
       return false;
     }
   }

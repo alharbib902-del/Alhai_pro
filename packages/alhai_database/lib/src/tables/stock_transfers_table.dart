@@ -22,9 +22,13 @@ class StockTransfersTable extends Table {
   /// but align in future migrations.
   TextColumn get createdBy => text().nullable()();
   TextColumn get approvedBy => text().nullable()();
+  TextColumn get receivedBy => text().nullable()();
+  TextColumn get approvalStatus => text().withDefault(const Constant('pending'))();
+  // pending → approved → in_transit → received → cancelled
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get approvedAt => dateTime().nullable()();
   DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get receivedAt => dateTime().nullable()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
   @override

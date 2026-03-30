@@ -63,6 +63,20 @@ const Map<String, Map<String, String>> _localToRemoteColumnMap = {
     'quantity': 'qty',
     'total': 'total_price',
   },
+  // M-COMPAT: shifts.difference → Supabase cash_difference (original column name)
+  'shifts': {
+    'difference': 'cash_difference',
+  },
+  // M-COMPAT: loyalty_points column name mismatches
+  'loyalty_points': {
+    'current_points': 'points',
+    'total_earned': 'points_earned',
+    'total_redeemed': 'points_redeemed',
+  },
+  // M-COMPAT: users.avatar → Supabase image_url
+  'users': {
+    'avatar': 'image_url',
+  },
 };
 
 /// Reverse map: Supabase remote name -> local Drift name.

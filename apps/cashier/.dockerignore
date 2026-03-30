@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Build artifacts
+**/build/
+**/.dart_tool/
+**/.pub-cache/
+
+# Claude worktrees
+.claude/worktrees/
+
+# Environment files
+.env
+.dart_define.env
+*.env.local
+
+# Tests
+**/test/
+**/e2e/
+**/node_modules/
+
+# Docs & reports
+docs/
+reports/
+audit-report/
+fix-report/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

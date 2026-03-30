@@ -42,6 +42,10 @@ const Set<String> allowedSyncTables = {
   'whatsapp_messages',
   'roles',
   'daily_summaries',
+  'org_products',
+  'stock_transfers',
+  'stock_deltas',
+  'invoices',
 };
 
 /// Validates that a table name is in the allowed whitelist.

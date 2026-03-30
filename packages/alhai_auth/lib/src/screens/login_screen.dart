@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
@@ -45,6 +46,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   // === حالة الخطوات ===
   LoginStep _currentStep = LoginStep.phone;
   String? _userEmail;
+  String? _userPassword;
   String? _userName;
   String? _storeName;
 
@@ -52,12 +54,98 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   static const String _devOtp = '123456';
 
   String? _error;
-  int _remainingAttempts = 3;
+  int _remainingAttempts = _maxAttempts;
+
+  // === OTP Lockout ===
+  static const String _lockoutKey = 'otp_lockout_until';
+  static const int _maxAttempts = 3;
+  static const Duration _lockoutDuration = Duration(minutes: 5);
+  bool _isLockedOut = false;
+  DateTime? _lockoutUntil;
+  Timer? _lockoutTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLockoutStatus();
+  }
 
   @override
   void dispose() {
     _phoneController.dispose();
+    _lockoutTimer?.cancel();
     super.dispose();
+  }
+
+  /// فحص حالة القفل عند فتح الشاشة (يمنع التحايل بإعادة التحميل)
+  Future<void> _checkLockoutStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lockoutStr = prefs.getString(_lockoutKey);
+      if (lockoutStr != null) {
+        final lockoutTime = DateTime.tryParse(lockoutStr);
+        if (lockoutTime != null && lockoutTime.isAfter(DateTime.now())) {
+          if (mounted) {
+            setState(() {
+              _isLockedOut = true;
+              _lockoutUntil = lockoutTime;
+              _remainingAttempts = 0;
+            });
+            _startLockoutTimer();
+          }
+        } else {
+          // انتهت مدة القفل → حذف
+          await prefs.remove(_lockoutKey);
+        }
+      }
+    } catch (_) {}
+  }
+
+  /// تفعيل القفل المؤقت بعد 3 محاولات خاطئة
+  Future<void> _activateLockout() async {
+    final until = DateTime.now().add(_lockoutDuration);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_lockoutKey, until.toIso8601String());
+    } catch (_) {}
+
+    if (!mounted) return;
+    setState(() {
+      _isLockedOut = true;
+      _lockoutUntil = until;
+      _error = 'تم تجاوز الحد الأقصى للمحاولات.\nيرجى الانتظار ${_lockoutDuration.inMinutes} دقائق ثم المحاولة مجدداً.';
+      _otpValue = '';
+      _otpKey.currentState?.clear();
+    });
+
+    _startLockoutTimer();
+
+    // الرجوع لشاشة إدخال الرقم بعد ثانيتين
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) _goBack();
+    });
+  }
+
+  /// بدء مؤقت العد التنازلي لإنهاء القفل
+  void _startLockoutTimer() {
+    _lockoutTimer?.cancel();
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_lockoutUntil == null || DateTime.now().isAfter(_lockoutUntil!)) {
+        timer.cancel();
+        if (mounted) {
+          setState(() {
+            _isLockedOut = false;
+            _lockoutUntil = null;
+            _remainingAttempts = _maxAttempts;
+            _error = null;
+          });
+          // حذف القفل من التخزين
+          SharedPreferences.getInstance().then((prefs) => prefs.remove(_lockoutKey));
+        }
+      } else {
+        if (mounted) setState(() {}); // تحديث العد التنازلي في UI
+      }
+    });
   }
 
   String get _fullPhoneNumber {
@@ -95,6 +183,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _checkPhone() async {
     final l10n = AppLocalizations.of(context);
+
+    // منع المحاولة أثناء القفل
+    if (_isLockedOut) {
+      final remaining = _lockoutUntil?.difference(DateTime.now());
+      final mins = (remaining?.inSeconds ?? 300) ~/ 60 + 1;
+      setState(() {
+        _error = 'تم تجاوز الحد الأقصى للمحاولات. انتظر $mins دقائق';
+      });
+      return;
+    }
+
     final phoneDigits = _phoneController.text.replaceAll(' ', '');
 
     // التحقق من طول الرقم
@@ -139,8 +238,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // الحساب موجود وعنده إيميل → ننتقل مباشرة لخطوة OTP
       _userEmail = result['email'] as String?;
+      _userPassword = result['password'] as String?;
       _userName = result['name'] as String?;
       _storeName = result['store_name'] as String?;
+      if (kDebugMode) {
+        debugPrint('📧 Email: $_userEmail, Password: ${_userPassword != null ? "✅ found" : "❌ missing"}');
+      }
       _currentStep = LoginStep.otp;
       _error = null;
     });
@@ -166,6 +269,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context);
     final otpToVerify = otp ?? _otpValue;
 
+    // منع المحاولة أثناء القفل
+    if (_isLockedOut) {
+      final remaining = _lockoutUntil?.difference(DateTime.now());
+      final mins = (remaining?.inSeconds ?? 300) ~/ 60 + 1;
+      setState(() {
+        _error = 'الرقم مقفل مؤقتاً. انتظر $mins دقائق';
+      });
+      return;
+    }
+
     if (otpToVerify.length < 6) {
       setState(() => _error = l10n?.enterOtpFully ?? 'يرجى إدخال رمز التحقق كاملاً');
       return;
@@ -186,25 +299,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final authNotifier = ref.read(authStateProvider.notifier);
 
       // محاولة الدخول بالإيميل في الخلفية (Supabase)
+      // يستخدم الباسورد المستخرج من check_cashier_by_phone RPC
       bool supabaseSignedIn = false;
+      final signInPassword = _userPassword ?? _devOtp;
       if (_userEmail != null) {
         try {
-          if (kDebugMode) {
-            debugPrint('🔐 Background sign-in with email: $_userEmail');
-          }
+          debugPrint('🔐 Supabase sign-in: email=$_userEmail, password=${_userPassword != null ? "from DB" : "dev fallback"}');
           final signInResult = await authNotifier.signInWithEmailPassword(
             email: _userEmail!,
-            password: _devOtp,
+            password: signInPassword,
           );
           supabaseSignedIn = signInResult.success;
-          if (kDebugMode) {
-            debugPrint('🔐 Background sign-in result: $supabaseSignedIn');
-          }
+          debugPrint('🔐 Supabase sign-in result: ${supabaseSignedIn ? "✅ SUCCESS" : "❌ FAILED: ${signInResult.error}"}');
         } catch (e) {
-          if (kDebugMode) {
-            debugPrint('⚠️ Background sign-in failed: $e');
-          }
+          debugPrint('⚠️ Supabase sign-in exception: $e');
         }
+      } else {
+        debugPrint('⚠️ No email found — cannot sign in to Supabase');
       }
 
       // لو Supabase ما نجح → ننشئ جلسة محلية عبر verifyLocalOtp
@@ -237,30 +348,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // الرمز غير صحيح
     if (!mounted) return;
-    setState(() {
-      _isLoading = false;
-      _remainingAttempts--;
-      if (_remainingAttempts <= 0) {
-        _error = l10n?.maxAttemptsReached ?? 'تم تجاوز الحد الأقصى. يرجى المحاولة لاحقاً';
-        _otpValue = '';
-        _otpKey.currentState?.clear();
-        _remainingAttempts = 3;
-      } else {
+
+    _remainingAttempts--;
+
+    if (_remainingAttempts <= 0) {
+      // === قفل مؤقت بعد 3 محاولات خاطئة ===
+      setState(() => _isLoading = false);
+      await _activateLockout();
+    } else {
+      setState(() {
+        _isLoading = false;
         _error = 'رمز التحقق غير صحيح';
-      }
-    });
+      });
+    }
   }
 
   /// الرجوع لخطوة الهاتف
   void _goBack() {
     setState(() {
-      _error = null;
+      _error = _isLockedOut ? _error : null; // إبقاء رسالة القفل
       _currentStep = LoginStep.phone;
       _otpValue = '';
       _otpKey.currentState?.clear();
-      _remainingAttempts = 3;
+      if (!_isLockedOut) _remainingAttempts = _maxAttempts;
       _otpVerified = false;
       _userEmail = null;
+      _userPassword = null;
       _userName = null;
       _storeName = null;
     });
@@ -395,41 +508,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           LoginBackground(
             height: 280,
             child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const MascotWidget(
-                    size: MascotSize.medium,
-                    pose: MascotPose.waving,
-                    animate: true,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const MascotWidget(
+                        size: MascotSize.small,
+                        pose: MascotPose.waving,
+                        animate: true,
+                      ),
+                      const SizedBox(height: 16),
+                      Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context);
+                          return Column(
+                            children: [
+                              Text(
+                                l10n?.welcomeTitle ?? 'مرحباً بك مجدداً! 👋',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n?.welcomeSubtitleShort ?? 'سجّل دخولك لإدارة متجرك',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context);
-                      return Column(
-                        children: [
-                          Text(
-                            l10n?.welcomeTitle ?? 'مرحباً بك مجدداً! 👋',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n?.welcomeSubtitleShort ?? 'سجّل دخولك لإدارة متجرك',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -442,6 +559,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// نموذج تسجيل الدخول
   Widget _buildLoginForm({bool isMobile = false}) {
     final l10n = AppLocalizations.of(context);
+    // استخدام Theme.of(context) بدل Riverpod لضمان التطابق مع حقول الإدخال
+    // Riverpod isDarkMode لا يحسب ThemeMode.system → عدم تطابق مع Theme.of(context)
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(

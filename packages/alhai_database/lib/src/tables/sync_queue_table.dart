@@ -13,6 +13,8 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_sync_created_at', columns: {#createdAt})
 @TableIndex(name: 'idx_sync_idempotency', columns: {#idempotencyKey}, unique: true)
 @TableIndex(name: 'idx_sync_status_priority', columns: {#status, #priority})
+@TableIndex(name: 'idx_sync_status_priority_created', columns: {#status, #priority, #createdAt})
+@TableIndex(name: 'idx_sync_table_record_status', columns: {#tableName_, #recordId, #status})
 class SyncQueueTable extends Table {
   @override
   String get tableName => 'sync_queue';

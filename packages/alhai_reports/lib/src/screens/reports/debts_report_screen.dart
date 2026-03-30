@@ -7,6 +7,8 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:uuid/uuid.dart';
+import '../../utils/pdf_font_helper.dart';
 
 /// شاشة تقرير الديون
 class DebtsReportScreen extends ConsumerStatefulWidget {
@@ -218,40 +220,108 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
 
   void _recordPayment(Map<String, dynamic> debt) {
     final amountController = TextEditingController();
-    
+    String? errorText;
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(AppLocalizations.of(dialogContext)!.recordPaymentFor(debt['name'] as String)),
-        content: TextField(
-          controller: amountController,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(
-            labelText: AppLocalizations.of(dialogContext)!.paymentAmountField,
-            suffixText: AppLocalizations.of(dialogContext)!.sar,
-            helperText: AppLocalizations.of(dialogContext)!.currentDebt((debt['balance'] as double).toStringAsFixed(0)),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(AppLocalizations.of(dialogContext)!.recordPaymentFor(debt['name'] as String)),
+          content: TextField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(dialogContext)!.paymentAmountField,
+              suffixText: AppLocalizations.of(dialogContext)!.sar,
+              helperText: AppLocalizations.of(dialogContext)!.currentDebt((debt['balance'] as double).toStringAsFixed(0)),
+              errorText: errorText,
+            ),
           ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(AppLocalizations.of(dialogContext)!.cancel)),
+            FilledButton(
+              onPressed: () async {
+                final amount = double.tryParse(amountController.text.trim());
+                final balance = debt['balance'] as double;
+
+                if (amount == null || amount <= 0) {
+                  setDialogState(() => errorText = 'أدخل مبلغ صحيح');
+                  return;
+                }
+                if (amount > balance) {
+                  setDialogState(() => errorText = 'المبلغ أكبر من الدين المتبقي');
+                  return;
+                }
+
+                Navigator.pop(dialogContext);
+                await _persistPayment(
+                  accountId: debt['id'] as String,
+                  amount: amount,
+                  currentBalance: balance,
+                );
+              },
+              child: Text(AppLocalizations.of(dialogContext)!.recordAction),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(AppLocalizations.of(dialogContext)!.cancel)),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(AppLocalizations.of(context)!.paymentRecordedMsg), backgroundColor: Colors.green),
-              );
-              _loadDebts();
-            },
-            child: Text(AppLocalizations.of(dialogContext)!.recordAction),
-          ),
-        ],
       ),
     );
   }
 
-  pw.Document _buildDebtsPdf() {
-    final pdf = pw.Document();
+  /// حفظ الدفعة في القاعدة المحلية
+  Future<void> _persistPayment({
+    required String accountId,
+    required double amount,
+    required double currentBalance,
+  }) async {
+    try {
+      final db = GetIt.I<AppDatabase>();
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      final newBalance = currentBalance - amount;
+      final paymentId = const Uuid().v4();
+
+      // 1. خصم من رصيد الحساب
+      await db.accountsDao.subtractFromBalance(accountId, amount);
+
+      // 2. تسجيل حركة الدفعة
+      await db.transactionsDao.recordPayment(
+        id: paymentId,
+        storeId: storeId,
+        accountId: accountId,
+        amount: amount,
+        balanceAfter: newBalance,
+        paymentMethod: 'cash',
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.paymentRecordedMsg),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+
+      // 3. إعادة تحميل البيانات
+      await _loadDebts();
+    } catch (e) {
+      debugPrint('DebtsReport: Error persisting payment: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ أثناء تسجيل الدفعة: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<pw.Document> _buildDebtsPdf() async {
+    final pdf = await PdfFontHelper.createDocument();
     pdf.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
       textDirection: pw.TextDirection.rtl,
@@ -364,7 +434,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   }
 
   void _shareReport() async {
-    final pdf = _buildDebtsPdf();
+    final pdf = await _buildDebtsPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
       filename:
@@ -373,7 +443,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   }
 
   void _printReport() async {
-    final pdf = _buildDebtsPdf();
+    final pdf = await _buildDebtsPdf();
     await Printing.layoutPdf(
       onLayout: (_) => pdf.save(),
       name:

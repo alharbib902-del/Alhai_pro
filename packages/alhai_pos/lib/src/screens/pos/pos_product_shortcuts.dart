@@ -1,4 +1,3 @@
-import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -63,7 +62,7 @@ class _PosProductCardState extends State<PosProductCard> {
             ),
             boxShadow: _isHovered ? AppShadows.md : AppShadows.sm,
           ),
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: Clip.hardEdge,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -170,32 +169,26 @@ class _PosProductCardState extends State<PosProductCard> {
       children: [
         imageWidget,
 
-        // Price badge (top-right)
+        // Price badge (top-right) - بدون BackdropFilter للأداء
         if (!isOutOfStock)
           PositionedDirectional(
             top: 6,
             end: 6,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.85),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${product.price.toStringAsFixed(0)} ${l10n.sar}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimary,
-                    ),
-                  ),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.92),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                '${product.price.toStringAsFixed(0)} ${l10n.sar}',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
             ),

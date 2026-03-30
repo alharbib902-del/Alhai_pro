@@ -13,6 +13,7 @@ class OrgTables {
   static const String orgMembers = 'org_members';
   static const String userStores = 'user_stores';
   static const String posTerminals = 'pos_terminals';
+  static const String orgProducts = 'org_products';
 
   /// All org-level tables in sync priority order
   static const List<String> all = [
@@ -21,6 +22,7 @@ class OrgTables {
     orgMembers,
     userStores,
     posTerminals,
+    orgProducts,
   ];
 
   OrgTables._();

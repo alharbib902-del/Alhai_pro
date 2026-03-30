@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
+import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../core/utils/keyboard_shortcuts.dart';
@@ -40,6 +41,13 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   final _keyboardFocusNode = FocusNode();
   bool _showOrdersPanel = false;
   int _orderCounter = 1;
+  late String _dateSubtitle;
+
+  /// Bug 2: يمنع التنقل أثناء حفظ البيع
+  bool _isProcessingSale = false;
+
+  /// Bug 3: يمنع مسح الباركود أثناء فتح نافذة الدفع
+  bool _isPaymentDialogOpen = false;
 
   /// L34: In-memory recent search terms (max [_kMaxRecentSearches]).
   final List<String> _recentSearches = [];
@@ -50,6 +58,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   @override
   void initState() {
     super.initState();
+    // حساب التاريخ مرة واحدة بدلاً من كل build
+    final now = DateTime.now();
+    final locale = WidgetsBinding.instance.platformDispatcher.locale.toString();
+    _dateSubtitle = DateFormat('d MMMM yyyy', locale).format(now);
+
     Future.microtask(() {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId != null) {
@@ -58,7 +71,43 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       }
       // التحقق من وجود مسودة سلة محفوظة واستعادتها مع تأكيد
       _checkPendingDraft();
+
+      // إصلاح عناصر البيع المفقودة في طابور المزامنة (مرة واحدة)
+      ref.read(saleItemsSyncRepairProvider);
+
+      // تشغيل المزامنة الأولية (تحميل البيانات من Supabase)
+      _triggerInitialSync();
+
+      // تفعيل المستمع الفوري (Realtime) لاستقبال التحديثات من Supabase
+      ref.read(realtimeActivationProvider);
     });
+  }
+
+  /// تشغيل المزامنة الأولية لتحميل البيانات من Supabase
+  Future<void> _triggerInitialSync() async {
+    try {
+      final initialSync = ref.read(initialSyncProvider);
+      if (initialSync == null) return;
+
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      // التحقق هل تمت المزامنة الأولية؟
+      final isComplete = await initialSync.isComplete();
+      if (isComplete) {
+        debugPrint('[POS] Initial sync already complete');
+        return;
+      }
+
+      debugPrint('[POS] Starting initial sync...');
+      final result = await initialSync.execute(
+        orgId: '', // سيتم تجاهله للجداول بدون org_id
+        storeId: storeId,
+      );
+      debugPrint('[POS] Initial sync done: ${result.totalRecords} records, errors: ${result.errors}');
+    } catch (e) {
+      debugPrint('[POS] Initial sync error: $e');
+    }
   }
 
   /// عرض dialog تأكيد لاستعادة سلة محفوظة من جلسة سابقة
@@ -260,136 +309,243 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   void _showPaymentDialog(double total) {
+    setState(() => _isPaymentDialogOpen = true);
     final isWide = context.isDesktop;
 
     if (isWide) {
       showDialog(
         context: context,
-        builder: (ctx) => Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: InlinePayment(
-              total: total,
-              onCancel: () => Navigator.pop(ctx),
-              onComplete: (result) {
-                Navigator.pop(ctx);
-                _handlePaymentComplete(result);
-              },
+        barrierDismissible: false,
+        builder: (ctx) => PopScope(
+          canPop: !_isProcessingSale,
+          child: Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: InlinePayment(
+                total: total,
+                storeId: ref.read(currentStoreIdProvider) ?? '',
+                onCancel: () {
+                  if (!_isProcessingSale) {
+                    Navigator.pop(ctx);
+                  }
+                },
+                onComplete: (result) async {
+                  // Bug 2: حفظ البيع أولاً ثم إغلاق النافذة
+                  await _handlePaymentComplete(result);
+                  if (ctx.mounted) Navigator.pop(ctx);
+                },
+              ),
             ),
           ),
         ),
-      );
+      ).then((_) {
+        if (mounted) setState(() => _isPaymentDialogOpen = false);
+      });
     } else {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        isDismissible: false,
+        enableDrag: false,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
           final colorScheme = Theme.of(ctx).colorScheme;
-          return Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
+          return PopScope(
+            canPop: !_isProcessingSale,
+            child: Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              InlinePayment(
-                total: total,
-                onCancel: () => Navigator.pop(ctx),
-                onComplete: (result) {
-                  Navigator.pop(ctx);
-                  _handlePaymentComplete(result);
-                },
-              ),
-            ],
+                InlinePayment(
+                  total: total,
+                  storeId: ref.read(currentStoreIdProvider) ?? '',
+                  onCancel: () {
+                    if (!_isProcessingSale) {
+                      Navigator.pop(ctx);
+                    }
+                  },
+                  onComplete: (result) async {
+                    // Bug 2: حفظ البيع أولاً ثم إغلاق النافذة
+                    await _handlePaymentComplete(result);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  },
+                ),
+              ],
+            ),
           ),
-        );
+          );
         },
-      );
+      ).then((_) {
+        if (mounted) setState(() => _isPaymentDialogOpen = false);
+      });
     }
   }
 
   Future<void> _handlePaymentComplete(PaymentResult result) async {
-    final cartState = ref.read(cartStateProvider);
+    setState(() => _isProcessingSale = true);
 
-    // 1. حفظ البيع في قاعدة البيانات
-    String? saleId;
-    String receiptNumber = 'ORD-${_orderCounter.toString().padLeft(4, '0')}';
     try {
-      final saleService = ref.read(saleServiceProvider);
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) {
-        throw StateError('No store selected — cannot create sale');
-      }
-      saleId = await saleService.createSale(
-        storeId: storeId,
-        cashierId: 'cashier_001',
-        items: cartState.items,
-        subtotal: cartState.subtotal,
-        discount: cartState.discount,
-        tax: cartState.subtotal * 0.15,
-        total: result.amountPaid - result.change,
-        paymentMethod: result.method.name,
-        customerId: result.customerId,
-        customerName: result.customerName,
-      );
+      final cartState = ref.read(cartStateProvider);
 
-      // جلب رقم الإيصال الحقيقي من قاعدة البيانات
-      final db = ref.read(appDatabaseProvider);
-      final sale = await db.salesDao.getSaleById(saleId);
-      if (sale != null) {
-        receiptNumber = sale.receiptNo;
-      }
-    } catch (e) {
-      debugPrint('Save sale error: $e');
-    }
+      // 1. حفظ البيع في قاعدة البيانات
+      String? saleId;
+      String receiptNumber = 'ORD-${_orderCounter.toString().padLeft(4, '0')}';
+      try {
+        final saleService = ref.read(saleServiceProvider);
+        final storeId = ref.read(currentStoreIdProvider);
+        if (storeId == null) {
+          throw StateError('No store selected — cannot create sale');
+        }
+        // حساب المبلغ المستلم فعلياً (cash + card بدون credit)
+        double? amountReceived;
+        double? changeAmount;
+        double? cashAmount;
+        double? cardAmount;
+        double? creditAmount;
+        final saleTotal = result.amountPaid - result.change;
 
-    // 2. طباعة تلقائية بعد الدفع (ESC/POS)
-    if (saleId != null) {
-      final autoPrint = ref.read(autoPrintEnabledProvider);
-      final autoPrintCallback = ref.read(autoPrintCallbackProvider);
-      if (autoPrint && autoPrintCallback != null) {
-        try {
-          await autoPrintCallback(saleId);
-        } catch (e) {
-          debugPrint('Auto-print error: $e');
+        if (result.method == PaymentMethod.cash) {
+          amountReceived = result.amountPaid;
+          changeAmount = result.change;
+          cashAmount = saleTotal;
+        } else if (result.method == PaymentMethod.card) {
+          cardAmount = saleTotal;
+        } else if (result.method == PaymentMethod.credit) {
+          creditAmount = saleTotal;
+        } else if (result.method == PaymentMethod.mixed && result.splits != null) {
+          // مجموع الدفعات المستلمة فعلاً (نقد + بطاقة) بدون الآجل
+          amountReceived = result.splits!
+              .where((s) => s.method != PaymentMethod.credit)
+              .fold<double>(0.0, (sum, s) => sum + s.amount);
+          // تفصيل كل طريقة دفع
+          cashAmount = result.splits!
+              .where((s) => s.method == PaymentMethod.cash)
+              .fold<double>(0.0, (sum, s) => sum + s.amount);
+          cardAmount = result.splits!
+              .where((s) => s.method == PaymentMethod.card)
+              .fold<double>(0.0, (sum, s) => sum + s.amount);
+          creditAmount = result.splits!
+              .where((s) => s.method == PaymentMethod.credit)
+              .fold<double>(0.0, (sum, s) => sum + s.amount);
+          // تنظيف: null إذا صفر
+          if (cashAmount == 0) cashAmount = null;
+          if (cardAmount == 0) cardAmount = null;
+          if (creditAmount == 0) creditAmount = null;
+        }
+
+        final saleResult = await saleService.createSale(
+          storeId: storeId,
+          cashierId: ref.read(currentUserProvider)?.id ?? '',
+          items: cartState.items,
+          subtotal: cartState.subtotal,
+          discount: cartState.discount,
+          tax: cartState.subtotal * 0.15,
+          total: saleTotal,
+          paymentMethod: result.method.name,
+          customerId: result.customerId,
+          customerName: result.customerName,
+          customerPhone: result.customerPhone,
+          amountReceived: amountReceived,
+          changeAmount: changeAmount,
+          cashAmount: cashAmount,
+          cardAmount: cardAmount,
+          creditAmount: creditAmount,
+        );
+        saleId = saleResult.saleId;
+
+        if (saleResult.hadPriceCorrections) {
+          for (final correction in saleResult.priceCorrections) {
+            debugPrint('[POS] Price corrected at sale time: $correction');
+          }
+        }
+
+        // جلب رقم الإيصال الحقيقي من قاعدة البيانات
+        final db = ref.read(appDatabaseProvider);
+        final sale = await db.salesDao.getSaleById(saleId);
+        if (sale != null) {
+          receiptNumber = sale.receiptNo;
+        }
+      } catch (e) {
+        // Bug 1: عرض خطأ للمستخدم وعدم مسح السلة
+        debugPrint('Save sale error: $e');
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            icon: const Icon(Icons.error_outline, color: AppColors.error, size: 40),
+            title: const Text('فشل حفظ البيع'),
+            content: Text(
+              'حدث خطأ أثناء حفظ عملية البيع. السلة لم تُمسح.\n\n$e',
+              textDirection: TextDirection.rtl,
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('حسناً'),
+              ),
+            ],
+          ),
+        );
+        return; // لا نمسح السلة ولا نعرض نافذة النجاح
+      }
+
+      // 2. طباعة تلقائية بعد الدفع (ESC/POS)
+      if (saleId != null) {
+        final autoPrint = ref.read(autoPrintEnabledProvider);
+        final autoPrintCallback = ref.read(autoPrintCallbackProvider);
+        if (autoPrint && autoPrintCallback != null) {
+          try {
+            await autoPrintCallback(saleId);
+          } catch (e) {
+            debugPrint('Auto-print error: $e');
+          }
         }
       }
+
+      // 3. مسح السلة (فقط عند نجاح الحفظ)
+      ref.read(cartStateProvider.notifier).clear();
+      setState(() => _orderCounter++);
+
+      if (!mounted) return;
+
+      // 4. عرض dialog النجاح مع saleId (الطباعة تتم داخل Dialog)
+      await PaymentSuccessDialog.show(
+        context: context,
+        receiptNumber: receiptNumber,
+        amount: result.amountPaid,
+        paymentMethodLabel: result.method.localizedLabel(AppLocalizations.of(context)!),
+        customerPhone: result.customerPhone,
+        customerName: result.customerName,
+        saleId: saleId,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessingSale = false);
+      }
     }
-
-    // 3. مسح السلة
-    ref.read(cartStateProvider.notifier).clear();
-    setState(() => _orderCounter++);
-
-    if (!mounted) return;
-
-    // 4. عرض dialog النجاح مع saleId (الطباعة تتم داخل Dialog)
-    await PaymentSuccessDialog.show(
-      context: context,
-      receiptNumber: receiptNumber,
-      amount: result.amountPaid,
-      paymentMethodLabel: result.method.localizedLabel(AppLocalizations.of(context)!),
-      customerPhone: result.customerPhone,
-      customerName: result.customerName,
-      saleId: saleId,
-    );
   }
 
   Future<void> _handleBarcodeScan(String barcode) async {
+    // Bug 3: تجاهل مسح الباركود أثناء فتح نافذة الدفع
+    if (_isPaymentDialogOpen) return;
+
     final repository = ref.read(productsRepositoryProvider);
     final product = await repository.getByBarcode(barcode);
     if (!mounted) return;
@@ -410,10 +566,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   String _getDateSubtitle(AppLocalizations l10n) {
-    final now = DateTime.now();
-    final locale = Localizations.localeOf(context).toString();
-    final dateStr = DateFormat('d MMMM yyyy', locale).format(now);
-    return '$dateStr • ${l10n.mainBranch}';
+    return '$_dateSubtitle • ${l10n.mainBranch}';
   }
 
   // L57: AutomaticKeepAliveClientMixin is not applicable here because PosScreen

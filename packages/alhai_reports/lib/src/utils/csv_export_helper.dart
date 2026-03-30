@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'pdf_font_helper.dart';
 
 /// Result of a CSV export operation
 class CsvExportResult {
@@ -100,7 +101,7 @@ class CsvExportHelper {
     required List<String> headers,
     required List<List<dynamic>> rows,
   }) async {
-    final pdf = pw.Document();
+    final pdf = await PdfFontHelper.createDocument();
 
     pdf.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,

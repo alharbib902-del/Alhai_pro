@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "../../apps/cashier/Dockerfile"
+watchPatterns = ["apps/cashier/**", "packages/**", "alhai_core/**", "alhai_services/**", "alhai_design_system/**"]
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

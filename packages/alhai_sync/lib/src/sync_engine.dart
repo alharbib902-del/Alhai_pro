@@ -126,7 +126,11 @@ class SyncEngine {
   int _consecutiveFailures = 0;
 
   /// الحد الأقصى للفشل المتتالي قبل التوقف المؤقت
-  static const int _maxBackoffExponent = 5; // max ~16 دقيقة
+  /// max = 30s × 2^4 = 480s ≈ 5 دقائق (بدلاً من 16 دقيقة)
+  static const int _maxBackoffExponent = 4;
+
+  /// الحد الأقصى المطلق للفترة بين المزامنات (5 دقائق)
+  static const Duration _maxSyncInterval = Duration(minutes: 5);
 
   /// معرف المؤسسة الحالية
   String? _orgId;
@@ -385,12 +389,19 @@ class SyncEngine {
     final backoffMultiplier = _consecutiveFailures > 0
         ? (1 << _consecutiveFailures.clamp(0, _maxBackoffExponent))
         : 1;
-    final interval = syncInterval * backoffMultiplier;
+    var interval = syncInterval * backoffMultiplier;
+    // حد أقصى 5 دقائق بين المزامنات
+    if (interval > _maxSyncInterval) interval = _maxSyncInterval;
     _periodicTimer = Timer.periodic(interval, (_) {
       if (_connectivity.isOnline && !_isLocked) {
         syncNow();
       }
     });
+
+    if (kDebugMode && _consecutiveFailures > 0) {
+      debugPrint('SyncEngine: backoff interval = ${interval.inSeconds}s '
+          '(failures: $_consecutiveFailures)');
+    }
   }
 
   /// إعادة تعيين backoff عند نجاح المزامنة

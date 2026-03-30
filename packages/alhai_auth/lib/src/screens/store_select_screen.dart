@@ -11,6 +11,7 @@ import '../providers/auth_providers.dart';
 import '../providers/theme_provider.dart';
 import '../security/secure_storage_service.dart';
 import '../widgets/branch_card.dart';
+import '../widgets/branding/mascot_widget.dart';
 
 /// شاشة اختيار المتجر - تصميم جديد 2026
 class StoreSelectScreen extends ConsumerStatefulWidget {
@@ -20,13 +21,10 @@ class StoreSelectScreen extends ConsumerStatefulWidget {
   ConsumerState<StoreSelectScreen> createState() => _StoreSelectScreenState();
 }
 
-class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
-    with SingleTickerProviderStateMixin {
+class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
   String? _selectedStoreId;
-  late AnimationController _floatController;
-  late Animation<double> _floatAnimation;
 
   // بيانات الفروع من قاعدة البيانات
   List<BranchData> _stores = [];
@@ -45,112 +43,89 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
     );
   }
 
-  /// تحميل الفروع (user_stores محلي أولاً → Supabase RPC → fallback)
+  /// تحميل الفروع (محلي أولاً → Supabase في الخلفية)
   Future<void> _loadStores() async {
     setState(() {
       _isLoadingStores = true;
       _storesError = null;
     });
 
-    List<BranchData> branches = [];
     final currentUserId = await _getCurrentUserId();
 
-    // --- المحاولة 1: Local DB مع تصفية حسب user_stores ---
+    // --- المحاولة 1: Local DB (سريع جداً) ---
     try {
       final db = getIt<AppDatabase>();
-
-      // جلب متاجر هذا المستخدم من user_stores
       List<StoresTableData> stores = [];
+
       if (currentUserId != null) {
         final userStores = await db.orgMembersDao.getUserStores(currentUserId);
         if (userStores.isNotEmpty) {
-          // جلب تفاصيل المتاجر
-          for (final us in userStores) {
-            if (!us.isActive) continue;
-            try {
-              final store = await db.storesDao.getStoreById(us.storeId);
-              if (store != null && store.isActive) {
-                stores.add(store);
-              }
-            } catch (_) {}
-          }
+          // batch query بدلاً من loop (N+1 fix)
+          final activeIds = userStores
+              .where((us) => us.isActive)
+              .map((us) => us.storeId)
+              .toList();
+          stores = await db.storesDao.getStoresByIds(activeIds);
         }
       }
 
-      // إذا لم نجد متاجر في user_stores، نزامن من Supabase
+      // fallback: جلب كل المتاجر المحلية النشطة
       if (stores.isEmpty) {
-        await _syncStoresFromSupabase(db);
-        // بعد المزامنة، نحاول مرة أخرى من user_stores
-        if (currentUserId != null) {
-          final userStores = await db.orgMembersDao.getUserStores(currentUserId);
-          for (final us in userStores) {
-            if (!us.isActive) continue;
-            try {
-              final store = await db.storesDao.getStoreById(us.storeId);
-              if (store != null && store.isActive) {
-                stores.add(store);
-              }
-            } catch (_) {}
-          }
-        }
-        // fallback: إذا لا زالت فارغة، جلب كل المتاجر المحلية
-        if (stores.isEmpty) {
-          stores = await db.storesDao.getActiveStores();
-        }
-        // fallback نهائي: إذا stores table فاضي لكن products موجودة → ننشئ سجل المتجر
-        if (stores.isEmpty) {
-          try {
-            final products = await db.productsDao.getAllProducts(kDefaultStoreId);
-            if (products.isNotEmpty) {
-              debugPrint('[StoreSelect] Found ${products.length} products but no store record - creating default store');
-              await db.storesDao.insertStore(StoresTableCompanion.insert(
-                id: kDefaultStoreId,
-                name: 'سوبرماركت الحي',
-                createdAt: DateTime.now(),
-                currency: const Value('SAR'),
-                timezone: const Value('Asia/Riyadh'),
-                isActive: const Value(true),
-                address: const Value('الرياض، حي النزهة'),
-                city: const Value('الرياض'),
-                nameEn: const Value('Al-Hai Supermarket'),
-              ));
-              final newStore = await db.storesDao.getStoreById(kDefaultStoreId);
-              if (newStore != null) stores.add(newStore);
-            }
-          } catch (e) {
-            debugPrint('[StoreSelect] Fallback store creation failed: $e');
-          }
+        stores = await db.storesDao.getActiveStores();
+      }
+
+      // fallback نهائي: فحص سريع بـ LIMIT 1 بدلاً من تحميل 5000 منتج
+      if (stores.isEmpty) {
+        final hasProds = await db.productsDao.hasProducts(kDefaultStoreId);
+        if (hasProds) {
+          debugPrint('[StoreSelect] Products exist but no store record - creating default');
+          await db.storesDao.insertStore(StoresTableCompanion.insert(
+            id: kDefaultStoreId,
+            name: 'سوبرماركت الحي',
+            createdAt: DateTime.now(),
+            currency: const Value('SAR'),
+            timezone: const Value('Asia/Riyadh'),
+            isActive: const Value(true),
+            address: const Value('الرياض، حي النزهة'),
+            city: const Value('الرياض'),
+            nameEn: const Value('Al-Hai Supermarket'),
+          ));
+          final newStore = await db.storesDao.getStoreById(kDefaultStoreId);
+          if (newStore != null) stores.add(newStore);
         }
       }
 
-      branches = stores.asMap().entries
-          .map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0))
-          .toList();
+      if (stores.isNotEmpty) {
+        final branches = stores.asMap().entries
+            .map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0))
+            .toList();
 
-      if (mounted) {
-        setState(() {
-          _stores = branches;
-          _isLoadingStores = false;
-        });
-        // إذا متجر واحد فقط → اختياره تلقائياً
-        if (branches.length == 1) {
-          _selectStore(branches.first);
+        if (mounted) {
+          setState(() {
+            _stores = branches;
+            _isLoadingStores = false;
+          });
+          if (branches.length == 1) {
+            _selectStore(branches.first);
+          }
         }
+
+        // مزامنة من Supabase في الخلفية (لا تؤخر العرض)
+        _syncStoresInBackground(db, currentUserId);
+        return;
       }
-      return;
     } catch (dbError) {
       debugPrint('[StoreSelect] Local DB failed: $dbError');
     }
 
-    // --- المحاولة 2: Supabase مباشر (fallback للـ Web) ---
+    // --- المحاولة 2: Supabase مباشر (إذا Local فاضي) ---
     try {
-      branches = await _fetchStoresFromSupabase();
+      final branches = await _fetchStoresFromSupabase();
       if (mounted) {
         setState(() {
           _stores = branches;
           _isLoadingStores = false;
         });
-        // إذا متجر واحد فقط → اختياره تلقائياً
         if (branches.length == 1) {
           _selectStore(branches.first);
         }
@@ -163,6 +138,32 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
           _storesError = 'خطأ في جلب البيانات: $supaError';
         });
       }
+    }
+  }
+
+  /// مزامنة المتاجر في الخلفية بدون تأخير العرض
+  Future<void> _syncStoresInBackground(AppDatabase db, String? currentUserId) async {
+    try {
+      await _syncStoresFromSupabase(db);
+      // بعد المزامنة، نتحقق إذا تغيرت القائمة
+      if (currentUserId != null && mounted) {
+        final userStores = await db.orgMembersDao.getUserStores(currentUserId);
+        if (userStores.isNotEmpty) {
+          final activeIds = userStores
+              .where((us) => us.isActive)
+              .map((us) => us.storeId)
+              .toList();
+          final stores = await db.storesDao.getStoresByIds(activeIds);
+          final branches = stores.asMap().entries
+              .map((e) => _mapStoreToBranch(e.value, isFirst: e.key == 0))
+              .toList();
+          if (mounted && branches.length != _stores.length) {
+            setState(() => _stores = branches);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[StoreSelect] Background sync failed: $e');
     }
   }
 
@@ -223,8 +224,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
 
     // استدعاء دالة RPC التي تتخطى RLS مع retry
     final response = await _retryRpc(
-      () => supabase.rpc('get_my_stores').timeout(const Duration(seconds: 30)),
+      () => supabase.rpc('get_my_stores').timeout(const Duration(seconds: 10)),
       label: 'get_my_stores',
+      maxRetries: 2,
     );
     debugPrint('[StoreSelect] RPC get_my_stores response: $response');
 
@@ -259,8 +261,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
 
       // استخدام RPC لتفادي مشاكل RLS مع retry
       final response = await _retryRpc(
-        () => supabase.rpc('get_my_stores').timeout(const Duration(seconds: 30)),
+        () => supabase.rpc('get_my_stores').timeout(const Duration(seconds: 10)),
         label: 'sync_get_my_stores',
+        maxRetries: 2,
       );
       final storesList = response is List ? response : <dynamic>[];
       if (storesList.isEmpty) return;
@@ -319,22 +322,11 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
     super.initState();
     // تحميل الفروع من قاعدة البيانات
     _loadStores();
-
-    // Animation للـ floating
-    _floatController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _floatAnimation = Tween<double>(begin: 0, end: 15).animate(
-      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
-    );
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    _floatController.dispose();
     super.dispose();
   }
 
@@ -346,40 +338,22 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
       _isSyncing = true;
     });
 
-    // Save store ID to Provider and SecureStorage
+    // حفظ معرف المتجر في Provider و SecureStorage بالتوازي
     ref.read(currentStoreIdProvider.notifier).state = store.id;
-    final userId = await _getCurrentUserId() ?? '';
-    await SecureStorageService.saveUserData(
-      userId: userId,
-      storeId: store.id,
-    );
+    // لا ننتظر SecureStorage - يعمل في الخلفية
+    _getCurrentUserId().then((userId) {
+      SecureStorageService.saveUserData(
+        userId: userId ?? '',
+        storeId: store.id,
+      );
+    });
 
-    // Sync with timeout - continue even if sync fails (offline-first)
+    // مزامنة البيانات مع timeout قصير - لا تمنع الانتقال
     try {
-      await _syncStoreData(store.id).timeout(const Duration(seconds: 15));
+      await _syncStoreData(store.id).timeout(const Duration(seconds: 8));
     } catch (e) {
       debugPrint('[StoreSelect] Sync failed or timed out: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.cloud_off_rounded, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'فشلت المزامنة، سيتم العمل بالبيانات المحلية',
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.orange,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
+      // لا نعرض رسالة خطأ - التطبيق يعمل offline-first
     } finally {
       if (mounted) {
         setState(() => _isSyncing = false);
@@ -388,130 +362,105 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle_rounded, color: Colors.white),
-            const SizedBox(width: 12),
-            Text(AppLocalizations.of(context)?.branchSelectedMessage(store.name) ?? 'تم اختيار ${store.name}'),
-          ],
-        ),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) context.go('/pos');
-    });
+    // الانتقال مباشرة بدون تأخير
+    context.go('/pos');
   }
 
-  /// مزامنة التصنيفات والمنتجات من Supabase → Local DB
+  /// مزامنة التصنيفات والمنتجات من Supabase → Local DB (بالتوازي)
   Future<void> _syncStoreData(String storeId) async {
-    try {
-      final supabase = Supabase.instance.client;
-      final db = getIt<AppDatabase>();
+    final supabase = Supabase.instance.client;
+    final db = getIt<AppDatabase>();
 
-      debugPrint('[Sync] بدء مزامنة البيانات للمتجر: $storeId');
+    debugPrint('[Sync] بدء مزامنة البيانات للمتجر: $storeId');
 
-      // --- 1. مزامنة التصنيفات ---
-      try {
-        final catResponse = await _retryRpc(
-          () => supabase.rpc('get_store_categories', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 30)),
-          label: 'get_store_categories',
-        );
-        final catList = catResponse is List ? catResponse : <dynamic>[];
-        debugPrint('[Sync] تصنيفات من Supabase: ${catList.length}');
+    // تشغيل RPC التصنيفات والمنتجات بالتوازي بدلاً من التسلسل
+    final results = await Future.wait([
+      _retryRpc(
+        () => supabase.rpc('get_store_categories', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 20)),
+        label: 'get_store_categories',
+      ),
+      _retryRpc(
+        () => supabase.rpc('get_store_products', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 20)),
+        label: 'get_store_products',
+      ),
+    ]);
 
-        if (catList.isNotEmpty) {
-          final categories = catList
-              .where((c) => c is Map<String, dynamic>)
-              .map((c) {
-            final cat = c as Map<String, dynamic>;
-            return CategoriesTableCompanion.insert(
-              id: cat['id'] as String? ?? '',
-              storeId: cat['store_id'] as String? ?? '',
-              name: cat['name'] as String? ?? '',
-              createdAt: DateTime.tryParse(cat['created_at']?.toString() ?? '') ?? DateTime.now(),
-              orgId: Value(cat['org_id'] as String?),
-              nameEn: Value(cat['name_en'] as String?),
-              parentId: Value(cat['parent_id'] as String?),
-              imageUrl: Value(cat['image_url'] as String?),
-              color: Value(cat['color'] as String?),
-              icon: Value(cat['icon'] as String?),
-              sortOrder: Value(cat['sort_order'] as int? ?? 0),
-              isActive: Value(cat['is_active'] as bool? ?? true),
-              updatedAt: Value(DateTime.tryParse(cat['updated_at']?.toString() ?? '')),
-              syncedAt: Value(DateTime.now()),
-            );
-          }).toList();
+    final catList = results[0] is List ? results[0] as List : <dynamic>[];
+    final prodList = results[1] is List ? results[1] as List : <dynamic>[];
+    debugPrint('[Sync] تصنيفات: ${catList.length}, منتجات: ${prodList.length}');
 
-          await db.categoriesDao.insertCategories(categories);
-          debugPrint('[Sync] ✅ تم مزامنة ${categories.length} تصنيف');
-        }
-      } catch (catError) {
-        debugPrint('[Sync] ❌ خطأ في مزامنة التصنيفات: $catError');
-        rethrow;
-      }
+    // حفظ التصنيفات والمنتجات بالتوازي في DB
+    await Future.wait([
+      if (catList.isNotEmpty) _saveCategoriesLocally(db, catList),
+      if (prodList.isNotEmpty) _saveProductsLocally(db, prodList),
+    ]);
 
-      // --- 2. مزامنة المنتجات ---
-      try {
-        final prodResponse = await _retryRpc(
-          () => supabase.rpc('get_store_products', params: {'p_store_id': storeId}).timeout(const Duration(seconds: 30)),
-          label: 'get_store_products',
-        );
-        final prodList = prodResponse is List ? prodResponse : <dynamic>[];
-        debugPrint('[Sync] منتجات من Supabase: ${prodList.length}');
+    debugPrint('[Sync] ✅ اكتملت المزامنة');
+  }
 
-        if (prodList.isNotEmpty) {
-          for (final p in prodList) {
-            if (p is! Map<String, dynamic>) continue;
-            final prod = p;
-            await db.productsDao.upsertProduct(ProductsTableCompanion.insert(
-              id: prod['id'] as String? ?? '',
-              storeId: prod['store_id'] as String? ?? '',
-              name: prod['name'] as String? ?? '',
-              price: (prod['price'] as num?)?.toDouble() ?? 0.0,
-              createdAt: DateTime.tryParse(prod['created_at']?.toString() ?? '') ?? DateTime.now(),
-              orgId: Value(prod['org_id'] as String?),
-              sku: Value(prod['sku'] as String?),
-              barcode: Value(prod['barcode'] as String?),
-              costPrice: Value((prod['cost_price'] as num?)?.toDouble()),
-              stockQty: Value(prod['stock_qty'] as int? ?? 0),
-              minQty: Value(prod['min_qty'] as int? ?? 1),
-              unit: Value(prod['unit'] as String?),
-              description: Value(prod['description'] as String?),
-              imageThumbnail: Value(prod['image_thumbnail'] as String?),
-              imageMedium: Value(prod['image_medium'] as String?),
-              imageLarge: Value(prod['image_large'] as String?),
-              imageHash: Value(prod['image_hash'] as String?),
-              categoryId: Value(prod['category_id'] as String?),
-              isActive: Value(prod['is_active'] as bool? ?? true),
-              trackInventory: Value(prod['track_inventory'] as bool? ?? true),
-              updatedAt: Value(DateTime.tryParse(prod['updated_at']?.toString() ?? '')),
-              syncedAt: Value(DateTime.now()),
-            ));
-          }
-          debugPrint('[Sync] ✅ تم مزامنة ${prodList.length} منتج');
-        }
-      } catch (prodError) {
-        debugPrint('[Sync] ❌ خطأ في مزامنة المنتجات: $prodError');
-        rethrow;
-      }
+  Future<void> _saveCategoriesLocally(AppDatabase db, List<dynamic> catList) async {
+    final categories = catList
+        .where((c) => c is Map<String, dynamic>)
+        .map((c) {
+      final cat = c as Map<String, dynamic>;
+      return CategoriesTableCompanion.insert(
+        id: cat['id'] as String? ?? '',
+        storeId: cat['store_id'] as String? ?? '',
+        name: cat['name'] as String? ?? '',
+        createdAt: DateTime.tryParse(cat['created_at']?.toString() ?? '') ?? DateTime.now(),
+        orgId: Value(cat['org_id'] as String?),
+        nameEn: Value(cat['name_en'] as String?),
+        parentId: Value(cat['parent_id'] as String?),
+        imageUrl: Value(cat['image_url'] as String?),
+        color: Value(cat['color'] as String?),
+        icon: Value(cat['icon'] as String?),
+        sortOrder: Value(cat['sort_order'] as int? ?? 0),
+        isActive: Value(cat['is_active'] as bool? ?? true),
+        updatedAt: Value(DateTime.tryParse(cat['updated_at']?.toString() ?? '')),
+        syncedAt: Value(DateTime.now()),
+      );
+    }).toList();
 
-      debugPrint('[Sync] ✅ اكتملت المزامنة');
-    } catch (e) {
-      debugPrint('[Sync] ❌ خطأ عام في المزامنة: $e');
-      rethrow;
+    await db.categoriesDao.insertCategories(categories);
+    debugPrint('[Sync] ✅ تم مزامنة ${categories.length} تصنيف');
+  }
+
+  Future<void> _saveProductsLocally(AppDatabase db, List<dynamic> prodList) async {
+    for (final p in prodList) {
+      if (p is! Map<String, dynamic>) continue;
+      final prod = p;
+      await db.productsDao.upsertProduct(ProductsTableCompanion.insert(
+        id: prod['id'] as String? ?? '',
+        storeId: prod['store_id'] as String? ?? '',
+        name: prod['name'] as String? ?? '',
+        price: (prod['price'] as num?)?.toDouble() ?? 0.0,
+        createdAt: DateTime.tryParse(prod['created_at']?.toString() ?? '') ?? DateTime.now(),
+        orgId: Value(prod['org_id'] as String?),
+        sku: Value(prod['sku'] as String?),
+        barcode: Value(prod['barcode'] as String?),
+        costPrice: Value((prod['cost_price'] as num?)?.toDouble()),
+        stockQty: Value(prod['stock_qty'] as int? ?? 0),
+        minQty: Value(prod['min_qty'] as int? ?? 1),
+        unit: Value(prod['unit'] as String?),
+        description: Value(prod['description'] as String?),
+        imageThumbnail: Value(prod['image_thumbnail'] as String?),
+        imageMedium: Value(prod['image_medium'] as String?),
+        imageLarge: Value(prod['image_large'] as String?),
+        imageHash: Value(prod['image_hash'] as String?),
+        categoryId: Value(prod['category_id'] as String?),
+        isActive: Value(prod['is_active'] as bool? ?? true),
+        trackInventory: Value(prod['track_inventory'] as bool? ?? true),
+        updatedAt: Value(DateTime.tryParse(prod['updated_at']?.toString() ?? '')),
+        syncedAt: Value(DateTime.now()),
+      ));
     }
+    debugPrint('[Sync] ✅ تم مزامنة ${prodList.length} منتج');
   }
 
   @override
   Widget build(BuildContext context) {
     final isWideScreen = context.isDesktop;
+    // استخدام Theme.of(context) لضمان التطابق مع ThemeMode.system
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -694,48 +643,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
   }
 
   Widget _buildRobotMascot() {
-    return AnimatedBuilder(
-      animation: _floatAnimation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, -_floatAnimation.value),
-          child: child,
-        );
-      },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Glow effect
-          Container(
-            width: 180,
-            height: 180,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryLight.withValues(alpha: 0.4),
-                  blurRadius: 60,
-                  spreadRadius: 15,
-                ),
-              ],
-            ),
-          ),
-          // أيقونة الروبوت
-          Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.storefront_rounded,
-              size: 100,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
+    return const MascotWidget(
+      size: MascotSize.medium,
+      pose: MascotPose.waving,
+      animate: true,
     );
   }
 
@@ -847,18 +758,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
       child: Row(
         children: [
           // أيقونة الروبوت مصغرة
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.storefront_rounded,
-              size: 32,
-              color: Colors.white,
-            ),
+          const MascotWidget(
+            size: MascotSize.small,
+            pose: MascotPose.waving,
+            animate: true,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -951,13 +854,14 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen>
               
               SizedBox(width: isMobile ? 6 : 8),
               
-              _buildIconButton(
-                icon: isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                onTap: () {
-                  ref.read(themeProvider.notifier).toggleDarkMode();
-                },
-                isDarkMode: isDarkMode,
-                size: iconSize,
+              // M-THEME-FIX: توحيد أيقونة الثيم مع شاشة Login
+              IconButton(
+                onPressed: () => ref.read(themeProvider.notifier).toggleDarkMode(),
+                icon: Icon(
+                  isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                  color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
+                ),
+                tooltip: isDarkMode ? 'الوضع النهاري' : 'الوضع الليلي',
               ),
             ],
           ),

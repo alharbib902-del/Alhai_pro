@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
 /// شاشة تقرير المبيعات اليومي - بيانات حقيقية
 class DailySalesReportScreen extends ConsumerStatefulWidget {
@@ -54,33 +55,52 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
         double credit = 0;
         double discount = 0;
         double tax = 0;
-        int items = 0;
 
         for (final sale in sales) {
           total += sale.total;
           discount += sale.discount;
           tax += sale.tax;
 
-          switch (sale.paymentMethod) {
-            case 'cash':
-              cash += sale.total;
-              break;
-            case 'card':
-              card += sale.total;
-              break;
-            case 'wallet':
-            case 'bankTransfer':
-            default:
-              credit += sale.total;
-              break;
-          }
-
-          // جلب عدد الـ items لكل فاتورة
-          final saleItems = await db.saleItemsDao.getItemsBySaleId(sale.id);
-          for (final item in saleItems) {
-            items += item.qty.toInt();
+          // استخدام الأعمدة الجديدة إن وجدت (المبيعات الجديدة)
+          if (sale.cashAmount != null || sale.cardAmount != null || sale.creditAmount != null) {
+            cash += sale.cashAmount ?? 0;
+            card += sale.cardAmount ?? 0;
+            credit += sale.creditAmount ?? 0;
+          } else {
+            // Fallback للمبيعات القديمة بدون تفصيل
+            switch (sale.paymentMethod) {
+              case 'cash':
+                cash += sale.total;
+                break;
+              case 'card':
+                card += sale.total;
+                break;
+              case 'credit':
+                credit += sale.total;
+                break;
+              case 'mixed':
+                final received = sale.amountReceived ?? 0;
+                if (received > 0) {
+                  cash += received;
+                }
+                if (!sale.isPaid && received < sale.total) {
+                  credit += (sale.total - received);
+                } else if (received < sale.total) {
+                  card += (sale.total - received);
+                }
+                break;
+              default:
+                cash += sale.total;
+                break;
+            }
           }
         }
+
+        // جلب عدد الأصناف لجميع المبيعات دفعة واحدة (بدلاً من N+1)
+        final saleIds = sales.map((s) => s.id).toList();
+        final items = saleIds.isNotEmpty
+            ? await db.saleItemsDao.getTotalItemsCountForSales(saleIds)
+            : 0;
 
         setState(() {
           _totalSales = total;
@@ -96,7 +116,9 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
       } else {
         setState(() => _isLoading = false);
       }
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('DailySalesReport: Error loading report data: $e');
+      debugPrint('$stack');
       setState(() => _isLoading = false);
     }
   }
@@ -391,8 +413,8 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
     }
   }
 
-  pw.Document _buildReportPdf() {
-    final pdf = pw.Document();
+  Future<pw.Document> _buildReportPdf() async {
+    final pdf = await PdfFontHelper.createDocument();
     pdf.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
       textDirection: pw.TextDirection.rtl,
@@ -497,7 +519,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
   }
 
   void _shareReport() async {
-    final pdf = _buildReportPdf();
+    final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
       filename:
@@ -506,7 +528,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
   }
 
   void _printReport() async {
-    final pdf = _buildReportPdf();
+    final pdf = await _buildReportPdf();
     await Printing.layoutPdf(
       onLayout: (_) => pdf.save(),
       name:

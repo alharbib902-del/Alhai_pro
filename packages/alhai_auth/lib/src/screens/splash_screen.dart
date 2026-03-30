@@ -37,24 +37,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     AppLogger.debug('Starting app initialization...', tag: 'SPLASH');
 
     try {
-      // DI تمت بالفعل في main.dart (ضرورية قبل runApp)
-      // هنا فقط العمليات البطيئة
+      // DI + CSV seeding تمت بالفعل في main.dart
+      // هنا نبدأ FTS في الخلفية بدون انتظار + نتحقق من المصادقة فوراً
 
-      // 1. FTS - تهيئة البحث السريع (L54: runs in background isolate)
-      setState(() => _status = _SplashStatus.initSearch);
-      await _initializeFtsInBackground();
-      AppLogger.debug('FTS: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
+      // 1. FTS - fire-and-forget (لا نحتاجه إلا عند البحث في POS)
+      _initializeFtsInBackground();
 
-      // 2. Database Seeding
-      setState(() => _status = _SplashStatus.loadData);
-      await _seedDatabaseIfNeeded();
-      AppLogger.debug('Seed: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
-
-      // 3. Memory Monitor
+      // 2. Memory Monitor
       MemoryMonitor.instance.startMonitoring();
 
       stopwatch.stop();
-      AppLogger.debug('Total init time: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
+      AppLogger.debug('Init time: ${stopwatch.elapsedMilliseconds}ms', tag: 'SPLASH');
     } catch (e, stackTrace) {
       stopwatch.stop();
       AppLogger.error('Initialization error: $e', tag: 'SPLASH');
@@ -64,25 +57,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         error: e,
         stackTrace: stackTrace,
       );
-
-      // Show error feedback before navigating to login
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred during initialization',
-            ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-        await Future.delayed(const Duration(seconds: 1));
-      }
     }
 
     if (!mounted) return;
 
     // ======================================================================
-    // منطق التوجيه الذكي:
+    // منطق التوجيه الذكي - يبدأ فوراً بدون انتظار FTS أو seed
     // 1. مصادق + عنده store_id محفوظ → مباشرة POS
     // 2. مصادق + بدون store_id → شاشة اختيار المتجر
     // 3. غير مصادق → شاشة تسجيل الدخول
@@ -101,7 +81,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // Wait for AuthNotifier to finish its own initialization
     try {
       final authNotifier = ref.read(authStateProvider.notifier);
-      await authNotifier.initComplete.timeout(const Duration(seconds: 10));
+      await authNotifier.initComplete.timeout(const Duration(seconds: 3));
     } catch (e) {
       AppLogger.debug('Auth init timeout: $e', tag: 'SPLASH');
     }
@@ -157,26 +137,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       AppLogger.debug('FTS initialized successfully', tag: 'SPLASH');
     } catch (e) {
       AppLogger.warning('FTS not available: $e', tag: 'SPLASH');
-    }
-  }
-
-  /// Seeds the database with demo data if it's empty
-  Future<void> _seedDatabaseIfNeeded() async {
-    if (!kDebugMode) return;
-    try {
-      final seeder = DatabaseSeeder(getIt<AppDatabase>());
-      final isEmpty = await seeder.isDatabaseEmpty();
-
-      if (isEmpty) {
-        AppLogger.debug('Seeding database with demo data...', tag: 'SPLASH');
-        if (mounted) setState(() => _status = _SplashStatus.initDemo);
-        await seeder.seedAll();
-        AppLogger.debug('Database seeded successfully', tag: 'SPLASH');
-      } else {
-        AppLogger.debug('Database already has data - skipping seed', tag: 'SPLASH');
-      }
-    } catch (e) {
-      AppLogger.error('Database seeding error: $e', tag: 'SPLASH');
     }
   }
 

@@ -77,8 +77,8 @@ class SimpleBarChart extends StatelessWidget {
         builder: (context, constraints) {
           final barAreaHeight = height - (showLabels ? 32 : 0);
           final barWidth = (constraints.maxWidth / data.length) * 0.5;
-          final gridColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
-          final textColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+          final gridColor = isDark ? AppColors.borderDark : AppColors.border;
+          final textColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
 
           return Column(
             children: [
@@ -260,7 +260,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
+                  color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -448,7 +448,7 @@ class _TopProductRow extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               color: isDark
-                  ? const Color(0xFF0F172A)
+                  ? AppColors.backgroundDark
                   : AppColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(12),
             ),

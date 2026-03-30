@@ -28,6 +28,7 @@ import 'categories_table.dart';
 @TableIndex(name: 'idx_products_synced_at', columns: {#syncedAt})
 @TableIndex(name: 'idx_products_is_active', columns: {#isActive})
 @TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode})
+@TableIndex(name: 'idx_products_store_category_active', columns: {#storeId, #categoryId, #isActive})
 class ProductsTable extends Table {
   @override
   String get tableName => 'products';
@@ -64,7 +65,25 @@ class ProductsTable extends Table {
   TextColumn get categoryId => text().nullable().references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   BoolColumn get trackInventory => boolean().withDefault(const Constant(true))();
-  
+
+  // صور المنظمة المركزية (مشتركة بين الفروع)
+  TextColumn get orgImageThumbnail => text().nullable()();
+  TextColumn get orgImageMedium => text().nullable()();
+  TextColumn get orgImageLarge => text().nullable()();
+  TextColumn get orgImageHash => text().nullable()();
+
+  // ربط بكتالوج المنظمة
+  TextColumn get orgProductId => text().nullable()();
+
+  // إعدادات الطلب الأونلاين
+  BoolColumn get onlineAvailable => boolean().withDefault(const Constant(false))();
+  RealColumn get onlineMaxQty => real().nullable()();
+  RealColumn get onlineReservedQty => real().withDefault(const Constant(0))();
+  RealColumn get minAlertQty => real().nullable()();
+  BoolColumn get autoReorder => boolean().withDefault(const Constant(false))();
+  RealColumn get reorderQty => real().nullable()();
+  RealColumn get turnoverRate => real().nullable()();
+
   // التواريخ
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

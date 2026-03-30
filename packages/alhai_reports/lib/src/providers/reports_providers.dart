@@ -41,7 +41,7 @@ final customDateRangeProvider = StateProvider<DateRange?>((ref) {
 // ============================================================================
 
 /// تقرير المبيعات للفترة المحددة
-final salesReportProvider = FutureProvider<SalesReport?>((ref) async {
+final salesReportProvider = FutureProvider.autoDispose<SalesReport?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
   final period = ref.watch(selectedReportPeriodProvider);
@@ -57,7 +57,7 @@ final salesReportProvider = FutureProvider<SalesReport?>((ref) async {
 });
 
 /// إحصائيات اليوم السريعة
-final todayStatsProvider = FutureProvider<SalesStats?>((ref) async {
+final todayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -67,7 +67,7 @@ final todayStatsProvider = FutureProvider<SalesStats?>((ref) async {
 });
 
 /// إحصائيات الكاشير اليوم
-final cashierTodayStatsProvider = FutureProvider<SalesStats?>((ref) async {
+final cashierTodayStatsProvider = FutureProvider.autoDispose<SalesStats?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -81,7 +81,7 @@ final cashierTodayStatsProvider = FutureProvider<SalesStats?>((ref) async {
 // ============================================================================
 
 /// ملخص لوحة التحكم
-final dashboardSummaryProvider = FutureProvider<DashboardSummary?>((ref) async {
+final dashboardSummaryProvider = FutureProvider.autoDispose<DashboardSummary?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -91,7 +91,7 @@ final dashboardSummaryProvider = FutureProvider<DashboardSummary?>((ref) async {
 });
 
 /// مراقبة ملخص لوحة التحكم (تحديث كل 5 دقائق)
-final dashboardAutoRefreshProvider = StreamProvider<DashboardSummary?>((ref) async* {
+final dashboardAutoRefreshProvider = StreamProvider.autoDispose<DashboardSummary?>((ref) async* {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -114,7 +114,7 @@ final dashboardAutoRefreshProvider = StreamProvider<DashboardSummary?>((ref) asy
 // ============================================================================
 
 /// تقرير المخزون
-final inventoryReportProvider = FutureProvider<InventoryReport?>((ref) async {
+final inventoryReportProvider = FutureProvider.autoDispose<InventoryReport?>((ref) async {
   final service = ref.watch(reportsServiceProvider);
   final user = ref.watch(currentUserProvider);
 
@@ -124,19 +124,19 @@ final inventoryReportProvider = FutureProvider<InventoryReport?>((ref) async {
 });
 
 /// المنتجات منخفضة المخزون
-final lowStockItemsProvider = FutureProvider<List<LowStockItem>>((ref) async {
+final lowStockItemsProvider = FutureProvider.autoDispose<List<LowStockItem>>((ref) async {
   final report = await ref.watch(inventoryReportProvider.future);
   return report?.lowStockItems ?? [];
 });
 
 /// عدد المنتجات منخفضة المخزون
-final lowStockCountProvider = Provider<int>((ref) {
+final lowStockCountProvider = Provider.autoDispose<int>((ref) {
   final report = ref.watch(inventoryReportProvider);
   return report.valueOrNull?.lowStockCount ?? 0;
 });
 
 /// عدد المنتجات النافدة
-final outOfStockCountProvider = Provider<int>((ref) {
+final outOfStockCountProvider = Provider.autoDispose<int>((ref) {
   final report = ref.watch(inventoryReportProvider);
   return report.valueOrNull?.outOfStockCount ?? 0;
 });
@@ -146,13 +146,13 @@ final outOfStockCountProvider = Provider<int>((ref) {
 // ============================================================================
 
 /// مقارنة فترتين
-final salesComparisonProvider = Provider<SalesComparison?>((ref) {
+final salesComparisonProvider = Provider.autoDispose<SalesComparison?>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.comparison;
 });
 
 /// هل المبيعات تتحسن؟
-final isSalesImprovingProvider = Provider<bool>((ref) {
+final isSalesImprovingProvider = Provider.autoDispose<bool>((ref) {
   final comparison = ref.watch(salesComparisonProvider);
   return comparison?.isImproved ?? false;
 });
@@ -162,25 +162,25 @@ final isSalesImprovingProvider = Provider<bool>((ref) {
 // ============================================================================
 
 /// بيانات الرسم البياني للمبيعات بالساعة
-final hourlySalesChartProvider = Provider<List<HourlySales>>((ref) {
+final hourlySalesChartProvider = Provider.autoDispose<List<HourlySales>>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.hourlySales ?? [];
 });
 
 /// بيانات الرسم البياني للمبيعات اليومية
-final dailySalesChartProvider = Provider<List<DailySales>>((ref) {
+final dailySalesChartProvider = Provider.autoDispose<List<DailySales>>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.dailySales ?? [];
 });
 
 /// بيانات طرق الدفع
-final paymentMethodsChartProvider = Provider<List<PaymentMethodStats>>((ref) {
+final paymentMethodsChartProvider = Provider.autoDispose<List<PaymentMethodStats>>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.paymentMethods ?? [];
 });
 
 /// أفضل المنتجات
-final topProductsProvider = Provider<List<TopProduct>>((ref) {
+final topProductsProvider = Provider.autoDispose<List<TopProduct>>((ref) {
   final report = ref.watch(salesReportProvider);
   return report.valueOrNull?.topProducts ?? [];
 });

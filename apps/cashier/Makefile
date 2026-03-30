@@ -23,6 +23,10 @@ build-web-staging:
 build-apk:
 	flutter build apk --dart-define=ENV=production
 
+## Build web for E2E testing (with semantics enabled in main.dart for Playwright)
+build-web-test:
+	flutter build web --no-tree-shake-icons --dart-define=ENV=staging
+
 ## Run tests
 test:
 	flutter test

@@ -235,4 +235,14 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase> with _$AuditLogDaoMixin 
     return (update(auditLogTable)..where((l) => l.id.isIn(ids)))
         .write(AuditLogTableCompanion(syncedAt: Value(DateTime.now())));
   }
+
+  /// حذف السجلات المزامنة القديمة (أقدم من المدة المحددة)
+  Future<int> cleanupOldLogs({Duration olderThan = const Duration(days: 90)}) {
+    final cutoff = DateTime.now().subtract(olderThan);
+    return (delete(auditLogTable)
+          ..where((l) =>
+              l.syncedAt.isNotNull() &
+              l.createdAt.isSmallerThanValue(cutoff)))
+        .go();
+  }
 }

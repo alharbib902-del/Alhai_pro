@@ -47,17 +47,22 @@ class RealtimeListener {
   final AppDatabase _db;
   final JsonColumnConverter _jsonConverter = JsonColumnConverter.instance;
 
-  /// الجداول المراقبة
-  /// هذه الجداول تحتاج تحديثات فورية عبر الأجهزة
+  /// الجداول المراقبة بالـ Realtime
+  /// ترتيب حسب الأولوية: stock_deltas أولاً (تعدد كاشير)
   static const List<String> watchedTables = [
-    'products',
-    'categories',
-    // جداول جديدة للمراقبة الفورية
-    'orders',
-    'notifications',
+    'stock_deltas',    // أولوية قصوى: تزامن مخزون بين أجهزة الكاشير
+    'orders',          // طلبات أونلاين + تحديث حالة فوري
+    'products',        // أسعار + حالة + مخزون
+    'notifications',   // إشعارات نفاد مخزون + طلبات جديدة
+    'categories',      // تصنيفات
+    'stock_transfers', // نقل مخزون بين الفروع
+    'invoices',        // فواتير رسمية (ZATCA)
     'shifts',
     'inventory_movements',
   ];
+
+  /// معرف الجهاز الحالي (لتجاهل أحداث الجهاز نفسه في stock_deltas)
+  String? _deviceId;
 
   /// قنوات الاشتراك النشطة
   final Map<String, RealtimeChannel> _channels = {};
@@ -85,9 +90,11 @@ class RealtimeListener {
   bool get isActive => _isActive;
 
   /// بدء الاستماع
+  /// [deviceId]: معرف الجهاز الحالي لتجاهل stock_deltas الخاصة بنفس الجهاز
   Future<void> start({
     required String orgId,
     required String storeId,
+    String? deviceId,
   }) async {
     if (_isActive) return;
 
@@ -126,6 +133,7 @@ class RealtimeListener {
 
     _orgId = orgId;
     _storeId = storeId;
+    _deviceId = deviceId;
     _isActive = true;
 
     for (final tableName in watchedTables) {
@@ -186,6 +194,12 @@ class RealtimeListener {
         if (recordOrgId != null && recordOrgId != _orgId) return;
       }
 
+      // تجاهل stock_deltas من نفس الجهاز (لتجنب التكرار)
+      if (tableName == 'stock_deltas' && _deviceId != null && newRecord.isNotEmpty) {
+        final deltaDeviceId = newRecord['device_id'] as String?;
+        if (deltaDeviceId == _deviceId) return;
+      }
+
       switch (eventType) {
         case RealtimeEventType.insert:
         case RealtimeEventType.update:
@@ -224,6 +238,38 @@ class RealtimeListener {
     }
   }
 
+  /// أعمدة التواريخ التي تحتاج تحويل من ISO 8601 إلى Unix seconds
+  static const Set<String> _dateTimeColumns = {
+    'created_at', 'updated_at', 'synced_at', 'deleted_at',
+    'opened_at', 'closed_at', 'issued_at', 'due_at', 'paid_at',
+    'expires_at', 'start_date', 'end_date', 'last_login',
+    'completed_at', 'confirmed_at', 'cancelled_at', 'delivered_at',
+    'shipped_at', 'refunded_at', 'voided_at', 'activated_at',
+    'deactivated_at', 'last_sync_at', 'last_pull_at', 'last_push_at',
+    // Additional datetime columns from database tables
+    'order_date', 'preparing_at', 'ready_at', 'delivering_at',
+    'received_at', 'approved_at', 'started_at', 'expiry_date',
+    'expense_date', 'read_at', 'sent_at', 'last_attempt_at',
+    'last_transaction_at', 'trial_ends_at', 'last_heartbeat_at',
+    'current_period_start', 'current_period_end',
+    'invited_at', 'joined_at', 'last_login_at',
+  };
+
+  /// تحويل القيمة حسب نوع العمود
+  dynamic _convertValue(String column, dynamic value) {
+    if (value == null) return null;
+    if (!_dateTimeColumns.contains(column)) return value;
+    if (value is int) return value;
+    if (value is String) {
+      try {
+        return DateTime.parse(value).millisecondsSinceEpoch ~/ 1000;
+      } catch (_) {
+        return null;
+      }
+    }
+    return value;
+  }
+
   /// إدراج/تحديث سجل محلياً
   Future<void> _upsertLocally(
       String tableName, Map<String, dynamic> record) async {
@@ -239,7 +285,7 @@ class RealtimeListener {
       'INSERT INTO $tableName (${columns.join(', ')}) '
       'VALUES ($placeholders) '
       'ON CONFLICT(id) DO UPDATE SET $updates',
-      columns.map((c) => record[c]).toList(),
+      columns.map((c) => _convertValue(c, record[c])).toList(),
     );
   }
 

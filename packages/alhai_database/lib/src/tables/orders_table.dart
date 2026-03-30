@@ -65,7 +65,12 @@ class OrdersTable extends Table {
   // الملاحظات
   TextColumn get notes => text().nullable()();
   TextColumn get cancelReason => text().nullable()();
-  
+
+  // تأكيد التسليم
+  TextColumn get confirmationCode => text().nullable()();
+  IntColumn get confirmationAttempts => integer().withDefault(const Constant(0))();
+  BoolColumn get autoReorderTriggered => boolean().withDefault(const Constant(false))();
+
   // التواريخ
   DateTimeColumn get orderDate => dateTime()();
   DateTimeColumn get confirmedAt => dateTime().nullable()();

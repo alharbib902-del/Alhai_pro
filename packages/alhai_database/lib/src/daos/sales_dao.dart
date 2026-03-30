@@ -198,7 +198,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }
 
   /// مراقبة المبيعات (Stream)
-  Stream<List<SalesTableData>> watchTodaySales(String storeId) {
+  /// [limit] - الحد الأقصى للنتائج (افتراضي 200)
+  Stream<List<SalesTableData>> watchTodaySales(String storeId, {int limit = 200}) {
     final today = DateTime.now();
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
@@ -209,7 +210,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
         s.createdAt.isBiggerOrEqualValue(startOfDay) &
         s.createdAt.isSmallerThanValue(endOfDay)
       )
-      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)]))
+      ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+      ..limit(limit))
       .watch();
   }
 

@@ -30,10 +30,14 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
           db.execute("PRAGMA key = '$safeKey'");
         }
 
-        // Enable WAL for better performance
+        // Enable WAL for better performance and crash safety
         db.execute('PRAGMA journal_mode=WAL');
         db.execute('PRAGMA synchronous=NORMAL');
         db.execute('PRAGMA foreign_keys=ON');
+        // Wait 5s instead of failing immediately on database lock
+        db.execute('PRAGMA busy_timeout=5000');
+        // Reclaim disk space gradually instead of all at once
+        db.execute('PRAGMA auto_vacuum=INCREMENTAL');
       },
     );
   });

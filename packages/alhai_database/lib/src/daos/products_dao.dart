@@ -33,7 +33,16 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
       ..limit(limit))
       .get();
   }
-  
+
+  /// فحص سريع: هل يوجد منتجات للمتجر؟ (بدون تحميل كل البيانات)
+  Future<bool> hasProducts(String storeId) async {
+    final result = await (select(productsTable)
+      ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
+      ..limit(1))
+      .get();
+    return result.isNotEmpty;
+  }
+
   /// الحصول على منتج بالمعرف
   Future<ProductsTableData?> getProductById(String id) {
     return (select(productsTable)..where((p) => p.id.equals(id)))
@@ -178,10 +187,12 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   }
 
   /// مراقبة المنتجات (Stream) - باستثناء المحذوفة
-  Stream<List<ProductsTableData>> watchProducts(String storeId) {
+  /// [limit] - الحد الأقصى للنتائج (افتراضي 500)
+  Stream<List<ProductsTableData>> watchProducts(String storeId, {int limit = 500}) {
     return (select(productsTable)
       ..where((p) => p.storeId.equals(storeId) & p.isActive.equals(true) & p.deletedAt.isNull())
-      ..orderBy([(p) => OrderingTerm.asc(p.name)]))
+      ..orderBy([(p) => OrderingTerm.asc(p.name)])
+      ..limit(limit))
       .watch();
   }
 
@@ -301,23 +312,33 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
 
   /// الحصول على المنتجات الأكثر مبيعاً (للعرض السريع)
   /// يتطلب join مع جدول sale_items
+  /// [since] - فلتر التاريخ لتحديد فترة التقرير (مثلاً آخر 30 يوم)
   Future<List<ProductsTableData>> getTopSellingProducts(
     String storeId, {
     int limit = 10,
+    DateTime? since,
   }) {
     // استخدام raw query للأداء
+    final sinceClause = since != null ? 'INNER JOIN sales s ON si.sale_id = s.id WHERE s.created_at > ?' : '';
+    final variables = <Variable>[];
+    if (since != null) {
+      variables.add(Variable.withDateTime(since));
+    }
+    variables.addAll([Variable.withInt(limit), Variable.withString(storeId)]);
+
     return customSelect(
       '''SELECT p.* FROM products p
          INNER JOIN (
-           SELECT product_id, COUNT(*) as sale_count
-           FROM sale_items
-           GROUP BY product_id
+           SELECT si.product_id, COUNT(*) as sale_count
+           FROM sale_items si
+           $sinceClause
+           GROUP BY si.product_id
            ORDER BY sale_count DESC
            LIMIT ?
          ) top ON p.id = top.product_id
          WHERE p.store_id = ? AND p.is_active = 1
          ORDER BY top.sale_count DESC''',
-      variables: [Variable.withInt(limit), Variable.withString(storeId)],
+      variables: variables,
       readsFrom: {productsTable},
     ).map((row) => productsTable.map(row.data)).get();
   }
@@ -361,6 +382,24 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
       product: productsTable.map(row.data),
       categoryName: row.data['category_name'] as String?,
     )).toList();
+  }
+
+  /// تحديث صور المنتج (بعد رفعها إلى Supabase Storage)
+  Future<int> updateProductImages(
+    String productId, {
+    String? imageThumbnail,
+    String? imageMedium,
+    String? imageLarge,
+    String? imageHash,
+  }) {
+    return (update(productsTable)..where((p) => p.id.equals(productId)))
+        .write(ProductsTableCompanion(
+      imageThumbnail: imageThumbnail != null ? Value(imageThumbnail) : const Value.absent(),
+      imageMedium: imageMedium != null ? Value(imageMedium) : const Value.absent(),
+      imageLarge: imageLarge != null ? Value(imageLarge) : const Value.absent(),
+      imageHash: imageHash != null ? Value(imageHash) : const Value.absent(),
+      updatedAt: Value(DateTime.now()),
+    ));
   }
 
   /// تحديث batch للمنتجات (لتحسين الأداء)

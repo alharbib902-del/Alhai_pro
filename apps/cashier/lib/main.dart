@@ -7,12 +7,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_l10n/alhai_l10n.dart' show AppLocalizations, SupportedLocales, localeProvider;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart' show ThemeNotifier, themeProvider, AppTheme;
+// M-THEME-FIX: استيراد مزود الثيم من auth لمزامنته مع shared_ui
+import 'package:alhai_auth/src/providers/theme_provider.dart' as auth_theme;
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:alhai_database/alhai_database.dart' show setDatabaseEncryptionKey, DatabaseSeeder, AppDatabase;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService, currentStoreIdProvider;
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/cashier_router.dart';
@@ -23,7 +26,14 @@ import 'services/session_manager.dart';
 
 void main() {
   initSentry(appRunner: () async {
-    WidgetsFlutterBinding.ensureInitialized();
+    final binding = WidgetsFlutterBinding.ensureInitialized();
+
+    // Enable semantics tree for E2E testing (Playwright needs DOM elements).
+    // On web, Flutter CanvasKit renders to canvas — enabling semantics
+    // creates a parallel DOM tree that Playwright can interact with.
+    if (kIsWeb) {
+      binding.ensureSemantics();
+    }
 
     // Global error handlers — send to Sentry
     FlutterError.onError = (details) {
@@ -39,9 +49,11 @@ void main() {
       return true;
     };
 
-    // تهيئة Firebase + Supabase + مفتاح التشفير بالتوازي (M87 fix)
+    // تهيئة Firebase + Supabase + مفتاح التشفير + استعادة الجلسة بالتوازي
     final dbKeyFuture = _getOrCreateDbKey();
     final prefsFuture = SharedPreferences.getInstance();
+    // استعادة store ID المحفوظ لمنع فقدان الجلسة عند التحديث (F5)
+    final storeIdFuture = SecureStorageService.getStoreId();
 
     final firebaseFuture = () async {
       // Skip Firebase on web debug (JS SDK can't load without internet to gstatic.com)
@@ -77,16 +89,43 @@ void main() {
       }
     }();
 
-    // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences معاً
+    // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences + storeId معاً
     final results = await Future.wait([
       firebaseFuture,
       supabaseFuture,
       dbKeyFuture,
       prefsFuture,
+      storeIdFuture,
     ]);
 
     final dbKey = results[2] as String;
     setDatabaseEncryptionKey(dbKey);
+
+    // SESSION-FIX: على الويب، فحص سريع لجلسة Supabase
+    // معظم المستخدمين يسجلون دخول محلي (verifyLocalOtp) بدون Supabase session
+    // لذلك نقلل الانتظار إلى 500ms فقط لعدم تأخير بدء التطبيق
+    if (kIsWeb) {
+      try {
+        final client = Supabase.instance.client;
+        if (client.auth.currentSession == null) {
+          debugPrint('⏳ Quick check for Supabase session on web...');
+          await client.auth.onAuthStateChange
+              .where((data) => data.session != null)
+              .first
+              .timeout(const Duration(milliseconds: 500));
+          debugPrint('✅ Supabase session recovered');
+        } else {
+          debugPrint('✅ Supabase session available immediately');
+        }
+      } catch (e) {
+        debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+      }
+
+      // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
+      final isValid = await SecureStorageService.isSessionValid();
+      final ssUserId = await SecureStorageService.getUserId();
+      debugPrint('📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}');
+    }
 
     // DI must run before runApp (Riverpod providers use getIt synchronously)
     await configureDependencies();
@@ -95,6 +134,9 @@ void main() {
     await _seedDatabaseFromCsv();
 
     final prefs = results[3] as SharedPreferences;
+    // SESSION-FIX: استعادة store ID المحفوظ قبل runApp لمنع فقدان الجلسة عند F5
+    final savedStoreId = results[4] as String?;
+
     final savedTheme = prefs.getString('app_theme_mode');
     final initialThemeMode = switch (savedTheme) {
       'dark' => ThemeMode.dark,
@@ -105,13 +147,23 @@ void main() {
     // M57: Pre-load onboarding state so router guard can check synchronously
     final hasSeenOnboardingFlag = prefs.getBool(kOnboardingSeenKey) ?? false;
 
+    if (kDebugMode) {
+      debugPrint('🔑 Restored storeId: $savedStoreId');
+    }
+
     addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
     runApp(
       ProviderScope(
         overrides: [
           themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+          // M-THEME-FIX: تهيئة مزود auth بنفس القيمة الأولية
+          auth_theme.themeProvider.overrideWith((ref) => auth_theme.ThemeNotifier(initialThemeMode)),
           onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
+          // SESSION-FIX: تهيئة store ID المحفوظ قبل أن يعمل router guard
+          // هذا يمنع إعادة التوجيه إلى /store-select عند تحديث الصفحة (F5)
+          if (savedStoreId != null && savedStoreId.isNotEmpty)
+            currentStoreIdProvider.overrideWith((ref) => savedStoreId),
         ],
         child: const CashierApp(),
       ),
@@ -245,12 +297,19 @@ class _CashierAppState extends ConsumerState<CashierApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize auto-print after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_autoPrintInitialized) {
         _autoPrintInitialized = true;
         initializeAutoPrint(ref);
       }
+
+      // M-THEME-FIX: مزامنة الثيم عند تغييره من شاشات auth (login/store-select)
+      // عندما يبدّل المستخدم الثيم في شاشة Login → يتم تحديث MaterialApp أيضاً
+      ref.listenManual(auth_theme.themeProvider, (previous, next) {
+        if (previous?.themeMode != next.themeMode) {
+          ref.read(themeProvider.notifier).setThemeMode(next.themeMode);
+        }
+      });
     });
   }
 

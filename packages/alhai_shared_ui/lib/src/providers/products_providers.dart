@@ -131,6 +131,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   ProductsNotifier(this._productsRepository) : super(const ProductsState());
 
   /// تحميل المنتجات - محسّن مع الفلترة على مستوى SQL
+  /// عند refresh=true، لا نمسح المنتجات القديمة حتى تصل الجديدة (بدون وميض)
   Future<void> loadProducts({
     required String storeId,
     bool refresh = false,
@@ -141,30 +142,28 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
       state = state.copyWith(
         currentPage: 1,
         hasMore: true,
-        products: [],
+        isLoading: true,
+        // لا نمسح products - نبقي القديمة مرئية حتى تصل الجديدة
       );
+    } else {
+      state = state.copyWith(isLoading: true);
     }
 
-    state = state.copyWith(isLoading: true);
-
     try {
-      // تم نقل الفلترة والبحث إلى Repository/DAO (SQL level)
-      // بدلاً من تحميل جميع البيانات وفلترتها في Dart
       final result = await _productsRepository.getProducts(
         storeId,
-        page: state.currentPage,
+        page: refresh ? 1 : state.currentPage,
         limit: 20,
-        categoryId: state.categoryId,  // تمرير للـ SQL
-        searchQuery: state.searchQuery,  // تمرير للـ SQL
+        categoryId: state.categoryId,
+        searchQuery: state.searchQuery,
       );
 
-      // الآن النتائج مفلترة مسبقاً من قاعدة البيانات
       final newProducts = refresh ? result.items : [...state.products, ...result.items];
 
       state = state.copyWith(
         products: newProducts,
         isLoading: false,
-        currentPage: state.currentPage + 1,
+        currentPage: (refresh ? 1 : state.currentPage) + 1,
         hasMore: result.hasMore,
       );
     } catch (e) {
@@ -175,26 +174,26 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     }
   }
 
-  /// البحث في المنتجات
+  /// البحث في المنتجات (لا يمسح القائمة - يستبدلها عند وصول النتائج)
   Future<void> search(String query, {String? storeId}) async {
     state = state.copyWith(
       searchQuery: query.isEmpty ? null : query,
       currentPage: 1,
       hasMore: true,
-      products: [],
+      // لا نمسح products - نبقي القديمة مرئية
     );
     if (storeId != null) {
       await loadProducts(storeId: storeId, refresh: true);
     }
   }
 
-  /// تصفية حسب التصنيف
+  /// تصفية حسب التصنيف (انتقال سلس بدون وميض)
   Future<void> filterByCategory(String? categoryId, {String? storeId}) async {
     state = state.copyWith(
       categoryId: categoryId,
       currentPage: 1,
       hasMore: true,
-      products: [],
+      // لا نمسح products - نبقي القديمة مرئية
     );
     if (storeId != null) {
       await loadProducts(storeId: storeId, refresh: true);
@@ -231,7 +230,7 @@ final productsListProvider = Provider<List<Product>>((ref) {
 });
 
 /// مزود منتج واحد بالـ ID - محسّن باستخدام Map للبحث السريع
-final productByIdProvider = Provider.family<Product?, String>((ref, id) {
+final productByIdProvider = Provider.autoDispose.family<Product?, String>((ref, id) {
   final productsMap = ref.watch(productsMapProvider);
   return productsMap[id];
 });
@@ -294,7 +293,7 @@ final categoriesMapProvider = Provider<Map<String, Category>>((ref) {
 });
 
 /// مزود تصنيف واحد بالـ ID - محسّن
-final categoryByIdProvider = Provider.family<Category?, String>((ref, id) {
+final categoryByIdProvider = Provider.autoDispose.family<Category?, String>((ref, id) {
   final categoriesMap = ref.watch(categoriesMapProvider);
   return categoriesMap[id];
 });
@@ -305,7 +304,7 @@ final categoryByIdProvider = Provider.family<Category?, String>((ref, id) {
 
 /// مزود البحث بالباركود - يستخدم من BarcodeListener
 final barcodeProductProvider =
-    FutureProvider.family<Product?, String>((ref, barcode) async {
+    FutureProvider.autoDispose.family<Product?, String>((ref, barcode) async {
   if (barcode.isEmpty) return null;
   final repository = ref.watch(productsRepositoryProvider);
   return repository.getByBarcode(barcode);
@@ -314,7 +313,7 @@ final barcodeProductProvider =
 /// مزود اقتراحات البحث (autocomplete)
 /// يعطي اقتراحات أثناء الكتابة
 final searchSuggestionsProvider =
-    FutureProvider.family<List<String>, String>((ref, query) async {
+    FutureProvider.autoDispose.family<List<String>, String>((ref, query) async {
   if (query.length < 2) return [];
 
   final storeId = ref.watch(currentStoreIdProvider);

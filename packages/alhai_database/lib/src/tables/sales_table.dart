@@ -12,12 +12,14 @@ import 'customers_table.dart';
 /// - idx_sales_created_at: للاستعلامات حسب التاريخ
 /// - idx_sales_status: لفلترة حسب الحالة
 /// - idx_sales_synced_at: للمزامنة
+/// - idx_sales_store_status_created: للفلترة المركبة حسب المتجر والحالة والتاريخ
 @TableIndex(name: 'idx_sales_store_id', columns: {#storeId})
 @TableIndex(name: 'idx_sales_cashier_id', columns: {#cashierId})
 @TableIndex(name: 'idx_sales_created_at', columns: {#createdAt})
 @TableIndex(name: 'idx_sales_status', columns: {#status})
 @TableIndex(name: 'idx_sales_synced_at', columns: {#syncedAt})
 @TableIndex(name: 'idx_sales_store_created', columns: {#storeId, #createdAt})
+@TableIndex(name: 'idx_sales_store_status_created', columns: {#storeId, #status, #createdAt})
 @TableIndex(name: 'idx_sales_store_receipt_unique', columns: {#storeId, #receiptNo}, unique: true)
 class SalesTable extends Table {
   @override
@@ -47,6 +49,11 @@ class SalesTable extends Table {
   BoolColumn get isPaid => boolean().withDefault(const Constant(true))();
   RealColumn get amountReceived => real().nullable()();
   RealColumn get changeAmount => real().nullable()();
+
+  // تفصيل مبالغ الدفع (للدفع المختلط والتقارير)
+  RealColumn get cashAmount => real().nullable()();   // المبلغ النقدي
+  RealColumn get cardAmount => real().nullable()();   // مبلغ البطاقة
+  RealColumn get creditAmount => real().nullable()();  // المبلغ الآجل
   
   // معلومات إضافية
   TextColumn get notes => text().nullable()();

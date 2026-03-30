@@ -113,6 +113,9 @@ class PerformanceStats {
 class PerformanceNotifier extends StateNotifier<PerformanceStats> {
   PerformanceNotifier() : super(PerformanceStats());
 
+  /// الحد الأقصى لعدد العمليات المخزّنة لمنع تراكم الذاكرة
+  static const int _maxSalesHistory = 100;
+
   String? _currentSaleId;
 
   /// بدء عملية بيع جديدة
@@ -122,7 +125,14 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
       saleId: _currentSaleId!,
       startTime: DateTime.now(),
     );
-    state = state.copyWith(sales: [...state.sales, sale]);
+
+    // Trim old entries to prevent unbounded memory growth
+    var updatedSales = [...state.sales, sale];
+    if (updatedSales.length > _maxSalesHistory) {
+      updatedSales = updatedSales.sublist(updatedSales.length - _maxSalesHistory);
+    }
+
+    state = state.copyWith(sales: updatedSales);
     return _currentSaleId!;
   }
 

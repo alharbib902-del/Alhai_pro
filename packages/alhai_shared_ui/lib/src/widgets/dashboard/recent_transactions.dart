@@ -615,9 +615,9 @@ String _formatTimeAgo(DateTime timestamp, AppLocalizations l10n) {
     case TransactionType.refund:
       return (
         l10n.returned,
-        isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
-        isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+        isDark ? AppColors.borderDark : AppColors.border,
+        isDark ? AppColors.textSecondaryDark : AppColors.grey600,
+        isDark ? AppColors.grey600 : AppColors.grey300,
       );
 
     case TransactionType.cancelled:

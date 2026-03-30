@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:alhai_core/alhai_core.dart' as core;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -49,8 +50,13 @@ Future<void> configureDependencies({String? environment}) async {
     if (!getIt.isRegistered<SupabaseClient>()) {
       getIt.registerSingleton<SupabaseClient>(supabase);
     }
-  } catch (_) {
-    // Supabase not initialized - offline mode only
+    if (kDebugMode) {
+      debugPrint('✅ [DI] SupabaseClient registered in GetIt — sync will be ACTIVE');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('❌ [DI] SupabaseClient NOT registered — sync DISABLED! Error: $e');
+    }
   }
 
   // Disable reassignment after setup

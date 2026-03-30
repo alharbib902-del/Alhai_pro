@@ -151,7 +151,7 @@ class InvoiceFilters extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isActive ? (isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary) : Colors.transparent,
+          color: isActive ? (isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           boxShadow: isActive ? AppShadows.of(context, size: ShadowSize.sm) : null,
         ),

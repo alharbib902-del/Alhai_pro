@@ -17,19 +17,19 @@ final aiFraudDetectionServiceProvider = Provider<AiFraudDetectionService>((ref) 
 });
 
 /// مزود تنبيهات الاحتيال - Fraud Alerts Provider
-final fraudAlertsProvider = FutureProvider<List<FraudAlert>>((ref) async {
+final fraudAlertsProvider = FutureProvider.autoDispose<List<FraudAlert>>((ref) async {
   final service = ref.watch(aiFraudDetectionServiceProvider);
   return service.getAlerts(ref.read(currentStoreIdProvider)!);
 });
 
 /// مزود درجات السلوك - Behavior Scores Provider
-final behaviorScoresProvider = FutureProvider<List<BehaviorScore>>((ref) async {
+final behaviorScoresProvider = FutureProvider.autoDispose<List<BehaviorScore>>((ref) async {
   final service = ref.watch(aiFraudDetectionServiceProvider);
   return service.getBehaviorScores(ref.read(currentStoreIdProvider)!);
 });
 
 /// مزود ملخص كشف الاحتيال - Fraud Detection Summary Provider
-final fraudSummaryProvider = FutureProvider<FraudDetectionSummary>((ref) async {
+final fraudSummaryProvider = FutureProvider.autoDispose<FraudDetectionSummary>((ref) async {
   final service = ref.watch(aiFraudDetectionServiceProvider);
   return service.getSummary(ref.read(currentStoreIdProvider)!);
 });
@@ -41,7 +41,7 @@ final fraudSeverityFilterProvider = StateProvider<FraudSeverity?>((ref) => null)
 final fraudPatternFilterProvider = StateProvider<FraudPattern?>((ref) => null);
 
 /// مزود التنبيهات المفلترة - Filtered Alerts Provider
-final filteredFraudAlertsProvider = Provider<AsyncValue<List<FraudAlert>>>((ref) {
+final filteredFraudAlertsProvider = Provider.autoDispose<AsyncValue<List<FraudAlert>>>((ref) {
   final alertsAsync = ref.watch(fraudAlertsProvider);
   final severityFilter = ref.watch(fraudSeverityFilterProvider);
   final patternFilter = ref.watch(fraudPatternFilterProvider);
@@ -62,7 +62,7 @@ final filteredFraudAlertsProvider = Provider<AsyncValue<List<FraudAlert>>>((ref)
 final selectedFraudAlertProvider = StateProvider<FraudAlert?>((ref) => null);
 
 /// مزود التحقيق - Investigation Provider
-final fraudInvestigationProvider = FutureProvider.family<Investigation, String>((ref, alertId) async {
+final fraudInvestigationProvider = FutureProvider.autoDispose.family<Investigation, String>((ref, alertId) async {
   final service = ref.watch(aiFraudDetectionServiceProvider);
   return service.getInvestigation(alertId);
 });

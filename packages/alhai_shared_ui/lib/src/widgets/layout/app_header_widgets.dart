@@ -22,7 +22,7 @@ class _DarkModeToggle extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDarkMode
-                ? const Color(0xFF374151)
+                ? AppColors.surfaceVariantDark
                 : AppColors.backgroundSecondary,
             borderRadius: BorderRadius.circular(8),
             border: isDarkMode
@@ -101,7 +101,7 @@ class _SearchFieldState extends State<_SearchField> {
         decoration: BoxDecoration(
           color: _isFocused
               ? (Theme.of(context).colorScheme.surface)
-              : (isDarkMode ? const Color(0xFF1E293B) : AppColors.backgroundSecondary),
+              : (isDarkMode ? AppColors.surfaceDark : AppColors.backgroundSecondary),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isFocused
@@ -199,10 +199,12 @@ class _SearchFieldState extends State<_SearchField> {
 class _HeaderIconButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback? onTap;
+  final bool isDark;
 
   const _HeaderIconButton({
     required this.icon,
     this.onTap,
+    this.isDark = false,
   });
 
   @override
@@ -227,13 +229,13 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? AppColors.backgroundSecondary
+                  ? (widget.isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               widget.icon,
-              color: AppColors.textSecondary,
+              color: AppColors.getTextSecondary(widget.isDark),
               size: 22,
             ),
           ),
@@ -247,10 +249,12 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
 class _NotificationButton extends StatefulWidget {
   final int count;
   final VoidCallback? onTap;
+  final bool isDark;
 
   const _NotificationButton({
     required this.count,
     this.onTap,
+    this.isDark = false,
   });
 
   @override
@@ -275,16 +279,16 @@ class _NotificationButtonState extends State<_NotificationButton> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? AppColors.backgroundSecondary
+                  ? (widget.isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                const Icon(
+                Icon(
                   Icons.notifications_outlined,
-                  color: AppColors.textSecondary,
+                  color: AppColors.getTextSecondary(widget.isDark),
                   size: 22,
                 ),
                 if (widget.count > 0)
@@ -300,7 +304,7 @@ class _NotificationButtonState extends State<_NotificationButton> {
                         color: AppColors.error,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: Colors.white,
+                          color: widget.isDark ? AppColors.backgroundDark : Colors.white,
                           width: 2,
                         ),
                       ),
@@ -346,6 +350,7 @@ class _UserInfoState extends State<_UserInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -362,7 +367,7 @@ class _UserInfoState extends State<_UserInfo> {
             ),
             decoration: BoxDecoration(
               color: _isHovered
-                  ? AppColors.backgroundSecondary
+                  ? (isDark ? Colors.white.withAlpha(26) : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -392,37 +397,43 @@ class _UserInfoState extends State<_UserInfo> {
                 const SizedBox(width: 10),
 
                 // الاسم والدور
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.name,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (widget.role != null)
+                Builder(builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        widget.role!,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 11,
+                        widget.name,
+                        style: TextStyle(
+                          color: AppColors.getTextPrimary(isDark),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                  ],
-                ),
+                      if (widget.role != null)
+                        Text(
+                          widget.role!,
+                          style: TextStyle(
+                            color: AppColors.getTextSecondary(isDark),
+                            fontSize: 11,
+                          ),
+                        ),
+                    ],
+                  );
+                }),
 
                 const SizedBox(width: 8),
 
                 // السهم
-                const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.textTertiary,
-                  size: 18,
-                ),
+                Builder(builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: AppColors.getTextMuted(isDark),
+                    size: 18,
+                  );
+                }),
               ],
             ),
           ),

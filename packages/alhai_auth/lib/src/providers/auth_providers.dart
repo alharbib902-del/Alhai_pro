@@ -138,17 +138,84 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _authRepository;
   final SupabaseClient? _supabaseClient;
   Timer? _sessionTimer;
+  StreamSubscription<dynamic>? _supabaseAuthSub;
   final Completer<void> _initCompleter = Completer<void>();
   Future<void> get initComplete => _initCompleter.future;
 
   AuthNotifier(this._authRepository, [this._supabaseClient]) : super(const AuthState()) {
+    _listenToSupabaseAuth();
     _checkAuthStatus();
   }
 
+  /// SESSION-FIX: الاستماع لأحداث Supabase Auth لاستعادة الجلسة عند التحديث (F5)
+  /// على الويب، Supabase قد تستعيد الجلسة بشكل غير متزامن بعد initialize().
+  /// هذا الـ listener يلتقط الجلسة المستعادة ويحدّث الحالة.
+  void _listenToSupabaseAuth() {
+    if (_supabaseClient == null) return;
+
+    _supabaseAuthSub = _supabaseClient.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+      final event = data.event;
+
+      if (kDebugMode) {
+        debugPrint('🔄 Supabase auth event: $event, session: ${session != null}');
+      }
+
+      // استعادة الجلسة الأولية أو تجديد التوكن → تحديث الحالة إذا لم نكن مصادقين
+      if ((event == AuthChangeEvent.initialSession ||
+           event == AuthChangeEvent.tokenRefreshed ||
+           event == AuthChangeEvent.signedIn) &&
+          session != null &&
+          state.status != AuthStatus.authenticated) {
+        final expiry = session.expiresAt != null
+            ? DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000)
+            : DateTime.now().add(kSessionDuration);
+
+        state = AuthState(
+          status: AuthStatus.authenticated,
+          user: User(
+            id: session.user.id,
+            phone: session.user.phone ?? '',
+            name: session.user.userMetadata?['name'] as String? ??
+                session.user.phone ?? '',
+            email: session.user.email,
+            role: UserRole.employee,
+            createdAt: DateTime.now(),
+          ),
+          sessionExpiry: expiry,
+        );
+        _startSessionMonitor();
+
+        // تحديث tokens في SecureStorage
+        SecureStorageService.saveTokens(
+          accessToken: session.accessToken,
+          refreshToken: session.refreshToken ?? '',
+          expiry: expiry,
+        );
+
+        if (!_initCompleter.isCompleted) {
+          _initCompleter.complete();
+        }
+      } else if (event == AuthChangeEvent.signedOut) {
+        _stopSessionMonitor();
+        state = const AuthState(status: AuthStatus.unauthenticated);
+      }
+    });
+  }
+
   /// التحقق من حالة المصادقة عند بدء التطبيق
+  ///
+  /// الترتيب:
+  /// 1. Supabase session (إذا وُجدت → authenticated فوراً)
+  /// 2. SecureStorageService (الحل الأساسي على الويب - verifyLocalOtp يحفظ هنا)
+  /// 3. _authRepository (fallback للـ native حيث AuthLocalDatasource يستخدم FlutterSecureStorage)
+  ///
+  /// ملاحظة مهمة: على الويب، verifyLocalOtp() يحفظ التوكنات في SecureStorageService فقط
+  /// (وليس في _authRepository/AuthLocalDatasource) لأن FlutterSecureStorage لا يعمل
+  /// على الويب بدون keychain أصلي. لذلك نعتمد على SecureStorageService مباشرة.
   Future<void> _checkAuthStatus() async {
     try {
-      // Check Supabase session first
+      // ── الخطوة 1: فحص Supabase session ──────────────────────────────
       if (_supabaseClient != null) {
         final session = _supabaseClient.auth.currentSession;
         if (session != null) {
@@ -158,7 +225,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
           // التحقق من انتهاء صلاحية JWT (M84 fix)
           if (expiry.isBefore(DateTime.now())) {
-            // محاولة تجديد الجلسة
             try {
               await _supabaseClient.auth.refreshSession();
               final refreshed = _supabaseClient.auth.currentSession;
@@ -185,20 +251,87 @@ class AuthNotifier extends StateNotifier<AuthState> {
             sessionExpiry: expiry,
           );
           _startSessionMonitor();
+          if (kDebugMode) debugPrint('✅ Auth restored from Supabase session');
           return;
+        }
+
+        // على الويب، Supabase قد لا تملك الجلسة فوراً بعد initialize()
+        if (kIsWeb) {
+          try {
+            await Future.delayed(const Duration(milliseconds: 500));
+            final retrySession = _supabaseClient.auth.currentSession;
+            if (retrySession != null) {
+              if (state.status == AuthStatus.authenticated) return;
+            }
+          } catch (_) {}
         }
       }
 
-      // التحقق من الجلسة المحفوظة
+      // ── الخطوة 2: فحص SecureStorageService ──────────────────────────
       final isSessionValid = await SecureStorageService.isSessionValid();
+      final savedUserId = await SecureStorageService.getUserId();
+      final savedExpiry = await SecureStorageService.getSessionExpiry();
+
+      if (kDebugMode) {
+        final hasToken = await SecureStorageService.getAccessToken() != null;
+        debugPrint('📋 SecureStorage check: valid=$isSessionValid, '
+            'token=${hasToken ? "exists" : "null"}, '
+            'userId=${savedUserId ?? "null"}, '
+            'expiry=${savedExpiry?.toIso8601String() ?? "null"}');
+      }
 
       if (!isSessionValid) {
+        if (_supabaseClient != null && kIsWeb) {
+          if (kDebugMode) {
+            debugPrint('⏳ SecureStorage session expired, waiting for Supabase auth event...');
+          }
+          state = const AuthState(status: AuthStatus.unauthenticated);
+          return;
+        }
         await SecureStorageService.clearSession();
         state = const AuthState(status: AuthStatus.unauthenticated);
         return;
       }
 
-      // التحقق من المصادقة
+      // SESSION-FIX: استعادة الجلسة مباشرة من SecureStorageService
+      // هذا يحل مشكلة F5 على الويب حيث verifyLocalOtp() يحفظ التوكنات
+      // في SecureStorageService فقط (وليس في _authRepository/AuthLocalDatasource)
+      if (savedUserId != null && savedUserId.isNotEmpty && savedExpiry != null) {
+        // محاولة جلب بيانات المستخدم الكاملة من repository
+        User? user;
+        try {
+          user = await _authRepository.getCurrentUser();
+        } catch (_) {
+          // repository قد لا يملك بيانات المستخدم (حالة local auth)
+        }
+
+        // إذا لم يكن في repository، ننشئ User من SecureStorage
+        user ??= User(
+          id: savedUserId,
+          phone: savedUserId,
+          name: savedUserId,
+          role: UserRole.employee,
+          createdAt: DateTime.now(),
+        );
+
+        state = AuthState(
+          status: AuthStatus.authenticated,
+          user: user,
+          sessionExpiry: savedExpiry,
+        );
+        _startSessionMonitor();
+
+        if (kDebugMode) {
+          debugPrint('✅ Auth restored from SecureStorage for user: $savedUserId');
+        }
+
+        if (state.needsRefresh) {
+          await _refreshToken();
+        }
+        return;
+      }
+
+      // ── الخطوة 3: Fallback إلى _authRepository (native) ─────────────
       final isAuthenticated = await _authRepository.isAuthenticated();
       if (isAuthenticated) {
         final user = await _authRepository.getCurrentUser();
@@ -209,18 +342,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
           user: user,
           sessionExpiry: expiry,
         );
-
-        // بدء مراقبة الجلسة
         _startSessionMonitor();
 
-        // تحقق من الحاجة لتجديد التوكن
         if (state.needsRefresh) {
           await _refreshToken();
         }
       } else {
+        if (kDebugMode) {
+          debugPrint('❌ Auth check: no valid session found anywhere');
+        }
         state = const AuthState(status: AuthStatus.unauthenticated);
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth check exception: $e');
+      }
       state = AuthState(
         status: AuthStatus.unauthenticated,
         error: e.toString(),
@@ -615,6 +751,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   
   @override
   void dispose() {
+    _supabaseAuthSub?.cancel();
     _stopSessionMonitor();
     super.dispose();
   }

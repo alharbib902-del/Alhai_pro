@@ -245,7 +245,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     if (isDesktop) {
       return Scaffold(
         backgroundColor: isDark
-            ? const Color(0xFF0F172A)
+            ? AppColors.backgroundDark
             : AppColors.backgroundSecondary,
         body: Row(
           children: [
@@ -258,7 +258,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       // Mobile: drawer sidebar
       return Scaffold(
         backgroundColor: isDark
-            ? const Color(0xFF0F172A)
+            ? AppColors.backgroundDark
             : AppColors.backgroundSecondary,
         drawer: Drawer(
           child: AppSidebar(

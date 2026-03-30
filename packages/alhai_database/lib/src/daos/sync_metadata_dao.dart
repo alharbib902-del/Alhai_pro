@@ -39,68 +39,120 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
   /// تحديث آخر وقت سحب لجدول
   Future<void> updateLastPullAt(String tableName, DateTime time,
       {int syncCount = 0}) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        lastPullAt: Value(time),
-        lastSyncCount: Value(syncCount),
-        isInitialSynced: const Value(true),
-      ),
+    final companion = SyncMetadataTableCompanion(
+      lastPullAt: Value(time),
+      lastSyncCount: Value(syncCount),
+      isInitialSynced: const Value(true),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          lastPullAt: Value(time),
+          lastSyncCount: Value(syncCount),
+          isInitialSynced: const Value(true),
+        ),
+      );
+    }
   }
 
   /// تحديث آخر وقت دفع لجدول
   Future<void> updateLastPushAt(String tableName, DateTime time,
       {int syncCount = 0}) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        lastPushAt: Value(time),
-        lastSyncCount: Value(syncCount),
-      ),
+    final companion = SyncMetadataTableCompanion(
+      lastPushAt: Value(time),
+      lastSyncCount: Value(syncCount),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          lastPushAt: Value(time),
+          lastSyncCount: Value(syncCount),
+        ),
+      );
+    }
   }
 
   /// تحديث عدد العناصر المعلقة والفاشلة
   Future<void> updateCounts(
       String tableName, int pending, int failed) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        pendingCount: Value(pending),
-        failedCount: Value(failed),
-      ),
+    final companion = SyncMetadataTableCompanion(
+      pendingCount: Value(pending),
+      failedCount: Value(failed),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          pendingCount: Value(pending),
+          failedCount: Value(failed),
+        ),
+      );
+    }
   }
 
   /// تعيين أن المزامنة الأولية تمت
   Future<void> markInitialSynced(String tableName) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        isInitialSynced: const Value(true),
-      ),
+    const companion = SyncMetadataTableCompanion(
+      isInitialSynced: Value(true),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          isInitialSynced: const Value(true),
+        ),
+      );
+    }
   }
 
   /// تسجيل خطأ مزامنة
   Future<void> setError(String tableName, String error) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        lastError: Value(error),
-      ),
+    final companion = SyncMetadataTableCompanion(
+      lastError: Value(error),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          lastError: Value(error),
+        ),
+      );
+    }
   }
 
   /// مسح خطأ المزامنة
   Future<void> clearError(String tableName) async {
-    await into(syncMetadataTable).insertOnConflictUpdate(
-      SyncMetadataTableCompanion.insert(
-        tableName_: tableName,
-        lastError: const Value(null),
-      ),
+    const companion = SyncMetadataTableCompanion(
+      lastError: Value(null),
     );
+    final rows = await (update(syncMetadataTable)
+          ..where((t) => t.tableName_.equals(tableName)))
+        .write(companion);
+    if (rows == 0) {
+      await into(syncMetadataTable).insert(
+        SyncMetadataTableCompanion.insert(
+          tableName_: tableName,
+          lastError: const Value(null),
+        ),
+      );
+    }
   }
 
   /// هل تمت المزامنة الأولية لجدول معين؟

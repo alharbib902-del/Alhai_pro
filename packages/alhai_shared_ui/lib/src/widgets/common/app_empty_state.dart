@@ -211,6 +211,9 @@ class AppEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final defaultIconColor = iconColor ?? theme.colorScheme.onSurfaceVariant;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -222,13 +225,13 @@ class AppEmptyState extends StatelessWidget {
               width: iconSize * 1.5,
               height: iconSize * 1.5,
               decoration: BoxDecoration(
-                color: (iconColor ?? AppColors.grey400).withValues(alpha: 0.1),
+                color: defaultIconColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: iconSize,
-                color: iconColor ?? AppColors.grey400,
+                color: defaultIconColor,
               ),
             ),
 
@@ -238,7 +241,7 @@ class AppEmptyState extends StatelessWidget {
             Text(
               title,
               style: AppTypography.titleLarge.copyWith(
-                color: AppColors.textPrimary,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -249,7 +252,7 @@ class AppEmptyState extends StatelessWidget {
               Text(
                 description!,
                 style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -326,6 +329,8 @@ class AppErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -353,7 +358,7 @@ class AppErrorState extends StatelessWidget {
             Text(
               message,
               style: AppTypography.titleLarge.copyWith(
-                color: AppColors.textPrimary,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -364,7 +369,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 details!,
                 style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -427,7 +432,7 @@ class AppLoadingState extends StatelessWidget {
             Text(
               message!,
               style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],

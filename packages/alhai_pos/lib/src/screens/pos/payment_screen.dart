@@ -972,7 +972,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       final subtotal = cartState.subtotal;
       final tax = subtotal * 0.15;
 
-      final saleId = await saleService.createSale(
+      final saleResult = await saleService.createSale(
         storeId: resolvedStoreId,
         cashierId: resolvedCashierId,
         items: cartState.items,
@@ -984,6 +984,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         customerId: cartState.customerId,
         notes: cartState.notes,
       );
+      final saleId = saleResult.saleId;
+
+      if (saleResult.hadPriceCorrections) {
+        for (final correction in saleResult.priceCorrections) {
+          debugPrint('[PaymentScreen] Price corrected at sale time: $correction');
+        }
+      }
 
       // معالجة نقاط الولاء بعد إتمام البيع (غير مؤثرة على البيع إذا فشلت)
       if (cartState.customerId != null && cartState.customerId!.isNotEmpty) {

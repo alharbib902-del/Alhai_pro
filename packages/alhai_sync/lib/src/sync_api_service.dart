@@ -47,6 +47,23 @@ class SyncApiService {
         onConflict: 'id',
       ).timeout(const Duration(seconds: 30));
     } on PostgrestException catch (e) {
+      // FK violation على customer_id → إعادة المحاولة بدون العميل
+      if (_isForeignKeyError(e) && cleanPayload.containsKey('customer_id')) {
+        if (kDebugMode) {
+          debugPrint('Sync: FK error on $tableName customer_id, retrying without it');
+        }
+        final retryPayload = Map<String, dynamic>.from(cleanPayload)
+          ..remove('customer_id');
+        try {
+          await _client.from(tableName).upsert(
+            retryPayload,
+            onConflict: 'id',
+          ).timeout(const Duration(seconds: 30));
+          return; // نجحت بدون customer_id
+        } catch (_) {
+          // الخطأ الثاني — نرمي الخطأ الأصلي
+        }
+      }
       if (kDebugMode) {
         debugPrint('Sync upsert DB error for $tableName: ${e.code} ${e.message}');
       }
@@ -62,6 +79,14 @@ class SyncApiService {
       }
       rethrow;
     }
+  }
+
+  /// هل الخطأ من نوع FK violation؟
+  bool _isForeignKeyError(PostgrestException e) {
+    // PostgreSQL error code 23503 = foreign_key_violation
+    return e.code == '23503' ||
+        (e.message?.contains('foreign key') ?? false) ||
+        (e.message?.contains('violates foreign key') ?? false);
   }
 
   /// حذف سجل
@@ -94,8 +119,8 @@ class SyncApiService {
   /// تنظيف الحمولة من الحقول المحلية فقط
   Map<String, dynamic> _cleanPayload(
       String tableName, Map<String, dynamic> payload) {
-    // Remove local-only fields, then convert to snake_case for Supabase
-    return toSnakeCase(cleanSyncPayload(payload, removeItems: false));
+    // Remove local-only fields (including embedded items), then convert to snake_case for Supabase
+    return toSnakeCase(cleanSyncPayload(payload, removeItems: true));
   }
 
   /// مزامنة مجموعة عمليات (batch)

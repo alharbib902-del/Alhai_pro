@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
+import '../conflict_resolver.dart';
 import '../json_converter.dart';
 import '../org_sync_service.dart';
 import '../sync_payload_utils.dart';
@@ -23,10 +24,21 @@ class PushStrategy {
   final SupabaseClient _client;
   final SyncQueueDao _syncQueueDao;
   final SyncMetadataDao _metadataDao;
+  final ConflictResolver _conflictResolver;
   final JsonColumnConverter _jsonConverter = JsonColumnConverter.instance;
 
   /// الجداول التي يتم دفعها للسيرفر
   /// هذه البيانات تُنشأ محلياً على نقطة البيع وتُرسل للسيرفر
+  ///
+  /// NOTE: 'customers' is NOT here — it is in BidirectionalStrategy only,
+  /// because customers can be modified both locally and from the admin panel.
+  ///
+  /// WARNING: 'cash_movements' and 'audit_log' do NOT exist as tables in
+  /// Supabase yet. They are tracked locally in Drift but push will fail with
+  /// a 404/42P01 "relation does not exist" error. These tables are kept in
+  /// the list so that when the corresponding Supabase migration is applied,
+  /// sync will work automatically. Until then, [_tablesNotInSupabase] skips
+  /// them with a clear debug log instead of wasting retry attempts.
   static const List<String> pushTables = [
     'sales',
     'sale_items',
@@ -41,6 +53,17 @@ class PushStrategy {
     'whatsapp_messages',
   ];
 
+  /// Tables listed in [pushTables] that do not yet have a corresponding table
+  /// in Supabase. Push operations for these tables are skipped and the queue
+  /// items are marked as conflicts immediately with a descriptive message,
+  /// instead of retrying 5 times and failing silently.
+  ///
+  /// Remove a table from this set once the Supabase migration is applied.
+  static const Set<String> _tablesNotInSupabase = {
+    'cash_movements',
+    'audit_log',
+  };
+
   /// الحد الأقصى لعدد المحاولات
   static const int maxRetries = 5;
 
@@ -51,9 +74,11 @@ class PushStrategy {
     required SupabaseClient client,
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
+    ConflictResolver conflictResolver = const ConflictResolver(),
   })  : _client = client,
         _syncQueueDao = db.syncQueueDao,
-        _metadataDao = metadataDao;
+        _metadataDao = metadataDao,
+        _conflictResolver = conflictResolver;
 
   /// تنفيذ الدفع لجميع العناصر المعلقة
   Future<PushResult> pushPending() async {
@@ -74,6 +99,21 @@ class PushStrategy {
           .toList();
 
       for (final item in itemsToPush) {
+        // Skip tables that don't exist in Supabase yet — mark as conflict
+        // immediately with a clear message instead of wasting retry attempts.
+        if (_tablesNotInSupabase.contains(item.tableName_)) {
+          final msg =
+              'Table "${item.tableName_}" does not exist in Supabase yet. '
+              'Skipping push — apply the Supabase migration first.';
+          await _syncQueueDao.markAsConflict(item.id, msg);
+          failedCount++;
+          errors.add('${item.tableName_}/${item.recordId}: $msg');
+          if (kDebugMode) {
+            debugPrint('PushStrategy: $msg (record: ${item.recordId})');
+          }
+          continue;
+        }
+
         try {
           // تعيين كـ "جاري المزامنة"
           await _syncQueueDao.markAsSyncing(item.id);
@@ -88,29 +128,228 @@ class PushStrategy {
             payload: payload,
           );
 
+          // حماية المبيعات: لا نحذف من الطابور حتى نتأكد من وجود البيع محلياً
+          if (_isSacredTable(item.tableName_) && item.operation.toUpperCase() != 'DELETE') {
+            final localId = payload['id'] as String?;
+            if (localId != null) {
+              // فحص بسيط: تأكد أن الـ ID موجود وصالح
+              if (localId.isEmpty) {
+                // إعادة إضافة للطابور بدلاً من فقدان البيانات
+                await _syncQueueDao.markAsFailed(
+                  item.id,
+                  'Sacred data protection: empty ID after push',
+                );
+                failedCount++;
+                errors.add('${item.tableName_}/${item.recordId}: Sacred data verification failed');
+                if (kDebugMode) {
+                  debugPrint(
+                    'PushStrategy: Sacred data (${ item.tableName_}) verification failed - re-queued');
+                }
+                continue;
+              }
+            }
+          }
+
           // نجاح: تعيين كـ "تمت المزامنة"
           await _syncQueueDao.markAsSynced(item.id);
           successCount++;
         } on PostgrestException catch (e) {
           failedCount++;
-          errors.add('${item.tableName_}/${item.recordId}: DB ${e.code}: ${e.message}');
-          await _syncQueueDao.markAsFailed(item.id, 'DB ${e.code}: ${e.message}');
+          final errorMsg = 'DB ${e.code}: ${e.message}';
+          errors.add('${item.tableName_}/${item.recordId}: $errorMsg');
+          final payload = jsonDecode(item.payload) as Map<String, dynamic>;
 
           if (kDebugMode) {
             debugPrint(
                 'Push DB error for ${item.tableName_}/${item.recordId}: ${e.code} ${e.message}');
           }
 
-          if (item.retryCount + 1 >= maxRetries) {
-            await _syncQueueDao.markAsConflict(
-              item.id,
-              'Max retries reached (DB error): ${e.message}',
+          // --- Conflict Type Detection ---
+
+          // A. Schema mismatch: table/column does not exist (42P01)
+          final isTableMissing = e.code == '42P01' ||
+              (e.message.contains('relation') &&
+                  e.message.contains('does not exist'));
+          if (isTableMissing) {
+            final conflict = SyncConflict(
+              syncQueueId: item.id,
+              tableName: item.tableName_,
+              recordId: item.recordId,
+              type: ConflictType.schemaMismatch,
+              operation: item.operation,
+              localData: payload,
+              errorMessage: errorMsg,
             );
+            await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            if (kDebugMode) {
+              debugPrint(
+                  'PushStrategy: Table "${item.tableName_}" missing from Supabase - '
+                  'marked as schemaMismatch conflict (no retry).');
+            }
+            continue;
+          }
+
+          // B. Duplicate key conflict (PostgreSQL 23505 unique_violation)
+          if (e.code == '23505') {
+            if (kDebugMode) {
+              debugPrint(
+                  'PushStrategy: Duplicate key for ${item.tableName_}/${item.recordId} - '
+                  'auto-resolving by converting to UPSERT');
+            }
+            // Auto-resolve: retry as upsert instead of insert
+            try {
+              await _executeUpsert(
+                tableName: item.tableName_,
+                payload: payload,
+              );
+              await _syncQueueDao.markAsSynced(item.id);
+              successCount++;
+              failedCount--; // undo the increment above
+              errors.removeLast(); // undo the error added above
+              if (kDebugMode) {
+                debugPrint(
+                    'PushStrategy: Duplicate key auto-resolved via UPSERT for '
+                    '${item.tableName_}/${item.recordId}');
+              }
+            } catch (upsertError) {
+              final conflict = SyncConflict(
+                syncQueueId: item.id,
+                tableName: item.tableName_,
+                recordId: item.recordId,
+                type: ConflictType.duplicateKey,
+                operation: item.operation,
+                localData: payload,
+                errorMessage: 'UPSERT fallback failed: $upsertError',
+              );
+              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            }
+            continue;
+          }
+
+          // C. Version conflict (HTTP 409 Conflict or updated_at mismatch)
+          final isVersionConflict = e.code == '409' ||
+              (e.message.contains('conflict') || e.message.contains('409'));
+          if (isVersionConflict) {
+            // Fetch server version to store both sides
+            Map<String, dynamic>? serverData;
+            try {
+              final response = await _client
+                  .from(item.tableName_)
+                  .select()
+                  .eq('id', item.recordId)
+                  .maybeSingle()
+                  .timeout(const Duration(seconds: 10));
+              serverData = response;
+            } catch (_) {
+              // Best effort - may not get server data
+            }
+
+            final conflict = SyncConflict(
+              syncQueueId: item.id,
+              tableName: item.tableName_,
+              recordId: item.recordId,
+              type: ConflictType.versionConflict,
+              operation: item.operation,
+              localData: payload,
+              serverData: serverData,
+              errorMessage: errorMsg,
+            );
+
+            // Try auto-resolution
+            final resolution = await _conflictResolver.resolve(conflict);
+            if (resolution.resolved && resolution.resolvedData != null) {
+              try {
+                await _executeUpsert(
+                  tableName: item.tableName_,
+                  payload: resolution.resolvedData!,
+                );
+                await _syncQueueDao.markAsSynced(item.id);
+                successCount++;
+                failedCount--;
+                errors.removeLast();
+                if (kDebugMode) {
+                  debugPrint(
+                      'PushStrategy: Version conflict auto-resolved (${resolution.strategy.name}) '
+                      'for ${item.tableName_}/${item.recordId}: ${resolution.description}');
+                }
+              } catch (resolveError) {
+                await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+              }
+            } else {
+              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            }
+            continue;
+          }
+
+          // D. Delete-Update conflict: local UPDATE but server record deleted (404 on row)
+          final isRecordNotFound = e.code == 'PGRST116' ||
+              (e.message.contains('not found') ||
+                  e.message.contains('0 rows'));
+          if (isRecordNotFound && item.operation.toUpperCase() == 'UPDATE') {
+            final conflict = SyncConflict(
+              syncQueueId: item.id,
+              tableName: item.tableName_,
+              recordId: item.recordId,
+              type: ConflictType.deleteUpdate,
+              operation: item.operation,
+              localData: payload,
+              serverData: null, // record was deleted on server
+              errorMessage: 'Record deleted on server, local has update: $errorMsg',
+            );
+
+            final resolution = await _conflictResolver.resolve(conflict);
+            if (resolution.resolved && resolution.resolvedData != null) {
+              try {
+                // Re-create the record on server using the resolved data
+                await _executeUpsert(
+                  tableName: item.tableName_,
+                  payload: resolution.resolvedData!,
+                );
+                await _syncQueueDao.markAsSynced(item.id);
+                successCount++;
+                failedCount--;
+                errors.removeLast();
+                if (kDebugMode) {
+                  debugPrint(
+                      'PushStrategy: Delete-update conflict auto-resolved (${resolution.strategy.name}) '
+                      'for ${item.tableName_}/${item.recordId}');
+                }
+              } catch (resolveError) {
+                await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+              }
+            } else {
+              await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
+            }
+            continue;
+          }
+
+          // E. Other DB errors: standard retry with backoff
+          await _syncQueueDao.markAsFailed(item.id, errorMsg);
+          if (item.retryCount + 1 >= maxRetries) {
+            final conflict = SyncConflict(
+              syncQueueId: item.id,
+              tableName: item.tableName_,
+              recordId: item.recordId,
+              type: ConflictType.versionConflict,
+              operation: item.operation,
+              localData: payload,
+              errorMessage: 'Max retries reached (DB error): ${e.message}',
+            );
+            await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
           }
         } on TimeoutException {
           failedCount++;
           errors.add('${item.tableName_}/${item.recordId}: Timeout');
-          await _syncQueueDao.markAsFailed(item.id, 'Network timeout');
+
+          final conflict = SyncConflict(
+            syncQueueId: item.id,
+            tableName: item.tableName_,
+            recordId: item.recordId,
+            type: ConflictType.networkTimeout,
+            operation: item.operation,
+            errorMessage: 'Network timeout',
+          );
+          await _syncQueueDao.markAsFailed(item.id, conflict.toJsonString());
 
           if (kDebugMode) {
             debugPrint(
@@ -120,14 +359,13 @@ class PushStrategy {
           if (item.retryCount + 1 >= maxRetries) {
             await _syncQueueDao.markAsConflict(
               item.id,
-              'Max retries reached (timeout)',
+              conflict.toJsonString(),
             );
           }
         } catch (e) {
           failedCount++;
           errors.add('${item.tableName_}/${item.recordId}: $e');
 
-          // فشل: زيادة عداد المحاولات
           await _syncQueueDao.markAsFailed(item.id, e.toString());
 
           if (kDebugMode) {
@@ -135,7 +373,6 @@ class PushStrategy {
                 'Push failed for ${item.tableName_}/${item.recordId}: $e');
           }
 
-          // إذا وصلنا للحد الأقصى، نعلم كتعارض
           if (item.retryCount + 1 >= maxRetries) {
             await _syncQueueDao.markAsConflict(
               item.id,
@@ -206,6 +443,38 @@ class PushStrategy {
         break;
     }
   }
+
+  /// Execute an upsert (INSERT ... ON CONFLICT UPDATE) on the server
+  ///
+  /// Used for:
+  /// - Auto-resolving duplicate key conflicts (23505)
+  /// - Re-creating records after delete-update conflict resolution
+  /// - Applying resolved version conflict data
+  Future<void> _executeUpsert({
+    required String tableName,
+    required Map<String, dynamic> payload,
+  }) async {
+    final remotePayload = _jsonConverter.toRemote(tableName, payload);
+    final cleanPayload = _cleanPayload(remotePayload);
+    final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
+
+    if (OrgTables.all.contains(tableName)) return;
+
+    await _client.from(tableName).upsert(
+          mappedPayload,
+          onConflict: 'id',
+        ).timeout(const Duration(seconds: 30));
+  }
+
+  /// الجداول المقدسة التي لا يجوز فقدان بياناتها
+  /// Sales are sacred - never lose sale data
+  static const Set<String> _sacredTables = {
+    'sales',
+    'sale_items',
+  };
+
+  /// هل هذا جدول مقدس (لا يمكن فقدان بياناته)؟
+  bool _isSacredTable(String tableName) => _sacredTables.contains(tableName);
 
   /// تنظيف الحقول المحلية قبل الإرسال
   Map<String, dynamic> _cleanPayload(Map<String, dynamic> payload) {

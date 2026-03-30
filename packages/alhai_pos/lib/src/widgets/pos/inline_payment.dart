@@ -67,12 +67,14 @@ class PaymentResult {
 class InlinePayment extends StatefulWidget {
   final double total;
   final double creditLimit;
+  final String storeId;
   final VoidCallback? onCancel;
   final void Function(PaymentResult result)? onComplete;
 
   const InlinePayment({
     super.key,
     required this.total,
+    required this.storeId,
     this.creditLimit = 500.0,
     this.onCancel,
     this.onComplete,
@@ -115,7 +117,9 @@ class _InlinePaymentState extends State<InlinePayment> {
   void _calculateChange() {
     final paid = double.tryParse(_amountController.text) ?? 0;
     setState(() {
-      _change = paid - widget.total;
+      final diff = paid - widget.total;
+      // تجنب floating point: إذا الفرق أقل من 0.01 (هللة) يعتبر صفر
+      _change = diff.abs() < 0.01 ? 0 : diff;
     });
   }
 
@@ -140,7 +144,7 @@ class _InlinePaymentState extends State<InlinePayment> {
   double get _splitRemaining => widget.total - _splitTotalPaid;
 
   Future<void> _selectCustomer() async {
-    final customer = await CustomerSearchDialog.show(context);
+    final customer = await CustomerSearchDialog.show(context, storeId: widget.storeId);
     if (customer != null && mounted) {
       setState(() {
         _selectedCustomer = customer;
@@ -207,7 +211,9 @@ class _InlinePaymentState extends State<InlinePayment> {
         );
         return;
       }
-      if (paid < widget.total) {
+      // tolerance 0.01 (هللة) لتجنب خطأ floating point
+      // مثال: 166.70 يُقرأ 166.6999... وهو أقل تقنياً
+      if (paid < widget.total - 0.01) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('المبلغ المستلم أقل من الإجمالي'),
@@ -295,57 +301,58 @@ class _InlinePaymentState extends State<InlinePayment> {
           color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // العنوان
-          Row(
-            children: [
-              Icon(Icons.payment, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                l10n.payment,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              if (widget.onCancel != null)
-                IconButton(
-                  icon: const Icon(Icons.close, size: 20),
-                  onPressed: widget.onCancel,
-                  visualDensity: VisualDensity.compact,
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // الإجمالي
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // العنوان
+            Row(
               children: [
-                Text(l10n.total, style: theme.textTheme.bodyLarge),
+                Icon(Icons.payment, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
                 Text(
-                  CurrencyFormatter.formatWithContext(context, widget.total),
-                  style: theme.textTheme.headlineSmall?.copyWith(
+                  l10n.payment,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
                   ),
                 ),
+                const Spacer(),
+                if (widget.onCancel != null)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: widget.onCancel,
+                    visualDensity: VisualDensity.compact,
+                  ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // طرق الدفع
-          Row(
+            // الإجمالي
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.total, style: theme.textTheme.bodyLarge),
+                  Text(
+                    CurrencyFormatter.formatWithContext(context, widget.total),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // طرق الدفع
+            Row(
             children: PaymentMethod.values.map((method) {
               final isSelected = _selectedMethod == method;
               return Expanded(
@@ -381,6 +388,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

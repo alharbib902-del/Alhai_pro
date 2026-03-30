@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
@@ -78,11 +79,25 @@ class ReceiptPrinterService {
       );
 
       // عرض dialog الطباعة/المعاينة
-      await Printing.layoutPdf(
-        name: 'فاتورة ${sale.receiptNo}',
-        format: const PdfPageFormat(80 * PdfPageFormat.mm, double.infinity),
-        onLayout: (_) => pdfBytes,
-      );
+      // على الويب: layoutPdf قد يفشل بسبب SecurityError (cross-origin iframe)
+      // في هذه الحالة نستخدم sharePdf كبديل (يفتح PDF في تاب جديد)
+      try {
+        await Printing.layoutPdf(
+          name: 'فاتورة ${sale.receiptNo}',
+          format: const PdfPageFormat(80 * PdfPageFormat.mm, double.infinity),
+          onLayout: (_) => pdfBytes,
+        );
+      } catch (printError) {
+        if (kIsWeb) {
+          debugPrint('layoutPdf failed on web, falling back to sharePdf: $printError');
+          await Printing.sharePdf(
+            bytes: pdfBytes,
+            filename: 'receipt_${sale.receiptNo}.pdf',
+          );
+        } else {
+          rethrow;
+        }
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

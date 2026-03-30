@@ -76,6 +76,31 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase> with _$SaleItemsDaoMixi
     )).toList();
   }
 
+  /// حساب إجمالي عدد الأصناف لعدة مبيعات دفعة واحدة (بدلاً من N+1)
+  Future<int> getTotalItemsCountForSales(List<String> saleIds) async {
+    if (saleIds.isEmpty) return 0;
+
+    // تقسيم إلى دفعات لتجنب تجاوز حد SQLite للمتغيرات
+    int total = 0;
+    const batchSize = 500;
+    for (var i = 0; i < saleIds.length; i += batchSize) {
+      final batch = saleIds.sublist(
+        i,
+        i + batchSize > saleIds.length ? saleIds.length : i + batchSize,
+      );
+      final placeholders = List.filled(batch.length, '?').join(', ');
+      final result = await customSelect(
+        'SELECT COALESCE(SUM(qty), 0) as total FROM sale_items WHERE sale_id IN ($placeholders)',
+        variables: batch.map((id) => Variable.withString(id)).toList(),
+      ).getSingle();
+
+      total += (result.data['total'] is int)
+          ? result.data['total'] as int
+          : (result.data['total'] as double?)?.toInt() ?? 0;
+    }
+    return total;
+  }
+
   /// أكثر المنتجات مبيعاً مع التفاصيل
   Future<List<ProductSalesSummary>> getTopSellingProducts(
     String storeId, {
