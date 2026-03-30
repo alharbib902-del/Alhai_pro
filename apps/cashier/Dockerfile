@@ -39,7 +39,7 @@ ARG WASENDER_DEVICE_ID=
 ARG WASENDER_PHONE=
 ARG WASENDER_NAME=بقالة الحي
 ARG WASENDER_WEBHOOK_SECRET=
-ARG AI_SERVER_URL=https://believable-art-production-d981.up.railway.app
+ARG AI_SERVER_URL=https://api.alhai.store
 ARG ENV=production
 
 RUN flutter build web --release --no-tree-shake-icons \

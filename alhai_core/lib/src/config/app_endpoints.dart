@@ -20,7 +20,7 @@ class AppEndpoints {
   // AI Service
   static const String aiProduction = String.fromEnvironment(
     'AI_SERVER_URL',
-    defaultValue: 'https://believable-art-production-d981.up.railway.app',
+    defaultValue: 'https://api.alhai.store',
   );
   static const String aiDebug = String.fromEnvironment(
     'AI_DEBUG_URL',
