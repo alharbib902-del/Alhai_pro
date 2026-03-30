@@ -21,6 +21,11 @@ WORKDIR /app
 # Copy entire monorepo (needed for path dependencies)
 COPY . .
 
+# Fix Windows backslash paths in pubspec_overrides.yaml files for Linux
+RUN find /app -name "pubspec_overrides.yaml" -exec sed -i 's|\\\\|/|g' {} + 2>/dev/null; \
+    find /app -name "pubspec_overrides.yaml" -exec sed -i 's|\\|/|g' {} + 2>/dev/null; \
+    true
+
 # Get dependencies
 WORKDIR /app/apps/cashier
 RUN flutter pub get
