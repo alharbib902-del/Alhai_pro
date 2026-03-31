@@ -156,6 +156,12 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       route: AppRoutes.notificationsCenter,
     ),
     _NavItem(
+      id: 'settings',
+      label: 'Settings',
+      icon: Icons.settings_outlined,
+      route: AppRoutes.settings,
+    ),
+    _NavItem(
       id: 'profile',
       label: 'Profile',
       icon: Icons.person_outline,
@@ -181,6 +187,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
       case 'reports': return l10n.reports;
       case 'sync': return l10n.syncStatusTitle;
       case 'notifications': return l10n.notifications;
+      case 'settings': return l10n.settings;
       case 'profile': return l10n.profileTitle;
       default: return item.label;
     }
@@ -204,8 +211,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
     if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/reports')) return 'reports';
     if (location.startsWith('/sync')) return 'sync';
+    if (location.startsWith('/settings')) return 'settings';
     if (location.startsWith('/profile')) return 'profile';
-    if (location.startsWith('/settings')) return 'profile';
 
     return 'pos'; // default
   }
