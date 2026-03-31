@@ -15,6 +15,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة الاستبدال
@@ -140,8 +141,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
@@ -626,7 +627,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Exchange completed successfully'),
+          content: Text('تم الاستبدال بنجاح'),
           backgroundColor: AppColors.success,
         ),
       );

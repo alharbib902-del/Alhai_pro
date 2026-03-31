@@ -5,6 +5,7 @@
 library;
 
 import 'dart:async';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,8 +94,8 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
@@ -251,7 +252,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 child: FilledButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Scan or enter barcode'),
+                      const SnackBar(content: Text('امسح أو أدخل الباركود'),
                           backgroundColor: AppColors.info),
                     );
                   },
@@ -633,7 +634,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inventory updated'), backgroundColor: AppColors.success),
+        const SnackBar(content: Text('تم تحديث المخزون'), backgroundColor: AppColors.success),
       );
 
       // Clear form

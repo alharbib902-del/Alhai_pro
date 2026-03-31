@@ -12,6 +12,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/utils/cache_cleaner.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Main settings hub screen
@@ -28,8 +29,8 @@ class _CashierSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -37,7 +38,7 @@ class _CashierSettingsScreenState
       children: [
         AppHeader(
           title: l10n.settings,
-          subtitle: 'Manage your preferences',
+          subtitle: 'إدارة التفضيلات',
           showSearch: false,
           onMenuTap: isWideScreen
               ? null
@@ -64,77 +65,77 @@ class _CashierSettingsScreenState
       _SettingsItem(
         icon: Icons.store_rounded,
         title: l10n.storeInfo,
-        subtitle: 'Name, Address & Logo',
+        subtitle: 'الاسم، العنوان والشعار',
         color: AppColors.primary,
         route: AppRoutes.settingsStore,
       ),
       _SettingsItem(
         icon: Icons.receipt_long_rounded,
         title: l10n.taxSettings,
-        subtitle: 'VAT & Tax Number',
+        subtitle: l10n.taxSettingsSubtitle,
         color: AppColors.info,
         route: AppRoutes.settingsTax,
       ),
       _SettingsItem(
         icon: Icons.receipt_rounded,
         title: l10n.receiptSettings,
-        subtitle: 'Header, Footer & Logo',
+        subtitle: 'رأس وتذييل الفاتورة والشعار',
         color: AppColors.secondary,
         route: AppRoutes.settingsReceipt,
       ),
-      const _SettingsItem(
+      _SettingsItem(
         icon: Icons.payment_rounded,
-        title: 'Payment Devices',
-        subtitle: 'mada, STC Pay, Apple Pay',
+        title: l10n.paymentDevicesSettings,
+        subtitle: l10n.paymentDevicesSubtitle,
         color: AppColors.card,
         route: AppRoutes.settingsPaymentDevices,
       ),
       _SettingsItem(
         icon: Icons.print_rounded,
         title: l10n.printerSettings,
-        subtitle: 'Thermal, A4, Network',
+        subtitle: l10n.printerSettingsSubtitle,
         color: AppColors.warning,
         route: AppRoutes.settingsPrinter,
       ),
       _SettingsItem(
         icon: Icons.keyboard_rounded,
         title: l10n.keyboardShortcuts,
-        subtitle: 'POS, Payment & Navigation',
+        subtitle: 'نقطة البيع، الدفع والتنقل',
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         route: AppRoutes.settingsKeyboardShortcuts,
       ),
-      const _SettingsItem(
+      _SettingsItem(
         icon: Icons.people_rounded,
-        title: 'Users & Permissions',
-        subtitle: 'Roles & Access',
+        title: 'المستخدمين والصلاحيات',
+        subtitle: 'الأدوار والوصول',
         color: AppColors.credit,
         route: AppRoutes.settingsUsers,
       ),
       _SettingsItem(
         icon: Icons.backup_rounded,
         title: l10n.backup,
-        subtitle: 'Auto backup & restore',
+        subtitle: 'نسخ احتياطي واستعادة تلقائية',
         color: AppColors.error,
         route: AppRoutes.settingsBackup,
       ),
-      const _SettingsItem(
+      _SettingsItem(
         icon: Icons.privacy_tip_rounded,
-        title: 'سياسة الخصوصية',
-        subtitle: 'Privacy & Data Rights',
+        title: l10n.privacyPolicy,
+        subtitle: 'الخصوصية وحقوق البيانات',
         color: AppColors.info,
         route: AppRoutes.settingsPrivacy,
       ),
       _SettingsItem(
         icon: Icons.language_rounded,
         title: l10n.language,
-        subtitle: 'Arabic/English',
+        subtitle: 'عربي/إنجليزي',
         color: AppColors.primaryDark,
         route: AppRoutes.settingsLanguage,
       ),
       _SettingsItem(
         icon: Icons.palette_rounded,
         title: l10n.theme,
-        subtitle: 'Dark/Light Mode',
+        subtitle: 'الوضع الداكن/الفاتح',
         color: AppColors.secondaryDark,
         route: AppRoutes.settingsTheme,
       ),

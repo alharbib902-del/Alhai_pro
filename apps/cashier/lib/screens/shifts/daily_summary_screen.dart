@@ -11,6 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة ملخص اليوم
@@ -20,8 +21,8 @@ class DailySummaryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);

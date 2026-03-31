@@ -16,6 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/backup_manager.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Backup management screen
@@ -122,7 +123,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Backup completed — ${bundle.totalRows} rows, ${bundle.sizeMb.toStringAsFixed(1)} MB',
+              'اكتمل النسخ الاحتياطي — ${bundle.totalRows} صف، ${bundle.sizeMb.toStringAsFixed(1)} ميجابايت',
             ),
             backgroundColor: AppColors.success,
           ),
@@ -135,7 +136,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Backup failed: $e'),
+            content: Text('فشل النسخ الاحتياطي: $e'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -166,7 +167,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Backup Complete',
+                'اكتمل النسخ الاحتياطي',
                 style: TextStyle(color: AppColors.getTextPrimary(isDark)),
               ),
             ),
@@ -185,7 +186,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Copy the backup data to clipboard to save or share it.',
+              'انسخ بيانات النسخ الاحتياطي للحافظة لحفظها أو مشاركتها.',
               style: TextStyle(
                 fontSize: 13,
                 color: AppColors.getTextMuted(isDark),
@@ -196,7 +197,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
+            child: const Text('إغلاق'),
           ),
           FilledButton.icon(
             onPressed: () {
@@ -204,13 +205,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Backup copied to clipboard'),
+                  content: Text('تم نسخ النسخة الاحتياطية للحافظة'),
                   backgroundColor: AppColors.info,
                 ),
               );
             },
             icon: const Icon(Icons.copy_rounded, size: 18),
-            label: const Text('Copy to Clipboard'),
+            label: const Text('نسخ للحافظة'),
           ),
         ],
       ),
@@ -408,8 +409,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -417,7 +418,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       children: [
         AppHeader(
           title: l10n.backup,
-          subtitle: 'Backup & Restore',
+          subtitle: l10n.backupSettings,
           showSearch: false,
           leading: IconButton(
             icon: Icon(

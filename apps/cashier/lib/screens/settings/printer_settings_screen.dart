@@ -15,6 +15,7 @@ import '../../core/services/sentry_service.dart';
 import '../../services/printing/print_service.dart';
 import '../../services/printing/printing_providers.dart'
     hide autoPrintEnabledProvider;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 
 /// Printer settings screen
 class PrinterSettingsScreen extends ConsumerStatefulWidget {
@@ -235,7 +236,7 @@ class _PrinterSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isMediumScreen = size.width > 600;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 

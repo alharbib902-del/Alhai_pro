@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -81,7 +82,7 @@ class _AddPaymentDeviceScreenState
         setState(() => _testPassed = true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Connection successful'),
+            content: Text('تم الاتصال بنجاح'),
             backgroundColor: AppColors.success,
           ),
         );
@@ -91,7 +92,7 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Connection failed: $e'),
+            content: Text('فشل الاتصال: $e'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -128,7 +129,7 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Device saved'),
+            content: Text('تم حفظ الجهاز'),
             backgroundColor: AppColors.success,
           ),
         );
@@ -139,7 +140,7 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving settings: $e'),
+            content: Text('خطأ في حفظ الإعدادات: $e'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -152,16 +153,16 @@ class _AddPaymentDeviceScreenState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isWideScreen = size.width > 900;
-    final isMediumScreen = size.width > 600;
+    final isWideScreen = size.width >= AlhaiBreakpoints.desktop;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
         AppHeader(
-          title: 'Add Payment Device',
-          subtitle: 'Configure new device',
+          title: 'إضافة جهاز دفع',
+          subtitle: 'إعداد جهاز جديد',
           showSearch: false,
           leading: IconButton(
             icon: Icon(

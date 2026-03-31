@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Privacy policy and data rights screen
@@ -19,7 +20,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final isMediumScreen = size.width > 600;
+    final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
@@ -27,7 +28,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
       children: [
         AppHeader(
           title: 'سياسة الخصوصية',
-          subtitle: 'Privacy Policy',
+          subtitle: 'الخصوصية وحقوق البيانات',
           showSearch: false,
           leading: IconButton(
             icon: Icon(
