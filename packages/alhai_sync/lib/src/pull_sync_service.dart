@@ -172,16 +172,30 @@ class PullSyncService {
 
     final skippedCount = records.length - filteredRecords.length;
 
-    if (skippedCount > 0 && kDebugMode) {
-      // Log each skipped record for debugging and visibility
+    if (skippedCount > 0) {
+      // Track conflicts instead of silently skipping
       final skippedRecords = records.where((r) => pendingIds.contains(r['id']));
-      final strategy = _conflictResolver.getStrategy(tableName, ConflictType.versionConflict);
-      for (final skippedRecord in skippedRecords) {
-        final recordId = skippedRecord['id'] as String? ?? 'unknown';
-        debugPrint(
-          '[PullSync] Conflict: skipped $tableName/$recordId '
-          '(pending local push, server has update, strategy: ${strategy.name})',
-        );
+      for (final record in skippedRecords) {
+        final recordId = record['id'] as String? ?? 'unknown';
+        try {
+          await _syncQueueDao.insertConflict(
+            tableName: tableName,
+            recordId: recordId,
+            serverData: record,
+            reason: 'pull_skip_pending_local',
+          );
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('[PullSync] Failed to track conflict for $tableName/$recordId: $e');
+          }
+        }
+        if (kDebugMode) {
+          final strategy = _conflictResolver.getStrategy(tableName, ConflictType.versionConflict);
+          debugPrint(
+            '[PullSync] Conflict: skipped $tableName/$recordId '
+            '(pending local push, server has update, strategy: ${strategy.name})',
+          );
+        }
       }
     }
 

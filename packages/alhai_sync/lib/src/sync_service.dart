@@ -400,6 +400,11 @@ class SyncService {
     return health.isOverloaded;
   }
 
+  /// Reset all items stuck in 'syncing' status back to 'pending' (crash recovery)
+  Future<int> resetStuckItems() {
+    return _syncQueueDao.resetStuckItems();
+  }
+
   /// استعادة العناصر العالقة في حالة 'syncing' لأكثر من 5 دقائق
   Future<int> recoverStuckSyncingItems({
     Duration stuckThreshold = const Duration(minutes: 5),

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
 
 import '../app_database.dart';
 import '../tables/sync_queue_table.dart';
@@ -137,6 +140,16 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
       .watch();
   }
 
+  /// Reset items stuck in 'syncing' status (from app crash) back to 'pending'
+  Future<int> resetStuckItems() async {
+    return (update(syncQueueTable)
+      ..where((t) => t.status.equals('syncing'))
+    ).write(SyncQueueTableCompanion(
+      status: const Value('pending'),
+      lastAttemptAt: Value(DateTime.now()),
+    ));
+  }
+
   /// الحصول على العناصر العالقة في حالة 'syncing' (بسبب إغلاق مفاجئ أو خطأ)
   Future<List<SyncQueueTableData>> getStuckSyncingItems() {
     return (select(syncQueueTable)
@@ -244,6 +257,77 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
           q.status.equals('synced') &
           q.syncedAt.isSmallerThanValue(thirtyDaysAgo)))
         .go();
+  }
+
+  // ==================== Conflict Tracking ====================
+
+  /// Insert a conflict record into the sync queue for tracking
+  /// instead of silently skipping records during pull sync
+  Future<void> insertConflict({
+    required String tableName,
+    required String recordId,
+    required Map<String, dynamic> serverData,
+    required String reason,
+  }) async {
+    final now = DateTime.now();
+    final id = const Uuid().v4();
+    await into(syncQueueTable).insert(
+      SyncQueueTableCompanion.insert(
+        id: id,
+        tableName_: tableName,
+        recordId: recordId,
+        operation: 'CONFLICT',
+        payload: jsonEncode(serverData),
+        idempotencyKey: 'conflict_${tableName}_${recordId}_${now.millisecondsSinceEpoch}',
+        status: const Value('conflict'),
+        priority: const Value(1),
+        createdAt: now,
+        lastError: Value(reason),
+      ),
+    );
+  }
+
+  /// Get a single sync queue item by its ID
+  Future<SyncQueueTableData?> getById(String id) {
+    return (select(syncQueueTable)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  /// Mark a conflict as resolved
+  Future<int> markAsResolved(String id) {
+    return (update(syncQueueTable)..where((t) => t.id.equals(id)))
+        .write(SyncQueueTableCompanion(
+          status: const Value('resolved'),
+          syncedAt: Value(DateTime.now()),
+        ));
+  }
+
+  // ==================== Sync Audit Log Queries ====================
+
+  /// Get recent sync activity for display in sync status screen
+  Future<List<SyncQueueTableData>> getRecentActivity({int limit = 50}) async {
+    return (select(syncQueueTable)
+      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])
+      ..limit(limit)
+    ).get();
+  }
+
+  /// Get conflict count for badge display
+  Future<int> getConflictCount() async {
+    final result = await customSelect(
+      "SELECT COUNT(*) as count FROM sync_queue WHERE status = 'conflict'",
+      readsFrom: {syncQueueTable},
+    ).getSingle();
+    return result.data['count'] as int? ?? 0;
+  }
+
+  /// Get count of pending items (not yet synced)
+  Future<int> getPendingQueueCount() async {
+    final result = await customSelect(
+      "SELECT COUNT(*) as count FROM sync_queue WHERE status = 'pending'",
+      readsFrom: {syncQueueTable},
+    ).getSingle();
+    return result.data['count'] as int? ?? 0;
   }
 
   // ==================== تعارضات متقدمة (Advanced Conflicts) ====================

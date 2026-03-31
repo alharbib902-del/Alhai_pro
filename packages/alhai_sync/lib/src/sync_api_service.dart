@@ -14,6 +14,34 @@ class SyncApiService {
 
   SyncApiService({required SupabaseClient client}) : _client = client;
 
+  /// Check if record was already synced (for timeout recovery).
+  ///
+  /// When a push times out, the server may have already processed the request.
+  /// Call this before retrying to avoid creating duplicates.
+  Future<bool> isRecordSynced(String tableName, String recordId, String storeId) async {
+    try {
+      final response = await _client
+          .from(tableName)
+          .select('id, updated_at')
+          .eq('id', recordId)
+          .eq('store_id', storeId)
+          .maybeSingle()
+          .timeout(const Duration(seconds: 10));
+      return response != null;
+    } catch (_) {
+      return false; // Can't verify, will retry
+    }
+  }
+
+  /// Calculate adaptive timeout based on payload size in bytes.
+  ///
+  /// Large payloads (e.g. sales with many items) need more time.
+  static Duration getAdaptiveTimeout(int payloadSizeBytes) {
+    if (payloadSizeBytes > 500000) return const Duration(seconds: 60);
+    if (payloadSizeBytes > 100000) return const Duration(seconds: 45);
+    return const Duration(seconds: 30);
+  }
+
   /// تنفيذ المزامنة لعملية واحدة
   Future<void> syncOperation({
     required String tableName,
@@ -151,26 +179,25 @@ class SyncApiService {
     );
   }
 
-  /// جلب التحديثات من السيرفر لجدول معين
+  /// جلب التحديثات من السيرفر لجدول معين (مع تقسيم الصفحات)
+  ///
+  /// يجلب السجلات على دفعات بحجم [pageSize] لتجنب timeout/OOM
+  /// عند وجود آلاف السجلات (مثل 9,742 منتج).
   Future<List<Map<String, dynamic>>> fetchUpdates({
     required String tableName,
     required String storeId,
     DateTime? since,
+    int pageSize = 500,
   }) async {
     try {
-      var query = _client
-          .from(tableName)
-          .select()
-          .eq('store_id', storeId);
-
-      if (since != null) {
-        query = query.gte('updated_at', since.toIso8601String());
-      }
-
-      final response = await query.timeout(const Duration(seconds: 30));
-      final records = List<Map<String, dynamic>>.from(response);
+      final allRecords = await _fetchPaginated(
+        tableName,
+        storeId,
+        since,
+        pageSize: pageSize,
+      );
       // Convert JSONB fields from remote to local text format
-      return _jsonConverter.batchToLocal(tableName, records);
+      return _jsonConverter.batchToLocal(tableName, allRecords);
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint('Fetch updates DB error for $tableName: ${e.code} ${e.message}');
@@ -187,6 +214,45 @@ class SyncApiService {
       }
       rethrow;
     }
+  }
+
+  /// جلب السجلات بشكل مُقسّم على صفحات لتجنب timeout/OOM
+  Future<List<Map<String, dynamic>>> _fetchPaginated(
+    String tableName,
+    String storeId,
+    DateTime? since, {
+    int pageSize = 500,
+  }) async {
+    final allRecords = <Map<String, dynamic>>[];
+    int offset = 0;
+
+    while (true) {
+      var query = _client
+          .from(tableName)
+          .select()
+          .eq('store_id', storeId);
+
+      if (since != null) {
+        query = query.gte('updated_at', since.toIso8601String());
+      }
+
+      final response = await query
+          .order('updated_at', ascending: true)
+          .range(offset, offset + pageSize - 1)
+          .timeout(const Duration(seconds: 30));
+
+      final records = List<Map<String, dynamic>>.from(response);
+      allRecords.addAll(records);
+
+      if (kDebugMode && records.isNotEmpty) {
+        debugPrint('[SyncApi] Fetched page: $tableName offset=$offset count=${records.length}');
+      }
+
+      if (records.length < pageSize) break; // Last page
+      offset += pageSize;
+    }
+
+    return allRecords;
   }
 
   /// جلب سجل واحد بالـ ID

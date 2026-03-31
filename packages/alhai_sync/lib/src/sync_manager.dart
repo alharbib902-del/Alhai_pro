@@ -9,6 +9,61 @@ import 'pull_sync_service.dart';
 import 'sync_service.dart';
 import 'org_sync_service.dart';
 
+/// Simple async mutex to prevent concurrent sync operations
+class _SyncMutex {
+  Completer<void>? _completer;
+
+  bool get isLocked => _completer != null && !_completer!.isCompleted;
+
+  Future<bool> tryAcquire() async {
+    if (isLocked) return false;
+    _completer = Completer<void>();
+    return true;
+  }
+
+  void release() {
+    if (_completer != null && !_completer!.isCompleted) {
+      _completer!.complete();
+    }
+    _completer = null;
+  }
+}
+
+/// Circuit Breaker لمنع إعادة المحاولة المتكررة عند فشل متتالي
+///
+/// بعد [threshold] فشل متتالي، يُفتح الدائرة ويتوقف عن المزامنة
+/// لمدة [resetTimeout] قبل السماح بمحاولة جديدة.
+class _CircuitBreaker {
+  int _failureCount = 0;
+  DateTime? _openedAt;
+  static const int threshold = 5;
+  static const Duration resetTimeout = Duration(minutes: 5);
+
+  bool get isOpen {
+    if (_failureCount < threshold) return false;
+    if (_openedAt != null &&
+        DateTime.now().difference(_openedAt!) > resetTimeout) {
+      reset();
+      return false;
+    }
+    return true;
+  }
+
+  void recordFailure() {
+    _failureCount++;
+    if (_failureCount >= threshold) {
+      _openedAt = DateTime.now();
+    }
+  }
+
+  void recordSuccess() => _failureCount = 0;
+
+  void reset() {
+    _failureCount = 0;
+    _openedAt = null;
+  }
+}
+
 /// استراتيجية Exponential Backoff للمحاولات
 class RetryStrategy {
   static const int maxRetries = 3;
@@ -61,6 +116,9 @@ class SyncManager {
   final Duration pullSyncInterval;
 
   final _statusController = StreamController<SyncStatus>.broadcast();
+  final _syncMutex = _SyncMutex();
+  final _pushCircuitBreaker = _CircuitBreaker();
+  final _pullCircuitBreaker = _CircuitBreaker();
   StreamSubscription<bool>? _connectivitySubscription;
   Timer? _syncTimer;
   Timer? _periodicTimer;
@@ -97,6 +155,18 @@ class SyncManager {
     } catch (e) {
       if (kDebugMode) {
         debugPrint('[SyncManager] ⚠️ Failed to recover stuck syncing items: $e');
+      }
+    }
+
+    // Recover stuck items (status = 'syncing' from previous crash) - reset all to pending
+    try {
+      final resetCount = await _syncService.resetStuckItems();
+      if (resetCount > 0 && kDebugMode) {
+        debugPrint('[SyncManager] Reset $resetCount items stuck in syncing status back to pending');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[SyncManager] ⚠️ Failed to reset stuck items: $e');
       }
     }
 
@@ -213,7 +283,23 @@ class SyncManager {
     if (_isSyncing || _connectivityService.isOffline) {
       return SyncResult(successCount: 0, failedCount: 0, errors: []);
     }
-    
+
+    // Circuit breaker: skip push sync after consecutive failures
+    if (_pushCircuitBreaker.isOpen) {
+      if (kDebugMode) {
+        debugPrint('[SyncManager] Push skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)');
+      }
+      return SyncResult(successCount: 0, failedCount: 0, errors: ['Circuit breaker open']);
+    }
+
+    // Acquire shared mutex - skip if pull sync is running
+    if (!await _syncMutex.tryAcquire()) {
+      if (kDebugMode) {
+        debugPrint('[SyncManager] Push skipped: sync mutex held by pull');
+      }
+      return SyncResult(successCount: 0, failedCount: 0, errors: []);
+    }
+
     _isSyncing = true;
     _statusController.add(SyncStatus.syncing);
     
@@ -282,6 +368,7 @@ class SyncManager {
           if (didSync) {
             await _syncService.markAsSynced(item.id);
             successCount++;
+            _pushCircuitBreaker.recordSuccess();
             if (kDebugMode) {
               debugPrint('[SyncManager] ✅ Synced: ${item.tableName_}/${item.recordId} (${stopwatch.elapsedMilliseconds}ms)');
             }
@@ -324,9 +411,18 @@ class SyncManager {
           }
 
           failedCount++;
+          _pushCircuitBreaker.recordFailure();
           errors.add('${item.tableName_}/${item.recordId}: $e');
           if (kDebugMode) {
             debugPrint('[SyncManager] ❌ Failed: ${item.tableName_}/${item.recordId}: $e');
+          }
+
+          // If circuit breaker tripped, stop processing remaining items
+          if (_pushCircuitBreaker.isOpen) {
+            if (kDebugMode) {
+              debugPrint('[SyncManager] Circuit breaker opened after ${_CircuitBreaker.threshold} consecutive failures, stopping push');
+            }
+            break;
           }
 
           // تسجيل عملية فاشلة
@@ -373,11 +469,12 @@ class SyncManager {
       }
     } finally {
       _isSyncing = false;
+      _syncMutex.release();
       _statusController.add(
         errors.isNotEmpty ? SyncStatus.error : SyncStatus.idle,
       );
     }
-    
+
     return SyncResult(
       successCount: successCount,
       failedCount: failedCount,
@@ -394,9 +491,25 @@ class SyncManager {
       return null;
     }
 
+    // Circuit breaker: skip pull sync after consecutive failures
+    if (_pullCircuitBreaker.isOpen) {
+      if (kDebugMode) {
+        debugPrint('[SyncManager] Pull skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)');
+      }
+      return null;
+    }
+
     if (pullSyncService == null || storeId == null) {
       if (kDebugMode) {
         debugPrint('[PullSync] Skipped: pullSyncService or storeId is null');
+      }
+      return null;
+    }
+
+    // Acquire shared mutex - skip if push sync is running
+    if (!await _syncMutex.tryAcquire()) {
+      if (kDebugMode) {
+        debugPrint('[SyncManager] Pull skipped: sync mutex held by push');
       }
       return null;
     }
@@ -411,18 +524,25 @@ class SyncManager {
             '${result.skippedConflicts > 0 ? ', ${result.skippedConflicts} conflicts skipped' : ''}');
       }
 
-      if (result.hasErrors && kDebugMode) {
-        debugPrint('[SyncManager] Pull errors: ${result.errors.join('; ')}');
+      if (result.hasErrors) {
+        _pullCircuitBreaker.recordFailure();
+        if (kDebugMode) {
+          debugPrint('[SyncManager] Pull errors: ${result.errors.join('; ')}');
+        }
+      } else {
+        _pullCircuitBreaker.recordSuccess();
       }
 
       return result;
     } catch (e) {
+      _pullCircuitBreaker.recordFailure();
       if (kDebugMode) {
         debugPrint('[SyncManager] Pull failed: $e');
       }
       return null;
     } finally {
       _isPulling = false;
+      _syncMutex.release();
     }
   }
 

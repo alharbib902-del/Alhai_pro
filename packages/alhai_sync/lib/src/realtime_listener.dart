@@ -70,6 +70,9 @@ class RealtimeListener {
   /// مراقب الأحداث
   final _eventController = StreamController<RealtimeEvent>.broadcast();
 
+  /// مؤقت تجديد JWT تلقائياً قبل انتهاء صلاحيته (كل 45 دقيقة)
+  Timer? _jwtRefreshTimer;
+
   /// معرفات الفلترة
   String? _orgId;
   String? _storeId;
@@ -140,8 +143,50 @@ class RealtimeListener {
       await _subscribeToTable(tableName);
     }
 
+    // Start periodic JWT refresh to prevent silent disconnects after ~1 hour
+    _startJwtRefreshTimer();
+
     if (kDebugMode) {
       debugPrint('RealtimeListener started for org=$orgId, store=$storeId');
+    }
+  }
+
+  /// بدء مؤقت تجديد JWT الدوري
+  ///
+  /// JWT ينتهي بعد ~1 ساعة. نجدده كل 45 دقيقة لتجنب انقطاع Realtime الصامت.
+  void _startJwtRefreshTimer() {
+    _jwtRefreshTimer?.cancel();
+    _jwtRefreshTimer = Timer.periodic(
+      const Duration(minutes: 45), // Refresh before 1-hour expiry
+      (_) async {
+        try {
+          await _client.auth.refreshSession();
+          // Reconnect realtime channels with the new token
+          await _reconnectChannels();
+          if (kDebugMode) {
+            debugPrint('[Realtime] JWT refreshed and channels reconnected');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('[Realtime] JWT refresh failed: $e');
+          }
+        }
+      },
+    );
+  }
+
+  /// إعادة الاتصال بجميع القنوات بعد تجديد JWT
+  Future<void> _reconnectChannels() async {
+    if (!_isActive) return;
+    final tableNames = List<String>.from(_channels.keys);
+    for (final tableName in tableNames) {
+      try {
+        await _subscribeToTable(tableName);
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('[Realtime] Failed to reconnect channel $tableName: $e');
+        }
+      }
     }
   }
 
@@ -331,6 +376,8 @@ class RealtimeListener {
   /// إيقاف جميع الاشتراكات
   Future<void> stop() async {
     _isActive = false;
+    _jwtRefreshTimer?.cancel();
+    _jwtRefreshTimer = null;
     for (final tableName in List.from(_channels.keys)) {
       await _unsubscribeFromTable(tableName);
     }
@@ -341,6 +388,8 @@ class RealtimeListener {
 
   /// تنظيف الموارد
   Future<void> dispose() async {
+    _jwtRefreshTimer?.cancel();
+    _jwtRefreshTimer = null;
     await stop();
     await _eventController.close();
   }

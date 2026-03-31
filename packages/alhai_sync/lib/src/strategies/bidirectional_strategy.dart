@@ -174,14 +174,17 @@ class BidirectionalStrategy {
 
     try {
       // المرحلة 1: دفع التغييرات المحلية المعلقة
-      pushed = await _pushLocalChanges(config.tableName);
+      final pushResult = await _pushLocalChanges(config.tableName);
+      pushed = pushResult.count;
 
       // المرحلة 2: سحب التغييرات من السيرفر
+      // Skip records that were just pushed in this cycle to avoid overwriting
       final pullResult = await _pullServerChanges(
         tableName: config.tableName,
         orgId: orgId,
         storeId: storeId,
         conflictResolution: config.conflictResolution,
+        justPushedIds: pushResult.pushedIds,
       );
       pulled = pullResult.pulled;
       conflicts = pullResult.conflicts;
@@ -212,8 +215,9 @@ class BidirectionalStrategy {
   }
 
   /// دفع التغييرات المحلية المعلقة
-  Future<int> _pushLocalChanges(String tableName) async {
+  Future<_PushResult> _pushLocalChanges(String tableName) async {
     int count = 0;
+    final pushedIds = <String>{};
     final pendingItems = await _syncQueueDao.getPendingItems();
     final tableItems =
         pendingItems.where((i) => i.tableName_ == tableName).toList();
@@ -245,6 +249,7 @@ class BidirectionalStrategy {
 
         await _syncQueueDao.markAsSynced(item.id);
         count++;
+        pushedIds.add(item.recordId);
       } on PostgrestException catch (e) {
         final errorMsg = 'DB ${e.code}: ${e.message}';
         final payload = jsonDecode(item.payload) as Map<String, dynamic>;
@@ -262,6 +267,7 @@ class BidirectionalStrategy {
             ).timeout(const Duration(seconds: 30));
             await _syncQueueDao.markAsSynced(item.id);
             count++;
+            pushedIds.add(item.recordId);
             if (kDebugMode) {
               debugPrint('Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}');
             }
@@ -313,6 +319,7 @@ class BidirectionalStrategy {
               ).timeout(const Duration(seconds: 30));
               await _syncQueueDao.markAsSynced(item.id);
               count++;
+              pushedIds.add(item.recordId);
               if (kDebugMode) {
                 debugPrint('Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
                     'for $tableName/${item.recordId}');
@@ -348,7 +355,7 @@ class BidirectionalStrategy {
       }
     }
 
-    return count;
+    return _PushResult(count: count, pushedIds: pushedIds);
   }
 
   /// سحب التغييرات من السيرفر مع كشف التعارضات
@@ -357,6 +364,7 @@ class BidirectionalStrategy {
     required String orgId,
     required String storeId,
     required ConflictResolution conflictResolution,
+    Set<String> justPushedIds = const {},
   }) async {
     int pulled = 0;
     int conflicts = 0;
@@ -384,6 +392,16 @@ class BidirectionalStrategy {
       }
 
       for (final serverRecord in records) {
+        // Skip records that were just pushed in this same sync cycle
+        // to prevent overwriting local data with stale server response
+        final recordId = serverRecord['id'] as String?;
+        if (recordId != null && justPushedIds.contains(recordId)) {
+          if (kDebugMode) {
+            debugPrint('BidirectionalStrategy: skipping just-pushed record $tableName/$recordId');
+          }
+          continue;
+        }
+
         try {
           final result = await _applyServerRecord(
             tableName: tableName,
@@ -642,6 +660,13 @@ class BidirectionalStrategy {
 }
 
 enum _ApplyResult { pulled, conflict }
+
+class _PushResult {
+  final int count;
+  final Set<String> pushedIds;
+
+  _PushResult({required this.count, required this.pushedIds});
+}
 
 class _PullWithConflictsResult {
   final int pulled;

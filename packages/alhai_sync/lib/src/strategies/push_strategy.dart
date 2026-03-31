@@ -9,6 +9,7 @@ import 'package:alhai_database/alhai_database.dart';
 import '../conflict_resolver.dart';
 import '../json_converter.dart';
 import '../org_sync_service.dart';
+import '../sync_api_service.dart';
 import '../sync_payload_utils.dart';
 
 /// استراتيجية الدفع (Push): المحلي ← السيرفر
@@ -26,6 +27,9 @@ class PushStrategy {
   final SyncMetadataDao _metadataDao;
   final ConflictResolver _conflictResolver;
   final JsonColumnConverter _jsonConverter = JsonColumnConverter.instance;
+
+  /// Lazy-initialized API service for idempotency checks on timeout recovery.
+  late final SyncApiService _apiService = SyncApiService(client: _client);
 
   /// الجداول التي يتم دفعها للسيرفر
   /// هذه البيانات تُنشأ محلياً على نقطة البيع وتُرسل للسيرفر
@@ -121,11 +125,12 @@ class PushStrategy {
           // تحليل البيانات
           final payload = jsonDecode(item.payload) as Map<String, dynamic>;
 
-          // تنفيذ العملية على السيرفر
+          // تنفيذ العملية على السيرفر (with idempotency key & adaptive timeout)
           await _executeRemoteOperation(
             tableName: item.tableName_,
             operation: item.operation,
             payload: payload,
+            idempotencyKey: item.idempotencyKey,
           );
 
           // حماية المبيعات: لا نحذف من الطابور حتى نتأكد من وجود البيع محلياً
@@ -338,6 +343,39 @@ class PushStrategy {
             await _syncQueueDao.markAsConflict(item.id, conflict.toJsonString());
           }
         } on TimeoutException {
+          if (kDebugMode) {
+            debugPrint(
+                'Push timeout for ${item.tableName_}/${item.recordId}');
+          }
+
+          // Idempotency check: the server may have already processed the
+          // request before the timeout fired. Verify before retrying to
+          // avoid creating duplicates.
+          final payload = jsonDecode(item.payload) as Map<String, dynamic>;
+          final recordId = payload['id'] as String? ?? item.recordId;
+          final storeId = payload['storeId'] as String? ?? payload['store_id'] as String? ?? '';
+
+          if (storeId.isNotEmpty &&
+              item.operation.toUpperCase() != 'DELETE') {
+            final alreadySynced = await _apiService.isRecordSynced(
+              item.tableName_,
+              recordId,
+              storeId,
+            );
+            if (alreadySynced) {
+              // Server already has the record -- treat as success
+              await _syncQueueDao.markAsSynced(item.id);
+              successCount++;
+              if (kDebugMode) {
+                debugPrint(
+                    'PushStrategy: Timeout recovered - record already on server '
+                    '${item.tableName_}/$recordId');
+              }
+              continue;
+            }
+          }
+
+          // Record not found on server (or couldn't verify) -- mark as failed for retry
           failedCount++;
           errors.add('${item.tableName_}/${item.recordId}: Timeout');
 
@@ -350,11 +388,6 @@ class PushStrategy {
             errorMessage: 'Network timeout',
           );
           await _syncQueueDao.markAsFailed(item.id, conflict.toJsonString());
-
-          if (kDebugMode) {
-            debugPrint(
-                'Push timeout for ${item.tableName_}/${item.recordId}');
-          }
 
           if (item.retryCount + 1 >= maxRetries) {
             await _syncQueueDao.markAsConflict(
@@ -414,6 +447,7 @@ class PushStrategy {
     required String tableName,
     required String operation,
     required Map<String, dynamic> payload,
+    String? idempotencyKey,
   }) async {
     // تحويل JSONB fields من نص إلى كائنات
     final remotePayload = _jsonConverter.toRemote(tableName, payload);
@@ -424,8 +458,17 @@ class PushStrategy {
     // M36: إعادة تسمية الأعمدة المحلية لتتوافق مع مخطط Supabase
     final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
 
+    // Include idempotency_key so the server can detect duplicate pushes
+    if (idempotencyKey != null && idempotencyKey.isNotEmpty) {
+      mappedPayload['idempotency_key'] = idempotencyKey;
+    }
+
     // تجاهل جداول المؤسسة (تُعالج بخدمة مزامنة المؤسسة)
     if (OrgTables.all.contains(tableName)) return;
+
+    // Adaptive timeout based on payload size
+    final payloadBytes = utf8.encode(jsonEncode(mappedPayload)).length;
+    final timeout = SyncApiService.getAdaptiveTimeout(payloadBytes);
 
     switch (operation.toUpperCase()) {
       case 'CREATE':
@@ -433,12 +476,12 @@ class PushStrategy {
         await _client.from(tableName).upsert(
               mappedPayload,
               onConflict: 'id',
-            ).timeout(const Duration(seconds: 30));
+            ).timeout(timeout);
         break;
       case 'DELETE':
         final id = mappedPayload['id'] as String?;
         if (id != null) {
-          await _client.from(tableName).delete().eq('id', id).timeout(const Duration(seconds: 30));
+          await _client.from(tableName).delete().eq('id', id).timeout(timeout);
         }
         break;
     }
@@ -460,10 +503,14 @@ class PushStrategy {
 
     if (OrgTables.all.contains(tableName)) return;
 
+    // Adaptive timeout based on payload size
+    final payloadBytes = utf8.encode(jsonEncode(mappedPayload)).length;
+    final timeout = SyncApiService.getAdaptiveTimeout(payloadBytes);
+
     await _client.from(tableName).upsert(
           mappedPayload,
           onConflict: 'id',
-        ).timeout(const Duration(seconds: 30));
+        ).timeout(timeout);
   }
 
   /// الجداول المقدسة التي لا يجوز فقدان بياناتها

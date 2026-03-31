@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:alhai_database/alhai_database.dart';
+
 /// Types of sync conflicts that can occur between local and server data
 enum ConflictType {
   /// Both local and server modified the same record (409 or updated_at mismatch)
@@ -551,5 +553,42 @@ class ConflictResolver {
       return DateTime.tryParse(value);
     }
     return null;
+  }
+
+  /// Resolve a conflict by choosing local or server version
+  ///
+  /// For [ResolutionStrategy.serverWins], applies the server data locally
+  /// by inserting/replacing the record in the target table.
+  /// For [ResolutionStrategy.localWins], the local data is already correct
+  /// so we just mark the conflict as resolved.
+  Future<void> resolveConflict({
+    required String conflictId,
+    required ResolutionStrategy strategy,
+    required AppDatabase db,
+    required SyncQueueDao syncQueueDao,
+  }) async {
+    final conflict = await syncQueueDao.getById(conflictId);
+    if (conflict == null) return;
+
+    if (strategy == ResolutionStrategy.serverWins) {
+      // Apply server data locally
+      final serverData = jsonDecode(conflict.payload) as Map<String, dynamic>;
+      final columns = serverData.keys.toList();
+      final placeholders = columns.map((_) => '?').join(', ');
+      final updates = columns
+          .where((c) => c != 'id')
+          .map((c) => '$c = excluded.$c')
+          .join(', ');
+
+      await db.customStatement(
+        'INSERT INTO ${conflict.tableName_} (${columns.join(', ')}) '
+        'VALUES ($placeholders) '
+        'ON CONFLICT(id) DO UPDATE SET $updates',
+        columns.map((c) => serverData[c]).toList(),
+      );
+    }
+    // localWins = just mark as resolved (local data is already correct)
+
+    await syncQueueDao.markAsResolved(conflictId);
   }
 }
