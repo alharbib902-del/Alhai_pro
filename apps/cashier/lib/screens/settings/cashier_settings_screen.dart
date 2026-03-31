@@ -4,12 +4,14 @@
 /// to its sub-screen. Supports: RTL Arabic, dark/light theme, responsive.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import '../../core/utils/cache_cleaner.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Main settings hub screen
@@ -50,48 +52,10 @@ class _CashierSettingsScreenState
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildGrid(isWideScreen, isMediumScreen, isDark, l10n),
+            child: _buildGridWithCacheClear(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildGrid(
-    bool isWideScreen,
-    bool isMediumScreen,
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
-    final items = _buildSettingsItems(l10n);
-
-    final crossAxisCount = isWideScreen
-        ? 4
-        : isMediumScreen
-            ? 3
-            : 2;
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: isWideScreen ? 1.3 : 1.1,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return _SettingsTile(
-          icon: item.icon,
-          title: item.title,
-          subtitle: item.subtitle,
-          color: item.color,
-          isDark: isDark,
-          onTap: () => context.push(item.route),
-        );
-      },
     );
   }
 
@@ -174,7 +138,142 @@ class _CashierSettingsScreenState
         color: AppColors.secondaryDark,
         route: AppRoutes.settingsTheme,
       ),
+      // Clear cache - special item (route unused, handled by onTap override)
+      const _SettingsItem(
+        icon: Icons.cleaning_services_rounded,
+        title: 'مسح الذاكرة المؤقتة',
+        subtitle: 'حل مشاكل التحميل والبيانات',
+        color: AppColors.error,
+        route: '_clear_cache',
+      ),
     ];
+  }
+
+  // ============================================================================
+  // GRID BUILDER (overridden to handle cache clear tap)
+  // ============================================================================
+
+  Widget _buildGridWithCacheClear(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final items = _buildSettingsItems(l10n);
+
+    final crossAxisCount = isWideScreen
+        ? 4
+        : isMediumScreen
+            ? 3
+            : 2;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: isWideScreen ? 1.3 : 1.1,
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _SettingsTile(
+          icon: item.icon,
+          title: item.title,
+          subtitle: item.subtitle,
+          color: item.color,
+          isDark: isDark,
+          onTap: item.route == '_clear_cache'
+              ? () => _showClearCacheDialog(context)
+              : () => context.push(item.route),
+        );
+      },
+    );
+  }
+
+  /// Show confirmation dialog then clear all cached data
+  Future<void> _showClearCacheDialog(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            SizedBox(width: 8),
+            Text('مسح الذاكرة المؤقتة'),
+          ],
+        ),
+        content: const Text(
+          'سيتم مسح جميع البيانات المؤقتة وإعادة تحميلها من السيرفر.\n\n'
+          'سيتم تسجيل خروجك وإعادة تشغيل التطبيق.\n\n'
+          'هل تريد المتابعة؟',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            icon: const Icon(Icons.cleaning_services_rounded),
+            label: const Text('مسح وإعادة التشغيل'),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await _clearAllCacheAndReload();
+    }
+  }
+
+  /// Clear all browser storage and reload
+  Future<void> _clearAllCacheAndReload() async {
+    try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Text('جاري مسح الذاكرة المؤقتة...'),
+              ],
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
+      // Clear all web storage (IndexedDB, localStorage, caches, SW)
+      await clearAllWebCache();
+
+      // Wait briefly then reload
+      await Future.delayed(const Duration(milliseconds: 500));
+      reloadPage();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 }
 
