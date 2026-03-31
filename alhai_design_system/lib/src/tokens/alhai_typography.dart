@@ -19,9 +19,13 @@ abstract final class AlhaiTypography {
   /// variants that will be picked up automatically; on platforms without them
   /// the system default (Roboto, SF Pro, etc.) is used.
   static const List<String> fontFamilyFallback = [
+    'Arial', // System Arabic fallback (available on all platforms)
+    'Tahoma', // System Arabic fallback (Windows/web)
+    'Segoe UI', // System Arabic fallback (Windows)
     'NotoSansDevanagari', // Asset font for Hindi (hi)
     'NotoSansBengali', // Asset font for Bengali (bn)
     'Noto Sans',
+    'Noto Sans Arabic', // System Arabic fallback (Android/Linux)
     'Noto Sans Devanagari',
     'Noto Sans Bengali',
     'Roboto',

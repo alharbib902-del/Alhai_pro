@@ -9,6 +9,7 @@ import '../security/secure_storage_service.dart';
 import '../providers/auth_providers.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 enum _SplashStatus { loading, initSearch, loadData, initDemo, checkAuth, ready }
 
@@ -208,6 +209,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       color: Theme.of(context).colorScheme.surface,
                       fontWeight: FontWeight.bold,
                       fontSize: isMobile ? 22 : isDesktop ? 32 : 26,
+                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -215,6 +217,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     'Al-HAI POS',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
                     ),
                   ),
                   const SizedBox(height: 48),
@@ -226,6 +229,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   Text(
                     _getStatusText(_status, l10n),
                     style: TextStyle(
+                      fontFamily: AlhaiTypography.fontFamily,
+                      fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
                       color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
