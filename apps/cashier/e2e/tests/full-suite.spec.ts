@@ -460,9 +460,95 @@ test.describe('12. Extended Routes', () => {
 });
 
 // ============================================================================
-// 13. PERFORMANCE
+// 13. REMAINING ROUTES — POS, Purchases, Suppliers, Settings, Marketing, etc.
 // ============================================================================
-test.describe('13. Performance', () => {
+test.describe('13. Remaining Routes', () => {
+  const remainingRoutes = [
+    // POS sub-screens
+    { path: '/pos/quick-sale', label: 'Quick Sale' },
+    { path: '/pos/favorites', label: 'Favorites' },
+    { path: '/pos/hold-invoices', label: 'Hold Invoices' },
+    { path: '/pos/kiosk', label: 'Kiosk Mode' },
+    // Inventory extra
+    { path: '/inventory/remove', label: 'Remove Inventory' },
+    { path: '/inventory/damaged-goods', label: 'Damaged Goods' },
+    // Returns extra
+    { path: '/returns/reason', label: 'Refund Reason' },
+    { path: '/void-transaction', label: 'Void Transaction' },
+    // Sales extra
+    { path: '/sales/reprint', label: 'Reprint Receipt' },
+    // Purchases
+    { path: '/purchases', label: 'Purchases List' },
+    { path: '/purchases/new', label: 'New Purchase' },
+    { path: '/purchases/smart-reorder', label: 'Smart Reorder' },
+    { path: '/purchases/ai-import', label: 'AI Invoice Import' },
+    { path: '/purchases/ai-review', label: 'AI Invoice Review' },
+    { path: '/purchases/supplier-returns', label: 'Supplier Returns' },
+    { path: '/purchase-request', label: 'Purchase Request' },
+    // Suppliers
+    { path: '/suppliers', label: 'Suppliers List' },
+    { path: '/suppliers/new', label: 'New Supplier' },
+    // Settings extra
+    { path: '/settings/pos', label: 'POS Settings' },
+    { path: '/settings/barcode', label: 'Barcode Settings' },
+    { path: '/settings/discounts', label: 'Discount Settings' },
+    { path: '/settings/interest', label: 'Interest Settings' },
+    { path: '/settings/security', label: 'Security Settings' },
+    { path: '/settings/roles', label: 'Roles & Permissions' },
+    { path: '/settings/activity-log', label: 'Activity Log' },
+    { path: '/settings/notifications', label: 'Notifications Settings' },
+    { path: '/settings/zatca', label: 'ZATCA Compliance' },
+    { path: '/settings/help', label: 'Help & Support' },
+    { path: '/settings/shipping', label: 'Shipping Gateways' },
+    { path: '/settings/whatsapp', label: 'WhatsApp Management' },
+    // Marketing & Offers
+    { path: '/offers/coupon', label: 'Coupon Codes' },
+    { path: '/promotions', label: 'Smart Promotions' },
+    { path: '/loyalty', label: 'Loyalty Program' },
+    // Employees
+    { path: '/employees', label: 'Employees' },
+    { path: '/employees/attendance', label: 'Attendance' },
+    { path: '/employees/commissions', label: 'Commissions' },
+    // Expenses extra
+    { path: '/expenses/categories', label: 'Expense Categories' },
+    // Sync extra
+    { path: '/sync/pending', label: 'Pending Transactions' },
+    { path: '/sync/conflicts', label: 'Conflict Resolution' },
+    // Customer extra
+    { path: '/customers/groups', label: 'Customer Groups' },
+    { path: '/debts/monthly-close', label: 'Monthly Close' },
+    // Other
+    { path: '/categories', label: 'Categories' },
+    { path: '/print-queue', label: 'Print Queue' },
+    { path: '/branches', label: 'Branches' },
+    { path: '/drivers', label: 'Drivers' },
+    { path: '/wallet', label: 'E-Wallet' },
+    { path: '/subscription', label: 'Subscription' },
+    { path: '/media', label: 'Media Library' },
+    { path: '/devices', label: 'Device Log' },
+    { path: '/ecommerce', label: 'E-Commerce' },
+    { path: '/ecommerce/online-orders', label: 'Online Orders' },
+    { path: '/ecommerce/delivery-zones', label: 'Delivery Zones' },
+    { path: '/products/price-lists', label: 'Price Lists' },
+    { path: '/products/add', label: 'Add Product' },
+    // Manager
+    { path: '/manager-approval', label: 'Manager Approval' },
+    // Daily summary
+    { path: '/shifts/daily-summary', label: 'Daily Summary' },
+  ];
+
+  for (const { path, label } of remainingRoutes) {
+    test(`REM: ${label} (${path})`, async ({ page }) => {
+      await ensureAuthenticatedAt(page, path);
+      await expectNoFatalRouteError(page);
+    });
+  }
+});
+
+// ============================================================================
+// 14. PERFORMANCE
+// ============================================================================
+test.describe('14. Performance', () => {
   test('PERF-001: navigation stability (3 round trips)', async ({ page }) => {
     await ensureAuthenticatedAt(page, '/pos');
     for (let i = 0; i < 3; i++) {
