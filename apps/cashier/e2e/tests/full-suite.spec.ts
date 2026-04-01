@@ -401,9 +401,68 @@ test.describe('11. Security', () => {
 });
 
 // ============================================================================
-// 12. PERFORMANCE
+// 12. EXTENDED ROUTES — Reports, Settings, AI, Expenses, Orders
 // ============================================================================
-test.describe('12. Performance', () => {
+test.describe('12. Extended Routes', () => {
+  const extendedRoutes = [
+    // Reports (not covered above)
+    { path: '/reports/inventory', label: 'Inventory Report' },
+    { path: '/reports/profit', label: 'Profit Report' },
+    { path: '/reports/tax', label: 'Tax Report' },
+    { path: '/reports/vat', label: 'VAT Report' },
+    { path: '/reports/zakat', label: 'Zakat Report' },
+    { path: '/reports/debts', label: 'Debts Report' },
+    { path: '/reports/debt-aging', label: 'Debt Aging Report' },
+    { path: '/reports/customers', label: 'Customer Report' },
+    { path: '/reports/comparison', label: 'Comparison Report' },
+    { path: '/reports/complaints', label: 'Complaints Report' },
+    { path: '/reports/analytics', label: 'Sales Analytics' },
+    { path: '/reports/staff', label: 'Staff Performance' },
+    { path: '/reports/peak-hours', label: 'Peak Hours' },
+    { path: '/reports/balance', label: 'Balance Sheet' },
+    // Settings (not covered above)
+    { path: '/settings/privacy', label: 'Privacy Policy' },
+    { path: '/settings/language', label: 'Language' },
+    { path: '/settings/theme', label: 'Theme' },
+    // Expenses
+    { path: '/expenses', label: 'Expenses' },
+    // Orders
+    { path: '/orders', label: 'Orders' },
+    // AI Screens
+    { path: '/ai/assistant', label: 'AI Assistant' },
+    { path: '/ai/sales-forecasting', label: 'AI Sales Forecast' },
+    { path: '/ai/smart-pricing', label: 'AI Smart Pricing' },
+    { path: '/ai/fraud-detection', label: 'AI Fraud Detection' },
+    { path: '/ai/basket-analysis', label: 'AI Basket Analysis' },
+    { path: '/ai/customer-recommendations', label: 'AI Customer Recs' },
+    { path: '/ai/smart-inventory', label: 'AI Smart Inventory' },
+    { path: '/ai/competitor-analysis', label: 'AI Competitor' },
+    { path: '/ai/smart-reports', label: 'AI Smart Reports' },
+    { path: '/ai/staff-analytics', label: 'AI Staff Analytics' },
+    { path: '/ai/sentiment-analysis', label: 'AI Sentiment' },
+    { path: '/ai/return-prediction', label: 'AI Return Prediction' },
+    { path: '/ai/promotion-designer', label: 'AI Promotion Designer' },
+    { path: '/ai/chat-with-data', label: 'AI Chat with Data' },
+    // Customer sub-routes
+    { path: '/customers/analytics', label: 'Customer Analytics' },
+    // Sales sub-routes
+    { path: '/sales/exchange', label: 'Exchange' },
+    // Onboarding
+    { path: '/onboarding', label: 'Onboarding' },
+  ];
+
+  for (const { path, label } of extendedRoutes) {
+    test(`EXT: ${label} (${path})`, async ({ page }) => {
+      await ensureAuthenticatedAt(page, path);
+      await expectNoFatalRouteError(page);
+    });
+  }
+});
+
+// ============================================================================
+// 13. PERFORMANCE
+// ============================================================================
+test.describe('13. Performance', () => {
   test('PERF-001: navigation stability (3 round trips)', async ({ page }) => {
     await ensureAuthenticatedAt(page, '/pos');
     for (let i = 0; i < 3; i++) {
