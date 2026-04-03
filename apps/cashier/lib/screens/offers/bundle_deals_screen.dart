@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -96,7 +96,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadBundles)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadBundles)
                   : _bundles.isEmpty
                       ? _buildEmptyState(isDark, l10n)
                       : _buildBundlesList(isMediumScreen, isDark, l10n),
@@ -110,9 +110,9 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
     return RefreshIndicator(
       onRefresh: _loadBundles,
       child: ListView.separated(
-        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         itemCount: _bundles.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
         itemBuilder: (context, index) =>
             _buildBundleCard(_bundles[index], index, isDark, l10n),
       ),
@@ -148,7 +148,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
         children: [
           // Header with gradient
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -177,7 +177,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                     size: 26,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,9 +185,9 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                       Text(bundle.name,
                           style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700,
                               color: AppColors.getTextPrimary(isDark))),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AlhaiSpacing.xxs),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(999),
@@ -205,7 +205,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                 ),
                 // Savings badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(999),
@@ -228,21 +228,21 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
           ),
           // Bundle contents
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Included Products',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 // Simulated products in bundle
                 _buildBundleProduct(l10n.product, 1, isDark),
                 const SizedBox(height: 6),
                 _buildBundleProduct(l10n.product, 2, isDark),
                 const SizedBox(height: 6),
                 _buildBundleProduct(l10n.product, 3, isDark),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 // Price comparison
                 Container(
                   padding: const EdgeInsets.all(14),
@@ -266,7 +266,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -303,7 +303,7 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
                 ),
                 // Validity
                 if (bundle.endDate != null) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Row(
                     children: [
                       Icon(Icons.schedule_rounded, size: 14,
@@ -355,11 +355,11 @@ class _BundleDealsScreenState extends ConsumerState<BundleDealsScreen> {
         children: [
           Icon(Icons.inventory_2_outlined, size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text('No bundle deals',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text('Bundle deals will appear here',
               style: TextStyle(fontSize: 13,
                   color: AppColors.getTextMuted(isDark))),

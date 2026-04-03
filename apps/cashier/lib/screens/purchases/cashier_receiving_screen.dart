@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -74,7 +74,7 @@ class _CashierReceivingScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'استلام بضاعة',
+          title: l10n.receivingGoods,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -96,10 +96,10 @@ class _CashierReceivingScreenState
                       onRefresh: _loadPurchases,
                       child: ListView.separated(
                         padding:
-                            EdgeInsets.all(isMediumScreen ? 24 : 16),
+                            EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         itemCount: _purchases.length,
                         separatorBuilder: (_, __) =>
-                            const SizedBox(height: 12),
+                            const SizedBox(height: AlhaiSpacing.sm),
                         itemBuilder: (_, index) => _buildPurchaseCard(
                             _purchases[index], isDark, isMediumScreen, l10n),
                       ),
@@ -120,7 +120,7 @@ class _CashierReceivingScreenState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
@@ -128,33 +128,33 @@ class _CashierReceivingScreenState
             child: const Icon(Icons.local_shipping_outlined,
                 size: 48, color: AppColors.primary),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'لا توجد شحنات للاستلام',
+            l10n.noShipmentsToReceive,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: AppColors.getTextPrimary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            'ستظهر هنا الطلبات المعتمدة الجاهزة للاستلام',
+            l10n.approvedOrdersAppearHere,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           OutlinedButton.icon(
             onPressed: _loadPurchases,
             icon: const Icon(Icons.refresh_rounded, size: 18),
-            label: const Text('تحديث'),
+            label: Text(l10n.refresh),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -172,7 +172,7 @@ class _CashierReceivingScreenState
     final isReceiving = _receivingId == purchase.id;
 
     return Container(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -205,9 +205,9 @@ class _CashierReceivingScreenState
                         color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
-                      purchase.supplierName ?? 'مورد غير محدد',
+                      purchase.supplierName ?? l10n.unspecifiedSupplier,
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.getTextSecondary(isDark),
@@ -218,13 +218,13 @@ class _CashierReceivingScreenState
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'معتمد',
+                child: Text(
+                  l10n.approved,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -236,7 +236,7 @@ class _CashierReceivingScreenState
           ),
           const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius: BorderRadius.circular(10),
@@ -251,7 +251,7 @@ class _CashierReceivingScreenState
                 Container(
                   width: 1,
                   height: 24,
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                  margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   color: AppColors.getBorder(isDark),
                 ),
                 _infoItem(
@@ -264,7 +264,7 @@ class _CashierReceivingScreenState
                   Container(
                     width: 1,
                     height: 24,
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                    margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                     color: AppColors.getBorder(isDark),
                   ),
                   Expanded(
@@ -285,18 +285,18 @@ class _CashierReceivingScreenState
                 child: OutlinedButton.icon(
                   onPressed: () => _showItemsBottomSheet(purchase, isDark, l10n),
                   icon: const Icon(Icons.list_alt_rounded, size: 18),
-                  label: const Text('عرض البنود',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  label: Text(l10n.viewItems,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.info,
                     side: const BorderSide(color: AppColors.info),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 flex: 2,
                 child: FilledButton.icon(
@@ -312,13 +312,13 @@ class _CashierReceivingScreenState
                         )
                       : const Icon(Icons.check_circle_rounded, size: 18),
                   label: Text(
-                    isReceiving ? 'جارٍ الاستلام...' : 'تأكيد الاستلام',
+                    isReceiving ? l10n.receivingInProgress : l10n.confirmReceivingBtn,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -383,7 +383,7 @@ class _CashierReceivingScreenState
                 children: [
                   // Handle bar
                   Container(
-                    margin: const EdgeInsets.only(top: 12),
+                    margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -393,11 +393,11 @@ class _CashierReceivingScreenState
                   ),
                   // Title
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(AlhaiSpacing.xs),
                           decoration: BoxDecoration(
                             color: AppColors.info.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -405,13 +405,13 @@ class _CashierReceivingScreenState
                           child: const Icon(Icons.list_alt_rounded,
                               color: AppColors.info, size: 20),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AlhaiSpacing.sm),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'بنود الطلب ${purchase.purchaseNumber}',
+                                l10n.orderItemsTitle(purchase.purchaseNumber),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -419,7 +419,7 @@ class _CashierReceivingScreenState
                                 ),
                               ),
                               Text(
-                                '${items.length} منتج',
+                                l10n.productCountItems(items.length),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.getTextSecondary(isDark),
@@ -437,7 +437,7 @@ class _CashierReceivingScreenState
                     child: items.isEmpty
                         ? Center(
                             child: Text(
-                              'لا توجد بنود',
+                              l10n.noOrderItems,
                               style: TextStyle(
                                 color: AppColors.getTextMuted(isDark),
                               ),
@@ -445,10 +445,10 @@ class _CashierReceivingScreenState
                           )
                         : ListView.separated(
                             controller: scrollController,
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(AlhaiSpacing.md),
                             itemCount: items.length,
                             separatorBuilder: (_, __) =>
-                                const SizedBox(height: 8),
+                                const SizedBox(height: AlhaiSpacing.xs),
                             itemBuilder: (_, index) {
                               final item = items[index];
                               return Container(
@@ -478,7 +478,7 @@ class _CashierReceivingScreenState
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    const SizedBox(width: AlhaiSpacing.sm),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -553,15 +553,14 @@ class _CashierReceivingScreenState
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: const Text('تأكيد استلام البضاعة'),
+          title: Text(l10n.confirmReceiveGoodsTitle),
           content: Text(
-            'هل أنت متأكد من استلام الطلب ${purchase.purchaseNumber}؟\n'
-            'سيتم تحديث المخزون تلقائياً.',
+            l10n.confirmReceiveGoodsBody(purchase.purchaseNumber),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('إلغاء'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
@@ -569,7 +568,7 @@ class _CashierReceivingScreenState
                 backgroundColor: AppColors.success,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('تأكيد الاستلام'),
+              child: Text(l10n.confirmReceivingBtn),
             ),
           ],
         ),
@@ -613,7 +612,7 @@ class _CashierReceivingScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تم استلام الطلب ${purchase.purchaseNumber} بنجاح'),
+          content: Text(l10n.orderReceivedSuccess(purchase.purchaseNumber)),
           backgroundColor: AppColors.success,
         ),
       );

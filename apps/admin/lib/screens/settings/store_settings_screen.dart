@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إعدادات المتجر - بتصميم Sidebar + Header
 class StoreSettingsScreen extends ConsumerStatefulWidget {
@@ -120,12 +121,12 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildPageHeader(isDark, l10n),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
 
         _buildSettingsGroup(l10n.storeInfo, Icons.store_rounded,
             AppColors.primary, isDark, [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextFormField(
               controller: _nameController,
               maxLength: 100,
@@ -139,7 +140,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextFormField(
               controller: _addressController,
               maxLength: 200,
@@ -153,7 +154,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 16),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -175,7 +176,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         _buildSettingsGroup(l10n.taxInfo, Icons.receipt_long_rounded,
             AppColors.success, isDark, [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextFormField(
               controller: _vatController,
               keyboardType: TextInputType.number,
@@ -194,7 +195,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextFormField(
               controller: _crController,
               keyboardType: TextInputType.number,
@@ -236,13 +237,13 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                 ),
               ),
             ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         _buildSettingsGroup(l10n.languageAndCurrency, Icons.language_rounded,
             const Color(0xFFF97316), isDark, [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: DropdownButtonFormField<String>(
               initialValue: _language,
               decoration: InputDecoration(
@@ -259,7 +260,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 16),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: DropdownButtonFormField<String>(
               initialValue: _currency,
               decoration: InputDecoration(
@@ -304,7 +305,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
         ]),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -318,7 +319,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -336,7 +337,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           icon: Icon(Icons.arrow_back_rounded,
               color: Theme.of(context).colorScheme.onSurface),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -346,7 +347,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           child: const Icon(Icons.store_rounded,
               color: AppColors.primary, size: 24),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -368,7 +369,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   Widget _buildSettingsGroup(String title, IconData icon, Color color,
       bool isDark, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -380,18 +381,18 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(title,
                     style: TextStyle(
                         fontSize: 16,

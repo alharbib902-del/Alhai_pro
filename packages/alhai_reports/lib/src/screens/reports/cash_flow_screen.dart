@@ -186,9 +186,9 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
@@ -209,7 +209,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
               const PopupMenuItem(value: 'year', child: Text('سنوي')),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(children: [
                 Text(_periodLabel()),
                 const Icon(Icons.arrow_drop_down),
@@ -223,7 +223,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
         child: RefreshIndicator(
         onRefresh: _loadData,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           children: [
             // Net cash flow card
             _NetCard(
@@ -231,7 +231,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
               amount: _netCashFlow,
               isPositive: _netCashFlow >= 0,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // Operating activities
             _ActivitySection(
@@ -258,7 +258,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // Investing activities
             _ActivitySection(
@@ -275,7 +275,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // Financing activities
             _ActivitySection(
@@ -326,11 +326,11 @@ class _NetCard extends StatelessWidget {
         side: BorderSide(color: color.withValues(alpha: 0.3)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         child: Column(
           children: [
             Text(label, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)} ر.س',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: color),
@@ -368,14 +368,14 @@ class _ActivitySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(icon, color: color, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
                 const Spacer(),
                 Container(
@@ -397,7 +397,7 @@ class _ActivitySection extends StatelessWidget {
             ),
             const Divider(height: 20),
             ...rows.map((row) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

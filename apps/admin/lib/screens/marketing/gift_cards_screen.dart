@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'dart:math';
 
 /// شاشة إدارة بطاقات الهدايا والقسائم
@@ -108,14 +110,14 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إصدار بطاقة هدية'),
+        title: Text(AppLocalizations.of(context).issueGiftCard),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Generated code
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -140,23 +142,23 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'قيمة البطاقة (ر.س)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.attach_money_rounded),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context).cardValue,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.attach_money_rounded),
                 ),
                 keyboardType: TextInputType.number,
                 controller: TextEditingController(text: '100'),
                 onChanged: (v) => amount = double.tryParse(v) ?? 100,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'صلاحية (أيام)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.calendar_today_rounded),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context).validityDays(365),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.calendar_today_rounded),
                 ),
                 keyboardType: TextInputType.number,
                 controller: TextEditingController(text: '365'),
@@ -166,7 +168,7 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
           FilledButton.icon(
             onPressed: () {
               final newCard = _GiftCard(
@@ -184,13 +186,13 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('تم إصدار بطاقة هدية بقيمة ${amount.toStringAsFixed(0)} ر.س'),
+                  content: Text(AppLocalizations.of(context).giftCardIssued(amount.toStringAsFixed(0))),
                   backgroundColor: AppColors.success,
                 ),
               );
             },
             icon: const Icon(Icons.card_giftcard_rounded),
-            label: const Text('إصدار البطاقة'),
+            label: Text(AppLocalizations.of(context).issueCard),
           ),
         ],
       ),
@@ -202,11 +204,11 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('صرف بطاقة هدية'),
+        title: Text(AppLocalizations.of(context).redeemGiftCard),
         content: TextField(
           controller: codeController,
-          decoration: const InputDecoration(
-            labelText: 'كود البطاقة',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context).cardCode,
             hintText: 'GC-XXXXXXXX',
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.qr_code_scanner_rounded),
@@ -214,7 +216,7 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           textCapitalization: TextCapitalization.characters,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
           FilledButton(
             onPressed: () {
               final code = codeController.text.trim().toUpperCase();
@@ -223,27 +225,27 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
               if (card == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('لا توجد بطاقة بهذا الكود'),
+                    content: Text(AppLocalizations.of(context).noCardWithCode),
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
                 );
               } else if (card.balance <= 0) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('رصيد البطاقة صفر'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).cardBalanceZero),
                     backgroundColor: Colors.orange,
                   ),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('رصيد البطاقة: ${card.balance.toStringAsFixed(2)} ر.س'),
+                    content: Text(AppLocalizations.of(context).cardBalance(card.balance.toStringAsFixed(2))),
                     backgroundColor: AppColors.success,
                   ),
                 );
               }
             },
-            child: const Text('تحقق'),
+            child: Text(AppLocalizations.of(context).verify),
           ),
         ],
       ),
@@ -259,19 +261,19 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('بطاقات الهدايا'),
+        title: Text(AppLocalizations.of(context).giftCards),
         actions: [
           IconButton(
             icon: const Icon(Icons.card_giftcard_rounded),
-            tooltip: 'صرف بطاقة',
+            tooltip: AppLocalizations.of(context).redeemCard,
             onPressed: _showRedeemDialog,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'البطاقات'),
-            Tab(text: 'الإحصائيات'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context).cardsTab),
+            Tab(text: AppLocalizations.of(context).statisticsTab),
           ],
         ),
       ),
@@ -283,16 +285,16 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
             children: [
               // Search and filter
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Column(
                   children: [
                     TextField(
                       controller: _searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'بحث بالكود...',
-                        prefixIcon: Icon(Icons.search_rounded),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context).searchByCode,
+                        prefixIcon: const Icon(Icons.search_rounded),
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                         isDense: true,
                       ),
                       onChanged: (_) {
@@ -302,19 +304,19 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                         });
                       },
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
                           for (final f in [
-                            ('all', 'الكل'),
-                            ('active', 'نشطة'),
-                            ('used', 'مستخدمة'),
-                            ('expired', 'منتهية'),
+                            ('all', AppLocalizations.of(context).all),
+                            ('active', AppLocalizations.of(context).activeFilter),
+                            ('used', AppLocalizations.of(context).usedFilter),
+                            ('expired', AppLocalizations.of(context).expiredFilter),
                           ])
                             Padding(
-                              padding: const EdgeInsetsDirectional.only(start: 8),
+                              padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
                               child: FilterChip(
                                 label: Text(f.$2),
                                 selected: _filter == f.$1,
@@ -334,18 +336,16 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : _filteredCards.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.card_giftcard_outlined, size: 64, color: Theme.of(context).hintColor),
-                                SizedBox(height: 12),
-                                Text('لا توجد بطاقات هدايا', style: TextStyle(color: Theme.of(context).hintColor)),
-                              ],
-                            ),
+                        ? AppEmptyState(
+                            icon: Icons.card_giftcard_outlined,
+                            title: AppLocalizations.of(context).noGiftCards,
+                            description: AppLocalizations.of(context).issueGiftCardsDescription,
+                            actionText: AppLocalizations.of(context).issueGiftCard,
+                            onAction: _showIssueDialog,
+                            actionIcon: Icons.add_rounded,
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                             itemCount: _filteredCards.length,
                             itemBuilder: (ctx, i) {
                               final card = _filteredCards[i];
@@ -358,27 +358,27 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
           // Tab 2: Statistics
           ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             children: [
               Row(children: [
                 Expanded(child: _StatCard(
-                  label: 'إجمالي الرصيد النشط',
-                  value: '${totalActive.toStringAsFixed(0)} ر.س',
+                  label: AppLocalizations.of(context).totalActiveBalance,
+                  value: '${totalActive.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                   icon: Icons.account_balance_wallet_rounded,
                   color: Colors.green,
                 )),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: _StatCard(
-                  label: 'إجمالي القيمة المصدرة',
-                  value: '${totalIssued.toStringAsFixed(0)} ر.س',
+                  label: AppLocalizations.of(context).totalIssuedValue,
+                  value: '${totalIssued.toStringAsFixed(0)} ${AppLocalizations.of(context).sarSuffix}',
                   icon: Icons.card_giftcard_rounded,
                   color: Colors.purple,
                 )),
               ]),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(children: [
                 Expanded(child: _StatCard(
-                  label: 'البطاقات النشطة',
+                  label: AppLocalizations.of(context).activeCards,
                   value: _cards
                       .where((c) => c.status == 'active' || c.status == 'partially_used')
                       .length
@@ -386,9 +386,9 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                   icon: Icons.check_circle_rounded,
                   color: Colors.blue,
                 )),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: _StatCard(
-                  label: 'البطاقات المستخدمة',
+                  label: AppLocalizations.of(context).usedCards,
                   value: _cards.where((c) => c.status == 'used').length.toString(),
                   icon: Icons.done_all_rounded,
                   color: Theme.of(context).hintColor,
@@ -401,7 +401,7 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showIssueDialog,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('إصدار بطاقة هدية'),
+        label: Text(AppLocalizations.of(context).issueGiftCard),
       ),
     );
   }
@@ -421,12 +421,13 @@ class _GiftCardTile extends StatelessWidget {
     }
   }
 
-  String get _statusLabel {
+  String _statusLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (card.status) {
-      case 'active': return 'نشطة';
-      case 'partially_used': return 'مستخدمة جزئياً';
-      case 'used': return 'مستخدمة بالكامل';
-      case 'expired': return 'منتهية الصلاحية';
+      case 'active': return l10n.giftCardStatusActive;
+      case 'partially_used': return l10n.giftCardStatusPartiallyUsed;
+      case 'used': return l10n.giftCardStatusFullyUsed;
+      case 'expired': return l10n.giftCardStatusExpired;
       default: return card.status;
     }
   }
@@ -436,16 +437,16 @@ class _GiftCardTile extends StatelessWidget {
     final statusColor = _statusColorOf(context);
     final pctUsed = card.amount > 0 ? 1 - (card.balance / card.amount) : 1.0;
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.card_giftcard_rounded, color: statusColor, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   card.code,
                   style: const TextStyle(
@@ -463,13 +464,13 @@ class _GiftCardTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    _statusLabel,
+                    _statusLabel(context),
                     style: TextStyle(fontSize: 11, color: statusColor, fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             LinearProgressIndicator(
               value: pctUsed,
               backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -482,7 +483,7 @@ class _GiftCardTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'الرصيد: ${card.balance.toStringAsFixed(0)}/${card.amount.toStringAsFixed(0)} ر.س',
+                  AppLocalizations.of(context).balanceDisplay(card.balance.toStringAsFixed(0), card.amount.toStringAsFixed(0)),
                   style: TextStyle(
                     fontSize: 12,
                     color: statusColor,
@@ -490,7 +491,7 @@ class _GiftCardTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'ينتهي: ${card.expiresAt.day}/${card.expiresAt.month}/${card.expiresAt.year}',
+                  AppLocalizations.of(context).expiresOn('${card.expiresAt.day}/${card.expiresAt.month}/${card.expiresAt.year}'),
                   style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
                 ),
               ],
@@ -519,14 +520,14 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor)),
           ],
         ),

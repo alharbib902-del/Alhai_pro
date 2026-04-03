@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة قوائم الأسعار المتعددة
 /// تدير أسعار الجملة والتجزئة وأسعار العملاء المميزين
@@ -21,17 +23,20 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
   List<_PriceEntry> _entries = [];
   bool _isLoadingEntries = false;
 
-  final List<_PriceList> _defaultLists = const [
-    _PriceList(id: 'retail', name: 'سعر التجزئة', description: 'السعر العادي للعملاء الأفراد', color: Colors.blue),
-    _PriceList(id: 'wholesale', name: 'سعر الجملة', description: 'أسعار مخفضة لكميات كبيرة', color: Colors.orange),
-    _PriceList(id: 'vip', name: 'أسعار VIP', description: 'أسعار خاصة للعملاء المميزين', color: Colors.purple),
-    _PriceList(id: 'cost', name: 'سعر التكلفة', description: 'للاستخدام الداخلي فقط', color: Colors.red),
-  ];
+  List<_PriceList> _defaultLists(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      _PriceList(id: 'retail', name: l10n.retailPrice, description: l10n.retailPriceDesc, color: Colors.blue),
+      _PriceList(id: 'wholesale', name: l10n.wholesalePrice, description: l10n.wholesalePriceDesc, color: Colors.orange),
+      _PriceList(id: 'vip', name: l10n.vipPrice, description: l10n.vipPriceDesc, color: Colors.purple),
+      _PriceList(id: 'cost', name: l10n.costPriceList, description: l10n.costPriceDesc, color: Colors.red),
+    ];
+  }
 
   @override
   void initState() {
     super.initState();
-    _priceLists = _defaultLists;
+    // _priceLists initialized in didChangeDependencies
     _loadEntries();
   }
 
@@ -99,30 +104,32 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
     final controller = TextEditingController(text: entry.listPrice.toStringAsFixed(2));
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('تعديل السعر - ${entry.name}'),
+      builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx);
+        return AlertDialog(
+        title: Text(l10n.editPrice(entry.name)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('السعر الأساسي: ${entry.basePrice.toStringAsFixed(2)} ر.س',
+            Text(l10n.basePriceLabel(entry.basePrice.toStringAsFixed(2)),
                 style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
-            Text('سعر التكلفة: ${entry.costPrice.toStringAsFixed(2)} ر.س',
+            Text(l10n.costPriceLabel(entry.costPrice.toStringAsFixed(2)),
                 style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(
               controller: controller,
               decoration: InputDecoration(
-                labelText: 'السعر الجديد (${_priceLists[_selectedList].name})',
+                labelText: l10n.newPriceLabel(_priceLists[_selectedList].name),
                 border: const OutlineInputBorder(),
-                suffixText: 'ر.س',
+                suffixText: l10n.sarSuffix,
               ),
               keyboardType: TextInputType.number,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               final newPrice = double.tryParse(controller.text);
@@ -130,24 +137,27 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('تم تحديث سعر "${entry.name}" إلى ${newPrice.toStringAsFixed(2)} ر.س'),
+                    content: Text(l10n.priceUpdated(entry.name, newPrice.toStringAsFixed(2))),
                     backgroundColor: AppColors.success,
                   ),
                 );
               }
             },
-            child: const Text('حفظ'),
+            child: Text(l10n.save),
           ),
         ],
-      ),
+      );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    _priceLists = _defaultLists(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('قوائم الأسعار'),
+        title: Text(l10n.priceLists),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -160,12 +170,12 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
           // Price list selector
           Container(
             height: 100,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
               itemCount: _priceLists.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (ctx, i) {
                 final list = _priceLists[i];
                 final isSelected = i == _selectedList;
@@ -177,7 +187,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: 130,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? list.color
@@ -199,7 +209,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                             color: isSelected ? Colors.white : list.color,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           list.description,
                           style: TextStyle(
@@ -219,16 +229,16 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
 
           // Active list header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
             child: Row(
               children: [
                 Icon(_priceLists[_selectedList].color == Colors.blue
                     ? Icons.storefront_rounded
                     : Icons.business_rounded,
                     color: _priceLists[_selectedList].color, size: 18),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
-                  '${_priceLists[_selectedList].name} (${_entries.length} منتج)',
+                  '${_priceLists[_selectedList].name} (${l10n.productCount(_entries.length)})',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -240,9 +250,9 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
             child: _isLoadingEntries
                 ? const Center(child: CircularProgressIndicator())
                 : _entries.isEmpty
-                    ? Center(child: Text('لا توجد منتجات', style: TextStyle(color: Theme.of(context).hintColor)))
+                    ? AppEmptyState.noProducts(context)
                     : ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                         itemCount: _entries.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (ctx, i) {
@@ -256,7 +266,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                             dense: true,
                             title: Text(entry.name, style: const TextStyle(fontSize: 13)),
                             subtitle: Text(
-                              'أساسي: ${entry.basePrice.toStringAsFixed(2)} ر.س',
+                              l10n.baseLabel(entry.basePrice.toStringAsFixed(2)),
                               style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
                             ),
                             trailing: Row(
@@ -267,7 +277,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${entry.listPrice.toStringAsFixed(2)} ر.س',
+                                      l10n.amountSar(entry.listPrice.toStringAsFixed(2)),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: listColor,
@@ -284,7 +294,7 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                                       ),
                                   ],
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: AlhaiSpacing.xxs),
                                 IconButton(
                                   icon: const Icon(Icons.edit_rounded, size: 18),
                                   onPressed: () => _showEditPriceDialog(entry),

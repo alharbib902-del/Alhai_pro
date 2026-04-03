@@ -98,9 +98,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : _error != null
-                      ? AppErrorState.general(message: _error, onRetry: _loadStatus)
+                      ? AppErrorState.general(context, message: _error, onRetry: _loadStatus)
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                           child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, isOnline),
                         ),
                 ),
@@ -114,7 +114,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       children: [
         // Connection status card
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           decoration: BoxDecoration(
             color: isDark
                 ? (isOnline ? AppColors.success.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1))
@@ -139,7 +139,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   size: 32,
                 ),
               ),
-              const SizedBox(width: 20),
+              SizedBox(width: AlhaiSpacing.mdl),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
 
         // Pending items card
         Container(
@@ -176,7 +176,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
             onTap: () => context.push(AppRoutes.pendingTransactions),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -188,7 +188,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       color: _pendingCount > 0 ? AppColors.warning : AppColors.success,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AlhaiSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,26 +209,26 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   ),
                   if (_pendingCount > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: AppColors.warning,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text('$_pendingCount', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AlhaiSpacing.xs),
                   AdaptiveIcon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                 ],
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
 
         // Conflict items card (يظهر فقط إن وجدت تعارضات)
         if (_conflictCount > 0) ...[
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark
                   ? AppColors.error.withValues(alpha: 0.1)
@@ -242,27 +242,27 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   backgroundColor: AppColors.error.withValues(alpha: 0.1),
                   child: const Icon(Icons.warning_amber_rounded, color: AppColors.error),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'تعارضات المزامنة',
+                        l10n.syncConflicts,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
-                        '$_conflictCount عنصر يحتاج مراجعة',
+                        l10n.itemsNeedReview(_conflictCount),
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.error,
                     borderRadius: BorderRadius.circular(16),
@@ -272,12 +272,12 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
         ],
 
         // Sync info card
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
@@ -293,7 +293,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               _InfoRow(label: l10n.lastFullSync, value: _lastSyncTime != null ? _formatDate(_lastSyncTime!) : '-', isDark: isDark),
               Divider(height: 16, color: Theme.of(context).dividerColor),
               _InfoRow(
@@ -307,7 +307,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Sync button
         SizedBox(
@@ -318,7 +318,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.sync),
             label: Text(_isSyncing ? l10n.syncing : l10n.syncNow),
-            style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+            style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md)),
           ),
         ),
       ],
@@ -333,9 +333,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       case SyncHealthStatus.syncing:
         return l10n.syncing;
       case SyncHealthStatus.warning:
-        return 'يحتاج اهتمام';
+        return l10n.needsAttention;
       case SyncHealthStatus.critical:
-        return 'مشاكل خطيرة';
+        return l10n.seriousProblems;
     }
   }
 
@@ -381,7 +381,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       if (result.hasErrors) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تمت مزامنة ${result.successCount} عنصر، فشل ${result.failedCount}'),
+            content: Text(l10n.syncPartialSuccess(result.successCount, result.failedCount)),
             backgroundColor: AppColors.warning,
           ),
         );
@@ -393,8 +393,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
     } catch (e) {
       debugPrint('SyncStatusScreen: Force sync error: $e');
       if (mounted) {
+        final errL10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ في المزامنة: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text(errL10n.syncErrorMessage('$e')), backgroundColor: AppColors.error),
         );
       }
     } finally {

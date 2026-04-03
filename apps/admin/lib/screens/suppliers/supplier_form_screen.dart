@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Admin Supplier Form Screen - Add/Edit supplier
 class SupplierFormScreen extends ConsumerStatefulWidget {
@@ -129,16 +130,16 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           builder: (context) => ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: AlertDialog(
-              title: const Text('تغييرات غير محفوظة'),
-              content: const Text('هل تريد المغادرة بدون حفظ التغييرات؟'),
+              title: Text(AppLocalizations.of(context).unsavedChanges),
+              content: Text(AppLocalizations.of(context).leaveWithoutSaving),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('إلغاء'),
+                  child: Text(AppLocalizations.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('مغادرة'),
+                  child: Text(AppLocalizations.of(context).leave),
                 ),
               ],
             ),
@@ -186,11 +187,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         Expanded(
           flex: 2,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             child: Column(
               children: [
                 _buildBasicInfoSection(isDark, l10n),
-                const SizedBox(height: 20),
+                const SizedBox(height: AlhaiSpacing.mdl),
                 _buildContactSection(isDark, l10n),
               ],
             ),
@@ -199,18 +200,18 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // Right column: business + financial + additional + save
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 24, 24, 24),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero, AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg),
             child: Column(
               children: [
                 _buildBusinessSection(isDark, l10n),
-                const SizedBox(height: 20),
+                const SizedBox(height: AlhaiSpacing.mdl),
                 _buildFinancialSection(isDark, l10n),
-                const SizedBox(height: 20),
+                const SizedBox(height: AlhaiSpacing.mdl),
                 _buildAdditionalSection(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(isDark, l10n),
                 if (widget.isEditing) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildDeleteButton(isDark, l10n),
                 ],
               ],
@@ -223,7 +224,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
   Widget _buildNarrowLayout(bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         children: [
           // Back button
@@ -236,7 +237,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
                   widget.isEditing
@@ -251,23 +252,23 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildBasicInfoSection(isDark, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildContactSection(isDark, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildBusinessSection(isDark, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildFinancialSection(isDark, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildAdditionalSection(isDark, l10n),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           _buildSaveButton(isDark, l10n),
           if (widget.isEditing) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             _buildDeleteButton(isDark, l10n),
           ],
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
         ],
       ),
     );
@@ -514,7 +515,7 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         // Active switch
         Container(
           padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
           decoration: BoxDecoration(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.03)

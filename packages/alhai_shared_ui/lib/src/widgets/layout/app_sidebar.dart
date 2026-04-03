@@ -179,7 +179,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -213,7 +213,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                               ? Colors.white.withValues(alpha: 0.3)
                               : AppColors.textTertiary,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           l10n.noResults,
                           style: TextStyle(
@@ -270,7 +270,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
       itemCount: flatItems.length,
       itemBuilder: (context, index) {
         final entry = flatItems[index];

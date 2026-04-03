@@ -9,7 +9,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AppColors, AlhaiColors, AlhaiDurations;
+    show AppColors, AlhaiColors, AlhaiDurations, AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_sync/alhai_sync.dart' show SyncStatus;
 
 import '../../providers/sync_providers.dart';
@@ -101,13 +102,14 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
 
   /// تحديد الأيقونة واللون بناءً على الحالة
   ({IconData icon, Color color, String tooltip}) _resolveState() {
+    final l10n = AppLocalizations.of(context)!;
     if (!widget.isOnline) {
       return (
         icon: Icons.cloud_off_rounded,
         color: AppColors.error,
         tooltip: widget.pendingCount > 0
-            ? 'غير متصل - ${widget.pendingCount} عمليات في الانتظار'
-            : 'غير متصل بالإنترنت',
+            ? l10n.offlineWithPending(widget.pendingCount)
+            : l10n.noInternetConnection,
       );
     }
 
@@ -116,8 +118,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
         icon: Icons.sync_rounded,
         color: AppColors.warning,
         tooltip: widget.pendingCount > 0
-            ? 'جاري المزامنة... (${widget.pendingCount} عمليات)'
-            : 'جاري المزامنة...',
+            ? l10n.syncingWithCount(widget.pendingCount)
+            : l10n.syncing,
       );
     }
 
@@ -126,8 +128,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
         icon: Icons.sync_problem_rounded,
         color: AppColors.error,
         tooltip: widget.pendingCount > 0
-            ? 'خطأ في المزامنة - ${widget.pendingCount} عمليات معلقة'
-            : 'خطأ في المزامنة',
+            ? l10n.syncErrorWithCount(widget.pendingCount)
+            : l10n.syncErrorMessage(''),
       );
     }
 
@@ -135,14 +137,14 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
       return (
         icon: Icons.cloud_upload_rounded,
         color: AppColors.warning,
-        tooltip: '${widget.pendingCount} عمليات في انتظار المزامنة',
+        tooltip: l10n.pendingSyncWithCount(widget.pendingCount),
       );
     }
 
     return (
       icon: Icons.cloud_done_rounded,
       color: AlhaiColors.success,
-      tooltip: 'متصل - كل البيانات مزامنة',
+      tooltip: l10n.connectedAllSynced,
     );
   }
 
@@ -184,7 +186,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
             borderRadius: BorderRadius.circular(8),
             child: AnimatedContainer(
               duration: AlhaiDurations.fast,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: _isHovered
                     ? (widget.isDark
@@ -242,7 +244,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                             minHeight: 16,
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
+                            horizontal: AlhaiSpacing.xxs,
                             vertical: 1,
                           ),
                           decoration: BoxDecoration(
@@ -316,7 +318,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                 color: Colors.transparent,
                 child: Container(
                   width: 260,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   decoration: BoxDecoration(
                     color: isDark
                         ? AppColors.surfaceDark
@@ -343,7 +345,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(AlhaiSpacing.xs),
                             decoration: BoxDecoration(
                               color: state.color.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
@@ -354,7 +356,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                               size: 20,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: AlhaiSpacing.sm),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,7 +369,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(height: 2),
+                                SizedBox(height: AlhaiSpacing.xxxs),
                                 Text(
                                   _getStatusDescription(),
                                   style: TextStyle(
@@ -383,14 +385,14 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
 
                       // الفاصل
                       if (widget.pendingCount > 0) ...[
-                        const SizedBox(height: 12),
+                        SizedBox(height: AlhaiSpacing.sm),
                         Divider(
                           height: 1,
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.08)
                               : theme.dividerColor,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: AlhaiSpacing.sm),
                         // تفاصيل العمليات المعلقة
                         Row(
                           children: [
@@ -399,7 +401,7 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                               color: AppColors.getTextMuted(isDark),
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: AlhaiSpacing.xs),
                             Text(
                               '${widget.pendingCount} عمليات في الانتظار',
                               style: TextStyle(
@@ -422,26 +424,28 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
   }
 
   String _getStatusTitle() {
-    if (!widget.isOnline) return 'غير متصل';
-    if (widget.syncStatus == SyncStatus.syncing) return 'جاري المزامنة';
-    if (widget.syncStatus == SyncStatus.error) return 'خطأ في المزامنة';
-    if (widget.pendingCount > 0) return 'في انتظار المزامنة';
-    return 'متصل';
+    final l10n = AppLocalizations.of(context)!;
+    if (!widget.isOnline) return l10n.disconnectedLabel;
+    if (widget.syncStatus == SyncStatus.syncing) return l10n.syncing;
+    if (widget.syncStatus == SyncStatus.error) return l10n.syncErrorMessage('');
+    if (widget.pendingCount > 0) return l10n.pendingSync;
+    return l10n.connectedLabel;
   }
 
   String _getStatusDescription() {
+    final l10n = AppLocalizations.of(context)!;
     if (!widget.isOnline) {
-      return 'البيانات محفوظة محلياً وستتم مزامنتها عند الاتصال';
+      return l10n.dataSavedLocally;
     }
     if (widget.syncStatus == SyncStatus.syncing) {
-      return 'يتم رفع البيانات إلى السيرفر...';
+      return l10n.uploadingData;
     }
     if (widget.syncStatus == SyncStatus.error) {
-      return 'حدث خطأ، ستتم إعادة المحاولة تلقائياً';
+      return l10n.errorWillRetry;
     }
     if (widget.pendingCount > 0) {
-      return 'ستتم المزامنة خلال ثوان';
+      return l10n.syncSoon;
     }
-    return 'كل البيانات محدثة ومزامنة';
+    return l10n.allDataSynced;
   }
 }

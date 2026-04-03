@@ -12,7 +12,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -99,7 +99,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child:
                 _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
@@ -124,21 +124,21 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             child: Column(
               children: [
                 _buildSearchCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 if (_searchResults.isNotEmpty && _selectedProduct == null)
                   _buildSearchResults(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildBarcodePreview(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildQuantityCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildPrintButton(isDark, l10n),
               ],
             ),
@@ -151,15 +151,15 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildSearchCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
           _buildSearchResults(isDark, l10n),
-          SizedBox(height: isMediumScreen ? 24 : 16),
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         ],
         _buildBarcodePreview(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildPrintButton(isDark, l10n),
       ],
     );
@@ -167,7 +167,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
 
   Widget _buildSearchCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -179,7 +179,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -187,7 +187,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 child: const Icon(Icons.search_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.searchProduct,
                 style: TextStyle(
@@ -198,7 +198,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -244,18 +244,18 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                           color: AppColors.primary, width: 2),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                        horizontal: AlhaiSpacing.md, vertical: 14),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               SizedBox(
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('أدخل الباركود يدوياً'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context).enterBarcodeManually),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -274,7 +274,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: 16),
+              padding: EdgeInsets.only(top: AlhaiSpacing.md),
               child: Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -302,7 +302,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 14),
+                  horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -362,7 +362,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     final barcode = product?.barcode ?? '';
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -373,7 +373,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -381,7 +381,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 child: const Icon(Icons.qr_code_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Barcode Preview',
                 style: TextStyle(
@@ -392,7 +392,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           if (product == null)
             Center(
               child: Column(
@@ -401,7 +401,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                       size: 64,
                       color: AppColors.getTextMuted(isDark)
                           .withValues(alpha: 0.3)),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text('Select a product first',
                       style: TextStyle(
                           fontSize: 13,
@@ -413,7 +413,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             // Barcode visualization
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -438,7 +438,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                       }),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     barcode.isNotEmpty ? barcode : 'N/A',
                     style: TextStyle(
@@ -449,7 +449,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                       letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     product.name,
                     style: TextStyle(
@@ -458,7 +458,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     '${product.price.toStringAsFixed(2)} ${l10n.sar}',
                     style: TextStyle(
@@ -470,10 +470,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             // Barcode format info
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius: BorderRadius.circular(10),
@@ -483,7 +483,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   Icon(Icons.info_outline_rounded,
                       size: 16,
                       color: AppColors.getTextMuted(isDark)),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     'Format: EAN-13',
                     style: TextStyle(
@@ -501,7 +501,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
 
   Widget _buildQuantityCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -513,7 +513,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -521,7 +521,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 child: const Icon(Icons.content_copy_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Label Quantity',
                 style: TextStyle(
@@ -532,7 +532,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
@@ -567,7 +567,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -584,7 +584,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                        horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
@@ -635,7 +635,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),

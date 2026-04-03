@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Wallet management screen with balance overview, transactions list, and settings.
 class WalletScreen extends ConsumerStatefulWidget {
@@ -140,14 +141,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
           ],
         ),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               // Balance card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                       colors: [AppColors.primary, Color(0xFF5B2D8E)]),
@@ -165,7 +166,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 14),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Text(
                             _balance.toStringAsFixed(2),
                             style: const TextStyle(
@@ -174,7 +175,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           Wrap(
                             spacing: 16,
                             runSpacing: 8,
@@ -202,7 +203,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                         ],
                       ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               TabBar(
                 controller: _tabController,
                 labelColor: AppColors.primary,
@@ -245,7 +246,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
           Icon(Icons.error_outline,
               size: 64,
               color: AppColors.error.withValues(alpha: 0.7)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             _error!,
             style: TextStyle(
@@ -253,7 +254,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 color: Theme.of(context).colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: _loadData,
             icon: const Icon(Icons.refresh),
@@ -267,58 +268,30 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
   Widget _buildTransactionsTab(
       bool isDark, List<TransactionsTableData> transactions) {
     if (transactions.isEmpty) {
-      String emptyMessage;
-      String emptySubMessage;
-      IconData emptyIcon;
       if (_tabController.index == 0) {
-        emptyMessage = 'No transactions';
-        emptySubMessage = 'Transactions will appear here after activity';
-        emptyIcon = Icons.receipt_long_outlined;
+        return AppEmptyState.noData(
+          context,
+          title: 'لا توجد معاملات',
+          description: 'ستظهر المعاملات هنا بعد النشاط',
+        );
       } else if (_tabController.index == 1) {
-        emptyMessage = 'No deposits';
-        emptySubMessage = 'Tap + to add a new deposit';
-        emptyIcon = Icons.savings_outlined;
+        return AppEmptyState(
+          icon: Icons.savings_outlined,
+          title: 'لا توجد إيداعات',
+          description: 'اضغط + لإضافة إيداع جديد',
+        );
       } else {
-        emptyMessage = 'No transfers';
-        emptySubMessage = '';
-        emptyIcon = Icons.swap_horiz;
+        return AppEmptyState(
+          icon: Icons.swap_horiz,
+          title: 'لا توجد تحويلات',
+        );
       }
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(emptyIcon,
-                size: 80,
-                color: isDark
-                    ? Colors.white24
-                    : AppColors.textTertiary),
-            const SizedBox(height: 16),
-            Text(
-              emptyMessage,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-            if (emptySubMessage.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                emptySubMessage,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: isDark
-                        ? Colors.white38
-                        : AppColors.textTertiary),
-              ),
-            ],
-          ],
-        ),
-      );
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       itemCount: transactions.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
       itemBuilder: (context, index) {
         final t = transactions[index];
         return _buildTransactionCard(t, isDark);
@@ -351,7 +324,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
             ),
             child: Icon(icon, color: color, size: 22),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,7 +338,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 ),
                 if (transaction.description != null &&
                     transaction.description!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     transaction.description!,
                     style: TextStyle(
@@ -375,7 +348,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   _formatDateTime(transaction.createdAt),
                   style: TextStyle(
@@ -398,7 +371,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   color: color,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: AlhaiSpacing.xxxs),
               if (transaction.paymentMethod != null)
                 Text(
                   _getPaymentMethodLabel(transaction.paymentMethod!),
@@ -497,7 +470,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 ),
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
                 initialValue: selectedMethod,
                 decoration: InputDecoration(
@@ -519,7 +492,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   }
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               TextField(
                 controller: noteController,
                 decoration: InputDecoration(
@@ -584,7 +557,7 @@ class _WalletInfoChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: Colors.white70, size: 16),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

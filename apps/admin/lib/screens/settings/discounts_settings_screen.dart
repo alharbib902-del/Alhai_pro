@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الخصومات
 const String _kDiscountEnabled = 'discount_enabled';
@@ -173,7 +174,7 @@ class _DiscountsSettingsScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildPageHeader(isDark, l10n),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
 
         _buildSettingsGroup(l10n.generalDiscounts, Icons.local_offer_rounded,
             const Color(0xFFEF4444), isDark, [
@@ -209,7 +210,7 @@ class _DiscountsSettingsScreenState
               ),
             ],
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         _buildSettingsGroup(l10n.vipCustomerDiscount, Icons.star_rounded,
@@ -230,7 +231,7 @@ class _DiscountsSettingsScreenState
                     onChanged: (v) => setState(() => _vipDiscountRate = v)),
               ),
             ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         _buildSettingsGroup(l10n.otherDiscounts, Icons.sell_rounded,
@@ -248,10 +249,10 @@ class _DiscountsSettingsScreenState
             value: _enableCoupons,
             onChanged: (v) => setState(() => _enableCoupons = v),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -261,7 +262,7 @@ class _DiscountsSettingsScreenState
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -273,13 +274,13 @@ class _DiscountsSettingsScreenState
   Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(children: [
       IconButton(onPressed: () => context.pop(), icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
-      const SizedBox(width: 8),
+      const SizedBox(width: AlhaiSpacing.xs),
       Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: const Color(0xFFEF4444).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.local_offer_rounded, color: Color(0xFFEF4444), size: 24),
       ),
-      const SizedBox(width: 12),
+      const SizedBox(width: AlhaiSpacing.sm),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(l10n.discountSettingsTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
         Text(l10n.discountSettingsSubtitle, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
@@ -289,7 +290,7 @@ class _DiscountsSettingsScreenState
 
   Widget _buildSettingsGroup(String title, IconData icon, Color color, bool isDark, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -297,14 +298,14 @@ class _DiscountsSettingsScreenState
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Row(children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
           ]),
         ),

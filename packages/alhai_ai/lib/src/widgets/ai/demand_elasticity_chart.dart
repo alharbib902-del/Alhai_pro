@@ -31,7 +31,7 @@ class DemandElasticityChart extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -55,7 +55,7 @@ class DemandElasticityChart extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -87,7 +87,7 @@ class DemandElasticityChart extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // الرسم البياني
           SizedBox(
@@ -105,7 +105,7 @@ class DemandElasticityChart extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // المفتاح
           Row(
@@ -113,7 +113,7 @@ class DemandElasticityChart extends StatelessWidget {
             children: [
               _buildLegendDot('السعر الحالي', const Color(0xFF3B82F6), isDark),
               // Current price
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildLegendDot('السعر المقترح', AppColors.primary, isDark),
               // Suggested price
             ],
@@ -121,7 +121,7 @@ class DemandElasticityChart extends StatelessWidget {
 
           // الوصف
           if (elasticity != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -160,8 +160,8 @@ class DemandElasticityChart extends StatelessWidget {
             : AppColors.info;
 
     return Container(
-      margin: const EdgeInsets.only(top: 2),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      margin: const EdgeInsets.only(top: AlhaiSpacing.xxxs),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -189,7 +189,7 @@ class DemandElasticityChart extends StatelessWidget {
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           label,
           style: TextStyle(

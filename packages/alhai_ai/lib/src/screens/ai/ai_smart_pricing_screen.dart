@@ -12,6 +12,7 @@ import '../../services/ai_smart_pricing_service.dart';
 import '../../widgets/ai/price_suggestion_card.dart';
 import '../../widgets/ai/profit_impact_calculator.dart';
 import '../../widgets/ai/demand_elasticity_chart.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة التسعير الذكي
 class AiSmartPricingScreen extends ConsumerStatefulWidget {
@@ -43,7 +44,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: _buildContent(isDark, isWideScreen, isMediumScreen),
                   ),
                 ),
@@ -70,12 +71,12 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           error: (e, _) => _buildErrorWidget(e.toString(), isDark),
         ),
 
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // فلتر
         _buildFilterChips(filter, isDark),
 
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // المحتوى الرئيسي
         if (isWideScreen)
@@ -95,7 +96,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
                   error: (e, _) => _buildErrorWidget(e.toString(), isDark),
                 ),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: AlhaiSpacing.lg),
               // لوحة التفاصيل
               Expanded(
                 flex: 2,
@@ -119,7 +120,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
                 error: (e, _) => _buildErrorWidget(e.toString(), isDark),
               ),
               if (selected != null) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildDetailPanel(
                     selected, sliderPrice, impactAsync, elasticityAsync, isDark),
               ],
@@ -188,15 +189,15 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
         Row(
           children: [
             Expanded(child: _buildSummaryCard(cards[0], isDark)),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: _buildSummaryCard(cards[1], isDark)),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(child: _buildSummaryCard(cards[2], isDark)),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: _buildSummaryCard(cards[3], isDark)),
           ],
         ),
@@ -226,7 +227,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: data.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
@@ -246,7 +247,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
                         isDark ? Colors.white54 : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: AlignmentDirectional.centerStart,
@@ -331,7 +332,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
   ) {
     if (suggestions.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(AlhaiSpacing.xxl),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -348,7 +349,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
               size: 48,
               color: isDark ? Colors.white24 : AppColors.grey300,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               AppLocalizations.of(context)!.noSuggestionsInFilter,
               style: TextStyle(
@@ -364,7 +365,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
     return Column(
       children: suggestions.map((suggestion) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           child: PriceSuggestionCard(
             suggestion: suggestion,
             isSelected: selected?.productId == suggestion.productId,
@@ -414,7 +415,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
           },
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // رسم مرونة الطلب
         elasticityAsync.when(
@@ -433,7 +434,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
   /// تلميح اختيار منتج
   Widget _buildSelectProductHint(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -446,7 +447,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
@@ -457,7 +458,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
               size: 32,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             AppLocalizations.of(context)!.selectProductForDetails,
             style: TextStyle(
@@ -466,7 +467,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
               color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             AppLocalizations.of(context)!.selectProductHint,
             textAlign: TextAlign.center,
@@ -498,7 +499,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
 
   Widget _buildErrorWidget(String error, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.errorSurface,
         borderRadius: BorderRadius.circular(12),
@@ -506,7 +507,7 @@ class _AiSmartPricingScreenState extends ConsumerState<AiSmartPricingScreen> {
       child: Row(
         children: [
           const Icon(Icons.error_outline_rounded, color: AppColors.error),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.errorOccurredShort(error),

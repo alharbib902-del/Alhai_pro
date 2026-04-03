@@ -506,7 +506,7 @@ class _StatContent extends StatelessWidget {
             ),
             if (icon != null)
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: hasGradient
                       ? colorScheme.onPrimary.withValues(alpha: 0.2)
@@ -537,7 +537,7 @@ class _StatContent extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 6,
-                  vertical: 2,
+                  vertical: AlhaiSpacing.xxxs,
                 ),
                 decoration: BoxDecoration(
                   color: change! >= 0
@@ -559,7 +559,7 @@ class _StatContent extends StatelessWidget {
                           ? (hasGradient ? colorScheme.onPrimary : AppColors.success)
                           : (hasGradient ? colorScheme.onPrimary : AppColors.error),
                     ),
-                    const SizedBox(width: 2),
+                    SizedBox(width: AlhaiSpacing.xxxs),
                     Text(
                       '${change!.abs().toStringAsFixed(1)}%',
                       style: TextStyle(

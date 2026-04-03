@@ -10,6 +10,7 @@ library smart_offline_banner;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 
 /// شريط حالة الاتصال الذكي
@@ -175,7 +176,7 @@ class _OfflineBanner extends StatelessWidget {
         bottom: false,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           child: Row(
             children: [
               const Icon(
@@ -183,15 +184,15 @@ class _OfflineBanner extends StatelessWidget {
                 color: Colors.white,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'لا يوجد اتصال بالإنترنت',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.noInternetConnection,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -199,7 +200,7 @@ class _OfflineBanner extends StatelessWidget {
                     ),
                     if (pendingCount > 0)
                       Text(
-                        '$pendingCount عملية في انتظار المزامنة',
+                        AppLocalizations.of(context)!.operationsPendingSync(pendingCount),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 11,
@@ -212,10 +213,10 @@ class _OfflineBanner extends StatelessWidget {
                 TextButton.icon(
                   onPressed: onSyncPressed,
                   icon: const Icon(Icons.sync, size: 16),
-                  label: const Text('مزامنة'),
+                  label: Text(AppLocalizations.of(context)!.syncLabel),
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
                   ),
                 ),
             ],
@@ -236,19 +237,19 @@ class _OnlineBanner extends StatelessWidget {
         bottom: false,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: const Row(
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.wifi,
                 color: Colors.white,
                 size: 20,
               ),
-              SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
-                'تم استعادة الاتصال',
-                style: TextStyle(
+                AppLocalizations.of(context)!.connectionRestored,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
@@ -314,18 +315,18 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: AlhaiSpacing.xxs),
           Text(
-            isOnline ? 'متصل' : 'غير متصل',
+            isOnline ? AppLocalizations.of(context)!.connectedLabel : AppLocalizations.of(context)!.disconnectedLabel,
             style: TextStyle(
               fontSize: 12,
               color: color,
             ),
           ),
           if (!isOnline && _state.pendingSyncCount > 0) ...[
-            const SizedBox(width: 4),
+            SizedBox(width: AlhaiSpacing.xxs),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
               decoration: BoxDecoration(
                 color: AlhaiColors.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),

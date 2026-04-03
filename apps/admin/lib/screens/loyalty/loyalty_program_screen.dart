@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // ============================================================================
 // LOYALTY TIER MODEL
@@ -211,7 +212,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
           userRole: l10n.branchManager,
           actions: [
             Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8),
+              padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
               child: Switch(
                 value: _programEnabled,
                 onChanged: (v) => setState(() => _programEnabled = v),
@@ -229,7 +230,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 children: [
                   const Icon(Icons.error_outline,
                       size: 64, color: AppColors.error),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     _error!,
                     style: TextStyle(
@@ -239,7 +240,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   FilledButton.icon(
                     onPressed: _loadData,
                     icon: const Icon(Icons.refresh, size: 18),
@@ -290,7 +291,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       color: isDark
                           ? Colors.white30
                           : AppColors.textTertiary),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     l10n.loyaltyProgram,
                     style: TextStyle(
@@ -298,7 +299,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       color: isDark ? Colors.white70 : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     l10n.settings,
                     style: TextStyle(
@@ -366,7 +367,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Members list
           if (_members.isEmpty)
@@ -381,7 +382,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               final memberTier =
                   _getTierForPoints(member.currentPoints, _tiers);
               return Container(
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: cardColor,
                   borderRadius: BorderRadius.circular(12),
@@ -460,7 +461,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           if (_rewards.isEmpty)
             AppEmptyState(
               icon: Icons.card_giftcard,
@@ -469,7 +470,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
             )
           else
             ..._rewards.map((reward) => Container(
-                  margin: const EdgeInsets.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                   decoration: BoxDecoration(
                     color: cardColor,
                     borderRadius: BorderRadius.circular(12),
@@ -545,7 +546,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
             children: [
               // Header description
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.07),
                   borderRadius: BorderRadius.circular(10),
@@ -553,14 +554,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       color: AppColors.primary.withValues(alpha: 0.2)),
                 ),
                 child: Row(
-                  children: const [
-                    Icon(Icons.info_outline,
+                  children: [
+                    const Icon(Icons.info_outline,
                         color: AppColors.primary, size: 18),
-                    SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
-                        'يمكنك تخصيص مستويات برنامج الولاء وتحديد النقاط والمزايا لكل مستوى.',
-                        style: TextStyle(
+                        l10n.loyaltyTierCustomizeHint,
+                        style: const TextStyle(
                           color: AppColors.primary,
                           fontSize: 13,
                         ),
@@ -569,7 +570,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // Tier cards
               ..._tiers.asMap().entries.map((entry) {
@@ -582,7 +583,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     .length;
 
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
                   decoration: BoxDecoration(
                     color: cardColor,
                     borderRadius: BorderRadius.circular(14),
@@ -621,7 +622,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                               child: Icon(Icons.star_rounded,
                                   color: tier.color, size: 22),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: AlhaiSpacing.sm),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -652,14 +653,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                '$memberCount عضو',
+                                l10n.memberCount(memberCount),
                                 style: TextStyle(
                                     fontSize: 12,
                                     color: tier.color,
                                     fontWeight: FontWeight.w600),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AlhaiSpacing.xs),
                             IconButton(
                               icon: const Icon(Icons.edit_outlined, size: 20),
                               color: tier.color,
@@ -673,16 +674,16 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
 
                       // Tier details
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(AlhaiSpacing.md),
                         child: Column(
                           children: [
                             // النقاط المطلوبة
                             _buildTierDetailRow(
                               icon: Icons.star_border_rounded,
-                              label: 'النقاط المطلوبة',
+                              label: l10n.pointsRequired,
                               value: tier.maxPoints == -1
-                                  ? '${tier.minPoints}+ نقطة'
-                                  : '${tier.minPoints} - ${tier.maxPoints} نقطة',
+                                  ? '${tier.minPoints}+ ${l10n.pointsUnit}'
+                                  : '${tier.minPoints} - ${tier.maxPoints} ${l10n.pointsUnit}',
                               color: tier.color,
                               textColor: textColor,
                               subtextColor: subtextColor,
@@ -691,7 +692,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                             // نسبة الخصم
                             _buildTierDetailRow(
                               icon: Icons.discount_outlined,
-                              label: 'نسبة الخصم',
+                              label: l10n.discountPercentage,
                               value: '${(tier.discount * 100).toStringAsFixed(0)}%',
                               color: tier.discount > 0
                                   ? AppColors.success
@@ -703,7 +704,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                             // مضاعف النقاط
                             _buildTierDetailRow(
                               icon: Icons.multiple_stop_rounded,
-                              label: 'مضاعف النقاط',
+                              label: l10n.pointsMultiplier,
                               value: '${tier.multiplier}x',
                               color: AppColors.info,
                               textColor: textColor,
@@ -730,9 +731,9 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               onPressed: () => _showAddTierDialog(isDark),
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
-                'إضافة مستوى',
-                style: TextStyle(color: Colors.white),
+              label: Text(
+                l10n.addTier,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ),
@@ -753,7 +754,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
     return Row(
       children: [
         Icon(icon, size: 18, color: color),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Text(label, style: TextStyle(color: subtextColor, fontSize: 13)),
         const Spacer(),
         Text(
@@ -783,7 +784,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius: BorderRadius.circular(12),
@@ -840,10 +841,10 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // عرض ملخص المستويات في إعدادات (للاطلاع فقط)
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius: BorderRadius.circular(12),
@@ -902,7 +903,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
 
   Widget _buildTierRow(LoyaltyTierConfig tier, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Container(
@@ -913,11 +914,11 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 shape: BoxShape.circle),
             child: Icon(Icons.star, color: tier.color, size: 18),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Text(tier.name,
               style:
                   TextStyle(fontWeight: FontWeight.w500, color: tier.color)),
-          const SizedBox(width: 4),
+          const SizedBox(width: AlhaiSpacing.xxs),
           Text(
             '(${tier.nameEn})',
             style: TextStyle(
@@ -935,7 +936,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               fontSize: 12,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Text(
             '${(tier.discount * 100).toStringAsFixed(0)}%',
             style: TextStyle(
@@ -952,7 +953,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
   Widget _buildStatCard(
       IconData icon, String label, String value, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -963,7 +964,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(value,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -1001,7 +1002,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
           title: Row(
             children: [
               Icon(Icons.star_rounded, color: tier.color, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text('${l10n.edit}: ${tier.name}'),
             ],
           ),
@@ -1012,11 +1013,11 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    labelText: 'الاسم (عربي)',
+                    labelText: l10n.nameArabic,
                     prefixIcon: const Icon(Icons.translate),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: nameEnController,
                   decoration: InputDecoration(
@@ -1024,32 +1025,32 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     prefixIcon: const Icon(Icons.translate),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: minPointsController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'الحد الأدنى من النقاط',
+                    labelText: l10n.minPoints,
                     prefixIcon: const Icon(Icons.star_border),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: maxPointsController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'الحد الأقصى (اتركه فارغاً = غير محدود)',
+                    labelText: l10n.maxPointsHint,
                     prefixIcon: const Icon(Icons.star),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Row(
                   children: [
                     const Icon(Icons.discount_outlined,
                         size: 18, color: AppColors.success),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(
-                        'نسبة الخصم: ${(discount * 100).toStringAsFixed(0)}%'),
+                        l10n.discountLabel((discount * 100).toStringAsFixed(0))),
                   ],
                 ),
                 Slider(
@@ -1062,14 +1063,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       setDialogState(() => discount = v),
                   activeColor: AppColors.success,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Row(
                   children: [
                     const Icon(Icons.multiple_stop_rounded,
                         size: 18, color: AppColors.info),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(
-                        'مضاعف النقاط: ${multiplier.toStringAsFixed(1)}x'),
+                        l10n.multiplierLabel(multiplier.toStringAsFixed(1))),
                   ],
                 ),
                 Slider(
@@ -1140,19 +1141,19 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('إضافة مستوى جديد'),
+          title: Text(l10n.addNewTier),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'الاسم (عربي)',
-                    prefixIcon: Icon(Icons.translate),
+                  decoration: InputDecoration(
+                    labelText: l10n.nameArabic,
+                    prefixIcon: const Icon(Icons.translate),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: nameEnController,
                   decoration: const InputDecoration(
@@ -1160,25 +1161,25 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     prefixIcon: Icon(Icons.translate),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: minPointsController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'الحد الأدنى من النقاط',
-                    prefixIcon: Icon(Icons.star_border),
+                  decoration: InputDecoration(
+                    labelText: l10n.minPoints,
+                    prefixIcon: const Icon(Icons.star_border),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: maxPointsController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'الحد الأقصى (اتركه فارغاً = غير محدود)',
-                    prefixIcon: Icon(Icons.star),
+                  decoration: InputDecoration(
+                    labelText: l10n.maxPointsHint,
+                    prefixIcon: const Icon(Icons.star),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 // Color picker (simple)
                 Wrap(
                   spacing: 8,
@@ -1205,14 +1206,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                         ),
                       )).toList(),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Row(
                   children: [
                     const Icon(Icons.discount_outlined,
                         size: 18, color: AppColors.success),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(
-                        'نسبة الخصم: ${(discount * 100).toStringAsFixed(0)}%'),
+                        l10n.discountLabel((discount * 100).toStringAsFixed(0))),
                   ],
                 ),
                 Slider(
@@ -1225,13 +1226,13 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       setDialogState(() => discount = v),
                   activeColor: AppColors.success,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Row(
                   children: [
                     const Icon(Icons.multiple_stop_rounded,
                         size: 18, color: AppColors.info),
-                    const SizedBox(width: 8),
-                    Text('مضاعف النقاط: ${multiplier.toStringAsFixed(1)}x'),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Text(l10n.multiplierLabel(multiplier.toStringAsFixed(1))),
                   ],
                 ),
                 Slider(
@@ -1325,7 +1326,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1336,7 +1337,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               child: Icon(Icons.person,
                   size: 40, color: memberTier.color),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               member.customerId,
               style: TextStyle(
@@ -1346,9 +1347,9 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
               ),
             ),
             // شارة المستوى الديناميكية
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             _buildTierBadge(memberTier),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -1374,11 +1375,11 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 ]),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             // مزايا المستوى الحالي
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: memberTier.color.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
@@ -1387,7 +1388,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'مزايا مستوى ${memberTier.name}',
+                    l10n.tierBenefits(memberTier.name),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: memberTier.color,
@@ -1395,17 +1396,17 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '• خصم ${(memberTier.discount * 100).toStringAsFixed(0)}% على المشتريات',
+                    l10n.discountOnPurchases((memberTier.discount * 100).toStringAsFixed(0)),
                     style: const TextStyle(fontSize: 13),
                   ),
                   Text(
-                    '• ${memberTier.multiplier}x نقاط على كل عملية شراء',
+                    l10n.pointsPerPurchase('${memberTier.multiplier}'),
                     style: const TextStyle(fontSize: 13),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: () {
                 Navigator.pop(context);
@@ -1436,9 +1437,9 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
           children: [
             Text(
                 '${l10n.balanceCol}: ${member.currentPoints} ${l10n.pointsIssued}'),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.loyaltyRewards),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             ..._rewards
                 .where(
                     (r) => r.pointsRequired <= member.currentPoints)
@@ -1463,7 +1464,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     (r) => r.pointsRequired <= member.currentPoints)
                 .isEmpty)
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Text(
                   l10n.noTransactions,
                   style:
@@ -1501,7 +1502,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                   prefixIcon: const Icon(Icons.card_giftcard),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               TextField(
                 controller: pointsController,
                 keyboardType: TextInputType.number,
@@ -1510,7 +1511,7 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                   prefixIcon: const Icon(Icons.stars),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
                 initialValue: type,
                 decoration: InputDecoration(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -143,21 +144,21 @@ class QuickFeedbackWidget extends ConsumerWidget {
     return Card(
       color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'كيف كانت هذه العملية؟',
+              AppLocalizations.of(context)!.howWasOperation,
               style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _FeedbackButton(
                   icon: Icons.thumb_up,
-                  label: 'سريعة ✓',
+                  label: AppLocalizations.of(context)!.fastLabel,
                   color: AlhaiColors.success,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
@@ -167,16 +168,16 @@ class QuickFeedbackWidget extends ConsumerWidget {
                     );
                     onFeedbackSubmitted?.call();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('شكراً لتقييمك! 👍'),
-                        duration: Duration(seconds: 1),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.thanksFeedback),
+                        duration: const Duration(seconds: 1),
                       ),
                     );
                   },
                 ),
                 _FeedbackButton(
                   icon: Icons.thumb_down,
-                  label: 'بطيئة',
+                  label: AppLocalizations.of(context)!.slow,
                   color: AlhaiColors.warning,
                   onTap: () {
                     ref.read(feedbackProvider.notifier).addFeedback(
@@ -190,7 +191,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: onFeedbackSubmitted,
-                  child: const Text('تخطي'),
+                  child: Text(AppLocalizations.of(context)!.skip),
                 ),
               ],
             ),
@@ -206,17 +207,17 @@ class QuickFeedbackWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('ما الذي يمكن تحسينه؟'),
+        title: Text(AppLocalizations.of(context)!.whatToImprove),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('مساعدتك تفيدنا في تحسين التطبيق'),
-            const SizedBox(height: 16),
+            Text(AppLocalizations.of(context)!.helpUsImprove),
+            SizedBox(height: AlhaiSpacing.md),
             TextField(
               controller: controller,
               maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'اكتب ملاحظتك (اختياري)...',
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.writeNoteOptional,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -225,7 +226,7 @@ class QuickFeedbackWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -239,13 +240,13 @@ class QuickFeedbackWidget extends ConsumerWidget {
               }
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('شكراً! سنعمل على التحسين 🙏'),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.thanksWillImprove),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: const Text('إرسال'),
+            child: Text(AppLocalizations.of(context)!.send),
           ),
         ],
       ),
@@ -277,11 +278,11 @@ class _FeedbackButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
           child: Column(
             children: [
               Icon(icon, color: color, size: 32),
-              const SizedBox(height: 4),
+              SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 label,
                 style: TextStyle(
@@ -308,40 +309,40 @@ class FeedbackStatsWidget extends ConsumerWidget {
     final theme = Theme.of(context);
 
     if (feedbacks.isEmpty) {
-      return const Center(child: Text('لا توجد تقييمات بعد'));
+      return Center(child: Text(AppLocalizations.of(context)!.noRatingsYet));
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'تقييمات العملاء',
+          AppLocalizations.of(context)!.customerRatings,
           style: theme.textTheme.titleMedium,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(
               child: _StatCard(
-                label: 'عمليات سريعة',
+                label: AppLocalizations.of(context)!.fastOperations,
                 value: '${notifier.quickPercentage.toStringAsFixed(0)}%',
                 icon: Icons.flash_on,
                 color: AlhaiColors.success,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _StatCard(
-                label: 'متوسط التقييم',
+                label: AppLocalizations.of(context)!.averageRating,
                 value: notifier.avgRating.toStringAsFixed(1),
                 icon: Icons.star,
                 color: Colors.amber,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _StatCard(
-                label: 'إجمالي التقييمات',
+                label: AppLocalizations.of(context)!.totalRatings,
                 value: '${feedbacks.length}',
                 icon: Icons.thumb_up,
                 color: AlhaiColors.info,
@@ -370,7 +371,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -378,7 +379,7 @@ class _StatCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: color),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
             style: TextStyle(

@@ -15,7 +15,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -122,7 +122,7 @@ class _CashierPurchaseRequestScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'طلب شراء سريع',
+          title: l10n.quickPurchaseRequest,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -137,7 +137,7 @@ class _CashierPurchaseRequestScreenState
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,20 +147,20 @@ class _CashierPurchaseRequestScreenState
                         child: Column(
                           children: [
                             _buildSearchSection(isDark, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                             _buildItemsList(isDark, l10n),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 24),
+                      const SizedBox(width: AlhaiSpacing.lg),
                       Expanded(
                         flex: 2,
                         child: Column(
                           children: [
                             _buildSummaryCard(isDark, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                             _buildNotesSection(isDark, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                             _buildSendButton(isDark, l10n),
                           ],
                         ),
@@ -171,15 +171,15 @@ class _CashierPurchaseRequestScreenState
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildSearchSection(isDark, l10n),
-                      SizedBox(height: isMediumScreen ? 24 : 16),
+                      SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       _buildItemsList(isDark, l10n),
-                      SizedBox(height: isMediumScreen ? 24 : 16),
+                      SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       _buildSummaryCard(isDark, l10n),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       _buildNotesSection(isDark, l10n),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AlhaiSpacing.lg),
                       _buildSendButton(isDark, l10n),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: AlhaiSpacing.xl),
                     ],
                   ),
           ),
@@ -197,7 +197,7 @@ class _CashierPurchaseRequestScreenState
 
   Widget _buildSearchSection(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -209,7 +209,7 @@ class _CashierPurchaseRequestScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -217,7 +217,7 @@ class _CashierPurchaseRequestScreenState
                 child: const Icon(Icons.search_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.searchProduct,
                 style: TextStyle(
@@ -228,7 +228,7 @@ class _CashierPurchaseRequestScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _searchController,
             onChanged: _searchProducts,
@@ -264,17 +264,17 @@ class _CashierPurchaseRequestScreenState
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: 12),
+              padding: EdgeInsets.only(top: AlhaiSpacing.sm),
               child: Center(child: CircularProgressIndicator()),
             ),
           if (_searchResults.isNotEmpty)
             Container(
-              margin: const EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius: BorderRadius.circular(12),
@@ -287,7 +287,7 @@ class _CashierPurchaseRequestScreenState
                     onTap: () => _addProduct(product),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
@@ -310,7 +310,7 @@ class _CashierPurchaseRequestScreenState
                             child: const Icon(Icons.inventory_2_outlined,
                                 color: AppColors.primary, size: 18),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AlhaiSpacing.sm),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +358,7 @@ class _CashierPurchaseRequestScreenState
   Widget _buildItemsList(bool isDark, AppLocalizations l10n) {
     if (_requestItems.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
           borderRadius: BorderRadius.circular(16),
@@ -371,9 +371,9 @@ class _CashierPurchaseRequestScreenState
           children: [
             Icon(Icons.add_shopping_cart_rounded,
                 size: 48, color: AppColors.getTextMuted(isDark)),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
-              'ابحث عن منتجات وأضفها للطلب',
+              l10n.searchAndAddProducts,
               style: TextStyle(
                 fontSize: 15,
                 color: AppColors.getTextSecondary(isDark),
@@ -393,11 +393,11 @@ class _CashierPurchaseRequestScreenState
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
@@ -405,9 +405,9 @@ class _CashierPurchaseRequestScreenState
                   child: const Icon(Icons.shopping_cart_rounded,
                       color: AppColors.secondary, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(
-                  'المنتجات المطلوبة',
+                  l10n.requestedProducts,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -417,13 +417,13 @@ class _CashierPurchaseRequestScreenState
                 const Spacer(),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '${_requestItems.length} منتج',
+                    l10n.productCountItems(_requestItems.length),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -438,7 +438,7 @@ class _CashierPurchaseRequestScreenState
           ...List.generate(_requestItems.length, (index) {
             final item = _requestItems[index];
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 border: index < _requestItems.length - 1
                     ? Border(
@@ -464,13 +464,13 @@ class _CashierPurchaseRequestScreenState
                             color: AppColors.getTextPrimary(isDark),
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AlhaiSpacing.xxxs),
                         Row(
                           children: [
                             Icon(Icons.inventory_2_outlined,
                                 size: 12,
                                 color: _getStockColor(item.product.stockQty)),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: AlhaiSpacing.xxs),
                             Text(
                               '${l10n.currentStock}: ${item.product.stockQty}',
                               style: TextStyle(
@@ -483,9 +483,9 @@ class _CashierPurchaseRequestScreenState
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   SizedBox(
-                    width: 80,
+                    width:80,
                     child: TextField(
                       controller: item.qtyController,
                       keyboardType: TextInputType.number,
@@ -498,7 +498,7 @@ class _CashierPurchaseRequestScreenState
                       ),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 10),
+                            horizontal: AlhaiSpacing.xs, vertical: 10),
                         filled: true,
                         fillColor: AppColors.getSurfaceVariant(isDark),
                         border: OutlineInputBorder(
@@ -519,7 +519,7 @@ class _CashierPurchaseRequestScreenState
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   IconButton(
                     onPressed: () => _removeProduct(index),
                     icon: const Icon(Icons.delete_outline_rounded, size: 20),
@@ -543,7 +543,7 @@ class _CashierPurchaseRequestScreenState
         _requestItems.fold<int>(0, (sum, item) => sum + item.quantity);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(16),
@@ -556,7 +556,7 @@ class _CashierPurchaseRequestScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -564,9 +564,9 @@ class _CashierPurchaseRequestScreenState
                 child: const Icon(Icons.summarize_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'ملخص الطلب',
+                l10n.orderSummary,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -575,21 +575,21 @@ class _CashierPurchaseRequestScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               Expanded(
                 child: _summaryItem(
-                  'عدد المنتجات',
+                  l10n.productCountSummary,
                   '$totalItems',
                   AppColors.info,
                   isDark,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _summaryItem(
-                  'إجمالي الكمية',
+                  l10n.totalQuantitySummary,
                   '$totalQty',
                   AppColors.secondary,
                   isDark,
@@ -605,7 +605,7 @@ class _CashierPurchaseRequestScreenState
   Widget _summaryItem(
       String label, String value, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(10),
@@ -620,7 +620,7 @@ class _CashierPurchaseRequestScreenState
               color: color,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             label,
             style: TextStyle(
@@ -637,7 +637,7 @@ class _CashierPurchaseRequestScreenState
 
   Widget _buildNotesSection(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -649,7 +649,7 @@ class _CashierPurchaseRequestScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -657,7 +657,7 @@ class _CashierPurchaseRequestScreenState
                 child: const Icon(Icons.note_alt_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.noteLabel,
                 style: TextStyle(
@@ -668,13 +668,13 @@ class _CashierPurchaseRequestScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _notesController,
             maxLines: 3,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             decoration: InputDecoration(
-              hintText: 'أضف ملاحظات للمدير (اختياري)...',
+              hintText: l10n.addNotesForManager,
               hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -691,7 +691,7 @@ class _CashierPurchaseRequestScreenState
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -717,12 +717,12 @@ class _CashierPurchaseRequestScreenState
                     strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.send_rounded, size: 20),
-        label: const Text('إرسال الطلب',
+        label: Text(l10n.sendRequestBtn,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),
@@ -738,8 +738,8 @@ class _CashierPurchaseRequestScreenState
     if (_requestItems.isEmpty) return;
     if (_requestItems.any((item) => item.quantity <= 0)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إدخال كمية صحيحة لجميع المنتجات'),
+        SnackBar(
+          content: Text(l10n.validQuantityRequired),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -807,8 +807,8 @@ class _CashierPurchaseRequestScreenState
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إرسال الطلب للمدير'),
+        SnackBar(
+          content: Text(l10n.requestSentToManager),
           backgroundColor: AppColors.success,
         ),
       );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -27,13 +29,16 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
   final _noteController = TextEditingController();
   String _returnReason = 'damaged';
 
-  final _reasons = const [
-    ('damaged', 'تالف / معيب'),
-    ('wrong_item', 'صنف خاطئ'),
-    ('expired', 'منتهي الصلاحية'),
-    ('overstock', 'فائض عن الحاجة'),
-    ('other', 'سبب آخر'),
-  ];
+  List<(String, String)> _reasons(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      ('damaged', l10n.damagedDefective),
+      ('wrong_item', l10n.wrongItem),
+      ('expired', l10n.expiredProduct),
+      ('overstock', l10n.overstockExcess),
+      ('other', l10n.otherReason),
+    ];
+  }
 
   double get _totalReturn =>
       _items.fold(0.0, (sum, i) => sum + (i.qty * i.unitCost));
@@ -56,7 +61,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
       final db = GetIt.I<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
-        setState(() { _error = 'لم يتم تحديد المتجر'; _isLoading = false; });
+        setState(() { _error = AppLocalizations.of(context).storeNotSelected; _isLoading = false; });
         return;
       }
       final sups = await db.suppliersDao.getAllSuppliers(storeId);
@@ -78,38 +83,39 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
         String productName = '';
         double qty = 1;
         double unitCost = 0;
+        final l10n = AppLocalizations.of(ctx);
         return AlertDialog(
-          title: const Text('إضافة صنف للإرجاع'),
+          title: Text(l10n.addItemForReturn),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'اسم الصنف',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.itemName,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (v) => productName = v,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'الكمية',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.quantityLabel,
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (v) => qty = double.tryParse(v) ?? 1,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'سعر الوحدة',
-                        border: OutlineInputBorder(),
-                        suffixText: 'ر.س',
+                      decoration: InputDecoration(
+                        labelText: l10n.unitPrice,
+                        border: const OutlineInputBorder(),
+                        suffixText: l10n.sarSuffix,
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (v) => unitCost = double.tryParse(v) ?? 0,
@@ -122,7 +128,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -137,7 +143,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                   Navigator.pop(ctx);
                 }
               },
-              child: const Text('إضافة'),
+              child: Text(l10n.add),
             ),
           ],
         );
@@ -146,15 +152,16 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
   }
 
   Future<void> _submitReturn() async {
+    final l10n = AppLocalizations.of(context);
     if (_selectedSupplier == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('يرجى اختيار المورد'), backgroundColor: Theme.of(context).colorScheme.error),
+        SnackBar(content: Text(l10n.pleaseSelectSupplier), backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
     if (_items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('يرجى إضافة أصناف للإرجاع'), backgroundColor: Theme.of(context).colorScheme.error),
+        SnackBar(content: Text(l10n.pleaseAddItems), backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
@@ -162,26 +169,26 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تأكيد الإرجاع'),
+        title: Text(l10n.confirmReturn),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('المورد: ${_selectedSupplier!.name}'),
-            Text('عدد الأصناف: ${_items.length}'),
-            Text('الإجمالي: ${_totalReturn.toStringAsFixed(2)} ر.س'),
-            const SizedBox(height: 8),
+            Text(l10n.supplierLabel(_selectedSupplier!.name)),
+            Text(l10n.itemCount(_items.length)),
+            Text(l10n.totalAmount(_totalReturn.toStringAsFixed(2))),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
-              'سيتم تسجيل إشعار خصم وتعديل المخزون.',
+              l10n.creditNoteWillBeRecorded,
               style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('تأكيد الإرجاع'),
+            child: Text(l10n.confirmReturn),
           ),
         ],
       ),
@@ -233,7 +240,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'تم تسجيل المرتجع بنجاح - إشعار خصم: ${_totalReturn.toStringAsFixed(2)} ر.س',
+              l10n.returnRecordedSuccess(_totalReturn.toStringAsFixed(2)),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -244,7 +251,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ: $e'), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(content: Text(l10n.errorPrefix(e.toString(), e)), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -252,23 +259,24 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('مرتجعات المشتريات')),
+        appBar: AppBar(title: Text(l10n.supplierReturns)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('مرتجعات المشتريات')),
+        appBar: AppBar(title: Text(l10n.supplierReturns)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
-              TextButton(onPressed: _loadSuppliers, child: const Text('إعادة المحاولة')),
+              TextButton(onPressed: _loadSuppliers, child: Text(l10n.retryAction)),
             ],
           ),
         ),
@@ -277,18 +285,18 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مرتجعات المشتريات'),
+        title: Text(l10n.supplierReturns),
         actions: [
           if (!_isSaving)
             TextButton.icon(
               onPressed: _submitReturn,
               icon: const Icon(Icons.check_rounded),
-              label: const Text('إصدار إشعار خصم'),
+              label: Text(l10n.issueCreditNote),
               style: TextButton.styleFrom(foregroundColor: Colors.white),
             )
           else
             const Padding(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(AlhaiSpacing.sm),
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -298,23 +306,23 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // Supplier selection
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('المورد', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  Text(l10n.supplier, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   DropdownButtonFormField<_SupplierOption>(
                     initialValue: _selectedSupplier,
-                    decoration: const InputDecoration(
-                      hintText: 'اختر المورد',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.business_rounded),
+                    decoration: InputDecoration(
+                      hintText: l10n.selectSupplier,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.business_rounded),
                     ),
                     items: _suppliers
                         .map((s) => DropdownMenuItem(
@@ -328,21 +336,21 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Return reason
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('سبب الإرجاع', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  Text(l10n.returnReason, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
-                    children: _reasons.map((r) => ChoiceChip(
+                    children: _reasons(context).map((r) => ChoiceChip(
                       label: Text(r.$2, style: const TextStyle(fontSize: 12)),
                       selected: _returnReason == r.$1,
                       onSelected: (_) => setState(() => _returnReason = r.$1),
@@ -352,35 +360,29 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Items
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('الأصناف المرتجعة',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(l10n.returnedItems(_items.length),
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       TextButton.icon(
                         onPressed: _addItem,
                         icon: const Icon(Icons.add_rounded, size: 16),
-                        label: const Text('إضافة صنف'),
+                        label: Text(l10n.addItem),
                       ),
                     ],
                   ),
                   if (_items.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                        child: Text('لم تتم إضافة أصناف بعد',
-                            style: TextStyle(color: Theme.of(context).hintColor)),
-                      ),
-                    )
+                    AppEmptyState.noProducts(context, onAdd: _addItem)
                   else
                     ...(_items.asMap().entries.map((entry) {
                       final i = entry.key;
@@ -390,14 +392,14 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                         leading: const Icon(Icons.inventory_2_rounded, size: 20),
                         title: Text(item.productName),
                         subtitle: Text(
-                          '${item.qty} × ${item.unitCost.toStringAsFixed(2)} ر.س',
+                          '${item.qty} × ${item.unitCost.toStringAsFixed(2)} ${l10n.sarSuffix}',
                           style: const TextStyle(fontSize: 12),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '${(item.qty * item.unitCost).toStringAsFixed(2)} ر.س',
+                              '${(item.qty * item.unitCost).toStringAsFixed(2)} ${l10n.sarSuffix}',
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             IconButton(
@@ -412,25 +414,25 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Notes
           TextField(
             controller: _noteController,
-            decoration: const InputDecoration(
-              labelText: 'ملاحظات',
-              hintText: 'أي ملاحظات إضافية...',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.notes_rounded),
+            decoration: InputDecoration(
+              labelText: l10n.notes,
+              hintText: l10n.additionalNotesHint,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.notes_rounded),
             ),
             maxLines: 2,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Total
           if (_items.isNotEmpty)
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFFE53935), Color(0xFFEF5350)],
@@ -440,10 +442,10 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('إجمالي المرتجع',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  Text(l10n.totalReturn,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   Text(
-                    '${_totalReturn.toStringAsFixed(2)} ر.س',
+                    '${_totalReturn.toStringAsFixed(2)} ${l10n.sarSuffix}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -465,7 +467,7 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.assignment_return_rounded),
-              label: Text('إصدار إشعار خصم (${_totalReturn.toStringAsFixed(0)} ر.س)'),
+              label: Text(l10n.issueCreditNoteWithAmount(_totalReturn.toStringAsFixed(0))),
             )
           : null,
     );

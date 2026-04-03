@@ -120,7 +120,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
         children: [
           // Header
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.lg, AlhaiSpacing.lg, 0),
             child: Text(
               'الطلبات الواردة',
               style: TextStyle(
@@ -130,11 +130,11 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Tabs
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24),
+            margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -156,7 +156,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Orders list
           Expanded(
@@ -174,7 +174,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                           color:
                               isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           'لا توجد طلبات',
                           style: TextStyle(
@@ -203,7 +203,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
 
   Widget _buildDataTable(List<_MockOrder> orders, bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -282,12 +282,12 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
 
   Widget _buildCardList(List<_MockOrder> orders, bool isDark) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
         return Card(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -297,7 +297,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
             borderRadius: BorderRadius.circular(12),
             onTap: () => context.go('/orders/${order.id}'),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -335,7 +335,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     order.storeName,
                     style: TextStyle(
@@ -344,7 +344,7 @@ class _DistributorOrdersScreenState extends State<DistributorOrdersScreen>
                           : AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

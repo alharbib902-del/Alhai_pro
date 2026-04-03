@@ -15,7 +15,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة الاستبدال
@@ -165,7 +165,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +173,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                       Expanded(
                         child: _buildReturnSection(isDark, l10n),
                       ),
-                      const SizedBox(width: 24),
+                      const SizedBox(width: AlhaiSpacing.lg),
                       Expanded(
                         child: _buildNewItemsSection(isDark, l10n),
                       ),
@@ -182,7 +182,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 : Column(
                     children: [
                       _buildReturnSection(isDark, l10n),
-                      SizedBox(height: isMediumScreen ? 24 : 16),
+                      SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       _buildNewItemsSection(isDark, l10n),
                     ],
                   ),
@@ -200,7 +200,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
 
   Widget _buildReturnSection(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -212,7 +212,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -220,7 +220,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 child: const Icon(Icons.assignment_return_rounded,
                     color: AppColors.error, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Items to Return',
                 style: TextStyle(
@@ -231,17 +231,17 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildSearchBar(
               _returnSearchController, isDark, l10n, true),
           if (_returnSearchResults.isNotEmpty)
             _buildSearchResults(_returnSearchResults, isDark, true),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           ..._returnItems.asMap().entries.map((e) =>
               _buildExchangeItemCard(e.value, e.key, isDark, l10n, true)),
           if (_returnItems.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -266,7 +266,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
 
   Widget _buildNewItemsSection(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -278,7 +278,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -286,7 +286,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 child: const Icon(Icons.add_shopping_cart_rounded,
                     color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'New Items to Add',
                 style: TextStyle(
@@ -297,17 +297,17 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildSearchBar(
               _newSearchController, isDark, l10n, false),
           if (_newSearchResults.isNotEmpty)
             _buildSearchResults(_newSearchResults, isDark, false),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           ..._newItems.asMap().entries.map((e) =>
               _buildExchangeItemCard(e.value, e.key, isDark, l10n, false)),
           if (_newItems.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -356,7 +356,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -364,7 +364,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   Widget _buildSearchResults(
       List<ProductsTableData> results, bool isDark, bool isReturn) {
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -384,12 +384,12 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               child: Row(
                 children: [
                   Icon(Icons.inventory_2_outlined,
                       size: 18, color: AppColors.getTextMuted(isDark)),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Text(
                       product.name,
@@ -421,8 +421,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       AppLocalizations l10n, bool isReturn) {
     final total = item.price * item.qty;
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: AppColors.getSurfaceVariant(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -491,7 +491,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ),
             ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Text(
             total.toStringAsFixed(2),
             style: TextStyle(
@@ -520,7 +520,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     final hasItems = _returnItems.isNotEmpty || _newItems.isNotEmpty;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -569,7 +569,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
             Expanded(
               child: FilledButton.icon(
                 onPressed: _isSubmitting || !hasItems
@@ -589,7 +589,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -626,8 +626,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم الاستبدال بنجاح'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).exchangeSuccessMsg),
           backgroundColor: AppColors.success,
         ),
       );

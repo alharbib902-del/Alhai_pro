@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -114,16 +114,16 @@ class _QuickAddProductScreenState
           builder: (context) => ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: AlertDialog(
-              title: const Text('تغييرات غير محفوظة'),
-              content: const Text('هل تريد المغادرة بدون حفظ التغييرات؟'),
+              title: Text(AppLocalizations.of(context).unsavedChanges),
+              content: Text(AppLocalizations.of(context).leaveWithoutSaving),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('إلغاء'),
+                  child: Text(AppLocalizations.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('مغادرة'),
+                  child: Text(AppLocalizations.of(context).leave),
                 ),
               ],
             ),
@@ -151,9 +151,9 @@ class _QuickAddProductScreenState
             child: _isLoading
                 ? const AppLoadingState()
                 : _error != null
-                    ? AppErrorState.general(message: _error!, onRetry: _loadCategories)
+                    ? AppErrorState.general(context, message: _error!, onRetry: _loadCategories)
                     : SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 900),
@@ -186,18 +186,18 @@ class _QuickAddProductScreenState
               child: Column(
                 children: [
                   _buildBasicInfoCard(isDark, l10n),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   _buildBarcodeCard(isDark, l10n),
                 ],
               ),
             ),
-            const SizedBox(width: 24),
+            const SizedBox(width: AlhaiSpacing.lg),
             Expanded(
               flex: 2,
               child: Column(
                 children: [
                   _buildPricingCard(isDark, l10n),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   _buildSaveButton(isDark, l10n),
                 ],
               ),
@@ -213,11 +213,11 @@ class _QuickAddProductScreenState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildBasicInfoCard(isDark, l10n),
-          SizedBox(height: isMediumScreen ? 24 : 16),
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           _buildBarcodeCard(isDark, l10n),
-          SizedBox(height: isMediumScreen ? 24 : 16),
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           _buildPricingCard(isDark, l10n),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           _buildSaveButton(isDark, l10n),
         ],
       ),
@@ -226,7 +226,7 @@ class _QuickAddProductScreenState
 
   Widget _buildBasicInfoCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -238,7 +238,7 @@ class _QuickAddProductScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -246,7 +246,7 @@ class _QuickAddProductScreenState
                 child: const Icon(Icons.inventory_2_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Product Info',
                 style: TextStyle(
@@ -257,7 +257,7 @@ class _QuickAddProductScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Product name
           TextFormField(
             controller: _nameController,
@@ -276,7 +276,7 @@ class _QuickAddProductScreenState
               isDark,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Category dropdown
           DropdownButtonFormField<String>(
             initialValue: _selectedCategoryId,
@@ -302,7 +302,7 @@ class _QuickAddProductScreenState
 
   Widget _buildBarcodeCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -314,7 +314,7 @@ class _QuickAddProductScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -322,7 +322,7 @@ class _QuickAddProductScreenState
                 child: const Icon(Icons.qr_code_scanner_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.barcode,
                 style: TextStyle(
@@ -333,7 +333,7 @@ class _QuickAddProductScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -354,7 +354,7 @@ class _QuickAddProductScreenState
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               SizedBox(
                 height: 56,
                 child: FilledButton.icon(
@@ -378,7 +378,7 @@ class _QuickAddProductScreenState
 
   Widget _buildPricingCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -390,7 +390,7 @@ class _QuickAddProductScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -398,7 +398,7 @@ class _QuickAddProductScreenState
                 child: const Icon(Icons.attach_money_rounded,
                     color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Pricing Info',
                 style: TextStyle(
@@ -409,7 +409,7 @@ class _QuickAddProductScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Price
           TextFormField(
             controller: _priceController,
@@ -438,7 +438,7 @@ class _QuickAddProductScreenState
                   fontSize: 14,
                   color: AppColors.getTextSecondary(isDark)),
               prefixIcon: const Padding(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(Icons.sell_rounded,
                     size: 24, color: AppColors.success),
               ),
@@ -459,7 +459,7 @@ class _QuickAddProductScreenState
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Quantity
           TextFormField(
             controller: _quantityController,
@@ -477,7 +477,7 @@ class _QuickAddProductScreenState
               isDark,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Quick quantity chips
           Wrap(
             spacing: 8,
@@ -494,7 +494,7 @@ class _QuickAddProductScreenState
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                        horizontal: 14, vertical: AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
@@ -544,7 +544,7 @@ class _QuickAddProductScreenState
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),
@@ -573,7 +573,7 @@ class _QuickAddProductScreenState
         borderSide: const BorderSide(color: AppColors.primary, width: 2),
       ),
       contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
     );
   }
 

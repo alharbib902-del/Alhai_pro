@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات قالب الإيصال
 const String _kReceiptHeader = 'receipt_header';
@@ -208,13 +209,13 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildPageHeader(isDark, l10n),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
 
         // Header / Footer
         _buildSettingsGroup(l10n.headerAndFooter, Icons.text_fields_rounded,
             const Color(0xFFEC4899), isDark, [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: TextField(
               controller: _headerController,
               decoration: InputDecoration(
@@ -226,7 +227,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 16),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
             child: TextField(
               controller: _footerController,
               maxLines: 2,
@@ -318,7 +319,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             value: _showQrCode,
             onChanged: (v) => setState(() => _showQrCode = v),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         // Paper size
@@ -353,10 +354,10 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -370,7 +371,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -388,7 +389,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           icon: Icon(Icons.arrow_back_rounded,
               color: Theme.of(context).colorScheme.onSurface),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -398,7 +399,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
           child: const Icon(Icons.receipt_long_rounded,
               color: Color(0xFFEC4899), size: 24),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -420,7 +421,7 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
   Widget _buildSettingsGroup(String title, IconData icon, Color color,
       bool isDark, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -432,18 +433,18 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(title,
                     style: TextStyle(
                         fontSize: 16,

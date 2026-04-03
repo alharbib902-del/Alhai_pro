@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// نافذة البحث عن عميل
 class CustomerSearchDialog extends StatefulWidget {
@@ -157,8 +158,8 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
             child: Row(
               children: [
-                const Text(
-                  'اختيار عميل',
+                Text(
+                  AppLocalizations.of(context)!.selectCustomerTitle,
                   style: AppTypography.headlineSmall,
                 ),
                 const Spacer(),
@@ -179,7 +180,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
               maxLength: 100,
               decoration: InputDecoration(
                 counterText: '',
-                hintText: 'البحث بالاسم أو رقم الهاتف...',
+                hintText: AppLocalizations.of(context)!.searchByNameOrPhoneHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -209,13 +210,13 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                   backgroundColor: colorScheme.outlineVariant,
                   child: const Icon(Icons.person_outline, color: AppColors.textMuted),
                 ),
-                title: const Text('عميل عابر'),
-                subtitle: const Text('متابعة بدون تحديد عميل'),
+                title: Text(AppLocalizations.of(context)!.walkInCustomerLabel),
+                subtitle: Text(AppLocalizations.of(context)!.continueWithoutCustomer),
                 trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   widget.onSelect(CustomerSearchResult(
                     id: 'walk-in',
-                    name: 'عميل عابر',
+                    name: AppLocalizations.of(context)!.walkInCustomerLabel,
                     phone: '',
                     balance: 0,
                     loyaltyPoints: 0,
@@ -251,7 +252,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 child: OutlinedButton.icon(
                   onPressed: widget.onAddNew,
                   icon: const Icon(Icons.person_add),
-                  label: const Text('إضافة عميل جديد'),
+                  label: Text(AppLocalizations.of(context)!.addNewCustomerButton),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                   ),
@@ -352,7 +353,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                           size: 14,
                           color: AppColors.textMuted,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           customer.phone,
                           style: AppTypography.bodySmall.copyWith(
@@ -365,9 +366,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                           size: 14,
                           color: AppColors.warning,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
-                          '${customer.loyaltyPoints} نقطة',
+                          AppLocalizations.of(context)!.loyaltyPointsCountLabel(customer.loyaltyPoints.toString()),
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.textMuted,
                           ),
@@ -389,7 +390,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                     ),
                   ),
                   Text(
-                    '${customer.balance.abs().toStringAsFixed(2)} ر.س',
+                    AppLocalizations.of(context)!.customerBalanceAmount(customer.balance.abs().toStringAsFixed(2)),
                     style: AppTypography.titleSmall.copyWith(
                       color: hasDebt
                           ? AppColors.error
@@ -433,14 +434,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
           ),
           const SizedBox(height: AppSizes.md),
           Text(
-            'لا توجد نتائج',
+            AppLocalizations.of(context)!.noResultsFoundTitle,
             style: AppTypography.titleMedium.copyWith(
               color: AppColors.textMuted,
             ),
           ),
           const SizedBox(height: AppSizes.xs),
           Text(
-            'جرب البحث بكلمة أخرى',
+            AppLocalizations.of(context)!.tryAnotherSearch,
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMuted,
             ),

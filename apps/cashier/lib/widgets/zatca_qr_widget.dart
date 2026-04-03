@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 
 import '../services/zatca/zatca_qr_service.dart';
 
@@ -40,7 +41,7 @@ class ZatcaQrWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -63,7 +64,7 @@ class ZatcaQrWidget extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(
           'ZATCA E-Invoice',
           style: TextStyle(

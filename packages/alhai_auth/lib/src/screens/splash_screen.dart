@@ -195,14 +195,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: const Icon(
                       Icons.smart_toy_rounded,
                       size: 80,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   Text(
                     l10n.pointOfSale,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -212,7 +212,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     'Al-HAI POS',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -220,11 +220,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AlhaiSpacing.xxxl),
                   CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.surface),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   // نص الحالة
                   Text(
                     _getStatusText(_status, l10n),

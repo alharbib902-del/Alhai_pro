@@ -7,6 +7,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// E-commerce management screen with tabs for online orders, product sync, and settings.
 class EcommerceScreen extends ConsumerStatefulWidget {
@@ -242,7 +243,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     final activeCount = _products.where((p) => p.isActive).length;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -281,7 +282,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           Text(
             l10n.products,
             style: TextStyle(
@@ -290,12 +291,12 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _products.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
             itemBuilder: (context, index) {
               final product = _products[index];
               return _buildProductCard(product, isDark);
@@ -309,7 +310,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
   Widget _buildProductCard(ProductsTableData product, bool isDark) {
     final isOnline = _isProductOnline(product.id);
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -351,7 +352,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                         isDark ? Colors.white24 : AppColors.textTertiary,
                   ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +365,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                         Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,
@@ -469,7 +470,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -481,35 +482,35 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildContentCard(
             'Banners',
             'Manage homepage banners and promotions',
             Icons.image_outlined,
             isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildContentCard(
             'Pages',
             'Create and edit store pages (About, Privacy, ...)',
             Icons.description_outlined,
             isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildContentCard(
             'Themes',
             'Customize online store appearance',
             Icons.palette_outlined,
             isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildContentCard(
             'Navigation',
             'Manage store navigation menus',
             Icons.menu_outlined,
             isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildContentCard(
             'Categories',
             'Choose categories displayed on homepage',
@@ -542,7 +543,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     );
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -554,7 +555,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildSettingTile(
             l10n.ecommerce,
             'Enable online purchasing',
@@ -591,7 +592,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             (val) => _saveEcomSetting(
                 'ecom_free_shipping_enabled', val.toString()),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           Text(
             'Delivery Settings',
             style: TextStyle(
@@ -600,27 +601,27 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
               'Min Order Amount', minOrderController, isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
               'Delivery Fee', deliveryFeeController, isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField('Free Shipping Limit',
               freeShippingLimitController, isDark),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Delivery Zones Link
           Card(
             child: ListTile(
               leading: const Icon(Icons.map_rounded, color: AppColors.primary),
-              title: const Text('مناطق التوصيل'),
-              subtitle: const Text('إدارة مناطق التوصيل وأسعارها'),
+              title: Text(AppLocalizations.of(context).deliveryZones),
+              subtitle: Text(AppLocalizations.of(context).manageDeliveryZonesAndPricing),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
               onTap: () => context.push('/ecommerce/delivery-zones'),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -664,7 +665,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         children: [
           Icon(Icons.error_outline,
               size: 64, color: AppColors.error.withValues(alpha: 0.7)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             _error!,
             style: TextStyle(
@@ -672,7 +673,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 color: Theme.of(context).colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: _loadData,
             icon: const Icon(Icons.refresh),
@@ -700,7 +701,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 color: isDark
                     ? Colors.white24
                     : AppColors.textTertiary),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               title,
               style: TextStyle(
@@ -708,7 +709,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               subtitle,
               style: TextStyle(
@@ -734,7 +735,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
   ) {
     return Container(
       width: 180,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -746,7 +747,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: color, size: 28),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(
             value,
             style: TextStyle(
@@ -755,7 +756,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             title,
             style: TextStyle(
@@ -775,7 +776,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     bool isDark,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -827,8 +828,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     ValueChanged<bool> onChanged,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),

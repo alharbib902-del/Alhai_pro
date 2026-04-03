@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // ============================================================================
 // PENDING REFUND DATA - holds data between request and reason screens
@@ -72,7 +73,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
         children: [
           // Search order
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Expanded(
@@ -85,7 +86,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 FilledButton.icon(
                   onPressed: _isSearching ? null : _searchOrder,
                   icon: _isSearching
@@ -100,8 +101,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           if (_saleData != null) ...[
             // Order info
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: AppColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -109,7 +110,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
               child: Row(
                 children: [
                   const Icon(Icons.info_outline, color: AppColors.info),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,11 +123,11 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // Select items header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -142,14 +143,14 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             // Items list
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 itemCount: _saleItems.length,
                 itemBuilder: (context, index) {
                   final item = _saleItems[index];
                   final isSelected = _selectedItems.any((e) => e.id == item.id);
 
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
+                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                     child: CheckboxListTile(
                       value: isSelected,
                       onChanged: (v) => _toggleItem(item, v ?? false),
@@ -171,7 +172,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
             // Bottom action
             if (_selectedItems.isNotEmpty)
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, -2))],
@@ -205,7 +206,7 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.receipt_long, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     Text(AppLocalizations.of(context)!.enterInvoiceToSearch, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),

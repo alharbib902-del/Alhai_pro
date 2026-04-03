@@ -12,7 +12,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../widgets/zatca_qr_widget.dart';
@@ -129,7 +129,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               ? const AppLoadingState()
               : _error != null
                   ? AppErrorState.general(
-                      message: _error!, onRetry: _loadOrders)
+                      context, message: _error!, onRetry: _loadOrders)
                   : isWideScreen
                       ? _buildWideLayout(isDark, l10n, isMediumScreen)
                       : _buildNarrowLayout(isDark, l10n, isMediumScreen),
@@ -146,7 +146,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   Widget _buildWideLayout(
       bool isDark, AppLocalizations l10n, bool isMediumScreen) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -155,12 +155,12 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             child: Column(
               children: [
                 _buildSearchBar(isDark, l10n),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Expanded(child: _buildOrdersList(isDark, l10n)),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: _buildSelectedOrderPreview(isDark, l10n),
@@ -175,7 +175,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: _buildSearchBar(isDark, l10n),
         ),
         Expanded(
@@ -222,7 +222,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -237,7 +237,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                 size: 64,
                 color: AppColors.getTextMuted(isDark)
                     .withValues(alpha: 0.4)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noTransactions,
                 style: TextStyle(
                     fontSize: 16,
@@ -250,7 +250,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
 
     return ListView.separated(
       itemCount: _filteredOrders.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
       itemBuilder: (context, index) =>
           _buildOrderCard(_filteredOrders[index], isDark, l10n),
     );
@@ -269,7 +269,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08)
@@ -332,13 +332,13 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                       color: AppColors.getTextPrimary(isDark),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     children: [
                       Icon(Icons.person_outline_rounded,
                           size: 12,
                           color: AppColors.getTextMuted(isDark)),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(
                           order.customerId ?? l10n.cashCustomer,
@@ -356,7 +356,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                       Icon(Icons.access_time_rounded,
                           size: 12,
                           color: AppColors.getTextMuted(isDark)),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text('$date $time',
                           style: TextStyle(
                               fontSize: 11,
@@ -387,7 +387,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       bool isDark, AppLocalizations l10n) {
     if (_selectedOrderId == null) {
       return Container(
-        padding: const EdgeInsets.all(48),
+        padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
           borderRadius: BorderRadius.circular(16),
@@ -401,7 +401,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   size: 64,
                   color: AppColors.getTextMuted(isDark)
                       .withValues(alpha: 0.4)),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Text(l10n.selectInvoiceToPrint,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -418,7 +418,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         _allOrders.firstWhere((o) => o.id == _selectedOrderId);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -432,7 +432,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -440,7 +440,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                 child: const Icon(Icons.receipt_long_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(l10n.receiptPreview,
                     style: TextStyle(
@@ -450,7 +450,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Order info
           _buildPreviewRow(l10n.invoiceNumber,
               '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}', isDark),
@@ -464,11 +464,11 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               order.paymentMethod, isDark),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(l10n.totalAmount,
+                Text(l10n.totalAmountLabel,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -482,7 +482,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // ZATCA QR Code
           Center(
             child: ZatcaQrWidget(
@@ -494,7 +494,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               size: 100,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Print button
           SizedBox(
             width: double.infinity,
@@ -514,7 +514,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
@@ -547,7 +547,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
 
   Widget _buildMobileReprintBar(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -587,7 +587,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),

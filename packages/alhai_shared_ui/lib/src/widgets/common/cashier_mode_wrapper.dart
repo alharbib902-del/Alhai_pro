@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import '../../providers/cashier_mode_provider.dart';
 
 // ============================================================================
@@ -230,7 +230,7 @@ class CashierModeBadge extends ConsumerWidget {
     if (!isEnabled) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: AlhaiColors.warning.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
@@ -240,7 +240,7 @@ class CashierModeBadge extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.speed, size: 16, color: AlhaiColors.warningDark),
-          const SizedBox(width: 4),
+          SizedBox(width: AlhaiSpacing.xxs),
           Text(
             'وضع الكاشير',
             style: TextStyle(

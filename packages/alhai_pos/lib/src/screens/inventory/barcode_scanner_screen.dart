@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
@@ -52,7 +52,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           // منطقة المسح
           Container(
             margin: EdgeInsets.all(padding),
-            padding: EdgeInsets.all(isDesktop ? 32 : 24),
+            padding: EdgeInsets.all(isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.lg),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.7)]),
               borderRadius: BorderRadius.circular(16),
@@ -60,9 +60,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
             child: Column(
               children: [
                 Icon(_isScanning ? Icons.qr_code_scanner : Icons.qr_code, size: 80, color: colorScheme.surface),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Text(_isScanning ? l10n.scanning : l10n.pressToStart, style: TextStyle(color: colorScheme.surface, fontSize: 18)),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 FilledButton.icon(
                   onPressed: _toggleScanning,
                   icon: Icon(_isScanning ? Icons.stop : Icons.play_arrow),
@@ -86,7 +86,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                     onSubmitted: (_) => _manualSearch(l10n),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 IconButton.filled(
                   icon: _isSearching
                       ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.surface))
@@ -97,7 +97,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // المنتجات الممسوحة
           Expanded(
@@ -107,9 +107,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.qr_code_2, size: 64, color: colorScheme.onSurfaceVariant),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         Text(l10n.noScannedProducts, style: TextStyle(color: colorScheme.onSurfaceVariant)),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(l10n.enterBarcodeToSearch, style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
                       ],
                     ),
@@ -122,7 +122,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                       return Card(
                         child: ListTile(
                           leading: Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(AlhaiSpacing.xs),
                             decoration: BoxDecoration(color: colorScheme.primaryContainer, borderRadius: BorderRadius.circular(8)),
                             child: Icon(Icons.inventory_2, color: colorScheme.primary),
                           ),
@@ -152,7 +152,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                   Text('${_scannedProducts.length} ${l10n.product}', style: const TextStyle(fontWeight: FontWeight.bold)),
                   const Spacer(),
                   OutlinedButton(onPressed: () => setState(() => _scannedProducts.clear()), child: Text(l10n.clearAll)),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   FilledButton.icon(onPressed: () => _addToCart(l10n), icon: const Icon(Icons.add_shopping_cart), label: Text(l10n.addToCart)),
                 ],
               ),

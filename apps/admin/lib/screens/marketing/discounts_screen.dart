@@ -5,6 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Discounts Screen - شاشة الخصومات
 class DiscountsScreen extends ConsumerWidget {
@@ -35,6 +36,7 @@ class DiscountsScreen extends ConsumerWidget {
           child: discountsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => AppErrorState.general(
+              context,
               message: error.toString(),
               onRetry: () => ref.invalidate(discountsListProvider),
             ),
@@ -95,7 +97,7 @@ class _DiscountsContent extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         Row(
           children: [
             Expanded(child: _buildStatCard(Icons.local_offer, l10n.totalLabel, '${discounts.length}', AppColors.info, isDark, context)),
@@ -105,19 +107,19 @@ class _DiscountsContent extends ConsumerWidget {
             Expanded(child: _buildStatCard(Icons.pause_circle, l10n.stopped, '${discounts.length - active}', AppColors.textSecondary, isDark, context)),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         if (discounts.isEmpty)
-          AppEmptyState.noOffers()
+          AppEmptyState.noOffers(context)
         else
         ...discounts.map((discount) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: !discount.isActive ? Theme.of(context).colorScheme.surfaceContainerLowest : cardColor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -131,7 +133,7 @@ class _DiscountsContent extends ConsumerWidget {
                       ),
                       child: Icon(Icons.local_offer, color: discount.isActive ? AppColors.success : AppColors.textSecondary),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,11 +161,11 @@ class _DiscountsContent extends ConsumerWidget {
                 Row(
                   children: [
                     Icon(Icons.category, size: 14, color: subtextColor),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(discount.appliesTo == 'all' ? l10n.allProducts : l10n.specificCategory, style: TextStyle(fontSize: 12, color: subtextColor)),
                     const Spacer(),
                     Icon(Icons.calendar_today, size: 14, color: subtextColor),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text('${_formatDate(discount.startDate)} - ${_formatDate(discount.endDate)}', style: TextStyle(fontSize: 11, color: subtextColor)),
                   ],
                 ),
@@ -177,7 +179,7 @@ class _DiscountsContent extends ConsumerWidget {
 
   Widget _buildStatCard(IconData icon, String label, String value, Color color, bool isDark, BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -186,7 +188,7 @@ class _DiscountsContent extends ConsumerWidget {
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
           Text(label, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
@@ -237,7 +239,7 @@ class _DiscountsContent extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.discountName, prefixIcon: const Icon(Icons.local_offer))),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
                     Expanded(

@@ -14,6 +14,7 @@ import '../../providers/ai_return_prediction_providers.dart';
 import '../../services/ai_return_prediction_service.dart';
 import '../../widgets/ai/return_risk_card.dart';
 import '../../widgets/ai/preventive_action_card.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة التنبؤ بالمرتجعات
 class AiReturnPredictionScreen extends ConsumerStatefulWidget {
@@ -102,13 +103,13 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
       error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.errorOccurredDetail(e.toString()))),
       data: (probs) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقات الملخص
               _buildSummaryCards(isDark, isWideScreen, avgRate, atRisk, highRiskCount),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // رسم بياني للاتجاه
               trends.when(
@@ -116,11 +117,11 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                 error: (_, __) => const SizedBox.shrink(),
                 data: (trendData) => _buildTrendChart(isDark, trendData),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // فلتر مستوى الخطر
               _buildRiskFilter(isDark, selectedFilter),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // قائمة العمليات
               Text(
@@ -131,9 +132,9 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               ...probs.map((p) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                     child: ReturnRiskCard(probability: p),
                   )),
             ],
@@ -256,7 +257,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                     fontSize: 12,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   data.value,
                   style: TextStyle(
@@ -282,7 +283,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
 
   Widget _buildTrendChart(bool isDark, List<ReturnTrend> trends) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -298,7 +299,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
           Row(
             children: [
               const Icon(Icons.show_chart, color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 AppLocalizations.of(context)!.returnTrendTitle,
                 style: TextStyle(
@@ -309,7 +310,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           SizedBox(
             height: 180,
             child: CustomPaint(
@@ -320,7 +321,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // Legend
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -390,7 +391,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
               : AppColors.primary;
 
           return Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8),
+            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
             child: FilterChip(
               label: Text(f.label),
               selected: isSelected,
@@ -442,13 +443,13 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
         );
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ملخص التوفير
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: AlignmentDirectional.topStart,
@@ -482,7 +483,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                         size: 28,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: AlhaiSpacing.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,7 +495,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                               fontSize: 14,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             AppLocalizations.of(context)!.amountSar(totalSavings.toStringAsFixed(2)),
                             style: const TextStyle(
@@ -514,7 +515,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -523,7 +524,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             'AI',
                             style: TextStyle(
@@ -539,7 +540,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // عنوان القائمة
               Text(
@@ -550,7 +551,7 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 AppLocalizations.of(context)!.applyPreventiveHint,
                 style: TextStyle(
@@ -559,11 +560,11 @@ class _AiReturnPredictionScreenState extends ConsumerState<AiReturnPredictionScr
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // قائمة الإجراءات
               ...actionsList.map((action) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                     child: PreventiveActionCard(
                       action: action,
                       onApply: () {

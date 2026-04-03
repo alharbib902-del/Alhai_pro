@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_ai/alhai_ai.dart' show AiInvoiceService, AiInvoiceException;
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// AI Invoice Import Screen - شاشة استيراد الفاتورة بالذكاء الاصطناعي
 class AiInvoiceImportScreen extends ConsumerStatefulWidget {
@@ -61,10 +62,10 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
               icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
             ),
           ]),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           Container(
             constraints: const BoxConstraints(maxWidth: 600),
-            padding: const EdgeInsets.all(48),
+            padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(24),
@@ -82,15 +83,15 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
                   ),
                   child: const Icon(Icons.document_scanner, size: 56, color: AppColors.info),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AlhaiSpacing.xl),
                 Text(l10n.importSupplierInvoice, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   l10n.captureOrSelectPhoto,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.6),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AlhaiSpacing.xl),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -100,7 +101,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
                       label: Text(l10n.captureImage),
                       style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14)),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: AlhaiSpacing.md),
                     OutlinedButton.icon(
                       onPressed: _pickFromGallery,
                       icon: const Icon(Icons.photo_library),
@@ -123,7 +124,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -140,7 +141,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
           ),
         ),
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
@@ -154,7 +155,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
                 style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
             Expanded(
               child: FilledButton.icon(
                 onPressed: _processImage,
@@ -173,7 +174,7 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
     final l10n = AppLocalizations.of(context);
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(48),
+        padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
@@ -184,9 +185,9 @@ class _AiInvoiceImportScreenState extends ConsumerState<AiInvoiceImportScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 56, height: 56, child: CircularProgressIndicator(strokeWidth: 3)),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Text(l10n.processingInvoice, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(l10n.extractingDataWithAi, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),

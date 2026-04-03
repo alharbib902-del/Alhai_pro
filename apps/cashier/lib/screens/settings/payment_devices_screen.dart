@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -151,7 +151,7 @@ class _PaymentDevicesScreenState
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -169,7 +169,7 @@ class _PaymentDevicesScreenState
               : _devices.isEmpty
                   ? _buildEmptyState(isDark, l10n)
                   : SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: _buildContent(
                           isWideScreen, isMediumScreen, isDark, l10n),
                     ),
@@ -196,7 +196,7 @@ class _PaymentDevicesScreenState
               color: AppColors.info,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'No payment devices',
             style: TextStyle(
@@ -205,7 +205,7 @@ class _PaymentDevicesScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             'Add your first payment device',
             style: TextStyle(
@@ -213,7 +213,7 @@ class _PaymentDevicesScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
             onPressed: () =>
                 context.push('/settings/payment-devices/add'),
@@ -223,7 +223,7 @@ class _PaymentDevicesScreenState
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -244,7 +244,7 @@ class _PaymentDevicesScreenState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildSummaryCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         if (isWideScreen)
           GridView.builder(
             shrinkWrap: true,
@@ -278,7 +278,7 @@ class _PaymentDevicesScreenState
     final disconnectedCount = _devices.length - connectedCount;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -333,7 +333,7 @@ class _PaymentDevicesScreenState
       child: Column(
         children: [
           Icon(icon, color: color, size: 22),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             value,
             style: TextStyle(
@@ -342,7 +342,7 @@ class _PaymentDevicesScreenState
               color: AppColors.getTextPrimary(isDark),
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             label,
             style: TextStyle(
@@ -365,7 +365,7 @@ class _PaymentDevicesScreenState
         device.isConnected ? AppColors.success : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -387,7 +387,7 @@ class _PaymentDevicesScreenState
               size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,7 +401,7 @@ class _PaymentDevicesScreenState
                     color: AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Container(
@@ -423,7 +423,7 @@ class _PaymentDevicesScreenState
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Text(
                       '${device.type} - ${device.connectionMethod}',
                       style: TextStyle(
@@ -445,7 +445,7 @@ class _PaymentDevicesScreenState
               side: BorderSide(
                   color: AppColors.info.withValues(alpha: 0.5)),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
             ),

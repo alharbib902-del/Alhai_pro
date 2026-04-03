@@ -40,10 +40,10 @@ class ApprovalCenterScreen extends ConsumerWidget {
               return countAsync.when(
                 data: (count) => count > 0
                     ? Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 16),
+                        padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
                               color: AlhaiColors.warning,
                               borderRadius: BorderRadius.circular(12),
@@ -91,7 +91,7 @@ class ApprovalCenterScreen extends ConsumerWidget {
                     ref.invalidate(pendingApprovalsCountProvider);
                   },
                   child: ListView.builder(
-                    padding: EdgeInsets.all(isMobile ? 12 : 20),
+                    padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
                     itemCount: refunds.length,
                     itemBuilder: (context, index) {
                       final refund = refunds[index];
@@ -114,14 +114,14 @@ class ApprovalCenterScreen extends ConsumerWidget {
                       size: 48,
                       color: isDark ? Colors.white30 : Theme.of(context).disabledColor,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     Text(
                       l10n?.errorOccurred ?? 'An error occurred',
                       style: TextStyle(
                         color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     TextButton.icon(
                       onPressed: () => ref.invalidate(pendingRefundsProvider),
                       icon: const Icon(Icons.refresh),
@@ -166,7 +166,7 @@ class ApprovalCenterScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 64, color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
             style: TextStyle(
@@ -200,7 +200,7 @@ class _FilterTabs extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border(
@@ -214,11 +214,11 @@ class _FilterTabs extends StatelessWidget {
         child: Row(
           children: [
             _buildChip(context, l10n?.all ?? 'All', ApprovalFilter.all),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildChip(context, l10n?.pending ?? 'Pending', ApprovalFilter.pending),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildChip(context, l10n?.completed ?? 'Approved', ApprovalFilter.approved),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildChip(context, l10n?.cancelled ?? 'Rejected', ApprovalFilter.rejected),
           ],
         ),
@@ -298,7 +298,7 @@ class _RefundCard extends ConsumerWidget {
     final isPending = refund.status.toLowerCase() == 'pending';
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       elevation: isDark ? 0 : 1,
       color: isDark ? Colors.white.withValues(alpha: 0.06) : null,
       shape: RoundedRectangleBorder(
@@ -308,7 +308,7 @@ class _RefundCard extends ConsumerWidget {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.all(isMobile ? 12 : 16),
+        padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -329,7 +329,7 @@ class _RefundCard extends ConsumerWidget {
                     size: 20,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
 
                 // Return number + customer name
                 Expanded(
@@ -358,7 +358,7 @@ class _RefundCard extends ConsumerWidget {
 
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -375,7 +375,7 @@ class _RefundCard extends ConsumerWidget {
               ],
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
 
             // Details row: Amount, Date, Reason
             Row(
@@ -385,14 +385,14 @@ class _RefundCard extends ConsumerWidget {
                   label: refund.totalRefund.toStringAsFixed(2),
                   isDark: isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _DetailChip(
                   icon: Icons.calendar_today,
                   label: _formatDate(refund.createdAt),
                   isDark: isDark,
                 ),
                 if (refund.reason != null) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: _DetailChip(
                       icon: Icons.note,
@@ -407,9 +407,9 @@ class _RefundCard extends ConsumerWidget {
 
             // Action buttons for pending items
             if (isPending) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               const Divider(height: 1),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(
                 children: [
                   Expanded(
@@ -427,7 +427,7 @@ class _RefundCard extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: FilledButton.icon(
                       onPressed: () => _handleApprove(context, ref),
@@ -554,7 +554,7 @@ class _DetailChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
@@ -563,7 +563,7 @@ class _DetailChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(width: 4),
+          const SizedBox(width: AlhaiSpacing.xxs),
           Flexible(
             child: Text(
               label,

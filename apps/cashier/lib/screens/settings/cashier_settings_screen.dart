@@ -12,7 +12,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/utils/cache_cleaner.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Main settings hub screen
@@ -38,7 +38,7 @@ class _CashierSettingsScreenState
       children: [
         AppHeader(
           title: l10n.settings,
-          subtitle: 'إدارة التفضيلات',
+          subtitle: l10n.managePreferencesSubtitle,
           showSearch: false,
           onMenuTap: isWideScreen
               ? null
@@ -52,7 +52,7 @@ class _CashierSettingsScreenState
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: _buildGridWithCacheClear(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -65,7 +65,7 @@ class _CashierSettingsScreenState
       _SettingsItem(
         icon: Icons.store_rounded,
         title: l10n.storeInfo,
-        subtitle: 'الاسم، العنوان والشعار',
+        subtitle: l10n.storeNameAddressLogo,
         color: AppColors.primary,
         route: AppRoutes.settingsStore,
       ),
@@ -79,7 +79,7 @@ class _CashierSettingsScreenState
       _SettingsItem(
         icon: Icons.receipt_rounded,
         title: l10n.receiptSettings,
-        subtitle: 'رأس وتذييل الفاتورة والشعار',
+        subtitle: l10n.receiptHeaderFooterLogo,
         color: AppColors.secondary,
         route: AppRoutes.settingsReceipt,
       ),
@@ -100,50 +100,50 @@ class _CashierSettingsScreenState
       _SettingsItem(
         icon: Icons.keyboard_rounded,
         title: l10n.keyboardShortcuts,
-        subtitle: 'نقطة البيع، الدفع والتنقل',
+        subtitle: l10n.posPaymentNavSubtitle,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         route: AppRoutes.settingsKeyboardShortcuts,
       ),
       _SettingsItem(
         icon: Icons.people_rounded,
-        title: 'المستخدمين والصلاحيات',
-        subtitle: 'الأدوار والوصول',
+        title: l10n.usersAndPermissions,
+        subtitle: l10n.rolesAndAccess,
         color: AppColors.credit,
         route: AppRoutes.settingsUsers,
       ),
       _SettingsItem(
         icon: Icons.backup_rounded,
         title: l10n.backup,
-        subtitle: 'نسخ احتياطي واستعادة تلقائية',
+        subtitle: l10n.backupAutoRestore,
         color: AppColors.error,
         route: AppRoutes.settingsBackup,
       ),
       _SettingsItem(
         icon: Icons.privacy_tip_rounded,
         title: l10n.privacyPolicy,
-        subtitle: 'الخصوصية وحقوق البيانات',
+        subtitle: l10n.privacyAndDataRights,
         color: AppColors.info,
         route: AppRoutes.settingsPrivacy,
       ),
       _SettingsItem(
         icon: Icons.language_rounded,
         title: l10n.language,
-        subtitle: 'عربي/إنجليزي',
+        subtitle: l10n.arabicEnglish,
         color: AppColors.primaryDark,
         route: AppRoutes.settingsLanguage,
       ),
       _SettingsItem(
         icon: Icons.palette_rounded,
         title: l10n.theme,
-        subtitle: 'الوضع الداكن/الفاتح',
+        subtitle: l10n.darkLightMode,
         color: AppColors.secondaryDark,
         route: AppRoutes.settingsTheme,
       ),
       // Clear cache - special item (route unused, handled by onTap override)
-      const _SettingsItem(
+      _SettingsItem(
         icon: Icons.cleaning_services_rounded,
-        title: 'مسح الذاكرة المؤقتة',
-        subtitle: 'حل مشاكل التحميل والبيانات',
+        title: l10n.clearCacheTitle,
+        subtitle: l10n.clearCacheSubtitle,
         color: AppColors.error,
         route: '_clear_cache',
       ),
@@ -196,30 +196,29 @@ class _CashierSettingsScreenState
 
   /// Show confirmation dialog then clear all cached data
   Future<void> _showClearCacheDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: AppColors.error),
-            SizedBox(width: 8),
-            Text('مسح الذاكرة المؤقتة'),
+            const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            const SizedBox(width: AlhaiSpacing.xs),
+            Text(l10n.clearCacheTitle),
           ],
         ),
-        content: const Text(
-          'سيتم مسح جميع البيانات المؤقتة وإعادة تحميلها من السيرفر.\n\n'
-          'سيتم تسجيل خروجك وإعادة تشغيل التطبيق.\n\n'
-          'هل تريد المتابعة؟',
+        content: Text(
+          l10n.clearCacheDialogBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.of(ctx).pop(true),
             icon: const Icon(Icons.cleaning_services_rounded),
-            label: const Text('مسح وإعادة التشغيل'),
+            label: Text(l10n.clearAndRestart),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.error,
             ),
@@ -235,26 +234,27 @@ class _CashierSettingsScreenState
 
   /// Clear all browser storage and reload
   Future<void> _clearAllCacheAndReload() async {
+    final l10n = AppLocalizations.of(context);
     try {
       // Show loading indicator
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Row(
               children: [
-                SizedBox(
-                  width: 20,
+                const SizedBox(
+                  width:20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 12),
-                Text('جاري مسح الذاكرة المؤقتة...'),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Text(l10n.clearingCacheProgress),
               ],
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -269,7 +269,7 @@ class _CashierSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ: $e'),
+            content: Text(l10n.errorMsgGeneric('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -329,7 +329,7 @@ class _SettingsTileState extends State<_SettingsTile> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           decoration: BoxDecoration(
             color: _isHovered
                 ? widget.color.withValues(alpha: widget.isDark ? 0.15 : 0.06)
@@ -378,7 +378,7 @@ class _SettingsTileState extends State<_SettingsTile> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 widget.subtitle,
                 style: TextStyle(

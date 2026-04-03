@@ -7,29 +7,36 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 class _Denomination {
   final double value;
-  final String labelAr;
   final bool isNote;
 
   const _Denomination({
     required this.value,
-    required this.labelAr,
     required this.isNote,
   });
+
+  String label(AppLocalizations l10n) {
+    if (value >= 1) {
+      return l10n.denominationRiyal(value.toInt().toString());
+    }
+    return l10n.denominationHalala((value * 100).toInt().toString());
+  }
 }
 
 const _denominations = [
-  _Denomination(value: 500, labelAr: '500 ريال', isNote: true),
-  _Denomination(value: 100, labelAr: '100 ريال', isNote: true),
-  _Denomination(value: 50, labelAr: '50 ريال', isNote: true),
-  _Denomination(value: 20, labelAr: '20 ريال', isNote: true),
-  _Denomination(value: 10, labelAr: '10 ريال', isNote: true),
-  _Denomination(value: 5, labelAr: '5 ريال', isNote: true),
-  _Denomination(value: 1, labelAr: '1 ريال', isNote: false),
-  _Denomination(value: 0.50, labelAr: '50 هللة', isNote: false),
-  _Denomination(value: 0.25, labelAr: '25 هللة', isNote: false),
+  _Denomination(value: 500, isNote: true),
+  _Denomination(value: 100, isNote: true),
+  _Denomination(value: 50, isNote: true),
+  _Denomination(value: 20, isNote: true),
+  _Denomination(value: 10, isNote: true),
+  _Denomination(value: 5, isNote: true),
+  _Denomination(value: 1, isNote: false),
+  _Denomination(value: 0.50, isNote: false),
+  _Denomination(value: 0.25, isNote: false),
 ];
 
 /// ويدجت عداد الفئات - قابل للتضمين مباشرة
@@ -100,13 +107,14 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       children: [
         // الإجمالي في الأعلى
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
@@ -115,10 +123,10 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           ),
           child: Column(
             children: [
-              const Text('إجمالي المبلغ', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 4),
+              Text(l10n.totalAmountLabel, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
-                '${_total.toStringAsFixed(2)} ريال',
+                l10n.amountRiyal(_total.toStringAsFixed(2)),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 28,
@@ -128,23 +136,23 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
 
         // قسم الأوراق
-        _buildSectionHeader('أوراق نقدية', Icons.money, isDark),
-        ..._denominations.where((d) => d.isNote).map((d) => _buildRow(d, isDark)),
+        _buildSectionHeader(l10n.banknotes, Icons.money, isDark),
+        ..._denominations.where((d) => d.isNote).map((d) => _buildRow(d, isDark, l10n)),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         // قسم العملات المعدنية
-        _buildSectionHeader('عملات معدنية', Icons.toll, isDark),
-        ..._denominations.where((d) => !d.isNote).map((d) => _buildRow(d, isDark)),
+        _buildSectionHeader(l10n.coins, Icons.toll, isDark),
+        ..._denominations.where((d) => !d.isNote).map((d) => _buildRow(d, isDark, l10n)),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         // زر الإعادة
         TextButton.icon(
           onPressed: _reset,
           icon: const Icon(Icons.refresh, size: 16),
-          label: const Text('إعادة تعيين'),
+          label: Text(l10n.resetAction),
           style: TextButton.styleFrom(foregroundColor: Colors.red),
         ),
       ],
@@ -172,19 +180,19 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
     );
   }
 
-  Widget _buildRow(_Denomination d, bool isDark) {
+  Widget _buildRow(_Denomination d, bool isDark, AppLocalizations l10n) {
     final count = _counts[d.value] ?? 0;
     final subtotal = d.value * count;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           // الفئة
           SizedBox(
-            width: 90,
+            width:90,
             child: Text(
-              d.labelAr,
+              d.label(l10n),
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -213,13 +221,13 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           ),
           // فاصل
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
             child: Text('×', style: TextStyle(color: AppColors.textSecondary)),
           ),
           // الإجمالي الفرعي
           Expanded(
             child: Text(
-              '= ${subtotal.toStringAsFixed(subtotal == subtotal.roundToDouble() ? 0 : 2)} ر.س',
+              '= ${subtotal.toStringAsFixed(subtotal == subtotal.roundToDouble() ? 0 : 2)} ${l10n.sar}',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
@@ -262,7 +270,7 @@ Future<double?> showDenominationCounterSheet(
                 // Handle
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 8),
+                    margin: const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -272,12 +280,12 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   child: Row(
                     children: [
                       const Icon(Icons.calculate_rounded, color: Color(0xFF1A8FE3)),
-                      const SizedBox(width: 8),
-                      const Text('عد العملات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: AlhaiSpacing.xs),
+                      Text(AppLocalizations.of(ctx)!.countCurrencyBtn, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -290,7 +298,7 @@ Future<double?> showDenominationCounterSheet(
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollCtrl,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: DenominationCounterWidget(
                       initialTotal: initialTotal,
                       onTotalChanged: (t) {
@@ -301,26 +309,26 @@ Future<double?> showDenominationCounterSheet(
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom,
-                    top: 8,
+                    left: AlhaiSpacing.md,
+                    right: AlhaiSpacing.md,
+                    bottom: AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
+                    top: AlhaiSpacing.xs,
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('إلغاء'),
+                          child: Text(AppLocalizations.of(ctx)!.cancel),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         flex: 2,
                         child: FilledButton.icon(
                           onPressed: () => Navigator.pop(ctx, currentTotal),
                           icon: const Icon(Icons.check),
-                          label: Text('تأكيد: ${currentTotal.toStringAsFixed(2)} ر.س'),
+                          label: Text(AppLocalizations.of(ctx)!.confirmAmountSar(currentTotal.toStringAsFixed(2))),
                         ),
                       ),
                     ],

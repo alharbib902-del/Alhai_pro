@@ -5,6 +5,8 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:uuid/uuid.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة البضاعة التالفة والمفقودة
 class DamagedGoodsScreen extends ConsumerStatefulWidget {
@@ -20,12 +22,15 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
   List<_DamagedRecord> _records = [];
   double _totalLoss = 0;
 
-  final _lossTypes = [
-    ('damaged', 'تالف / معيب', Icons.broken_image_rounded, Colors.red),
-    ('expired', 'منتهي الصلاحية', Icons.event_busy_rounded, Colors.orange),
-    ('theft', 'سرقة / فقدان', Icons.security_rounded, Colors.purple),
-    ('waste', 'هدر / كسر', Icons.delete_rounded, Colors.brown),
-  ];
+  List<(String, String, IconData, Color)> _lossTypes(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      ('damaged', l10n.damagedDefectiveShort, Icons.broken_image_rounded, Colors.red),
+      ('expired', l10n.expiredShort, Icons.event_busy_rounded, Colors.orange),
+      ('theft', l10n.theftLoss, Icons.security_rounded, Colors.purple),
+      ('waste', l10n.wasteBreakage, Icons.delete_rounded, Colors.brown),
+    ];
+  }
 
   ({DateTime start, DateTime end}) _getDateRange() {
     final now = DateTime.now();
@@ -87,7 +92,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
         final records = result.map((row) => _DamagedRecord(
           id: row.data['id'] as String,
           type: row.data['type'] as String,
-          productName: row.data['product_name'] as String? ?? 'منتج غير محدد',
+          productName: row.data['product_name'] as String? ?? AppLocalizations.of(context).unknownProduct,
           qty: _toDouble(row.data['qty']).abs(),
           lossAmount: _toDouble(row.data['loss_amount']),
           note: row.data['note'] as String? ?? '',
@@ -126,27 +131,29 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDlg) => AlertDialog(
-          title: const Text('تسجيل بضاعة تالفة'),
+        builder: (ctx, setDlg) {
+          final l10n = AppLocalizations.of(ctx);
+          return AlertDialog(
+          title: Text(l10n.recordDamagedGoods),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'اسم المنتج',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.productNameLabel,
+                    border: const OutlineInputBorder(),
                   ),
                   onChanged: (v) => productName = v,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
                     Expanded(
                       child: TextField(
-                        decoration: const InputDecoration(
-                          labelText: 'الكمية',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.quantityLabel,
+                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (v) => qty = double.tryParse(v) ?? 1,
@@ -155,10 +162,10 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
-                        decoration: const InputDecoration(
-                          labelText: 'التكلفة/وحدة',
-                          border: OutlineInputBorder(),
-                          suffixText: 'ر.س',
+                        decoration: InputDecoration(
+                          labelText: l10n.costPerUnit,
+                          border: const OutlineInputBorder(),
+                          suffixText: l10n.sarSuffix,
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (_) {},
@@ -166,17 +173,17 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                const Text('نوع الخسارة', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.sm),
+                Text(l10n.lossType, style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Wrap(
                   spacing: 6,
-                  children: _lossTypes.map((t) => ChoiceChip(
+                  children: _lossTypes(ctx).map((t) => ChoiceChip(
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(t.$3, size: 14, color: lossType == t.$1 ? Colors.white : t.$4),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(t.$2, style: const TextStyle(fontSize: 12)),
                       ],
                     ),
@@ -185,12 +192,12 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     selectedColor: t.$4,
                   )).toList(),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 TextField(
                   controller: noteController,
-                  decoration: const InputDecoration(
-                    labelText: 'ملاحظات',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.notes,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 2,
                 ),
@@ -198,7 +205,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
             FilledButton(
               onPressed: () async {
                 if (productName.trim().isEmpty) return;
@@ -222,8 +229,8 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                   _loadData();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('تم تسجيل البضاعة التالفة بنجاح'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context).damagedGoodsRecorded),
                         backgroundColor: AppColors.success,
                       ),
                     );
@@ -232,23 +239,24 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('خطأ: $e'),
+                        content: Text(AppLocalizations.of(context).errorPrefix(e.toString(), e)),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
                   }
                 }
               },
-              child: const Text('تسجيل'),
+              child: Text(l10n.recordAction),
             ),
           ],
-        ),
+        );
+        },
       ),
     );
   }
 
-  (IconData, Color) _getTypeInfo(String type) {
-    for (final t in _lossTypes) {
+  (IconData, Color) _getTypeInfo(String type, BuildContext context) {
+    for (final t in _lossTypes(context)) {
       if (t.$1 == type) return (t.$3, t.$4);
     }
     return (Icons.warning_rounded, Theme.of(context).colorScheme.outline);
@@ -261,22 +269,23 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
       byType[r.type] = (byType[r.type] ?? 0) + r.lossAmount;
     }
 
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('البضاعة التالفة والمفقودة'),
+        title: Text(l10n.damagedAndLostGoods),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) { setState(() => _period = v); _loadData(); },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
-              const PopupMenuItem(value: 'year', child: Text('هذه السنة')),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
+              PopupMenuItem(value: 'year', child: Text(l10n.thisYear)),
             ],
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(children: [
-                Text('الفترة'),
-                Icon(Icons.arrow_drop_down),
+                Text(l10n.periodLabel),
+                const Icon(Icons.arrow_drop_down),
               ]),
             ),
           ),
@@ -288,17 +297,17 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
               children: [
                 // Loss summary
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   color: Colors.red.withValues(alpha: 0.05),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('إجمالي الخسائر',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                          Text(l10n.totalLosses,
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
                           Text(
-                            '${_totalLoss.toStringAsFixed(2)} ر.س',
+                            l10n.amountSar(_totalLoss.toStringAsFixed(2)),
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -310,7 +319,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                       const SizedBox(height: 10),
                       // By type breakdown
                       Row(
-                        children: _lossTypes.map((t) {
+                        children: _lossTypes(context).map((t) {
                           final amount = byType[t.$1] ?? 0;
                           return Expanded(
                             child: Padding(
@@ -318,9 +327,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                               child: Column(
                                 children: [
                                   Icon(t.$3, size: 18, color: t.$4),
-                                  const SizedBox(height: 2),
+                                  const SizedBox(height: AlhaiSpacing.xxxs),
                                   Text(
-                                    '${amount.toStringAsFixed(0)} ر.س',
+                                    l10n.amountSar(amount.toStringAsFixed(0)),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -343,23 +352,18 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
 
                 Expanded(
                   child: _records.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
-                              const SizedBox(height: 12),
-                              Text('لا توجد بضاعة تالفة في هذه الفترة',
-                                  style: TextStyle(color: Theme.of(context).hintColor)),
-                            ],
-                          ),
+                      ? AppEmptyState(
+                          icon: Icons.check_circle_outline,
+                          title: l10n.noDamagedGoods,
+                          description: l10n.noDamagedGoodsInPeriod,
+                          iconColor: AppColors.success,
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           itemCount: _records.length,
                           itemBuilder: (ctx, i) {
                             final r = _records[i];
-                            final typeInfo = _getTypeInfo(r.type);
+                            final typeInfo = _getTypeInfo(r.type, context);
                             return Card(
                               margin: const EdgeInsets.only(bottom: 6),
                               child: ListTile(
@@ -373,7 +377,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'الكمية: ${r.qty.toStringAsFixed(0)} | '
+                                      '${l10n.quantityWithValue(r.qty.toStringAsFixed(0))} | '
                                       '${r.date.day}/${r.date.month}/${r.date.year}',
                                       style: const TextStyle(fontSize: 11),
                                     ),
@@ -383,7 +387,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                   ],
                                 ),
                                 trailing: Text(
-                                  '${r.lossAmount.toStringAsFixed(0)} ر.س',
+                                  l10n.amountSar(r.lossAmount.toStringAsFixed(0)),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: typeInfo.$2,
@@ -401,7 +405,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showRecordDialog,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('تسجيل بضاعة تالفة'),
+        label: Text(l10n.recordDamagedGoodsFab),
         backgroundColor: Theme.of(context).colorScheme.error,
         foregroundColor: Colors.white,
       ),

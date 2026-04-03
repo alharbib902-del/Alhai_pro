@@ -5,6 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة سجل النشاطات
 class ActivityLogScreen extends ConsumerStatefulWidget {
@@ -131,19 +132,19 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
           scrollDirection: Axis.horizontal,
           child: Row(children: [
             _buildFilterChip('all', l10n.allFilter, isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildFilterChip('auth', l10n.loginLogoutFilter, isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildFilterChip('sales', l10n.salesFilter, isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildFilterChip('products', l10n.productsFilter, isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildFilterChip('users', l10n.usersFilter, isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _buildFilterChip('system', l10n.systemFilter, isDark),
           ]),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         _buildGroup('${l10n.activityLog} (${filtered.length})',
             filtered.map((a) => _buildActivityTile(a, isDark)).toList(), isDark,
             noItemsText: l10n.noActivities),
@@ -168,7 +169,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark, {String noItemsText = ''}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -176,12 +177,12 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface)),
         ),
         if (children.isEmpty)
-          Padding(padding: const EdgeInsets.all(32), child: Center(
+          Padding(padding: const EdgeInsets.all(AlhaiSpacing.xl), child: Center(
             child: Text(noItemsText, style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant))))
         else ...children,
@@ -192,7 +193,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   Widget _buildActivityTile(_ActivityItem a, bool isDark) {
     return ListTile(
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: a.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(a.icon, color: a.color, size: 20),
       ),

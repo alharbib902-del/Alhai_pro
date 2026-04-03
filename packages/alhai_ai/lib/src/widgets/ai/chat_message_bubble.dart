@@ -30,16 +30,16 @@ class ChatMessageBubble extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
       child: Row(
         mainAxisAlignment:
             _isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!_isUser) _buildAvatar(isDark),
-          if (!_isUser) const SizedBox(width: 8),
+          if (!_isUser) const SizedBox(width: AlhaiSpacing.xs),
           Flexible(child: _buildBubble(context, isDark, l10n)),
-          if (_isUser) const SizedBox(width: 8),
+          if (_isUser) const SizedBox(width: AlhaiSpacing.xs),
           if (_isUser) _buildUserAvatar(isDark),
         ],
       ),
@@ -135,7 +135,7 @@ class ChatMessageBubble extends StatelessWidget {
         children: [
           // محتوى الرسالة
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 8),
+            padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.sm, 14, AlhaiSpacing.xs),
             child: SelectableText(
               message.content,
               style: TextStyle(
@@ -157,7 +157,7 @@ class ChatMessageBubble extends StatelessWidget {
 
           // الوقت + زر النسخ
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 8, 8),
+            padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, AlhaiSpacing.xs, AlhaiSpacing.xs),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -173,7 +173,7 @@ class ChatMessageBubble extends StatelessWidget {
                   ),
                 ),
                 if (!_isUser) ...[
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   InkWell(
                     onTap: () {
                       Clipboard.setData(
@@ -187,7 +187,7 @@ class ChatMessageBubble extends StatelessWidget {
                     },
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                       child: Icon(
                         Icons.copy_rounded,
                         size: 14,
@@ -210,7 +210,7 @@ class ChatMessageBubble extends StatelessWidget {
     if (data.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsetsDirectional.fromSTEB(14, 0, 14, 8),
+      margin: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: isDark
@@ -233,7 +233,7 @@ class ChatMessageBubble extends StatelessWidget {
               ? (entry.value as double).toStringAsFixed(2)
               : entry.value.toString();
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxxs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -263,7 +263,7 @@ class ChatMessageBubble extends StatelessWidget {
   /// إجراءات مقترحة
   Widget _buildSuggestedActions(bool isDark) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 14, 8),
+      padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
@@ -278,7 +278,7 @@ class ChatMessageBubble extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -295,7 +295,7 @@ class ChatMessageBubble extends StatelessWidget {
                       size: 14,
                       color: AppColors.primary,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                   ],
                   Text(
                     action.label,

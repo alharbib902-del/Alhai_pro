@@ -13,6 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -166,7 +167,7 @@ class _CashierCategoriesScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadCategories)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadCategories)
                   : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
@@ -182,7 +183,7 @@ class _CashierCategoriesScreenState
             flex: 3,
             child: _buildCategoriesPanel(isMediumScreen, isDark, l10n),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 4,
             child: _buildProductsPanel(isDark, l10n),
@@ -204,7 +205,7 @@ class _CashierCategoriesScreenState
       children: [
         // Search bar
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: TextField(
             controller: _searchController,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
@@ -229,7 +230,7 @@ class _CashierCategoriesScreenState
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 14),
+                  horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
         ),
@@ -239,7 +240,7 @@ class _CashierCategoriesScreenState
               ? _buildEmptyState(isDark, l10n)
               : GridView.builder(
                   padding: EdgeInsets.symmetric(
-                      horizontal: isMediumScreen ? 24 : 16, vertical: 8),
+                      horizontal: isMediumScreen ? 24 : 16, vertical: AlhaiSpacing.xs),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMediumScreen ? 3 : 2,
                     crossAxisSpacing: 12,
@@ -266,7 +267,7 @@ class _CashierCategoriesScreenState
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.12)
@@ -291,7 +292,7 @@ class _CashierCategoriesScreenState
               child: Icon(_getCategoryIcon(category.name),
                   color: color, size: 24),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               category.name,
               style: TextStyle(
@@ -303,10 +304,10 @@ class _CashierCategoriesScreenState
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 2),
+                  horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius: BorderRadius.circular(999),
@@ -333,7 +334,7 @@ class _CashierCategoriesScreenState
       children: [
         // Back button + category header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             border: Border(
@@ -356,7 +357,7 @@ class _CashierCategoriesScreenState
                   ),
                 ),
               if (!context.isDesktop)
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
               Container(
                 width: 40,
                 height: 40,
@@ -369,7 +370,7 @@ class _CashierCategoriesScreenState
                 child: Icon(_getCategoryIcon(category.name),
                     color: _getCategoryColor(category.name), size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,7 +405,7 @@ class _CashierCategoriesScreenState
                               size: 48,
                               color: AppColors.getTextMuted(isDark)
                                   .withValues(alpha: 0.4)),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           Text(l10n.noProducts,
                               style: TextStyle(
                                   fontSize: 14,
@@ -414,10 +415,10 @@ class _CashierCategoriesScreenState
                       ),
                     )
                   : ListView.separated(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
                       itemCount: _categoryProducts.length,
                       separatorBuilder: (_, __) =>
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                       itemBuilder: (context, index) =>
                           _buildProductItem(
                               _categoryProducts[index], isDark, l10n),
@@ -432,7 +433,7 @@ class _CashierCategoriesScreenState
     final hasLowStock = product.stockQty < 5;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -461,14 +462,14 @@ class _CashierCategoriesScreenState
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.getTextPrimary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     if (product.barcode != null) ...[
                       Icon(Icons.qr_code_rounded,
                           size: 12,
                           color: AppColors.getTextMuted(isDark)),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(product.barcode!,
                           style: TextStyle(
                               fontSize: 11,
@@ -478,7 +479,7 @@ class _CashierCategoriesScreenState
                     ],
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 6, vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: (hasLowStock
                                 ? AppColors.error
@@ -524,7 +525,7 @@ class _CashierCategoriesScreenState
               size: 64,
               color:
                   AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noCategories,
               style: TextStyle(
                   fontSize: 16,

@@ -98,7 +98,7 @@ class PosCategoryColumn extends StatelessWidget {
           ];
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             itemCount: allItems.length,
             itemBuilder: (context, index) => allItems[index],
           );
@@ -147,7 +147,7 @@ class PosCategoryColumnItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           child: AnimatedContainer(
             duration: AlhaiDurations.standard,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: isActive
                   ? color.withValues(alpha: 0.15)
@@ -181,7 +181,7 @@ class PosCategoryColumnItem extends StatelessWidget {
                             : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   label,
                   style: TextStyle(
@@ -276,7 +276,7 @@ class PosCategoryBar extends StatelessWidget {
       child: categories.when(
         data: (cats) => ListView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
           children: [
             PosCategoryPill(
               icon: Icons.grid_view_rounded,
@@ -327,7 +327,7 @@ class PosCategoryPill extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 8),
+      padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
       child: Material(
         color: Colors.transparent,
         child: InkWell(

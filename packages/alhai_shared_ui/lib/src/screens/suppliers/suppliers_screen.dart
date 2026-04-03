@@ -82,10 +82,11 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 Expanded(
                   child: ref.watch(suppliersListProvider).when(
                     loading: () => const Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(AlhaiSpacing.md),
                       child: ShimmerList(itemCount: 6, itemHeight: 72),
                     ),
                     error: (e, _) => AppErrorState.general(
+                      context,
                       message: e.toString(),
                       onRetry: () => ref.invalidate(suppliersListProvider),
                     ),
@@ -95,7 +96,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       child: SingleChildScrollView(
                         controller: _scrollController,
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: _buildContent(suppliers,
                             isWideScreen, isMediumScreen, isDark, l10n),
                       ),
@@ -127,7 +128,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   isDark: isDark,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: _StatCard(
                   icon: Icons.check_circle_rounded,
@@ -137,7 +138,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   isDark: isDark,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: _StatCard(
                   icon: Icons.account_balance_wallet_rounded,
@@ -163,7 +164,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       isDark: isDark,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: _StatCard(
                       icon: Icons.check_circle_rounded,
@@ -175,7 +176,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               _StatCard(
                 icon: Icons.account_balance_wallet_rounded,
                 label: 'المستحقات',
@@ -185,11 +186,11 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               ),
             ],
           ),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Supplier Catalog - Coming Soon
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
@@ -208,7 +209,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 child: const Icon(Icons.menu_book_rounded,
                     color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +222,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       'تصفح كتالوج الموردين - هذه الميزة غير متاحة حالياً',
                       style: TextStyle(
@@ -234,7 +235,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -251,11 +252,11 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
 
         // Search & Add row
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
@@ -277,27 +278,27 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         contentPadding:
-                            const EdgeInsets.symmetric(vertical: 12),
+                            const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AlhaiSpacing.md),
                   FilledButton.icon(
                     onPressed: () => _showAddSupplierDialog(context),
                     icon: const Icon(Icons.add, size: 18),
                     label: Text(l10n.addSupplier),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 14),
+                          horizontal: AlhaiSpacing.mdl, vertical: 14),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Divider(
                 color: Theme.of(context).dividerColor,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
 
               // Suppliers List
               Builder(builder: (context) {
@@ -310,7 +311,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
 
                 if (filtered.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
                     child: Center(
                       child: Text(l10n.noSuppliers, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ),
@@ -330,7 +331,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                     final initial = supplier.name.isNotEmpty ? supplier.name[0] : '?';
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 8),
+                          horizontal: AlhaiSpacing.xxs, vertical: AlhaiSpacing.xs),
                       leading: Hero(
                         tag: 'supplier-avatar-${supplier.id}',
                         child: CircleAvatar(
@@ -363,7 +364,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                                horizontal: 10, vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
                               color:
                                   AppColors.primary.withValues(alpha: 0.1),
@@ -378,7 +379,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                           Icon(
                             Directionality.of(context) == TextDirection.rtl ? Icons.chevron_right : Icons.chevron_left,
                             color: isDark
@@ -413,7 +414,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
         maxChildSize: 0.9,
         expand: false,
         builder: (context, scrollController) => Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: ListView(
             controller: scrollController,
             children: [
@@ -427,14 +428,14 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               CircleAvatar(
                 radius: 40,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                 child: const Icon(Icons.store,
                     size: 40, color: AppColors.primary),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(
                 supplier.name,
                 textAlign: TextAlign.center,
@@ -442,7 +443,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               _DetailRow(
                   icon: Icons.phone,
                   label: l10n.supplierPhone,
@@ -464,7 +465,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                     icon: Icons.numbers,
                     label: l10n.taxNumber,
                     value: supplier.taxNumber!),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               Row(
                 children: [
                   Expanded(
@@ -474,7 +475,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       label: Text(l10n.edit),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AlhaiSpacing.md),
                   Expanded(
                     child: FilledButton.icon(
                       onPressed: () {},
@@ -511,7 +512,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 prefixIcon: const Icon(Icons.store),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AlhaiSpacing.sm),
             TextField(
               controller: phoneCtrl,
               decoration: InputDecoration(
@@ -520,7 +521,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               ),
               keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AlhaiSpacing.sm),
             TextField(
               controller: emailCtrl,
               decoration: InputDecoration(
@@ -598,7 +599,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -616,7 +617,7 @@ class _StatCard extends StatelessWidget {
             ),
             child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -628,7 +629,7 @@ class _StatCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   value,
                   style: TextStyle(
@@ -657,11 +658,11 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Icon(icon, size: 20, color: AppColors.textSecondary),
-          const SizedBox(width: 12),
+          SizedBox(width: AlhaiSpacing.sm),
           Text(label,
               style: const TextStyle(color: AppColors.textSecondary)),
           const Spacer(),

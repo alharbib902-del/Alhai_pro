@@ -5,6 +5,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// بيانات تحليل العملاء المجمعة
 class _CustomerAnalyticsData {
@@ -267,13 +268,13 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 64, color: colorScheme.error),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.errorOccurred,
                   style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(_error!,
                   style: TextStyle(color: colorScheme.onSurfaceVariant)),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               FilledButton.icon(
                 onPressed: _loadData,
                 icon: const Icon(Icons.refresh),
@@ -312,7 +313,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
             final isWide = constraints.maxWidth >= 800;
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -330,7 +331,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
 
                   // الإحصائيات الرئيسية - responsive
                   if (isWide)
@@ -342,21 +343,21 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                           value: '${_data.totalCustomers}',
                           color: colorScheme.primary,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.person_add,
                           label: l10n.newCustomers,
                           value: '${_data.newCustomers}',
                           color: colorScheme.tertiary,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.account_balance_wallet,
                           label: l10n.totalDebts,
                           value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
                           color: colorScheme.error,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.attach_money,
                           label: l10n.averageSpending,
@@ -374,7 +375,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                           value: '${_data.totalCustomers}',
                           color: colorScheme.primary,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.person_add,
                           label: l10n.newCustomers,
@@ -383,7 +384,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: AlhaiSpacing.sm),
                     Row(
                       children: [
                         _StatCard(
@@ -392,7 +393,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                           value: l10n.priceWithCurrency(_data.totalDebt.toStringAsFixed(0)),
                           color: colorScheme.error,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _StatCard(
                           icon: Icons.attach_money,
                           label: l10n.averageSpending,
@@ -403,7 +404,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                     ),
                   ],
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
 
                   // Wide: top customers + distribution side by side
                   if (isWide) ...[
@@ -415,7 +416,7 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                           flex: 3,
                           child: _buildTopCustomersSection(l10n, colorScheme),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: AlhaiSpacing.md),
                         // توزيع العملاء
                         Expanded(
                           flex: 2,
@@ -423,15 +424,15 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AlhaiSpacing.lg),
                     _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
                   ] else ...[
                     // أفضل العملاء
                     _buildTopCustomersSection(l10n, colorScheme),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AlhaiSpacing.lg),
                     // توزيع العملاء
                     _buildDistributionSection(l10n, colorScheme, vipPct, regularPct, normalPct),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AlhaiSpacing.lg),
                     // نشاط العملاء
                     _buildActivitySection(l10n, colorScheme, activePct, dormantPct, inactivePct),
                   ],
@@ -449,11 +450,11 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.topCustomers, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         _data.topCustomers.isEmpty
             ? Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xl),
                   child: Center(
                     child: Text(l10n.noData,
                         style: TextStyle(color: colorScheme.onSurfaceVariant)),
@@ -489,22 +490,22 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.customerDistribution, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Column(
               children: [
                 _DistributionRow(
                     label: '${l10n.vipCustomers} (> 5000)',
                     percentage: vipPct,
                     color: colorScheme.tertiary),
-                const SizedBox(height: 12),
+                SizedBox(height: AlhaiSpacing.sm),
                 _DistributionRow(
                     label: '${l10n.regularCustomers} (1000-5000)',
                     percentage: regularPct,
                     color: colorScheme.primary),
-                const SizedBox(height: 12),
+                SizedBox(height: AlhaiSpacing.sm),
                 _DistributionRow(
                     label: '${l10n.normalCustomers} (< 1000)',
                     percentage: normalPct,
@@ -523,10 +524,10 @@ class _CustomerAnalyticsScreenState extends ConsumerState<CustomerAnalyticsScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.customerActivity, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -569,12 +570,12 @@ class _StatCard extends StatelessWidget {
     return Expanded(
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(icon, color: color, size: 20),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(value,
                   style: TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold, color: color)),
@@ -642,7 +643,7 @@ class _DistributionRow extends StatelessWidget {
                     fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
           ],
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: AlhaiSpacing.xxs),
         LinearProgressIndicator(
             value: percentage / 100,
             backgroundColor: colorScheme.surfaceContainerHighest,
@@ -678,7 +679,7 @@ class _ActivityStat extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, color: color)),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: AlhaiSpacing.xs),
         Text(value,
             style: TextStyle(
                 fontWeight: FontWeight.bold, color: colorScheme.onSurface)),

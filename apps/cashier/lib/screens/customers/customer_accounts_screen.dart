@@ -14,7 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -141,17 +141,18 @@ class _CustomerAccountsScreenState
               ? const AppLoadingState()
               : _error != null
               ? AppErrorState.general(
+                  context,
                   message: _error,
                   onRetry: _loadAccounts,
                 )
               : Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: Column(
                         children: [
                           _buildSearchBar(isDark, l10n),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           _buildStatusFilters(isDark, l10n),
                         ],
                       ),
@@ -161,17 +162,17 @@ class _CustomerAccountsScreenState
                           horizontal: isMediumScreen ? 24 : 16),
                       child: _buildSummaryStats(isDark, l10n),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Expanded(
                       child: _filteredAccounts.isEmpty
                           ? _buildEmptyState(isDark, l10n)
                           : ListView.separated(
                               padding: EdgeInsets.symmetric(
                                   horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: 8),
+                                  vertical: AlhaiSpacing.xs),
                               itemCount: _filteredAccounts.length,
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AlhaiSpacing.xs),
                               itemBuilder: (context, index) =>
                                   _buildAccountCard(
                                       _filteredAccounts[index],
@@ -222,7 +223,7 @@ class _CustomerAccountsScreenState
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -236,17 +237,17 @@ class _CustomerAccountsScreenState
             setState(() => _statusFilter = 'all');
             _applyFilters();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip('Outstanding', _statusFilter == 'outstanding', () {
             setState(() => _statusFilter = 'outstanding');
             _applyFilters();
           }, isDark, icon: Icons.warning_amber_rounded),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip('Overdue', _statusFilter == 'overdue', () {
             setState(() => _statusFilter = 'overdue');
             _applyFilters();
           }, isDark, icon: Icons.schedule_rounded),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip('Paid', _statusFilter == 'paid', () {
             setState(() => _statusFilter = 'paid');
             _applyFilters();
@@ -263,7 +264,7 @@ class _CustomerAccountsScreenState
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
@@ -315,7 +316,7 @@ class _CustomerAccountsScreenState
     final count = _filteredAccounts.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -330,7 +331,7 @@ class _CustomerAccountsScreenState
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$count',
                     style: TextStyle(
                         fontSize: 20,
@@ -351,7 +352,7 @@ class _CustomerAccountsScreenState
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
                     style: const TextStyle(
                         fontSize: 20,
@@ -372,7 +373,7 @@ class _CustomerAccountsScreenState
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$overdueCount',
                     style: TextStyle(
                         fontSize: 20,
@@ -405,7 +406,7 @@ class _CustomerAccountsScreenState
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
           borderRadius: BorderRadius.circular(12),
@@ -457,10 +458,10 @@ class _CustomerAccountsScreenState
                         ),
                       ),
                       if (isOverdue) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                              horizontal: 6, vertical: AlhaiSpacing.xxxs),
                           decoration: BoxDecoration(
                             color:
                                 AppColors.warning.withValues(alpha: 0.1),
@@ -478,14 +479,14 @@ class _CustomerAccountsScreenState
                       ],
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     children: [
                       if (account.phone != null) ...[
                         Icon(Icons.phone_outlined,
                             size: 13,
                             color: AppColors.getTextMuted(isDark)),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           account.phone!,
                           style: TextStyle(
@@ -510,10 +511,10 @@ class _CustomerAccountsScreenState
                     color: balanceColor,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 2),
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: balanceColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
@@ -529,7 +530,7 @@ class _CustomerAccountsScreenState
                 ),
               ],
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Icon(Icons.chevron_right_rounded,
                 color: AppColors.getTextMuted(isDark), size: 20),
           ],

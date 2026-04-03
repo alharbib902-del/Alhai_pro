@@ -57,15 +57,15 @@ class LiteSettingsScreen extends ConsumerWidget {
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 16 : 32,
-          vertical: 16,
+          horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.xl,
+          vertical: AlhaiSpacing.md,
         ),
         children: [
           // =================================================================
           // APPEARANCE SECTION
           // =================================================================
           _SectionHeader(title: l10n.appearance, icon: Icons.palette_outlined, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
             children: [
@@ -87,13 +87,13 @@ class LiteSettingsScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // =================================================================
           // NOTIFICATIONS SECTION
           // =================================================================
           _SectionHeader(title: l10n.notifications, icon: Icons.notifications_outlined, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
             children: [
@@ -135,13 +135,13 @@ class LiteSettingsScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // =================================================================
           // ALERT THRESHOLDS SECTION
           // =================================================================
           _SectionHeader(title: l10n.alerts, icon: Icons.tune_rounded, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
             children: [
@@ -179,13 +179,13 @@ class LiteSettingsScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // =================================================================
           // SECURITY SECTION
           // =================================================================
           _SectionHeader(title: l10n.security, icon: Icons.shield_outlined, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
             children: [
@@ -215,13 +215,13 @@ class LiteSettingsScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // =================================================================
           // APP INFO SECTION
           // =================================================================
           _SectionHeader(title: l10n.about, icon: Icons.info_outline, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
             children: [
@@ -255,7 +255,7 @@ class LiteSettingsScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: AlhaiSpacing.xl),
 
           // Logout button
           Center(
@@ -304,7 +304,7 @@ class LiteSettingsScreen extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
         ],
       ),
     );
@@ -365,7 +365,7 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 18, color: AlhaiColors.primary),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Text(
           title,
           style: TextStyle(
@@ -431,7 +431,7 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -504,7 +504,7 @@ class _ToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
       child: Row(
         children: [
           Container(
@@ -578,7 +578,7 @@ class _ThresholdTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
       child: Row(
         children: [
           Container(
@@ -618,7 +618,7 @@ class _ThresholdTile extends StatelessWidget {
                   color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                   child: Text(
                     '$value $unit',
                     style: TextStyle(

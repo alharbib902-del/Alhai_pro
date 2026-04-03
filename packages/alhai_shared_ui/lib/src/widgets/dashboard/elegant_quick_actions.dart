@@ -71,7 +71,7 @@ class ElegantQuickActions extends StatelessWidget {
           children: [
             // Main content — MUST be first (non-Positioned) to give Stack its size
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -85,7 +85,7 @@ class ElegantQuickActions extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: AlhaiSpacing.md),
 
                   // 2x2 Grid of action buttons
                   GridView.builder(
@@ -179,7 +179,7 @@ class _QuickActionButton extends StatelessWidget {
                 color: Colors.white,
                 size: 28,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(
                 action.label,
                 style: const TextStyle(

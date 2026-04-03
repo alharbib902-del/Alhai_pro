@@ -46,18 +46,18 @@ class InvoiceDataTable extends StatelessWidget {
           // Bulk actions bar
           if (selectedIds.isNotEmpty)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.05), border: Border(bottom: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)))),
               child: Row(
                 children: [
                   Checkbox(value: selectedIds.length == invoices.length, onChanged: (v) => onSelectAll(v ?? false), activeColor: AppColors.primary),
                   Text(l10n.selected(selectedIds.length), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary)),
                   const Spacer(),
-                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), side: const BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.bulkPrint, style: TextStyle(fontSize: 13, color: colorScheme.onSurface))),
-                  const SizedBox(width: 8),
-                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), side: const BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.bulkExportPdf, style: TextStyle(fontSize: 13, color: colorScheme.onSurface))),
-                  const SizedBox(width: 8),
-                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), side: const BorderSide(color: AppColors.error), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.delete, style: const TextStyle(fontSize: 13, color: AppColors.error))),
+                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6), side: const BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.bulkPrint, style: TextStyle(fontSize: 13, color: colorScheme.onSurface))),
+                  SizedBox(width: AlhaiSpacing.xs),
+                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6), side: const BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.bulkExportPdf, style: TextStyle(fontSize: 13, color: colorScheme.onSurface))),
+                  SizedBox(width: AlhaiSpacing.xs),
+                  OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6), side: const BorderSide(color: AppColors.error), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: Text(l10n.delete, style: const TextStyle(fontSize: 13, color: AppColors.error))),
                 ],
               ),
             ),
@@ -89,7 +89,7 @@ class InvoiceDataTable extends StatelessWidget {
           columnSpacing: 24,
           horizontalMargin: 16,
           columns: [
-            const DataColumn(label: SizedBox(width: 32)),
+            const DataColumn(label: SizedBox(width: AlhaiSpacing.xl)),
             DataColumn(label: Text(l10n.invoiceNumberCol)),
             DataColumn(label: Text(l10n.customerNameCol)),
             DataColumn(label: Text(l10n.dateCol)),
@@ -107,7 +107,7 @@ class InvoiceDataTable extends StatelessWidget {
                 DataCell(Checkbox(value: selectedIds.contains(inv.id), onChanged: (v) => onSelectInvoice(inv.id, v ?? false), activeColor: AppColors.primary)),
                 DataCell(Row(children: [
                   InkWell(onTap: () => onView(inv), child: Text(inv.id, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary, fontFamily: 'monospace'))),
-                  const SizedBox(width: 4),
+                  SizedBox(width: AlhaiSpacing.xxs),
                   InkWell(onTap: () => onCopyId(inv.id), child: Icon(Icons.copy, size: 14, color: colorScheme.onSurfaceVariant)),
                 ])),
                 DataCell(Row(children: [
@@ -126,11 +126,11 @@ class InvoiceDataTable extends StatelessWidget {
                     icon: Icon(Icons.more_vert, size: 18, color: colorScheme.onSurfaceVariant),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     itemBuilder: (context) => [
-                      PopupMenuItem(value: 'print', child: Row(children: [const Icon(Icons.print_outlined, size: 16, color: AppColors.textMuted), const SizedBox(width: 8), Text(l10n.printInvoice)])),
-                      PopupMenuItem(value: 'pdf', child: Row(children: [const Icon(Icons.picture_as_pdf, size: 16, color: AppColors.error), const SizedBox(width: 8), Text(l10n.exportPdf)])),
-                      PopupMenuItem(value: 'whatsapp', child: Row(children: [const Icon(Icons.message, size: 16, color: AppColors.success), const SizedBox(width: 8), Text(l10n.sendWhatsapp)])),
+                      PopupMenuItem(value: 'print', child: Row(children: [const Icon(Icons.print_outlined, size: 16, color: AppColors.textMuted), SizedBox(width: AlhaiSpacing.xs), Text(l10n.printInvoice)])),
+                      PopupMenuItem(value: 'pdf', child: Row(children: [const Icon(Icons.picture_as_pdf, size: 16, color: AppColors.error), SizedBox(width: AlhaiSpacing.xs), Text(l10n.exportPdf)])),
+                      PopupMenuItem(value: 'whatsapp', child: Row(children: [const Icon(Icons.message, size: 16, color: AppColors.success), SizedBox(width: AlhaiSpacing.xs), Text(l10n.sendWhatsapp)])),
                       const PopupMenuDivider(),
-                      PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete_outline, size: 16, color: AppColors.error), const SizedBox(width: 8), Text(l10n.deleteInvoice, style: const TextStyle(color: AppColors.error))])),
+                      PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete_outline, size: 16, color: AppColors.error), SizedBox(width: AlhaiSpacing.xs), Text(l10n.deleteInvoice, style: const TextStyle(color: AppColors.error))])),
                     ],
                   ),
                 ])),
@@ -146,8 +146,8 @@ class InvoiceDataTable extends StatelessWidget {
 
   Widget _buildMobileCard(InvoiceModel inv, ColorScheme colorScheme, AppLocalizations l10n, BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(12),
@@ -158,27 +158,27 @@ class InvoiceDataTable extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(radius: 18, backgroundColor: _getAvatarColor(inv.customer), child: Text(inv.customer.isNotEmpty ? inv.customer[0] : '?', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white))),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(inv.customer, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface)),
                 Text(inv.id, style: const TextStyle(fontSize: 12, fontFamily: 'monospace', color: AppColors.primary)),
               ])),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Text(CurrencyFormatter.formatWithContext(context, inv.amount), style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 _buildStatusBadge(inv.status, l10n, colorScheme),
               ]),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
               Icon(Icons.calendar_today, size: 14, color: colorScheme.onSurfaceVariant),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               Text(_formatDate(inv.date), style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
               const Spacer(),
               _buildPaymentIcon(inv.paymentMethod),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               IconButton(onPressed: () => onView(inv), icon: Icon(Icons.visibility_outlined, size: 18, color: colorScheme.onSurfaceVariant), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
             ],
           ),
@@ -201,7 +201,7 @@ class InvoiceDataTable extends StatelessWidget {
     final isDark = colorScheme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: isDark ? color.withValues(alpha: 0.15) : color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -231,7 +231,7 @@ class InvoiceDataTable extends StatelessWidget {
 
   Widget _buildPagination(ColorScheme colorScheme, AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -252,7 +252,7 @@ class InvoiceDataTable extends StatelessWidget {
 
   Widget _pageBtn(String label, bool isActive, ColorScheme colorScheme) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
+      margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
       width: 36, height: 36,
       decoration: BoxDecoration(
         color: isActive ? AppColors.primary : Colors.transparent,

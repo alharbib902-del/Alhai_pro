@@ -6,6 +6,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الإشعارات
 const String _kNotifPushEnabled = 'notif_push_enabled';
@@ -200,14 +201,14 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface))),
         ...children,
@@ -218,7 +219,7 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
   Widget _switchTile(IconData icon, String title, String subtitle, bool value,
       ValueChanged<bool> onChanged, bool isDark) {
     return SwitchListTile(
-      secondary: Container(padding: const EdgeInsets.all(8),
+      secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: value ? AppColors.primary : AppColors.textSecondary, size: 20)),
       title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),

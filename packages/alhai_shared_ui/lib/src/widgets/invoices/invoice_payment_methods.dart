@@ -20,7 +20,7 @@ class InvoicePaymentMethods extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -30,9 +30,9 @@ class InvoicePaymentMethods extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.paymentMethods, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           ...methods.map((m) => _buildMethodRow(m, context)),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
@@ -43,7 +43,7 @@ class InvoicePaymentMethods extends StatelessWidget {
                 foregroundColor: isDark ? AppColors.textMutedDark : AppColors.textMuted,
                 side: BorderSide(color: Theme.of(context).dividerColor, style: BorderStyle.solid),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
               ),
             ),
           ),
@@ -54,9 +54,9 @@ class InvoicePaymentMethods extends StatelessWidget {
 
   Widget _buildMethodRow(_PaymentMethod method, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
           borderRadius: BorderRadius.circular(12),
@@ -71,7 +71,7 @@ class InvoicePaymentMethods extends StatelessWidget {
               ),
               child: Icon(method.icon, color: method.color, size: 18),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: AlhaiSpacing.sm),
             Text(method.label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
             const Spacer(),
             Text('${method.percent}%', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),

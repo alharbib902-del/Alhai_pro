@@ -14,6 +14,7 @@ import '../../services/ai_promotion_designer_service.dart';
 import '../../widgets/ai/generated_promotion_card.dart';
 import '../../widgets/ai/roi_forecast_chart.dart';
 import '../../widgets/ai/ab_test_config_panel.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة تصميم العروض الذكية
 class AiPromotionDesignerScreen extends ConsumerStatefulWidget {
@@ -104,17 +105,17 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
       },
       data: (promos) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+          padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقة AI Header
               _buildAiHeader(isDark, totalRevenue, avgConfidence, promos.length),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // فلتر الأنواع
               _buildTypeFilter(isDark, selectedFilter),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // شبكة العروض
               if (isWideScreen)
@@ -131,7 +132,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
   Widget _buildAiHeader(bool isDark, AsyncValue<double> totalRevenue, AsyncValue<double> avgConfidence, int count) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: AlignmentDirectional.topStart,
@@ -160,7 +161,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
                 ),
                 child: const Icon(Icons.auto_awesome, color: Colors.white, size: 24),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +186,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               _buildHeaderStat(
@@ -197,7 +198,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
                 ),
                 Icons.monetization_on_outlined,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildHeaderStat(
                 l10n.aiAiConfidence,
                 avgConfidence.when(
@@ -217,7 +218,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
   Widget _buildHeaderStat(String label, String value, IconData icon) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(10),
@@ -225,7 +226,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
         child: Row(
           children: [
             Icon(icon, color: Colors.white70, size: 18),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -276,7 +277,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
         : AppColors.primary;
 
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 8),
+      padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
@@ -336,7 +337,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     return Column(
       children: promos.map((p) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           child: GeneratedPromotionCard(
             promotion: p,
             isSelected: selected?.id == p.id,
@@ -370,14 +371,14 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     final roiForecast = ref.watch(roiForecastProvider);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+      padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // تفاصيل العرض المحدد
           if (selectedPromotion != null) ...[
             _buildSelectedPromotionDetail(isDark, selectedPromotion),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
           ],
 
           // رسم بياني ROI
@@ -388,7 +389,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
           ),
 
           if (selectedPromotion == null) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Center(
               child: Column(
                 children: [
@@ -397,7 +398,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
                     color: isDark ? Colors.white38 : AppColors.textMuted,
                     size: 48,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     l10n.aiSelectPromotionForRoi,
                     style: TextStyle(
@@ -421,7 +422,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     final typeColor = Color(AiPromotionDesignerService.getPromotionTypeColorValue(promo.type));
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -468,7 +469,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(
             promo.title,
             style: TextStyle(
@@ -477,7 +478,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             promo.description,
             style: TextStyle(
@@ -486,16 +487,16 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               _buildDetailStat(l10n.aiRevenueLabel, '${promo.projectedRevenue.toStringAsFixed(0)} ر.س', AppColors.success, isDark),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               _buildDetailStat(l10n.aiCostLabel, '${promo.projectedCost.toStringAsFixed(0)} ر.س', AppColors.error, isDark),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               _buildDetailStat('ROI', '${promo.roi.toStringAsFixed(0)}%', const Color(0xFF8B5CF6), isDark),
               if (promo.discountAmount > 0) ...[
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 _buildDetailStat(l10n.aiDiscountLabel, '${promo.discountAmount.toStringAsFixed(0)}%', typeColor, isDark),
               ],
             ],
@@ -524,7 +525,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AlhaiSpacing.xxxs),
             Text(
               label,
               style: TextStyle(
@@ -552,13 +553,13 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
     final allPromotions = ref.watch(generatedPromotionsProvider);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+      padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // معلومات عن اختبار A/B
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF8B5CF6).withValues(alpha: 0.1)
@@ -586,7 +587,7 @@ class _AiPromotionDesignerScreenState extends ConsumerState<AiPromotionDesignerS
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // لوحة التكوين
           allPromotions.when(

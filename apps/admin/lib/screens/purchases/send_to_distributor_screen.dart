@@ -7,6 +7,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../providers/purchases_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Send to Distributor Screen - شاشة إرسال الطلب للموزع
 class SendToDistributorScreen extends ConsumerStatefulWidget {
@@ -45,7 +46,7 @@ class _SendToDistributorScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'إرسال للموزع',
+          title: l10n.sendToDistributor,
           onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () =>
               context.push(AppRoutes.notificationsCenter),
@@ -59,7 +60,7 @@ class _SendToDistributorScreenState
             error: (e, _) => _buildError(isDark, e.toString()),
             data: (data) {
               if (data == null) {
-                return _buildError(isDark, 'لم يتم العثور على طلب الشراء');
+                return _buildError(isDark, l10n.purchaseNotFound);
               }
               // Pre-select supplier from purchase if not yet initialized
               if (!_supplierInitialized &&
@@ -89,7 +90,7 @@ class _SendToDistributorScreenState
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
             style: TextStyle(
@@ -97,12 +98,12 @@ class _SendToDistributorScreenState
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: () =>
                 context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
             icon: const Icon(Icons.arrow_back),
-            label: const Text('العودة'),
+            label: Text(AppLocalizations.of(context).goBack),
           ),
         ],
       ),
@@ -136,10 +137,10 @@ class _SendToDistributorScreenState
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
-                  'إرسال الطلب للموزع',
+                  AppLocalizations.of(context).sendToDistributorTitle,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -149,7 +150,7 @@ class _SendToDistributorScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           if (isWide)
             Row(
@@ -160,20 +161,20 @@ class _SendToDistributorScreenState
                   child: Column(
                     children: [
                       _buildPurchaseInfoCard(purchase, isDark),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       _buildItemsSummary(items, isDark),
                     ],
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: AlhaiSpacing.lg),
                 Expanded(
                   flex: 1,
                   child: Column(
                     children: [
                       _buildSupplierCard(asyncSuppliers, isDark, l10n),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       _buildNotesCard(isDark),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       _buildSendButton(isDark),
                     ],
                   ),
@@ -184,18 +185,18 @@ class _SendToDistributorScreenState
             Column(
               children: [
                 _buildPurchaseInfoCard(purchase, isDark),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildItemsSummary(items, isDark),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildSupplierCard(asyncSuppliers, isDark, l10n),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildNotesCard(isDark),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildSendButton(isDark),
               ],
             ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: AlhaiSpacing.xl),
         ],
       ),
     );
@@ -206,7 +207,7 @@ class _SendToDistributorScreenState
   // ---------------------------------------------------------------------------
   Widget _buildPurchaseInfoCard(PurchasesTableData purchase, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -220,7 +221,7 @@ class _SendToDistributorScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -228,9 +229,9 @@ class _SendToDistributorScreenState
                 child: const Icon(Icons.receipt_long_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'معلومات الطلب',
+                AppLocalizations.of(context).orderInfo,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -239,14 +240,14 @@ class _SendToDistributorScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _infoRow('رقم الطلب', purchase.purchaseNumber, isDark),
-          const SizedBox(height: 8),
-          _infoRow('المورد الحالي', purchase.supplierName ?? 'غير محدد', isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.md),
+          _infoRow(AppLocalizations.of(context).orderNumber, purchase.purchaseNumber, isDark),
+          const SizedBox(height: AlhaiSpacing.xs),
+          _infoRow(AppLocalizations.of(context).currentSupplier, purchase.supplierName ?? AppLocalizations.of(context).unspecified, isDark),
+          const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
-            'الإجمالي',
-            '${purchase.total.toStringAsFixed(2)} ر.س',
+            AppLocalizations.of(context).totalLabel,
+            AppLocalizations.of(context).amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -281,7 +282,7 @@ class _SendToDistributorScreenState
   // ---------------------------------------------------------------------------
   Widget _buildItemsSummary(List<PurchaseItemsTableData> items, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -295,7 +296,7 @@ class _SendToDistributorScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -303,9 +304,9 @@ class _SendToDistributorScreenState
                 child: const Icon(Icons.list_alt_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'ملخص الأصناف',
+                AppLocalizations.of(context).itemsSummary,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -320,7 +321,7 @@ class _SendToDistributorScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${items.length} صنف',
+                  AppLocalizations.of(context).itemCountLabel(items.length),
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -330,22 +331,12 @@ class _SendToDistributorScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Divider(
             color: Theme.of(context).dividerColor,
           ),
           if (items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Center(
-                child: Text(
-                  'لا توجد أصناف',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            )
+            AppEmptyState.noProducts(context)
           else
             ListView.separated(
               shrinkWrap: true,
@@ -377,9 +368,9 @@ class _SendToDistributorScreenState
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Text(
-                        '${item.total.toStringAsFixed(2)} ر.س',
+                        AppLocalizations.of(context).amountSar(item.total.toStringAsFixed(2)),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: isDark
@@ -406,7 +397,7 @@ class _SendToDistributorScreenState
     AppLocalizations l10n,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -420,7 +411,7 @@ class _SendToDistributorScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -428,9 +419,9 @@ class _SendToDistributorScreenState
                 child: const Icon(Icons.store_rounded,
                     color: AppColors.secondary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'الموزع / المورد',
+                AppLocalizations.of(context).distributorSupplier,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -439,7 +430,7 @@ class _SendToDistributorScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           asyncSuppliers.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(
@@ -476,7 +467,7 @@ class _SendToDistributorScreenState
   // ---------------------------------------------------------------------------
   Widget _buildNotesCard(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -490,7 +481,7 @@ class _SendToDistributorScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -498,9 +489,9 @@ class _SendToDistributorScreenState
                 child: const Icon(Icons.notes_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'رسالة إضافية',
+                AppLocalizations.of(context).additionalMessage,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -509,12 +500,12 @@ class _SendToDistributorScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextFormField(
             controller: _notesController,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: 'أضف ملاحظات أو رسالة للموزع...',
+              hintText: AppLocalizations.of(context).addNotesForDistributor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -544,10 +535,10 @@ class _SendToDistributorScreenState
                 ),
               )
             : const Icon(Icons.send_rounded),
-        label: Text(_isSending ? 'جاري الإرسال...' : 'إرسال للموزع'),
+        label: Text(_isSending ? AppLocalizations.of(context).sending : AppLocalizations.of(context).sendToDistributor),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.info,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
@@ -560,8 +551,8 @@ class _SendToDistributorScreenState
   Future<void> _sendToDistributor() async {
     if (_selectedSupplierId == null || _selectedSupplierId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى اختيار الموزع'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseSelectDistributor),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -630,8 +621,8 @@ class _SendToDistributorScreenState
       if (mounted) {
         setState(() => _isSending = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إرسال الطلب للموزع بنجاح'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).orderSentSuccess),
             backgroundColor: AppColors.success,
           ),
         );
@@ -642,7 +633,7 @@ class _SendToDistributorScreenState
         setState(() => _isSending = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في إرسال الطلب: $e'),
+            content: Text(AppLocalizations.of(context).errorSendingOrder('$e')),
             backgroundColor: AppColors.error,
           ),
         );

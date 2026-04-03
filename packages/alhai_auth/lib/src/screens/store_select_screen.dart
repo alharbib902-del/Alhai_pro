@@ -530,7 +530,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           // المحتوى الرئيسي
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return SingleChildScrollView(
@@ -549,7 +549,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                             // صورة الروبوت مع الحركة
                             _buildRobotMascot(),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
 
                             // العنوان والوصف
                             _buildBrandText(),
@@ -628,7 +628,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             size: 24,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         const Text(
           'Al-HAI POS',
           style: TextStyle(
@@ -658,7 +658,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
@@ -669,7 +669,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 size: 20,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Text(
               l10n?.centralManagement ?? 'إدارة مركزية شاملة',
               style: const TextStyle(
@@ -680,7 +680,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         Text(
           l10n?.centralManagementDesc ??
               'تحكم في جميع فروعك ومستودعاتك من مكان واحد. احصل على تقارير فورية ومزامنة للمخزون بين جميع نقاط البيع.',
@@ -700,9 +700,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     return Row(
       children: [
         Expanded(child: _buildStatItem('24/7', l10n?.support247 ?? 'دعم فني')),
-        const SizedBox(width: 16),
+        const SizedBox(width: AlhaiSpacing.md),
         Expanded(child: _buildStatItem('50+', l10n?.analyticsTools ?? 'أدوات تحليل')),
-        const SizedBox(width: 16),
+        const SizedBox(width: AlhaiSpacing.md),
         Expanded(child: _buildStatItem('99.9%', l10n?.uptime ?? 'وقت التشغيل')),
       ],
     );
@@ -710,7 +710,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
   Widget _buildStatItem(String value, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
@@ -726,7 +726,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             label,
             style: TextStyle(
@@ -745,10 +745,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   Widget _buildMobileBrandHeader() {
     return Container(
       padding: EdgeInsetsDirectional.only(
-        top: context.safeTop + 16,
-        start: 20,
-        end: 20,
-        bottom: 24,
+        top: context.safeTop + AlhaiSpacing.md,
+        start: AlhaiSpacing.mdl,
+        end: AlhaiSpacing.mdl,
+        bottom: AlhaiSpacing.lg,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -763,7 +763,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             pose: MascotPose.waving,
             animate: true,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,7 +776,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   AppLocalizations.of(context)?.selectYourBranchToContinue ?? 'اختر فرعك للمتابعة',
                   style: TextStyle(
@@ -827,7 +827,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final iconSize = isMobile ? 36.0 : 44.0;
     
     return Container(
-      padding: EdgeInsets.all(isMobile ? 12 : 24),
+      padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -842,7 +842,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 size: iconSize,
               ),
               
-              SizedBox(width: isMobile ? 8 : 12),
+              SizedBox(width: isMobile ? AlhaiSpacing.xs : AlhaiSpacing.sm),
               
               // === معلومات المستخدم ===
               Expanded(
@@ -852,7 +852,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               // === اليمين: اللغة + Dark Mode ===
               _buildLanguageSelector(isDarkMode, localeState, isMobile: isMobile),
               
-              SizedBox(width: isMobile ? 6 : 8),
+              SizedBox(width: isMobile ? 6 : AlhaiSpacing.xs),
               
               // M-THEME-FIX: توحيد أيقونة الثيم مع شاشة Login
               IconButton(
@@ -866,7 +866,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ],
           ),
 
-          SizedBox(height: isMobile ? 20 : 32),
+          SizedBox(height: isMobile ? AlhaiSpacing.mdl : AlhaiSpacing.xl),
 
           // العنوان
           Text(
@@ -878,7 +878,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           Text(
             l10n?.youHaveAccessToBranches ?? 'لديك صلاحية الوصول إلى الفروع التالية. اختر فرعاً للبدء.',
@@ -888,7 +888,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             ),
           ),
 
-          SizedBox(height: isMobile ? 16 : 24),
+          SizedBox(height: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
 
           // حقل البحث
           _buildSearchField(isDarkMode),
@@ -944,7 +944,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               style: TextStyle(fontSize: isMobile ? 14 : 16),
             ),
             if (!isMobile) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 _getLanguageName(localeState.locale.languageCode),
                 style: TextStyle(
@@ -969,7 +969,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           child: Row(
             children: [
               Text(_getLanguageFlag(locale.languageCode)),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 _getLanguageName(locale.languageCode),
                 style: TextStyle(
@@ -1117,7 +1117,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.md),
       ),
     );
   }
@@ -1135,7 +1135,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 64, color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)?.errorOccurred ?? 'حدث خطأ',
               style: TextStyle(
@@ -1143,9 +1143,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 color: isDarkMode ? Colors.white70 : AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xl),
               child: Text(
                 _storesError!,
                 style: TextStyle(fontSize: 12, color: Colors.red.shade300),
@@ -1153,7 +1153,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 textDirection: TextDirection.ltr,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             TextButton.icon(
               onPressed: _loadStores,
               icon: const Icon(Icons.refresh),
@@ -1169,7 +1169,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
       itemCount: _filteredStores.length + 1,
       itemBuilder: (context, index) {
         if (index == _filteredStores.length) {
@@ -1178,7 +1178,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
         final store = _filteredStores[index];
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           child: _buildStoreCard(store, isDarkMode),
         );
       },
@@ -1228,7 +1228,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       onTap: _isSyncing ? null : () => _selectStore(store),
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isDarkMode
               ? (isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05))
@@ -1256,7 +1256,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 color: isDarkMode ? Colors.white38 : Theme.of(context).colorScheme.outlineVariant,
               ),
 
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
 
             // حالة الفرع
             Container(
@@ -1312,7 +1312,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                     ),
                     textAlign: TextAlign.end,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -1327,7 +1327,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Icon(
                         Icons.location_on_outlined,
                         size: 14,
@@ -1339,7 +1339,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               ),
             ),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
 
             // الأيقونة
             Container(
@@ -1360,7 +1360,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   Widget _buildAddBranchButton(bool isDarkMode) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       child: OutlinedButton(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -1372,7 +1372,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           );
         },
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.mdl),
           side: BorderSide(
             color: isDarkMode ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant,
             style: BorderStyle.solid,
@@ -1386,7 +1386,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               Icons.add_rounded,
               color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(
               l10n?.addBranch ?? 'إضافة فرع جديد',
               style: TextStyle(
@@ -1410,7 +1410,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
             size: 64,
             color: isDarkMode ? Colors.white24 : AppColors.textTertiary,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             AppLocalizations.of(context)?.noResultsFoundSearch ?? 'لا توجد نتائج',
             style: TextStyle(
@@ -1427,7 +1427,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   Widget _buildFooter(bool isDarkMode) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
@@ -1467,7 +1467,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       onTap: () {},
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -44,19 +44,19 @@ class LiteDashboardScreen extends ConsumerWidget {
             icon: const Icon(Icons.notifications_outlined),
             tooltip: l10n.notifications,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
         ],
       ),
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(isMedium ? 24 : 16),
+          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: statsAsync.when(
             data: (stats) => _buildContent(context, ref, stats, isWide, isMedium, isDark, l10n),
             loading: () => const Center(
               child: Padding(
-                padding: EdgeInsets.all(64),
+                padding: EdgeInsets.all(AlhaiSpacing.massive),
                 child: CircularProgressIndicator(),
               ),
             ),
@@ -87,12 +87,12 @@ class LiteDashboardScreen extends ConsumerWidget {
             color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        SizedBox(height: isMedium ? 20 : 14),
+        SizedBox(height: isMedium ? AlhaiSpacing.mdl : 14),
 
         // Stat cards
         _buildStatCards(context, stats, isWide, isMedium, isDark, l10n),
 
-        SizedBox(height: isMedium ? 24 : 16),
+        SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Quick Actions + Recent Activity
         if (isWide)
@@ -147,7 +147,7 @@ class LiteDashboardScreen extends ConsumerWidget {
       ),
     ];
 
-    final spacing = isMedium ? 16.0 : 12.0;
+    final spacing = isMedium ? AlhaiSpacing.md : AlhaiSpacing.sm;
 
     if (isWide) {
       return Row(
@@ -191,7 +191,7 @@ class LiteDashboardScreen extends ConsumerWidget {
       onTap: data.onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -225,7 +225,7 @@ class LiteDashboardScreen extends ConsumerWidget {
                 const Spacer(),
                 if (data.change != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                     decoration: BoxDecoration(
                       color: data.change! >= 0
                           ? AlhaiColors.success.withValues(alpha: 0.1)
@@ -253,7 +253,7 @@ class LiteDashboardScreen extends ConsumerWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               data.value,
               style: TextStyle(
@@ -262,7 +262,7 @@ class LiteDashboardScreen extends ConsumerWidget {
                 color: isDark ? Colors.white : Colors.black87,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               data.title,
               style: TextStyle(
@@ -290,7 +290,7 @@ class LiteDashboardScreen extends ConsumerWidget {
           flex: 2,
           child: _buildRecentActivity(context, ref, isDark, l10n),
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: AlhaiSpacing.lg),
         Expanded(
           flex: 1,
           child: _buildQuickActions(context, isDark, l10n),
@@ -303,7 +303,7 @@ class LiteDashboardScreen extends ConsumerWidget {
     return Column(
       children: [
         _buildQuickActions(context, isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildRecentActivity(context, ref, isDark, l10n),
       ],
     );
@@ -315,7 +315,7 @@ class LiteDashboardScreen extends ConsumerWidget {
 
   Widget _buildQuickActions(BuildContext context, bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -334,7 +334,7 @@ class LiteDashboardScreen extends ConsumerWidget {
               color: isDark ? Colors.white : null,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _QuickActionTile(
             icon: Icons.approval_rounded,
             title: l10n.returns,
@@ -390,7 +390,7 @@ class LiteDashboardScreen extends ConsumerWidget {
     final activityAsync = ref.watch(recentActivityProvider);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -404,7 +404,7 @@ class LiteDashboardScreen extends ConsumerWidget {
           Row(
             children: [
               Icon(Icons.history_rounded, size: 20, color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.activityLog,
                 style: TextStyle(
@@ -415,12 +415,12 @@ class LiteDashboardScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           activityAsync.when(
             data: (activities) {
               if (activities.isEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AlhaiSpacing.lg),
                   child: Center(
                     child: Column(
                       children: [
@@ -429,7 +429,7 @@ class LiteDashboardScreen extends ConsumerWidget {
                           size: 40,
                           color: isDark ? Colors.white24 : Theme.of(context).colorScheme.outlineVariant,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           l10n.noResults,
                           style: TextStyle(
@@ -449,7 +449,7 @@ class LiteDashboardScreen extends ConsumerWidget {
             },
             loading: () => const Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.all(AlhaiSpacing.lg),
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             ),
@@ -467,7 +467,7 @@ class LiteDashboardScreen extends ConsumerWidget {
   Widget _buildError(BuildContext context, WidgetRef ref, bool isDark, AppLocalizations l10n) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(64),
+        padding: const EdgeInsets.all(AlhaiSpacing.massive),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -476,14 +476,14 @@ class LiteDashboardScreen extends ConsumerWidget {
               size: 48,
               color: isDark ? Colors.white30 : Theme.of(context).colorScheme.outlineVariant,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.errorOccurred,
               style: TextStyle(
                 color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextButton.icon(
               onPressed: () => _refresh(ref),
               icon: const Icon(Icons.refresh_rounded),
@@ -549,12 +549,12 @@ class _QuickActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
           decoration: BoxDecoration(
             color: color.withValues(alpha: isDark ? 0.08 : 0.06),
             borderRadius: BorderRadius.circular(12),
@@ -570,7 +570,7 @@ class _QuickActionTile extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: 18),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   title,
@@ -673,7 +673,7 @@ class _ActivityTile extends StatelessWidget {
     final color = _getActionColor(activity.action);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -686,7 +686,7 @@ class _ActivityTile extends StatelessWidget {
             ),
             child: Icon(_getActionIcon(activity.action), size: 16, color: color),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,7 +700,7 @@ class _ActivityTile extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   '${activity.userName} \u2022 ${_formatTime(activity.timestamp)}',
                   style: TextStyle(

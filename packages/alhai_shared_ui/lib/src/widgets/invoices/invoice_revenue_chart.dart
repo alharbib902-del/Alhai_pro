@@ -14,7 +14,7 @@ class InvoiceRevenueChart extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -28,7 +28,7 @@ class InvoiceRevenueChart extends StatelessWidget {
             children: [
               Text(l10n.revenueAnalysis, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(8),
@@ -38,14 +38,14 @@ class InvoiceRevenueChart extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(l10n.last7Days, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Icon(Icons.keyboard_arrow_down, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: AlhaiSpacing.lg),
           SizedBox(
             height: 220,
             child: CustomPaint(
@@ -53,7 +53,7 @@ class InvoiceRevenueChart extends StatelessWidget {
               painter: _RevenueChartPainter(isDark: isDark, gridLineColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           // X-axis labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

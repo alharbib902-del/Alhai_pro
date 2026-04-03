@@ -148,7 +148,7 @@ class _DataQueryInputState extends State<DataQueryInput> {
                       fontSize: 13,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   ),
                 ),
               ),
@@ -167,10 +167,10 @@ class _DataQueryInputState extends State<DataQueryInput> {
 
               // زر التنفيذ
               Padding(
-                padding: const EdgeInsetsDirectional.only(start: 8),
+                padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
                 child: widget.isLoading
                     ? const Padding(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(AlhaiSpacing.sm),
                         child: SizedBox(
                           width: 20,
                           height: 20,
@@ -220,7 +220,7 @@ class _DataQueryInputState extends State<DataQueryInput> {
             ),
             child: ListView.builder(
               shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
               itemCount: _filteredSuggestions.length,
               itemBuilder: (context, index) {
                 final suggestion = _filteredSuggestions[index];
@@ -236,7 +236,7 @@ class _DataQueryInputState extends State<DataQueryInput> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: AlhaiSpacing.md,
                         vertical: 10,
                       ),
                       child: Row(

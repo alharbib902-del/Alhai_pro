@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
@@ -266,7 +267,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                 color: AppColors.textMuted,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               label,
               style: AppTypography.labelSmall.copyWith(
@@ -323,7 +324,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
           return Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -335,7 +336,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                       fontSize: 9,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Container(
                     height: height,
                     decoration: BoxDecoration(
@@ -347,7 +348,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     '${data.hour}',
                     style: AppTypography.labelSmall.copyWith(
@@ -380,7 +381,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
           return Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -391,7 +392,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                       fontWeight: isPeak ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Container(
                     height: height,
                     decoration: BoxDecoration(
@@ -403,7 +404,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Text(
                     _getDayShort(context, data.day),
                     style: AppTypography.labelSmall.copyWith(
@@ -483,7 +484,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
 
             // Grid
             ...List.generate(heatmapData.length, (hourIndex) {
@@ -531,7 +532,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             fontSize: 10,
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Container(
           width: 60,
           height: 8,
@@ -547,7 +548,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           AppLocalizations.of(context)!.highLabel,
           style: AppTypography.labelSmall.copyWith(

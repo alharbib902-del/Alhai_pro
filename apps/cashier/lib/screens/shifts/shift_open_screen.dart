@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -58,7 +58,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -85,18 +85,18 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
             child: Column(
               children: [
                 _buildUserCard(user, isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildOpeningCashCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildInfoCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildOpenButton(isDark, l10n),
               ],
             ),
@@ -109,11 +109,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildUserCard(user, isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildOpeningCashCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildInfoCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildOpenButton(isDark, l10n),
       ],
     );
@@ -125,7 +125,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -150,7 +150,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,12 +163,12 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                     color: AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.access_time_rounded,
                         size: 14, color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       timeStr,
                       style: TextStyle(
@@ -176,10 +176,10 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                         color: AppColors.getTextSecondary(isDark),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Icon(Icons.calendar_today_rounded,
                         size: 14, color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '${now.day}/${now.month}/${now.year}',
                       style: TextStyle(
@@ -199,7 +199,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
 
   Widget _buildOpeningCashCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -211,7 +211,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -219,7 +219,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 child: const Icon(Icons.account_balance_wallet_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.openingCashLabel,
                 style: TextStyle(
@@ -230,7 +230,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _openingCashController,
             keyboardType: TextInputType.number,
@@ -253,7 +253,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 color: AppColors.getTextSecondary(isDark),
               ),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(Icons.calculate_rounded,
                     size: 28, color: AppColors.getTextMuted(isDark)),
               ),
@@ -273,7 +273,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Quick amount chips
           Wrap(
             spacing: 8,
@@ -290,7 +290,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
@@ -323,7 +323,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
 
   Widget _buildInfoCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.warning.withValues(alpha: isDark ? 0.12 : 0.06),
         borderRadius: BorderRadius.circular(16),
@@ -335,7 +335,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
@@ -343,7 +343,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 child: const Icon(Icons.info_outline_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.importantNotes,
                 style: TextStyle(
@@ -356,9 +356,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           ),
           const SizedBox(height: 14),
           _InfoItem(text: l10n.countCashBeforeShift, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _InfoItem(text: l10n.shiftTimeAutoRecorded, isDark: isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _InfoItem(text: l10n.oneShiftAtATime, isDark: isDark),
         ],
       ),
@@ -383,7 +383,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -468,7 +468,7 @@ class _InfoItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
           child: Container(
             width: 6,
             height: 6,

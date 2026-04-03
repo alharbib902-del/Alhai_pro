@@ -400,12 +400,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(AlhaiSpacing.lg),
                     child: Row(
                       children: [
                         Container(
-                          width: 40,
-                          height: 40,
+                          width: AlhaiSpacing.xxl,
+                          height: AlhaiSpacing.xxl,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
@@ -416,7 +416,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             size: 24,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AlhaiSpacing.sm),
                         const Text(
                           'Al-Hal POS',
                           style: TextStyle(
@@ -432,7 +432,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(48),
+                        padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
@@ -442,7 +442,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               pose: MascotPose.waving,
                               animate: true,
                             ),
-                            const SizedBox(height: 32),
+                            const SizedBox(height: AlhaiSpacing.xl),
                             Builder(
                               builder: (context) {
                                 final l10n = AppLocalizations.of(context);
@@ -457,7 +457,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: AlhaiSpacing.sm),
                                     Text(
                                       l10n?.welcomeSubtitle ?? 'سجّل دخولك لإدارة متجرك',
                                       style: TextStyle(
@@ -470,7 +470,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 40),
+                            const SizedBox(height: AlhaiSpacing.xxl),
                             const FeatureBadgesRow(
                               types: [
                                 FeatureBadgeType.fast,
@@ -518,7 +518,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         pose: MascotPose.waving,
                         animate: true,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       Builder(
                         builder: (context) {
                           final l10n = AppLocalizations.of(context);
@@ -532,7 +532,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AlhaiSpacing.xs),
                               Text(
                                 l10n?.welcomeSubtitleShort ?? 'سجّل دخولك لإدارة متجرك',
                                 style: TextStyle(
@@ -567,7 +567,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
       child: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(isMobile ? 24 : 48),
+          padding: EdgeInsets.all(isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
@@ -592,17 +592,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
 
-                SizedBox(height: isMobile ? 24 : 48),
+                SizedBox(height: isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl),
 
                 // مؤشر الخطوات + العنوان
                 _buildStepHeader(),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: AlhaiSpacing.xl),
 
                 // محتوى الخطوة الحالية
                 _buildCurrentStepContent(),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
 
                 // زر الإجراء
                 _buildActionButton(),
@@ -610,7 +610,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // أزرار إضافية (رجوع)
                 _buildStepActions(),
 
-                SizedBox(height: isMobile ? 32 : 48),
+                SizedBox(height: isMobile ? AlhaiSpacing.xl : AlhaiSpacing.xxxl),
 
                 _buildFooter(),
               ],
@@ -647,10 +647,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Row(
           children: [
             for (int i = 0; i < 2; i++) ...[
-              if (i > 0) const SizedBox(width: 8),
+              if (i > 0) const SizedBox(width: AlhaiSpacing.xs),
               Container(
-                width: i == _currentStep.index ? 24 : 8,
-                height: 8,
+                width: i == _currentStep.index ? AlhaiSpacing.lg : AlhaiSpacing.xs,
+                height: AlhaiSpacing.xs,
                 decoration: BoxDecoration(
                   color: i <= _currentStep.index
                       ? AppColors.primary
@@ -661,7 +661,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ],
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         Text(
           title,
           style: TextStyle(
@@ -670,7 +670,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(
           subtitle,
           style: TextStyle(
@@ -716,7 +716,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       children: [
         // رقم الجوال (قراءة فقط)
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: isDarkMode
@@ -733,7 +733,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 color: isDarkMode ? Colors.white54 : AppColors.textSecondary,
                 size: 20,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Directionality(
                   textDirection: TextDirection.ltr,
@@ -754,7 +754,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
 
         Text(
           l10n?.verificationCode ?? 'رمز التحقق',
@@ -764,7 +764,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
 
         OtpInputField(
           key: _otpKey,
@@ -785,9 +785,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         // رسالة الخطأ
         if (_error != null) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -796,7 +796,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Row(
               children: [
                 const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     _error!,
@@ -810,9 +810,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         // حالة النجاح
         if (_otpVerified) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -821,7 +821,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: const Row(
               children: [
                 Icon(Icons.check_circle_outline_rounded, color: AppColors.success, size: 20),
-                SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     'تم التحقق بنجاح! جاري الدخول...',
@@ -835,7 +835,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         // المحاولات المتبقية
         if (_remainingAttempts < 3 && _remainingAttempts > 0 && !_otpVerified) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Center(
             child: Text(
               l10n?.remainingAttempts(_remainingAttempts) ?? 'المحاولات المتبقية: $_remainingAttempts',
@@ -849,7 +849,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         // تلميح رمز التطوير
         if (kDebugMode) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -860,7 +860,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Row(
               children: [
                 const Icon(Icons.developer_mode_rounded, color: AppColors.info, size: 18),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     'وضع التطوير - الرمز: $_devOtp',
@@ -903,7 +903,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
@@ -938,7 +938,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: _otpVerified ? AppColors.success : AppColors.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
@@ -953,7 +953,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_currentStep == LoginStep.phone) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: AlhaiSpacing.md),
       child: Center(
         child: TextButton(
           onPressed: _isLoading ? null : _goBack,
@@ -989,7 +989,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             light: false,
             spacing: 12,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
         ],
         Wrap(
           alignment: WrapAlignment.center,
@@ -1024,7 +1024,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 10),

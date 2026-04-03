@@ -128,7 +128,7 @@ class _SidebarHeader extends StatelessWidget {
                           size: 20,
                         ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +145,7 @@ class _SidebarHeader extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: AlhaiSpacing.xxxs),
                       Builder(builder: (ctx) {
                         final l10n = AppLocalizations.of(ctx)!;
                         return Text(
@@ -198,7 +198,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: widget.collapsed ? 4 : 12,
-          vertical: 2,
+          vertical: AlhaiSpacing.xxxs,
         ),
         child: Material(
           color: Colors.transparent,
@@ -251,7 +251,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                               : (Theme.of(context).colorScheme.onSurfaceVariant),
                           size: 20,
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: AlhaiSpacing.md),
 
                         // العنوان
                         Expanded(
@@ -275,8 +275,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                         if (widget.item.badge != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
+                              horizontal: AlhaiSpacing.xs,
+                              vertical: AlhaiSpacing.xxxs,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.error.withValues(alpha:0.1),
@@ -299,7 +299,7 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
+                                vertical: AlhaiSpacing.xxxs,
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.primary,
@@ -453,7 +453,7 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AlhaiSpacing.sm),
 
                       // الاسم والدور
                       Expanded(
@@ -472,7 +472,7 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             if (widget.role != null) ...[
-                              const SizedBox(height: 2),
+                              SizedBox(height: AlhaiSpacing.xxxs),
                               Text(
                                 widget.role!,
                                 style: TextStyle(
@@ -532,14 +532,14 @@ class _SidebarFooter extends StatelessWidget {
               collapsed: collapsed,
               onTap: onSettingsTap,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: AlhaiSpacing.xxs),
             _FooterButton(
               icon: Icons.help_outline_rounded,
               title: l10n.technicalSupportShort,
               collapsed: collapsed,
               onTap: onSupportTap,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: AlhaiSpacing.xxs),
             _FooterButton(
               icon: Icons.logout_rounded,
               title: l10n.logout,
@@ -620,7 +620,7 @@ class _FooterButtonState extends State<_FooterButton> {
                         color: color,
                         size: 20,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Text(
                           widget.title,

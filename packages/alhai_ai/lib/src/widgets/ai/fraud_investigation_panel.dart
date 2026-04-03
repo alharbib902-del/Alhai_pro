@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../services/ai_fraud_detection_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// لوحة التحقيق
 class FraudInvestigationPanel extends StatefulWidget {
@@ -79,7 +80,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -105,7 +106,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                 color: AppColors.primary,
                 size: 22,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.investigation,
                 style: TextStyle(
@@ -117,7 +118,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
               const Spacer(),
               // Status dropdown
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: _getStatusColor(_currentStatus).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -158,11 +159,11 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Suggested action
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
@@ -184,7 +185,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AlhaiSpacing.xxxs),
                       Text(
                         widget.alert.suggestedAction,
                         style: TextStyle(
@@ -199,7 +200,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Timeline header
           Text(
@@ -210,7 +211,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Timeline events
           ...widget.investigation.timeline.asMap().entries.map((entry) {
@@ -226,7 +227,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
             );
           }),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Add note
           Text(
@@ -237,7 +238,7 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               Expanded(
@@ -269,13 +270,13 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: AppColors.primary),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
                     filled: true,
                     fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               IconButton(
                 onPressed: () {
                   if (_noteController.text.isNotEmpty) {
@@ -347,11 +348,11 @@ class _TimelineItem extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           // Content
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -363,7 +364,7 @@ class _TimelineItem extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     event.description,
                     style: TextStyle(
@@ -371,7 +372,7 @@ class _TimelineItem extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     formattedTime,
                     style: TextStyle(

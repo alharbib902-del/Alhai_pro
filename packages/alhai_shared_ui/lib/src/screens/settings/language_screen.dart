@@ -45,7 +45,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: _buildContent(
                         isWideScreen, isMediumScreen, isDark, l10n),
                   ),
@@ -64,7 +64,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
       children: [
         // Info note
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.info.withValues(alpha: 0.15)
@@ -77,7 +77,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
           child: Row(
             children: [
               const Icon(Icons.info_outline, color: AppColors.info, size: 20),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   l10n.languageChangeInfo,
@@ -93,7 +93,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
           ),
         ),
 
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Language list
         _buildSettingsGroup(
@@ -136,7 +136,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
   Widget _buildSettingsGroup(
       String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -195,9 +195,9 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
             ),
           ),
           if (isRtl) ...[
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
               decoration: BoxDecoration(
                 color: AppColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
@@ -216,7 +216,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
       ),
       trailing: isSelected
           ? Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               decoration: const BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
@@ -259,7 +259,7 @@ class LanguagePickerDialog extends ConsumerWidget {
 
     return AlertDialog(
       title: Text(AppLocalizations.of(context)!.selectLanguage),
-      contentPadding: const EdgeInsets.symmetric(vertical: 16),
+      contentPadding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView.builder(

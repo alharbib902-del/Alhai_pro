@@ -500,7 +500,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
                 ),
                 textAlign: TextAlign.end,
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: AlhaiSpacing.xxs),
             ],
             Container(
               height: widget.height,

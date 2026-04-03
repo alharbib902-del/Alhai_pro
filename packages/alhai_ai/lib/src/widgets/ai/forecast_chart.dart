@@ -35,7 +35,7 @@ class _ForecastChartState extends State<ForecastChart> {
 
     return Container(
       height: widget.height,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -60,7 +60,7 @@ class _ForecastChartState extends State<ForecastChart> {
             children: [
               const Icon(Icons.show_chart_rounded,
                   color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'التوقعات مقابل الفعلي', // Forecast vs Actual
                 style: TextStyle(
@@ -71,20 +71,20 @@ class _ForecastChartState extends State<ForecastChart> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           // المفتاح
           Row(
             children: [
               _buildLegend(l10n.actual, const Color(0xFF3B82F6), isDark),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildLegend(l10n.forecast, AppColors.primary, isDark),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildLegend('نطاق الثقة', AppColors.primary.withValues(alpha: 0.2),
                   isDark),
               // Confidence band
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // الرسم
           Expanded(
             child: GestureDetector(
@@ -130,7 +130,7 @@ class _ForecastChartState extends State<ForecastChart> {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           label,
           style: TextStyle(
@@ -144,8 +144,8 @@ class _ForecastChartState extends State<ForecastChart> {
 
   Widget _buildTooltip(DailyForecast forecast, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.1)

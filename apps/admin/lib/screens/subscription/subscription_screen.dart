@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Subscription management screen showing current plan, usage, and available plans.
 class SubscriptionScreen extends ConsumerStatefulWidget {
@@ -124,7 +125,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             Icon(Icons.error_outline,
                 size: 64,
                 color: AppColors.error.withValues(alpha: 0.7)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error!,
               style: TextStyle(
@@ -132,7 +133,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
@@ -144,20 +145,20 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Current plan card
           _buildCurrentPlanCard(isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           // Usage stats
           _buildUsageStats(isDark, l10n),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           // Features list
           if (_subscription != null) ...[
             _buildFeaturesSection(isDark),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
           ],
           Text(
             'Available Plans',
@@ -167,7 +168,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 color:
                     Theme.of(context).colorScheme.onSurface),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           LayoutBuilder(
             builder: (context, constraints) {
               final crossCount = constraints.maxWidth > 800
@@ -211,7 +212,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     if (_subscription == null) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               colors: [Theme.of(context).colorScheme.outlineVariant, Theme.of(context).colorScheme.outline]),
@@ -240,13 +241,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             const Text('No active subscription',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             const Row(
               children: [
                 Icon(Icons.info_outline,
@@ -284,7 +285,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
             colors: [AppColors.primary, Color(0xFF5B2D8E)]),
@@ -315,20 +316,20 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(planName,
               style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold)),
           if (price > 0) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
                 '${price.toStringAsFixed(0)} $currency / month',
                 style: const TextStyle(
                     color: Colors.white70, fontSize: 14)),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               const Icon(Icons.timer_outlined,
@@ -346,7 +347,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           LinearProgressIndicator(
             value: progress,
             backgroundColor: Colors.white24,
@@ -355,7 +356,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 : Colors.greenAccent,
             minHeight: 6,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
               Text(
@@ -363,7 +364,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 style: const TextStyle(
                     color: Colors.white54, fontSize: 12),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               Text(
                 'To: ${_formatDate(endDate)}',
                 style: const TextStyle(
@@ -390,7 +391,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -405,7 +406,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 isDark,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _buildUsageTile(
                 'Employees',
@@ -427,7 +428,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _buildUsageTile(String title, String value, String limit,
       IconData icon, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -456,13 +457,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(value,
               style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface)),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(title,
               style: TextStyle(
                   fontSize: 13,
@@ -504,10 +505,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.onSurface)),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
@@ -517,12 +518,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           child: Column(
             children: features
                 .map((f) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                       child: Row(
                         children: [
                           const Icon(Icons.check_circle,
                               color: AppColors.success, size: 18),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Expanded(
                               child: Text(f,
                                   style: TextStyle(
@@ -545,7 +546,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         _subscription?.plan.toLowerCase() == name.toLowerCase();
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -565,7 +566,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             Container(
               padding: const EdgeInsets.symmetric(
                   horizontal: 8, vertical: 2),
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8)),
@@ -579,7 +580,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             Container(
               padding: const EdgeInsets.symmetric(
                   horizontal: 8, vertical: 2),
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                   color: AppColors.success,
                   borderRadius: BorderRadius.circular(8)),
@@ -594,7 +595,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface)),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -603,14 +604,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary)),
-              const SizedBox(width: 4),
+              const SizedBox(width: AlhaiSpacing.xxs),
               Text('/month',
                   style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           ...features.map((f) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
@@ -636,27 +637,27 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: Text('الترقية إلى $name'),
+                          title: Text(AppLocalizations.of(ctx).upgradeToPlan(name)),
                           content: Text(
-                            'سعر الخطة: $price ريال/شهر\n\nهل تريد المتابعة؟',
+                            AppLocalizations.of(ctx).upgradePlanPriceBody(price),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('إلغاء'),
+                              child: Text(AppLocalizations.of(ctx).cancel),
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(ctx);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                      'سيتم التواصل معك لإتمام عملية الترقية',
+                                      AppLocalizations.of(context).upgradeContactMsg,
                                     ),
                                   ),
                                 );
                               },
-                              child: const Text('تأكيد'),
+                              child: Text(AppLocalizations.of(ctx).confirm),
                             ),
                           ],
                         ),

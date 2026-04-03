@@ -625,8 +625,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   },
             icon: const Icon(Icons.call_split_rounded),
             label: _isSplitPayment
-                ? Text('دفع مقسم ✅ (${_splitPayments.length} طرق)')
-                : const Text('دفع مقسم'),
+                ? Text(AppLocalizations.of(context)!.splitPaymentDone(_splitPayments.length))
+                : Text(AppLocalizations.of(context)!.splitPaymentLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor: _isSplitPayment ? AppColors.success : AppColors.primary,
               side: BorderSide(color: _isSplitPayment ? AppColors.success : AppColors.primary),
@@ -718,7 +718,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 if (discount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   PaymentSummaryRow(
-                    label: l10n.discountLabel,
+                    label: l10n.discountLabel(''),
                     value: -discount,
                     valueColor: AppColors.success,
                   ),
@@ -727,7 +727,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 if (loyaltyDiscount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   PaymentSummaryRow(
-                    label: 'خصم نقاط الولاء ($_pointsToRedeem نقطة)',
+                    label: AppLocalizations.of(context)!.loyaltyPointsDiscountLabel(_pointsToRedeem),
                     value: -loyaltyDiscount,
                     valueColor: AppColors.success,
                     icon: Icons.stars_rounded,
@@ -841,7 +841,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           onTap: () => setState(() => _showPhoneInput = !_showPhoneInput),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             child: Row(
               children: [
                 Icon(
@@ -851,17 +851,17 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   color: whatsAppColor,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(l10n.whatsappReceipt,
                     style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface)),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 Icon(Icons.chat, size: 16, color: whatsAppColor),
               ],
             ),
           ),
         ),
         if (_showPhoneInput) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
@@ -872,7 +872,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
               isDense: true,
               suffixIcon: Icon(Icons.phone_android,
                   size: 18, color: whatsAppColor),

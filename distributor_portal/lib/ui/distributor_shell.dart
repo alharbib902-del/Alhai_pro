@@ -92,7 +92,7 @@ class _DistributorShellState extends State<DistributorShell> {
       children: [
         // Brand header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.lg),
           child: Row(
             children: [
               Container(
@@ -108,7 +108,7 @@ class _DistributorShellState extends State<DistributorShell> {
                   size: 22,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,15 +137,15 @@ class _DistributorShellState extends State<DistributorShell> {
           ),
         ),
         const Divider(height: 1),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         // Nav items
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
             children: _navItems.map((item) {
               final isSelected = item.id == selectedId;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
                 child: Material(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
@@ -154,8 +154,8 @@ class _DistributorShellState extends State<DistributorShell> {
                     onTap: () => _onNavItemTapped(item.route),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                        horizontal: AlhaiSpacing.md,
+                        vertical: AlhaiSpacing.sm,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
@@ -174,7 +174,7 @@ class _DistributorShellState extends State<DistributorShell> {
                                     ? Colors.white60
                                     : AppColors.textSecondary,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AlhaiSpacing.sm),
                           Text(
                             item.label,
                             style: TextStyle(
@@ -201,7 +201,7 @@ class _DistributorShellState extends State<DistributorShell> {
         // Bottom user section
         const Divider(height: 1),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Row(
             children: [
               CircleAvatar(

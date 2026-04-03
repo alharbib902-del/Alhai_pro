@@ -7,6 +7,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إعدادات الأمان
 class SecuritySettingsScreen extends ConsumerStatefulWidget {
@@ -129,7 +130,7 @@ class _SecuritySettingsScreenState
       _buildSettingsGroup(l10n.biometricSection, [
         if (_biometricAvailable)
           SwitchListTile(
-            secondary: Container(padding: const EdgeInsets.all(8),
+            secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: Icon(Icons.fingerprint_rounded, color: _biometricEnabled ? AppColors.primary : AppColors.textSecondary, size: 20)),
             title: Text(l10n.fingerprintOption, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -159,11 +160,11 @@ class _SecuritySettingsScreenState
 
   Widget _buildSettingsGroup(String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
         ...children,
       ]),
@@ -172,7 +173,7 @@ class _SecuritySettingsScreenState
 
   Widget _buildSettingsTile({required IconData icon, required String title, String? subtitle, Widget? trailing, VoidCallback? onTap, required bool isDark, Color? iconColor}) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(8),
+      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: (iconColor ?? AppColors.primary).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: iconColor ?? AppColors.primary, size: 20)),
       title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -201,10 +202,10 @@ class _SecuritySettingsScreenState
       builder: (context, setDialogState) => AlertDialog(title: Text(l10n.createPinTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
             decoration: InputDecoration(labelText: l10n.enterNewPin, border: const OutlineInputBorder()), onChanged: (v) => newPin = v),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
             decoration: InputDecoration(labelText: l10n.enterNewPinChange, border: const OutlineInputBorder()), onChanged: (v) => confirmPin = v),
-        if (error != null) ...[const SizedBox(height: 8), Text(error!, style: const TextStyle(color: Colors.red))],
+        if (error != null) ...[const SizedBox(height: AlhaiSpacing.xs), Text(error!, style: const TextStyle(color: Colors.red))],
       ]), actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
         FilledButton(onPressed: () async {
@@ -229,10 +230,10 @@ class _SecuritySettingsScreenState
       builder: (context, setDialogState) => AlertDialog(title: Text(l10n.changePinTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
             decoration: InputDecoration(labelText: l10n.enterCurrentPin, border: const OutlineInputBorder()), onChanged: (v) => currentPin = v),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         TextField(keyboardType: TextInputType.number, maxLength: 4, obscureText: true,
             decoration: InputDecoration(labelText: l10n.enterNewPinChange, border: const OutlineInputBorder()), onChanged: (v) => newPin = v),
-        if (error != null) ...[const SizedBox(height: 8), Text(error!, style: const TextStyle(color: Colors.red))],
+        if (error != null) ...[const SizedBox(height: AlhaiSpacing.xs), Text(error!, style: const TextStyle(color: Colors.red))],
       ]), actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
         FilledButton(onPressed: () async {

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Pending Transactions Screen - Admin version
 /// Displays transactions waiting to sync with retry and bulk sync actions
@@ -57,7 +58,7 @@ class _PendingTransactionsScreenState
                 children: [
                   const Icon(Icons.error_outline,
                       size: 64, color: AppColors.error),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     error.toString(),
                     style: TextStyle(
@@ -67,7 +68,7 @@ class _PendingTransactionsScreenState
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   FilledButton.icon(
                     onPressed: () =>
                         ref.invalidate(pendingSyncItemsProvider),
@@ -88,7 +89,7 @@ class _PendingTransactionsScreenState
                           color: isDark
                               ? Colors.white24
                               : AppColors.success),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.allOperationsSynced,
                         style: TextStyle(
@@ -96,7 +97,7 @@ class _PendingTransactionsScreenState
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Text(
                         l10n.noPendingOperations,
                         style: TextStyle(
@@ -138,7 +139,7 @@ class _PendingTransactionsScreenState
       children: [
         // Warning banner
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.warning.withValues(alpha: 0.1)
@@ -150,7 +151,7 @@ class _PendingTransactionsScreenState
           child: Row(
             children: [
               const Icon(Icons.cloud_off, color: AppColors.warning),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +187,7 @@ class _PendingTransactionsScreenState
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Pending items list
         ...List.generate(pendingItems.length, (index) {
@@ -195,7 +196,7 @@ class _PendingTransactionsScreenState
               ? item.recordId.substring(0, 8)
               : item.recordId;
           return Container(
-            margin: const EdgeInsets.only(bottom: 8),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -205,7 +206,7 @@ class _PendingTransactionsScreenState
             ),
             child: ListTile(
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               leading: CircleAvatar(
                 backgroundColor:
                     _getOperationColor(item.operation).withValues(alpha: 0.1),
@@ -242,7 +243,7 @@ class _PendingTransactionsScreenState
                         ),
                       ),
                       if (item.retryCount > 0) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
@@ -265,7 +266,7 @@ class _PendingTransactionsScreenState
                   if (item.lastError != null &&
                       item.lastError!.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                       child: Text(
                         item.lastError!,
                         style: const TextStyle(

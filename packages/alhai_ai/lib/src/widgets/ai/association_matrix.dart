@@ -26,7 +26,7 @@ class AssociationMatrix extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -48,7 +48,7 @@ class AssociationMatrix extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.grid_on_rounded, color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'خريطة الارتباطات', // Association Heatmap
                 style: TextStyle(
@@ -63,14 +63,14 @@ class AssociationMatrix extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Heatmap grid
           SizedBox(
             height: math.min(associations.length * 56.0, 400),
             child: ListView.separated(
               itemCount: associations.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
               itemBuilder: (context, index) {
                 final assoc = associations[index];
                 return _AssociationRow(
@@ -95,13 +95,13 @@ class AssociationMatrix extends StatelessWidget {
           label: l10n.strong,
           isDark: isDark,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         _LegendItem(
           color: AppColors.warning,
           label: l10n.medium,
           isDark: isDark,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         _LegendItem(
           color: AppColors.error.withValues(alpha: 0.6),
           label: l10n.weak,
@@ -149,7 +149,7 @@ class _AssociationRowState extends State<_AssociationRow> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
           decoration: BoxDecoration(
             color: _isHovered
                 ? (widget.isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50)
@@ -196,7 +196,7 @@ class _AssociationRowState extends State<_AssociationRow> {
                 ),
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
 
               // Confidence bar
               Expanded(
@@ -215,7 +215,7 @@ class _AssociationRowState extends State<_AssociationRow> {
                         minHeight: 6,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${(assoc.confidence * 100).toInt()}%',
                       style: TextStyle(
@@ -228,11 +228,11 @@ class _AssociationRowState extends State<_AssociationRow> {
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
 
               // Frequency badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -279,7 +279,7 @@ class _LegendItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           label,
           style: TextStyle(

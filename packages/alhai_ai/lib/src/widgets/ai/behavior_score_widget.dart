@@ -68,7 +68,7 @@ class BehaviorScoreWidget extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: EdgeInsets.all(compact ? 12 : 16),
+          padding: EdgeInsets.all(compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -114,7 +114,7 @@ class BehaviorScoreWidget extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,11 +129,11 @@ class BehaviorScoreWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: AlhaiSpacing.xxxs),
               Row(
                 children: [
                   Icon(_getTrendIcon(), size: 14, color: _getTrendColor()),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   Text(
                     _getScoreLabel(l10n),
                     style: TextStyle(
@@ -150,7 +150,7 @@ class BehaviorScoreWidget extends StatelessWidget {
         // Alert count badge
         if (score.alertCount > 0)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
@@ -186,7 +186,7 @@ class BehaviorScoreWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +213,7 @@ class BehaviorScoreWidget extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Circular progress
         SizedBox(
@@ -252,11 +252,11 @@ class BehaviorScoreWidget extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Factor bars
         ...score.factors.entries.map((entry) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               child: _FactorBar(
                 label: entry.key,
                 value: entry.value,
@@ -363,7 +363,7 @@ class _FactorBar extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         SizedBox(
           width: 32,
           child: Text(

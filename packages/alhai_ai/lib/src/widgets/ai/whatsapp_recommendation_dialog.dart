@@ -6,6 +6,7 @@ library;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// حوار إرسال التوصية عبر واتساب
 class WhatsAppRecommendationDialog extends StatefulWidget {
@@ -113,7 +114,7 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +134,7 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +167,7 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // Phone input
               Text(
@@ -208,13 +209,13 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Color(0xFF25D366)),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
                   filled: true,
                   fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Message preview
               Text(
@@ -251,13 +252,13 @@ class _WhatsAppRecommendationDialogState extends State<WhatsAppRecommendationDia
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Color(0xFF25D366)),
                   ),
-                  contentPadding: const EdgeInsets.all(12),
+                  contentPadding: const EdgeInsets.all(AlhaiSpacing.sm),
                   filled: true,
                   fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // Send button
               SizedBox(

@@ -140,9 +140,9 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 64, color: isDark ? AppColors.error.withValues(alpha: 0.7) : AppColors.error.withValues(alpha: 0.5)),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.errorOccurred, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               TextButton.icon(
                 onPressed: _loadData,
                 icon: const Icon(Icons.refresh),
@@ -173,7 +173,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             children: [
               // إحصائيات سريعة للطلبات النشطة
               Container(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: AlhaiSpacing.md),
                 child: Row(
                   children: [
                     _StatCard(
@@ -182,14 +182,14 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                       value: '${_orders.where((o) => o.status == "created").length}',
                       color: AlhaiColors.warning,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(
                       icon: Icons.restaurant,
                       label: l10n.orderStatusPreparing,
                       value: '${_orders.where((o) => o.status == "preparing" || o.status == "confirmed").length}',
                       color: AlhaiColors.info,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(
                       icon: Icons.delivery_dining,
                       label: l10n.orderStatusDelivering,
@@ -208,7 +208,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.delivery_dining, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
-                            const SizedBox(height: 16),
+                            SizedBox(height: AlhaiSpacing.md),
                             Text(l10n.noOrders, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ],
                         ),
@@ -261,13 +261,13 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
   Widget _buildOrderCard(BuildContext context, OrdersTableData order, List<OrderItemsTableData> items, String customerName, String customerPhone, String address, bool isDark, Color subtleColor, AppLocalizations l10n) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       color: isDark ? const Color(0xFF1E293B) : null,
       child: InkWell(
         onTap: () => _showOrderDetails(order, items, customerName, customerPhone, address),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -278,22 +278,22 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                   _StatusChip(status: order.status),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               Row(
                 children: [
                   Icon(Icons.person, size: 16, color: subtleColor),
-                  const SizedBox(width: 4),
+                  SizedBox(width: AlhaiSpacing.xxs),
                   Text(customerName, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
                   Text(l10n.priceWithCurrency(order.total.toStringAsFixed(0)), style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
               if (address.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.location_on, size: 16, color: subtleColor),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Expanded(child: Text(address, style: TextStyle(fontSize: 12, color: subtleColor), overflow: TextOverflow.ellipsis)),
                   ],
                 ),
@@ -303,12 +303,12 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                 children: [
                   if (order.driverId != null) ...[
                     Icon(Icons.directions_car, size: 16, color: AlhaiColors.info),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Text(order.driverId!, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
-                    const SizedBox(width: 16),
+                    SizedBox(width: AlhaiSpacing.md),
                   ],
                   Icon(Icons.timer, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  const SizedBox(width: 4),
+                  SizedBox(width: AlhaiSpacing.xxs),
                   Text(_formatTimeSinceOrder(order.orderDate, l10n), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
                   Text('${items.length} ${l10n.products}', style: TextStyle(fontSize: 12, color: subtleColor)),
@@ -335,7 +335,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
   void _showMap() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('هذه الميزة غير متاحة حالياً')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.featureNotAvailableNow)),
     );
   }
 
@@ -356,10 +356,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
         expand: false,
         builder: (context, scrollController) => ListView(
           controller: scrollController,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           children: [
             Center(
-              child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24), decoration: BoxDecoration(color: Theme.of(context).dividerColor, borderRadius: BorderRadius.circular(2))),
+              child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg), decoration: BoxDecoration(color: Theme.of(context).dividerColor, borderRadius: BorderRadius.circular(2))),
             ),
             Row(
               children: [
@@ -368,7 +368,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                 _StatusChip(status: order.status),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
 
             // خط زمني لحالة الطلب
             _buildTimeline(order),
@@ -384,7 +384,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
             if (items.isNotEmpty) ...[
               const Divider(height: 24),
               Text(l10n.products, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               ...items.map((item) => ListTile(
                 dense: true,
                 title: Text(item.productName),
@@ -417,7 +417,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
             // زر إلغاء الطلب
             if (order.status != 'delivered' && order.status != 'cancelled') ...[
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               OutlinedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
@@ -458,7 +458,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                     decoration: BoxDecoration(shape: BoxShape.circle, color: step['done'] == true ? AppColors.success : (isDark ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.grey300)),
                     child: Icon(step['done'] == true ? Icons.check : Icons.circle, size: 12, color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AlhaiSpacing.xxs),
                   Text(step['label'] as String, style: TextStyle(fontSize: 10, color: step['done'] == true ? AppColors.success : Theme.of(context).colorScheme.onSurfaceVariant)),
                 ],
               ),
@@ -480,7 +480,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: Column(children: [
           Icon(icon, color: color),
@@ -517,7 +517,7 @@ class _StatusChip extends StatelessWidget {
       'cancelled': l10n.cancelled,
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(color: (colors[status] ?? Theme.of(context).colorScheme.outline).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
       child: Text(labels[status] ?? status, style: TextStyle(fontSize: 11, color: colors[status] ?? Theme.of(context).colorScheme.outline, fontWeight: FontWeight.w500)),
     );

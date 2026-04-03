@@ -63,7 +63,7 @@ class OrderCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       color: order.status == OrderStatus.pending
           ? AppColors.warning.withValues(alpha: 0.1)
           : null,
@@ -86,7 +86,7 @@ class OrderCard extends StatelessWidget {
                         maxLines: 1,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     if (order.isNew)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -105,7 +105,7 @@ class OrderCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   _formatTime(order.createdAt, l10n),
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -118,7 +118,7 @@ class OrderCard extends StatelessWidget {
           
           // Status Badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
             decoration: BoxDecoration(
               color: _getStatusColor(order.status).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
@@ -130,7 +130,7 @@ class OrderCard extends StatelessWidget {
                   order.status.icon,
                   style: const TextStyle(fontSize: 12),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   order.status.arabicName,
                   style: TextStyle(
@@ -151,7 +151,7 @@ class OrderCard extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -163,7 +163,7 @@ class OrderCard extends StatelessWidget {
                 size: 16,
                 color: theme.colorScheme.outline,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
                 child: Text(
                   order.customerName,
@@ -174,13 +174,13 @@ class OrderCard extends StatelessWidget {
                   maxLines: 1,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Icon(
                 Icons.phone_outlined,
                 size: 16,
                 color: theme.colorScheme.outline,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
                 child: Text(
                   order.customerPhone,
@@ -194,7 +194,7 @@ class OrderCard extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           
           // Address
           if (order.customerAddress != null)
@@ -205,7 +205,7 @@ class OrderCard extends StatelessWidget {
                   size: 16,
                   color: theme.colorScheme.outline,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 Expanded(
                   child: Text(
                     order.customerAddress!,
@@ -219,11 +219,11 @@ class OrderCard extends StatelessWidget {
               ],
             ),
           
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           
           // Items
           ...order.items.take(3).map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
             child: Row(
               children: [
                 Container(
@@ -244,7 +244,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     item.productName,
@@ -254,7 +254,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${item.total.toStringAsFixed(2)} ر.س',
+                  AppLocalizations.of(context)!.priceSar(item.total.toStringAsFixed(2)),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -265,7 +265,7 @@ class OrderCard extends StatelessWidget {
           
           if (order.items.length > 3)
             Text(
-              '+ ${order.items.length - 3} منتجات أخرى',
+              AppLocalizations.of(context)!.moreProductsLabel(order.items.length - 3),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
               ),
@@ -280,7 +280,7 @@ class OrderCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       child: Column(
         children: [
           // Payment Status & Total
@@ -289,7 +289,7 @@ class OrderCard extends StatelessWidget {
             children: [
               // Payment Status
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: order.isPaid
                       ? AppColors.success.withValues(alpha: 0.1)
@@ -300,7 +300,7 @@ class OrderCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(order.paymentStatus.icon),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       order.paymentStatus.arabicName,
                       style: TextStyle(
@@ -324,7 +324,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${order.total.toStringAsFixed(2)} ر.س',
+                    AppLocalizations.of(context)!.priceSar(order.total.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
@@ -335,7 +335,7 @@ class OrderCard extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           
           // Action Buttons
           _buildActionButtons(context),
@@ -361,7 +361,7 @@ class OrderCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               flex: 2,
               child: FilledButton.icon(
@@ -370,7 +370,7 @@ class OrderCard extends StatelessWidget {
                   onPrint?.call();
                 },
                 icon: const Icon(Icons.check, size: 18),
-                label: const Text('قبول وطباعة'),
+                label: Text(AppLocalizations.of(context)!.acceptAndPrint),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.success,
                 ),
@@ -390,13 +390,13 @@ class OrderCard extends StatelessWidget {
                 label: Text(l10n.print),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               flex: 2,
               child: FilledButton.icon(
                 onPressed: onAssignDriver,
                 icon: const Icon(Icons.delivery_dining, size: 18),
-                label: const Text('تسليم للسائق'),
+                label: Text(AppLocalizations.of(context)!.deliverToDriver),
               ),
             ),
           ],
@@ -409,13 +409,13 @@ class OrderCard extends StatelessWidget {
               Icons.delivery_dining,
               color: Theme.of(context).colorScheme.tertiary,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'في الطريق',
+                    AppLocalizations.of(context)!.onTheWayStatus,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.tertiary,
                       fontWeight: FontWeight.bold,
@@ -423,7 +423,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   if (order.driverName != null)
                     Text(
-                      'السائق: ${order.driverName}',
+                      AppLocalizations.of(context)!.driverNameLabel(order.driverName!),
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -442,9 +442,9 @@ class OrderCard extends StatelessWidget {
               Icons.check_circle,
               color: AppColors.success,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(
-              'تم التسليم',
+              AppLocalizations.of(context)!.deliveredStatus,
               style: TextStyle(
                 color: AppColors.success,
                 fontWeight: FontWeight.bold,
@@ -460,7 +460,7 @@ class OrderCard extends StatelessWidget {
               Icons.cancel,
               color: AppColors.error,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,9 +513,9 @@ class OrderCard extends StatelessWidget {
     if (diff.inMinutes < 1) {
       return l10n.now;
     } else if (diff.inMinutes < 60) {
-      return 'منذ ${diff.inMinutes} دقيقة';
+      return l10n.agoMinutes(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ساعة';
+      return l10n.agoHours(diff.inHours);
     } else {
       return '${time.day}/${time.month} ${time.hour}:${time.minute.toString().padLeft(2, '0')}';
     }

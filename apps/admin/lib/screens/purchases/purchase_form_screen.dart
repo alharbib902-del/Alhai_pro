@@ -8,6 +8,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../providers/purchases_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Purchase Form Screen - شاشة إضافة فاتورة شراء
 class PurchaseFormScreen extends ConsumerStatefulWidget {
@@ -77,7 +78,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               onPressed: () => context.pop(),
               icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               child: Text(
                 l10n.newPurchaseInvoice,
@@ -93,24 +94,24 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         if (isWideScreen)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 2, child: Column(children: [_buildSupplierCard(isDark), const SizedBox(height: 16), _buildItemsCard(isDark)])),
-              const SizedBox(width: 24),
-              Expanded(flex: 1, child: Column(children: [_buildPaymentCard(isDark), const SizedBox(height: 16), _buildTotalCard(isDark)])),
+              Expanded(flex: 2, child: Column(children: [_buildSupplierCard(isDark), const SizedBox(height: AlhaiSpacing.md), _buildItemsCard(isDark)])),
+              const SizedBox(width: AlhaiSpacing.lg),
+              Expanded(flex: 1, child: Column(children: [_buildPaymentCard(isDark), const SizedBox(height: AlhaiSpacing.md), _buildTotalCard(isDark)])),
             ],
           )
         else
           Column(children: [
             _buildSupplierCard(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             _buildItemsCard(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             _buildPaymentCard(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             _buildTotalCard(isDark),
           ]),
       ],
@@ -122,7 +123,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final suppliersAsync = ref.watch(activeSuppliersProvider);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -133,14 +134,14 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         children: [
           Row(children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: const Icon(Icons.store_rounded, color: AppColors.primary, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Text(l10n.supplierData, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
           ]),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           suppliersAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(l10n.errorLoadingSuppliers(e)),
@@ -155,7 +156,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               onChanged: (v) => setState(() => _selectedSupplierId = v),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           TextField(
             controller: _invoiceNoController,
             decoration: InputDecoration(
@@ -172,7 +173,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   Widget _buildItemsCard(bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -186,29 +187,20 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             children: [
               Row(children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                   child: const Icon(Icons.inventory_2_rounded, color: AppColors.info, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(l10n.productsLabel, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               ]),
               FilledButton.tonalIcon(onPressed: _addProduct, icon: const Icon(Icons.add, size: 18), label: Text(l10n.addProduct)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Divider(color: Theme.of(context).dividerColor),
           if (_items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Center(
-                child: Column(children: [
-                  Icon(Icons.inventory_2_outlined, size: 48, color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary),
-                  const SizedBox(height: 12),
-                  Text(l10n.noProductsAddedYet, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                ]),
-              ),
-            )
+            AppEmptyState.noProducts(context, onAdd: _addProduct)
           else
             ListView.separated(
               shrinkWrap: true,
@@ -242,7 +234,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   Widget _buildPaymentCard(bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -253,14 +245,14 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         children: [
           Row(children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(color: AppColors.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: const Icon(Icons.payment_rounded, color: AppColors.warning, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Text(l10n.paymentStatus, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
           ]),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           SegmentedButton<String>(
             segments: [
               ButtonSegment(value: 'paid', label: Text(l10n.paidStatus), icon: const Icon(Icons.check_circle)),
@@ -277,7 +269,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   Widget _buildTotalCard(bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
@@ -317,10 +309,10 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.productNameLabel)),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(children: [
                 Expanded(child: TextField(controller: qtyController, decoration: InputDecoration(labelText: l10n.quantityLabel), keyboardType: TextInputType.number)),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: TextField(controller: costController, decoration: InputDecoration(labelText: l10n.purchasePriceLabel), keyboardType: TextInputType.number)),
               ]),
             ],

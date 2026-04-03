@@ -50,11 +50,11 @@ class QueryHistoryPanel extends StatelessWidget {
         children: [
           // العنوان
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),
+            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.xs),
             child: Row(
               children: [
                 const Icon(Icons.history, color: AppColors.primary, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'سجل الاستعلامات',
                   style: TextStyle(
@@ -101,7 +101,7 @@ class QueryHistoryPanel extends StatelessWidget {
           // القائمة
           if (history.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -111,7 +111,7 @@ class QueryHistoryPanel extends StatelessWidget {
                       color: isDark ? Colors.white24 : AppColors.grey300,
                       size: 40,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'لا يوجد استعلامات سابقة',
                       style: TextStyle(
@@ -119,7 +119,7 @@ class QueryHistoryPanel extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       'اسأل سؤالاً عن بياناتك للبدء',
                       style: TextStyle(
@@ -134,7 +134,7 @@ class QueryHistoryPanel extends StatelessWidget {
           else
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
                 itemCount: history.length,
                 separatorBuilder: (_, __) => Divider(
                   height: 1,
@@ -169,7 +169,7 @@ class QueryHistoryPanel extends StatelessWidget {
       child: InkWell(
         onTap: () => onRerun(item.query.query),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,7 +183,7 @@ class QueryHistoryPanel extends StatelessWidget {
                 ),
                 child: Icon(typeIcon, color: typeColor, size: 16),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
 
               // التفاصيل
               Expanded(
@@ -200,7 +200,7 @@ class QueryHistoryPanel extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Row(
                       children: [
                         Text(

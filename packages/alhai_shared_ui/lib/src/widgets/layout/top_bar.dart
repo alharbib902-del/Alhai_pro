@@ -174,7 +174,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         if (subtitle != null) ...[
-          const SizedBox(height: 2),
+          SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             subtitle!,
             style: AppTypography.bodySmall.copyWith(
@@ -215,7 +215,7 @@ class TopBarNotificationButton extends StatelessWidget {
             top: 8,
             start: 8,
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               decoration: const BoxDecoration(
                 color: AppColors.error,
                 shape: BoxShape.circle,

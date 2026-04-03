@@ -67,7 +67,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -108,7 +108,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.image_rounded, color: _statusColor.withValues(alpha: 0.5), size: 24),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       '$confidence%',
                       style: TextStyle(
@@ -142,7 +142,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: _statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -151,7 +151,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(_statusIcon, size: 12, color: _statusColor),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: AlhaiSpacing.xxs),
                               Text(
                                 _statusLabel,
                                 style: TextStyle(
@@ -173,7 +173,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                         if (widget.product.barcode != null) ...[
                           Icon(Icons.qr_code_rounded, size: 12,
                             color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             widget.product.barcode!,
                             style: TextStyle(
@@ -181,11 +181,11 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                               color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AlhaiSpacing.sm),
                         ],
                         if (widget.product.category != null) ...[
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                             decoration: BoxDecoration(
                               color: AppColors.info.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
@@ -203,7 +203,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                       ],
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
 
                     // Confidence bar
                     Row(
@@ -221,7 +221,7 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         if (widget.product.suggestedPrice != null)
                           Text(
                             '${widget.product.suggestedPrice!.toStringAsFixed(2)} ر.س',
@@ -287,7 +287,7 @@ class _ActionButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),

@@ -6,6 +6,7 @@ import '../../providers/cart_providers.dart';
 import '../../widgets/pos/quantity_input_dialog.dart';
 import 'pos_category_widgets.dart';
 import 'pos_product_shortcuts.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // =============================================================================
 // PRODUCTS PANEL
@@ -142,10 +143,10 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 64, color: AppColors.error.withValues(alpha: 0.6)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text('${l10n.error}: ${state.error}',
                 style: TextStyle(color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: () {
                 final storeId = ref.read(currentStoreIdProvider);
@@ -169,13 +170,13 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
           children: [
             Icon(Icons.inventory_2_outlined, size: 64,
                 color: isDark ? AppColors.grey600 : AppColors.grey400),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noProducts,
                 style: TextStyle(
                   color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: 16,
                 )),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(l10n.addProductsToStart,
                 style: TextStyle(
                   color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
@@ -197,7 +198,7 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
       },
       child: Padding(
         padding: EdgeInsets.only(
-          left: 8, right: 8, top: 8,
+          left: AlhaiSpacing.xs, right: AlhaiSpacing.xs, top: AlhaiSpacing.xs,
           bottom: widget.showShortcutsBar ? 80 : 8,
         ),
         child: GridView.builder(
@@ -205,8 +206,8 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: cols,
             childAspectRatio: cols <= 3 ? 0.9 : 1.0,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
+            crossAxisSpacing: AlhaiSpacing.xs,
+            mainAxisSpacing: AlhaiSpacing.xs,
           ),
           // +1 عنصر إضافي لعرض مؤشر التحميل عند التمرير
           itemCount: state.products.length + (state.isLoading ? 1 : 0),
@@ -215,7 +216,7 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
             if (index >= state.products.length) {
               return const Center(
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(AlhaiSpacing.md),
                   child: SizedBox(
                     width: 24, height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),

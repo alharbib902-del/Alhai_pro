@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الفوائد الشهرية
 const String _kInterestEnabled = 'interest_enabled';
@@ -138,7 +139,7 @@ class _InterestSettingsScreenState
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildPageHeader(isDark, l10n),
-      const SizedBox(height: 20),
+      const SizedBox(height: AlhaiSpacing.mdl),
 
       _buildSettingsGroup(l10n.monthlyInterest, Icons.trending_up_rounded, const Color(0xFFF97316), isDark, [
         SwitchListTile(title: Text(l10n.enableInterest, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
@@ -156,7 +157,7 @@ class _InterestSettingsScreenState
                   label: '${_maxInterestRate.toStringAsFixed(1)}%',
                   onChanged: (v) { setState(() { _maxInterestRate = v; if (_monthlyRate > v) _monthlyRate = v; }); }))),
         ],
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
       ]),
 
       if (_enableInterest)
@@ -167,7 +168,7 @@ class _InterestSettingsScreenState
                   label: '$_gracePeriodDays', onChanged: (v) => setState(() => _gracePeriodDays = v.toInt())))),
           SwitchListTile(title: Text(l10n.compoundInterest, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text(l10n.compoundInterestDesc), value: _compoundInterest, onChanged: (v) => setState(() => _compoundInterest = v)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
       if (_enableInterest)
@@ -176,15 +177,15 @@ class _InterestSettingsScreenState
               subtitle: Text(l10n.autoCalculationDesc), value: _autoCalculate, onChanged: (v) => setState(() => _autoCalculate = v)),
           SwitchListTile(title: Text(l10n.customerNotification, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               subtitle: Text(l10n.customerNotificationDesc), value: _notifyCustomer, onChanged: (v) => setState(() => _notifyCustomer = v)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
-      const SizedBox(height: 16),
+      const SizedBox(height: AlhaiSpacing.md),
       SizedBox(width: double.infinity, child: FilledButton.icon(
         onPressed: _isSaving ? null : _saveSettings,
         icon: _isSaving ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.save_rounded),
         label: Text(l10n.saveSettings),
-        style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
       )),
     ]);
   }
@@ -192,10 +193,10 @@ class _InterestSettingsScreenState
   Widget _buildPageHeader(bool isDark, AppLocalizations l10n) {
     return Row(children: [
       IconButton(onPressed: () => context.pop(), icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
-      const SizedBox(width: 8),
+      const SizedBox(width: AlhaiSpacing.xs),
       Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: const Color(0xFFF97316).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.trending_up_rounded, color: Color(0xFFF97316), size: 24)),
-      const SizedBox(width: 12),
+      const SizedBox(width: AlhaiSpacing.sm),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(l10n.interestSettingsTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
         Text(l10n.interestSettingsSubtitle, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
@@ -205,14 +206,14 @@ class _InterestSettingsScreenState
 
   Widget _buildSettingsGroup(String title, IconData icon, Color color, bool isDark, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8), child: Row(children: [
-          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs), child: Row(children: [
+          Container(padding: const EdgeInsets.all(AlhaiSpacing.xs), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: Icon(icon, color: color, size: 20)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
         ])),
         ...children,

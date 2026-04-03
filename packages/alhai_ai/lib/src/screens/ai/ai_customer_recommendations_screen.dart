@@ -12,6 +12,7 @@ import '../../widgets/ai/repurchase_timeline.dart';
 import '../../widgets/ai/whatsapp_recommendation_dialog.dart';
 import '../../providers/ai_customer_recommendations_providers.dart';
 import '../../services/ai_customer_recommendations_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiCustomerRecommendationsScreen extends ConsumerStatefulWidget {
   const AiCustomerRecommendationsScreen({super.key});
@@ -104,7 +105,7 @@ class _AiCustomerRecommendationsScreenState
     final segmentsAsync = ref.watch(customerSegmentsProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -115,12 +116,12 @@ class _AiCustomerRecommendationsScreenState
             error: (e, _) => Text('$e'),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Segment filter chips
           _buildSegmentFilters(isDark),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Tabs
           Container(
@@ -146,7 +147,7 @@ class _AiCustomerRecommendationsScreenState
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           SizedBox(
             height: isWideScreen ? 600 : 500,
@@ -195,7 +196,7 @@ class _AiCustomerRecommendationsScreenState
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
@@ -252,7 +253,7 @@ class _AiCustomerRecommendationsScreenState
         children: [
           // All filter
           Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8),
+            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
             child: FilterChip(
               selected: currentFilter == null,
               label: Text(AppLocalizations.of(context)!.filterAllLabel),
@@ -269,7 +270,7 @@ class _AiCustomerRecommendationsScreenState
             final isSelected = currentFilter == segment;
             final color = _getSegmentColor(segment);
             return Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8),
+              padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
               child: FilterChip(
                 selected: isSelected,
                 label: Text(_getSegmentLabel(segment)),
@@ -296,7 +297,7 @@ class _AiCustomerRecommendationsScreenState
       data: (recs) {
         return ListView.separated(
           itemCount: recs.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
           itemBuilder: (context, index) {
             final rec = recs[index];
             return _CustomerRecommendationCard(
@@ -357,12 +358,12 @@ class _AiCustomerRecommendationsScreenState
       data: (segments) {
         return ListView.separated(
           itemCount: segments.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
           itemBuilder: (context, index) {
             final seg = segments[index];
             final color = _getSegmentColor(seg.segment);
             return Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
@@ -376,7 +377,7 @@ class _AiCustomerRecommendationsScreenState
                   Row(
                     children: [
                       Icon(_getSegmentIcon(seg.segment), color: color, size: 22),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         _getSegmentLabel(seg.segment),
                         style: TextStyle(
@@ -387,7 +388,7 @@ class _AiCustomerRecommendationsScreenState
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
@@ -399,7 +400,7 @@ class _AiCustomerRecommendationsScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Row(
                     children: [
                       _SegmentStat(
@@ -407,7 +408,7 @@ class _AiCustomerRecommendationsScreenState
                         value: AppLocalizations.of(context)!.revenueK((seg.totalRevenue / 1000).toStringAsFixed(1)),
                         isDark: isDark,
                       ),
-                      const SizedBox(width: 24),
+                      const SizedBox(width: AlhaiSpacing.lg),
                       _SegmentStat(
                         label: AppLocalizations.of(context)!.avgSpendStat,
                         value: AppLocalizations.of(context)!.amountSar(seg.avgSpend.toStringAsFixed(0)),
@@ -415,7 +416,7 @@ class _AiCustomerRecommendationsScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   // Customer names
                   Wrap(
                     spacing: 6,
@@ -473,7 +474,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -508,7 +509,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -530,7 +531,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                             fontSize: 11,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Text(
                           l10n.visitCountLabel(recommendation.visitCount),
                           style: TextStyle(
@@ -545,7 +546,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
               ),
               // Segment badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: segmentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -554,7 +555,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(segmentIcon, size: 12, color: segmentColor),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       segmentLabel,
                       style: TextStyle(color: segmentColor, fontSize: 10, fontWeight: FontWeight.bold),
@@ -565,7 +566,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Spend info
           Row(
@@ -577,7 +578,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               Text(
                 l10n.totalSpentLabel((recommendation.totalSpent / 1000).toStringAsFixed(1)),
                 style: const TextStyle(
@@ -590,7 +591,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
           ),
 
           if (recommendation.products.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               l10n.recommendedProducts,
               style: TextStyle(
@@ -599,7 +600,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             ...recommendation.products.map((product) => Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: RecommendationCard(product: product, compact: true),
@@ -621,7 +622,7 @@ class _CustomerRecommendationCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                   textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ),

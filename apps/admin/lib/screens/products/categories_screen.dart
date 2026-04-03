@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // ============================================================================
 // Provider - fetches CategoriesTableData directly from DAO
@@ -320,7 +321,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           flex: 4,
           child: _buildLeftPanel(isDark, l10n),
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: AlhaiSpacing.lg),
         Expanded(
           flex: 6,
           child: _buildRightPanel(isDark, l10n),
@@ -349,7 +350,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Expanded(child: _buildRightPanel(isDark, l10n)),
         ],
       );
@@ -398,7 +399,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Column(
               children: [
                 Row(
@@ -411,7 +412,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     categoriesAsync.when(
                       data: (cats) => Container(
                         padding: const EdgeInsets.symmetric(
@@ -447,7 +448,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 // Search
                 TextField(
                   maxLength: 100,
@@ -525,7 +526,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           size: 48,
                           color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5).withValues(alpha: 0.5),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AlhaiSpacing.sm),
                         Text(
                           l10n.noCategories,
                           style: TextStyle(
@@ -602,26 +603,26 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         ],
       ),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildDetailHeader(isDark, l10n),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               Divider(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.08)
                     : AppColors.border.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               _buildIconAndColorRow(isDark, l10n),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               _buildNameFields(isDark, l10n),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               _buildSortOrderField(isDark, l10n),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               _buildActiveSwitch(isDark, l10n),
             ],
           ),
@@ -659,7 +660,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   ? Colors.white.withValues(alpha: 0.15)
                   : AppColors.textTertiary.withValues(alpha: 0.3),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.noCategorySelected,
               style: TextStyle(
@@ -667,7 +668,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 fontSize: 15,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: _startCreating,
               icon: const Icon(Icons.add, size: 18),
@@ -718,7 +719,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: Text(
             _isCreating
@@ -752,7 +753,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   horizontal: 12, vertical: 8),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
         ],
         FilledButton.icon(
           onPressed: _saveCategory,
@@ -824,7 +825,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: AlhaiSpacing.mdl),
         // Color picker
         Expanded(
           child: _buildPickerSection(
@@ -913,7 +914,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           maxLength: 80,
           validator: FormValidators.requiredField(maxLength: 80),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         _buildTextField(
           isDark: isDark,
           label: l10n.categoryNameEn,
@@ -1001,7 +1002,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
   Widget _buildActiveSwitch(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF0F172A)
@@ -1022,7 +1023,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             color: _isActive ? AppColors.success : AppColors.error,
             size: 20,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               _isActive ? l10n.activeStatus : l10n.inactiveStatus,
@@ -1120,7 +1121,7 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                     size: 18,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
                     widget.category.name,

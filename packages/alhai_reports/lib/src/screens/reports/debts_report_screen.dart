@@ -7,6 +7,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:uuid/uuid.dart';
 import '../../utils/pdf_font_helper.dart';
 
@@ -111,8 +112,8 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
               children: [
                 // Summary card
                 Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(AlhaiSpacing.md),
+                  padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.red.shade400, Colors.red.shade600],
@@ -126,7 +127,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(AppLocalizations.of(context)!.totalDebts, style: const TextStyle(color: Colors.white70)),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             '${_totalDebts.toStringAsFixed(0)} ${AppLocalizations.of(context)!.sar}',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
@@ -137,7 +138,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(AppLocalizations.of(context)!.customersCount, style: const TextStyle(color: Colors.white70)),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             '${_debts.length}',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
@@ -156,18 +157,18 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.check_circle, size: 64, color: Colors.green.shade400),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AlhaiSpacing.md),
                               Text(AppLocalizations.of(context)!.noOutstandingDebts, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                           itemCount: _debts.length,
                           itemBuilder: (context, index) {
                             final debt = _debts[index];
                             return Card(
-                              margin: const EdgeInsets.only(bottom: 8),
+                              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                               child: ListTile(
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.red.shade100,

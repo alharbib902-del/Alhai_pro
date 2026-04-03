@@ -1,0 +1,288 @@
+import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:alhai_core/alhai_core.dart';
+
+import '../../cart/providers/cart_provider.dart';
+import '../../addresses/providers/address_providers.dart';
+import '../providers/checkout_provider.dart';
+
+class CheckoutScreen extends ConsumerStatefulWidget {
+  const CheckoutScreen({super.key});
+
+  @override
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+  bool _loading = false;
+  String? _error;
+
+  Future<void> _placeOrder() async {
+    final cart = ref.read(cartProvider);
+    if (cart.isEmpty) return;
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final order = await ref.read(placeOrderProvider(cart).future);
+
+      // Clear cart
+      ref.read(cartProvider.notifier).clear();
+
+      if (mounted) {
+        context.go('/orders/${order.id}');
+      }
+    } catch (e) {
+      setState(() => _error = e.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cart = ref.watch(cartProvider);
+    final selectedAddress = ref.watch(selectedAddressProvider);
+    final paymentMethod = ref.watch(selectedPaymentMethodProvider);
+    final addressesAsync = ref.watch(addressesListProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('إتمام الطلب'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Delivery Address Section
+                  Text(
+                    'عنوان التوصيل',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  addressesAsync.when(
+                    loading: () => const LinearProgressIndicator(),
+                    error: (_, __) => const Text('فشل تحميل العناوين'),
+                    data: (addresses) {
+                      if (addresses.isEmpty) {
+                        return Card(
+                          child: ListTile(
+                            leading: const Icon(Icons.add_location_alt),
+                            title: const Text('أضف عنوان توصيل'),
+                            onTap: () => context.push('/profile/addresses'),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: addresses.map((address) {
+                          final isSelected =
+                              selectedAddress?.id == address.id;
+                          return Card(
+                            color: isSelected
+                                ? theme.colorScheme.primaryContainer
+                                : null,
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.location_on,
+                                color: isSelected
+                                    ? theme.colorScheme.primary
+                                    : null,
+                              ),
+                              title: Text(address.label),
+                              subtitle: Text(
+                                address.fullAddress,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: isSelected
+                                  ? Icon(Icons.check_circle,
+                                      color: theme.colorScheme.primary)
+                                  : null,
+                              onTap: () {
+                                ref
+                                    .read(selectedAddressProvider.notifier)
+                                    .state = address;
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AlhaiSpacing.lg),
+
+                  // Payment Method
+                  Text(
+                    'طريقة الدفع',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  ...[
+                    (PaymentMethod.cash, 'الدفع عند الاستلام', Icons.money),
+                    (PaymentMethod.card, 'بطاقة ائتمان', Icons.credit_card),
+                    (PaymentMethod.wallet, 'المحفظة', Icons.account_balance_wallet),
+                  ].map((entry) {
+                    final (method, label, icon) = entry;
+                    final isSelected = paymentMethod == method;
+                    return Card(
+                      color: isSelected
+                          ? theme.colorScheme.primaryContainer
+                          : null,
+                      child: ListTile(
+                        leading: Icon(icon,
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : null),
+                        title: Text(label),
+                        trailing: isSelected
+                            ? Icon(Icons.check_circle,
+                                color: theme.colorScheme.primary)
+                            : null,
+                        onTap: () {
+                          ref
+                              .read(selectedPaymentMethodProvider.notifier)
+                              .state = method;
+                        },
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: AlhaiSpacing.lg),
+
+                  // Order Summary
+                  Text(
+                    'ملخص الطلب',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      child: Column(
+                        children: [
+                          _SummaryRow(
+                            label: 'المنتجات (${cart.itemCount})',
+                            value: '${cart.total.toStringAsFixed(2)} ر.س',
+                          ),
+                          const Divider(),
+                          _SummaryRow(
+                            label: 'رسوم التوصيل',
+                            value: 'مجاني',
+                          ),
+                          const Divider(),
+                          _SummaryRow(
+                            label: 'الإجمالي',
+                            value: '${cart.total.toStringAsFixed(2)} ر.س',
+                            isBold: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (_error != null) ...[
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(
+                      _error!,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          // Place order button
+          Container(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: FilledButton(
+                onPressed: _loading ? null : _placeOrder,
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _loading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        'تأكيد الطلب - ${cart.total.toStringAsFixed(2)} ر.س',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isBold;
+
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.isBold = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final style = isBold
+        ? Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            )
+        : Theme.of(context).textTheme.bodyMedium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
+      ),
+    );
+  }
+}

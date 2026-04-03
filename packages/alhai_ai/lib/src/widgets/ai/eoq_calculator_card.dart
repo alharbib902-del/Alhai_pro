@@ -23,7 +23,7 @@ class EoqCalculatorCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -45,14 +45,14 @@ class EoqCalculatorCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.calculate_rounded, color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +78,7 @@ class EoqCalculatorCard extends StatelessWidget {
               ),
               // EOQ value
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF10B981), Color(0xFF059669)],
@@ -112,7 +112,7 @@ class EoqCalculatorCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Key metrics grid
           Row(
@@ -165,7 +165,7 @@ class EoqCalculatorCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Cost details
           Container(
@@ -199,7 +199,7 @@ class EoqCalculatorCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Order now button
           if (onOrderNow != null)
@@ -256,7 +256,7 @@ class _MetricBox extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +308,7 @@ class _CostItem extends StatelessWidget {
             fontSize: 10,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AlhaiSpacing.xxxs),
         Text(
           value,
           style: TextStyle(

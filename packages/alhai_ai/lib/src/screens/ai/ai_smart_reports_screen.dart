@@ -11,6 +11,7 @@ import '../../providers/ai_smart_reports_providers.dart';
 import '../../widgets/ai/report_query_input.dart';
 import '../../widgets/ai/generated_report_view.dart';
 import '../../widgets/ai/report_template_card.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiSmartReportsScreen extends ConsumerStatefulWidget {
   const AiSmartReportsScreen({super.key});
@@ -55,7 +56,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
       children: [
         // Query input
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: ReportQueryInput(
             suggestions: suggestions,
             onSubmit: (query) {
@@ -67,7 +68,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
         // Main content area
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +78,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                         flex: 3,
                         child: _buildReportArea(generatedReport, isDark),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: AlhaiSpacing.mdl),
                       // Templates sidebar
                       if (_showTemplates)
                         SizedBox(
@@ -114,7 +115,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                             filteredTemplates, categories, categoryFilter, isDark,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                       ],
                       Expanded(
                         child: _buildReportArea(generatedReport, isDark),
@@ -154,7 +155,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
                 shape: BoxShape.circle,
@@ -165,7 +166,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                 color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             Text(
               AppLocalizations.of(context)!.askAboutStore,
               style: TextStyle(
@@ -174,7 +175,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                 color: isDark ? Colors.white : AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               AppLocalizations.of(context)!.writeQuestionHint,
               style: TextStyle(
@@ -182,7 +183,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                 color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -206,7 +207,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
         onTap: () => ref.read(generatedReportProvider.notifier).generateFromQuery(text),
         borderRadius: BorderRadius.circular(10),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: isDark
                 ? const Color(0xFF8B5CF6).withValues(alpha: 0.1)
@@ -257,7 +258,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
                 valueColor: AlwaysStoppedAnimation(Color(0xFF8B5CF6)),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)!.analyzingData,
               style: TextStyle(
@@ -283,7 +284,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.error),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(AppLocalizations.of(context)!.errorOccurredShort(error),
               style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary)),
           ],
@@ -311,7 +312,7 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
             child: Row(
               children: [
                 const Icon(Icons.dashboard_customize_rounded, size: 18, color: Color(0xFF8B5CF6)),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   AppLocalizations.of(context)!.readyTemplates,
                   style: TextStyle(
@@ -355,10 +356,10 @@ class _AiSmartReportsScreenState extends ConsumerState<AiSmartReportsScreen> {
               },
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsetsDirectional.fromSTEB(14, 4, 14, 14),
+              padding: EdgeInsetsDirectional.fromSTEB(14, AlhaiSpacing.xxs, 14, 14),
               itemCount: templates.length,
               itemBuilder: (context, index) {
                 return Padding(

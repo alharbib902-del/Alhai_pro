@@ -194,8 +194,8 @@ class _DistributorOrderDetailScreenState
           ),
           actions: [
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
               decoration: BoxDecoration(
                 color: _getStatusColor(_order.status).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
@@ -226,20 +226,20 @@ class _DistributorOrderDetailScreenState
           ],
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(isMedium ? 24 : 16),
+          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // ── Order Header Info ──
               _buildOrderHeader(isDark, isMedium),
-              SizedBox(height: isMedium ? 24 : 16),
+              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
               // ── Items Section ──
               if (isWide)
                 _buildItemsTable(isDark)
               else
                 _buildItemsCards(isDark),
-              SizedBox(height: isMedium ? 24 : 16),
+              SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
               // ── Total & Notes ──
               if (isWide)
@@ -247,20 +247,20 @@ class _DistributorOrderDetailScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(flex: 3, child: _buildNotesSection(isDark)),
-                    const SizedBox(width: 24),
+                    const SizedBox(width: AlhaiSpacing.lg),
                     Expanded(flex: 2, child: _buildTotalSection(isDark)),
                   ],
                 )
               else ...[
                 _buildTotalSection(isDark),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 _buildNotesSection(isDark),
               ],
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // ── Action Buttons ──
               _buildActionButtons(isDark, isMedium),
-              const SizedBox(height: 32),
+              const SizedBox(height: AlhaiSpacing.xl),
             ],
           ),
         ),
@@ -271,7 +271,7 @@ class _DistributorOrderDetailScreenState
     final dateFormatted = DateFormat('yyyy/MM/dd - HH:mm', 'ar').format(_order.createdAt);
 
     return Container(
-      padding: EdgeInsets.all(isMedium ? 24 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -303,7 +303,7 @@ class _DistributorOrderDetailScreenState
                         color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       dateFormatted,
                       style: TextStyle(
@@ -316,7 +316,7 @@ class _DistributorOrderDetailScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -337,7 +337,7 @@ class _DistributorOrderDetailScreenState
                     color: AppColors.getTextSecondary(isDark),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   '${NumberFormat('#,##0.00').format(_order.proposedTotal)} ريال',
                   style: const TextStyle(
@@ -367,11 +367,11 @@ class _DistributorOrderDetailScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
@@ -379,7 +379,7 @@ class _DistributorOrderDetailScreenState
                   child: const Icon(Icons.list_alt_rounded,
                       color: AppColors.secondary, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   'بنود الطلب',
                   style: TextStyle(
@@ -411,7 +411,7 @@ class _DistributorOrderDetailScreenState
           const Divider(height: 1),
           // Table header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
             color: AppColors.getSurfaceVariant(isDark),
             child: Row(
               children: [
@@ -470,7 +470,7 @@ class _DistributorOrderDetailScreenState
             final rowTotal = price * item.quantity;
 
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 border: index < _order.items.length - 1
                     ? Border(
@@ -542,7 +542,7 @@ class _DistributorOrderDetailScreenState
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                       child: TextField(
                         controller: controller,
                         keyboardType: TextInputType.number,
@@ -619,7 +619,7 @@ class _DistributorOrderDetailScreenState
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: AppColors.secondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
@@ -627,7 +627,7 @@ class _DistributorOrderDetailScreenState
               child: const Icon(Icons.list_alt_rounded,
                   color: AppColors.secondary, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Text(
               'بنود الطلب',
               style: TextStyle(
@@ -654,7 +654,7 @@ class _DistributorOrderDetailScreenState
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         ...List.generate(_order.items.length, (index) {
           final item = _order.items[index];
           final controller = _priceControllers[item.id]!;
@@ -662,8 +662,8 @@ class _DistributorOrderDetailScreenState
           final rowTotal = price * item.quantity;
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.getSurface(isDark),
               borderRadius: BorderRadius.circular(14),
@@ -704,7 +704,7 @@ class _DistributorOrderDetailScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
                     _infoChip(
@@ -722,7 +722,7 @@ class _DistributorOrderDetailScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
                     Expanded(
@@ -770,7 +770,7 @@ class _DistributorOrderDetailScreenState
                       ),
                     ),
                     if (rowTotal > 0) ...[
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 10),
@@ -834,7 +834,7 @@ class _DistributorOrderDetailScreenState
     final total = _calculatedTotal;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: total > 0
             ? LinearGradient(
@@ -859,7 +859,7 @@ class _DistributorOrderDetailScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -867,7 +867,7 @@ class _DistributorOrderDetailScreenState
                 child: const Icon(Icons.calculate_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'إجمالي سعرك',
                 style: TextStyle(
@@ -878,7 +878,7 @@ class _DistributorOrderDetailScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             '${NumberFormat('#,##0.00').format(total)} ريال',
             style: TextStyle(
@@ -890,7 +890,7 @@ class _DistributorOrderDetailScreenState
             ),
           ),
           if (total > 0 && _order.proposedTotal > 0) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Builder(
               builder: (_) {
                 final diff = total - _order.proposedTotal;
@@ -925,7 +925,7 @@ class _DistributorOrderDetailScreenState
 
   Widget _buildNotesSection(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -937,7 +937,7 @@ class _DistributorOrderDetailScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -945,7 +945,7 @@ class _DistributorOrderDetailScreenState
                 child: const Icon(Icons.note_alt_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'ملاحظات للمتجر',
                 style: TextStyle(
@@ -956,7 +956,7 @@ class _DistributorOrderDetailScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _notesController,
             maxLines: 4,
@@ -979,7 +979,7 @@ class _DistributorOrderDetailScreenState
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -1014,7 +1014,7 @@ class _DistributorOrderDetailScreenState
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AlhaiSpacing.md),
         Expanded(
           flex: 2,
           child: FilledButton.icon(

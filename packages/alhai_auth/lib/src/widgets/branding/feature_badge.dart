@@ -141,7 +141,7 @@ class _CompactBadge extends StatelessWidget {
     final useWhiteText = light || isDarkMode;
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: useWhiteText
             ? Colors.white.withValues(alpha: 0.15)
@@ -161,7 +161,7 @@ class _CompactBadge extends StatelessWidget {
             color: data.color,
             size: 20,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Text(
             data.title,
             style: TextStyle(
@@ -189,7 +189,7 @@ class _FullBadge extends StatelessWidget {
     final useWhiteText = light || isDarkMode;
     
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: useWhiteText
             ? Colors.white.withValues(alpha: 0.1)
@@ -206,7 +206,7 @@ class _FullBadge extends StatelessWidget {
         children: [
           // الأيقونة
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: useWhiteText
                   ? Colors.white.withValues(alpha: 0.2)
@@ -219,7 +219,7 @@ class _FullBadge extends StatelessWidget {
               size: 28,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // العنوان
           Text(
             data.title,
@@ -231,7 +231,7 @@ class _FullBadge extends StatelessWidget {
           ),
           // العنوان الفرعي
           if (data.subtitle != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               data.subtitle!,
               style: TextStyle(
@@ -344,7 +344,7 @@ class _StatItem extends StatelessWidget {
             fontSize: 24,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         Text(
           label,
           style: TextStyle(
@@ -367,7 +367,7 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
+      height: AlhaiSpacing.xxl,
       width: 1,
       color: light
           ? Colors.white.withValues(alpha: 0.2)

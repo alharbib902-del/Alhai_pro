@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart' show StoreSettings;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/performance_provider.dart';
 
@@ -28,16 +28,16 @@ class PerformanceDashboard extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.analytics, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Text(
-                  'أداء الكاشير',
+                  l10n.cashierPerformance,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -48,15 +48,15 @@ class PerformanceDashboard extends ConsumerWidget {
                   onPressed: () {
                     ref.read(performanceProvider.notifier).resetSession();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم إعادة تعيين الإحصائيات')),
+                      SnackBar(content: Text(l10n.statsReset)),
                     );
                   },
-                  tooltip: 'إعادة تعيين',
+                  tooltip: l10n.resetStatsAction,
                 ),
               ],
             ),
             const Divider(),
-            const SizedBox(height: 8),
+            SizedBox(height: AlhaiSpacing.xs),
             
             // الإحصائيات
             Row(
@@ -64,27 +64,27 @@ class PerformanceDashboard extends ConsumerWidget {
                 Expanded(
                   child: _KpiCard(
                     icon: Icons.timer,
-                    label: 'متوسط وقت البيع',
+                    label: l10n.averageSaleTime,
                     value: stats.avgSaleTime.toStringAsFixed(0),
                     unit: l10n.seconds,
                     color: _getTimeColor(stats.avgSaleTime),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _KpiCard(
                     icon: Icons.speed,
-                    label: 'عمليات/ساعة',
+                    label: l10n.operationsPerHour,
                     value: stats.salesPerHour.toStringAsFixed(1),
                     unit: '',
                     color: _getSalesColor(stats.salesPerHour),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _KpiCard(
                     icon: Icons.error_outline,
-                    label: 'نسبة الأخطاء',
+                    label: l10n.errorRateLabel,
                     value: stats.errorRate.toStringAsFixed(1),
                     unit: '%',
                     color: _getErrorColor(stats.errorRate),
@@ -92,11 +92,11 @@ class PerformanceDashboard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             
             // ملخص اليوم
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
@@ -105,21 +105,21 @@ class PerformanceDashboard extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _SummaryItem(
-                    label: 'عمليات مكتملة',
+                    label: l10n.completedOperations,
                     value: '${stats.completedSales}',
                     icon: Icons.check_circle,
                     color: AlhaiColors.success,
                   ),
                   Container(width: 1, height: 30, color: Theme.of(context).dividerColor),
                   _SummaryItem(
-                    label: 'إجمالي المبيعات',
+                    label: l10n.totalSales,
                     value: '${stats.totalSales.toStringAsFixed(0)} ${StoreSettings.defaultCurrencySymbol}',
                     icon: Icons.attach_money,
                     color: AlhaiColors.info,
                   ),
                   Container(width: 1, height: 30, color: Theme.of(context).dividerColor),
                   _SummaryItem(
-                    label: 'أخطاء',
+                    label: l10n.errors,
                     value: '${stats.errorCount}',
                     icon: Icons.warning_amber,
                     color: stats.errorCount > 0 ? AlhaiColors.error : Theme.of(context).colorScheme.outline,
@@ -165,19 +165,19 @@ class _CompactView extends StatelessWidget {
         _MiniKpi(
           icon: Icons.timer,
           value: '${stats.avgSaleTime.toStringAsFixed(0)}s',
-          tooltip: 'متوسط وقت البيع',
+          tooltip: AppLocalizations.of(context)!.averageSaleTime,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         _MiniKpi(
           icon: Icons.speed,
           value: '${stats.salesPerHour.toStringAsFixed(0)}/h',
-          tooltip: 'عمليات/ساعة',
+          tooltip: AppLocalizations.of(context)!.operationsPerHour,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         _MiniKpi(
           icon: Icons.check_circle,
           value: '${stats.completedSales}',
-          tooltip: 'عمليات مكتملة',
+          tooltip: AppLocalizations.of(context)!.completedOperations,
         ),
       ],
     );
@@ -200,7 +200,7 @@ class _MiniKpi extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
@@ -209,7 +209,7 @@ class _MiniKpi extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
-            const SizedBox(width: 4),
+            SizedBox(width: AlhaiSpacing.xxs),
             Text(value, style: const TextStyle(fontSize: 12)),
           ],
         ),
@@ -238,7 +238,7 @@ class _KpiCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -247,7 +247,7 @@ class _KpiCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Text(
             label,
             style: theme.textTheme.labelSmall?.copyWith(
@@ -255,7 +255,7 @@ class _KpiCard extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -268,7 +268,7 @@ class _KpiCard extends StatelessWidget {
                 ),
               ),
               if (unit.isNotEmpty) ...[
-                const SizedBox(width: 2),
+                SizedBox(width: AlhaiSpacing.xxxs),
                 Text(
                   unit,
                   style: theme.textTheme.labelSmall?.copyWith(
@@ -302,7 +302,7 @@ class _SummaryItem extends StatelessWidget {
     return Column(
       children: [
         Icon(icon, color: color, size: 20),
-        const SizedBox(height: 4),
+        SizedBox(height: AlhaiSpacing.xxs),
         Text(
           value,
           style: TextStyle(

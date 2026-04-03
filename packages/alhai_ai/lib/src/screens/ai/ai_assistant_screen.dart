@@ -14,6 +14,7 @@ import '../../services/ai_assistant_service.dart';
 import '../../widgets/ai/chat_message_bubble.dart';
 import '../../widgets/ai/ai_quick_templates.dart';
 import '../../widgets/ai/ai_chat_input.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة المساعد الذكي
 class AiAssistantScreen extends ConsumerStatefulWidget {
@@ -118,7 +119,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   ) {
     return Container(
       margin: isWideScreen
-          ? const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0)
+          ? EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.zero, AlhaiSpacing.lg, AlhaiSpacing.zero)
           : EdgeInsets.zero,
       decoration: isWideScreen
           ? BoxDecoration(
@@ -162,7 +163,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 ? _buildEmptyState(isDark)
                 : ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     itemCount: messages.length + (isProcessing ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == messages.length && isProcessing) {
@@ -213,7 +214,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               size: 40,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             l10n.aiAssistantReady,
             style: TextStyle(
@@ -222,7 +223,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             l10n.aiAskAboutSalesStock,
             style: TextStyle(
@@ -239,7 +240,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   /// مؤشر الكتابة
   Widget _buildTypingIndicator(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Container(
@@ -255,9 +256,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               size: 20,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: const BorderRadius.only(
@@ -276,9 +277,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildDot(0, isDark),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 _buildDot(1, isDark),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 _buildDot(2, isDark),
               ],
             ),

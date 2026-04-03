@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sync_providers.dart';
 
 /// Banner لإظهار حالة عدم الاتصال
@@ -17,16 +18,16 @@ class OfflineBanner extends ConsumerWidget {
         
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           color: AlhaiColors.warningDark,
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.wifi_off, color: Colors.white, size: 18),
-              SizedBox(width: 8),
+              const Icon(Icons.wifi_off, color: Colors.white, size: 18),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
-                'لا يوجد اتصال بالإنترنت',
-                style: TextStyle(
+                AppLocalizations.of(context)!.noInternetConnection,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),

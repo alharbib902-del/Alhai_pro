@@ -625,7 +625,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               ),
               if (count != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
@@ -712,6 +712,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
     if (customers.isEmpty) {
       if (_searchController.text.isNotEmpty) {
         return AppEmptyState.noSearchResults(
+          context,
           query: _searchController.text,
           onClear: () {
             _searchController.clear();
@@ -720,6 +721,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
         );
       }
       return AppEmptyState.noCustomers(
+        context,
         onAdd: () => _showAddCustomerDialog(context, isDark, l10n),
       );
     }

@@ -11,6 +11,7 @@ import '../../providers/ai_staff_analytics_providers.dart';
 import '../../services/ai_staff_analytics_service.dart';
 import '../../widgets/ai/staff_performance_card.dart';
 import '../../widgets/ai/shift_optimization_chart.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiStaffAnalyticsScreen extends ConsumerStatefulWidget {
   const AiStaffAnalyticsScreen({super.key});
@@ -59,13 +60,13 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       children: [
         // Summary cards
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: _buildSummaryRow(teamSummary, isDark, isWideScreen),
         ),
 
         // Tabs
         Container(
-          margin: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -165,7 +166,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(item.icon, size: 18, color: item.color),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Text(
                   item.value,
                   style: TextStyle(
@@ -195,7 +196,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
     final rankings = ref.watch(staffRankingsProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -211,11 +212,11 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
@@ -224,7 +225,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                     ),
                     child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 20),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Text(
                     AppLocalizations.of(context)!.aiLeaderboardThisWeek,
                     style: TextStyle(
@@ -262,7 +263,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -308,7 +309,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,10 +342,10 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
               color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           // Change
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
             decoration: BoxDecoration(
               color: ranking.changeFromLastWeek >= 0
                   ? AppColors.success.withValues(alpha: 0.1)
@@ -361,7 +362,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   size: 12,
                   color: ranking.changeFromLastWeek >= 0 ? AppColors.success : AppColors.error,
                 ),
-                const SizedBox(width: 2),
+                const SizedBox(width: AlhaiSpacing.xxxs),
                 Text(
                   ranking.changeFromLastWeek.abs().toStringAsFixed(1),
                   style: TextStyle(
@@ -386,7 +387,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
       data: (staff) {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Wrap(
@@ -414,11 +415,11 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
     final optimizations = ref.watch(shiftOptimizationsProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         children: [
           ShiftOptimizationChart(data: heatmap, height: isWideScreen ? 350 : 280),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Optimization suggestions
           ...optimizations.map((opt) => _buildOptimizationCard(opt, isDark)),
         ],
@@ -428,8 +429,8 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
 
   Widget _buildOptimizationCard(ShiftOptimization opt, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -470,9 +471,9 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                       decoration: BoxDecoration(
                         color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -488,7 +489,7 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Text(
                   opt.suggestion,
                   style: TextStyle(

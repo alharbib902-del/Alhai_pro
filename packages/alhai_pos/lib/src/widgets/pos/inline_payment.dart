@@ -159,19 +159,19 @@ class _InlinePaymentState extends State<InlinePayment> {
     final amount = double.tryParse(_splitAmountController.text) ?? 0;
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('أدخل مبلغ صحيح'), backgroundColor: Theme.of(context).colorScheme.error),
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterValidAmountError), backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
     if (amount > 999999.99) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('المبلغ يجب أن لا يتجاوز 999,999.99'), backgroundColor: Theme.of(context).colorScheme.error),
+        SnackBar(content: Text(AppLocalizations.of(context)!.amountExceedsMaxError), backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
     if (amount > _splitRemaining + 0.01) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('المبلغ أكبر من المتبقي'), backgroundColor: Theme.of(context).colorScheme.error),
+        SnackBar(content: Text(AppLocalizations.of(context)!.amountExceedsRemainingError), backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
@@ -205,7 +205,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (paid < 0 || paid > 999999.99) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('المبلغ يجب أن يكون بين 0 و 999,999.99'),
+            content: Text(AppLocalizations.of(context)!.amountBetweenZeroAndMax),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -216,7 +216,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (paid < widget.total - 0.01) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('المبلغ المستلم أقل من الإجمالي'),
+            content: Text(AppLocalizations.of(context)!.amountLessThanTotal),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -239,7 +239,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (_selectedCustomer == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('يجب اختيار العميل أولاً'),
+            content: Text(AppLocalizations.of(context)!.selectCustomerFirstError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -248,7 +248,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (_creditLimitExceeded) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('تم تجاوز حد الدين للعميل'),
+            content: Text(AppLocalizations.of(context)!.debtLimitExceededError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -267,7 +267,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       if (_splitRemaining > 0.01) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('أكمل الدفع أولاً'),
+            content: Text(AppLocalizations.of(context)!.completePaymentFirstError),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -293,7 +293,7 @@ class _InlinePaymentState extends State<InlinePayment> {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
@@ -310,7 +310,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             Row(
               children: [
                 Icon(Icons.payment, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.payment,
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -326,11 +326,11 @@ class _InlinePaymentState extends State<InlinePayment> {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // الإجمالي
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -349,7 +349,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // طرق الدفع
             Row(
@@ -367,7 +367,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // محتوى حسب طريقة الدفع
           if (_selectedMethod == PaymentMethod.cash) _buildCashSection(theme),
@@ -375,13 +375,13 @@ class _InlinePaymentState extends State<InlinePayment> {
           if (_selectedMethod == PaymentMethod.mixed) _buildMixedSection(theme, isDark),
 
           // زر إتمام الدفع
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           FilledButton.icon(
             onPressed: _canComplete ? _completePayment : null,
             icon: const Icon(Icons.check_circle),
-            label: const Text('إتمام الدفع'),
+            label: Text(AppLocalizations.of(context)!.completePaymentLabel),
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               textStyle: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -420,32 +420,32 @@ class _InlinePaymentState extends State<InlinePayment> {
             LengthLimitingTextInputFormatter(12),
           ],
           decoration: InputDecoration(
-            labelText: 'المبلغ المستلم',
-            prefixText: 'ر.س ',
+            labelText: AppLocalizations.of(context)!.receivedAmountLabel,
+            prefixText: AppLocalizations.of(context)!.sarPrefix,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
           ),
           onSubmitted: (_) => _completePayment(),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         // أزرار المبالغ السريعة
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: AlhaiSpacing.xs,
+          runSpacing: AlhaiSpacing.xs,
           alignment: WrapAlignment.center,
           children: [50, 100, 200, 500].map((amount) {
             return ActionChip(
-              label: Text('$amount ر.س'),
+              label: Text(AppLocalizations.of(context)!.amountSar(amount.toString())),
               onPressed: () {
                 _amountController.text = amount.toStringAsFixed(2);
               },
             );
           }).toList(),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         if (_change > 0)
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
@@ -457,7 +457,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 Row(
                   children: [
                     const Icon(Icons.currency_exchange, color: AppColors.success),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(AppLocalizations.of(context)!.remainingLabel),
                   ],
                 ),
@@ -506,7 +506,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                       ? AppColors.primary
                       : (isDark ? theme.colorScheme.onSurface.withValues(alpha: 0.54) : AppColors.textMuted),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _selectedCustomer != null
                       ? Column(
@@ -529,7 +529,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                           ],
                         )
                       : Text(
-                          'اختر العميل',
+                          AppLocalizations.of(context)!.selectCustomerLabel,
                           style: TextStyle(
                             color: isDark ? theme.colorScheme.onSurface.withValues(alpha: 0.54) : AppColors.textMuted,
                           ),
@@ -546,9 +546,9 @@ class _InlinePaymentState extends State<InlinePayment> {
 
         // معلومات الحساب
         if (_selectedCustomer != null) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: _creditLimitExceeded
@@ -565,7 +565,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('الرصيد الحالي'),
+                    Text(AppLocalizations.of(context)!.currentBalanceTitle),
                     Text(
                       CurrencyFormatter.formatWithContext(context, _selectedCustomer!.balance),
                       style: TextStyle(
@@ -575,13 +575,13 @@ class _InlinePaymentState extends State<InlinePayment> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('حد الائتمان'),
+                    Text(AppLocalizations.of(context)!.creditLimitTitle),
                     Text(
-                      '500.00 ر.س',
+                      AppLocalizations.of(context)!.creditLimitAmount,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isDark ? theme.colorScheme.onSurface.withValues(alpha: 0.7) : AppColors.textSecondary,
@@ -590,13 +590,13 @@ class _InlinePaymentState extends State<InlinePayment> {
                   ],
                 ),
                 if (_creditLimitExceeded) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     children: [
                       Icon(Icons.warning_amber, color: theme.colorScheme.error, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        'تجاوز حد الدين!',
+                        AppLocalizations.of(context)!.debtLimitExceededWarning,
                         style: TextStyle(
                           color: theme.colorScheme.error,
                           fontWeight: FontWeight.bold,
@@ -610,7 +610,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             ),
           ),
         ],
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
       ],
     );
   }
@@ -623,7 +623,7 @@ class _InlinePaymentState extends State<InlinePayment> {
       children: [
         // ملخص
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
@@ -642,7 +642,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -661,7 +661,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
 
         // قائمة الدفعات المضافة
         if (_splits.isNotEmpty) ...[
@@ -669,7 +669,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             final split = _splits[i];
             return Container(
               margin: const EdgeInsets.only(bottom: 6),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: isDark ? theme.colorScheme.surfaceContainerHighest : AppColors.grey50,
@@ -677,14 +677,14 @@ class _InlinePaymentState extends State<InlinePayment> {
               child: Row(
                 children: [
                   Icon(split.method.icon, color: split.method.color, size: 20),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Text(split.method.localizedLabel(AppLocalizations.of(context)!)),
                   const Spacer(),
                   Text(
                     CurrencyFormatter.formatWithContext(context, split.amount),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   InkWell(
                     onTap: () => _removeSplit(i),
                     child: Icon(Icons.close, color: theme.colorScheme.error, size: 18),
@@ -693,7 +693,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               ),
             );
           }),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ],
 
         // إضافة دفعة جديدة
@@ -714,7 +714,7 @@ class _InlinePaymentState extends State<InlinePayment> {
                       onTap: () => setState(() => _splitMethod = m),
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
@@ -742,7 +742,7 @@ class _InlinePaymentState extends State<InlinePayment> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // حقل المبلغ + زر إضافة
           Row(
@@ -758,21 +758,21 @@ class _InlinePaymentState extends State<InlinePayment> {
                   ],
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.amount,
-                    suffixText: 'ر.س',
+                    suffixText: AppLocalizations.of(context)!.sarCurrency,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
                     isDense: true,
                   ),
                   onSubmitted: (_) => _addSplit(),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               FilledButton.icon(
                 onPressed: _addSplit,
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(AppLocalizations.of(context)!.addPayment),
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
                   backgroundColor: AppColors.primary,
                 ),
               ),
@@ -782,15 +782,15 @@ class _InlinePaymentState extends State<InlinePayment> {
           // اختيار العميل (إذا كانت الدفعة آجل)
           if (_splitMethod == PaymentMethod.credit && _selectedCustomer == null)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
               child: OutlinedButton.icon(
                 onPressed: _selectCustomer,
                 icon: const Icon(Icons.person_search, size: 18),
-                label: const Text('اختر العميل أولاً'),
+                label: Text(AppLocalizations.of(context)!.selectCustomerFirstButton),
               ),
             ),
         ],
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
       ],
     );
   }

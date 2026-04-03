@@ -46,12 +46,12 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 const Icon(Icons.sticky_note_2_outlined,
                     size: 20, color: Color(0xFFF59E0B)),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'Internal Notes',
                   style: TextStyle(
@@ -63,7 +63,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 2),
+                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius:
@@ -86,7 +86,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
           // Notes list
           if (_notes.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Center(
                 child: Text(
                   'No notes yet',
@@ -99,7 +99,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               itemCount: _notes.length,
               separatorBuilder: (_, __) =>
                   const SizedBox(height: 10),
@@ -143,7 +143,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                     onSubmitted: (_) => _addNote(),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 IconButton(
                   onPressed: _addNote,
                   icon:
@@ -195,7 +195,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
         // Note content
         Expanded(
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius:
@@ -227,7 +227,7 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   note['text'] as String,
                   style: TextStyle(

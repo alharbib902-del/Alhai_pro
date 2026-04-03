@@ -50,7 +50,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ],
         Container(
           decoration: BoxDecoration(
@@ -101,15 +101,15 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.md,
               ),
             ),
             onSubmitted: (_) => widget.onSubmitted?.call(),
           ),
         ),
         if (hasError) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               const Icon(

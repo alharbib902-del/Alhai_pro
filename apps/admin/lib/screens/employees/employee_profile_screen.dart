@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة ملف الموظف التفصيلي
 /// تعرض بيانات الموظف، أداء المبيعات، الورديات، والصلاحيات
@@ -216,14 +218,16 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       await db.usersDao.updateUser(updated);
       await _loadUser();
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم حفظ الصلاحيات'), backgroundColor: AppColors.success),
+          SnackBar(content: Text(l10n.permissionsSaved), backgroundColor: AppColors.success),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ: $e'), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(content: Text(l10n.errorWithMessage(e.toString())), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -242,9 +246,10 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
       ));
       await _loadUser();
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(active ? 'تم تفعيل الحساب' : 'تم تعطيل الحساب'),
+            content: Text(active ? l10n.accountActivated : l10n.accountDeactivated),
             backgroundColor: active ? AppColors.success : AppColors.warning,
           ),
         );
@@ -256,21 +261,22 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('ملف الموظف')),
+        appBar: AppBar(title: Text(l10n.employeeProfile)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null || _user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('ملف الموظف')),
-        body: Center(child: Text(_error ?? 'الموظف غير موجود')),
+        appBar: AppBar(title: Text(l10n.employeeProfile)),
+        body: Center(child: Text(_error ?? l10n.employeeNotFound)),
       );
     }
 
     final user = _user!;
-    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? 'موظف');
+    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? l10n.employeeFallback);
     final initials = displayName[0].toUpperCase();
     final roleColor = _roleColor(user.role);
 
@@ -279,11 +285,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         title: Text(displayName),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(Icons.person_outline), text: 'الملف'),
-            Tab(icon: Icon(Icons.bar_chart_outlined), text: 'المبيعات'),
-            Tab(icon: Icon(Icons.schedule_outlined), text: 'الورديات'),
-            Tab(icon: Icon(Icons.lock_outline), text: 'الصلاحيات'),
+          tabs: [
+            Tab(icon: const Icon(Icons.person_outline), text: l10n.profileTab),
+            Tab(icon: const Icon(Icons.bar_chart_outlined), text: l10n.salesTab),
+            Tab(icon: const Icon(Icons.schedule_outlined), text: l10n.shiftsTab),
+            Tab(icon: const Icon(Icons.lock_outline), text: l10n.permissionsTab2),
           ],
         ),
       ),
@@ -310,25 +316,27 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   String _roleLabel(String role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role) {
-      case 'owner': return 'مالك';
-      case 'manager': return 'مدير';
-      case 'supervisor': return 'مشرف';
-      default: return 'كاشير';
+      case 'owner': return l10n.ownerRole;
+      case 'manager': return l10n.managerRole;
+      case 'supervisor': return l10n.supervisorRole;
+      default: return l10n.cashierRole;
     }
   }
 
   Widget _buildProfileTab(UsersTableData user, String initials, Color roleColor) {
-    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? 'موظف');
+    final l10n = AppLocalizations.of(context)!;
+    final displayName = user.name.isNotEmpty ? user.name : (user.phone ?? l10n.employeeFallback);
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         children: [
           // Avatar header
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -337,12 +345,12 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                     child: Text(initials,
                         style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: roleColor)),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text(displayName,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: roleColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -350,7 +358,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                     child: Text(_roleLabel(user.role),
                         style: TextStyle(color: roleColor, fontWeight: FontWeight.bold)),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
@@ -363,8 +371,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                         Icon(user.isActive ? Icons.circle : Icons.circle_outlined,
                             size: 8,
                             color: user.isActive ? AppColors.success : Theme.of(context).disabledColor),
-                        const SizedBox(width: 4),
-                        Text(user.isActive ? 'نشط' : 'غير نشط',
+                        const SizedBox(width: AlhaiSpacing.xxs),
+                        Text(user.isActive ? l10n.active : l10n.inactive,
                             style: TextStyle(
                                 fontSize: 12,
                                 color: user.isActive ? AppColors.success : Theme.of(context).disabledColor)),
@@ -375,26 +383,26 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Info list
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Column(
               children: [
-                _infoTile(Icons.phone_outlined, 'الجوال', user.phone ?? '-'),
+                _infoTile(Icons.phone_outlined, l10n.mobilePhone, user.phone ?? '-'),
                 const Divider(height: 1, indent: 52),
-                _infoTile(Icons.email_outlined, 'البريد الإلكتروني', user.email ?? '-'),
+                _infoTile(Icons.email_outlined, l10n.emailLabel, user.email ?? '-'),
                 const Divider(height: 1, indent: 52),
-                _infoTile(Icons.calendar_today_outlined, 'تاريخ الانضمام',
+                _infoTile(Icons.calendar_today_outlined, l10n.joinDate,
                     _formatDate(user.createdAt)),
                 const Divider(height: 1, indent: 52),
-                _infoTile(Icons.login_outlined, 'آخر دخول',
-                    user.lastLoginAt != null ? _formatDate(user.lastLoginAt!) : 'لم يدخل بعد'),
+                _infoTile(Icons.login_outlined, l10n.lastLogin,
+                    user.lastLoginAt != null ? _formatDate(user.lastLoginAt!) : l10n.neverLoggedIn),
                 const Divider(height: 1, indent: 52),
                 SwitchListTile(
                   secondary: const Icon(Icons.toggle_on_outlined),
-                  title: const Text('الحساب نشط'),
-                  subtitle: Text(user.isActive ? 'يمكنه تسجيل الدخول' : 'محظور من الدخول'),
+                  title: Text(l10n.accountActive),
+                  subtitle: Text(user.isActive ? l10n.canLogin : l10n.blockedFromLogin),
                   value: user.isActive,
                   onChanged: _toggleActive,
                 ),
@@ -415,16 +423,17 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildSalesTab() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Period selector
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           child: SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'week', label: Text('أسبوع')),
-              ButtonSegment(value: 'month', label: Text('شهر')),
-              ButtonSegment(value: 'all', label: Text('الكل')),
+            segments: [
+              ButtonSegment(value: 'week', label: Text(l10n.weekLabel)),
+              ButtonSegment(value: 'month', label: Text(l10n.monthLabel)),
+              ButtonSegment(value: 'all', label: Text(l10n.all)),
             ],
             selected: {_salesPeriod},
             onSelectionChanged: (s) {
@@ -441,11 +450,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                       child: FilledButton.icon(
                         onPressed: _loadSalesPerformance,
                         icon: const Icon(Icons.refresh),
-                        label: const Text('تحميل بيانات المبيعات'),
+                        label: Text(l10n.loadSalesData),
                       ),
                     )
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
                       child: Column(
                         children: [
                           GridView.builder(
@@ -460,10 +469,10 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                             itemCount: 4,
                             itemBuilder: (context, index) {
                               final metrics = [
-                                (Icons.attach_money_rounded, AppColors.success, 'إجمالي المبيعات', '${_salesStats!.total.toStringAsFixed(0)} ر.س'),
-                                (Icons.receipt_long_outlined, AppColors.info, 'عدد الفواتير', '${_salesStats!.count}'),
-                                (Icons.trending_up_rounded, Colors.purple, 'متوسط الفاتورة', '${_salesStats!.average.toStringAsFixed(0)} ر.س'), // chart metric color
-                                (Icons.schedule_outlined, AppColors.warning, 'ساعة الذروة', _hourlySales.isNotEmpty ? '${_hourlySales.reduce((a, b) => a.total > b.total ? a : b).hour.toString().padLeft(2, '0')}:00' : '-'),
+                                (Icons.attach_money_rounded, AppColors.success, l10n.totalSales, l10n.amountSar(_salesStats!.total.toStringAsFixed(0))),
+                                (Icons.receipt_long_outlined, AppColors.info, l10n.invoiceCountLabel2, '${_salesStats!.count}'),
+                                (Icons.trending_up_rounded, Colors.purple, l10n.averageInvoice, l10n.amountSar(_salesStats!.average.toStringAsFixed(0))), // chart metric color
+                                (Icons.schedule_outlined, AppColors.warning, l10n.peakHourLabel, _hourlySales.isNotEmpty ? '${_hourlySales.reduce((a, b) => a.total > b.total ? a : b).hour.toString().padLeft(2, '0')}:00' : '-'),
                               ];
                               final m = metrics[index];
                               return _MetricCard(
@@ -475,16 +484,16 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                             },
                           ),
                           if (_hourlySales.isNotEmpty) ...[
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             Card(
                               child: Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(AlhaiSpacing.md),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('توزيع المبيعات بالساعة',
-                                        style: TextStyle(fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 12),
+                                    Text(l10n.hourlySalesDistribution,
+                                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: AlhaiSpacing.sm),
                                     _HourlyBarChart(data: _hourlySales),
                                   ],
                                 ),
@@ -500,26 +509,27 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildShiftsTab() {
+    final l10n = AppLocalizations.of(context)!;
     if (_shiftsLoading) return const Center(child: CircularProgressIndicator());
     if (_shifts.isEmpty) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.schedule_outlined, size: 64, color: Theme.of(context).hintColor),
-          const SizedBox(height: 12),
-          Text('لا توجد ورديات مسجلة', style: TextStyle(color: Theme.of(context).hintColor)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.sm),
+          Text(l10n.noShifts, style: TextStyle(color: Theme.of(context).hintColor)),
+          const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: _loadShifts,
             icon: const Icon(Icons.refresh),
-            label: const Text('تحديث'),
+            label: Text(l10n.refresh),
           ),
         ]),
       );
     }
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       itemCount: _shifts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
       itemBuilder: (ctx, i) {
         final s = _shifts[i];
         final isClosed = s.status == 'closed';
@@ -534,7 +544,7 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
             title: Text(_formatDate(s.openedAt),
                 style: const TextStyle(fontWeight: FontWeight.w600)),
             subtitle: Text(
-              'فتح: ${_formatTime(s.openedAt)}  إغلاق: ${s.closedAt != null ? _formatTime(s.closedAt!) : "--:--"}',
+              '${l10n.shiftOpenTime(_formatTime(s.openedAt))}  ${l10n.shiftCloseTime(s.closedAt != null ? _formatTime(s.closedAt!) : "--:--")}',
               style: const TextStyle(fontSize: 12),
             ),
             trailing: Column(
@@ -542,13 +552,13 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  dur != null ? '${dur.inHours}س ${dur.inMinutes % 60}د' : 'مفتوح',
+                  dur != null ? l10n.hoursMinutes(dur.inHours, dur.inMinutes % 60) : l10n.shiftOpenStatus,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isClosed ? Theme.of(context).disabledColor : AppColors.success,
                   ),
                 ),
-                Text('${s.totalSales} فاتورة',
+                Text(l10n.invoiceCountWithNum(s.totalSales),
                     style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor)),
               ],
             ),
@@ -559,25 +569,26 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Widget _buildPermissionsTab(UsersTableData user) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         children: [
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('الدور الوظيفي', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
+                  Text(l10n.jobRole, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedRole,
                     decoration: const InputDecoration(border: OutlineInputBorder()),
-                    items: const [
-                      DropdownMenuItem(value: 'manager', child: Text('مدير')),
-                      DropdownMenuItem(value: 'supervisor', child: Text('مشرف')),
-                      DropdownMenuItem(value: 'cashier', child: Text('كاشير')),
+                    items: [
+                      DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)),
+                      DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)),
+                      DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole)),
                     ],
                     onChanged: (v) { if (v != null) setState(() => _selectedRole = v); },
                   ),
@@ -585,32 +596,32 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Card(
             child: Column(
               children: [
-                _permSwitch('إدارة المنتجات', Icons.inventory_2_outlined),
+                _permSwitch(l10n.manageProducts, Icons.inventory_2_outlined),
                 const Divider(height: 1),
-                _permSwitch('عرض التقارير', Icons.bar_chart_outlined),
+                _permSwitch(l10n.viewReports, Icons.bar_chart_outlined),
                 const Divider(height: 1),
-                _permSwitch('عمليات الاسترداد', Icons.assignment_return_outlined),
+                _permSwitch(l10n.refundOperations, Icons.assignment_return_outlined),
                 const Divider(height: 1),
-                _permSwitch('إدارة العملاء', Icons.people_outline),
+                _permSwitch(l10n.manageCustomersPermission, Icons.people_outline),
                 const Divider(height: 1),
-                _permSwitch('إدارة العروض', Icons.local_offer_outlined),
+                _permSwitch(l10n.manageOffers, Icons.local_offer_outlined),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: _saveRole,
               icon: const Icon(Icons.save_outlined),
-              label: const Text('حفظ الصلاحيات'),
+              label: Text(l10n.savePermissions),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           if (user.role != 'owner')
             SizedBox(
               width: double.infinity,
@@ -619,12 +630,12 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text(user.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'),
+                      title: Text(user.isActive ? l10n.deactivateAccount : l10n.activateAccount),
                       content: Text(user.isActive
-                          ? 'هل تريد تعطيل حساب ${user.name}؟'
-                          : 'هل تريد تفعيل حساب ${user.name}؟'),
+                          ? l10n.confirmDeactivateAccount(user.name)
+                          : l10n.confirmActivateAccount(user.name)),
                       actions: [
-                        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+                        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
                         FilledButton(
                           style: FilledButton.styleFrom(
                             backgroundColor: user.isActive ? AppColors.error : AppColors.success,
@@ -633,14 +644,14 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                             Navigator.pop(ctx);
                             _toggleActive(!user.isActive);
                           },
-                          child: Text(user.isActive ? 'تعطيل' : 'تفعيل'),
+                          child: Text(user.isActive ? l10n.deactivate : l10n.activate),
                         ),
                       ],
                     ),
                   );
                 },
                 icon: Icon(user.isActive ? Icons.person_off_outlined : Icons.person_outline),
-                label: Text(user.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'),
+                label: Text(user.isActive ? l10n.deactivateAccount : l10n.activateAccount),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: user.isActive ? AppColors.error : AppColors.success,
                   side: BorderSide(color: user.isActive ? AppColors.error : AppColors.success),
@@ -677,6 +688,7 @@ class _HourlyBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
     final maxVal = data.map((d) => d.total).reduce((a, b) => a > b ? a : b);
     return SizedBox(
       height: 80,
@@ -688,7 +700,7 @@ class _HourlyBarChart extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Tooltip(
-                message: '${h.hour.toString().padLeft(2, '0')}:00 - ${h.total.toStringAsFixed(0)} ر.س',
+                message: '${h.hour.toString().padLeft(2, '0')}:00 - ${l10n.amountSar(h.total.toStringAsFixed(0))}',
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -699,7 +711,7 @@ class _HourlyBarChart extends StatelessWidget {
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text('${h.hour}',
                         style: TextStyle(fontSize: 9, color: Theme.of(context).hintColor)),
                   ],
@@ -723,7 +735,7 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),

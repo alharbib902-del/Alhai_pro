@@ -305,7 +305,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   ),
                 ),
                 Text(
-                  'نظام نقطة البيع',
+                  l10n.posSystemLabel,
                   style: TextStyle(
                     color: AppColors.white.withValues(alpha: 0.8),
                     fontSize: 14,
@@ -340,8 +340,8 @@ class _AppScaffoldState extends State<AppScaffold> {
               trailing: item.badge != null
                   ? Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxxs,
                       ),
                       decoration: BoxDecoration(
                         color: item.badgeColor ?? AppColors.error,

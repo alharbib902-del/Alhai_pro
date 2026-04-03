@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 
 /// شاشة تقرير المقارنة بين الفترات
 class ComparisonReportScreen extends ConsumerStatefulWidget {
@@ -194,7 +195,7 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error ?? 'خطأ في تحميل البيانات'),
               TextButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
@@ -231,7 +232,7 @@ class _ComparisonReportScreenState extends ConsumerState<ComparisonReportScreen>
       body: SafeArea(
         top: false,
         child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // Header labels
           Row(
@@ -326,7 +327,7 @@ class _CompRow extends StatelessWidget {
     final changeColor = isPositive ? Colors.green.shade700 : Colors.red.shade700;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Expanded(

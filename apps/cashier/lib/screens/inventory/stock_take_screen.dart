@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -138,16 +138,16 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadData)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadData)
                   : Column(
                   children: [
                     // Summary bar
                     Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: Column(
                         children: [
                           _buildSummaryBar(isDark, l10n),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: AlhaiSpacing.md),
                           _buildCategoryFilter(isDark, l10n),
                         ],
                       ),
@@ -159,10 +159,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                           : ListView.separated(
                               padding: EdgeInsets.symmetric(
                                   horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: 8),
+                                  vertical: AlhaiSpacing.xs),
                               itemCount: _filteredProducts.length,
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AlhaiSpacing.xs),
                               itemBuilder: (context, index) =>
                                   _buildProductRow(
                                       _filteredProducts[index],
@@ -187,7 +187,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
   Widget _buildSummaryBar(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -201,7 +201,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 Text('Total Items',
                     style: TextStyle(fontSize: 11,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$_totalItems',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                         color: AppColors.getTextPrimary(isDark))),
@@ -215,7 +215,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 Text(l10n.counted,
                     style: TextStyle(fontSize: 11,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$_countedItems',
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                         color: AppColors.success)),
@@ -229,7 +229,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 Text(l10n.variances,
                     style: TextStyle(fontSize: 11,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$_varianceItems',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                         color: _varianceItems > 0
@@ -250,7 +250,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
         children: [
           _buildFilterChip(l10n.allCategories, _selectedCategoryId == null,
               () => setState(() => _selectedCategoryId = null), isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           ..._categories.map((cat) => Padding(
                 padding: const EdgeInsetsDirectional.only(end: 8),
                 child: _buildFilterChip(
@@ -270,7 +270,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
@@ -327,7 +327,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                         color: AppColors.getTextPrimary(isDark)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 if (product.barcode != null)
                   Text(product.barcode!,
                       style: TextStyle(fontSize: 11,
@@ -344,14 +344,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 Text(l10n.system,
                     style: TextStyle(fontSize: 10,
                         color: AppColors.getTextMuted(isDark))),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text('$systemQty',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
                         color: AppColors.getTextPrimary(isDark))),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           // Counted qty input
           SizedBox(
             width: 80,
@@ -369,7 +369,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 hintText: '-',
                 hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 10),
+                    horizontal: AlhaiSpacing.xs, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: AppColors.getBorder(isDark)),
@@ -388,7 +388,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           // Variance
           SizedBox(
             width: 60,
@@ -397,7 +397,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 Text('Variance',
                     style: TextStyle(fontSize: 10,
                         color: AppColors.getTextMuted(isDark))),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   variance != null
                       ? '${variance >= 0 ? '+' : ''}$variance'
@@ -425,7 +425,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
         children: [
           Icon(Icons.inventory_2_outlined, size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noProducts,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                   color: AppColors.getTextMuted(isDark))),
@@ -436,7 +436,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
   Widget _buildBottomBar(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(top: BorderSide(color: AppColors.getBorder(isDark))),
@@ -459,7 +459,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: FilledButton.icon(
                 onPressed: _isSaving ? null : _finalizeCount,

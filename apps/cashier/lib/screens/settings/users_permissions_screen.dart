@@ -14,7 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -125,7 +125,7 @@ class _UsersPermissionsScreenState
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -137,7 +137,7 @@ class _UsersPermissionsScreenState
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             CircleAvatar(
               radius: 36,
               backgroundColor:
@@ -158,7 +158,7 @@ class _UsersPermissionsScreenState
                     )
                   : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               user.name,
               style: TextStyle(
@@ -167,10 +167,10 @@ class _UsersPermissionsScreenState
                 color: AppColors.getTextPrimary(isDark),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 4),
+                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
               decoration: BoxDecoration(
                 color: _getRoleColor(user.role).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -184,7 +184,7 @@ class _UsersPermissionsScreenState
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             _detailRow(Icons.email_rounded, 'Email',
                 user.email.isNotEmpty ? user.email : '-', isDark),
             _detailRow(Icons.phone_rounded, l10n.phone,
@@ -204,10 +204,10 @@ class _UsersPermissionsScreenState
                 _formatDate(user.lastLogin!),
                 isDark,
               ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color:
                     AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
@@ -232,7 +232,7 @@ class _UsersPermissionsScreenState
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
           ],
         ),
       ),
@@ -247,7 +247,7 @@ class _UsersPermissionsScreenState
     Color? valueColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Icon(icon, size: 18, color: AppColors.getTextMuted(isDark)),
@@ -308,9 +308,9 @@ class _UsersPermissionsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadUsers)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadUsers)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),
                 ),
@@ -330,11 +330,11 @@ class _UsersPermissionsScreenState
       children: [
         // Summary cards
         _buildSummaryCards(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Role filter
         _buildRoleFilter(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Users list
         if (isWideScreen)
@@ -359,7 +359,7 @@ class _UsersPermissionsScreenState
           AppColors.info,
           isDark,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         _summaryCard(
           l10n.active,
           '$active',
@@ -367,7 +367,7 @@ class _UsersPermissionsScreenState
           AppColors.success,
           isDark,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         _summaryCard(
           'Admins',
           '$admins',
@@ -375,7 +375,7 @@ class _UsersPermissionsScreenState
           AppColors.secondary,
           isDark,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         _summaryCard(
           'Cashiers',
           '$cashiers',
@@ -396,7 +396,7 @@ class _UsersPermissionsScreenState
   ) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
           borderRadius: BorderRadius.circular(12),
@@ -405,7 +405,7 @@ class _UsersPermissionsScreenState
         child: Column(
           children: [
             Icon(icon, color: color, size: 22),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               value,
               style: TextStyle(
@@ -414,7 +414,7 @@ class _UsersPermissionsScreenState
                 color: AppColors.getTextPrimary(isDark),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AlhaiSpacing.xxxs),
             Text(
               label,
               style: TextStyle(
@@ -452,7 +452,7 @@ class _UsersPermissionsScreenState
               onTap: () => setState(() => _selectedRole = role),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
+                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.1)
@@ -488,7 +488,7 @@ class _UsersPermissionsScreenState
     return Column(
       children: users.map((user) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           child: _buildUserCard(user, isDark, l10n),
         );
       }).toList(),
@@ -508,7 +508,7 @@ class _UsersPermissionsScreenState
           // Table header
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 14),
+                horizontal: AlhaiSpacing.mdl, vertical: 14),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius: const BorderRadius.only(
@@ -543,7 +543,7 @@ class _UsersPermissionsScreenState
               onTap: () => _showUserDetail(user, isDark, l10n),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 14),
+                    horizontal: AlhaiSpacing.mdl, vertical: 14),
                 decoration: BoxDecoration(
                   border: index < users.length - 1
                       ? Border(
@@ -649,7 +649,7 @@ class _UsersPermissionsScreenState
     return GestureDetector(
       onTap: () => _showUserDetail(user, isDark, l10n),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
           borderRadius: BorderRadius.circular(14),
@@ -690,12 +690,12 @@ class _UsersPermissionsScreenState
                       color: AppColors.getTextPrimary(isDark),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: _getRoleColor(user.role)
                               .withValues(alpha: 0.1),
@@ -710,7 +710,7 @@ class _UsersPermissionsScreenState
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Container(
                         width: 6,
                         height: 6,
@@ -721,7 +721,7 @@ class _UsersPermissionsScreenState
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         user.isActive ? l10n.active : l10n.inactive,
                         style: TextStyle(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../tokens/alhai_spacing.dart';
+
 /// Alhai Chart Card - Dashboard chart container (v1.1.0)
 /// Used in: admin_pos, super_admin dashboards
 class AlhaiChartCard extends StatelessWidget {
@@ -35,7 +37,7 @@ class AlhaiChartCard extends StatelessWidget {
         side: BorderSide(color: colorScheme.outlineVariant),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,7 +56,7 @@ class AlhaiChartCard extends StatelessWidget {
                         ),
                       ),
                       if (subtitle != null) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           subtitle!,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -70,7 +72,7 @@ class AlhaiChartCard extends StatelessWidget {
                 ],
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             // Chart
             isLoading
                 ? SizedBox(
@@ -83,7 +85,7 @@ class AlhaiChartCard extends StatelessWidget {
                   ),
             // Legend
             if (legend != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               legend!,
             ],
           ],
@@ -121,13 +123,13 @@ class AlhaiLegendItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(3),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Text(
           label,
           style: theme.textTheme.bodySmall,
         ),
         if (value != null) ...[
-          const SizedBox(width: 4),
+          const SizedBox(width: AlhaiSpacing.xxs),
           Text(
             value!,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -155,8 +157,8 @@ class AlhaiChartLegend extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 16,
-      runSpacing: 8,
+      spacing: AlhaiSpacing.md,
+      runSpacing: AlhaiSpacing.xs,
       children: items,
     );
   }

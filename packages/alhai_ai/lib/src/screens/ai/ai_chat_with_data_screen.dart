@@ -13,6 +13,7 @@ import '../../providers/ai_chat_with_data_providers.dart';
 import '../../widgets/ai/data_query_input.dart';
 import '../../widgets/ai/query_result_view.dart';
 import '../../widgets/ai/query_history_panel.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة المحادثة مع البيانات
 class AiChatWithDataScreen extends ConsumerStatefulWidget {
@@ -69,7 +70,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           SizedBox(
             width: 350,
             child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 16, 16),
+              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md),
               child: QueryHistoryPanel(
                 history: history,
                 onRerun: _executeQuery,
@@ -124,13 +125,13 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
     bool isWideScreen,
   ) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(isWideScreen ? 24 : 16),
+      padding: EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // عنوان AI
           _buildAiBanner(isDark),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // حقل الإدخال
           DataQueryInput(
@@ -142,7 +143,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
             isLoading: isLoading,
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // النتيجة أو الاقتراحات
           if (currentResult != null) ...[
@@ -158,7 +159,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
   Widget _buildAiBanner(bool isDark) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: AlignmentDirectional.topStart,
@@ -189,7 +190,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
               size: 28,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +203,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   l10n.aiAskAboutDataInArabic,
                   style: TextStyle(
@@ -214,7 +215,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
@@ -252,7 +253,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
         Row(
           children: [
             const Icon(Icons.lightbulb_outline, color: AppColors.warning, size: 20),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(
               l10n.aiTrySampleQuestions,
               style: TextStyle(
@@ -263,7 +264,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // شبكة الاقتراحات
         Wrap(
@@ -334,7 +335,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
                         ),
                         child: Icon(icon, color: color, size: 18),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Text(
                           query,
@@ -358,11 +359,11 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           }).toList(),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: AlhaiSpacing.xl),
 
         // نصيحة
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.info.withValues(alpha: 0.1)
@@ -389,7 +390,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       l10n.aiTipDescription,
                       style: TextStyle(

@@ -58,7 +58,7 @@ class _AiChatInputState extends State<AiChatInput> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
+      padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         border: Border(
@@ -82,11 +82,11 @@ class _AiChatInputState extends State<AiChatInput> {
           children: [
             // زر الميكروفون (معطل حالياً)
             _buildMicButton(isDark),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
 
             // حقل النص
             Expanded(child: _buildTextField(isDark)),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
 
             // زر الإرسال
             _buildSendButton(isDark),
@@ -147,7 +147,7 @@ class _AiChatInputState extends State<AiChatInput> {
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
+            horizontal: AlhaiSpacing.md,
             vertical: 10,
           ),
           isDense: true,

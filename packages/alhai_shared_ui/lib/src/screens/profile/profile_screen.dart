@@ -155,7 +155,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         // Profile header card
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
@@ -180,7 +180,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(
                 userName,
                 style: TextStyle(
@@ -193,21 +193,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 _translateRole(userRole),
                 style: TextStyle(color: isDark ? Colors.white70 : Colors.white.withValues(alpha: 0.7)),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               _isLoading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _StatBadge(icon: Icons.receipt_long, value: _salesCount.toString(), label: l10n.transactionUnit),
-                        const SizedBox(width: 24),
+                        SizedBox(width: AlhaiSpacing.lg),
                         _StatBadge(icon: Icons.calendar_today, value: _daysActive.toString(), label: l10n.dayUnit),
                       ],
                     ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Personal info section
         Text(
@@ -217,7 +217,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
@@ -257,7 +257,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
 
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Security section
         Text(
@@ -267,7 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
@@ -299,7 +299,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
 
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Logout button
         SizedBox(
@@ -310,7 +310,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             label: Text(l10n.logoutButton, style: const TextStyle(color: AppColors.error)),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
             ),
           ),
         ),

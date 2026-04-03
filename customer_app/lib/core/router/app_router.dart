@@ -1,240 +1,180 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Customer App Router Configuration
-/// 
-/// Routes reference: See PRD_FINAL.md for complete route dictionary
+import '../../features/auth/screens/splash_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/otp_screen.dart';
+import '../../features/home/screens/home_screen.dart';
+import '../../features/catalog/screens/catalog_screen.dart';
+import '../../features/catalog/screens/product_detail_screen.dart';
+import '../../features/search/screens/search_screen.dart';
+import '../../features/cart/screens/cart_screen.dart';
+import '../../features/checkout/screens/checkout_screen.dart';
+import '../../features/orders/screens/orders_screen.dart';
+import '../../features/orders/screens/order_detail_screen.dart';
+import '../../features/tracking/screens/order_tracking_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../features/addresses/screens/addresses_screen.dart';
+import '../../features/settings/screens/settings_screen.dart';
+import '../../features/stores/screens/nearby_stores_screen.dart';
+import '../../shared/widgets/bottom_nav_shell.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
 class AppRouter {
   AppRouter._();
 
   static final router = GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: true,
     routes: [
       // ==========================================
-      // 🏠 HOME & ONBOARDING
+      // Auth routes (no bottom nav)
       // ==========================================
       GoRoute(
         path: '/',
         name: 'splash',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Splash'),
+        builder: (context, state) => const SplashScreen(),
       ),
-      GoRoute(
-        path: '/onboarding',
-        name: 'onboarding',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Onboarding'),
-      ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Home'),
-      ),
-
-      // ==========================================
-      // 🔐 AUTH
-      // ==========================================
       GoRoute(
         path: '/auth/login',
         name: 'login',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Login'),
-      ),
-      GoRoute(
-        path: '/auth/register',
-        name: 'register',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Register'),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: '/auth/otp',
         name: 'otp',
-        builder: (context, state) => const _PlaceholderScreen(title: 'OTP Verification'),
+        builder: (context, state) {
+          final phone = state.extra as String? ?? '';
+          return OtpScreen(phone: phone);
+        },
       ),
 
       // ==========================================
-      // 🛒 CATALOG & PRODUCTS
+      // Main app with bottom navigation
+      // ==========================================
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return _MainShell(navigationShell: navigationShell);
+        },
+        branches: [
+          // Tab 0: Home
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: 'home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          // Tab 1: Orders
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/orders',
+                name: 'orders',
+                builder: (context, state) => const OrdersScreen(),
+              ),
+            ],
+          ),
+          // Tab 2: Cart
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/cart',
+                name: 'cart',
+                builder: (context, state) => const CartScreen(),
+              ),
+            ],
+          ),
+          // Tab 3: Profile
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // ==========================================
+      // Full-screen routes (on top of bottom nav)
       // ==========================================
       GoRoute(
         path: '/catalog',
         name: 'catalog',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Catalog'),
+        builder: (context, state) => const CatalogScreen(),
       ),
       GoRoute(
         path: '/products/:id',
         name: 'productDetails',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'Product ${state.pathParameters['id']}',
+        builder: (context, state) => ProductDetailScreen(
+          productId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: '/search',
         name: 'search',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Search'),
-      ),
-
-      // ==========================================
-      // 🛍️ CART & CHECKOUT
-      // ==========================================
-      GoRoute(
-        path: '/cart',
-        name: 'cart',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Cart'),
+        builder: (context, state) => const SearchScreen(),
       ),
       GoRoute(
         path: '/checkout',
         name: 'checkout',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Checkout'),
-      ),
-      GoRoute(
-        path: '/checkout/payment',
-        name: 'payment',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Payment'),
-      ),
-
-      // ==========================================
-      // 📦 ORDERS
-      // ==========================================
-      GoRoute(
-        path: '/orders',
-        name: 'orders',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Orders'),
+        builder: (context, state) => const CheckoutScreen(),
       ),
       GoRoute(
         path: '/orders/:id',
         name: 'orderDetails',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'Order ${state.pathParameters['id']}',
+        builder: (context, state) => OrderDetailScreen(
+          orderId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: '/orders/:id/track',
         name: 'trackOrder',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'Track Order ${state.pathParameters['id']}',
+        builder: (context, state) => OrderTrackingScreen(
+          orderId: state.pathParameters['id']!,
         ),
-      ),
-
-      // ==========================================
-      // 👤 PROFILE
-      // ==========================================
-      GoRoute(
-        path: '/profile',
-        name: 'profile',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Profile'),
       ),
       GoRoute(
         path: '/profile/addresses',
         name: 'addresses',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Addresses'),
+        builder: (context, state) => const AddressesScreen(),
       ),
       GoRoute(
         path: '/profile/settings',
         name: 'settings',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Settings'),
-      ),
-
-      // ==========================================
-      // 🏪 STORE
-      // ==========================================
-      GoRoute(
-        path: '/store/:id',
-        name: 'storeDetails',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'Store ${state.pathParameters['id']}',
-        ),
+        builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
         path: '/stores/nearby',
         name: 'nearbyStores',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Nearby Stores'),
+        builder: (context, state) => const NearbyStoresScreen(),
       ),
     ],
   );
 }
 
-/// L78: Placeholder screen for routes that haven't been implemented yet.
-/// Shows a branded "Coming Soon" UI with app icon, title, and status indicator.
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
+/// Main shell with bottom navigation.
+class _MainShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
 
-  const _PlaceholderScreen({required this.title});
+  const _MainShell({required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.storefront_rounded,
-                  size: 48,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                title,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.amber.withValues(alpha: 0.15)
-                      : Colors.amber.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.construction_rounded,
-                      size: 18,
-                      color: Colors.amber.shade700,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'قريباً - قيد التطوير',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.amber.shade700,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'هذه الشاشة قيد التطوير وستكون متاحة قريباً',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      body: navigationShell,
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) => navigationShell.goBranch(
+          index,
+          initialLocation: index == navigationShell.currentIndex,
         ),
       ),
     );

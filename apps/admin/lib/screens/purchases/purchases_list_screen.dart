@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/purchases_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Purchases List Screen - شاشة قائمة طلبات الشراء
 class PurchasesListScreen extends ConsumerStatefulWidget {
@@ -34,19 +35,20 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
     super.dispose();
   }
 
-  /// Returns the Arabic label for each tab
+  /// Returns the localized label for each tab
   String _tabLabel(String key) {
+    final l10n = AppLocalizations.of(context);
     switch (key) {
       case 'all':
-        return 'الكل';
+        return l10n.statusAll;
       case 'draft':
-        return 'مسودة';
+        return l10n.statusDraft;
       case 'sent':
-        return 'مُرسل';
+        return l10n.statusSent;
       case 'approved':
-        return 'موافق';
+        return l10n.statusApprovedShort;
       case 'received':
-        return 'مستلم';
+        return l10n.statusReceived;
       default:
         return key;
     }
@@ -70,19 +72,20 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
     }
   }
 
-  /// Returns the Arabic label for a status
-  static String statusLabel(String status) {
+  /// Returns the localized label for a status
+  static String statusLabel(String status, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case 'draft':
-        return 'مسودة';
+        return l10n.statusDraft;
       case 'sent':
-        return 'مُرسل';
+        return l10n.statusSent;
       case 'approved':
-        return 'موافق';
+        return l10n.statusApprovedShort;
       case 'received':
-        return 'مستلم';
+        return l10n.statusReceived;
       case 'completed':
-        return 'مكتمل';
+        return l10n.statusCompleted;
       default:
         return status;
     }
@@ -98,7 +101,7 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
     return Column(
       children: [
         AppHeader(
-          title: 'طلبات الشراء',
+          title: l10n.purchaseOrders,
           onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () =>
               context.push(AppRoutes.notificationsCenter),
@@ -158,7 +161,7 @@ class _AllPurchasesTab extends ConsumerWidget {
     final asyncPurchases = ref.watch(purchasesListProvider);
     return asyncPurchases.when(
       loading: () => const Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(AlhaiSpacing.md),
         child: ShimmerList(itemCount: 6, itemHeight: 72),
       ),
       error: (e, _) => _ErrorView(error: e.toString()),
@@ -197,7 +200,7 @@ class _FilteredPurchasesTab extends ConsumerWidget {
     final asyncPurchases = ref.watch(purchasesByStatusProvider(status));
     return asyncPurchases.when(
       loading: () => const Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(AlhaiSpacing.md),
         child: ShimmerList(itemCount: 6, itemHeight: 72),
       ),
       error: (e, _) => _ErrorView(error: e.toString()),
@@ -245,7 +248,7 @@ class _PurchasesContent extends StatelessWidget {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             icon: const Icon(Icons.add),
-            label: const Text('طلب شراء جديد'),
+            label: Text(AppLocalizations.of(context).newPurchaseOrder),
             onPressed: () => context.go(AppRoutes.purchaseForm),
           ),
         ),
@@ -257,7 +260,7 @@ class _PurchasesContent extends StatelessWidget {
     final dateFormat = DateFormat('yyyy/MM/dd', 'ar');
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -274,12 +277,12 @@ class _PurchasesContent extends StatelessWidget {
             headingRowColor: WidgetStateProperty.all(
               isDark ? const Color(0xFF0F172A) : AppColors.grey50,
             ),
-            columns: const [
-              DataColumn(label: Text('رقم الطلب')),
-              DataColumn(label: Text('المورد')),
-              DataColumn(label: Text('الحالة')),
-              DataColumn(label: Text('الإجمالي')),
-              DataColumn(label: Text('التاريخ')),
+            columns: [
+              DataColumn(label: Text(AppLocalizations.of(context).orderNumberColumn)),
+              DataColumn(label: Text(AppLocalizations.of(context).supplierInfoLabel)),
+              DataColumn(label: Text(AppLocalizations.of(context).statusColumn)),
+              DataColumn(label: Text(AppLocalizations.of(context).totalLabel)),
+              DataColumn(label: Text(AppLocalizations.of(context).dateLabel)),
             ],
             rows: purchases.map((p) {
               return DataRow(
@@ -306,7 +309,7 @@ class _PurchasesContent extends StatelessWidget {
                     isDark: isDark,
                   )),
                   DataCell(Text(
-                    '${p.total.toStringAsFixed(2)} ر.س',
+                    AppLocalizations.of(context).amountSar(p.total.toStringAsFixed(2)),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: isDark
@@ -337,13 +340,13 @@ class _PurchasesContent extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 80),
       itemCount: purchases.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
       itemBuilder: (context, index) {
         final p = purchases[index];
         return GestureDetector(
           onTap: () => context.go(AppRoutes.purchaseDetailPath(p.id)),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -375,7 +378,7 @@ class _PurchasesContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 // Supplier
                 Row(
                   children: [
@@ -397,13 +400,13 @@ class _PurchasesContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 // Bottom row: total + date
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${p.total.toStringAsFixed(2)} ر.س',
+                      AppLocalizations.of(context).amountSar(p.total.toStringAsFixed(2)),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -442,7 +445,7 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _PurchasesListScreenState.statusColor(status);
-    final label = _PurchasesListScreenState.statusLabel(status);
+    final label = _PurchasesListScreenState.statusLabel(status, context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -469,34 +472,14 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 64,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.3)
-                : AppColors.textTertiary,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'لا توجد طلبات شراء',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: () => context.go(AppRoutes.purchaseForm),
-            icon: const Icon(Icons.add),
-            label: const Text('إنشاء طلب شراء'),
-          ),
-        ],
-      ),
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
+      icon: Icons.shopping_cart_outlined,
+      title: l10n.noPurchaseOrders,
+      description: l10n.createPurchaseToStart,
+      actionText: l10n.createPurchaseOrder,
+      onAction: () => context.go(AppRoutes.purchaseForm),
+      actionIcon: Icons.add,
     );
   }
 }
@@ -512,21 +495,21 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
-              'حدث خطأ في تحميل البيانات',
+              AppLocalizations.of(context).errorLoadingData,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               error,
               textAlign: TextAlign.center,

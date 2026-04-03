@@ -33,7 +33,7 @@ class WhatIfPanel extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -57,7 +57,7 @@ class WhatIfPanel extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -96,7 +96,7 @@ class WhatIfPanel extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // الخصم
           _buildSliderSection(
@@ -110,7 +110,7 @@ class WhatIfPanel extends StatelessWidget {
             onChanged: onDiscountChanged,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // تغيير السعر
           _buildSliderSection(
@@ -124,13 +124,13 @@ class WhatIfPanel extends StatelessWidget {
             onChanged: onPriceChanged,
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // النتيجة
           if (isLoading)
             const Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(AlhaiSpacing.md),
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             )
@@ -166,7 +166,7 @@ class WhatIfPanel extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -182,7 +182,7 @@ class WhatIfPanel extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         SliderTheme(
           data: SliderThemeData(
             activeTrackColor: color,
@@ -260,7 +260,7 @@ class WhatIfPanel extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // التغيير
           Row(
@@ -286,7 +286,7 @@ class WhatIfPanel extends StatelessWidget {
           ),
 
           if (result.explanation.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               result.explanation,
               textAlign: TextAlign.center,
@@ -318,7 +318,7 @@ class WhatIfPanel extends StatelessWidget {
             color: isDark ? Colors.white54 : AppColors.textSecondary,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         Text(
           value,
           style: TextStyle(

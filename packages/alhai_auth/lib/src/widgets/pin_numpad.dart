@@ -33,9 +33,9 @@ class PinDisplay extends StatelessWidget {
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          width: 56,
-          height: 64,
+          margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+          width: AlhaiSpacing.huge,
+          height: AlhaiSpacing.massive,
           decoration: BoxDecoration(
             color: isFilled
                 ? (hasError ? AppColors.error.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1))
@@ -65,8 +65,8 @@ class PinDisplay extends StatelessWidget {
             child: isFilled
                 ? (obscure
                     ? Container(
-                        width: 16,
-                        height: 16,
+                        width: AlhaiSpacing.md,
+                        height: AlhaiSpacing.md,
                         decoration: BoxDecoration(
                           color: hasError ? AppColors.error : AppColors.primary,
                           shape: BoxShape.circle,
@@ -112,15 +112,15 @@ class PinNumpad extends StatelessWidget {
       children: [
         // الصف الأول: 1 2 3
         _buildRow(['1', '2', '3']),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // الصف الثاني: 4 5 6
         _buildRow(['4', '5', '6']),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // الصف الثالث: 7 8 9
         _buildRow(['7', '8', '9']),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // الصف الرابع: Biometric 0 Backspace
         Row(
@@ -134,9 +134,9 @@ class PinNumpad extends StatelessWidget {
                 isSpecial: true,
               )
             else
-              const SizedBox(width: 80),
+              const SizedBox(width: AlhaiSpacing.avatarXl),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
 
             // زر 0
             _NumpadButton(
@@ -144,7 +144,7 @@ class PinNumpad extends StatelessWidget {
               onPressed: enabled ? () => onKeyPressed('0') : null,
             ),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
 
             // زر الحذف
             _NumpadButton(
@@ -164,7 +164,7 @@ class PinNumpad extends StatelessWidget {
       children: keys.asMap().entries.map((entry) {
         return Padding(
           padding: EdgeInsetsDirectional.only(
-            start: entry.key > 0 ? 16 : 0,
+            start: entry.key > 0 ? AlhaiSpacing.md : 0,
           ),
           child: _NumpadButton(
             text: entry.value,
@@ -248,8 +248,8 @@ class _NumpadButtonState extends State<_NumpadButton>
           );
         },
         child: Container(
-          width: 80,
-          height: 80,
+          width: AlhaiSpacing.avatarXl,
+          height: AlhaiSpacing.avatarXl,
           decoration: BoxDecoration(
             color: widget.isSpecial
                 ? AppColors.backgroundSecondary
@@ -389,8 +389,8 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: 400,
-        padding: const EdgeInsets.all(32),
+        width: AlhaiSpacing.dialogMaxWidth,
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -407,7 +407,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
           children: [
             // أيقونة القفل
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
@@ -419,7 +419,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // العنوان
             const Text(
@@ -431,7 +431,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
 
             // الوصف
             Text(
@@ -443,7 +443,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // عرض PIN
             PinDisplay(
@@ -453,7 +453,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
 
             // رسالة الخطأ
             if (_errorMessage != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Text(
                 _errorMessage!,
                 style: const TextStyle(
@@ -463,7 +463,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               ),
             ],
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
 
             // لوحة الأرقام
             PinNumpad(
@@ -472,7 +472,7 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
               enabled: !_isVerifying,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // زر الإلغاء
             TextButton(
@@ -581,9 +581,9 @@ class _PinInputFieldState extends State<PinInputField> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(widget.length, (index) {
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          width: 56,
-          height: 64,
+          margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+          width: AlhaiSpacing.huge,
+          height: AlhaiSpacing.massive,
           child: KeyboardListener(
             focusNode: FocusNode(),
             onKeyEvent: (event) => _onKeyDown(index, event),

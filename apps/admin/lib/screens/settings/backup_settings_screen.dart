@@ -6,6 +6,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات النسخ الاحتياطي
 const String _kBackupAutoEnabled = 'backup_auto_enabled';
@@ -124,7 +125,7 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildGroup(l10n.autoBackup, [
         SwitchListTile(
-          secondary: Container(padding: const EdgeInsets.all(8),
+          secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: const Icon(Icons.backup_rounded, color: AppColors.primary, size: 20)),
           title: Text(l10n.autoBackup, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -172,14 +173,14 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface))),
         ...children,
@@ -190,7 +191,7 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
   Widget _tile(IconData icon, String title, String? subtitle, bool isDark,
       {Widget? trailing, VoidCallback? onTap}) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(8),
+      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: AppColors.primary, size: 20)),
       title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -204,7 +205,7 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
 
   Widget _historyItem(String type, String date, String size, bool success, bool isDark) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(8),
+      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: (success ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8)),

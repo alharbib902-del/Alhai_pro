@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
 
@@ -64,15 +66,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ).get();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         setState(() {
-          _employees = users.map((u) => _EmployeeOption(id: u.id, name: u.name.isNotEmpty ? u.name : (u.phone ?? 'موظف'))).toList();
+          _employees = users.map((u) => _EmployeeOption(id: u.id, name: u.name.isNotEmpty ? u.name : (u.phone ?? l10n.employeeFallback))).toList();
           _records = shifts.map((row) {
             final openedAt = _parseDate(row.data['opened_at']);
             final closedAt = _parseDate(row.data['closed_at']);
             final duration = closedAt.difference(openedAt);
             return _AttendanceRecord(
               employeeId: row.data['cashier_id'] as String,
-              employeeName: row.data['employee_name'] as String? ?? 'موظف',
+              employeeName: row.data['employee_name'] as String? ?? l10n.employeeFallback,
               checkIn: openedAt,
               checkOut: closedAt,
               duration: duration,
@@ -102,9 +105,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
   String _formatDuration(Duration? d) {
     if (d == null) return '--';
-    final h = d.inHours;
-    final m = d.inMinutes.remainder(60);
-    return '$hس $mد';
+    final l10n = AppLocalizations.of(context)!;
+    return l10n.hoursMinutes(d.inHours, d.inMinutes.remainder(60));
   }
 
   Future<void> _selectDate() async {
@@ -123,12 +125,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final presentCount = _records.where((r) => r.checkIn != null).length;
     final absentCount = (_employees.length - presentCount).clamp(0, _employees.length);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('حضور وانصراف الموظفين'),
+        title: Text(l10n.employeeAttendance),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today_rounded),
@@ -145,7 +148,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           // Date banner
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
             color: theme.colorScheme.primaryContainer,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -156,7 +159,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     children: [
                       Icon(Icons.calendar_today_rounded,
                           size: 18, color: theme.colorScheme.onPrimaryContainer),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                         style: TextStyle(
@@ -170,9 +173,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                 ),
                 Row(
                   children: [
-                    _AttBadge(label: 'حاضر', count: presentCount, color: AppColors.success),
-                    const SizedBox(width: 8),
-                    _AttBadge(label: 'غائب', count: absentCount, color: AppColors.error),
+                    _AttBadge(label: l10n.presentLabel, count: presentCount, color: AppColors.success),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    _AttBadge(label: l10n.absentLabel, count: absentCount, color: AppColors.error),
                   ],
                 ),
               ],
@@ -182,32 +185,32 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           // Summary row
           if (!_isLoading)
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               child: Row(
                 children: [
                   Expanded(child: _SummaryBox(
-                    label: 'الحضور',
+                    label: l10n.attendanceCount,
                     value: presentCount.toString(),
                     color: AppColors.success,
                   )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _SummaryBox(
-                    label: 'الغياب',
+                    label: l10n.absencesCount,
                     value: absentCount.toString(),
                     color: AppColors.error,
                   )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _SummaryBox(
-                    label: 'متأخر',
+                    label: l10n.lateCount,
                     value: _records
                         .where((r) => r.checkIn != null && r.checkIn!.hour >= 9)
                         .length
                         .toString(),
                     color: AppColors.warning,
                   )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _SummaryBox(
-                    label: 'إجمالي الموظفين',
+                    label: l10n.totalEmployees,
                     value: _employees.length.toString(),
                     color: AppColors.info,
                   )),
@@ -220,24 +223,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _records.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.people_outline, size: 64, color: Theme.of(context).hintColor),
-                            const SizedBox(height: 12),
-                            Text(
-                              'لا يوجد سجلات حضور ليوم '
-                              '${_selectedDate.day}/${_selectedDate.month}',
-                              style: TextStyle(color: Theme.of(context).hintColor),
-                            ),
-                          ],
-                        ),
+                    ? AppEmptyState.noData(
+                        context,
+                        title: l10n.noShifts,
+                        description: l10n.noAttendanceRecordsForDay(_selectedDate.day, _selectedDate.month),
                       )
                     : ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                         itemCount: _records.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 4),
+                        separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xxs),
                         itemBuilder: (ctx, i) {
                           final r = _records[i];
                           final isOpen = r.checkOut == null;
@@ -260,11 +254,11 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               subtitle: Row(
                                 children: [
                                   Icon(Icons.login_rounded, size: 12, color: AppColors.success),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: AlhaiSpacing.xxs),
                                   Text(_formatTime(r.checkIn), style: const TextStyle(fontSize: 12)),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: AlhaiSpacing.sm),
                                   Icon(Icons.logout_rounded, size: 12, color: AppColors.error),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: AlhaiSpacing.xxs),
                                   Text(_formatTime(r.checkOut), style: const TextStyle(fontSize: 12)),
                                 ],
                               ),
@@ -286,7 +280,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         color: AppColors.success.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: Text('يعمل الآن',
+                                      child: Text(l10n.workingNow,
                                           style: TextStyle(fontSize: 10, color: AppColors.success)),
                                     ),
                                 ],

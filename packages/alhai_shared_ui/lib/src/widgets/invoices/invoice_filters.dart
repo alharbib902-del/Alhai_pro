@@ -36,7 +36,7 @@ class InvoiceFilters extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
@@ -50,7 +50,7 @@ class InvoiceFilters extends StatelessWidget {
                       style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
                       dropdownColor: Theme.of(context).colorScheme.surface,
                       items: [
-                        DropdownMenuItem(value: 'all', child: Row(children: [Icon(Icons.filter_list, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textMuted), const SizedBox(width: 8), Text(l10n.statusAll)])),
+                        DropdownMenuItem(value: 'all', child: Row(children: [Icon(Icons.filter_list, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textMuted), SizedBox(width: AlhaiSpacing.xs), Text(l10n.statusAll)])),
                         DropdownMenuItem(value: 'paid', child: Text(l10n.statusPaid)),
                         DropdownMenuItem(value: 'pending', child: Text(l10n.statusPending)),
                       ],
@@ -59,19 +59,19 @@ class InvoiceFilters extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               // Date range inputs
               _dateInput(context, isDark),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               _dateInput(context, isDark),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               OutlinedButton(
                 onPressed: onReset,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.onSurface,
                   side: BorderSide(color: Theme.of(context).dividerColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                 ),
                 child: Text(l10n.resetFilters),
               ),
@@ -93,7 +93,7 @@ class InvoiceFilters extends StatelessWidget {
             ],
           ),
 
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
 
         // Tabs
         SingleChildScrollView(
@@ -101,13 +101,13 @@ class InvoiceFilters extends StatelessWidget {
           child: Row(
             children: [
               _tabBtn(l10n.all, 'all', isDark),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               _tabBtn(l10n.statusPaid, 'paid', isDark),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               _tabBtn(l10n.statusPending, 'pending', isDark),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               _tabBtn(l10n.statusOverdue, 'overdue', isDark),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               _tabBtn(l10n.statusCancelled, 'cancelled', isDark),
             ],
           ),
@@ -125,7 +125,7 @@ class InvoiceFilters extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: AnimatedContainer(
           duration: AlhaiDurations.standard,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 10),
           decoration: BoxDecoration(
             color: isActive ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
@@ -149,7 +149,7 @@ class InvoiceFilters extends StatelessWidget {
       onTap: onViewToggle,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isActive ? (isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
@@ -163,7 +163,7 @@ class InvoiceFilters extends StatelessWidget {
   Widget _dateInput(BuildContext context, bool isDark) {
     return Container(
       width: 140,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -172,7 +172,7 @@ class InvoiceFilters extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.calendar_today, size: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
           Text('2026-02-09', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),

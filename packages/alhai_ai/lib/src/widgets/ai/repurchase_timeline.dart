@@ -25,7 +25,7 @@ class RepurchaseTimeline extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -47,7 +47,7 @@ class RepurchaseTimeline extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.event_repeat_rounded, color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'تذكيرات إعادة الشراء', // Repurchase Reminders
                 style: TextStyle(
@@ -58,7 +58,7 @@ class RepurchaseTimeline extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -75,7 +75,7 @@ class RepurchaseTimeline extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Timeline items
           ...reminders.asMap().entries.map((entry) {
@@ -159,13 +159,13 @@ class _RepurchaseTimelineItem extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
 
             // Content
             Expanded(
               child: Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: reminder.isOverdue
                       ? AppColors.error.withValues(alpha: 0.05)
@@ -194,7 +194,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: AlhaiSpacing.xxxs),
                               Text(
                                 reminder.productName,
                                 style: const TextStyle(
@@ -208,7 +208,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         ),
                         // Status badge
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: reminder.isOverdue
                                 ? AppColors.error.withValues(alpha: 0.1)
@@ -227,7 +227,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
 
                     // Details row
                     Row(
@@ -237,7 +237,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                           size: 14,
                           color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'آخر شراء: منذ ${reminder.daysSinceLastPurchase} يوم', // Last purchase: X days ago
                           style: TextStyle(
@@ -245,13 +245,13 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                             fontSize: 11,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AlhaiSpacing.sm),
                         Icon(
                           Icons.calendar_today_rounded,
                           size: 14,
                           color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           _formatDate(reminder.expectedDate),
                           style: TextStyle(
@@ -262,7 +262,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
 
                     // WhatsApp button
                     if (reminder.phone != null && onWhatsApp != null)

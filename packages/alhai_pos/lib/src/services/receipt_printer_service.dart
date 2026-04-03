@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
 import 'receipt_pdf_generator.dart';
 
@@ -30,7 +31,7 @@ class ReceiptPrinterService {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('الفاتورة غير موجودة'),
+              content: Text(AppLocalizations.of(context).invoiceNotFound),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -53,7 +54,7 @@ class ReceiptPrinterService {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الطباعة: $e'),
+            content: Text(AppLocalizations.of(context).printError('$e')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -102,7 +103,7 @@ class ReceiptPrinterService {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في الطباعة: $e'),
+            content: Text(AppLocalizations.of(context).printError('$e')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -139,7 +140,7 @@ class ReceiptPrinterService {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في المشاركة: $e'),
+            content: Text(AppLocalizations.of(context).shareError('$e')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

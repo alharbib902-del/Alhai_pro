@@ -7,6 +7,8 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../providers/sync_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../widgets/common/app_empty_state.dart';
 
 /// Customer Debt Management Screen
 class CustomerDebtScreen extends ConsumerStatefulWidget {
@@ -128,13 +130,13 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 64, color: colorScheme.error),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.errorOccurred,
                   style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(_loadError!,
                   style: TextStyle(color: colorScheme.onSurfaceVariant)),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               FilledButton.icon(
                 onPressed: _loadData,
                 icon: const Icon(Icons.refresh),
@@ -210,7 +212,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         final isWide = constraints.maxWidth >= 600;
         if (isWide) {
           return Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Expanded(
@@ -222,7 +224,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     color: colorScheme.error,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.warning,
@@ -231,7 +233,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     color: colorScheme.tertiary,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.people,
@@ -246,7 +248,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         }
         // Narrow: vertical stack
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             children: [
               Row(
@@ -260,7 +262,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       color: colorScheme.error,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: _SummaryCard(
                       icon: Icons.warning,
@@ -271,7 +273,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               _SummaryCard(
                 icon: Icons.people,
                 title: l10n.debtorCustomers,
@@ -288,18 +290,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   Widget _buildDebtList(String filter, AppLocalizations l10n, ColorScheme colorScheme) {
     final debts = _getFilteredDebts(filter);
     if (debts.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle,
-                size: 64, color: colorScheme.primary),
-            const SizedBox(height: 16),
-            Text(l10n.noDebts,
-                style: TextStyle(fontSize: 18, color: colorScheme.onSurface)),
-          ],
-        ),
-      );
+      return AppEmptyState.noDebts(context);
     }
 
     return LayoutBuilder(
@@ -336,12 +327,12 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
     final daysLeft = dueDate.difference(DateTime.now()).inDays;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       child: InkWell(
         onTap: () => _showDebtDetails(debt),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -361,7 +352,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment:
@@ -398,7 +389,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: isOverdue
                               ? colorScheme.errorContainer
@@ -429,7 +420,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   children: [
                     Icon(Icons.history,
                         size: 14, color: colorScheme.onSurfaceVariant),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       l10n.lastPaymentDate(
                           _formatDate(debt.lastTransactionAt!)),
@@ -445,7 +436,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       label: Text(l10n.recordPayment),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12),
+                            horizontal: AlhaiSpacing.sm),
                       ),
                     ),
                   ],
@@ -478,13 +469,13 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         expand: false,
         builder: (context, scrollController) => ListView(
           controller: scrollController,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           children: [
             Center(
               child: Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: 24),
+                margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg),
                 decoration: BoxDecoration(
                   color: colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
@@ -499,7 +490,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       debt.name.isNotEmpty ? debt.name[0] : '?',
                       style: const TextStyle(fontSize: 24)),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,9 +510,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: isOverdue
                     ? colorScheme.errorContainer
@@ -549,7 +540,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             _DetailRow(
                 label: l10n.dueDate,
                 value: _formatDate(dueDate)),
@@ -557,7 +548,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               _DetailRow(
                   label: l10n.lastPaymentLabel,
                   value: _formatDate(debt.lastTransactionAt!)),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             Row(
               children: [
                 Expanded(
@@ -567,7 +558,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                     label: Text(l10n.sendReminder),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
@@ -602,7 +593,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
             children: [
               Text(l10n.currentDebt(
                   CurrencyFormatter.formatNumber(debt.balance, decimalDigits: 0))),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
@@ -612,7 +603,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   suffixText: l10n.currencySAR,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
                 initialValue: paymentMethod,
                 decoration: InputDecoration(
@@ -765,7 +756,7 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -774,7 +765,7 @@ class _SummaryCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: color),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
             style: TextStyle(
@@ -803,7 +794,7 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

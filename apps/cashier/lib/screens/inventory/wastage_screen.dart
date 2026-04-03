@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -99,7 +99,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: _buildContent(isWideScreen, isMediumScreen, colorScheme, l10n),
           ),
         ),
@@ -124,25 +124,25 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
               children: [
                 _buildSearchCard(colorScheme, l10n),
                 if (_searchResults.isNotEmpty && _selectedProduct == null)
-                  ...[const SizedBox(height: 16), _buildSearchResults(colorScheme, l10n)],
+                  ...[const SizedBox(height: AlhaiSpacing.md), _buildSearchResults(colorScheme, l10n)],
                 if (_selectedProduct != null)
-                  ...[const SizedBox(height: 16), _buildSelectedCard(colorScheme, l10n)],
-                const SizedBox(height: 24),
+                  ...[const SizedBox(height: AlhaiSpacing.md), _buildSelectedCard(colorScheme, l10n)],
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildQuantityCard(colorScheme, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildReasonCard(colorScheme, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildPhotoCard(colorScheme, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildNoteCard(colorScheme, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(colorScheme, l10n),
               ],
             ),
@@ -156,18 +156,18 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       children: [
         _buildSearchCard(colorScheme, l10n),
         if (_searchResults.isNotEmpty && _selectedProduct == null)
-          ...[const SizedBox(height: 12), _buildSearchResults(colorScheme, l10n)],
+          ...[const SizedBox(height: AlhaiSpacing.sm), _buildSearchResults(colorScheme, l10n)],
         if (_selectedProduct != null)
-          ...[const SizedBox(height: 12), _buildSelectedCard(colorScheme, l10n)],
-        SizedBox(height: isMediumScreen ? 24 : 16),
+          ...[const SizedBox(height: AlhaiSpacing.sm), _buildSelectedCard(colorScheme, l10n)],
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildReasonCard(colorScheme, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildPhotoCard(colorScheme, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildNoteCard(colorScheme, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(colorScheme, l10n),
       ],
     );
@@ -175,7 +175,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
   Widget _buildSearchCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -187,7 +187,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -195,13 +195,13 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 child: const Icon(Icons.delete_outline_rounded,
                     color: AppColors.error, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.searchProduct,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: colorScheme.onSurface)),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -228,13 +228,13 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: AppColors.primary, width: 2),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               SizedBox(
-                height: 56,
+                height:56,
                 child: FilledButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -275,7 +275,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
               _searchResults = [];
             }),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(
                     color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
@@ -307,7 +307,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Row(
         children: [
           const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 22),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +331,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
   Widget _buildQuantityCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -343,7 +343,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           Text('Quantity Wasted',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
@@ -356,7 +356,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
               hintStyle: TextStyle(color: colorScheme.outline,
                   fontSize: 28, fontWeight: FontWeight.bold),
               prefixIcon: const Padding(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(Icons.delete_rounded, size: 28, color: AppColors.error),
               ),
               border: OutlineInputBorder(
@@ -389,7 +389,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -401,7 +401,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -409,13 +409,13 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 child: const Icon(Icons.list_alt_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.reason,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: colorScheme.onSurface)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -463,7 +463,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
   Widget _buildPhotoCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -475,7 +475,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           Text('Photo',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           InkWell(
             onTap: () {
               setState(() => _hasPhoto = !_hasPhoto);
@@ -501,7 +501,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                         children: [
                           Icon(Icons.check_circle_rounded,
                               color: AppColors.success, size: 32),
-                          SizedBox(height: 8),
+                          SizedBox(height: AlhaiSpacing.xs),
                           Text('Photo attached',
                               style: TextStyle(fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -515,7 +515,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                         children: [
                           Icon(Icons.camera_alt_outlined, size: 32,
                               color: colorScheme.outline),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Text('Tap to take photo',
                               style: TextStyle(fontSize: 13,
                                   color: colorScheme.outline)),
@@ -524,7 +524,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                     ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text('Optional',
               style: TextStyle(fontSize: 11, color: colorScheme.outline)),
         ],
@@ -534,7 +534,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
   Widget _buildNoteCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -546,7 +546,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           Text(l10n.noteLabel,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           TextField(
             controller: _noteController,
             maxLines: 3,
@@ -568,7 +568,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -593,7 +593,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.error,
           foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),

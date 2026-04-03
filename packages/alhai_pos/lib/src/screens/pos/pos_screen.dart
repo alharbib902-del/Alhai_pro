@@ -43,7 +43,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   int _orderCounter = 1;
   late String _dateSubtitle;
 
-  /// Bug 2: يمنع التنقل أثناء حفظ البيع
+  /// Bug 2 fix: tracks sale processing for loading overlay (no longer blocks navigation)
   bool _isProcessingSale = false;
 
   /// Bug 3: يمنع مسح الباركود أثناء فتح نافذة الدفع
@@ -280,7 +280,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               children: [
                 // Drag handle
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
@@ -316,26 +316,44 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => PopScope(
-          canPop: !_isProcessingSale,
-          child: Dialog(
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setDialogState) => Dialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
-              child: InlinePayment(
-                total: total,
-                storeId: ref.read(currentStoreIdProvider) ?? '',
-                onCancel: () {
-                  if (!_isProcessingSale) {
-                    Navigator.pop(ctx);
-                  }
-                },
-                onComplete: (result) async {
-                  // Bug 2: حفظ البيع أولاً ثم إغلاق النافذة
-                  await _handlePaymentComplete(result);
-                  if (ctx.mounted) Navigator.pop(ctx);
-                },
+              child: Stack(
+                children: [
+                  InlinePayment(
+                    total: total,
+                    storeId: ref.read(currentStoreIdProvider) ?? '',
+                    onCancel: () {
+                      if (!_isProcessingSale) {
+                        Navigator.pop(ctx);
+                      }
+                    },
+                    onComplete: (result) async {
+                      // Bug 2 fix: show loading overlay, don't block navigation
+                      setState(() => _isProcessingSale = true);
+                      setDialogState(() {});
+                      await _handlePaymentComplete(result);
+                      if (ctx.mounted) Navigator.pop(ctx);
+                    },
+                  ),
+                  // Bug 2 fix: loading overlay during sale processing
+                  if (_isProcessingSale)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -352,41 +370,61 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         backgroundColor: Colors.transparent,
         builder: (ctx) {
           final colorScheme = Theme.of(ctx).colorScheme;
-          return PopScope(
-            canPop: !_isProcessingSale,
-            child: Container(
+          return StatefulBuilder(
+            builder: (ctx, setSheetState) => Container(
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(24)),
             ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            child: Stack(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.outlineVariant,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    InlinePayment(
+                      total: total,
+                      storeId: ref.read(currentStoreIdProvider) ?? '',
+                      onCancel: () {
+                        if (!_isProcessingSale) {
+                          Navigator.pop(ctx);
+                        }
+                      },
+                      onComplete: (result) async {
+                        // Bug 2 fix: show loading overlay, don't block navigation
+                        setState(() => _isProcessingSale = true);
+                        setSheetState(() {});
+                        await _handlePaymentComplete(result);
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                    ),
+                  ],
+                ),
+                // Bug 2 fix: loading overlay during sale processing
+                if (_isProcessingSale)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(24),
+                        ),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                   ),
-                ),
-                InlinePayment(
-                  total: total,
-                  storeId: ref.read(currentStoreIdProvider) ?? '',
-                  onCancel: () {
-                    if (!_isProcessingSale) {
-                      Navigator.pop(ctx);
-                    }
-                  },
-                  onComplete: (result) async {
-                    // Bug 2: حفظ البيع أولاً ثم إغلاق النافذة
-                    await _handlePaymentComplete(result);
-                    if (ctx.mounted) Navigator.pop(ctx);
-                  },
-                ),
               ],
             ),
           ),
@@ -399,7 +437,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   Future<void> _handlePaymentComplete(PaymentResult result) async {
-    setState(() => _isProcessingSale = true);
+    // Note: _isProcessingSale is set by the caller (dialog/sheet) before calling this
 
     try {
       final cartState = ref.read(cartStateProvider);
@@ -490,15 +528,15 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           context: context,
           builder: (ctx) => AlertDialog(
             icon: const Icon(Icons.error_outline, color: AppColors.error, size: 40),
-            title: const Text('فشل حفظ البيع'),
+            title: Text(AppLocalizations.of(context)!.saleSaveFailed),
             content: Text(
-              'حدث خطأ أثناء حفظ عملية البيع. السلة لم تُمسح.\n\n$e',
+              AppLocalizations.of(context)!.errorSavingSaleMessage(e.toString()),
               textDirection: TextDirection.rtl,
             ),
             actions: [
               ElevatedButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('حسناً'),
+                child: Text(AppLocalizations.of(context)!.ok),
               ),
             ],
           ),
@@ -793,7 +831,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                   fontSize: 14,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               TextField(
                 controller: controller,
                 autofocus: true,
@@ -897,7 +935,7 @@ class _PosShortcutsOverlay extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 360),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -917,14 +955,14 @@ class _PosShortcutsOverlay extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     ...shortcuts.map((s) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
                       child: Row(
                         children: [
                           Container(
                             width: 72,
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                             decoration: BoxDecoration(
                               color: colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(6),
@@ -941,7 +979,7 @@ class _PosShortcutsOverlay extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AlhaiSpacing.sm),
                           Expanded(
                             child: Text(
                               s.label,
@@ -951,7 +989,7 @@ class _PosShortcutsOverlay extends StatelessWidget {
                         ],
                       ),
                     )),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'F1 ${l10n.help}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

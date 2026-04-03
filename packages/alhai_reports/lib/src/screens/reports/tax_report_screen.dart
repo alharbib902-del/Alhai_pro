@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة تقرير الضرائب
@@ -184,9 +184,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Text(_error!),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               ElevatedButton(
                 onPressed: _loadTaxData,
                 child: Text(l10n.retryAction),
@@ -207,7 +207,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -227,13 +227,13 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                 _loadTaxData();
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // ملخص الضريبة
             Card(
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [AlhaiColors.successDark, AlhaiColors.success]),
                   borderRadius: BorderRadius.circular(12),
@@ -242,32 +242,32 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(l10n.netTaxDue, style: const TextStyle(color: Colors.white70)),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text('${_netTax.toStringAsFixed(2)} ${l10n.sar}', style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text('${DateTime.now().month}/${DateTime.now().year}', style: const TextStyle(color: Colors.white70)),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // تفاصيل
             Row(
               children: [
                 Expanded(child: _DetailCard(title: l10n.salesTaxCollected, subtitle: l10n.salesTaxSubtitle, value: _salesTax.toStringAsFixed(2), color: AlhaiColors.info)),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: _DetailCard(title: l10n.purchasesTaxPaid, subtitle: l10n.purchasesTaxSubtitle, value: _purchasesTax.toStringAsFixed(2), color: Colors.orange)),
               ],
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // تفاصيل الضريبة حسب طريقة الدفع
             if (_taxByPayment.isNotEmpty) ...[
               Text(l10n.taxByPaymentMethod, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Card(
                 child: Column(
                   children: _taxByPayment.map((item) => _TaxRow(
@@ -276,12 +276,12 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                   )).toList(),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
             ],
 
             // جدول التفاصيل
             Text(l10n.taxDetailsTitle, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Card(
               child: Column(
                 children: [
@@ -298,17 +298,17 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // معلومات ZATCA
             Card(
               color: AlhaiColors.info.withValues(alpha: 0.1),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Row(
                   children: [
                     Icon(Icons.info_outline, color: AlhaiColors.info),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +323,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // أزرار الإجراءات
             Row(
@@ -339,7 +339,7 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                     label: Text(l10n.historyAction),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
@@ -409,13 +409,13 @@ class _DetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
             Text(subtitle, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text('$value ${AppLocalizations.of(context)!.sar}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
@@ -432,7 +432,7 @@ class _TaxRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

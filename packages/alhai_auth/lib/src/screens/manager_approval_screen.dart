@@ -6,7 +6,7 @@ import '../security/pin_service.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiContextExtensions;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiContextExtensions, AlhaiSpacing;
 import '../providers/auth_providers.dart';
 
 /// وضع الشاشة: إعداد أو تحقق أو حوار موافقة
@@ -117,7 +117,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           ],
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: child,
         ),
       ),
@@ -140,7 +140,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           ),
           child: Icon(Icons.lock_outline, size: 40, color: Colors.green.shade700),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         Text(
           _isSettingUp ? l10n.confirmPin : l10n.createNewPin,
           style: TextStyle(
@@ -149,28 +149,28 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             color: isDark ? Colors.white : null,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(
           _isSettingUp ? l10n.reenterPinToConfirm : l10n.enterFourDigitPin,
           style: TextStyle(color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AlhaiSpacing.xl),
         _buildPinDots(
           currentPin: _isSettingUp ? _confirmPin : _setupPin,
           color: Colors.green,
         ),
         if (_error != null) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(_error!, style: const TextStyle(color: Colors.red)),
         ],
-        const SizedBox(height: 32),
+        const SizedBox(height: AlhaiSpacing.xl),
         _buildKeypad(isSetup: true),
         if (_isLoading) ...[
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           const CircularProgressIndicator(),
         ],
         if (_isDialogMode) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextButton(
             onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
             child: Text(
@@ -227,7 +227,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           ),
           child: Icon(Icons.admin_panel_settings, size: 40, color: Colors.blue.shade700),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         Text(
           l10n.enterManagerPin,
           style: TextStyle(
@@ -236,26 +236,26 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             color: isDark ? Colors.white : null,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(
           widget.action ?? l10n.operationRequiresApproval,
           style: TextStyle(color: isDark ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AlhaiSpacing.xl),
         _buildPinDots(currentPin: _pin, color: Colors.blue),
         if (_error != null) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(_error!, style: const TextStyle(color: Colors.red)),
         ],
-        const SizedBox(height: 32),
+        const SizedBox(height: AlhaiSpacing.xl),
         _buildKeypad(isSetup: false),
         if (_isLoading) ...[
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           const CircularProgressIndicator(),
         ],
         if (_isDialogMode) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextButton(
             onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
             child: Text(
@@ -304,7 +304,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         return Container(
           width: 50,
           height: 60,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
+          margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: index < currentPin.length ? color : Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
@@ -333,8 +333,8 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
+          mainAxisSpacing: AlhaiSpacing.sm,
+          crossAxisSpacing: AlhaiSpacing.sm,
           childAspectRatio: 1.2,
         ),
         itemCount: 12,

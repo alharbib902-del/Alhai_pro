@@ -11,6 +11,7 @@ import '../../providers/returns_providers.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../services/manager_approval_service.dart';
 import 'refund_request_screen.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 const _uuid = Uuid();
 
@@ -75,7 +76,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
           // Refund summary banner
           Container(
             margin: EdgeInsets.all(padding),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -84,7 +85,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             child: Row(
               children: [
                 const Icon(Icons.receipt_long, color: AppColors.warning),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +113,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                   AppLocalizations.of(context)!.selectRefundReason,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
 
                 // Reason options
                 ...List.generate(_getReasons(context).length, (index) {
@@ -120,7 +121,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                   final isSelected = _selectedReason == reason['id'];
 
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
+                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                     color: isSelected ? AppColors.info.withValues(alpha: 0.1) : null,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -151,14 +152,14 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                   );
                 }),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
 
                 // Notes
                 Text(
                   AppLocalizations.of(context)!.additionalNotesOptional,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
@@ -191,7 +192,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                     : const AdaptiveIcon(Icons.arrow_forward),
                 label: Text(_isProcessing ? AppLocalizations.of(context)!.processingAction : AppLocalizations.of(context)!.nextSupervisorApproval),
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 ),
               ),
             ),

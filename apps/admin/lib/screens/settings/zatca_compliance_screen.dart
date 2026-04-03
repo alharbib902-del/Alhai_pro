@@ -6,6 +6,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات ZATCA
 const String _kZatcaEInvoicing = 'zatca_e_invoicing';
@@ -127,7 +128,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Status
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(16),
@@ -135,7 +136,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
         ),
         child: Row(children: [
           const Icon(Icons.verified_rounded, color: AppColors.success, size: 24),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l10n.zatcaRegistered, style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold)),
             Text(l10n.zatcaPhase2Active, style: TextStyle(color: AppColors.success.withValues(alpha: 0.8), fontSize: 12)),
@@ -143,7 +144,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
         ]),
       ),
 
-      const SizedBox(height: 24),
+      const SizedBox(height: AlhaiSpacing.lg),
 
       // Registration info
       _buildGroup(l10n.registrationInfo, [
@@ -158,7 +159,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
       // E-invoicing
       _buildGroup(l10n.eInvoicing, [
         SwitchListTile(
-          secondary: Container(padding: const EdgeInsets.all(8),
+          secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: const Icon(Icons.description_rounded, color: AppColors.primary, size: 20)),
           title: Text(l10n.eInvoicing, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -175,7 +176,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
       // QR code
       _buildGroup(l10n.qrCode, [
         SwitchListTile(
-          secondary: Container(padding: const EdgeInsets.all(8),
+          secondary: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: const Icon(Icons.qr_code_rounded, color: AppColors.primary, size: 20)),
           title: Text(l10n.qrCodeOnInvoice, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
@@ -197,7 +198,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
             trailing: const Icon(Icons.check_circle_rounded, color: AppColors.success)),
       ], isDark),
 
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
 
       // زر الإرسال للهيئة
       SizedBox(
@@ -207,36 +208,36 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
             showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: const Text('إرسال للهيئة الزكاة والضريبة'),
-                content: const Text(
-                  'سيتم إرسال بيانات الفوترة الإلكترونية للهيئة. تأكد من صحة بياناتك أولاً.',
+                title: Text(AppLocalizations.of(ctx).submitToZatcaAuthority),
+                content: Text(
+                  AppLocalizations.of(ctx).zatcaSubmitBody,
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: const Text('إلغاء'),
+                    child: Text(AppLocalizations.of(ctx).cancel),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'سيتم الربط بنظام ZATCA قريباً - تأكد من إعداد الشهادة الرقمية',
+                            AppLocalizations.of(context).zatcaLinkComingSoon,
                           ),
                         ),
                       );
                     },
-                    child: const Text('إرسال'),
+                    child: Text(AppLocalizations.of(ctx).submitBtn),
                   ),
                 ],
               ),
             );
           },
           icon: const Icon(Icons.send_rounded),
-          label: const Text('إرسال للهيئة'),
+          label: Text(AppLocalizations.of(context).submitToAuthority),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
           ),
@@ -247,14 +248,14 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface))),
         ...children,
@@ -264,7 +265,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
 
   Widget _tile(IconData icon, String title, String? subtitle, bool isDark, {Widget? trailing}) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(8),
+      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: AppColors.primary, size: 20)),
       title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),

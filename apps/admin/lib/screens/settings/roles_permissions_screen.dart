@@ -11,6 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة الأدوار والصلاحيات
 class RolesPermissionsScreen extends ConsumerStatefulWidget {
@@ -242,7 +243,7 @@ class _RolesPermissionsScreenState
       return const Center(child: CircularProgressIndicator());
     }
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Column(
         children: [
           // Add role button
@@ -261,7 +262,10 @@ class _RolesPermissionsScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
+          if (_roles.isEmpty)
+            AppEmptyState.noData(context, title: l10n.rolesPermissions)
+          else
           ..._roles.map((role) => _buildRoleCard(role, isDark)),
         ],
       ),
@@ -271,7 +275,7 @@ class _RolesPermissionsScreenState
   Widget _buildRoleCard(Role role, bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -284,7 +288,7 @@ class _RolesPermissionsScreenState
         onTap: () => _showRoleDetails(role),
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Row(
             children: [
               Container(
@@ -296,7 +300,7 @@ class _RolesPermissionsScreenState
                 ),
                 child: Icon(role.icon, color: role.color, size: 24),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +316,7 @@ class _RolesPermissionsScreenState
                           ),
                         ),
                         if (role.isSystemRole) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
@@ -333,7 +337,7 @@ class _RolesPermissionsScreenState
                         ],
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       role.description,
                       style: TextStyle(
@@ -341,12 +345,12 @@ class _RolesPermissionsScreenState
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
                         Icon(Icons.person, size: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.userCountLabel(role.usersCount),
                           style: TextStyle(
@@ -354,10 +358,10 @@ class _RolesPermissionsScreenState
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AlhaiSpacing.md),
                         Icon(Icons.key, size: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.permissionCountLabel(role.permissions.length),
                           style: TextStyle(
@@ -398,7 +402,7 @@ class _RolesPermissionsScreenState
 
   Widget _buildPermissionsTab(bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Column(
         children: PermissionCategory.values.map((category) {
           return _buildPermissionCategory(category, isDark);
@@ -413,7 +417,7 @@ class _RolesPermissionsScreenState
         Permission.values.where((p) => p.category == category).toList();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -424,7 +428,7 @@ class _RolesPermissionsScreenState
       ),
       child: ExpansionTile(
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: category.color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
@@ -496,7 +500,7 @@ class _RolesPermissionsScreenState
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Container(
                 width: 40,
                 height: 4,
@@ -509,18 +513,18 @@ class _RolesPermissionsScreenState
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(
                       color: role.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(role.icon, color: role.color, size: 32),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AlhaiSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -551,12 +555,12 @@ class _RolesPermissionsScreenState
             ),
             const Divider(height: 32),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
               child: Row(
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -564,7 +568,7 @@ class _RolesPermissionsScreenState
                       child: Row(
                         children: [
                           const Icon(Icons.people, color: AppColors.primary),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -583,10 +587,10 @@ class _RolesPermissionsScreenState
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
                       decoration: BoxDecoration(
                         color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -594,7 +598,7 @@ class _RolesPermissionsScreenState
                       child: Row(
                         children: [
                           const Icon(Icons.key, color: AppColors.success),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -616,10 +620,10 @@ class _RolesPermissionsScreenState
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
                 itemCount: role.permissions.length,
                 itemBuilder: (context, index) {
                   final permissionName = role.permissions[index];
@@ -629,7 +633,7 @@ class _RolesPermissionsScreenState
                   );
                   return ListTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -724,7 +728,7 @@ class _RolesPermissionsScreenState
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -738,7 +742,7 @@ class _RolesPermissionsScreenState
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             ...List.generate(
               role.usersCount,
               (index) => ListTile(
@@ -844,7 +848,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Row(
                 children: [
                   Text(
@@ -863,7 +867,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
             const Divider(height: 0),
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -876,7 +880,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                         border: const OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     TextField(
                       controller: _descriptionController,
                       maxLines: 2,
@@ -887,13 +891,13 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                         border: const OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AlhaiSpacing.lg),
                     Text(
                       l10n.rolePermissionsLabel,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     ...PermissionCategory.values.map((category) {
                       final permissions = Permission.values
                           .where((p) => p.category == category)
@@ -934,7 +938,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
             ),
             const Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -942,7 +946,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.cancel),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   FilledButton(
                     onPressed: () {
                       if (_nameController.text.isNotEmpty) {
@@ -992,16 +996,17 @@ class Role {
 enum PermissionCategory {
   pos, products, inventory, customers, sales, reports, settings, staff;
 
-  String get label {
+  String get label => '';
+  String localizedLabel(AppLocalizations l10n) {
     switch (this) {
-      case PermissionCategory.pos: return '\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639';
-      case PermissionCategory.products: return '\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a';
-      case PermissionCategory.inventory: return '\u0627\u0644\u0645\u062e\u0632\u0648\u0646';
-      case PermissionCategory.customers: return '\u0627\u0644\u0639\u0645\u0644\u0627\u0621';
-      case PermissionCategory.sales: return '\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a';
-      case PermissionCategory.reports: return '\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631';
-      case PermissionCategory.settings: return '\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
-      case PermissionCategory.staff: return '\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646';
+      case PermissionCategory.pos: return l10n.permCategoryPosLabel;
+      case PermissionCategory.products: return l10n.permCategoryProductsLabel;
+      case PermissionCategory.inventory: return l10n.permCategoryInventoryLabel;
+      case PermissionCategory.customers: return l10n.permCategoryCustomersLabel;
+      case PermissionCategory.sales: return l10n.permCategorySalesLabel;
+      case PermissionCategory.reports: return l10n.permCategoryReportsLabel;
+      case PermissionCategory.settings: return l10n.permCategorySettingsLabel;
+      case PermissionCategory.staff: return l10n.permCategoryStaffLabel;
     }
   }
 

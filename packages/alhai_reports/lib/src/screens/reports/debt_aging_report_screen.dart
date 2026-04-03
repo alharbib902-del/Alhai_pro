@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 
 /// شاشة تقرير أعمار الديون (Aging Report)
 /// تصنف الديون حسب المدة: 0-30 يوم، 31-60، 61-90، +90 يوم
@@ -140,7 +141,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
@@ -164,7 +165,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
           // Aging summary bands
           Container(
             color: Theme.of(context).colorScheme.surface,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Column(
               children: [
                 Row(children: [
@@ -174,7 +175,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     color: Colors.green,
                     pct: _grandTotal > 0 ? _total0_30 / _grandTotal : 0,
                   )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _BucketCard(
                     label: '31-60 يوم',
                     amount: _total31_60,
@@ -182,7 +183,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     pct: _grandTotal > 0 ? _total31_60 / _grandTotal : 0,
                   )),
                 ]),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Row(children: [
                   Expanded(child: _BucketCard(
                     label: '61-90 يوم',
@@ -190,7 +191,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     color: Colors.deepOrange,
                     pct: _grandTotal > 0 ? _total61_90 / _grandTotal : 0,
                   )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _BucketCard(
                     label: '+90 يوم',
                     amount: _total90plus,
@@ -198,10 +199,10 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     pct: _grandTotal > 0 ? _total90plus / _grandTotal : 0,
                   )),
                 ]),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)]),
                     borderRadius: BorderRadius.circular(8),
@@ -234,15 +235,15 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AlhaiSpacing.sm),
                         Text('لا توجد ديون مستحقة', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                       ],
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     itemCount: _entries.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 4),
+                    separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xxs),
                     itemBuilder: (ctx, i) {
                       final e = _entries[i];
                       return Card(
@@ -307,7 +308,7 @@ class _BucketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
@@ -317,12 +318,12 @@ class _BucketCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             '${amount.toStringAsFixed(0)} ر.س',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           LinearProgressIndicator(
             value: pct,
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -330,7 +331,7 @@ class _BucketCard extends StatelessWidget {
             minHeight: 4,
             borderRadius: BorderRadius.circular(2),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             '${(pct * 100).toStringAsFixed(0)}%',
             style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant),

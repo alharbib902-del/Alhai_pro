@@ -14,6 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/held_invoices_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder;
 
 /// Hold Invoices Screen
 class HoldInvoicesScreen extends ConsumerWidget {
@@ -36,10 +37,10 @@ class HoldInvoicesScreen extends ConsumerWidget {
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                              horizontal: AlhaiSpacing.xs, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
@@ -90,8 +91,8 @@ class HoldInvoicesScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: AppSizes.md),
-              const Text(
-                'خطأ في تحميل الفواتير المعلقة',
+              Text(
+                l10n.errorLoadingHeldInvoices,
                 style: AppTypography.titleMedium,
               ),
               const SizedBox(height: AppSizes.sm),
@@ -105,7 +106,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: () => ref.invalidate(dbHeldInvoicesListProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('إعادة المحاولة'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -130,7 +131,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                           direction: DismissDirection.endToStart,
                           background: Container(
                             alignment: AlignmentDirectional.centerEnd,
-                            padding: const EdgeInsetsDirectional.only(end: 24),
+                            padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.lg),
                             margin: const EdgeInsets.only(bottom: AppSizes.md),
                             decoration: BoxDecoration(
                               color: AppColors.error,
@@ -200,7 +201,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                         direction: DismissDirection.endToStart,
                         background: Container(
                           alignment: AlignmentDirectional.centerEnd,
-                          padding: const EdgeInsetsDirectional.only(end: 24),
+                          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.lg),
                           decoration: BoxDecoration(
                             color: AppColors.error,
                             borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -273,7 +274,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
           children: [
             const Icon(Icons.play_arrow_rounded,
                 color: Colors.white, size: 20),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(l10n.resumedInvoice(invoice.description)),
           ],
         ),
@@ -464,7 +465,7 @@ class _HoldInvoiceCard extends StatelessWidget {
               if (cart.items.isNotEmpty) ...[
                 const Divider(height: AppSizes.xl),
                 ...cart.items.take(3).map((item) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
                       child: Row(
                         children: [
                           Container(
@@ -476,7 +477,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Expanded(
                             child: Text(
                               item.product.name,
@@ -500,7 +501,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                                   : AppColors.textMuted,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AlhaiSpacing.xs),
                           Text(
                             item.total.toStringAsFixed(2),
                             style: TextStyle(
@@ -515,7 +516,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                     )),
                 if (cart.items.length > 3)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                     child: Text(
                       l10n.moreItems(cart.items.length - 3),
                       style: TextStyle(
@@ -575,7 +576,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                         color: isDark
                             ? AppColors.textMutedDark
                             : AppColors.textMuted),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       cart.customerName!,
                       style: TextStyle(

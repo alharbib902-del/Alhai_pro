@@ -50,7 +50,7 @@ class ShiftsScreen extends ConsumerWidget {
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
                       ),
                     ),
                   ],
@@ -60,7 +60,7 @@ class ShiftsScreen extends ConsumerWidget {
                     loading: () => const Center(child: CircularProgressIndicator()),
                     error: (e, _) => Center(child: Text('${l10n.error}: $e')),
                     data: (shifts) => SingleChildScrollView(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: _buildContent(context, shifts, isWideScreen, isMediumScreen, l10n),
                     ),
                   ),
@@ -84,11 +84,11 @@ class ShiftsScreen extends ConsumerWidget {
         if (openShift != null)
           _buildCurrentShiftCard(context, openShift, l10n),
         if (openShift != null)
-          SizedBox(height: isMediumScreen ? 24 : 16),
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Stats cards
         _buildStatsRow(context, shifts, isWideScreen, isMediumScreen, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Shifts list
         _buildShiftsList(context, shifts, l10n),
@@ -99,7 +99,7 @@ class ShiftsScreen extends ConsumerWidget {
   Widget _buildCurrentShiftCard(BuildContext context, ShiftsTableData shift, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF10B981), Color(0xFF059669)],
@@ -111,14 +111,14 @@ class ShiftsScreen extends ConsumerWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(Icons.lock_open_rounded, color: colorScheme.onPrimary, size: 32),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ class ShiftsScreen extends ConsumerWidget {
                     color: Colors.white.withValues(alpha: 0.95),
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   '${shift.cashierName} • ${l10n.since} ${_formatTime(shift.openedAt)}',
                   style: TextStyle(
@@ -139,11 +139,11 @@ class ShiftsScreen extends ConsumerWidget {
                     fontSize: 13,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AlhaiSpacing.xs),
                 Row(
                   children: [
                     _ShiftBadge(label: CurrencyFormatter.formatCompact(shift.totalSalesAmount), icon: Icons.attach_money),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AlhaiSpacing.sm),
                     _ShiftBadge(label: '${shift.totalSales} ${l10n.transaction}', icon: Icons.receipt_long_rounded),
                   ],
                 ),
@@ -216,9 +216,9 @@ class ShiftsScreen extends ConsumerWidget {
 
     return Column(
       children: [
-        Row(children: [Expanded(child: cards[0]), const SizedBox(width: 12), Expanded(child: cards[1])]),
-        const SizedBox(height: 12),
-        Row(children: [Expanded(child: cards[2]), const SizedBox(width: 12), Expanded(child: cards[3])]),
+        Row(children: [Expanded(child: cards[0]), SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[1])]),
+        SizedBox(height: AlhaiSpacing.sm),
+        Row(children: [Expanded(child: cards[2]), SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[3])]),
       ],
     );
   }
@@ -226,7 +226,7 @@ class ShiftsScreen extends ConsumerWidget {
   Widget _buildStatCard(BuildContext context, String label, String value, IconData icon, Color color) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -236,14 +236,14 @@ class ShiftsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Text(
             value,
             style: TextStyle(
@@ -252,7 +252,7 @@ class ShiftsScreen extends ConsumerWidget {
               color: colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             label,
             style: TextStyle(
@@ -276,7 +276,7 @@ class ShiftsScreen extends ConsumerWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Row(
               children: [
                 Text(
@@ -289,7 +289,7 @@ class ShiftsScreen extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
@@ -308,7 +308,7 @@ class ShiftsScreen extends ConsumerWidget {
           ),
           Divider(height: 1, color: colorScheme.outlineVariant),
           if (shifts.isEmpty)
-            AppEmptyState.noData(title: l10n.noShiftsToday, description: l10n.openShift)
+            AppEmptyState.noData(context, title: l10n.noShiftsToday, description: l10n.openShift)
           else
             ...(shifts.map((shift) => _buildShiftTile(context, shift, l10n))),
         ],
@@ -322,7 +322,7 @@ class ShiftsScreen extends ConsumerWidget {
     return InkWell(
       onTap: () => _showShiftDetails(context, shift, l10n),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -361,10 +361,10 @@ class ShiftsScreen extends ConsumerWidget {
                           color: colorScheme.onSurface,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AlhaiSpacing.xs),
                       if (isOpen)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                           decoration: BoxDecoration(
                             color: AppColors.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -376,7 +376,7 @@ class ShiftsScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     '${shift.cashierName} • ${_formatTime(shift.openedAt)} ${shift.closedAt != null ? '- ${_formatTime(shift.closedAt)}' : ''}',
                     style: TextStyle(
@@ -397,7 +397,7 @@ class ShiftsScreen extends ConsumerWidget {
                     color: colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   '${shift.totalSales} ${l10n.transaction}',
                   style: TextStyle(
@@ -407,7 +407,7 @@ class ShiftsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             Icon(
               Icons.chevron_right_rounded,
               color: colorScheme.onSurfaceVariant,
@@ -436,7 +436,7 @@ class ShiftsScreen extends ConsumerWidget {
         maxChildSize: 0.9,
         builder: (context, scrollController) => ListView(
           controller: scrollController,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           children: [
             Center(
               child: Container(
@@ -448,7 +448,7 @@ class ShiftsScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: AlhaiSpacing.mdl),
             Row(
               children: [
                 Container(
@@ -487,7 +487,7 @@ class ShiftsScreen extends ConsumerWidget {
                 ),
                 if (isOpen)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -499,7 +499,7 @@ class ShiftsScreen extends ConsumerWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             _DetailRow(label: l10n.openTime, value: _formatTime(shift.openedAt), icon: Icons.login_rounded),
             if (shift.closedAt != null)
               _DetailRow(label: l10n.closeTime, value: _formatTime(shift.closedAt), icon: Icons.logout_rounded),
@@ -513,7 +513,7 @@ class ShiftsScreen extends ConsumerWidget {
               _DetailRow(label: l10n.closingCash, value: CurrencyFormatter.formatCompact(shift.closingCash!), icon: Icons.account_balance_wallet_rounded, valueColor: AppColors.card),
             if (shift.difference != null)
               _DetailRow(label: l10n.difference, value: CurrencyFormatter.formatCompact(shift.difference!), icon: Icons.compare_arrows_rounded, valueColor: shift.difference! >= 0 ? AppColors.success : AppColors.error),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             if (isOpen)
               FilledButton.icon(
                 onPressed: () {
@@ -545,7 +545,7 @@ class _ShiftBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
@@ -554,7 +554,7 @@ class _ShiftBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.onPrimary, size: 14),
-          const SizedBox(width: 4),
+          SizedBox(width: AlhaiSpacing.xxs),
           Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.95), fontSize: 12, fontWeight: FontWeight.w500)),
         ],
       ),
@@ -579,11 +579,11 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
-          const SizedBox(width: 12),
+          SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               label,

@@ -5,6 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Special Offers Screen - شاشة العروض الخاصة
 class SpecialOffersScreen extends ConsumerWidget {
@@ -33,6 +34,7 @@ class SpecialOffersScreen extends ConsumerWidget {
           child: promotionsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => AppErrorState.general(
+              context,
               message: error.toString(),
               onRetry: () => ref.invalidate(promotionsListProvider),
             ),
@@ -83,7 +85,7 @@ class _OffersContent extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         Row(
           children: [
             Expanded(child: _buildStatCard(context, Icons.local_offer, l10n.totalLabel, '${promotions.length}', AppColors.info, isDark)),
@@ -93,23 +95,23 @@ class _OffersContent extends ConsumerWidget {
             Expanded(child: _buildStatCard(context, Icons.timer, l10n.expiringSoon, '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}', AppColors.secondary, isDark)),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         if (promotions.isEmpty)
-          AppEmptyState.noOffers()
+          AppEmptyState.noOffers(context)
         else
         ...promotions.map((promotion) {
           final isExpired = promotion.endDate.isBefore(DateTime.now());
           return Container(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: isExpired ? Theme.of(context).colorScheme.surfaceContainerLowest : cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
               leading: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: _getTypeColor(promotion.type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -148,7 +150,7 @@ class _OffersContent extends ConsumerWidget {
 
   Widget _buildStatCard(BuildContext context, IconData icon, String label, String value, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -157,7 +159,7 @@ class _OffersContent extends ConsumerWidget {
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
           Text(label, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
@@ -225,7 +227,7 @@ class _OffersContent extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.offerName, prefixIcon: const Icon(Icons.local_offer))),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
                   initialValue: type,
                   decoration: InputDecoration(labelText: l10n.offerType, prefixIcon: const Icon(Icons.category)),
@@ -267,24 +269,24 @@ class _OffersContent extends ConsumerWidget {
       context: context,
       backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
       builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
               Icon(_getTypeIcon(p.type), size: 32, color: _getTypeColor(p.type)),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(child: Text(p.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkTheme ? Colors.white : AppColors.textPrimary))),
             ]),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(label: l10n.offerType, value: _getTypeLabel(p, l10n), isDark: isDarkTheme),
             _DetailRow(label: l10n.startDateLabel, value: '${p.startDate.day}/${p.startDate.month}/${p.startDate.year}', isDark: isDarkTheme),
             _DetailRow(label: l10n.endDateLabel, value: '${p.endDate.day}/${p.endDate.month}/${p.endDate.year}', isDark: isDarkTheme),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Row(children: [
               Expanded(child: OutlinedButton.icon(onPressed: () { Navigator.pop(context); _deletePromotion(ref, p); }, icon: const Icon(Icons.delete, color: AppColors.error), label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)))),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(child: FilledButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit), style: FilledButton.styleFrom(backgroundColor: AppColors.primary))),
             ]),
           ],
@@ -300,7 +302,7 @@ class _DetailRow extends StatelessWidget {
   const _DetailRow({required this.label, required this.value, this.isDark = false});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
+    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

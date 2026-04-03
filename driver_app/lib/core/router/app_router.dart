@@ -1,148 +1,169 @@
+import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Driver App Router Configuration
-/// 
-/// Routes reference: See PRD_FINAL.md for complete route dictionary
-class AppRouter {
-  AppRouter._();
+import '../../features/auth/providers/auth_providers.dart';
+import '../../features/auth/screens/splash_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/profile_setup_screen.dart';
+import '../../features/home/screens/home_screen.dart';
+import '../../features/deliveries/screens/deliveries_list_screen.dart';
+import '../../features/deliveries/screens/order_details_screen.dart';
+import '../../features/deliveries/screens/new_order_screen.dart';
+import '../../features/navigation/screens/navigation_screen.dart';
+import '../../features/proof/screens/delivery_proof_screen.dart';
+import '../../features/chat/screens/chat_screen.dart';
+import '../../features/earnings/screens/earnings_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../shared/widgets/driver_navigation_shell.dart';
+import '../providers/app_providers.dart';
 
-  static final router = GoRouter(
+/// Router provider with auth guard and bottom navigation shell.
+final driverRouterProvider = Provider<GoRouter>((ref) {
+  final authNotifier = _AuthNotifier(ref);
+
+  return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
+    refreshListenable: authNotifier,
+    redirect: (context, state) => _guardRedirect(ref, state),
     routes: [
-      // ==========================================
-      // 🏠 SPLASH & AUTH
-      // ==========================================
+      // Auth routes (no bottom nav)
       GoRoute(
         path: '/',
         name: 'splash',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Splash'),
-      ),
-      GoRoute(
-        path: '/language',
-        name: 'languageSelection',
-        builder: (context, state) => const _PlaceholderScreen(title: 'اختيار اللغة'),
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const _PlaceholderScreen(title: 'تسجيل الدخول'),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: '/profile-setup',
         name: 'profileSetup',
-        builder: (context, state) => const _PlaceholderScreen(title: 'إعداد الملف الشخصي'),
+        builder: (context, state) => const ProfileSetupScreen(),
       ),
 
-      // ==========================================
-      // 📊 DASHBOARD
-      // ==========================================
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const _PlaceholderScreen(title: 'الرئيسية'),
-      ),
-      GoRoute(
-        path: '/deliveries',
-        name: 'activeDeliveries',
-        builder: (context, state) => const _PlaceholderScreen(title: 'التوصيلات النشطة'),
-      ),
-      GoRoute(
-        path: '/shifts',
-        name: 'shifts',
-        builder: (context, state) => const _PlaceholderScreen(title: 'جدول الورديات'),
-      ),
-      GoRoute(
-        path: '/earnings',
-        name: 'earnings',
-        builder: (context, state) => const _PlaceholderScreen(title: 'الأرباح'),
+      // Main app with bottom navigation
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return DriverNavigationShell(navigationShell: navigationShell);
+        },
+        branches: [
+          // Tab 0: Home
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: 'home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          // Tab 1: Deliveries
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/deliveries',
+                name: 'activeDeliveries',
+                builder: (context, state) =>
+                    const DeliveriesListScreen(),
+              ),
+            ],
+          ),
+          // Tab 2: Earnings
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/earnings',
+                name: 'earnings',
+                builder: (context, state) => const EarningsScreen(),
+              ),
+            ],
+          ),
+          // Tab 3: Profile
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
 
-      // ==========================================
-      // 📦 ORDERS
-      // ==========================================
-      GoRoute(
-        path: '/orders/new',
-        name: 'newOrder',
-        builder: (context, state) => const _PlaceholderScreen(title: 'طلب جديد'),
-      ),
+      // Full-screen routes (outside bottom nav)
       GoRoute(
         path: '/orders/:id',
         name: 'orderDetails',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'تفاصيل الطلب ${state.pathParameters['id']}',
+        builder: (context, state) => OrderDetailsScreen(
+          deliveryId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: '/orders/:id/navigate',
         name: 'navigation',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'الملاحة ${state.pathParameters['id']}',
+        builder: (context, state) => NavigationScreen(
+          deliveryId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: '/orders/:id/proof',
         name: 'deliveryProof',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'إثبات التسليم ${state.pathParameters['id']}',
+        builder: (context, state) => DeliveryProofScreen(
+          deliveryId: state.pathParameters['id']!,
         ),
       ),
-
-      // ==========================================
-      // 💬 COMMUNICATION
-      // ==========================================
       GoRoute(
         path: '/chat/:orderId',
         name: 'chat',
-        builder: (context, state) => _PlaceholderScreen(
-          title: 'المحادثة ${state.pathParameters['orderId']}',
+        builder: (context, state) => ChatScreen(
+          orderId: state.pathParameters['orderId']!,
         ),
       ),
       GoRoute(
-        path: '/quick-messages',
-        name: 'quickMessages',
-        builder: (context, state) => const _PlaceholderScreen(title: 'رسائل سريعة'),
-      ),
-
-      // ==========================================
-      // 📈 REPORTS
-      // ==========================================
-      GoRoute(
-        path: '/reports/daily',
-        name: 'dailyReport',
-        builder: (context, state) => const _PlaceholderScreen(title: 'التقرير اليومي'),
-      ),
-      GoRoute(
-        path: '/reports/weekly',
-        name: 'weeklyReport',
-        builder: (context, state) => const _PlaceholderScreen(title: 'التقرير الأسبوعي'),
-      ),
-      GoRoute(
-        path: '/reports/monthly',
-        name: 'monthlyReport',
-        builder: (context, state) => const _PlaceholderScreen(title: 'التقرير الشهري'),
-      ),
-
-      // ==========================================
-      // ⚙️ SETTINGS
-      // ==========================================
-      GoRoute(
-        path: '/profile',
-        name: 'profile',
-        builder: (context, state) => const _PlaceholderScreen(title: 'الملف الشخصي'),
-      ),
-      GoRoute(
-        path: '/help',
-        name: 'help',
-        builder: (context, state) => const _PlaceholderScreen(title: 'المساعدة'),
+        path: '/orders/new',
+        name: 'newOrder',
+        builder: (context, state) => const NewOrderScreen(),
       ),
     ],
   );
+});
+
+/// Auth guard redirect logic.
+String? _guardRedirect(Ref ref, GoRouterState state) {
+  final isAuth = ref.read(isAuthenticatedProvider);
+  final currentPath = state.uri.path;
+
+  // Public routes that don't need auth
+  const publicRoutes = ['/', '/login'];
+  if (publicRoutes.contains(currentPath)) {
+    if (isAuth && currentPath == '/login') {
+      return '/home';
+    }
+    return null;
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuth) return '/login';
+
+  return null;
 }
 
-/// L78: Placeholder screen for routes that haven't been implemented yet.
-/// Shows a branded "Coming Soon" UI with app icon, title, and status indicator.
+/// Notifies GoRouter when auth state changes.
+class _AuthNotifier extends ChangeNotifier {
+  _AuthNotifier(this._ref) {
+    _ref.listen(isAuthenticatedProvider, (_, __) => notifyListeners());
+  }
+
+  final Ref _ref;
+}
+
+/// Placeholder screen for routes not yet implemented.
 class _PlaceholderScreen extends StatelessWidget {
   final String title;
 
@@ -151,13 +172,12 @@ class _PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AlhaiSpacing.xl),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -174,7 +194,7 @@ class _PlaceholderScreen extends StatelessWidget {
                   color: theme.colorScheme.primary,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               Text(
                 title,
                 style: theme.textTheme.headlineMedium?.copyWith(
@@ -182,16 +202,12 @@ class _PlaceholderScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.amber.withValues(alpha: 0.15)
-                      : Colors.amber.withValues(alpha: 0.1),
+                  color: Colors.amber.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: Colors.amber.withValues(alpha: 0.3),
@@ -200,12 +216,9 @@ class _PlaceholderScreen extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.construction_rounded,
-                      size: 18,
-                      color: Colors.amber.shade700,
-                    ),
-                    const SizedBox(width: 8),
+                    Icon(Icons.construction_rounded,
+                        size: 18, color: Colors.amber.shade700),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(
                       'قريباً - قيد التطوير',
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -215,14 +228,6 @@ class _PlaceholderScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'هذه الشاشة قيد التطوير وستكون متاحة قريباً',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

@@ -66,15 +66,15 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+          borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
           child: AnimatedContainer(
             duration: context.prefersReducedMotion
                 ? Duration.zero
                 : AlhaiDurations.slow,
-            padding: EdgeInsets.all(isMobile ? 12 : 20),
+            padding: EdgeInsets.all(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+              borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
               border: Border.all(
                 color: isDarkMode
                     ? Colors.white.withAlpha(13)
@@ -115,11 +115,11 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: isMobile ? 40 : 48,
-                          height: isMobile ? 40 : 48,
+                          width: isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
+                          height: isMobile ? AlhaiSpacing.xxl : AlhaiSpacing.xxxl,
                           decoration: BoxDecoration(
                             color: effectiveIconColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
+                            borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.sm : AlhaiSpacing.md),
                           ),
                           child: Icon(
                             widget.icon,
@@ -154,7 +154,7 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
 
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
 
                     // القيمة مع اللاحقة
                     FittedBox(
@@ -173,7 +173,7 @@ class _DashboardStatCardState extends State<DashboardStatCard> {
                             ),
                           ),
                           if (widget.valueSuffix != null) ...[
-                            const SizedBox(width: 4),
+                            SizedBox(width: AlhaiSpacing.xxs),
                             Text(
                               widget.valueSuffix!,
                               style: TextStyle(
@@ -254,7 +254,7 @@ class _ChangeIndicator extends StatelessWidget {
             size: compact ? 12 : 14,
           ),
           if (!compact) ...[
-            const SizedBox(width: 2),
+            SizedBox(width: AlhaiSpacing.xxxs),
             Text(
               '${change >= 0 ? '+' : ''}${AppNumberFormatter.currency(change, locale: Localizations.localeOf(context).toString(), decimals: 1)}%',
               style: TextStyle(

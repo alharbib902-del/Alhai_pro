@@ -6,7 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../utils/csv_export_helper.dart';
 import '../../utils/pdf_font_helper.dart';
@@ -192,17 +192,17 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                         onTap: _selectDate,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
 
                     // حالة عدم وجود بيانات
                     if (_totalTransactions == 0)
                       Card(
                         child: Padding(
-                          padding: const EdgeInsets.all(32),
+                          padding: const EdgeInsets.all(AlhaiSpacing.xl),
                           child: Column(
                             children: [
                               Icon(Icons.hourglass_empty, size: 64, color: theme.disabledColor),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AlhaiSpacing.md),
                               Text(l10n.noData, style: TextStyle(color: colorScheme.onSurfaceVariant)),
                             ],
                           ),
@@ -211,13 +211,13 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                     else ...[
                       // Summary cards - responsive grid
                       _buildSummaryGrid(context, l10n, deviceType),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
 
                       // Payment methods
                       if (_totalSales > 0)
                         Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(AlhaiSpacing.md),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -230,7 +230,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                                   color: AlhaiColors.success,
                                   percentage: _cashSales / _totalSales,
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: AlhaiSpacing.sm),
                                 _PaymentRow(
                                   icon: Icons.credit_card,
                                   label: l10n.card,
@@ -238,7 +238,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                                   color: AlhaiColors.info,
                                   percentage: _cardSales / _totalSales,
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: AlhaiSpacing.sm),
                                 _PaymentRow(
                                   icon: Icons.account_balance_wallet,
                                   label: l10n.credit,
@@ -250,12 +250,12 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                             ),
                           ),
                         ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
 
                       // Deductions
                       Card(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(AlhaiSpacing.md),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -297,13 +297,13 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
 
                       // Net total
                       Card(
                         color: AlhaiColors.success.withValues(alpha: 0.1),
                         child: Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -368,7 +368,7 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
     if (columns == 4) {
       return Row(
         children: cards.map((card) => Expanded(child: Padding(
-          padding: const EdgeInsetsDirectional.only(end: 12),
+          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
           child: card,
         ))).toList(),
       );
@@ -379,15 +379,15 @@ class _DailySalesReportScreenState extends ConsumerState<DailySalesReportScreen>
         Row(
           children: [
             Expanded(child: cards[0]),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: cards[1]),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(child: cards[2]),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: cards[3]),
           ],
         ),
@@ -555,14 +555,14 @@ class _SummaryCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(title, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
@@ -595,15 +595,15 @@ class _PaymentRow extends StatelessWidget {
         Row(
           children: [
             Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(label),
             const Spacer(),
             Text(CurrencyFormatter.formatCompact(amount), style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text('(${(percentage * 100).toStringAsFixed(0)}%)', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(

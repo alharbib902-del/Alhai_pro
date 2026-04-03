@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' hide ResponsiveBuilder, ResponsiveVisibility;
+import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/responsive/responsive_utils.dart';
 import '../../providers/theme_provider.dart';
@@ -97,7 +98,7 @@ class AppHeader extends ConsumerWidget {
 
               // العنوان
               if (title != null) ...[
-                const SizedBox(width: 16),
+                SizedBox(width: AlhaiSpacing.md),
                 Flexible(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -126,7 +127,7 @@ class AppHeader extends ConsumerWidget {
                 ),
               ],
 
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
 
               // البحث - مخفي على الجوال
               ResponsiveVisibility.hiddenOnMobile(
@@ -136,7 +137,7 @@ class AppHeader extends ConsumerWidget {
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 500),
                           child: _SearchField(
-                            hint: searchHint ?? 'ابحث عن منتج، عميل، أو فاتورة...',
+                            hint: searchHint ?? AppLocalizations.of(context)!.searchPlaceholder,
                             onChanged: onSearchChanged,
                             onTap: onSearchTap,
                           ),
@@ -145,7 +146,7 @@ class AppHeader extends ConsumerWidget {
                     : const SizedBox.shrink(),
               ),
 
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
 
               // الإجراءات
               if (actions != null) ...actions!,
@@ -155,7 +156,7 @@ class AppHeader extends ConsumerWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     _HeaderIconButton(
                       icon: Icons.fullscreen_rounded,
                       isDark: isDarkMode,
@@ -168,18 +169,18 @@ class AppHeader extends ConsumerWidget {
               ),
 
               // مؤشر حالة المزامنة
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               const SyncStatusIndicator(),
 
               // اختيار اللغة
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               const LanguageSelectorButton(
                 showLabel: false,
                 compact: true,
               ),
 
               // زر الوضع الداكن
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               _DarkModeToggle(
                 isDarkMode: isDarkMode,
                 onToggle: () {
@@ -189,7 +190,7 @@ class AppHeader extends ConsumerWidget {
 
               // الإشعارات
               if (onNotificationsTap != null) ...[
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 _NotificationButton(
                   count: notificationsCount,
                   onTap: onNotificationsTap,
@@ -203,7 +204,7 @@ class AppHeader extends ConsumerWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(width: 16),
+                      SizedBox(width: AlhaiSpacing.md),
                       _UserInfo(
                         name: userName!,
                         role: userRole,

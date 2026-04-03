@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Keyboard shortcuts reference screen
@@ -57,7 +57,7 @@ class _KeyboardShortcutsScreenState
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child:
                 _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
@@ -79,7 +79,7 @@ class _KeyboardShortcutsScreenState
       children: [
         // Info banner
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
             borderRadius: BorderRadius.circular(12),
@@ -90,7 +90,7 @@ class _KeyboardShortcutsScreenState
             children: [
               const Icon(Icons.keyboard_rounded,
                   color: AppColors.info, size: 22),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   'Use these keyboard shortcuts for faster operations',
@@ -103,11 +103,11 @@ class _KeyboardShortcutsScreenState
             ],
           ),
         ),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Category filter chips
         _buildFilterChips(categories, isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Shortcuts list
         if (isWideScreen)
@@ -121,7 +121,7 @@ class _KeyboardShortcutsScreenState
                   l10n,
                 ),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: AlhaiSpacing.lg),
               Expanded(
                 child: _buildCategoryCards(
                   categories.skip(2).toList(),
@@ -147,7 +147,7 @@ class _KeyboardShortcutsScreenState
       child: Row(
         children: [
           _filterChip('all', l10n.all, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           ...categories.map((cat) => Padding(
                 padding: const EdgeInsetsDirectional.only(end: 8),
                 child: _filterChip(cat.id, cat.name, isDark),
@@ -162,7 +162,7 @@ class _KeyboardShortcutsScreenState
     return GestureDetector(
       onTap: () => setState(() => _selectedCategory = id),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
@@ -200,7 +200,7 @@ class _KeyboardShortcutsScreenState
     return Column(
       children: filtered.map((category) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
           child: _buildShortcutCard(category, isDark),
         );
       }).toList(),
@@ -219,7 +219,7 @@ class _KeyboardShortcutsScreenState
         children: [
           // Category header
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: category.color.withValues(alpha: isDark ? 0.1 : 0.04),
               borderRadius: const BorderRadius.only(
@@ -230,7 +230,7 @@ class _KeyboardShortcutsScreenState
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: category.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
@@ -241,7 +241,7 @@ class _KeyboardShortcutsScreenState
                     size: 20,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   category.name,
                   style: TextStyle(
@@ -253,7 +253,7 @@ class _KeyboardShortcutsScreenState
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                      horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: category.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -284,7 +284,7 @@ class _KeyboardShortcutsScreenState
                   ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   child: Row(
                     children: [
                       Expanded(
@@ -380,7 +380,7 @@ class _KeyBadge extends StatelessWidget {
       children: List.generate(parts.length * 2 - 1, (index) {
         if (index.isOdd) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
             child: Text(
               '+',
               style: TextStyle(

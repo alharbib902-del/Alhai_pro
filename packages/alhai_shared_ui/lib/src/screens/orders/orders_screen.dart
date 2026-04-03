@@ -183,16 +183,17 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
           : null,
       body: ordersAsync.when(
         loading: () => Padding(
-          padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.md),
           child: Column(
             children: [
               ShimmerStats(count: 4, isWide: isWideScreen),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               const ShimmerList(itemCount: 6, itemHeight: 72),
             ],
           ),
         ),
         error: (e, _) => AppErrorState.general(
+          context,
           message: e.toString(),
           onRetry: () => ref.invalidate(ordersListProvider),
         ),
@@ -225,13 +226,13 @@ Expanded(
                             child: SingleChildScrollView(
                               controller: _scrollController,
                               physics: const AlwaysScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+                              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.md),
                               child: Column(
                                 children: [
                                   _buildStatsSection(l10n, colorScheme, isWideScreen, allOrders.length, completedCount, pendingCount, cancelledCount),
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: AlhaiSpacing.lg),
                                   _buildFilterSection(colorScheme, l10n, isWideScreen),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: AlhaiSpacing.md),
                                   _buildOrdersList(allOrders,
                                       colorScheme, l10n, isWideScreen, isMediumScreen),
                                 ],
@@ -274,7 +275,7 @@ Expanded(
     final isDark = colorScheme.brightness == Brightness.dark;
     return Container(
       height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: colorScheme.surface.withValues(alpha: 0.8),
         border: Border(
@@ -290,7 +291,7 @@ Expanded(
             icon: Icon(Icons.menu_rounded,
                 color: colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
           Text(l10n.ordersHistory,
               style: TextStyle(
                   fontSize: 22,
@@ -303,11 +304,11 @@ Expanded(
                 Container(
                     height: 28,
                     width: 1,
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                     color: colorScheme.outlineVariant),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
@@ -324,7 +325,7 @@ Expanded(
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                             fontFamily: 'Source Code Pro')),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Text(l10n.totalOrdersLabel,
                         style: TextStyle(
                             fontSize: 12,
@@ -351,7 +352,7 @@ Expanded(
                         child: Row(children: [
                           const Icon(Icons.table_chart_outlined,
                               size: 18, color: AppColors.success),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                           Text(l10n.exportCsv),
                         ])),
                     PopupMenuItem(
@@ -359,13 +360,13 @@ Expanded(
                         child: Row(children: [
                           const Icon(Icons.picture_as_pdf_outlined,
                               size: 18, color: AppColors.error),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                           Text(l10n.exportPdf),
                         ])),
                   ],
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -380,14 +381,14 @@ Expanded(
                           style: TextStyle(
                               fontSize: 14,
                               color: colorScheme.onSurface)),
-                      const SizedBox(width: 4),
+                      SizedBox(width: AlhaiSpacing.xxs),
                       Icon(Icons.keyboard_arrow_down,
                           size: 16,
                           color: colorScheme.onSurfaceVariant),
                     ]),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 IconButton(
                   onPressed: () {},
                   icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode,
@@ -452,7 +453,7 @@ Expanded(
 
   Widget _buildStatCard(_StatData stat, ColorScheme colorScheme) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -469,7 +470,7 @@ Expanded(
           ),
           child: Icon(stat.icon, color: stat.color, size: 22),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: AlhaiSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,7 +480,7 @@ Expanded(
                   style: TextStyle(
                       fontSize: 12,
                       color: colorScheme.onSurfaceVariant)),
-              const SizedBox(height: 4),
+              SizedBox(height: AlhaiSpacing.xxs),
               Text(stat.value,
                   style: TextStyle(
                       fontSize: 22,
@@ -496,7 +497,7 @@ Expanded(
   Widget _buildFilterSection(
       ColorScheme colorScheme, AppLocalizations l10n, bool isWideScreen) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -522,7 +523,7 @@ Expanded(
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none),
@@ -535,12 +536,12 @@ Expanded(
                 color: colorScheme.onSurface,
                 fontSize: 14),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           // Status & Channel Filters
           isWideScreen
               ? Row(children: [
                   _buildStatusChips(colorScheme, l10n),
-                  const SizedBox(width: 24),
+                  SizedBox(width: AlhaiSpacing.lg),
                   _buildChannelChips(colorScheme, l10n),
                   const Spacer(),
                   _buildDateChip(colorScheme, l10n),
@@ -552,12 +553,12 @@ Expanded(
                       scrollDirection: Axis.horizontal,
                       child: _buildStatusChips(colorScheme, l10n),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: AlhaiSpacing.sm),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(children: [
                         _buildChannelChips(colorScheme, l10n),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         _buildDateChip(colorScheme, l10n),
                       ]),
                     ),
@@ -582,7 +583,7 @@ Expanded(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurfaceVariant)),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         ...tabs.map((t) => Padding(
               padding: const EdgeInsetsDirectional.only(start: 6),
               child: _buildChip(t.$2, _activeTab == t.$1, colorScheme,
@@ -605,7 +606,7 @@ Expanded(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurfaceVariant)),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         ...channels.map((c) => Padding(
               padding: const EdgeInsetsDirectional.only(start: 6),
               child: InkWell(
@@ -631,7 +632,7 @@ Expanded(
                         color: _activeChannel == c.$1
                             ? colorScheme.onPrimary
                             : colorScheme.onSurfaceVariant),
-                    const SizedBox(width: 4),
+                    SizedBox(width: AlhaiSpacing.xxs),
                     Text(c.$2,
                         style: TextStyle(
                             fontSize: 11,
@@ -649,7 +650,7 @@ Expanded(
 
   Widget _buildDateChip(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: colorScheme.outlineVariant),
@@ -721,7 +722,7 @@ Expanded(
           // Desktop Table Header
           if (isMediumScreen)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 border: Border(bottom: BorderSide(color: bColor)),
@@ -743,7 +744,7 @@ Expanded(
             ),
           // Orders
           if (orders.isEmpty)
-            AppEmptyState.noOrders()
+            AppEmptyState.noOrders(context)
           else
             ...orders.asMap().entries.map((entry) {
               final order = entry.value;
@@ -757,7 +758,7 @@ Expanded(
             }),
           // Pagination
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               border: Border(top: BorderSide(color: bColor)),
@@ -791,7 +792,7 @@ Expanded(
     return InkWell(
       onTap: () => _openOrderPanel(order),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05)
@@ -809,7 +810,7 @@ Expanded(
               flex: 2,
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.1)
@@ -891,7 +892,7 @@ Expanded(
               child: Center(
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
@@ -932,7 +933,7 @@ Expanded(
     return InkWell(
       onTap: () => _openOrderPanel(order),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05)
@@ -955,7 +956,7 @@ Expanded(
                                 ? AppColors.primary
                                 : textColor,
                             fontFamily: 'Source Code Pro')),
-                    const SizedBox(width: 8),
+                    SizedBox(width: AlhaiSpacing.xs),
                     Hero(
                       tag: 'order-status-${order.id}',
                       child: Material(
@@ -970,7 +971,7 @@ Expanded(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: textColor)),
-                  const SizedBox(height: 2),
+                  SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                       '${order.amount.toStringAsFixed(2)} ${l10n.currency} \u2022 ${order.itemsCount} ${l10n.items}',
                       style: TextStyle(
@@ -985,7 +986,7 @@ Expanded(
               children: [
                 Text('${_formatDate(order.date)}\u060C ${_formatTime(order.date)}',
                     style: TextStyle(fontSize: 11, color: mutedColor)),
-                const SizedBox(height: 8),
+                SizedBox(height: AlhaiSpacing.xs),
                 _buildChannelBadge(order.channel, colorScheme),
               ],
             ),
@@ -1010,7 +1011,7 @@ Expanded(
           // Panel Header
           Container(
             height: 80,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: bColor)),
             ),
@@ -1037,7 +1038,7 @@ Expanded(
                             width: 4,
                             height: 4,
                             margin:
-                                const EdgeInsets.symmetric(horizontal: 8),
+                                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
                             decoration: BoxDecoration(
                                 color: mutedColor, shape: BoxShape.circle)),
                         Text(
@@ -1058,7 +1059,7 @@ Expanded(
           // Scrollable Content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1071,16 +1072,16 @@ Expanded(
                       Row(children: [
                         _iconBtn(Icons.print_rounded, colorScheme, () {},
                             AppColors.primary),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AlhaiSpacing.xs),
                         _iconBtn(Icons.share_rounded, colorScheme, () {},
                             AppColors.info),
                       ]),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
                   // Customer Block
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(12),
@@ -1101,7 +1102,7 @@ Expanded(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary)),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AlhaiSpacing.sm),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1117,7 +1118,7 @@ Expanded(
                         ),
                       ]),
                       if (order.customerPhone != null) ...[
-                        const SizedBox(height: 12),
+                        SizedBox(height: AlhaiSpacing.sm),
                         Row(
                           mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
@@ -1140,7 +1141,7 @@ Expanded(
                       ],
                     ]),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
                   // Items List
                   Text(
                       '${l10n.items} (${order.items.length})',
@@ -1148,9 +1149,9 @@ Expanded(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: textColor)),
-                  const SizedBox(height: 12),
+                  SizedBox(height: AlhaiSpacing.sm),
                   ...order.items.map((item) => Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                         decoration: BoxDecoration(
                           border: Border(
                               bottom: BorderSide(
@@ -1195,19 +1196,19 @@ Expanded(
                           ],
                         ),
                       )),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
                   // Totals
                   _buildTotals(order, colorScheme, l10n, textColor, mutedColor),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
                   // Payment Method
                   Text(l10n.paymentMethodLabel,
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: textColor)),
-                  const SizedBox(height: 12),
+                  SizedBox(height: AlhaiSpacing.sm),
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: bColor),
@@ -1223,7 +1224,7 @@ Expanded(
                         child: const Icon(Icons.credit_card,
                             size: 20, color: AppColors.info),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1241,7 +1242,7 @@ Expanded(
                       ),
                     ]),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AlhaiSpacing.lg),
                   // Actions
                   Row(children: [
                     Expanded(
@@ -1260,7 +1261,7 @@ Expanded(
                                 color: textColor)),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {},
@@ -1284,7 +1285,7 @@ Expanded(
           ),
           // Panel Footer
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               border: Border(top: BorderSide(color: bColor)),
@@ -1319,16 +1320,16 @@ Expanded(
     final total = subtotal + vat - discount;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(children: [
         _totalRow(l10n.subtotalLabel, subtotal, mutedColor, textColor),
-        const SizedBox(height: 8),
+        SizedBox(height: AlhaiSpacing.xs),
         _totalRow(l10n.vatLabel, vat, mutedColor, textColor),
-        const SizedBox(height: 8),
+        SizedBox(height: AlhaiSpacing.xs),
         _totalRow(l10n.discount, -discount, mutedColor, AppColors.success,
             isDiscount: true),
         Divider(
@@ -1474,7 +1475,7 @@ Expanded(
 
   Widget _pageBtn(IconData icon, ColorScheme colorScheme, VoidCallback? onTap) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
@@ -1495,7 +1496,7 @@ Expanded(
 
   Widget _pageNumBtn(int num, ColorScheme colorScheme, bool isActive) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
       child: InkWell(
         onTap: () {}, // TODO: Implement pagination state management
         borderRadius: BorderRadius.circular(8),

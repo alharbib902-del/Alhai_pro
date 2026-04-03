@@ -147,7 +147,7 @@ class _QuickActionButtonState extends State<QuickActionButton>
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
-                          vertical: 2,
+                          vertical: AlhaiSpacing.xxxs,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.error,
@@ -262,10 +262,11 @@ class QuickActionRow extends StatelessWidget {
 
 /// الإجراءات السريعة الافتراضية
 class DefaultQuickActions {
-  static QuickAction newSale({VoidCallback? onTap}) {
+  static QuickAction newSale({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'new_sale',
-      title: 'بيع جديد',
+      title: l10n.newSale,
       icon: Icons.point_of_sale_rounded,
       color: AppColors.primary,
       isPrimary: true,
@@ -273,10 +274,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction addProduct({VoidCallback? onTap}) {
+  static QuickAction addProduct({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'add_product',
-      title: 'إضافة منتج',
+      title: l10n.addProduct,
       icon: Icons.add_box_rounded,
       color: const Color(0xFF8B5CF6), // Purple
       onTap: onTap,
@@ -294,10 +296,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction dailyReport({VoidCallback? onTap}) {
+  static QuickAction dailyReport({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'daily_report',
-      title: 'تقرير يومي',
+      title: l10n.dailyReport,
       icon: Icons.summarize_rounded,
       color: const Color(0xFF3B82F6), // Blue
       onTap: onTap,
@@ -338,10 +341,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction closeDay({VoidCallback? onTap}) {
+  static QuickAction closeDay({required BuildContext context, VoidCallback? onTap}) {
+    final l10n = AppLocalizations.of(context)!;
     return QuickAction(
       id: 'close_day',
-      title: 'إغلاق اليوم',
+      title: l10n.closeDay,
       icon: Icons.nightlight_round,
       color: const Color(0xFF6366F1), // Indigo
       onTap: onTap,
@@ -349,23 +353,23 @@ class DefaultQuickActions {
   }
 
   static List<QuickAction> defaultActions(BuildContext context) => [
-        newSale(),
-        addProduct(),
+        newSale(context: context),
+        addProduct(context: context),
         refund(context: context),
-        dailyReport(),
+        dailyReport(context: context),
       ];
 }
 
 /// قسم الإجراءات السريعة مع العنوان
 class QuickActionsSection extends StatelessWidget {
-  final String title;
+  final String? title;
   final List<QuickAction> actions;
   final VoidCallback? onSeeAll;
   final int crossAxisCount;
 
   const QuickActionsSection({
     super.key,
-    this.title = 'إجراءات سريعة',
+    this.title,
     required this.actions,
     this.onSeeAll,
     this.crossAxisCount = 4,
@@ -381,7 +385,7 @@ class QuickActionsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              title,
+              title ?? AppLocalizations.of(context)!.quickActions,
               style: const TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
@@ -391,18 +395,18 @@ class QuickActionsSection extends StatelessWidget {
             if (onSeeAll != null)
               TextButton(
                 onPressed: onSeeAll,
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'عرض الكل',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.viewAll,
+                      style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(
+                    const SizedBox(width: AlhaiSpacing.xxs),
+                    const Icon(
                       Icons.arrow_back_ios_rounded,
                       color: AppColors.primary,
                       size: 14,
@@ -413,7 +417,7 @@ class QuickActionsSection extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
 
         // الشبكة
         QuickActionGrid(

@@ -45,7 +45,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: _buildContent(
                         isWideScreen, isMediumScreen, isDark, l10n),
                   ),
@@ -63,7 +63,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
         // Theme preview
         _ThemePreview(isDark: isDark),
 
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Theme options
         _buildSettingsGroup(
@@ -139,7 +139,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
   Widget _buildSettingsGroup(
       String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -178,7 +178,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
   }) {
     return ListTile(
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
@@ -209,7 +209,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
       ),
       trailing: isSelected
           ? Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               decoration: const BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
@@ -243,7 +243,7 @@ class _ThemePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -274,7 +274,7 @@ class _ThemePreview extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Container(
                   height: 12,
@@ -288,24 +288,24 @@ class _ThemePreview extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           // Mini cards
           Row(
             children: [
               Expanded(
                   child: _MiniCard(isDark: isDark, color: AppColors.primary)),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                   child:
                       _MiniCard(isDark: isDark, color: AppColors.secondary)),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               Expanded(
                   child: _MiniCard(isDark: isDark, color: AppColors.success)),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                   child: _MiniCard(isDark: isDark, color: AppColors.warning)),
             ],

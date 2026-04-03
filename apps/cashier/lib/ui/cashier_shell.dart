@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
 import 'package:alhai_pos/alhai_pos.dart' show cartStateProvider, heldInvoicesProvider;
 
@@ -277,8 +277,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                 // Header
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 20,
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.mdl,
                   ),
                   child: Row(
                     children: [
@@ -303,7 +303,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                 // Nav items
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                     children: _navItems.map((item) {
                       final isSelected = item.id == selectedId;
                       return _buildSidebarItem(item, isSelected);
@@ -333,7 +333,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
   Widget _buildSidebarItem(_NavItem item, bool isSelected) {
     final label = _getLocalizedLabel(context, item);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
       child: Material(
         color: isSelected
             ? AppColors.primary.withValues(alpha: 0.1)
@@ -343,7 +343,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
           borderRadius: BorderRadius.circular(8),
           onTap: () => _onNavItemTapped(item.route),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
             child: Row(
               children: [
                 Icon(
@@ -353,7 +353,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                       ? AppColors.primary
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -379,7 +379,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.point_of_sale, color: AppColors.primary, size: 24),
-            SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             Text('Al-HAI Cashier'),
           ],
         ),
@@ -391,7 +391,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
             children: [
               // Drawer header
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 child: Row(
                   children: [
                     const CircleAvatar(
@@ -401,7 +401,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Text(
                       'Al-HAI Cashier',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(

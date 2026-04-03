@@ -76,7 +76,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 360),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -97,9 +97,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
-                        '${product.price.toStringAsFixed(2)} ر.س',
+                        AppLocalizations.of(context)!.priceSar(product.price.toStringAsFixed(2)),
                         style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.primary,
@@ -108,9 +108,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                       ),
                       if (product.trackInventory)
                         Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                           child: Text(
-                            'المتوفر: ${product.stockQty}',
+                            AppLocalizations.of(context)!.availableStock(product.stockQty.toString()),
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -130,7 +130,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
               ],
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // التحكم بالكمية: - [input] +
             Row(
@@ -142,7 +142,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                   onTap: _quantity > 1 ? () => _setQuantity(_quantity - 1) : null,
                   isDark: isDark,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AlhaiSpacing.md),
 
                 // حقل الكمية
                 SizedBox(
@@ -176,7 +176,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                           width: 2,
                         ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -193,7 +193,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AlhaiSpacing.md),
 
                 // زر +
                 _QuantityButton(
@@ -205,12 +205,12 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // أزرار سريعة
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: AlhaiSpacing.xs,
+              runSpacing: AlhaiSpacing.xs,
               alignment: WrapAlignment.center,
               children: [1, 5, 10, 25, 50]
                   .where((q) => q <= maxQty)
@@ -223,11 +223,11 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                   .toList(),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // الإجمالي
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: isDark
                     ? AppColors.primary.withValues(alpha: 0.15)
@@ -245,7 +245,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     ),
                   ),
                   Text(
-                    '${(product.price * _quantity).toStringAsFixed(2)} ر.س',
+                    AppLocalizations.of(context)!.priceSar((product.price * _quantity).toStringAsFixed(2)),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -256,7 +256,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // زر الإضافة
             SizedBox(
@@ -268,7 +268,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     : null,
                 icon: const Icon(Icons.add_shopping_cart),
                 label: Text(
-                  'إضافة $_quantity للسلة',
+                  AppLocalizations.of(context)!.addQtyToCart(_quantity),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -359,7 +359,7 @@ class _QuickAmountChip extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(

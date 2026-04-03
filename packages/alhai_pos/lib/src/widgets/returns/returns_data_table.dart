@@ -34,14 +34,14 @@ class ReturnsDataTable extends StatelessWidget {
 
     if (returns.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxxl),
         child: Center(
           child: Column(
             children: [
               Icon(Icons.inbox_outlined, size: 48, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(l10n.noReturns, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(l10n.noReturnsDesc, style: TextStyle(fontSize: 13, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
             ],
           ),
@@ -208,7 +208,7 @@ class ReturnsDataTable extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(6),
@@ -217,7 +217,7 @@ class ReturnsDataTable extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 13, color: textColor),
-          const SizedBox(width: 4),
+          const SizedBox(width: AlhaiSpacing.xxs),
           Text(text, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: textColor)),
         ],
       ),
@@ -260,7 +260,7 @@ class ReturnsDataTable extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -308,7 +308,7 @@ class ReturnsDataTable extends StatelessWidget {
                 child: Row(
                   children: [
                     const Icon(Icons.check, size: 16, color: AppColors.success),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(l10n.approve, style: const TextStyle(fontSize: 12, color: AppColors.success)),
                   ],
                 ),
@@ -318,7 +318,7 @@ class ReturnsDataTable extends StatelessWidget {
                 child: Row(
                   children: [
                     const Icon(Icons.close, size: 16, color: AppColors.error),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(l10n.reject, style: const TextStyle(fontSize: 12, color: AppColors.error)),
                   ],
                 ),

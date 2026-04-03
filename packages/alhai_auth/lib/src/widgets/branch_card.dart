@@ -155,8 +155,8 @@ class BranchStatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: compact ? 8 : 12,
-        vertical: compact ? 4 : 6,
+        horizontal: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm,
+        vertical: compact ? AlhaiSpacing.xxs : 6,
       ),
       decoration: BoxDecoration(
         color: _color.withValues(alpha: 0.1),
@@ -169,8 +169,8 @@ class BranchStatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 8,
-            height: 8,
+            width: AlhaiSpacing.xs,
+            height: AlhaiSpacing.xs,
             decoration: BoxDecoration(
               color: _color,
               shape: BoxShape.circle,
@@ -213,14 +213,14 @@ class BranchCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: EdgeInsets.only(bottom: compact ? 8 : 12),
+      margin: EdgeInsets.only(bottom: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: EdgeInsets.all(compact ? 12 : 16),
+            padding: EdgeInsets.all(compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.primary.withValues(alpha: 0.05)
@@ -248,7 +248,7 @@ class BranchCard extends StatelessWidget {
                   size: compact ? 20 : 24,
                 ),
 
-                SizedBox(width: compact ? 12 : 16),
+                SizedBox(width: compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
 
                 // معلومات الفرع
                 Expanded(
@@ -271,10 +271,10 @@ class BranchCard extends StatelessWidget {
                             ),
                           ),
                           if (branch.isDefault) ...[
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AlhaiSpacing.xs),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
+                                horizontal: AlhaiSpacing.xs,
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
@@ -296,7 +296,7 @@ class BranchCard extends StatelessWidget {
 
                       // العنوان
                       if (branch.address != null) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Row(
                           children: [
                             const Icon(
@@ -304,7 +304,7 @@ class BranchCard extends StatelessWidget {
                               size: 14,
                               color: AppColors.textTertiary,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: AlhaiSpacing.xxs),
                             Expanded(
                               child: Text(
                                 branch.address!,
@@ -322,7 +322,7 @@ class BranchCard extends StatelessWidget {
 
                       // الحالة
                       if (showStatus && !compact) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         BranchStatusBadge(
                           status: branch.status,
                           compact: true,
@@ -332,7 +332,7 @@ class BranchCard extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(width: compact ? 8 : 12),
+                SizedBox(width: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm),
 
                 // الحالة (في الوضع المختصر) أو السهم
                 if (showStatus && compact)
@@ -379,7 +379,7 @@ class BranchList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: padding ?? const EdgeInsets.all(16),
+      padding: padding ?? const EdgeInsets.all(AlhaiSpacing.md),
       itemCount: branches.length,
       itemBuilder: (context, index) {
         final branch = branches[index];
@@ -441,7 +441,7 @@ class BranchSearchField extends StatelessWidget {
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
+            horizontal: AlhaiSpacing.md,
             vertical: 14,
           ),
         ),
@@ -467,7 +467,7 @@ class AddBranchButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -480,7 +480,7 @@ class AddBranchButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
@@ -491,7 +491,7 @@ class AddBranchButton extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               const Text(
                 'إضافة فرع جديد',
                 style: TextStyle(
@@ -544,7 +544,7 @@ class UserInfoHeader extends StatelessWidget {
               : null,
         ),
 
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
 
         // الاسم والدور
         Expanded(

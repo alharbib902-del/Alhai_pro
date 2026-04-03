@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
@@ -294,10 +295,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.errorOccurred,
                 style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             TextButton(
               onPressed: () {
                 ref.invalidate(_reportsTodayStatsProvider);
@@ -927,7 +928,7 @@ class _ReportCardState extends State<_ReportCard> {
                               color: widget.report.color,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AlhaiSpacing.xxxs),
                           Text(
                             stat.label,
                             style: const TextStyle(

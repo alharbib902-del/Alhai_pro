@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -74,7 +74,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -98,7 +98,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             child: Column(
               children: [
                 _buildCodeInputCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 if (_isValidated && _discountDetails != null)
                   _buildDiscountDetailsCard(isDark, l10n),
                 if (_validationError != null)
@@ -106,7 +106,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: _buildRecentCouponsCard(isDark, l10n),
@@ -119,11 +119,11 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildCodeInputCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         if (_isValidated && _discountDetails != null)
-          ...[_buildDiscountDetailsCard(isDark, l10n), SizedBox(height: isMediumScreen ? 24 : 16)],
+          ...[_buildDiscountDetailsCard(isDark, l10n), SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md)],
         if (_validationError != null)
-          ...[_buildErrorCard(isDark, l10n), SizedBox(height: isMediumScreen ? 24 : 16)],
+          ...[_buildErrorCard(isDark, l10n), SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md)],
         _buildRecentCouponsCard(isDark, l10n),
       ],
     );
@@ -131,7 +131,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   Widget _buildCodeInputCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -143,7 +143,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -151,13 +151,13 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 child: const Icon(Icons.confirmation_number_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text('Enter Coupon Code',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Code input
           TextField(
             controller: _codeController,
@@ -197,13 +197,13 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 18),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Scan button
           SizedBox(
-            width: double.infinity,
+            width:double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -216,12 +216,12 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.info,
                 side: BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Action buttons
           Row(
             children: [
@@ -243,7 +243,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: FilledButton.icon(
                   onPressed: _isValidated && _discountDetails != null
@@ -269,7 +269,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
   Widget _buildDiscountDetailsCard(bool isDark, AppLocalizations l10n) {
     final details = _discountDetails!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.success.withValues(alpha: isDark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(16),
@@ -281,13 +281,13 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
           Row(
             children: [
               const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 24),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text('Coupon Valid',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildDetailRow(l10n.discountType, details['type'] as String, isDark),
           _buildDetailRow(l10n.discountValue, details['value'] as String, isDark),
           _buildDetailRow('Valid Until', details['validUntil'] as String, isDark),
@@ -300,7 +300,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   Widget _buildDetailRow(String label, String value, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -317,7 +317,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   Widget _buildErrorCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.error.withValues(alpha: isDark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(16),
@@ -326,7 +326,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
       child: Row(
         children: [
           const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 24),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               _validationError!,
@@ -341,7 +341,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   Widget _buildRecentCouponsCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -353,7 +353,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -361,17 +361,17 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 child: const Icon(Icons.history_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text('Recent Coupons',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           if (_recentCoupons.isEmpty)
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Text('No recent coupons',
                     style: TextStyle(fontSize: 13,
                         color: AppColors.getTextMuted(isDark))),
@@ -391,7 +391,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: 8),
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
@@ -409,7 +409,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                         child: const Icon(Icons.confirmation_number_outlined,
                             color: AppColors.primary, size: 18),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,7 +429,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                         decoration: BoxDecoration(
                           color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(999),

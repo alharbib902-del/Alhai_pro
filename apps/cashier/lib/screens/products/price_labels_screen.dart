@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -121,7 +121,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadProducts)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadProducts)
                   : _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
         ),
       ],
@@ -137,17 +137,17 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
             flex: 3,
             child: _buildProductsList(isMediumScreen, isDark, l10n),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 children: [
                   _buildLabelSizeCard(isDark, l10n),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   _buildLabelPreview(isDark, l10n),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   _buildPrintButton(isDark, l10n),
                 ],
               ),
@@ -161,11 +161,11 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
       children: [
         // Label size + actions bar
         Padding(
-          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: Column(
             children: [
               _buildLabelSizeCard(isDark, l10n),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
             ],
           ),
         ),
@@ -184,7 +184,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         // Search + select all
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: isMediumScreen ? 24 : 16, vertical: 8),
+              horizontal: isMediumScreen ? 24 : 16, vertical: AlhaiSpacing.xs),
           child: Row(
             children: [
               Expanded(
@@ -216,11 +216,11 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                           color: AppColors.primary, width: 2),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                        horizontal: AlhaiSpacing.md, vertical: 14),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               TextButton.icon(
                 onPressed: () {
                   setState(() {
@@ -258,10 +258,10 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                           color: AppColors.getTextMuted(isDark))))
               : ListView.separated(
                   padding: EdgeInsets.symmetric(
-                      horizontal: isMediumScreen ? 24 : 16, vertical: 8),
+                      horizontal: isMediumScreen ? 24 : 16, vertical: AlhaiSpacing.xs),
                   itemCount: _filteredProducts.length,
                   separatorBuilder: (_, __) =>
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                   itemBuilder: (context, index) =>
                       _buildProductTile(
                           _filteredProducts[index], isDark, l10n),
@@ -316,7 +316,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 });
               },
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +326,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: AppColors.getTextPrimary(isDark))),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     product.barcode ?? l10n.noBarcode,
                     style: TextStyle(
@@ -354,7 +354,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
 
   Widget _buildLabelSizeCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -366,7 +366,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -374,7 +374,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 child: const Icon(Icons.aspect_ratio_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Label Size',
                 style: TextStyle(
@@ -385,13 +385,13 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               _buildSizeOption('Small', 'small', isDark),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               _buildSizeOption(l10n.medium, 'medium', isDark),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               _buildSizeOption('Large', 'large', isDark),
             ],
           ),
@@ -408,7 +408,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.1)
@@ -444,7 +444,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         .toList();
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -456,7 +456,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -464,7 +464,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 child: const Icon(Icons.preview_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Preview',
                 style: TextStyle(
@@ -475,11 +475,11 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           if (selectedProducts.isEmpty)
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AlhaiSpacing.lg),
                 child: Text('Select products for labels',
                     style: TextStyle(
                         fontSize: 13,
@@ -491,7 +491,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 product, isDark, l10n)),
           if (_selectedIds.length > 3)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
               child: Text(
                 '+${_selectedIds.length - 3} ${l10n.more}',
                 style: TextStyle(
@@ -513,7 +513,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
             : 100.0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       height: labelHeight,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -551,7 +551,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
               ),
             ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,7 +564,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                         color: Colors.black),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   '${product.price.toStringAsFixed(2)} ${l10n.sar}',
                   style: TextStyle(
@@ -583,7 +583,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
 
   Widget _buildBottomBar(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -619,7 +619,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),

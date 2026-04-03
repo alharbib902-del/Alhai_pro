@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة إدارة الطلبات الإلكترونية (Online Orders)
 class OnlineOrdersScreen extends ConsumerStatefulWidget {
@@ -15,15 +18,18 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
   List<_OnlineOrder> _orders = [];
   List<_OnlineOrder> _filteredOrders = [];
 
-  final _statusTabs = [
-    ('all', 'الكل'),
-    ('created', 'جديد'),
-    ('preparing', 'قيد التجهيز'),
-    ('ready', 'جاهز'),
-    ('out_for_delivery', 'تم الشحن'),
-    ('delivered', 'تم التسليم'),
-    ('cancelled', 'ملغي'),
-  ];
+  List<(String, String)> _statusTabs(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      ('all', l10n.statusAll),
+      ('created', l10n.statusNew),
+      ('preparing', l10n.statusPreparing),
+      ('ready', l10n.statusReady),
+      ('out_for_delivery', l10n.statusShipped),
+      ('delivered', l10n.statusDelivered),
+      ('cancelled', l10n.statusCancelled),
+    ];
+  }
 
   @override
   void initState() {
@@ -109,14 +115,15 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
     }
   }
 
-  String _statusLabel(String status) {
+  String _statusLabel(String status, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (status) {
-      case 'created': return 'جديد';
-      case 'preparing': return 'قيد التجهيز';
-      case 'ready': return 'جاهز للاستلام';
-      case 'out_for_delivery': return 'تم الشحن';
-      case 'delivered': return 'تم التسليم';
-      case 'cancelled': return 'ملغي';
+      case 'created': return l10n.statusNew;
+      case 'preparing': return l10n.statusPreparing;
+      case 'ready': return l10n.statusReadyForPickup;
+      case 'out_for_delivery': return l10n.statusShipped;
+      case 'delivered': return l10n.statusDelivered;
+      case 'cancelled': return l10n.statusCancelled;
       default: return status;
     }
   }
@@ -131,12 +138,13 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
     }
   }
 
-  String _nextStatusLabel(String status) {
+  String _nextStatusLabel(String status, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (status) {
-      case 'created': return 'قبول الطلب';
-      case 'preparing': return 'جاهز';
-      case 'ready': return 'تم الشحن';
-      case 'out_for_delivery': return 'تم التسليم';
+      case 'created': return l10n.nextStatusAcceptOrder;
+      case 'preparing': return l10n.nextStatusReady;
+      case 'ready': return l10n.nextStatusShipped;
+      case 'out_for_delivery': return l10n.nextStatusDelivered;
       default: return '';
     }
   }
@@ -150,11 +158,12 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
     }
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(DateTime dt, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 60) return l10n.timeAgoMinutes(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoDays(diff.inDays);
   }
 
   @override
@@ -165,9 +174,9 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('الطلبات الإلكترونية'),
+            Text(AppLocalizations.of(context).onlineOrders),
             if (pendingCount > 0) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
@@ -195,7 +204,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              children: _statusTabs.map((tab) {
+              children: _statusTabs(context).map((tab) {
                 final count = tab.$1 == 'all'
                     ? _orders.length
                     : _orders.where((o) => o.status == tab.$1).length;
@@ -217,7 +226,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                     backgroundColor: _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1)
                         .withValues(alpha: 0.1),
                     showCheckmark: false,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                   ),
                 );
               }).toList(),
@@ -229,23 +238,11 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _filteredOrders.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.shopping_bag_outlined, size: 64, color: Theme.of(context).hintColor),
-                            const SizedBox(height: 12),
-                            Text(
-                              'لا توجد طلبات ${_statusFilter != 'all' ? _statusLabel(_statusFilter) : ''}',
-                              style: TextStyle(color: Theme.of(context).hintColor),
-                            ),
-                          ],
-                        ),
-                      )
+                    ? AppEmptyState.noOrders(context)
                     : RefreshIndicator(
                         onRefresh: _loadOrders,
                         child: ListView.builder(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           itemCount: _filteredOrders.length,
                           itemBuilder: (ctx, i) {
                             final order = _filteredOrders[i];
@@ -262,7 +259,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                       children: [
                                         Text(_platformIcon(order.platform),
                                             style: const TextStyle(fontSize: 18)),
-                                        const SizedBox(width: 8),
+                                        const SizedBox(width: AlhaiSpacing.xs),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +282,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                             border: Border.all(color: color.withValues(alpha: 0.3)),
                                           ),
                                           child: Text(
-                                            _statusLabel(order.status),
+                                            _statusLabel(order.status, context),
                                             style: TextStyle(
                                               fontSize: 11,
                                               color: color,
@@ -309,14 +306,14 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                       ),
                                     )),
 
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: AlhaiSpacing.xs),
 
                                     // Footer
                                     Row(
                                       children: [
                                         Icon(Icons.location_on_rounded,
                                             size: 14, color: Theme.of(context).hintColor),
-                                        const SizedBox(width: 4),
+                                        const SizedBox(width: AlhaiSpacing.xxs),
                                         Expanded(
                                           child: Text(
                                             order.address,
@@ -325,7 +322,7 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${order.total.toStringAsFixed(2)} ر.س',
+                                          AppLocalizations.of(context).amountSar(order.total.toStringAsFixed(2)),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
@@ -339,10 +336,10 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          _timeAgo(order.createdAt),
+                                          _timeAgo(order.createdAt, context),
                                           style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
                                         ),
-                                        if (_nextStatusLabel(order.status).isNotEmpty)
+                                        if (_nextStatusLabel(order.status, context).isNotEmpty)
                                           SizedBox(
                                             height: 30,
                                             child: FilledButton(
@@ -366,11 +363,11 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                                                 _applyFilter();
                                               },
                                               style: FilledButton.styleFrom(
-                                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                                                 backgroundColor: color,
                                               ),
                                               child: Text(
-                                                _nextStatusLabel(order.status),
+                                                _nextStatusLabel(order.status, context),
                                                 style: const TextStyle(fontSize: 12),
                                               ),
                                             ),

@@ -11,6 +11,7 @@ import '../../services/ai_competitor_analysis_service.dart';
 import '../../widgets/ai/competitor_price_table.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../widgets/ai/market_position_chart.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiCompetitorAnalysisScreen extends ConsumerStatefulWidget {
   const AiCompetitorAnalysisScreen({super.key});
@@ -62,7 +63,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
       children: [
         // Tab bar
         Container(
-          margin: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -114,7 +115,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                     if (unreadAlerts > 0) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                         decoration: BoxDecoration(
                           color: AppColors.error,
                           borderRadius: BorderRadius.circular(10),
@@ -134,7 +135,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
 
         // Summary cards
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: _buildSummaryCards(summary, isDark, isWideScreen),
         ),
 
@@ -200,7 +201,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
 
   Widget _buildSummaryCard(_SummaryData data, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -223,7 +224,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
             ),
             child: Icon(data.icon, color: data.color, size: 22),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,7 +269,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
         final categories = [l10n.all, ...data.map((c) => c.category).toSet()];
 
         return Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           child: Column(
             children: [
               // Filter row
@@ -281,7 +282,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                         children: categories.map((cat) {
                           final isSelected = cat == filter;
                           return Padding(
-                            padding: const EdgeInsetsDirectional.only(start: 8),
+                            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
                             child: FilterChip(
                               selected: isSelected,
                               label: Text(cat),
@@ -304,7 +305,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   PopupMenuButton<CompetitorSortType>(
                     initialValue: sort,
                     onSelected: (v) => ref.read(competitorSortProvider.notifier).state = v,
@@ -315,7 +316,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                       PopupMenuItem(value: CompetitorSortType.category, child: Text(l10n.aiSortByCategory)),
                     ],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF1E293B) : Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -339,7 +340,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Expanded(
                 child: CompetitorPriceTable(comparisons: filtered),
               ),
@@ -355,11 +356,11 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     final isWide = context.isDesktop;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         children: [
           MarketPositionChart(position: position, height: isWide ? 400 : 300),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Competitor cards
           Wrap(
             spacing: 12,
@@ -388,7 +389,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     final color = competitorColors[competitor.nameAr] ?? AppColors.primary;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -420,7 +421,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,9 +450,9 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
           Row(
             children: [
               _buildCompetitorStat(l10n.aiPriceIndex, '${(competitor.overallPriceIndex * 100).toInt()}%', isDark, color),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               _buildCompetitorStat(l10n.aiQuality, '${competitor.qualityScore}/10', isDark, color),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               _buildCompetitorStat(l10n.aiBranches, '${competitor.branchCount}', isDark, color),
             ],
           ),
@@ -463,7 +464,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
   Widget _buildCompetitorStat(String label, String value, bool isDark, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(8),
@@ -478,7 +479,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                 color: color,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AlhaiSpacing.xxxs),
             Text(
               label,
               style: TextStyle(
@@ -499,7 +500,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -522,7 +523,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                     children: [
                       Icon(Icons.notifications_off_rounded, size: 48,
                         color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AlhaiSpacing.sm),
                       Text(l10n.aiNoAlertsCurrently,
                         style: TextStyle(
                           color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary,
@@ -531,7 +532,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                   itemCount: alerts.length,
                   itemBuilder: (context, index) {
                     return _buildAlertCard(alerts[index], isDark, alertsNotifier);
@@ -564,8 +565,8 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -625,7 +626,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     alert.message,
                     style: TextStyle(
@@ -633,12 +634,12 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                       color: isDark ? Colors.white.withValues(alpha: 0.7) : AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     children: [
                       if (alert.changePercent != 0)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: alertColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -652,7 +653,7 @@ class _AiCompetitorAnalysisScreenState extends ConsumerState<AiCompetitorAnalysi
                             ),
                           ),
                         ),
-                      if (alert.changePercent != 0) const SizedBox(width: 8),
+                      if (alert.changePercent != 0) const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         '${alert.oldPrice.toStringAsFixed(2)} ر.س → ${alert.newPrice.toStringAsFixed(2)} ر.س',
                         style: TextStyle(

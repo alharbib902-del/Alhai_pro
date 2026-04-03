@@ -31,7 +31,7 @@ class CompetitorPriceTable extends StatelessWidget {
           children: [
             Icon(Icons.compare_arrows_rounded, size: 48,
               color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text('لا توجد بيانات مقارنة',
               style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textSecondary)),
           ],
@@ -170,7 +170,7 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: isDark
             ? AppColors.info.withValues(alpha: 0.15)
@@ -203,7 +203,7 @@ class _PriceDiffBadge extends StatelessWidget {
     final icon = isNegative ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
@@ -212,7 +212,7 @@ class _PriceDiffBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          const SizedBox(width: 2),
+          const SizedBox(width: AlhaiSpacing.xxxs),
           Text(
             '${percent.abs().toStringAsFixed(1)}%',
             style: TextStyle(
@@ -268,7 +268,7 @@ class _PositionIndicator extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: color),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color)),
       ],
     );

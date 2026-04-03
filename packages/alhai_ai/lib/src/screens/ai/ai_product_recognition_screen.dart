@@ -11,6 +11,7 @@ import '../../providers/ai_product_recognition_providers.dart';
 import '../../services/ai_product_recognition_service.dart';
 import '../../widgets/ai/recognition_result_card.dart';
 import '../../widgets/ai/ocr_data_panel.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiProductRecognitionScreen extends ConsumerStatefulWidget {
   const AiProductRecognitionScreen({super.key});
@@ -48,14 +49,14 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
       children: [
         // Mode selector
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
           child: _buildModeSelector(scanMode, isDark),
         ),
 
         // Main content
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,14 +67,14 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                         child: Column(
                           children: [
                             _buildCameraArea(isDark, scanMode),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             Expanded(
                               child: _buildResultsList(recognitionResult, isDark),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: AlhaiSpacing.mdl),
                       // OCR panel
                       SizedBox(
                         width: 360,
@@ -99,12 +100,12 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                     child: Column(
                       children: [
                         _buildCameraArea(isDark, scanMode),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         SizedBox(
                           height: 300,
                           child: _buildResultsList(recognitionResult, isDark),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         SizedBox(
                           height: 500,
                           child: OcrDataPanel(
@@ -133,7 +134,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
     ];
 
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -206,7 +207,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   decoration: BoxDecoration(
                     color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -217,7 +218,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                     color: const Color(0xFF3B82F6).withValues(alpha: 0.5),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   l10n.aiCameraArea,
                   style: TextStyle(
@@ -359,7 +360,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                   valueColor: AlwaysStoppedAnimation(Color(0xFF3B82F6)),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(
                 AppLocalizations.of(context)!.aiAnalyzingImage,
                 style: TextStyle(
@@ -385,7 +386,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                 children: [
                   Icon(Icons.image_search_rounded, size: 48,
                     color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     AppLocalizations.of(context)!.aiStartScanToSeeResults,
                     style: TextStyle(
@@ -421,9 +422,9 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
                     ),
                     const Spacer(),
                     _buildResultBadge(AppLocalizations.of(context)!.aiDetectedCount(data.totalDetected), AppColors.info, isDark),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     _buildResultBadge(AppLocalizations.of(context)!.aiMatchedCount(data.totalMatched), AppColors.success, isDark),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     _buildResultBadge(AppLocalizations.of(context)!.aiAccuracyPercent('${(data.avgConfidence * 100).toInt()}'), AppColors.primary, isDark),
                   ],
                 ),
@@ -469,7 +470,7 @@ class _AiProductRecognitionScreenState extends ConsumerState<AiProductRecognitio
 
   Widget _buildResultBadge(String text, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
 
@@ -143,7 +145,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
       }
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('تمت إعادة الإرسال إلى قائمة الانتظار'), backgroundColor: AppColors.info),
+      SnackBar(content: Text(AppLocalizations.of(context).requeuedMessage), backgroundColor: AppColors.info),
     );
   }
 
@@ -164,31 +166,31 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isEdit ? 'تعديل القالب' : 'قالب جديد'),
+        title: Text(isEdit ? AppLocalizations.of(context).editTemplate : AppLocalizations.of(context).newTemplate),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'اسم القالب',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).templateName,
+                border: const OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(
               controller: contentCtrl,
-              decoration: const InputDecoration(
-                labelText: 'نص الرسالة',
-                border: OutlineInputBorder(),
-                helperText: 'استخدم {store_name} {customer_name} {total} كمتغيرات',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).messageText,
+                border: const OutlineInputBorder(),
+                helperText: AppLocalizations.of(context).templateVariablesHint('{customer_name}', '{store_name}', '{total}'),
               ),
               maxLines: 4,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel)),
           FilledButton(
             onPressed: () {
               final name = nameCtrl.text.trim();
@@ -212,7 +214,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
               });
               Navigator.pop(ctx);
             },
-            child: const Text('حفظ'),
+            child: Text(AppLocalizations.of(context).save),
           ),
         ],
       ),
@@ -223,7 +225,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إدارة WhatsApp'),
+        title: Text(AppLocalizations.of(context).whatsappManagement),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -236,8 +238,8 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
             Tab(
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 const Icon(Icons.queue_rounded, size: 16),
-                const SizedBox(width: 4),
-                Text('قائمة الانتظار'),
+                const SizedBox(width: AlhaiSpacing.xxs),
+                Text(AppLocalizations.of(context).messageQueue),
                 if (_pendingCount > 0) ...[
                   const SizedBox(width: 6),
                   Container(
@@ -248,8 +250,8 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                 ],
               ]),
             ),
-            const Tab(icon: Icon(Icons.message_outlined, size: 16), text: 'القوالب'),
-            const Tab(icon: Icon(Icons.settings_outlined, size: 16), text: 'الإعدادات'),
+            Tab(icon: const Icon(Icons.message_outlined, size: 16), text: AppLocalizations.of(context).templates),
+            Tab(icon: const Icon(Icons.settings_outlined, size: 16), text: AppLocalizations.of(context).settings),
           ],
         ),
       ),
@@ -275,14 +277,14 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
       children: [
         // Stats row
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           child: Row(
             children: [
-              Expanded(child: _StatCard(label: 'انتظار', count: _pendingCount, color: AppColors.warning)),
-              const SizedBox(width: 8),
-              Expanded(child: _StatCard(label: 'مُرسل', count: _sentCount, color: AppColors.success)),
-              const SizedBox(width: 8),
-              Expanded(child: _StatCard(label: 'فشل', count: _failedCount, color: AppColors.error)),
+              Expanded(child: _StatCard(label: AppLocalizations.of(context).pendingStatus, count: _pendingCount, color: AppColors.warning)),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Expanded(child: _StatCard(label: AppLocalizations.of(context).sentStatus, count: _sentCount, color: AppColors.success)),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Expanded(child: _StatCard(label: AppLocalizations.of(context).failedStatus, count: _failedCount, color: AppColors.error)),
             ],
           ),
         ),
@@ -291,26 +293,24 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
           height: 44,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
             children: [
-              _filterChip('all', 'الكل'),
-              _filterChip('pending', 'انتظار'),
-              _filterChip('sent', 'مُرسل'),
-              _filterChip('failed', 'فشل'),
+              _filterChip('all', AppLocalizations.of(context).all),
+              _filterChip('pending', AppLocalizations.of(context).pendingStatus),
+              _filterChip('sent', AppLocalizations.of(context).sentStatus),
+              _filterChip('failed', AppLocalizations.of(context).failedStatus),
             ],
           ),
         ),
         Expanded(
           child: filtered.isEmpty
-              ? Center(
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(Icons.inbox_outlined, size: 64, color: Theme.of(context).hintColor),
-                    SizedBox(height: 12),
-                    Text('لا توجد رسائل', style: TextStyle(color: Theme.of(context).hintColor)),
-                  ]),
+              ? AppEmptyState(
+                  icon: Icons.inbox_outlined,
+                  title: AppLocalizations.of(context).noMessages,
+                  description: '',
                 )
               : ListView.separated(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AlhaiSpacing.sm),
                   itemCount: filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 6),
                   itemBuilder: (ctx, i) {
@@ -332,13 +332,13 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                                     IconButton(
                                       icon: Icon(Icons.refresh_rounded, size: 18, color: AppColors.info),
                                       onPressed: () => _retryMessage(msg.id),
-                                      tooltip: 'إعادة الإرسال',
+                                      tooltip: AppLocalizations.of(context).retrySend,
                                     ),
                                   if (msg.status == 'pending')
                                     IconButton(
                                       icon: Icon(Icons.cancel_outlined, size: 18, color: AppColors.error),
                                       onPressed: () => _cancelMessage(msg.id),
-                                      tooltip: 'إلغاء',
+                                      tooltip: AppLocalizations.of(context).cancel,
                                     ),
                                 ],
                               )
@@ -355,7 +355,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
   Widget _filterChip(String status, String label) {
     final isSelected = _filterStatus == status;
     return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 8),
+      padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
       child: FilterChip(
         selected: isSelected,
         label: Text(label),
@@ -377,25 +377,25 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${_templates.length} قالب',
+              Text(AppLocalizations.of(context).templateCount(_templates.length),
                   style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
               FilledButton.icon(
                 onPressed: () => _showTemplateEditor(),
                 icon: const Icon(Icons.add_rounded, size: 16),
-                label: const Text('قالب جديد'),
+                label: Text(AppLocalizations.of(context).newTemplate),
               ),
             ],
           ),
         ),
         Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
             itemCount: _templates.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
             itemBuilder: (ctx, i) {
               final t = _templates[i];
               return Card(
@@ -406,7 +406,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                   ),
                   title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600)),
                   subtitle: Text(
-                    t.isActive ? 'نشط' : 'معطّل',
+                    t.isActive ? AppLocalizations.of(context).activeStatus : AppLocalizations.of(context).disabledStatus,
                     style: TextStyle(
                       color: t.isActive ? AppColors.success : Theme.of(context).colorScheme.outline,
                       fontSize: 12,
@@ -425,27 +425,27 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                   ),
                   children: [
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+                      padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.xs),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(AlhaiSpacing.sm),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(t.content, style: const TextStyle(fontSize: 13)),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton.icon(
                                 onPressed: () => _showTemplateEditor(existing: t),
                                 icon: const Icon(Icons.edit_outlined, size: 16),
-                                label: const Text('تعديل'),
+                                label: Text(AppLocalizations.of(context).edit),
                               ),
                               TextButton.icon(
                                 style: TextButton.styleFrom(foregroundColor: AppColors.error),
@@ -453,7 +453,7 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                                   setState(() => _templates.removeAt(i));
                                 },
                                 icon: const Icon(Icons.delete_outline, size: 16),
-                                label: const Text('حذف'),
+                                label: Text(AppLocalizations.of(context).delete),
                               ),
                             ],
                           ),
@@ -472,30 +472,30 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
 
   Widget _buildSettingsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // API credentials
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('إعدادات API', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  const SizedBox(height: 12),
+                  Text(AppLocalizations.of(context).apiSettings, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   TextField(
                     controller: _apiKeyController,
-                    decoration: const InputDecoration(
-                      labelText: 'مفتاح API',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).apiKey,
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.key_rounded),
                       hintText: 'wasender_api_xxxxx',
                     ),
                     obscureText: true,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   TextField(
                     controller: _instanceIdController,
                     decoration: const InputDecoration(
@@ -504,41 +504,41 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
                       prefixIcon: Icon(Icons.phone_android_rounded),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   OutlinedButton.icon(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: const Text('جاري اختبار الاتصال...'), backgroundColor: AppColors.info),
+                        SnackBar(content: Text(AppLocalizations.of(context).testingConnection), backgroundColor: AppColors.info),
                       );
                     },
                     icon: const Icon(Icons.wifi_tethering_rounded, size: 18),
-                    label: const Text('اختبار الاتصال'),
+                    label: Text(AppLocalizations.of(context).testConnection),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // Auto-send settings
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('إعدادات الإرسال', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text(AppLocalizations.of(context).sendSettings, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('الإرسال التلقائي'),
-                    subtitle: const Text('إرسال الرسائل تلقائياً بعد كل عملية'),
+                    title: Text(AppLocalizations.of(context).autoSend),
+                    subtitle: Text(AppLocalizations.of(context).autoSendDescription),
                     value: _autoSend,
                     onChanged: (v) => setState(() => _autoSend = v),
                   ),
                   const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('الحد اليومي للرسائل'),
-                    subtitle: Text('$_dailyLimit رسالة/يوم'),
+                    title: Text(AppLocalizations.of(context).dailyMessageLimit),
+                    subtitle: Text(AppLocalizations.of(context).messagesPerDay(_dailyLimit)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -558,17 +558,17 @@ class _WhatsAppManagementScreenState extends ConsumerState<WhatsAppManagementScr
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم حفظ الإعدادات'), backgroundColor: AppColors.success),
+                  SnackBar(content: Text(AppLocalizations.of(context).settingsSaved), backgroundColor: AppColors.success),
                 );
               },
               icon: const Icon(Icons.save_outlined),
-              label: const Text('حفظ الإعدادات'),
+              label: Text(AppLocalizations.of(context).saveSettings),
             ),
           ),
         ],
@@ -591,7 +591,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),

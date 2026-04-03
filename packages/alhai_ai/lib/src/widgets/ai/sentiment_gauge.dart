@@ -61,7 +61,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
     final label = AiSentimentAnalysisService.getSentimentLabel(widget.score);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -80,7 +80,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFEC4899), Color(0xFFBE185D)],
@@ -89,7 +89,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
                 ),
                 child: const Icon(Icons.sentiment_satisfied_alt_rounded, color: Colors.white, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +115,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Gauge
           SizedBox(
@@ -149,7 +149,7 @@ class _SentimentGaugeState extends State<SentimentGauge>
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Stats row
           Row(
@@ -219,7 +219,7 @@ class _StatItem extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             label,
             style: TextStyle(

@@ -20,7 +20,7 @@ class DeleteInvoiceDialog extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 380),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -29,26 +29,26 @@ class DeleteInvoiceDialog extends StatelessWidget {
                 decoration: BoxDecoration(color: AppColors.error.withValues(alpha: isDark ? 0.15 : 0.1), shape: BoxShape.circle),
                 child: const Icon(Icons.warning_amber, size: 32, color: AppColors.error),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.deleteConfirm, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(l10n.deleteInvoiceMsg, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface, side: BorderSide(color: Theme.of(context).dividerColor), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: 12)),
+                      style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface, side: BorderSide(color: Theme.of(context).dividerColor), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.cancel),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: FilledButton(
                       onPressed: onConfirm,
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: 12)),
+                      style: FilledButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm)),
                       child: Text(l10n.yesDelete),
                     ),
                   ),

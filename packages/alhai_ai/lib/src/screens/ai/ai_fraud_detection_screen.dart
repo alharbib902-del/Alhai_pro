@@ -14,6 +14,7 @@ import '../../providers/ai_fraud_detection_providers.dart';
 import '../../services/ai_fraud_detection_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'dart:math' as math;
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiFraudDetectionScreen extends ConsumerStatefulWidget {
   const AiFraudDetectionScreen({super.key});
@@ -79,7 +80,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
       error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.aiErrorWithMessage(e.toString()))),
       data: (alerts) {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -90,7 +91,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                 error: (_, __) => const SizedBox.shrink(),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // Risk meter
               summaryAsync.when(
@@ -99,7 +100,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                 error: (_, __) => const SizedBox.shrink(),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
 
               // Tabs
               Container(
@@ -125,7 +126,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Tab content
               SizedBox(
@@ -188,7 +189,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             return SizedBox(
               width: isWideScreen ? constraints.maxWidth / 4 - 16 : double.infinity,
               child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -213,7 +214,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                   ),
                   child: Icon(card.icon, color: card.color, size: 22),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,7 +226,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                           fontSize: 12,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
                         card.value,
                         style: TextStyle(
@@ -250,7 +251,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   Widget _buildRiskMeter(bool isDark, FraudDetectionSummary summary) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -271,7 +272,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
           Row(
             children: [
               const Icon(Icons.speed_rounded, color: AppColors.primary, size: 22),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.aiRiskMeter,
                 style: TextStyle(
@@ -282,7 +283,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Center(
             child: SizedBox(
               width: 200,
@@ -319,7 +320,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Pattern breakdown
           Wrap(
             spacing: 8,
@@ -371,7 +372,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.check_circle_outline_rounded, size: 64, color: AppColors.success),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)!.aiNoFraudAlerts,
               style: TextStyle(
@@ -386,9 +387,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
       itemCount: alerts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
       itemBuilder: (context, index) {
         final alert = alerts[index];
         return FraudAlertCard(
@@ -407,7 +408,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   Widget _buildBehaviorTab(bool isDark, List<BehaviorScore> scores, bool isWideScreen) {
     if (isWideScreen) {
       return GridView.builder(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(AlhaiSpacing.xxs),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: getResponsiveGridColumns(context, mobile: 2, desktop: 4),
           childAspectRatio: 0.75,
@@ -422,9 +423,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
       itemCount: scores.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
       itemBuilder: (context, index) {
         return BehaviorScoreWidget(
           score: scores[index],
@@ -445,7 +446,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
               size: 64,
               color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context)!.aiSelectAlertToInvestigate,
               style: TextStyle(
@@ -459,7 +460,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxs),
       child: FraudInvestigationPanel(
         alert: _selectedAlert!,
         investigation: _selectedInvestigation!,

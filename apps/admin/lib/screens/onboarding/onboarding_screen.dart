@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// SharedPreferences key for admin onboarding completion flag
 const String kAdminOnboardingSeenKey = 'admin_onboarding_complete';

@@ -124,7 +124,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
@@ -141,7 +141,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // Zakat result card
           Card(
@@ -155,7 +155,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 children: [
                   Icon(
@@ -163,7 +163,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     size: 48,
                     color: _aboveNisab ? AlhaiColors.success : AlhaiColors.info,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     _aboveNisab ? 'وجبت الزكاة' : 'لم يبلغ النصاب',
                     style: TextStyle(
@@ -173,10 +173,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     ),
                   ),
                   if (_aboveNisab) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text('مقدار الزكاة الواجبة',
                         style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${_zakatDue.toStringAsFixed(2)} ر.س',
                       style: TextStyle(
@@ -190,7 +190,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                       style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
                     ),
                   ] else ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text(
                       'النصاب الشرعي: ${_nisabSar.toStringAsFixed(0)} ر.س',
                       style: TextStyle(color: AlhaiColors.infoDark),
@@ -204,17 +204,17 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Nisab info
           Card(
             color: isDark ? const Color(0xFF1E293B) : Colors.amber.shade50,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               child: Row(
                 children: [
                   Icon(Icons.info_outline, color: Colors.amber.shade700, size: 20),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: Text(
                       'النصاب: ${_nisabSar.toStringAsFixed(0)} ر.س '
@@ -229,12 +229,12 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Zakat base calculation
           const Text('أصول الزكاة (+)',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _ZakatLine(
             label: 'قيمة البضاعة والمخزون',
             amount: _inventoryValue,
@@ -254,10 +254,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
             isDark: isDark,
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           const Text('الخصومات (-)',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           _ZakatLine(
             label: 'الديون الواجبة للموردين',
             amount: _accountsPayable,
@@ -271,13 +271,13 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
             isDark: isDark,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           const Divider(thickness: 2),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Net zakat base
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AlhaiColors.info.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
@@ -298,11 +298,11 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Zakat calculation
           if (_aboveNisab) Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AlhaiColors.success.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
@@ -324,7 +324,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Text(
                   'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.',
                   style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
@@ -356,7 +356,7 @@ class _ZakatLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isAddition ? AlhaiColors.successDark : AlhaiColors.errorDark;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Icon(
@@ -364,7 +364,7 @@ class _ZakatLine extends StatelessWidget {
             size: 18,
             color: color,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
           Text(
             '${amount.toStringAsFixed(0)} ر.س',

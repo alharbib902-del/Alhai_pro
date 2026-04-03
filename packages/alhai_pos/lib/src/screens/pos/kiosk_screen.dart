@@ -139,12 +139,12 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ..._cart.map((i) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(child: Text(i.name, overflow: TextOverflow.ellipsis, maxLines: 1)),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Text(l10n.qtyTimesPrice(i.qty, i.price.toStringAsFixed(0))),
                 ],
               ),
@@ -154,7 +154,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(child: Text(l10n.totalAmount, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, maxLines: 1)),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(l10n.amountWithSar(_subtotal.toStringAsFixed(2)),
                     style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
               ],
@@ -246,19 +246,19 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               ),
               child: const Icon(Icons.check_rounded, color: Colors.white, size: 64),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Text(
               l10n.orderReceived,
               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AlhaiColors.success),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               l10n.orderBeingPrepared,
               style: TextStyle(fontSize: 18, color: Theme.of(context).hintColor),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
             const CircularProgressIndicator(color: AlhaiColors.success),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.redirectingToHome, style: TextStyle(color: Theme.of(context).hintColor)),
           ],
         ),
@@ -271,11 +271,11 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       color: AppColors.primary,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
       child: Row(
         children: [
           const Icon(Icons.store_rounded, color: Colors.white, size: 28),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Text(
             l10n.orderNow,
             style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
@@ -296,7 +296,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   right: 6,
                   top: 6,
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                     decoration: const BoxDecoration(color: AlhaiColors.error, shape: BoxShape.circle),
                     child: Text(
                       '${_cart.length}',
@@ -318,9 +318,9 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       color: Colors.white,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
         itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
         itemBuilder: (ctx, i) {
           final cat = _categories[i];
           final isSelected = cat.id == _selectedCategory;
@@ -328,7 +328,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
             onTap: () => setState(() => _selectedCategory = cat.id),
             child: AnimatedContainer(
               duration: AlhaiDurations.standard,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primary : Theme.of(context).colorScheme.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(20),
@@ -354,19 +354,19 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.inventory_2_outlined, size: 64, color: Theme.of(context).hintColor),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(l10n.noProducts, style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16)),
         ]),
       );
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 220,
         mainAxisExtent: 200,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisSpacing: AlhaiSpacing.sm,
+        mainAxisSpacing: AlhaiSpacing.sm,
       ),
       itemCount: prods.length,
       itemBuilder: (ctx, i) {
@@ -398,7 +398,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AlhaiSpacing.xxs),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -408,7 +408,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                           ),
                           if (inCart != null)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 2),
                               decoration: BoxDecoration(
                                 color: AlhaiColors.success,
                                 borderRadius: BorderRadius.circular(12),
@@ -436,11 +436,11 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Row(
             children: [
               const Icon(Icons.shopping_cart_rounded, color: AppColors.primary),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(l10n.orderCartWithCount(_cart.length),
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -453,7 +453,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
           child: _cart.isEmpty
               ? Center(child: Text(l10n.cartEmpty, style: TextStyle(color: Theme.of(context).hintColor)))
               : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   itemCount: _cart.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (ctx, i) {
@@ -491,7 +491,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
   Widget _buildFooter() {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       color: Colors.white,
       child: Row(
         children: [
@@ -507,7 +507,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                 ),
               ],
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
           ],
           Expanded(
             child: FilledButton.icon(
@@ -515,7 +515,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               icon: const Icon(Icons.check_circle_rounded),
               label: Text(_cart.isEmpty ? l10n.selectFromMenu : l10n.orderNow),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),

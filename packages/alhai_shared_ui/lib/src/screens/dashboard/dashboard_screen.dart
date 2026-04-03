@@ -56,22 +56,22 @@ class DashboardScreen extends ConsumerWidget {
           child: RefreshIndicator(
             onRefresh: () => _refreshDashboard(ref),
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
               child: dashboardAsync.when(
                 data: (data) => _buildContent(context, data, isWideScreen, isMediumScreen, l10n),
                 loading: () => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ShimmerStats(isWide: isWideScreen),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AlhaiSpacing.lg),
                     const ShimmerCard(height: 200),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AlhaiSpacing.md),
                     const ShimmerList(itemCount: 4),
                   ],
                 ),
                 error: (error, _) => Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(64),
+                    padding: const EdgeInsets.all(AlhaiSpacing.massive),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -80,14 +80,14 @@ class DashboardScreen extends ConsumerWidget {
                           size: 48,
                           color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textTertiary,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: AlhaiSpacing.md),
                         Text(
                           l10n.errorOccurred,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: AlhaiSpacing.sm),
                         TextButton.icon(
                           onPressed: () => _refreshDashboard(ref),
                           icon: const Icon(Icons.refresh_rounded),
@@ -165,7 +165,7 @@ class DashboardScreen extends ConsumerWidget {
       ),
     ];
 
-    final spacing = isMediumScreen ? 16.0 : 12.0;
+    final spacing = isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm;
 
     // Desktop OR landscape phone: show all 4 cards in a single row
     if (isWideScreen || (isLandscape && !isMediumScreen)) {
@@ -218,7 +218,7 @@ class DashboardScreen extends ConsumerWidget {
             data: _buildChartData(data, l10n),
           ),
         ),
-        const SizedBox(width: 24),
+        SizedBox(width: AlhaiSpacing.lg),
         Expanded(
           flex: 1,
           child: Column(
@@ -229,7 +229,7 @@ class DashboardScreen extends ConsumerWidget {
                 onRefund: () => context.push(AppRoutes.returns),
                 onDailyReport: () => context.push('/reports'),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               TopProductsList(
                 products: _buildTopProducts(data),
                 onProductTap: (id) => context.push(AppRoutes.productDetailPath(id)),
@@ -294,7 +294,7 @@ class DashboardScreen extends ConsumerWidget {
         onTap: () => context.push(AppRoutes.expiryTracking),
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: AlhaiColors.warning.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
@@ -303,7 +303,7 @@ class DashboardScreen extends ConsumerWidget {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AlhaiColors.warning.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -311,7 +311,7 @@ class DashboardScreen extends ConsumerWidget {
                 child: Icon(Icons.warning_amber_rounded,
                     color: AlhaiColors.warningDark, size: 20),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +324,7 @@ class DashboardScreen extends ConsumerWidget {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       'منتجات تنتهي صلاحيتها خلال 7 ايام',
                       style: TextStyle(

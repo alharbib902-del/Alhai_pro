@@ -291,11 +291,11 @@ class _GradientButtonState extends State<GradientButton>
   EdgeInsets get _padding {
     switch (widget.size) {
       case GradientButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
       case GradientButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 10);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10);
       case GradientButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: 24, vertical: 14);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14);
     }
   }
 

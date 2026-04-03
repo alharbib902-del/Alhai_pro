@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -89,9 +89,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 64, color: colorScheme.error),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.errorOccurred),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               TextButton.icon(
                 onPressed: () {
                   setState(() { _isLoading = true; _loadError = null; });
@@ -134,7 +134,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
         children: [
           // Summary cards
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Expanded(
@@ -145,7 +145,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     color: colorScheme.error,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.inventory,
@@ -154,7 +154,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     color: AlhaiColors.warning,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
                     icon: Icons.calendar_today,
@@ -192,7 +192,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.check_circle, size: 64, color: AlhaiColors.success),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noAlerts, style: const TextStyle(fontSize: 18)),
           ],
         ),
@@ -207,7 +207,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
       });
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
       itemCount: sortedAlerts.length,
       itemBuilder: (context, index) {
         final alert = sortedAlerts[index];
@@ -233,7 +233,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
             );
           },
           child: Card(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
             color: (alert.priority == 'high' || alert.priority == 'critical')
                 ? colorScheme.errorContainer
                 : null,
@@ -241,11 +241,11 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
               onTap: () => _showAlertDetails(alert),
               borderRadius: BorderRadius.circular(12),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       decoration: BoxDecoration(
                         color: _getAlertColor(alert.type).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -255,7 +255,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                         color: _getAlertColor(alert.type),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: AlhaiSpacing.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +270,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                               ),
                               if (alert.priority == 'high' || alert.priority == 'critical')
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                                   decoration: BoxDecoration(
                                     color: colorScheme.error,
                                     borderRadius: BorderRadius.circular(4),
@@ -282,12 +282,12 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             _getAlertMessage(alert),
                             style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             _formatTimeAgo(alert.createdAt),
                             style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
@@ -353,7 +353,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,14 +361,14 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   decoration: BoxDecoration(
                     color: _getAlertColor(alert.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(_getAlertIcon(alert.type), size: 32, color: _getAlertColor(alert.type)),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,10 +380,10 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             _DetailRow(label: l10n.currentQuantity, value: '${alert.currentStock}'),
             _DetailRow(label: l10n.minimumThreshold, value: '${alert.threshold}'),
-            const SizedBox(height: 24),
+            SizedBox(height: AlhaiSpacing.lg),
             Row(
               children: [
                 Expanded(
@@ -396,7 +396,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
                     label: Text(l10n.dismissAction),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
@@ -421,13 +421,13 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setSheetState) => Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.alertSettings, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               SwitchListTile(
                 title: Text(l10n.lowStockNotifications),
                 value: _notifyLowStock,
@@ -506,7 +506,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(l10n.productLabelName(alert.productName)),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             TextField(
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -576,7 +576,7 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -585,7 +585,7 @@ class _SummaryCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: color),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 24)),
           Text(label, style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8))),
         ],
@@ -604,7 +604,7 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

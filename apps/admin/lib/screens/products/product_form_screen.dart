@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Admin Product Form Screen - Add/Edit product
 class ProductFormScreen extends ConsumerStatefulWidget {
@@ -138,16 +139,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           builder: (context) => ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: AlertDialog(
-              title: const Text('تغييرات غير محفوظة'),
-              content: const Text('هل تريد المغادرة بدون حفظ التغييرات؟'),
+              title: Text(AppLocalizations.of(context).unsavedChanges),
+              content: Text(AppLocalizations.of(context).leaveWithoutSaving),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('إلغاء'),
+                  child: Text(AppLocalizations.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('مغادرة'),
+                  child: Text(AppLocalizations.of(context).leave),
                 ),
               ],
             ),
@@ -199,7 +200,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
               child: Text(
                 widget.isEditing ? l10n.editProduct : l10n.addProduct,
@@ -212,7 +213,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Form content - M121: constrain form width on desktop
         Center(
@@ -240,22 +241,22 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           child: Column(
             children: [
               _buildImageSection(isDark, l10n),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               _buildBasicInfoSection(isDark, l10n),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               _buildPricingSection(isDark, l10n),
             ],
           ),
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: AlhaiSpacing.lg),
         // Right column: stock + settings + save
         Expanded(
           child: Column(
             children: [
               _buildStockSection(isDark, l10n),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
               _buildSettingsSection(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildSaveButton(isDark, l10n),
             ],
           ),
@@ -268,17 +269,17 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     return Column(
       children: [
         _buildImageSection(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildBasicInfoSection(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildPricingSection(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildStockSection(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildSettingsSection(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
       ],
     );
   }

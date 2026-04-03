@@ -12,6 +12,7 @@ import '../../services/ai_sales_forecasting_service.dart';
 import '../../widgets/ai/forecast_chart.dart';
 import '../../widgets/ai/seasonal_patterns_card.dart';
 import '../../widgets/ai/what_if_panel.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة توقع المبيعات بالذكاء الاصطناعي
 class AiSalesForecastingScreen extends ConsumerStatefulWidget {
@@ -69,7 +70,7 @@ class _AiSalesForecastingScreenState
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: _buildContent(isDark, isWideScreen, isMediumScreen),
                   ),
                 ),
@@ -94,12 +95,12 @@ class _AiSalesForecastingScreenState
           error: (e, _) => _buildErrorWidget(e.toString(), isDark),
         ),
 
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // اختيار الفترة
         _buildPeriodTabs(isDark),
 
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // المحتوى الرئيسي
         if (isWideScreen)
@@ -117,7 +118,7 @@ class _AiSalesForecastingScreenState
                       loading: () => _buildLoadingCard(isDark, 280),
                       error: (e, _) => _buildErrorWidget(e.toString(), isDark),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AlhaiSpacing.lg),
                     // الأنماط الموسمية
                     patternsAsync.when(
                       data: (patterns) =>
@@ -128,7 +129,7 @@ class _AiSalesForecastingScreenState
                   ],
                 ),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: AlhaiSpacing.lg),
               Expanded(
                 flex: 1,
                 child: Column(
@@ -139,7 +140,7 @@ class _AiSalesForecastingScreenState
                       loading: () => _buildLoadingCard(isDark, 180),
                       error: (e, _) => _buildErrorWidget(e.toString(), isDark),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AlhaiSpacing.lg),
                     // ماذا لو
                     WhatIfPanel(
                       discountPercent: discount,
@@ -167,19 +168,19 @@ class _AiSalesForecastingScreenState
                 loading: () => _buildLoadingCard(isDark, 240),
                 error: (e, _) => _buildErrorWidget(e.toString(), isDark),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               forecastAsync.when(
                 data: (result) => _buildSummaryCard(result, isDark),
                 loading: () => _buildLoadingCard(isDark, 180),
                 error: (e, _) => _buildErrorWidget(e.toString(), isDark),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               patternsAsync.when(
                 data: (patterns) => SeasonalPatternsCard(patterns: patterns),
                 loading: () => _buildLoadingCard(isDark, 200),
                 error: (e, _) => _buildErrorWidget(e.toString(), isDark),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               WhatIfPanel(
                 discountPercent: discount,
                 priceChangePercent: priceChange,
@@ -259,15 +260,15 @@ class _AiSalesForecastingScreenState
         Row(
           children: [
             Expanded(child: _buildMetricCard(cards[0], isDark)),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: _buildMetricCard(cards[1], isDark)),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(child: _buildMetricCard(cards[2], isDark)),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: _buildMetricCard(cards[3], isDark)),
           ],
         ),
@@ -297,7 +298,7 @@ class _AiSalesForecastingScreenState
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: data.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
@@ -317,7 +318,7 @@ class _AiSalesForecastingScreenState
                         isDark ? Colors.white54 : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: AlignmentDirectional.centerStart,
@@ -376,7 +377,7 @@ class _AiSalesForecastingScreenState
   Widget _buildSummaryCard(ForecastResult result, bool isDark) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: AlignmentDirectional.topStart,
@@ -404,7 +405,7 @@ class _AiSalesForecastingScreenState
             children: [
               const Icon(Icons.auto_awesome_rounded,
                   color: AppColors.primary, size: 22),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.aiForecastSummary,
                 style: TextStyle(
@@ -443,7 +444,7 @@ class _AiSalesForecastingScreenState
                   color: AppColors.primary,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     result.trend == TrendDirection.up
@@ -484,7 +485,7 @@ class _AiSalesForecastingScreenState
 
   Widget _buildErrorWidget(String error, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.errorSurface,
         borderRadius: BorderRadius.circular(12),
@@ -492,7 +493,7 @@ class _AiSalesForecastingScreenState
       child: Row(
         children: [
           const Icon(Icons.error_outline_rounded, color: AppColors.error),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.aiErrorOccurred(error),

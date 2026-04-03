@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
 /// شاشة تقرير المشتريات الكاملة
@@ -184,9 +184,9 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
@@ -206,7 +206,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               const PopupMenuItem(value: 'year', child: Text('سنوي')),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(children: [
                 Text(_periodLabel()),
                 const Icon(Icons.arrow_drop_down),
@@ -218,7 +218,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
       body: RefreshIndicator(
         onRefresh: _loadData,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           children: [
             // Summary cards
             Row(children: [
@@ -228,7 +228,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 icon: Icons.shopping_cart_rounded,
                 color: AlhaiColors.info,
               )),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(child: _SummaryCard(
                 label: 'عدد الفواتير',
                 value: _invoiceCount.toString(),
@@ -236,7 +236,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 color: Colors.orange,
               )),
             ]),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Row(children: [
               Expanded(child: _SummaryCard(
                 label: 'متوسط الفاتورة',
@@ -244,7 +244,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 icon: Icons.calculate_rounded,
                 color: AlhaiColors.success,
               )),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(child: _SummaryCard(
                 label: 'إجمالي الضريبة',
                 value: '${_totalTax.toStringAsFixed(0)} ر.س',
@@ -252,13 +252,13 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 color: Colors.purple,
               )),
             ]),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // By supplier
             if (_bySupplier.isNotEmpty) ...[
               const Text('المشتريات حسب المورد',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               Card(
                 child: Column(
                   children: _bySupplier.map((s) {
@@ -289,14 +289,14 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                   }).toList(),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
             ],
 
             // Recent purchases
             if (_recent.isNotEmpty) ...[
               const Text('آخر الفواتير',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               Card(
                 child: Column(
                   children: _recent.map((p) => ListTile(
@@ -320,11 +320,11 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             if (_invoiceCount == 0)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xl),
                   child: Column(
                     children: [
                       Icon(Icons.shopping_cart_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AlhaiSpacing.sm),
                       Text('لا توجد مشتريات في هذه الفترة',
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ],
@@ -355,12 +355,12 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
             Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],

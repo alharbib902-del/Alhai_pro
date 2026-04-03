@@ -89,7 +89,7 @@ class RecentTransactionsList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+        borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
         border: Border.all(
           color: Theme.of(context).dividerColor,
         ),
@@ -109,9 +109,9 @@ class RecentTransactionsList extends StatelessWidget {
           // =================================================================
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
-              isMobile ? 16 : 24,
-              isMobile ? 16 : 24,
-              isMobile ? 16 : 24,
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
               0,
             ),
             child: Row(
@@ -141,7 +141,7 @@ class RecentTransactionsList extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
 
           // =================================================================
           // TABLE CONTENT
@@ -159,7 +159,7 @@ class RecentTransactionsList extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context, bool isDarkMode) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         child: Column(
           children: [
             Icon(
@@ -167,7 +167,7 @@ class RecentTransactionsList extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               size: 48,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AlhaiSpacing.sm),
             Builder(
               builder: (context) {
                 final l10n = AppLocalizations.of(context)!;
@@ -216,7 +216,7 @@ class RecentTransactionsList extends StatelessWidget {
         }),
 
         // Bottom padding
-        SizedBox(height: isMobile ? 8 : 12),
+        SizedBox(height: isMobile ? AlhaiSpacing.xs : AlhaiSpacing.sm),
       ],
     );
   }
@@ -250,8 +250,8 @@ class _TableHeader extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 24,
-        vertical: 12,
+        horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+        vertical: AlhaiSpacing.sm,
       ),
       decoration: BoxDecoration(
         border: Border(
@@ -299,7 +299,7 @@ class _TableHeader extends StatelessWidget {
 
           // إجراء
           SizedBox(
-            width: isMobile ? 36 : 48,
+            width: isMobile ? 36 : AlhaiSpacing.xxxl,
             child: Text(
               l10n.action,
               style: headerStyle,
@@ -355,8 +355,8 @@ class _TransactionRowState extends State<_TransactionRow> {
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 16 : 24,
-          vertical: isMobile ? 12 : 14,
+          horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+          vertical: isMobile ? AlhaiSpacing.sm : 14,
         ),
         decoration: BoxDecoration(
           color: _isHovered
@@ -405,7 +405,7 @@ class _TransactionRowState extends State<_TransactionRow> {
 
             // إجراء
             SizedBox(
-              width: isMobile ? 36 : 48,
+              width: isMobile ? 36 : AlhaiSpacing.xxxl,
               child: _buildActionButton(tx, isDark),
             ),
           ],
@@ -457,11 +457,11 @@ class _TransactionRowState extends State<_TransactionRow> {
     return Row(
       children: [
         Container(
-          width: isMobile ? 28 : 32,
-          height: isMobile ? 28 : 32,
+          width: isMobile ? 28 : AlhaiSpacing.xl,
+          height: isMobile ? 28 : AlhaiSpacing.xl,
           decoration: BoxDecoration(
             color: avatarColor.withValues(alpha:0.15),
-            borderRadius: BorderRadius.circular(isMobile ? 8 : 10),
+            borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.xs : 10),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -473,7 +473,7 @@ class _TransactionRowState extends State<_TransactionRow> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         Expanded(
           child: Text(
             tx.customerName,
@@ -513,7 +513,7 @@ class _TransactionRowState extends State<_TransactionRow> {
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(20),

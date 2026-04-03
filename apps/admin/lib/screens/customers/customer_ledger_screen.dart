@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Customer Ledger Screen - Admin version
 /// Displays customer account statement with filters and manual adjustments
@@ -206,16 +207,16 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildCustomerInfoCard(isDark, l10n, isMobile),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             _buildFilterSection(isDark, l10n, isMobile),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             isMobile
                                 ? _buildMobileTransactions(isDark, l10n)
                                 : _buildDesktopTable(isDark, l10n),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             if (!isMobile)
                               _buildSummaryBar(isDark, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                           ],
                         ),
                       ),
@@ -239,7 +240,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -270,7 +271,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,13 +284,13 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.phone_outlined,
                         size: 14,
                         color: Theme.of(context).hintColor),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       _account?.phone ?? '-',
                       style: TextStyle(
@@ -346,7 +347,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -362,7 +363,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               Icon(Icons.calendar_today_outlined,
                   size: 16,
                   color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.date,
                 style: TextStyle(
@@ -387,21 +388,21 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                   }),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.thisMonthPeriod,
                   _dateFilter == 'thisMonth',
                   () => setState(() => _dateFilter = 'thisMonth'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.threeMonths,
                   _dateFilter == 'threeMonths',
                   () => setState(() => _dateFilter = 'threeMonths'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.dateFromTo,
                   _dateFilter == 'custom',
@@ -412,13 +413,13 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               Icon(Icons.filter_list_rounded,
                   size: 16,
                   color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.type,
                 style: TextStyle(
@@ -440,28 +441,28 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                   () => setState(() => _typeFilter = 'all'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.invoices,
                   _typeFilter == 'invoice',
                   () => setState(() => _typeFilter = 'invoice'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.payment,
                   _typeFilter == 'payment',
                   () => setState(() => _typeFilter = 'payment'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.returns,
                   _typeFilter == 'return',
                   () => setState(() => _typeFilter = 'return'),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
                   l10n.adjustments,
                   _typeFilter == 'adjustment',
@@ -859,7 +860,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                                     : AppColors.success,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: AlhaiSpacing.xxxs),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -884,14 +885,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       ],
                     ),
                     if (txn['reference'] != '-') ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Row(
                         children: [
                           const SizedBox(width: 42),
                           Icon(Icons.tag_rounded,
                               size: 12,
                               color: Theme.of(context).hintColor),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             txn['reference'] as String,
                             style: TextStyle(
@@ -922,7 +923,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -945,7 +946,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             width: 1,
             height: 48,
             color: Theme.of(context).dividerColor,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
           ),
           Expanded(
             child: _buildSummaryItem(
@@ -960,7 +961,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             width: 1,
             height: 48,
             color: Theme.of(context).dividerColor,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
           ),
           Expanded(
             child: _buildSummaryItem(
@@ -1025,7 +1026,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: cardColor,
         border: Border(
@@ -1057,7 +1058,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     _totalDebit.toStringAsFixed(0),
                     style: const TextStyle(
@@ -1081,7 +1082,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
                     _totalCredit.toStringAsFixed(0),
                     style: const TextStyle(
@@ -1096,7 +1097,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             Expanded(
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: (finalBalance > 0
                           ? AppColors.error
@@ -1115,7 +1116,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       finalBalance.abs().toStringAsFixed(0),
                       style: TextStyle(
@@ -1144,7 +1145,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final cardColor = Theme.of(context).colorScheme.surface;
 
     return Container(
-      padding: const EdgeInsets.all(48),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -1162,7 +1163,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                   ? Colors.white.withValues(alpha: 0.2)
                   : AppColors.textMuted.withValues(alpha: 0.4),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.noTransactions,
               style: TextStyle(
@@ -1203,7 +1204,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             backgroundColor: dialogCardColor,
             child: Container(
               width: 440,
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1222,7 +1223,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         child: const Icon(Icons.tune_rounded,
                             size: 20, color: AppColors.warning),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Text(
                         l10n.manualAdjustment,
                         style: TextStyle(
@@ -1239,7 +1240,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   Text(
                     l10n.adjustmentType,
                     style: TextStyle(
@@ -1248,7 +1249,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     children: [
                       Expanded(
@@ -1262,7 +1263,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           dialogIsDark,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: _buildTypeOption(
                           l10n.creditAdjustment,
@@ -1276,7 +1277,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AlhaiSpacing.mdl),
                   Text(
                     l10n.adjustmentAmount,
                     style: TextStyle(
@@ -1285,7 +1286,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   TextField(
                     controller: amountController,
                     keyboardType: TextInputType.number,
@@ -1308,7 +1309,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           horizontal: 16, vertical: 14),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AlhaiSpacing.mdl),
                   Text(
                     l10n.adjustmentReason,
                     style: TextStyle(
@@ -1317,7 +1318,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   TextField(
                     controller: reasonController,
                     maxLines: 2,
@@ -1339,7 +1340,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           horizontal: 16, vertical: 14),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AlhaiSpacing.mdl),
                   Text(
                     l10n.adjustmentDate,
                     style: TextStyle(
@@ -1348,7 +1349,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                   InkWell(
                     onTap: () async {
                       final picked = await showDatePicker(
@@ -1409,7 +1410,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           child: Text(l10n.cancel),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: FilledButton.icon(
                           onPressed: () {
@@ -1495,7 +1496,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 color: isSelected
                     ? color
                     : Theme.of(context).colorScheme.onSurfaceVariant),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(
               label,
               style: TextStyle(

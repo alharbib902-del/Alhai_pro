@@ -72,11 +72,11 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFF97316), Color(0xFFEA580C)],
@@ -85,7 +85,7 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                   ),
                   child: const Icon(Icons.calendar_view_week_rounded, color: Colors.white, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +114,7 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                   children: [
                     Text(l10n.quiet,
                       style: TextStyle(fontSize: 10, color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     ...[0.1, 0.3, 0.5, 0.7, 0.9].map((v) {
                       return Container(
                         width: 12,
@@ -126,7 +126,7 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                         ),
                       );
                     }),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(l10n.busy,
                       style: TextStyle(fontSize: 10, color: isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted)),
                   ],
@@ -138,7 +138,7 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
           // Heatmap
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(60, 0, 16, 40),
+              padding: EdgeInsetsDirectional.fromSTEB(60, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.xxl),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {

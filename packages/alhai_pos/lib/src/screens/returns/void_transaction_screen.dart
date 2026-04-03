@@ -256,7 +256,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           content: Row(
             children: [
               const Icon(Icons.check_circle, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(l10n.voidSuccess, style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
@@ -274,7 +274,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           content: Row(
             children: [
               const Icon(Icons.error_outline, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(child: Text('$e')),
             ],
           ),
@@ -294,7 +294,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
         content: Row(
           children: [
             const Icon(Icons.check_circle, color: Colors.white, size: 18),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(l10n.copiedSuccess),
           ],
         ),
@@ -338,14 +338,14 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 _buildHeader(context, isWideScreen, isDark, l10n),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 32 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.md),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1400),
                       child: Column(
                         children: [
                           // Warning Banner
                           _buildWarningBanner(isDark, l10n, isMediumScreen),
-                          SizedBox(height: isMediumScreen ? 32 : 16),
+                          SizedBox(height: isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.md),
 
                           if (_invoiceData == null && !_showNotFound) ...[
                             // Search Section
@@ -376,7 +376,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(bottom: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.2) : AppColors.border)),
@@ -389,7 +389,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded, color: colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
               l10n.voidSaleTransaction,
@@ -398,7 +398,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               maxLines: 1,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           // Search in header (desktop)
           if (isWideScreen)
             SizedBox(
@@ -410,13 +410,13 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
                   filled: true,
                   fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 ),
                 style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
               ),
             ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           IconButton(
             onPressed: () {},
             icon: Badge(
@@ -443,7 +443,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
   Widget _buildWarningBanner(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
     return Container(
-      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.2) : const Color(0xFFFEF2F2),
         borderRadius: BorderRadius.circular(16),
@@ -465,7 +465,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
             ),
           ),
-          SizedBox(width: isMediumScreen ? 16 : 12),
+          SizedBox(width: isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,7 +478,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                     color: isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   isMediumScreen ? l10n.voidWarningDesc : l10n.voidWarningShort,
                   style: TextStyle(
@@ -502,7 +502,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildSearchSection(bool isDark, AppLocalizations l10n, bool isMediumScreen) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: EdgeInsets.all(isMediumScreen ? 32 : 20),
+      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.xl : AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -520,7 +520,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               l10n.searchByInvoiceOrBarcode,
               style: TextStyle(
@@ -528,19 +528,19 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             // Search row
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 700),
               child: Row(
                 children: [
                   Expanded(child: _buildSearchInput(isDark, l10n)),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   _buildSearchButton(isDark, l10n, large: true),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             // Barcode link
             TextButton.icon(
               onPressed: () {},
@@ -560,15 +560,15 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             _buildSearchInput(isDark, l10n),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
                 Expanded(child: _buildSearchButton(isDark, l10n, large: false)),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             // Barcode button
             OutlinedButton.icon(
               onPressed: () {},
@@ -586,7 +586,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
           // Empty state
           if (_invoiceData == null && !_showNotFound) ...[
-            SizedBox(height: isMediumScreen ? 40 : 24),
+            SizedBox(height: isMediumScreen ? AlhaiSpacing.xxl : AlhaiSpacing.lg),
             Container(
               width: isMediumScreen ? 120 : 80,
               height: isMediumScreen ? 120 : 80,
@@ -600,7 +600,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.searchForInvoiceToVoid,
               style: TextStyle(
@@ -609,7 +609,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               l10n.enterNumberOrScan,
               style: TextStyle(
@@ -650,7 +650,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             : null,
         filled: true,
         fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.25) : AppColors.border, width: 2),
@@ -680,7 +680,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
       style: FilledButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: colorScheme.onPrimary,
-        padding: EdgeInsets.symmetric(horizontal: large ? 32 : 24, vertical: large ? 20 : 16),
+        padding: EdgeInsets.symmetric(horizontal: large ? AlhaiSpacing.xl : AlhaiSpacing.lg, vertical: large ? AlhaiSpacing.mdl : AlhaiSpacing.md),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         elevation: 2,
       ),
@@ -694,7 +694,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildNotFoundSection(bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(48),
+      padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -711,24 +711,24 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             ),
             child: Icon(Icons.cancel_outlined, size: 40, color: colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             l10n.invoiceNotFound,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             l10n.invoiceNotFoundDesc,
             style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: _resetForm,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             child: Text(l10n.trySearchAgain, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -752,23 +752,23 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           child: Column(
             children: [
               _buildInvoiceSummaryCard(isDark, l10n, isMobile: false),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildItemsList(isDark, l10n),
             ],
           ),
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: AlhaiSpacing.lg),
         // Right: Reason + PIN + Confirm + Buttons
         Expanded(
           flex: 1,
           child: Column(
             children: [
               _buildReasonCard(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildManagerPinCard(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildConfirmCheckbox(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildDesktopButtons(isDark, l10n),
             ],
           ),
@@ -785,13 +785,13 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     return Column(
       children: [
         _buildInvoiceSummaryCard(isDark, l10n, isMobile: true),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildImpactAlert(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildReasonCard(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildManagerPinCard(isDark, l10n),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildConfirmCheckbox(isDark, l10n),
         const SizedBox(height: 80), // Space for bottom bar
       ],
@@ -806,7 +806,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final inv = _invoiceData!;
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -824,7 +824,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(20),
@@ -834,7 +834,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Row(
                       children: [
                         Expanded(
@@ -851,14 +851,14 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                             maxLines: 1,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         GestureDetector(
                           onTap: () => _copyToClipboard(inv.id),
                           child: Icon(Icons.copy_rounded, size: 16, color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       l10n.paidCash,
                       style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
@@ -874,7 +874,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                     l10n.grandTotal,
                     style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
@@ -887,16 +887,16 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                           color: colorScheme.onSurface,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         l10n.sar,
                         style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                     decoration: BoxDecoration(
                       color: isDark ? AppColors.success.withValues(alpha: 0.15) : const Color(0xFFDCFCE7),
                       borderRadius: BorderRadius.circular(20),
@@ -915,9 +915,9 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Divider(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.15) : AppColors.divider),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Customer & Date
           Row(
@@ -946,7 +946,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Flexible(
                           child: Text(
                             inv.customer,
@@ -990,7 +990,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
 
           // Impact alert (desktop only - inline)
           if (!isMobile) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             _buildImpactAlert(isDark, l10n),
           ],
         ],
@@ -1005,7 +1005,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildImpactAlert(bool isDark, AppLocalizations l10n) {
     final inv = _invoiceData!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF78350F).withValues(alpha: 0.2) : const Color(0xFFFFFBEB),
         borderRadius: BorderRadius.circular(14),
@@ -1015,7 +1015,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.info_outline, size: 18, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1028,11 +1028,11 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                     color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Row(
                   children: [
                     Icon(Icons.check, size: 14, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Flexible(
                       child: Text(
                         l10n.voidImpactItemsReturn(inv.items.length),
@@ -1041,11 +1041,11 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.replay, size: 14, color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706)),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Flexible(
                       child: Text(
                         l10n.voidImpactRefund(inv.total.toStringAsFixed(2), l10n.sar),
@@ -1084,7 +1084,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
               border: Border(bottom: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.15) : AppColors.divider)),
@@ -1108,7 +1108,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           // More items hint
           if (remainingCount > 0)
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.3) : AppColors.grey50,
               ),
@@ -1127,7 +1127,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildItemRow(_InvoiceItem item, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.1) : AppColors.divider)),
       ),
@@ -1142,7 +1142,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             ),
             child: Icon(item.icon, size: 18, color: colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1183,7 +1183,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildReasonCard(bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -1195,25 +1195,25 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           Row(
             children: [
               const Icon(Icons.help_outline, size: 18, color: AppColors.primary),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.voidReason,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Reason options
           ...List.generate(_reasonKeys.length, (i) {
             final key = _reasonKeys[i];
             final isSelected = _selectedReason == key;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               child: GestureDetector(
                 onTap: () => setState(() => _selectedReason = key),
                 child: AnimatedContainer(
                   duration: AlhaiDurations.standard,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (isDark ? AppColors.error.withValues(alpha: 0.1) : const Color(0xFFFEF2F2))
@@ -1239,7 +1239,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                           color: isSelected ? colorScheme.onPrimary : Colors.transparent,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Text(
                           _getReasonText(key, l10n),
@@ -1259,7 +1259,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             );
           }),
           // Notes
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _notesController,
             maxLines: 3,
@@ -1295,7 +1295,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
   Widget _buildManagerPinCard(bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E3A5F).withValues(alpha: 0.3) : const Color(0xFFEFF6FF),
         borderRadius: BorderRadius.circular(20),
@@ -1307,7 +1307,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           Row(
             children: [
               Icon(Icons.shield_outlined, size: 18, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8)),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.managerApproval,
                 style: TextStyle(
@@ -1318,7 +1318,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             l10n.operationRequiresApproval,
             style: TextStyle(
@@ -1326,10 +1326,10 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               color: isDark ? const Color(0xFF93C5FD).withValues(alpha: 0.8) : const Color(0xFF1E3A8A),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // إشعار: سيُطلب PIN عند الضغط على زر التأكيد
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -1345,7 +1345,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                   size: 20,
                   color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.pinRequired,
                   style: TextStyle(
@@ -1371,7 +1371,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
     return GestureDetector(
       onTap: () => setState(() => _confirmed = !_confirmed),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
@@ -1394,7 +1394,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1433,7 +1433,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
           child: OutlinedButton(
             onPressed: _resetForm,
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               side: BorderSide(color: isDark ? colorScheme.outlineVariant.withValues(alpha: 0.25) : AppColors.border),
               foregroundColor: colorScheme.onSurfaceVariant,
@@ -1441,7 +1441,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             child: Text(l10n.cancelAction, style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           flex: 2,
           child: FilledButton.icon(
@@ -1453,7 +1453,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               foregroundColor: colorScheme.onPrimary,
               disabledBackgroundColor: isDark ? AppColors.error.withValues(alpha: 0.3) : AppColors.error.withValues(alpha: 0.4),
               disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.5),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               elevation: _isFormValid ? 4 : 0,
             ),

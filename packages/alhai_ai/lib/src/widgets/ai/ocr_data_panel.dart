@@ -91,11 +91,11 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
@@ -104,7 +104,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                   ),
                   child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +130,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                 ),
                 if (widget.extraction != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -139,7 +139,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.check_circle_rounded, size: 14, color: AppColors.success),
-                        SizedBox(width: 4),
+                        SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'تم الاستخراج',
                           style: TextStyle(
@@ -169,7 +169,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                   children: [
                     Icon(Icons.document_scanner_rounded, size: 48,
                       color: isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.textMuted),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'التقط صورة لاستخراج البيانات',
                       style: TextStyle(
@@ -177,7 +177,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     ElevatedButton.icon(
                       onPressed: widget.onExtract,
                       icon: const Icon(Icons.camera_alt_rounded, size: 18),
@@ -186,7 +186,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                         backgroundColor: const Color(0xFF3B82F6),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
                       ),
                     ),
                   ],
@@ -197,7 +197,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
             // Fields
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Column(
                   children: [
                     _OcrField(
@@ -207,7 +207,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       isDark: isDark,
                       onChanged: (v) => widget.onFieldChanged?.call(MapEntry('name', v)),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     _OcrField(
                       label: 'الباركود',
                       icon: Icons.qr_code_rounded,
@@ -215,7 +215,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       isDark: isDark,
                       onChanged: (v) => widget.onFieldChanged?.call(MapEntry('barcode', v)),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Row(
                       children: [
                         Expanded(
@@ -228,7 +228,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             onChanged: (v) => widget.onFieldChanged?.call(MapEntry('price', v)),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AlhaiSpacing.sm),
                         Expanded(
                           child: _OcrField(
                             label: 'تاريخ الانتهاء',
@@ -240,7 +240,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Row(
                       children: [
                         Expanded(
@@ -252,7 +252,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             onChanged: (v) => widget.onFieldChanged?.call(MapEntry('brand', v)),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AlhaiSpacing.sm),
                         Expanded(
                           child: _OcrField(
                             label: 'الوزن/الحجم',
@@ -265,12 +265,12 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
 
                     // Raw text
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       decoration: BoxDecoration(
                         color: isDark
                             ? const Color(0xFF0F172A)
@@ -305,7 +305,7 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
 
                     // Save button
                     SizedBox(
@@ -382,7 +382,7 @@ class _OcrField extends StatelessWidget {
           decoration: InputDecoration(
             filled: true,
             fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(

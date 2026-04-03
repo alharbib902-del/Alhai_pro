@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة المساعدة والدعم
 class HelpSupportScreen extends ConsumerStatefulWidget {
@@ -99,7 +100,7 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
       // FAQ
       _buildGroup(l10n.faq, faqs.map((faq) {
         return ExpansionTile(
-          leading: Container(padding: const EdgeInsets.all(8),
+          leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: const Icon(Icons.help_outline_rounded, color: AppColors.info, size: 20)),
           title: Text(faq.q, style: TextStyle(
@@ -129,14 +130,14 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface))),
         ...children,
@@ -146,7 +147,7 @@ class _HelpSupportScreenState extends ConsumerState<HelpSupportScreen> {
 
   Widget _tile(IconData icon, String title, String? subtitle, bool isDark, {VoidCallback? onTap}) {
     return ListTile(
-      leading: Container(padding: const EdgeInsets.all(8),
+      leading: Container(padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: AppColors.primary, size: 20)),
       title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),

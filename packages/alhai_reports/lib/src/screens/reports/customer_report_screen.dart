@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
@@ -152,18 +153,18 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           : _error != null
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.error_outline_rounded, size: 64, color: AppColors.textMuted),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           AppLocalizations.of(context)!.errorLoadingCustomerReport,
                           style: AppTypography.bodyLarge.copyWith(color: AppColors.textMuted),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         FilledButton.icon(
                           onPressed: _loadCustomerData,
                           icon: const Icon(Icons.refresh_rounded),
@@ -788,7 +789,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   final height = (d['value'] as int) / maxValue * 150;
                   return Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -799,7 +800,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Container(
                             height: height,
                             decoration: BoxDecoration(
@@ -809,7 +810,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Text(
                             d['month'] as String,
                             style: AppTypography.labelSmall.copyWith(
@@ -1102,7 +1103,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
   ) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
-      margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.all(AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(AppSizes.radiusMd),

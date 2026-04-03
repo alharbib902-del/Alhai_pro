@@ -71,7 +71,7 @@ class RefundReceiptScreen extends ConsumerWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           children: [
             // Success icon
@@ -84,20 +84,20 @@ class RefundReceiptScreen extends ConsumerWidget {
               ),
               child: const Icon(Icons.check_circle, size: 48, color: AppColors.success),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(AppLocalizations.of(context)!.refundSuccessful, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               AppLocalizations.of(context)!.refundNumberLabel(returnData.returnNumber),
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
 
             // Receipt card
             Card(
               child: Container(
                 width: 340,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 child: Column(
                   children: [
                     Text(AppLocalizations.of(context)!.refundReceipt, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -110,7 +110,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                       _ReceiptRow(label: AppLocalizations.of(context)!.refundMethodField, value: _getRefundMethodLabel(context, returnData.refundMethod)),
                     const Divider(height: 24),
                     Text(AppLocalizations.of(context)!.returnedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
 
                     // Items list
                     ...items.map((item) => _ProductRow(
@@ -130,7 +130,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     if (returnData.reason != null && returnData.reason!.isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +140,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                         ],
                       ),
                     if (returnData.notes != null && returnData.notes!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -153,7 +153,7 @@ class RefundReceiptScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // Actions
             Row(
@@ -163,14 +163,14 @@ class RefundReceiptScreen extends ConsumerWidget {
                   onPressed: () => _printReceipt(context, returnData.saleId),
                   icon: const Icon(Icons.print),
                   label: Text(AppLocalizations.of(context)!.printAction),
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 FilledButton.icon(
                   onPressed: () => context.go('/returns'),
                   icon: const Icon(Icons.home),
                   label: Text(AppLocalizations.of(context)!.homeAction),
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm)),
                 ),
               ],
             ),
@@ -242,7 +242,7 @@ class _ReceiptRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -263,7 +263,7 @@ class _ProductRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Expanded(child: Text(name)),

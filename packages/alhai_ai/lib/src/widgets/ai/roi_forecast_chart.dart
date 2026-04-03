@@ -30,7 +30,7 @@ class RoiForecastChart extends StatelessWidget {
 
     if (forecasts.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -45,7 +45,7 @@ class RoiForecastChart extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.show_chart, color: subtextColor, size: 40),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               Text(
                 'اختر عرضاً لعرض توقعات ROI',
                 style: TextStyle(color: subtextColor, fontSize: 14),
@@ -60,7 +60,7 @@ class RoiForecastChart extends StatelessWidget {
     final lastForecast = forecasts.last;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -77,7 +77,7 @@ class RoiForecastChart extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.trending_up, color: AppColors.success, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 title,
                 style: TextStyle(
@@ -88,7 +88,7 @@ class RoiForecastChart extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -105,7 +105,7 @@ class RoiForecastChart extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // ملخص
           Row(
@@ -116,14 +116,14 @@ class RoiForecastChart extends StatelessWidget {
                 AppColors.primary,
                 isDark,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildMiniStat(
                 l10n.cost,
                 '${(lastForecast.projectedCost / 1000).toStringAsFixed(1)}K ر.س',
                 AppColors.error,
                 isDark,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _buildMiniStat(
                 l10n.duration,
                 '${forecasts.length} ${l10n.day}',
@@ -133,7 +133,7 @@ class RoiForecastChart extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // الرسم البياني
           SizedBox(
@@ -147,14 +147,14 @@ class RoiForecastChart extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Legend
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLegendItem('ROI التراكمي', AppColors.primary, isDark),
-              const SizedBox(width: 20),
+              const SizedBox(width: AlhaiSpacing.mdl),
               _buildLegendItem('خط التعادل', AppColors.warning, isDark),
             ],
           ),

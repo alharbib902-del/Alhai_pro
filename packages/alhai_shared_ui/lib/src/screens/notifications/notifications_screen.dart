@@ -121,20 +121,20 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 Expanded(
                   child: _isLoading
                       ? const Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(AlhaiSpacing.md),
                           child: ShimmerList(itemCount: 6, itemHeight: 72),
                         )
                       : _error != null
-                      ? AppErrorState.general(message: _error, onRetry: _loadData)
+                      ? AppErrorState.general(context, message: _error, onRetry: _loadData)
                       : _notifications.isEmpty
-                      ? AppEmptyState.noNotifications()
+                      ? AppEmptyState.noNotifications(context)
                       : RefreshIndicator(
                           onRefresh: _loadData,
                           color: AppColors.primary,
                           child: AnimatedListView(
                           controller: _scrollController,
                           physics: const AlwaysScrollableScrollPhysics(),
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                           itemCount: _notifications.length,
                           itemBuilder: (context, index) {
                             final notification = _notifications[index];
@@ -142,7 +142,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                               key: Key(notification.id),
                               direction: DismissDirection.endToStart,
                               background: Container(
-                                margin: const EdgeInsets.only(bottom: 8),
+                                margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                                 decoration: BoxDecoration(
                                   color: AppColors.error,
                                   borderRadius: BorderRadius.circular(12),
@@ -159,7 +159,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                 setState(() => _notifications.removeAt(index));
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 8),
+                                margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                                 decoration: BoxDecoration(
                                   color: notification.isRead
                                       ? (Theme.of(context).colorScheme.surface)
@@ -172,7 +172,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   ),
                                 ),
                                 child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                                   leading: Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
@@ -203,7 +203,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   subtitle: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(height: 4),
+                                      SizedBox(height: AlhaiSpacing.xxs),
                                       Text(
                                         notification.body,
                                         style: TextStyle(
@@ -211,7 +211,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
-                                      const SizedBox(height: 2),
+                                      SizedBox(height: AlhaiSpacing.xxxs),
                                       Text(
                                         _formatTime(notification.createdAt),
                                         style: TextStyle(

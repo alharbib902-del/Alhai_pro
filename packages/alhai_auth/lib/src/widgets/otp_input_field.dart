@@ -357,7 +357,7 @@ class OtpInputWithLabel extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
         ],
         OtpInputField(
           key: otpKey,
@@ -368,9 +368,9 @@ class OtpInputWithLabel extends StatelessWidget {
           enabled: enabled,
         ),
         if (errorText != null) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -383,7 +383,7 @@ class OtpInputWithLabel extends StatelessWidget {
                   color: AppColors.error,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     errorText!,
@@ -398,9 +398,9 @@ class OtpInputWithLabel extends StatelessWidget {
           ),
         ],
         if (isSuccess) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -414,7 +414,7 @@ class OtpInputWithLabel extends StatelessWidget {
                   color: AppColors.success,
                   size: 20,
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     'تم التحقق بنجاح',

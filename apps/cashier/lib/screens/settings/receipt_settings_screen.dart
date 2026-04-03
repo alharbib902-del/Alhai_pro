@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -170,7 +170,7 @@ class _ReceiptSettingsScreenState
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),
                 ),
@@ -194,16 +194,16 @@ class _ReceiptSettingsScreenState
             child: Column(
               children: [
                 _buildTextFieldsCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildTogglesCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildWidthCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: _buildPreviewCard(isDark, l10n),
@@ -216,13 +216,13 @@ class _ReceiptSettingsScreenState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildTextFieldsCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildTogglesCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildWidthCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildPreviewCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(isDark, l10n),
       ],
     );
@@ -230,7 +230,7 @@ class _ReceiptSettingsScreenState
 
   Widget _buildTextFieldsCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -245,7 +245,7 @@ class _ReceiptSettingsScreenState
             AppColors.secondary,
             isDark,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'Header Text',
             style: TextStyle(
@@ -254,7 +254,7 @@ class _ReceiptSettingsScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _headerController,
             maxLines: 3,
@@ -264,7 +264,7 @@ class _ReceiptSettingsScreenState
             ),
             decoration: _inputDecoration('Receipt header hint', isDark),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             l10n.footerText,
             style: TextStyle(
@@ -273,7 +273,7 @@ class _ReceiptSettingsScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _footerController,
             maxLines: 3,
@@ -290,7 +290,7 @@ class _ReceiptSettingsScreenState
 
   Widget _buildTogglesCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -305,7 +305,7 @@ class _ReceiptSettingsScreenState
             AppColors.info,
             isDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _toggleItem(
             'Show Logo',
             'Display store logo on receipt',
@@ -344,7 +344,7 @@ class _ReceiptSettingsScreenState
 
   Widget _buildWidthCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -359,7 +359,7 @@ class _ReceiptSettingsScreenState
             AppColors.warning,
             isDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: ['58mm', '80mm'].map((width) {
               final isSelected = _receiptWidth == width;
@@ -372,7 +372,7 @@ class _ReceiptSettingsScreenState
                   child: GestureDetector(
                     onTap: () => setState(() => _receiptWidth = width),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primary.withValues(alpha: 0.1)
@@ -394,7 +394,7 @@ class _ReceiptSettingsScreenState
                                 : AppColors.getTextMuted(isDark),
                             size: 28,
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Text(
                             width,
                             style: TextStyle(
@@ -405,7 +405,7 @@ class _ReceiptSettingsScreenState
                                   : AppColors.getTextPrimary(isDark),
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             width == '58mm' ? l10n.smallSize : l10n.standardSize,
                             style: TextStyle(
@@ -428,7 +428,7 @@ class _ReceiptSettingsScreenState
 
   Widget _buildPreviewCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -443,10 +443,10 @@ class _ReceiptSettingsScreenState
             AppColors.primary,
             isDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
               borderRadius: BorderRadius.circular(8),
@@ -471,7 +471,7 @@ class _ReceiptSettingsScreenState
                       size: 24,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                 ],
                 if (_headerController.text.isNotEmpty) ...[
                   Text(
@@ -483,7 +483,7 @@ class _ReceiptSettingsScreenState
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AlhaiSpacing.xs),
                 ],
                 if (_showStoreAddress)
                   Text(
@@ -541,7 +541,7 @@ class _ReceiptSettingsScreenState
   Widget _previewRow(String label, String value, bool isDark,
       {bool bold = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxxs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -586,7 +586,7 @@ class _ReceiptSettingsScreenState
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -599,14 +599,14 @@ class _ReceiptSettingsScreenState
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Text(
           title,
           style: TextStyle(
@@ -627,7 +627,7 @@ class _ReceiptSettingsScreenState
     bool isDark,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
       child: Row(
         children: [
           Expanded(
@@ -642,7 +642,7 @@ class _ReceiptSettingsScreenState
                     color: AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   subtitle,
                   style: TextStyle(

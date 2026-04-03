@@ -5,7 +5,7 @@
 library;
 
 import 'dart:async';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,7 +118,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child:
                 _buildContent(isWideScreen, isMediumScreen, colorScheme, l10n),
           ),
@@ -144,21 +144,21 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               children: [
                 _buildSearchCard(colorScheme, l10n),
                 if (_searchResults.isNotEmpty && _selectedProduct == null)
-                  ...[const SizedBox(height: 16), _buildSearchResults(colorScheme, l10n)],
+                  ...[const SizedBox(height: AlhaiSpacing.md), _buildSearchResults(colorScheme, l10n)],
                 if (_selectedProduct != null)
-                  ...[const SizedBox(height: 24), _buildSelectedProductCard(colorScheme, l10n)],
+                  ...[const SizedBox(height: AlhaiSpacing.lg), _buildSelectedProductCard(colorScheme, l10n)],
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildQuantityCard(colorScheme, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildDetailsCard(colorScheme, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(colorScheme, l10n),
               ],
             ),
@@ -172,14 +172,14 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       children: [
         _buildSearchCard(colorScheme, l10n),
         if (_searchResults.isNotEmpty && _selectedProduct == null)
-          ...[SizedBox(height: isMediumScreen ? 16 : 12), _buildSearchResults(colorScheme, l10n)],
+          ...[SizedBox(height: isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm), _buildSearchResults(colorScheme, l10n)],
         if (_selectedProduct != null)
-          ...[SizedBox(height: isMediumScreen ? 24 : 16), _buildSelectedProductCard(colorScheme, l10n)],
-        SizedBox(height: isMediumScreen ? 24 : 16),
+          ...[SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md), _buildSelectedProductCard(colorScheme, l10n)],
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildDetailsCard(colorScheme, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(colorScheme, l10n),
       ],
     );
@@ -187,7 +187,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
 
   Widget _buildSearchCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -199,7 +199,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -207,7 +207,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 child: const Icon(Icons.search_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.searchProduct,
                   style: TextStyle(
                       fontSize: 16,
@@ -215,7 +215,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                       color: colorScheme.onSurface)),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -242,17 +242,17 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: AppColors.primary, width: 2),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               SizedBox(
-                height: 56,
+                height:56,
                 child: FilledButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('امسح أو أدخل الباركود'),
+                      SnackBar(content: Text(AppLocalizations.of(context).scanOrEnterBarcode),
                           backgroundColor: AppColors.info),
                     );
                   },
@@ -269,7 +269,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: 16),
+              padding: EdgeInsets.only(top: AlhaiSpacing.md),
               child: Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -296,7 +296,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               });
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
@@ -338,7 +338,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
   Widget _buildSelectedProductCard(ColorScheme colorScheme, AppLocalizations l10n) {
     final product = _selectedProduct!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.success.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(16),
@@ -384,7 +384,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
 
   Widget _buildQuantityCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -396,7 +396,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -404,7 +404,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 child: const Icon(Icons.add_circle_rounded,
                     color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text('Quantity to Add',
                   style: TextStyle(
                       fontSize: 16,
@@ -412,7 +412,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                       color: colorScheme.onSurface)),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
@@ -446,7 +446,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               fillColor: colorScheme.surfaceContainerLow,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -461,7 +461,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.success.withValues(alpha: 0.1)
@@ -491,7 +491,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
 
   Widget _buildDetailsCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -503,7 +503,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           Text('Supplier Reference',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurfaceVariant)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _supplierRefController,
             style: TextStyle(color: colorScheme.onSurface),
@@ -525,14 +525,14 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noteLabel,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: colorScheme.onSurfaceVariant)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _noteController,
             maxLines: 3,
@@ -554,7 +554,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -580,7 +580,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.success,
           foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
@@ -634,7 +634,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم تحديث المخزون'), backgroundColor: AppColors.success),
+        SnackBar(content: Text(AppLocalizations.of(context).inventoryUpdatedMsg), backgroundColor: AppColors.success),
       );
 
       // Clear form

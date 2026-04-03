@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Media library screen for managing product images with grid view,
 /// filtering, search, and storage usage indicator.
@@ -120,7 +121,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         // Search and filter row
         Container(
           padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
@@ -144,7 +145,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   setState(() => _searchQuery = value);
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               // Filter buttons and storage indicator
               Row(
                 children: [
@@ -180,7 +181,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               // Storage usage indicator
               _buildStorageIndicator(isDark),
             ],
@@ -201,7 +202,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         totalProducts > 0 ? totalImages / totalProducts : 0.0;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.05)
@@ -213,7 +214,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
           Icon(Icons.storage,
               size: 20,
               color: Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +229,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         : AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
@@ -243,7 +244,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Text(
             '${(usagePercent * 100).toStringAsFixed(0)}%',
             style: TextStyle(
@@ -271,7 +272,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
             Icon(Icons.error_outline,
                 size: 64,
                 color: AppColors.error.withValues(alpha: 0.7)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error!,
               style: TextStyle(
@@ -279,7 +280,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
@@ -293,44 +294,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
     final displayProducts = _displayProducts;
 
     if (displayProducts.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : AppColors.border.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Icon(Icons.cloud_upload_outlined,
-                  size: 60,
-                  color: isDark
-                      ? Colors.white24
-                      : AppColors.textTertiary),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.noData,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.addProductsToStart,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: isDark
-                      ? Colors.white38
-                      : AppColors.textTertiary),
-            ),
-          ],
-        ),
+      return AppEmptyState(
+        icon: Icons.photo_library_outlined,
+        title: l10n.noData,
+        description: l10n.addProductsToStart,
       );
     }
 
@@ -340,7 +307,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
             ? 5
             : (constraints.maxWidth > 600 ? 3 : 2);
         return GridView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossCount,
             crossAxisSpacing: 12,
@@ -413,7 +380,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                                 );
                               },
                               child: const Padding(
-                                padding: EdgeInsets.all(4),
+                                padding: EdgeInsets.all(AlhaiSpacing.xxs),
                                 child: Icon(Icons.edit,
                                     color: Colors.white, size: 18),
                               ),
@@ -445,7 +412,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                                 color: isDark
                                     ? Colors.white24
                                     : AppColors.textTertiary),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: AlhaiSpacing.xxs),
                             Text(
                               'Add image',
                               style: TextStyle(
@@ -462,7 +429,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
           ),
           // Product name
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -476,7 +443,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   product.price.toStringAsFixed(2),
                   style: const TextStyle(
@@ -501,7 +468,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         title: Row(
           children: [
             const Icon(Icons.cloud_upload, color: AppColors.primary),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Text(l10n.add),
           ],
         ),
@@ -516,7 +483,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                       Icon(Icons.check_circle_outline,
                           size: 48,
                           color: Colors.green.shade300),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AlhaiSpacing.sm),
                       const Text('All products have images',
                           style: TextStyle(
                               fontWeight: FontWeight.w500)),
@@ -530,7 +497,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         'Select a product to add an image:',
                         style: TextStyle(
                             fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Expanded(
                       child: ListView.builder(
                         itemCount: displayProducts.length,

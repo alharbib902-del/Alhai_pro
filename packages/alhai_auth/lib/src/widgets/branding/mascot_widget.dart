@@ -850,8 +850,8 @@ class MascotWithMessage extends StatelessWidget {
       children: [
         // فقاعة الرسالة
         Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),

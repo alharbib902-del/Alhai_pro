@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -156,7 +156,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),
                 ),
@@ -179,17 +179,17 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             child: Column(
               children: [
                 _buildTaxRateCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildTaxNumberCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             child: Column(
               children: [
                 _buildOptionsCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(isDark, l10n),
               ],
             ),
@@ -202,11 +202,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildTaxRateCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildTaxNumberCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildOptionsCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(isDark, l10n),
       ],
     );
@@ -214,7 +214,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
 
   Widget _buildTaxRateCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -226,7 +226,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -234,7 +234,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 child: const Icon(Icons.percent_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.taxRate,
                 style: TextStyle(
@@ -245,7 +245,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _taxRateController,
             keyboardType: TextInputType.number,
@@ -284,7 +284,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(
             'Saudi VAT is 15%',
             style: TextStyle(
@@ -299,7 +299,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
 
   Widget _buildTaxNumberCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -311,7 +311,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -319,7 +319,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 child: const Icon(Icons.numbers_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.taxNumber,
                 style: TextStyle(
@@ -330,7 +330,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _taxNumberController,
             readOnly: true,
@@ -357,7 +357,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             'Tax number (read-only)',
             style: TextStyle(
@@ -373,7 +373,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
 
   Widget _buildOptionsCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -385,7 +385,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -393,7 +393,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 child: const Icon(Icons.settings_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Tax Options',
                 style: TextStyle(
@@ -404,7 +404,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           _ToggleRow(
             icon: Icons.toggle_on_rounded,
             title: 'Enable Tax',
@@ -449,7 +449,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -490,7 +490,7 @@ class _ToggleRow extends StatelessWidget {
                 ? AppColors.getTextMuted(isDark)
                 : AppColors.getTextSecondary(isDark),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,7 +505,7 @@ class _ToggleRow extends StatelessWidget {
                         : AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   subtitle,
                   style: TextStyle(

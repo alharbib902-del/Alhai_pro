@@ -70,8 +70,8 @@ class _BreadcrumbItemWidgetState extends State<_BreadcrumbItemWidget> {
         onTap: widget.isLast ? null : widget.item.onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 4,
+            horizontal: AlhaiSpacing.xs,
+            vertical: AlhaiSpacing.xxs,
           ),
           decoration: BoxDecoration(
             color: _isHovered && !widget.isLast
@@ -150,7 +150,7 @@ class DateTimeDisplay extends StatelessWidget {
             size: 16,
             color: AppColors.textSecondary,
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
         ],
         Text(
           '$day\u060C $date${showTime ? ' - $time' : ''}',

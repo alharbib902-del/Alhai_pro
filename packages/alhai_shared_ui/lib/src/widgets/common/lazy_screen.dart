@@ -13,6 +13,8 @@ library lazy_screen;
 import 'package:flutter/material.dart';
 import '../../core/responsive/responsive_utils.dart';
 import 'shimmer_loading.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// L62: This widget is not currently used in any router configuration.
 /// It is kept for future web code-splitting via deferred loading.
@@ -79,7 +81,7 @@ class _LazyScreenState extends State<LazyScreen> {
     _screenFuture = widget.screenBuilder().timeout(
       widget.timeout,
       onTimeout: () {
-        throw const TimeoutException('تجاوز وقت تحميل الشاشة');
+        throw const TimeoutException('Screen loading timed out');
       },
     );
   }
@@ -132,12 +134,12 @@ class _DefaultLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             children: [
               // Shimmer للـ AppBar
               ShimmerPlaceholder.text(width: 150, height: 28),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
 
               // Shimmer للمحتوى
               Expanded(
@@ -145,7 +147,7 @@ class _DefaultLoadingScreen extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: 6,
                     itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
                       child: Container(
                         height: 80,
                         decoration: BoxDecoration(
@@ -183,7 +185,7 @@ class _DefaultErrorScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -192,25 +194,25 @@ class _DefaultErrorScreen extends StatelessWidget {
                   size: 64,
                   color: theme.colorScheme.error,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AlhaiSpacing.md),
                 Text(
-                  'حدث خطأ أثناء تحميل الشاشة',
+                  AppLocalizations.of(context)?.screenLoadError ?? 'An error occurred while loading the screen',
                   style: theme.textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AlhaiSpacing.xs),
                 Text(
-                  _getErrorMessage(error),
+                  _getErrorMessage(error, context),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AlhaiSpacing.lg),
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('إعادة المحاولة'),
+                  label: Text(AppLocalizations.of(context)?.retry ?? 'Retry'),
                 ),
               ],
             ),
@@ -220,11 +222,12 @@ class _DefaultErrorScreen extends StatelessWidget {
     );
   }
 
-  String _getErrorMessage(Object error) {
+  String _getErrorMessage(Object error, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (error is TimeoutException) {
-      return 'انتهى وقت الانتظار. تحقق من اتصالك بالإنترنت.';
+      return l10n?.timeoutCheckConnection ?? 'Timed out. Check your internet connection.';
     }
-    return 'يرجى المحاولة مرة أخرى لاحقاً.';
+    return l10n?.retryLaterMessage ?? 'Please try again later.';
   }
 }
 
@@ -326,12 +329,12 @@ class PosLoadingScreen extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Column(
                   children: [
                     // Search Bar
                     ShimmerPlaceholder.card(height: 48),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AlhaiSpacing.md),
                     // Categories
                     SizedBox(
                       height: 40,
@@ -353,7 +356,7 @@ class PosLoadingScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AlhaiSpacing.md),
                     // Products Grid
                     Expanded(
                       child: ShimmerGrid(
@@ -368,7 +371,7 @@ class PosLoadingScreen extends StatelessWidget {
             // Cart Panel Shimmer
             Container(
               width: 350,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(
@@ -379,11 +382,11 @@ class PosLoadingScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ShimmerPlaceholder.text(width: 100, height: 24),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AlhaiSpacing.md),
                   const Expanded(
                     child: ShimmerList(itemCount: 4, itemHeight: 60),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AlhaiSpacing.md),
                   ShimmerPlaceholder.card(height: 48),
                 ],
               ),
@@ -404,29 +407,29 @@ class ReportsLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title
               ShimmerPlaceholder.text(width: 150, height: 28),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               // Stats Cards
               Row(
                 children: List.generate(
                   3,
                   (_) => Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
                       child: ShimmerPlaceholder.card(height: 100),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               // Chart
               ShimmerPlaceholder.card(height: 200),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               // Table
               const Expanded(
                 child: ShimmerList(itemCount: 5, itemHeight: 48),
@@ -448,18 +451,18 @@ class ProductsLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             children: [
               // Search & Filter
               Row(
                 children: [
                   Expanded(child: ShimmerPlaceholder.card(height: 48)),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AlhaiSpacing.md),
                   ShimmerPlaceholder.card(width: 48, height: 48),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Categories
               SizedBox(
                 height: 40,
@@ -481,7 +484,7 @@ class ProductsLoadingScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Products List
               const Expanded(
                 child: ShimmerList(itemCount: 8, itemHeight: 80),
@@ -503,29 +506,29 @@ class InventoryLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title
               ShimmerPlaceholder.text(width: 120, height: 28),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Summary Cards
               Row(
                 children: List.generate(
                   3,
                   (_) => Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                       child: ShimmerPlaceholder.card(height: 80),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AlhaiSpacing.lg),
               // Search
               ShimmerPlaceholder.card(height: 48),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Inventory List
               const Expanded(
                 child: ShimmerList(itemCount: 6, itemHeight: 72),
@@ -547,18 +550,18 @@ class CustomersLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             children: [
               // Search & Add Button
               Row(
                 children: [
                   Expanded(child: ShimmerPlaceholder.card(height: 48)),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AlhaiSpacing.md),
                   ShimmerPlaceholder.card(width: 48, height: 48),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Filters
               SizedBox(
                 height: 36,
@@ -580,7 +583,7 @@ class CustomersLoadingScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Customers List
               const Expanded(
                 child: ShimmerList(itemCount: 8, itemHeight: 72),
@@ -602,12 +605,12 @@ class SuppliersLoadingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(
             children: [
               // Search
               ShimmerPlaceholder.card(height: 48),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               // Suppliers List
               const Expanded(
                 child: ShimmerList(itemCount: 6, itemHeight: 100),

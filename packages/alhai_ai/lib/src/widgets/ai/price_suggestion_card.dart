@@ -97,7 +97,7 @@ class PriceSuggestionCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AlhaiSpacing.xxxs),
                         // شارة الثقة
                         _buildConfidenceBadge(isDark),
                       ],
@@ -108,7 +108,7 @@ class PriceSuggestionCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
 
               // السعر الحالي مقابل المقترح
               Row(
@@ -148,7 +148,7 @@ class PriceSuggestionCard extends StatelessWidget {
 
               // السبب
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -210,7 +210,7 @@ class PriceSuggestionCard extends StatelessWidget {
             : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -244,7 +244,7 @@ class PriceSuggestionCard extends StatelessWidget {
             size: 14,
             color: color,
           ),
-          const SizedBox(width: 2),
+          const SizedBox(width: AlhaiSpacing.xxxs),
           Text(
             '${suggestion.changePercent.abs().toStringAsFixed(1)}%',
             style: TextStyle(
@@ -275,7 +275,7 @@ class PriceSuggestionCard extends StatelessWidget {
             color: isDark ? Colors.white38 : AppColors.textMuted,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AlhaiSpacing.xxxs),
         Text(
           '${price.toStringAsFixed(2)} ر.س',
           style: TextStyle(

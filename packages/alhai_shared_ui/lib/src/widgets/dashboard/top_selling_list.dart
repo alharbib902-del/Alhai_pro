@@ -53,7 +53,7 @@ class TopSellingList extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
@@ -98,7 +98,7 @@ class TopSellingList extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           
           // قائمة المنتجات
           ...products.take(5).map((product) => _TopSellingItem(
@@ -127,7 +127,7 @@ class _TopSellingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       child: Row(
         children: [
           // صورة المنتج أو أيقونة
@@ -165,7 +165,7 @@ class _TopSellingItem extends StatelessWidget {
                   ),
           ),
           
-          const SizedBox(width: 12),
+          SizedBox(width: AlhaiSpacing.sm),
           
           // معلومات المنتج
           Expanded(
@@ -182,7 +182,7 @@ class _TopSellingItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   '${product.soldCount} مبيع',
                   style: TextStyle(

@@ -80,7 +80,7 @@ class _DistributorSettingsScreenState
           centerTitle: false,
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(isMedium ? 24 : 16),
+          padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
           child: isWide
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,18 +90,18 @@ class _DistributorSettingsScreenState
                       child: Column(
                         children: [
                           _buildCompanyInfoSection(isDark),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: AlhaiSpacing.lg),
                           _buildDeliverySection(isDark),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 24),
+                    const SizedBox(width: AlhaiSpacing.lg),
                     Expanded(
                       flex: 2,
                       child: Column(
                         children: [
                           _buildNotificationsSection(isDark),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: AlhaiSpacing.lg),
                           _buildSaveButton(isDark),
                         ],
                       ),
@@ -112,13 +112,13 @@ class _DistributorSettingsScreenState
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildCompanyInfoSection(isDark),
-                    SizedBox(height: isMedium ? 24 : 16),
+                    SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     _buildNotificationsSection(isDark),
-                    SizedBox(height: isMedium ? 24 : 16),
+                    SizedBox(height: isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     _buildDeliverySection(isDark),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AlhaiSpacing.lg),
                     _buildSaveButton(isDark),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AlhaiSpacing.xl),
                   ],
                 ),
         ),
@@ -140,7 +140,7 @@ class _DistributorSettingsScreenState
           icon: Icons.badge_rounded,
           isDark: isDark,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildField(
           label: 'رقم الهاتف',
           controller: _phoneController,
@@ -148,7 +148,7 @@ class _DistributorSettingsScreenState
           keyboardType: TextInputType.phone,
           isDark: isDark,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildField(
           label: 'البريد الإلكتروني',
           controller: _emailController,
@@ -156,7 +156,7 @@ class _DistributorSettingsScreenState
           keyboardType: TextInputType.emailAddress,
           isDark: isDark,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildField(
           label: 'العنوان',
           controller: _addressController,
@@ -185,7 +185,7 @@ class _DistributorSettingsScreenState
             color: AppColors.getTextSecondary(isDark),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         _switchTile(
           'البريد الإلكتروني',
           Icons.email_outlined,
@@ -207,9 +207,9 @@ class _DistributorSettingsScreenState
           (v) => setState(() => _smsNotifications = v),
           isDark,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         Divider(color: AppColors.getBorder(isDark)),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Text(
           'أنواع الإشعارات',
           style: TextStyle(
@@ -218,7 +218,7 @@ class _DistributorSettingsScreenState
             color: AppColors.getTextSecondary(isDark),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         _switchTile(
           'طلبات جديدة',
           Icons.fiber_new_rounded,
@@ -261,7 +261,7 @@ class _DistributorSettingsScreenState
           hintText: 'أدخل المدن مفصولة بفاصلة',
           isDark: isDark,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         Row(
           children: [
             Expanded(
@@ -273,7 +273,7 @@ class _DistributorSettingsScreenState
                 isDark: isDark,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AlhaiSpacing.md),
             Expanded(
               child: _buildField(
                 label: 'رسوم التوصيل (ر.س)',
@@ -285,7 +285,7 @@ class _DistributorSettingsScreenState
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _switchTile(
           'توصيل مجاني',
           Icons.local_offer_rounded,
@@ -294,7 +294,7 @@ class _DistributorSettingsScreenState
           isDark,
         ),
         if (_freeDeliveryEnabled) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           _buildField(
             label: 'الحد الأدنى للتوصيل المجاني (ر.س)',
             controller: _freeDeliveryMinController,
@@ -327,7 +327,7 @@ class _DistributorSettingsScreenState
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),
@@ -345,7 +345,7 @@ class _DistributorSettingsScreenState
     required List<Widget> children,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -357,14 +357,14 @@ class _DistributorSettingsScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 title,
                 style: TextStyle(
@@ -375,7 +375,7 @@ class _DistributorSettingsScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           ...children,
         ],
       ),
@@ -402,7 +402,7 @@ class _DistributorSettingsScreenState
             color: AppColors.getTextSecondary(isDark),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
@@ -430,7 +430,7 @@ class _DistributorSettingsScreenState
                   const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
           ),
         ),
       ],
@@ -440,11 +440,11 @@ class _DistributorSettingsScreenState
   Widget _switchTile(String label, IconData icon, bool value,
       ValueChanged<bool> onChanged, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Icon(icon, color: AppColors.getTextMuted(isDark), size: 20),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               label,

@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../constants/breakpoints.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // ============================================================================
 // RESPONSIVE VALUE HELPER
@@ -72,9 +73,9 @@ class ResponsivePadding extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = getResponsiveValue<EdgeInsetsGeometry>(
       context,
-      mobile: customMobile ?? const EdgeInsets.all(12),
-      tablet: customTablet ?? const EdgeInsets.all(16),
-      desktop: customDesktop ?? const EdgeInsets.all(24),
+      mobile: customMobile ?? const EdgeInsets.all(AlhaiSpacing.sm),
+      tablet: customTablet ?? const EdgeInsets.all(AlhaiSpacing.md),
+      desktop: customDesktop ?? const EdgeInsets.all(AlhaiSpacing.lg),
     );
     
     return Padding(padding: padding, child: child);

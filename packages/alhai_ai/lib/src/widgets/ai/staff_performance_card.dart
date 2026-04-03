@@ -76,7 +76,7 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -160,7 +160,7 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                               decoration: BoxDecoration(
                                 color: _scoreColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
@@ -176,7 +176,7 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Row(
                           children: [
                             Text(
@@ -186,10 +186,10 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                                 color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AlhaiSpacing.xs),
                             if (widget.rank <= 3)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: widget.rank == 1
@@ -217,7 +217,7 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Key metrics row
               Row(
@@ -295,7 +295,7 @@ class _MetricItem extends StatelessWidget {
         children: [
           Icon(icon, size: 14,
             color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
             style: TextStyle(

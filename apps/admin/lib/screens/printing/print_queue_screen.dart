@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Print Queue Screen - Admin version
 /// Displays pending print jobs with status indicators and reprint/cancel actions
@@ -56,7 +57,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                           color: isDark
                               ? Colors.white24
                               : AppColors.textTertiary),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noPrintJobsPending,
                         style: TextStyle(
@@ -87,7 +88,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
       children: [
         // Printer status
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.success.withValues(alpha: 0.1)
@@ -101,7 +102,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             children: [
               const Icon(Icons.check_circle,
                   color: AppColors.success, size: 20),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   l10n.printerConnected,
@@ -120,7 +121,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Stats row
         Row(
@@ -134,7 +135,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                 isDark: isDark,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _buildStatCard(
                 icon: Icons.hourglass_empty,
@@ -144,7 +145,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                 isDark: isDark,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _buildStatCard(
                 icon: Icons.error_outline,
@@ -156,7 +157,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Header row
         Row(
@@ -176,7 +177,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                   child: Text(l10n.clearAll,
                       style: const TextStyle(color: AppColors.error)),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 FilledButton.icon(
                   onPressed: _isPrinting ? null : _printAll,
                   icon: _isPrinting
@@ -193,13 +194,13 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
 
         // Jobs list
         ...List.generate(jobs.length, (index) {
           final job = jobs[index];
           return Container(
-            margin: const EdgeInsets.only(bottom: 8),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -211,7 +212,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
             ),
             child: ListTile(
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               leading: CircleAvatar(
                 backgroundColor: job.status == 'failed'
                     ? AppColors.error.withValues(alpha: 0.1)
@@ -243,7 +244,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
                         ? AppColors.error
                         : AppColors.textTertiary,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   Expanded(
                     child: Text(
                       job.status == 'failed'
@@ -289,7 +290,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
     required bool isDark,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark
             ? color.withValues(alpha: 0.1)
@@ -300,7 +301,7 @@ class _PrintQueueScreenState extends ConsumerState<PrintQueueScreen> {
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             value,
             style: TextStyle(

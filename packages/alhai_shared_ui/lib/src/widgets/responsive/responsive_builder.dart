@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/constants/breakpoints.dart';
 
 /// Widget لبناء واجهات متجاوبة
@@ -123,7 +124,7 @@ class ResponsiveGridView extends StatelessWidget {
     this.spacing = 8,
     this.childAspectRatio = 0.85,
     this.minItemWidth = 140,
-    this.padding = const EdgeInsets.all(8),
+    this.padding = const EdgeInsets.all(AlhaiSpacing.xs),
   });
 
   @override

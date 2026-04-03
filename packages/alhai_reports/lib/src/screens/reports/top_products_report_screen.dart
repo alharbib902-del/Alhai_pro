@@ -7,6 +7,7 @@ library;
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
@@ -562,7 +563,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
 
                 if (totalRevenue == 0)
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: Center(child: Text(l10n.noRevenueForPeriod)),
                   )
                 else
@@ -589,7 +590,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         LinearProgressIndicator(
                           value: percentage / 100,
                           backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,

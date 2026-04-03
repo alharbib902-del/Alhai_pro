@@ -169,16 +169,17 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                 Expanded(
                   child: invoicesAsync.when(
                     loading: () => Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: Column(
                         children: [
                           ShimmerStats(count: 4, isWide: isWideScreen),
-                          const SizedBox(height: 24),
+                          SizedBox(height: AlhaiSpacing.lg),
                           const ShimmerList(itemCount: 6, itemHeight: 72),
                         ],
                       ),
                     ),
                     error: (e, _) => AppErrorState.general(
+                      context,
                       message: e.toString(),
                       onRetry: () => ref.invalidate(invoicesListProvider),
                     ),
@@ -189,7 +190,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                       final pendingCount = allInvoices.where((i) => i.status == 'pending').length;
 
                       if (allInvoices.isEmpty) {
-                        return AppEmptyState.noInvoices();
+                        return AppEmptyState.noInvoices(context);
                       }
 
                       return RefreshIndicator(
@@ -200,13 +201,13 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                         color: AppColors.primary,
                         child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: Column(
                           children: [
                             _buildStatsSection(l10n, isDark, isWideScreen, statsAsync, pendingCount),
-                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                             _buildChartSection(l10n, isDark, isWideScreen),
-                            SizedBox(height: isMediumScreen ? 24 : 16),
+                            SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                             InvoiceFilters(
                               activeTab: _activeTab,
                               onTabChanged: (tab) => setState(() => _activeTab = tab),
@@ -214,7 +215,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                               onViewToggle: () => setState(() => _isGridView = !_isGridView),
                               onReset: () => setState(() { _activeTab = 'all'; _searchQuery = ''; }),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: AlhaiSpacing.md),
                             InvoiceDataTable(
                               invoices: filteredInvoices,
                               selectedIds: _selectedInvoices,
@@ -232,7 +233,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                               onDelete: _showDeleteDialog,
                               isMobile: !isMediumScreen,
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AlhaiSpacing.lg),
                             _buildFooter(l10n, isDark),
                           ],
                         ),
@@ -248,7 +249,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
   Widget _buildHeader(BuildContext context, bool isWideScreen, bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 14),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
@@ -259,10 +260,10 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             onPressed: isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.menu_rounded, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
           Text(l10n.invoicesTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
           if (isWideScreen) ...[
-            Container(height: 28, width: 1, margin: const EdgeInsets.symmetric(horizontal: 16), color: Theme.of(context).dividerColor),
+            Container(height: 28, width: 1, margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md), color: Theme.of(context).dividerColor),
             FilledButton.icon(
               onPressed: _showCreateInvoiceDialog,
               icon: const Icon(Icons.add, size: 18),
@@ -270,25 +271,25 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             PopupMenuButton<String>(
               onSelected: (value) {},
               offset: const Offset(0, 40),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               itemBuilder: (context) => [
-                PopupMenuItem(value: 'export', child: Row(children: [const Icon(Icons.file_download_outlined, size: 18, color: AppColors.primary), const SizedBox(width: 8), Text(l10n.exportAll)])),
-                PopupMenuItem(value: 'print', child: Row(children: [const Icon(Icons.print_outlined, size: 18, color: AppColors.primary), const SizedBox(width: 8), Text(l10n.printReport)])),
+                PopupMenuItem(value: 'export', child: Row(children: [const Icon(Icons.file_download_outlined, size: 18, color: AppColors.primary), SizedBox(width: AlhaiSpacing.xs), Text(l10n.exportAll)])),
+                PopupMenuItem(value: 'print', child: Row(children: [const Icon(Icons.print_outlined, size: 18, color: AppColors.primary), SizedBox(width: AlhaiSpacing.xs), Text(l10n.printReport)])),
               ],
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor)),
                 child: Row(children: [
                   Text(l10n.more, style: TextStyle(fontSize: 14, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary)),
-                  const SizedBox(width: 4),
+                  SizedBox(width: AlhaiSpacing.xxs),
                   Icon(Icons.keyboard_arrow_down, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary),
                 ]),
               ),
@@ -314,14 +315,14 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   prefixIcon: Icon(Icons.search, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
                   filled: true,
                   fillColor: isDark ? const Color(0xFF0F172A) : AppColors.backgroundSecondary,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5))),
                 ),
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
               ),
             ),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
           IconButton(onPressed: () {}, icon: Badge(smallSize: 8, backgroundColor: AppColors.secondary, child: Icon(Icons.notifications_outlined, color: isDark ? AppColors.textMutedDark : AppColors.textSecondary))),
           IconButton(onPressed: () {}, icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode, color: isDark ? const Color(0xFFFBBF24) : AppColors.textSecondary)),
         ],
@@ -357,31 +358,31 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     if (isWideScreen) {
       return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(flex: 2, child: InvoiceRevenueChart(isDark: isDark)),
-        const SizedBox(width: 16),
+        SizedBox(width: AlhaiSpacing.md),
         Expanded(flex: 1, child: InvoicePaymentMethods(isDark: isDark)),
       ]);
     }
     return Column(children: [
       InvoiceRevenueChart(isDark: isDark),
-      const SizedBox(height: 16),
+      SizedBox(height: AlhaiSpacing.md),
       InvoicePaymentMethods(isDark: isDark),
     ]);
   }
 
   Widget _buildFooter(AppLocalizations l10n, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      padding: const EdgeInsets.only(top: AlhaiSpacing.md, bottom: AlhaiSpacing.xs),
       child: Column(children: [
         Divider(color: Theme.of(context).dividerColor),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
         Text(l10n.allRightsReservedFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-        const SizedBox(height: 8),
+        SizedBox(height: AlhaiSpacing.xs),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.privacyPolicyFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
+          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.privacyPolicyFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
           Text(' | ', style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.termsFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
+          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.termsFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
           Text(' | ', style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted)),
-          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.supportFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
+          TextButton(onPressed: () {}, style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs), minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap), child: Text(l10n.supportFooter, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textMutedDark : AppColors.textMuted))),
         ]),
       ]),
     );

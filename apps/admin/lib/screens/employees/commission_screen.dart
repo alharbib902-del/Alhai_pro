@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// شاشة عمولات وأهداف الموظفين
 class CommissionScreen extends ConsumerStatefulWidget {
@@ -103,34 +106,36 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
     return 0.0;
   }
 
-  String _periodLabel() {
+  String _periodLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (_period) {
-      case 'week': return 'هذا الأسبوع';
-      case 'month': return 'هذا الشهر';
-      case 'year': return 'هذه السنة';
-      default: return 'هذا الشهر';
+      case 'week': return l10n.thisWeek;
+      case 'month': return l10n.thisMonth;
+      case 'year': return l10n.thisYear;
+      default: return l10n.thisMonth;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final totalCommissions = _employees.fold(0.0, (sum, e) => sum + e.commission);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('عمولات الموظفين'),
+        title: Text(l10n.employeeCommissions),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) { setState(() => _period = v); _loadData(); },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
-              const PopupMenuItem(value: 'year', child: Text('هذه السنة')),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
+              PopupMenuItem(value: 'year', child: Text(l10n.thisYear)),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(children: [
-                Text(_periodLabel()),
+                Text(_periodLabel(context)),
                 const Icon(Icons.arrow_drop_down),
               ]),
             ),
@@ -144,7 +149,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                 // Total commissions banner
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
@@ -152,11 +157,11 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                   ),
                   child: Column(
                     children: [
-                      const Text('إجمالي العمولات المستحقة',
-                          style: TextStyle(color: Colors.white70, fontSize: 12)),
-                      const SizedBox(height: 4),
+                      Text(l10n.totalDueCommissions,
+                          style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                      const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
-                        '${totalCommissions.toStringAsFixed(2)} ر.س',
+                        l10n.amountSar(totalCommissions.toStringAsFixed(2)),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -164,7 +169,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                         ),
                       ),
                       Text(
-                        'لـ ${_employees.length} موظف',
+                        l10n.forEmployees(_employees.length),
                         style: const TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ],
@@ -173,26 +178,20 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
 
                 Expanded(
                   child: _employees.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.people_outline, size: 64, color: Theme.of(context).hintColor),
-                              SizedBox(height: 12),
-                              Text('لا توجد مبيعات في هذه الفترة',
-                                  style: TextStyle(color: Theme.of(context).hintColor)),
-                            ],
-                          ),
+                      ? AppEmptyState.noData(
+                          context,
+                          title: l10n.noCommissions,
+                          description: l10n.noSalesInPeriod,
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           itemCount: _employees.length,
                           itemBuilder: (ctx, i) {
                             final emp = _employees[i];
                             final achievedPct =
                                 emp.target > 0 ? (emp.totalSales / emp.target).clamp(0.0, 1.0) : 0.0;
                             return Card(
-                              margin: const EdgeInsets.only(bottom: 8),
+                              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                               child: Padding(
                                 padding: const EdgeInsets.all(14),
                                 child: Column(
@@ -211,7 +210,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 12),
+                                        const SizedBox(width: AlhaiSpacing.sm),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +219,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                                   style: const TextStyle(
                                                       fontWeight: FontWeight.bold)),
                                               Text(
-                                                '${emp.saleCount} فاتورة - مبيعات: ${emp.totalSales.toStringAsFixed(0)} ر.س',
+                                                l10n.invoicesSales(emp.saleCount, emp.totalSales.toStringAsFixed(0)),
                                                 style: TextStyle(
                                                     fontSize: 12, color: Theme.of(context).hintColor),
                                               ),
@@ -228,18 +227,18 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                           ),
                                         ),
                                         Container(
-                                          padding: const EdgeInsets.all(8),
+                                          padding: const EdgeInsets.all(AlhaiSpacing.xs),
                                           decoration: BoxDecoration(
                                             color: Colors.green.withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Column(
                                             children: [
-                                              Text('عمولة',
+                                              Text(l10n.commissionLabel,
                                                   style: TextStyle(
                                                       fontSize: 10, color: Theme.of(context).hintColor)),
                                               Text(
-                                                '${emp.commission.toStringAsFixed(0)} ر.س',
+                                                l10n.amountSar(emp.commission.toStringAsFixed(0)),
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.green,
@@ -257,11 +256,11 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'الهدف: ${emp.target.toStringAsFixed(0)} ر.س',
+                                          l10n.targetLabel(emp.target.toStringAsFixed(0)),
                                           style: TextStyle(fontSize: 11, color: Theme.of(context).hintColor),
                                         ),
                                         Text(
-                                          '${(achievedPct * 100).toStringAsFixed(0)}% مُحقق',
+                                          l10n.achievedPercent((achievedPct * 100).toStringAsFixed(0)),
                                           style: TextStyle(
                                             fontSize: 11,
                                             fontWeight: FontWeight.bold,
@@ -270,7 +269,7 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: AlhaiSpacing.xxs),
                                     LinearProgressIndicator(
                                       value: achievedPct,
                                       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -280,9 +279,9 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                       minHeight: 6,
                                       borderRadius: BorderRadius.circular(3),
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: AlhaiSpacing.xxs),
                                     Text(
-                                      'نسبة العمولة: ${(emp.commissionRate * 100).toStringAsFixed(0)}%',
+                                      l10n.commissionRate((emp.commissionRate * 100).toStringAsFixed(0)),
                                       style: TextStyle(fontSize: 10, color: Theme.of(context).hintColor),
                                     ),
                                   ],

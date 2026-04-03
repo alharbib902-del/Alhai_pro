@@ -31,7 +31,7 @@ class PreventiveActionCard extends StatelessWidget {
     final typeIcon = _getTypeIcon(action.type);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -78,7 +78,7 @@ class PreventiveActionCard extends StatelessWidget {
                 ),
                 child: Icon(typeIcon, color: Colors.white, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,9 +91,9 @@ class PreventiveActionCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: typeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -113,7 +113,7 @@ class PreventiveActionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // الوصف
           Text(
@@ -129,7 +129,7 @@ class PreventiveActionCard extends StatelessWidget {
 
           // التوفير المتوقع
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: isDark
                   ? AppColors.success.withValues(alpha: 0.1)
@@ -143,7 +143,7 @@ class PreventiveActionCard extends StatelessWidget {
                   color: AppColors.success,
                   size: 18,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'التوفير المتوقع:',
                   style: TextStyle(
@@ -151,7 +151,7 @@ class PreventiveActionCard extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   '${action.estimatedSavings.toStringAsFixed(2)} ر.س',
                   style: const TextStyle(

@@ -51,11 +51,11 @@ class GeneratedReportView extends StatelessWidget {
 
   Widget _buildHeader(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -64,7 +64,7 @@ class GeneratedReportView extends StatelessWidget {
             ),
             child: Icon(_getChartIcon(), color: Colors.white, size: 20),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class GeneratedReportView extends StatelessWidget {
           ),
           if (report.totalValue != null)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -110,8 +110,8 @@ class GeneratedReportView extends StatelessWidget {
 
   Widget _buildSummary(bool isDark) {
     return Container(
-      margin: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF8B5CF6).withValues(alpha: 0.08)
@@ -122,7 +122,7 @@ class GeneratedReportView extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.auto_awesome_rounded, size: 16, color: Color(0xFF8B5CF6)),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
               report.summary,
@@ -191,7 +191,7 @@ class _BarChartView extends StatelessWidget {
     final maxValue = data.map((d) => d.value).reduce(max);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Column(
         children: [
           Expanded(
@@ -215,7 +215,7 @@ class _BarChartView extends StatelessWidget {
                             color: isDark ? Colors.white.withValues(alpha: 0.6) : AppColors.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Flexible(
                           child: FractionallySizedBox(
                             heightFactor: ratio,
@@ -238,7 +238,7 @@ class _BarChartView extends StatelessWidget {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -286,7 +286,7 @@ class _LineChartView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: CustomPaint(
         size: Size.infinite,
         painter: _LineChartPainter(data: data, isDark: isDark),
@@ -429,7 +429,7 @@ class _PieChartView extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Row(
         children: [
           Expanded(
@@ -443,7 +443,7 @@ class _PieChartView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -462,7 +462,7 @@ class _PieChartView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Expanded(
                         child: Text(
                           entry.value.label,
@@ -564,7 +564,7 @@ class _TableView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: ListView.separated(
         itemCount: data.length,
         separatorBuilder: (_, __) => Divider(
@@ -595,7 +595,7 @@ class _TableView extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
                     row.label,
@@ -615,9 +615,9 @@ class _TableView extends StatelessWidget {
                   ),
                 ),
                 if (row.previousValue != null) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                     decoration: BoxDecoration(
                       color: row.changePercent >= 0
                           ? AppColors.success.withValues(alpha: 0.1)
@@ -667,7 +667,7 @@ class _NumberView extends StatelessWidget {
               color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
               colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -683,7 +683,7 @@ class _NumberView extends StatelessWidget {
             ),
           ),
           if (row.previousValue != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(

@@ -5,6 +5,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات بوابات الشحن
 const String _kShippingAramex = 'shipping_aramex_enabled';
@@ -94,7 +95,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
         body: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
                 border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
@@ -103,7 +104,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                 children: [
                   if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
                   const Icon(Icons.local_shipping, color: AppColors.primary, size: 28),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Text(AppLocalizations.of(context).shippingGatewaysTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
@@ -120,7 +121,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
               border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
@@ -129,51 +130,51 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
               children: [
                 if (!isWide) IconButton(icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(context).openDrawer()),
                 const Icon(Icons.local_shipping, color: AppColors.primary, size: 28),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text('\u0628\u0648\u0627\u0628\u0627\u062a \u0627\u0644\u0634\u062d\u0646', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(AppLocalizations.of(context).availableShippingGateways, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(AppLocalizations.of(context).activateShippingGateways, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AlhaiSpacing.mdl),
                   _buildGatewayCard(AppLocalizations.of(context).aramexName, 'Aramex', AppLocalizations.of(context).aramexDesc, Icons.flight, _aramexActive, const Color(0xFFE44D26), isDark,
                     onToggle: (v) {
                       setState(() => _aramexActive = v);
                       _saveSingleSetting(_kShippingAramex, v.toString());
                     }),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildGatewayCard('SMSA Express', 'SMSA', AppLocalizations.of(context).smsaDesc, Icons.speed, _smsaActive, const Color(0xFF00539F), isDark,
                     onToggle: (v) {
                       setState(() => _smsaActive = v);
                       _saveSingleSetting(_kShippingSmsa, v.toString());
                     }),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildGatewayCard(AppLocalizations.of(context).fastloName, 'Fastlo', AppLocalizations.of(context).fastloDesc, Icons.electric_moped, _fastloActive, const Color(0xFF6C63FF), isDark,
                     onToggle: (v) {
                       setState(() => _fastloActive = v);
                       _saveSingleSetting(_kShippingFastlo, v.toString());
                     }),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildGatewayCard('DHL', 'DHL Express', AppLocalizations.of(context).dhlDesc, Icons.public, _dhlActive, const Color(0xFFFFCC00), isDark,
                     onToggle: (v) {
                       setState(() => _dhlActive = v);
                       _saveSingleSetting(_kShippingDhl, v.toString());
                     }),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildGatewayCard('J&T Express', 'J&T Express', AppLocalizations.of(context).jtDesc, Icons.local_shipping, _jtActive, const Color(0xFFE60012), isDark,
                     onToggle: (v) {
                       setState(() => _jtActive = v);
                       _saveSingleSetting(_kShippingJt, v.toString());
                     }),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   _buildGatewayCard(AppLocalizations.of(context).customDeliveryName, 'Custom Delivery', AppLocalizations.of(context).customDeliveryDesc, Icons.person_pin_circle, _customActive, Colors.teal, isDark,
                     onToggle: (v) {
                       setState(() => _customActive = v);
@@ -190,7 +191,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
 
   Widget _buildGatewayCard(String name, String nameEn, String description, IconData icon, bool isActive, Color brandColor, bool isDark, {required ValueChanged<bool> onToggle}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -204,7 +205,7 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
             decoration: BoxDecoration(color: brandColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: brandColor, size: 28),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,11 +213,11 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                 Row(
                   children: [
                     Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(nameEn, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(description, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               ],
             ),
@@ -231,23 +232,23 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text('إعدادات $name'),
+                      title: Text(AppLocalizations.of(ctx).settingsForName(name)),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextField(
                             controller: apiKeyController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'API Key',
-                              hintText: 'أدخل مفتاح API',
+                              hintText: AppLocalizations.of(ctx).enterApiKey,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           TextField(
                             controller: accountController,
-                            decoration: const InputDecoration(
-                              labelText: 'Account Number',
-                              hintText: 'رقم الحساب',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(ctx).accountNumber,
+                              hintText: AppLocalizations.of(ctx).accountNumber,
                             ),
                           ),
                         ],
@@ -255,16 +256,16 @@ class _ShippingGatewaysScreenState extends ConsumerState<ShippingGatewaysScreen>
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('إلغاء'),
+                          child: Text(AppLocalizations.of(ctx).cancel),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(ctx);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('تم حفظ إعدادات $name')),
+                              SnackBar(content: Text(AppLocalizations.of(context).settingsSavedForName(name))),
                             );
                           },
-                          child: const Text('حفظ'),
+                          child: Text(AppLocalizations.of(ctx).save),
                         ),
                       ],
                     ),

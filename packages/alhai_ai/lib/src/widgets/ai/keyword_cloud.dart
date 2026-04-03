@@ -22,7 +22,7 @@ class KeywordCloud extends StatelessWidget {
     final maxCount = keywords.map((k) => k.count).reduce(max);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -42,7 +42,7 @@ class KeywordCloud extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -51,7 +51,7 @@ class KeywordCloud extends StatelessWidget {
                 ),
                 child: const Icon(Icons.cloud_rounded, color: Colors.white, size: 18),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,16 +79,16 @@ class KeywordCloud extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _LegendDot(color: AppColors.success, label: l10n.positive, isDark: isDark),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   _LegendDot(color: AppColors.warning, label: l10n.neutral, isDark: isDark),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   _LegendDot(color: AppColors.error, label: l10n.negative, isDark: isDark),
                 ],
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Keywords cloud
           Wrap(
@@ -127,7 +127,7 @@ class _LegendDot extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           label,
           style: TextStyle(

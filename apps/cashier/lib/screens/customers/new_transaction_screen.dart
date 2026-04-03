@@ -15,7 +15,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -142,9 +142,9 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadAccounts)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadAccounts)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: isWideScreen
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,20 +154,20 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                               child: Column(
                                 children: [
                                   _buildCustomerCard(colorScheme, l10n),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: AlhaiSpacing.lg),
                                   _buildTypeCard(colorScheme, l10n),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 24),
+                            const SizedBox(width: AlhaiSpacing.lg),
                             Expanded(
                               flex: 2,
                               child: Column(
                                 children: [
                                   _buildAmountCard(colorScheme, l10n),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: AlhaiSpacing.lg),
                                   _buildNoteCard(colorScheme, l10n),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: AlhaiSpacing.lg),
                                   _buildSubmitButton(colorScheme, l10n),
                                 ],
                               ),
@@ -179,17 +179,17 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                           children: [
                             _buildCustomerCard(colorScheme, l10n),
                             SizedBox(
-                                height: isMediumScreen ? 24 : 16),
+                                height:isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                             _buildTypeCard(colorScheme, l10n),
                             SizedBox(
-                                height: isMediumScreen ? 24 : 16),
+                                height:isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                             _buildAmountCard(colorScheme, l10n),
                             SizedBox(
-                                height: isMediumScreen ? 24 : 16),
+                                height:isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                             _buildNoteCard(colorScheme, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                             _buildSubmitButton(colorScheme, l10n),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: AlhaiSpacing.lg),
                           ],
                         ),
                 ),
@@ -205,7 +205,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
 
   Widget _buildCustomerCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -217,7 +217,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -225,7 +225,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 child: const Icon(Icons.person_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.customerName,
                 style: TextStyle(
@@ -236,7 +236,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           if (_selectedAccount != null && !_showCustomerSearch)
             _buildSelectedCustomer(colorScheme, l10n)
           else
@@ -280,7 +280,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                       fontWeight: FontWeight.w700,
                       color: colorScheme.onPrimary)),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +320,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 ),
               ],
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             const Icon(Icons.edit_rounded,
                 size: 18, color: AppColors.primary),
           ],
@@ -356,10 +356,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 200),
           child: ListView.builder(
@@ -378,7 +378,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                      horizontal: AlhaiSpacing.sm, vertical: 10),
                   child: Row(
                     children: [
                       Icon(Icons.person_outline_rounded,
@@ -415,7 +415,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
 
   Widget _buildTypeCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -427,7 +427,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -435,7 +435,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 child: const Icon(Icons.swap_vert_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.type,
                 style: TextStyle(
@@ -446,7 +446,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -459,7 +459,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   colorScheme,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _buildTypeOption(
                   l10n.payment,
@@ -484,7 +484,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.mdl),
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
@@ -521,7 +521,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     final activeColor = _isDebt ? AppColors.error : AppColors.success;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -533,7 +533,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: activeColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -541,7 +541,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 child: Icon(Icons.attach_money_rounded,
                     color: activeColor, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.amount,
                 style: TextStyle(
@@ -552,7 +552,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
@@ -574,7 +574,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   fontSize: 16,
                   color: colorScheme.onSurfaceVariant),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(
                   _isDebt ? Icons.add_rounded : Icons.remove_rounded,
                   size: 28,
@@ -599,7 +599,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               fillColor: colorScheme.surfaceContainerHighest,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -616,7 +616,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                        horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? activeColor.withValues(alpha: 0.1)
@@ -646,7 +646,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
 
   Widget _buildNoteCard(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -658,7 +658,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -666,7 +666,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                 child: const Icon(Icons.note_alt_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.noteLabel,
                 style: TextStyle(
@@ -677,7 +677,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _noteController,
             maxLines: 3,
@@ -703,7 +703,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -742,7 +742,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: activeColor,
           foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),
@@ -802,8 +802,8 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم تسجيل المعاملة بنجاح'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).transactionRecordedSuccess),
           backgroundColor: AppColors.success,
         ),
       );

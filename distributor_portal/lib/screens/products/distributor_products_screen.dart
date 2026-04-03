@@ -116,12 +116,12 @@ class _DistributorProductsScreenState
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
           ],
         ),
         body: Column(
@@ -144,7 +144,7 @@ class _DistributorProductsScreenState
 
   Widget _buildSearchBar(bool isDark, bool isMedium) {
     return Container(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -179,16 +179,16 @@ class _DistributorProductsScreenState
                 borderSide: BorderSide.none,
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           SizedBox(
             height: 36,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (_, index) {
                 final cat = _categories[index];
                 final isSelected = cat == _selectedCategory;
@@ -229,7 +229,7 @@ class _DistributorProductsScreenState
   Widget _buildDataTable(bool isDark) {
     final products = _filteredProducts;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
@@ -241,7 +241,7 @@ class _DistributorProductsScreenState
             // Header row
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius:
@@ -263,7 +263,7 @@ class _DistributorProductsScreenState
               final product = products[index];
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12),
+                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   border: index < products.length - 1
                       ? Border(
@@ -398,7 +398,7 @@ class _DistributorProductsScreenState
   Widget _buildProductCards(bool isDark, bool isMedium) {
     final products = _filteredProducts;
     return ListView.separated(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       itemCount: products.length,
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (_, index) {
@@ -423,7 +423,7 @@ class _DistributorProductsScreenState
                 child: const Icon(Icons.inventory_2_outlined,
                     color: AppColors.primary, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,7 +436,7 @@ class _DistributorProductsScreenState
                         color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
                         Text(
@@ -447,7 +447,7 @@ class _DistributorProductsScreenState
                             color: AppColors.getTextMuted(isDark),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
@@ -484,7 +484,7 @@ class _DistributorProductsScreenState
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               IconButton(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -519,7 +519,7 @@ class _DistributorProductsScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -543,7 +543,7 @@ class _DistributorProductsScreenState
         children: [
           Icon(Icons.inventory_2_outlined,
               size: 64, color: AppColors.getTextMuted(isDark)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             'لا توجد منتجات',
             style: TextStyle(
@@ -552,7 +552,7 @@ class _DistributorProductsScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
             'جرب تغيير معايير البحث',
             style: TextStyle(

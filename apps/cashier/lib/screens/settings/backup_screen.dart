@@ -16,7 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/backup_manager.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Backup management screen
@@ -123,7 +123,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'اكتمل النسخ الاحتياطي — ${bundle.totalRows} صف، ${bundle.sizeMb.toStringAsFixed(1)} ميجابايت',
+              AppLocalizations.of(context).backupCompletedBody(bundle.totalRows, bundle.sizeMb.toStringAsFixed(1)),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -136,7 +136,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل النسخ الاحتياطي: $e'),
+            content: Text(AppLocalizations.of(context).backupFailedMsg('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -156,7 +156,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
@@ -164,10 +164,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               child: const Icon(Icons.check_circle_rounded,
                   color: AppColors.success, size: 22),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Text(
-                'اكتمل النسخ الاحتياطي',
+                AppLocalizations.of(ctx).backupCompletedTitle,
                 style: TextStyle(color: AppColors.getTextPrimary(isDark)),
               ),
             ),
@@ -184,9 +184,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 color: AppColors.getTextSecondary(isDark),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
-              'انسخ بيانات النسخ الاحتياطي للحافظة لحفظها أو مشاركتها.',
+              AppLocalizations.of(ctx).copyBackupInstructions,
               style: TextStyle(
                 fontSize: 13,
                 color: AppColors.getTextMuted(isDark),
@@ -197,21 +197,21 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إغلاق'),
+            child: Text(AppLocalizations.of(ctx).closeBtn),
           ),
           FilledButton.icon(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: _lastBackupJson ?? ''));
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم نسخ النسخة الاحتياطية للحافظة'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).backupCopiedToClipboard),
                   backgroundColor: AppColors.info,
                 ),
               );
             },
             icon: const Icon(Icons.copy_rounded, size: 18),
-            label: const Text('نسخ للحافظة'),
+            label: Text(AppLocalizations.of(ctx).copyToClipboardBtn),
           ),
         ],
       ),
@@ -229,7 +229,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: AppColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
@@ -237,7 +237,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               child: const Icon(Icons.warning_rounded,
                   color: AppColors.warning, size: 22),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Text(
                 l10n.restoreBackup,
@@ -249,7 +249,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           ],
         ),
         content: SizedBox(
-          width: 500,
+          width:500,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +261,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   color: AppColors.getTextPrimary(isDark),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(
                 children: [
                   Expanded(
@@ -278,7 +278,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 200),
                 child: TextField(
@@ -301,9 +301,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: AppColors.error
                       .withValues(alpha: isDark ? 0.12 : 0.06),
@@ -437,9 +437,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadBackupSettings)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadBackupSettings)
                   : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),
                 ),
@@ -462,17 +462,17 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             child: Column(
               children: [
                 _buildLastBackupCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildBackupNowCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             child: Column(
               children: [
                 _buildAutoBackupCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildRestoreCard(isDark, l10n),
               ],
             ),
@@ -485,11 +485,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildLastBackupCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildBackupNowCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildAutoBackupCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildRestoreCard(isDark, l10n),
       ],
     );
@@ -510,7 +510,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -522,7 +522,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -533,7 +533,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   size: 22,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.lastBackup,
                 style: TextStyle(
@@ -544,7 +544,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           if (!hasBackup)
             Text(
               'No backup yet. Create your first backup now.',
@@ -574,7 +574,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
                 Expanded(
@@ -595,9 +595,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: statusColor.withValues(alpha: isDark ? 0.12 : 0.06),
                 borderRadius: BorderRadius.circular(10),
@@ -649,7 +649,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         Text(
           value,
           style: TextStyle(
@@ -674,7 +674,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   Widget _buildBackupNowCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: _isBackingUp
             ? null
@@ -699,7 +699,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             const CircularProgressIndicator(
               color: AppColors.primary,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               'Exporting database...',
               style: TextStyle(
@@ -708,7 +708,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 color: AppColors.getTextPrimary(isDark),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               l10n.pleaseWait,
               style: TextStyle(
@@ -731,7 +731,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -752,7 +752,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     };
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -764,7 +764,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -772,7 +772,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 child: const Icon(Icons.schedule_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   l10n.autoBackup,
@@ -795,7 +795,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             ],
           ),
           if (_autoBackup) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             Text(
               l10n.backupFrequency,
               style: TextStyle(
@@ -804,7 +804,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 color: AppColors.getTextSecondary(isDark),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -817,7 +817,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                        horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.info.withValues(alpha: 0.1)
@@ -851,7 +851,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   Widget _buildRestoreCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -863,7 +863,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -871,7 +871,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 child: const Icon(Icons.restore_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.restoreFromBackup,
                 style: TextStyle(
@@ -882,7 +882,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             'Restore your data from a previous backup. This will replace all current data.',
             style: TextStyle(
@@ -891,7 +891,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           SizedBox(
             width: double.infinity,
             child: _isRestoring
@@ -901,7 +901,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         const CircularProgressIndicator(
                           color: AppColors.warning,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AlhaiSpacing.sm),
                         Text(
                           'Restoring...',
                           style: TextStyle(

@@ -58,7 +58,7 @@ class ReturnsStatCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: EdgeInsets.all(compact ? 16 : 20),
+      padding: EdgeInsets.all(compact ? AlhaiSpacing.md : AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -110,7 +110,7 @@ class ReturnsStatCard extends StatelessWidget {
           ),
 
           if (data.subtitle != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               data.subtitle!,
               style: TextStyle(
@@ -143,7 +143,7 @@ class ReturnsStatCard extends StatelessWidget {
               children: [
                 if (data.changeIcon != null) ...[
                   Icon(data.changeIcon!, size: 14, color: data.changeColor ?? AppColors.success),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                 ],
                 Flexible(
                   child: Text(
@@ -160,7 +160,7 @@ class ReturnsStatCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                   decoration: BoxDecoration(
                     color: (data.badgeColor ?? AppColors.success).withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -169,7 +169,7 @@ class ReturnsStatCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.check, size: 12, color: data.badgeColor ?? AppColors.success),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         data.badgeText!,
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: data.badgeColor ?? AppColors.success),
@@ -178,7 +178,7 @@ class ReturnsStatCard extends StatelessWidget {
                   ),
                 ),
                 if (data.subtitle != null && data.badgeText != null) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     data.subtitle!,
                     style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
@@ -188,7 +188,7 @@ class ReturnsStatCard extends StatelessWidget {
             ),
 
           if (data.footerText != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(
               data.footerText!,
               style: TextStyle(fontSize: 11, color: isDark ? AppColors.textMutedDark : AppColors.textMuted),

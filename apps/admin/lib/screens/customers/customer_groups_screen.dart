@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
 
@@ -21,14 +22,17 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
   List<_CustomerSummary> _customers = [];
   bool _isLoadingCustomers = false;
 
-  List<_CustomerGroup> _buildDefaultGroups() => [
-    const _CustomerGroup(id: 'all', name: 'كل العملاء', icon: Icons.group_rounded, color: AppColors.info, minPurchase: 0),
-    const _CustomerGroup(id: 'vip', name: 'عملاء VIP', icon: Icons.star_rounded, color: AppColors.warning, minPurchase: 10000),
-    const _CustomerGroup(id: 'regular', name: 'عملاء منتظمون', icon: Icons.person_rounded, color: AppColors.success, minPurchase: 1000),
-    const _CustomerGroup(id: 'new', name: 'عملاء جدد', icon: Icons.person_add_rounded, color: Colors.cyan, minPurchase: 0), // segment status color
-    const _CustomerGroup(id: 'debt', name: 'عملاء لديهم ديون', icon: Icons.account_balance_rounded, color: AppColors.error, minPurchase: 0),
-    _CustomerGroup(id: 'inactive', name: 'غير نشطين', icon: Icons.person_off_rounded, color: Theme.of(context).colorScheme.outline, minPurchase: 0),
-  ];
+  List<_CustomerGroup> _buildDefaultGroups() {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      _CustomerGroup(id: 'all', name: l10n.allCustomersGroup, icon: Icons.group_rounded, color: AppColors.info, minPurchase: 0),
+      _CustomerGroup(id: 'vip', name: l10n.vipCustomersGroup, icon: Icons.star_rounded, color: AppColors.warning, minPurchase: 10000),
+      _CustomerGroup(id: 'regular', name: l10n.regularCustomersGroup, icon: Icons.person_rounded, color: AppColors.success, minPurchase: 1000),
+      _CustomerGroup(id: 'new', name: l10n.newCustomersGroup, icon: Icons.person_add_rounded, color: Colors.cyan, minPurchase: 0), // segment status color
+      _CustomerGroup(id: 'debt', name: l10n.customersWithDebt, icon: Icons.account_balance_rounded, color: AppColors.error, minPurchase: 0),
+      _CustomerGroup(id: 'inactive', name: l10n.inactive, icon: Icons.person_off_rounded, color: Theme.of(context).colorScheme.outline, minPurchase: 0),
+    ];
+  }
 
   bool _initialized = false;
 
@@ -78,19 +82,20 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
       final vipCount = (total * 0.1).round();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         setState(() {
           _groups = [
-            _CustomerGroup(id: 'all', name: 'كل العملاء', icon: Icons.group_rounded,
+            _CustomerGroup(id: 'all', name: l10n.allCustomersGroup, icon: Icons.group_rounded,
                 color: AppColors.info, minPurchase: 0, count: total),
-            _CustomerGroup(id: 'vip', name: 'عملاء VIP', icon: Icons.star_rounded,
+            _CustomerGroup(id: 'vip', name: l10n.vipCustomersGroup, icon: Icons.star_rounded,
                 color: AppColors.warning, minPurchase: 10000, count: vipCount),
-            _CustomerGroup(id: 'regular', name: 'عملاء منتظمون', icon: Icons.person_rounded,
+            _CustomerGroup(id: 'regular', name: l10n.regularCustomersGroup, icon: Icons.person_rounded,
                 color: AppColors.success, minPurchase: 1000, count: regularCount),
-            _CustomerGroup(id: 'new', name: 'عملاء جدد (30 يوم)', icon: Icons.person_add_rounded,
+            _CustomerGroup(id: 'new', name: l10n.newCustomers30Days, icon: Icons.person_add_rounded,
                 color: Colors.cyan, minPurchase: 0, count: newCount), // segment status color
-            _CustomerGroup(id: 'debt', name: 'لديهم ديون', icon: Icons.account_balance_rounded,
+            _CustomerGroup(id: 'debt', name: l10n.haveDebts, icon: Icons.account_balance_rounded,
                 color: AppColors.error, minPurchase: 0, count: debtCount),
-            _CustomerGroup(id: 'inactive', name: 'غير نشطين (90+ يوم)', icon: Icons.person_off_rounded,
+            _CustomerGroup(id: 'inactive', name: l10n.inactive90Days, icon: Icons.person_off_rounded,
                 color: Theme.of(context).colorScheme.outline, minPurchase: 0, count: inactiveCount),
           ];
           _isLoading = false;
@@ -171,9 +176,10 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مجموعات العملاء'),
+        title: Text(l10n.customerGroups),
         actions: [
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadGroupStats),
         ],
@@ -186,7 +192,7 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                 SizedBox(
                   width: 180,
                   child: Card(
-                    margin: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(AlhaiSpacing.xs),
                     child: ListView.builder(
                       itemCount: _groups.length,
                       itemBuilder: (ctx, i) {
@@ -222,9 +228,9 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AlhaiSpacing.xxxs),
                                 Text(
-                                  '${g.count} عميل',
+                                  l10n.customerCountLabel(g.count),
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: g.color,
@@ -248,8 +254,8 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.touch_app_rounded, size: 48, color: Theme.of(context).hintColor),
-                              SizedBox(height: 12),
-                              Text('اختر مجموعة لعرض العملاء',
+                              SizedBox(height: AlhaiSpacing.sm),
+                              Text(l10n.selectGroupToViewCustomers,
                                   style: TextStyle(color: Theme.of(context).hintColor)),
                             ],
                           ),
@@ -258,13 +264,13 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                           ? const Center(child: CircularProgressIndicator())
                           : _customers.isEmpty
                               ? Center(
-                                  child: Text('لا يوجد عملاء في هذه المجموعة',
+                                  child: Text(l10n.noCustomersInGroup,
                                       style: TextStyle(color: Theme.of(context).hintColor)),
                                 )
                               : ListView.separated(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                                   itemCount: _customers.length,
-                                  separatorBuilder: (_, __) => const SizedBox(height: 4),
+                                  separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xxs),
                                   itemBuilder: (ctx, i) {
                                     final c = _customers[i];
                                     final group = _groups[_selectedGroup];
@@ -286,14 +292,14 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    '${c.debt.toStringAsFixed(0)} ر.س',
+                                                    l10n.amountSar(c.debt.toStringAsFixed(0)),
                                                     style: TextStyle(
                                                       color: AppColors.error,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
-                                                  Text('دين', style: TextStyle(fontSize: 10, color: AppColors.error)),
+                                                  Text(l10n.debtWord, style: TextStyle(fontSize: 10, color: AppColors.error)),
                                                 ],
                                               )
                                             : Icon(Icons.check_circle_rounded,

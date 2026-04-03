@@ -39,7 +39,7 @@ class QuickActionsPanel extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: AlignmentDirectional.topStart,
@@ -88,7 +88,7 @@ class QuickActionsPanel extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               
               // أزرار الإجراءات
               GridView.builder(
@@ -162,7 +162,7 @@ class _QuickActionItemState extends State<_QuickActionItem> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: AlhaiDurations.standard,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: widget.isPrimary
                 ? Colors.white.withAlpha(_isHovered ? 64 : 51)
@@ -188,7 +188,7 @@ class _QuickActionItemState extends State<_QuickActionItem> {
                 ),
               ),
               
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               
               // النص
               Text(

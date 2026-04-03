@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Widget لعرض حالة التحميل مع تأثير Shimmer
 class LoadingWidget extends StatelessWidget {
@@ -38,7 +39,7 @@ class ShimmerList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: itemCount,
         itemBuilder: (_, __) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           child: Container(
             height: itemHeight,
             decoration: BoxDecoration(
@@ -78,7 +79,7 @@ class ShimmerGrid extends StatelessWidget {
       baseColor: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.outlineVariant,
       highlightColor: isDark ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.surfaceContainerLow,
       child: GridView.builder(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AlhaiSpacing.xs),
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,

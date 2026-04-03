@@ -31,7 +31,7 @@ class ReturnRiskCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -74,7 +74,7 @@ class ReturnRiskCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +167,7 @@ class ReturnRiskCard extends StatelessWidget {
                       color: subtextColor,
                       size: 18,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
                         probability.topRiskProduct,
@@ -194,13 +194,13 @@ class ReturnRiskCard extends StatelessWidget {
 
               // عوامل الخطر
               if (probability.factors.isNotEmpty) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
                   children: probability.factors.map((factor) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: isDark
                             ? riskColor.withValues(alpha: 0.1)
@@ -218,7 +218,7 @@ class ReturnRiskCard extends StatelessWidget {
                             size: 12,
                             color: riskColor,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             AiReturnPredictionService.getFactorLabel(factor),
                             style: TextStyle(

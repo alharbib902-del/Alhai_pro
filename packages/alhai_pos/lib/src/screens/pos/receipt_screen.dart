@@ -11,6 +11,7 @@ import '../../services/receipt_printer_service.dart';
 import '../../services/whatsapp_receipt_service.dart';
 import '../../providers/sale_providers.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // M160: Locale-aware currency formatting helper for this file
 String _fmtCurrency(BuildContext context, double amount) =>
@@ -119,14 +120,14 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error.withValues(alpha: 0.7)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error == 'invoiceNotSpecified' ? l10n.invoiceNotSpecified
                 : _error == 'invoiceNotFound' ? l10n.invoiceNotFound
                 : _error!,
               style: TextStyle(color: theme.colorScheme.error),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             FilledButton.icon(
               onPressed: () => context.go(AppRoutes.pos),
               icon: const Icon(Icons.point_of_sale),
@@ -146,12 +147,12 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        margin: EdgeInsets.all(screenWidth > 600 ? 32 : 16),
+        margin: EdgeInsets.all(screenWidth > 600 ? AlhaiSpacing.xl : AlhaiSpacing.md),
         child: Column(
           children: [
             // Success icon
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
               decoration: BoxDecoration(
                 color: AppColors.success.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
@@ -162,7 +163,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                 size: 64,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.paymentSuccessful,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -172,9 +173,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
             // Pending sync indicator for offline sales
             if (sale.syncedAt == null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warningSurface,
                   borderRadius: BorderRadius.circular(20),
@@ -185,7 +186,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                   children: [
                     Icon(Icons.cloud_upload_outlined,
                         size: 18, color: AppColors.warning),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(
                       l10n.pendingSync,
                       style: TextStyle(
@@ -199,7 +200,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               ),
             ],
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // Receipt card
             Expanded(
@@ -210,7 +211,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                     child: Column(
                       children: [
                         // Receipt header
@@ -241,7 +242,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               visualDensity: VisualDensity.compact,
                             ),
                           ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           l10n.receiptNumberLabel(sale.receiptNo),
                           style: TextStyle(
@@ -304,7 +305,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           ..._items.map((item) => Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 3),
@@ -347,23 +348,23 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         // Totals
                         _totalRow(l10n.subtotalLabel,
                             _fmtCurrency(context, sale.subtotal), isDark),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         _totalRow(
                             l10n.vatLabel,
                             _fmtCurrency(context, sale.tax),
                             isDark),
                         if (sale.discount > 0) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           _totalRow(
-                              l10n.discountLabel,
+                              l10n.discountLabel(''),
                               '-${_fmtCurrency(context, sale.discount)}',
                               isDark,
                               color: AppColors.success),
                         ],
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 12),
+                              vertical: AlhaiSpacing.xs, horizontal: AlhaiSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
@@ -372,7 +373,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                l10n.totalAmount,
+                                l10n.totalAmount(''),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -389,7 +390,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
 
                         // Payment method
                         _totalRow(l10n.paymentMethodField,
@@ -422,7 +423,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                                   : AppColors.textSecondary,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             l10n.includesVat15,
                             style: TextStyle(
@@ -440,7 +441,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
 
             // Actions
             Row(
@@ -461,7 +462,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                 ),
                 // زر واتساب (يظهر فقط عند وجود رقم هاتف)
                 if (_customerPhone != null) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed:
@@ -483,7 +484,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 // زر بيع جديد
                 Expanded(
                   flex: _customerPhone != null ? 1 : 2,
@@ -563,7 +564,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
     try {
       final receiptText = WhatsAppReceiptService.formatReceipt(
-        storeName: 'المتجر',
+        storeName: l10n.storeLabel,
         receiptNo: _sale!.receiptNo,
         date: _sale!.createdAt,
         items: _items

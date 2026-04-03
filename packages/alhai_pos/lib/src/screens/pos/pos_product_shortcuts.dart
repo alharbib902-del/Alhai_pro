@@ -72,7 +72,7 @@ class _PosProductCardState extends State<PosProductCard> {
               // Info area - Row with consistent + button position
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 4, 4),
+                  padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xs, AlhaiSpacing.xxs, AlhaiSpacing.xxs, AlhaiSpacing.xxs),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -95,7 +95,7 @@ class _PosProductCardState extends State<PosProductCard> {
                       // Add to cart button (+)
                       if (!isOutOfStock)
                         Padding(
-                          padding: const EdgeInsetsDirectional.only(start: 4),
+                          padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xxs),
                           child: Material(
                             color: AppColors.primary,
                             shape: const CircleBorder(),
@@ -206,7 +206,7 @@ class _PosProductCardState extends State<PosProductCard> {
                 angle: -0.3,
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(6),
@@ -280,7 +280,7 @@ class PosShortcutsBar extends ConsumerWidget {
     final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 10),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.full),
@@ -301,7 +301,7 @@ class PosShortcutsBar extends ConsumerWidget {
               context.push(AppRoutes.cashDrawer);
             },
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: AlhaiSpacing.mdl),
           PosShortcutButton(
             icon: Icons.replay_rounded,
             label: l10n.refund,
@@ -310,7 +310,7 @@ class PosShortcutsBar extends ConsumerWidget {
               context.push(AppRoutes.refundRequest);
             },
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: AlhaiSpacing.mdl),
           // زر تعليق: tap = تعليق، long press = عرض المعلقات
           GestureDetector(
             onLongPress: onShowHeldInvoices,
@@ -382,7 +382,7 @@ class PosShortcutButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -395,7 +395,7 @@ class PosShortcutButton extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 label,
                 style: TextStyle(

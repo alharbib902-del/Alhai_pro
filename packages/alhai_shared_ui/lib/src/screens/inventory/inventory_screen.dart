@@ -527,7 +527,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               ),
               if (count != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.2)
@@ -699,6 +699,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     if (filtered.isEmpty) {
       if (_searchController.text.isNotEmpty) {
         return AppEmptyState.noSearchResults(
+          context,
           query: _searchController.text,
           onClear: () {
             _searchController.clear();
@@ -707,15 +708,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         );
       }
       if (_filterType == 'low') {
-        return AppEmptyState.noLowStock();
+        return AppEmptyState.noLowStock(context);
       }
       if (_filterType == 'out') {
         return AppEmptyState.noData(
+          context,
           title: l10n.noOutOfStockProducts,
           description: l10n.allProductsAvailable,
         );
       }
       return AppEmptyState.noProducts(
+        context,
         onAdd: () => _showInventoryCountDialog(l10n),
       );
     }
@@ -1105,7 +1108,7 @@ class _StatCard extends StatelessWidget {
           ),
           if (isAlert)
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               decoration: BoxDecoration(
                 color: color,
                 shape: BoxShape.circle,

@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../../core/router/routes.dart';
 import '../../core/theme/app_sizes.dart';
+import '../../widgets/common/app_empty_state.dart';
 import 'customer_purchases_tab.dart' show formatDate;
 
 /// Account Ledger Tab - displays financial ledger entries and
@@ -40,7 +41,7 @@ class CustomerAccountTab extends StatelessWidget {
       return Column(
         children: [
           _buildBalanceSummaryCard(isDark, l10n),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           _buildLedgerList(context, isDark, l10n),
         ],
       );
@@ -51,7 +52,7 @@ class CustomerAccountTab extends StatelessWidget {
       children: [
         // Left: Financial Ledger
         Expanded(flex: 3, child: _buildLedgerList(context, isDark, l10n)),
-        const SizedBox(width: 16),
+        SizedBox(width: AlhaiSpacing.md),
         // Right: Balance summary card
         Expanded(
             flex: 2, child: _buildBalanceSummaryCard(isDark, l10n)),
@@ -73,12 +74,12 @@ class CustomerAccountTab extends StatelessWidget {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 const Icon(Icons.receipt_long_outlined,
                     size: 20, color: AppColors.primary),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.finance,
                   style: TextStyle(
@@ -105,31 +106,26 @@ class CustomerAccountTab extends StatelessWidget {
           // Entries from real transactions
           if (transactions.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: Text(
-                  l10n.noTransactions,
-                  style: TextStyle(
-                      color: AppColors.getTextMuted(isDark)),
-                ),
-              ),
+              padding: const EdgeInsets.all(AlhaiSpacing.lg),
+              child: AppEmptyState.noData(context,
+                  title: l10n.noTransactions),
             )
           else
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               itemCount:
                   transactions.length > 4 ? 4 : transactions.length,
               separatorBuilder: (_, __) =>
-                  const SizedBox(height: 8),
+                  SizedBox(height: AlhaiSpacing.xs),
               itemBuilder: (context, index) {
                 final entry = transactions[index];
                 final isCredit = entry.amount < 0;
                 final typeColor = getLedgerTypeColor(entry.type);
                 final typeIcon = _getLedgerTypeIcon(entry.type);
                 return Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AlhaiSpacing.sm),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius:
@@ -154,7 +150,7 @@ class CustomerAccountTab extends StatelessWidget {
                           color: typeColor,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AlhaiSpacing.sm),
                       // Details
                       Expanded(
                         child: Column(
@@ -171,7 +167,7 @@ class CustomerAccountTab extends StatelessWidget {
                                     isDark),
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: AlhaiSpacing.xxxs),
                             Text(
                               formatDate(entry.createdAt),
                               style: TextStyle(
@@ -239,7 +235,7 @@ class CustomerAccountTab extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -255,7 +251,7 @@ class CustomerAccountTab extends StatelessWidget {
             child: const Icon(Icons.account_balance_wallet_rounded,
                 size: 24, color: Colors.white),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           const Text(
             'Current Balance',
             style: TextStyle(
@@ -264,7 +260,7 @@ class CustomerAccountTab extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             '${balance.toStringAsFixed(0)} ${l10n.sar}',
             style: const TextStyle(
@@ -273,7 +269,7 @@ class CustomerAccountTab extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           // Credit Limit
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,7 +291,7 @@ class CustomerAccountTab extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           // Progress bar
           ClipRRect(
             borderRadius:
@@ -309,7 +305,7 @@ class CustomerAccountTab extends StatelessWidget {
               minHeight: 8,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Text(
             '${balance.toStringAsFixed(0)} / ${creditLimit.toStringAsFixed(0)} ${l10n.sar}',
             style: const TextStyle(
@@ -317,7 +313,7 @@ class CustomerAccountTab extends StatelessWidget {
               color: Colors.white70,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           // Top-up button
           SizedBox(
             width: double.infinity,
@@ -329,7 +325,7 @@ class CustomerAccountTab extends StatelessWidget {
                 backgroundColor: Colors.white,
                 foregroundColor: AppColors.primaryDark,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 12),
+                    const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(AppSizes.radiusLg),

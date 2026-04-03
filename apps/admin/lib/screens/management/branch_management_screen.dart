@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Branch Management Screen - شاشة إدارة الفروع
 class BranchManagementScreen extends ConsumerStatefulWidget {
@@ -75,7 +76,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? AppErrorState.general(message: _error, onRetry: _loadData)
+                  ? AppErrorState.general(context, message: _error, onRetry: _loadData)
                   : SingleChildScrollView(
                       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                       child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
@@ -93,28 +94,26 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
       children: [
         Row(children: [
           Expanded(child: _buildStatCard(icon: Icons.store, label: l10n.branchesTitle, value: '${_stores.length}', color: AppColors.info, isDark: isDark)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: _buildStatCard(icon: Icons.check_circle, label: l10n.active, value: '$activeCount', color: AppColors.success, isDark: isDark)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: _buildStatCard(icon: Icons.attach_money, label: l10n.todaySales, value: '\u2014', color: AppColors.warning, isDark: isDark)),
         ]),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         if (_stores.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(48),
-              child: Column(children: [
-                Icon(Icons.store_mall_directory_outlined, size: 64, color: Theme.of(context).colorScheme.outline),
-                const SizedBox(height: 16),
-                Text('\u0644\u0627 \u062A\u0648\u062C\u062F \u0641\u0631\u0648\u0639 \u0645\u0633\u062C\u0644\u0629', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
-              ]),
-            ),
+          AppEmptyState(
+            icon: Icons.store_mall_directory_outlined,
+            title: l10n.branchesTitle,
+            description: '\u0644\u0627 \u062A\u0648\u062C\u062F \u0641\u0631\u0648\u0639 \u0645\u0633\u062C\u0644\u0629',
+            actionText: l10n.addBranchAction,
+            onAction: _addBranch,
+            actionIcon: Icons.add,
           )
         else
           ...List.generate(_stores.length, (index) {
             final store = _stores[index];
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: isDark
                     ? (store.isActive ? const Color(0xFF1E293B) : const Color(0xFF1E293B).withValues(alpha: 0.5))
@@ -126,22 +125,22 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                 onTap: () => _showBranchDetails(store),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                           child: const Icon(Icons.store, color: AppColors.info),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AlhaiSpacing.md),
                         Expanded(
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Row(children: [
                               Text(store.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AlhaiSpacing.xs),
                               if (!store.isActive)
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -161,13 +160,13 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                       Divider(height: 24, color: Theme.of(context).dividerColor),
                       Row(children: [
                         Icon(Icons.person, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text('\u2014', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                         const Spacer(),
                         Icon(Icons.phone, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(store.phone ?? '\u2014', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AlhaiSpacing.md),
                         Text(
                           '\u2014 \u0631.\u0633',
                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: store.isActive ? AppColors.success : AppColors.textSecondary),
@@ -196,7 +195,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
 
   Widget _buildStatCard({required IconData icon, required String label, required String value, required Color color, required bool isDark}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? color.withValues(alpha: 0.1) : color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
@@ -204,7 +203,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
       ),
       child: Column(children: [
         Icon(icon, color: color, size: 24),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
         Text(label, style: TextStyle(fontSize: 12, color: color.withValues(alpha: 0.8))),
       ]),
@@ -223,9 +222,9 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
         content: SingleChildScrollView(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.branchName, prefixIcon: const Icon(Icons.store))),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(controller: addressController, decoration: InputDecoration(labelText: l10n.addressField, prefixIcon: const Icon(Icons.location_on))),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l10n.phone, prefixIcon: const Icon(Icons.phone))),
           ]),
         ),
@@ -280,12 +279,12 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
           color: Theme.of(context).colorScheme.surface,
           child: ListView(
             controller: scrollController,
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             children: [
-              Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24), decoration: BoxDecoration(color: Theme.of(context).colorScheme.outlineVariant, borderRadius: BorderRadius.circular(2)))),
+              Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg), decoration: BoxDecoration(color: Theme.of(context).colorScheme.outlineVariant, borderRadius: BorderRadius.circular(2)))),
               Row(children: [
-                Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.store, size: 32, color: AppColors.info)),
-                const SizedBox(width: 16),
+                Container(padding: const EdgeInsets.all(AlhaiSpacing.md), decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.store, size: 32, color: AppColors.info)),
+                const SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(store.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
@@ -293,7 +292,7 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
                   ]),
                 ),
               ]),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _DetailTile(icon: Icons.location_on, label: l10n.addressField, value: store.address ?? '\u2014', isDark: isDark),
               _DetailTile(icon: Icons.phone, label: l10n.phone, value: store.phone ?? '\u2014', isDark: isDark),
               _DetailTile(icon: Icons.email, label: '\u0627\u0644\u0628\u0631\u064A\u062F', value: store.email ?? '\u2014', isDark: isDark),
@@ -301,23 +300,23 @@ class _BranchManagementScreenState extends ConsumerState<BranchManagementScreen>
               _DetailTile(icon: Icons.receipt_long, label: l10n.taxNumber, value: store.taxNumber ?? '\u2014', isDark: isDark),
               Divider(height: 32, color: Theme.of(context).dividerColor),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.success.withValues(alpha: 0.1) : AppColors.successSurface,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(children: [
                   const Icon(Icons.attach_money, color: AppColors.success),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Text(l10n.todaySales, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   const Spacer(),
                   const Text('\u2014 \u0631.\u0633', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.success)),
                 ]),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               Row(children: [
                 Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit))),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () async {
@@ -372,10 +371,10 @@ class _DetailTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(children: [
         Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         const Spacer(),
         Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),

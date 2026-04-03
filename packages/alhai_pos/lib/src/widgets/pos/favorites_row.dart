@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// صف المنتجات السريعة (الأكثر مبيعاً)
 /// 
@@ -25,7 +27,7 @@ class FavoritesRow extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
         border: Border(
@@ -39,7 +41,7 @@ class FavoritesRow extends ConsumerWidget {
         children: [
           // العنوان
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
             child: Row(
               children: [
                 Icon(
@@ -47,9 +49,9 @@ class FavoritesRow extends ConsumerWidget {
                   size: 16,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
-                  'الأكثر مبيعاً (اضغط 1-9)',
+                  AppLocalizations.of(context)!.bestSellingPress19,
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -57,7 +59,7 @@ class FavoritesRow extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           
           // المنتجات
           SizedBox(
@@ -101,7 +103,7 @@ class _FavoriteProductCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
       child: Material(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -110,7 +112,7 @@ class _FavoriteProductCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: Container(
             width: 80,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
@@ -136,7 +138,7 @@ class _FavoriteProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 // اسم المنتج
                 Text(
                   product.name,
@@ -148,7 +150,7 @@ class _FavoriteProductCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 // السعر
                 Text(
-                  'ر.س ${product.price.toStringAsFixed(0)}',
+                  AppLocalizations.of(context)!.priceSar(product.price.toStringAsFixed(0)),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,

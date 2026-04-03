@@ -10,6 +10,7 @@ library accessible_widgets;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import '../../core/accessibility/semantic_labels.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // ============================================================================
 // ACCESSIBLE BUTTON
@@ -72,10 +73,10 @@ class AccessibleButton extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation(_getLoadingColor(theme)),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
         ] else if (icon != null) ...[
           Icon(icon, size: _getIconSize()),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
         ],
         Text(label, style: TextStyle(fontSize: _getFontSize())),
       ],
@@ -151,11 +152,11 @@ class AccessibleButton extends StatelessWidget {
   EdgeInsets _getPadding() {
     switch (size) {
       case AccessibleButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
       case AccessibleButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm);
       case AccessibleButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: 24, vertical: 16);
+        return const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md);
     }
   }
 
@@ -436,7 +437,7 @@ class AccessibleCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: padding ?? const EdgeInsets.all(16),
+            padding: padding ?? const EdgeInsets.all(AlhaiSpacing.md),
             child: child,
           ),
         ),
@@ -659,7 +660,7 @@ class AccessibleCheckbox extends StatelessWidget {
               value: value,
               onChanged: isEnabled ? onChanged : null,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             Text(
               label,
               style: TextStyle(

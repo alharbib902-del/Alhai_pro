@@ -136,7 +136,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(
                 children: [
                   Text(_getPeriodName()),
@@ -150,23 +150,23 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
       body: _staff.isEmpty
           ? const Center(child: Text('لا توجد بيانات للفترة المحددة'))
           : ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // Leader board
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       const Icon(Icons.emoji_events, color: AppColors.warning),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Text('المتصدرون', style: Theme.of(context).textTheme.titleMedium),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   ...List.generate(_staff.length.clamp(0, 3), (index) {
                     final staff = _staff[index];
                     final colors = [AppColors.warning, AppColors.grey400, const Color(0xFF795548)];
@@ -181,13 +181,13 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Detailed stats
           ...List.generate(_staff.length, (index) {
             final staff = _staff[index];
             return Card(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
               child: ExpansionTile(
                 leading: CircleAvatar(
                   child: Text(staff.name[0]),
@@ -200,7 +200,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                 ),
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: Column(
                       children: [
                         _StatRow(
@@ -209,14 +209,14 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                           value: '${staff.transactions}',
                           color: AppColors.info,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AlhaiSpacing.sm),
                         _StatRow(
                           icon: Icons.trending_up,
                           label: 'متوسط الفاتورة',
                           value: '${staff.avgTicket} ر.س',
                           color: AppColors.success,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AlhaiSpacing.sm),
                         _StatRow(
                           icon: Icons.speed,
                           label: 'المبيعات/ساعة (تقديري)',
@@ -234,18 +234,18 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
           // Comparison chart
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('مقارنة المبيعات', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   ...List.generate(_staff.length, (index) {
                     final staff = _staff[index];
                     final rawMax = _staff.isEmpty ? 0.0 : _staff.map((s) => s.sales).reduce((a, b) => a > b ? a : b);
                     final maxSales = rawMax > 0 ? rawMax : 1.0;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
                       child: Column(
                         children: [
                           Row(
@@ -261,7 +261,7 @@ class _StaffPerformanceScreenState extends ConsumerState<StaffPerformanceScreen>
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AlhaiSpacing.xs),
                               SizedBox(
                                 width: 70,
                                 child: Text(
@@ -327,7 +327,7 @@ class _LeaderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Container(
@@ -344,7 +344,7 @@ class _LeaderItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: Text(name)),
           Text(
             '${sales.toStringAsFixed(0)} ر.س',
@@ -382,7 +382,7 @@ class _StatRow extends StatelessWidget {
           ),
           child: Icon(icon, color: color, size: 18),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Expanded(child: Text(label)),
         Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
       ],

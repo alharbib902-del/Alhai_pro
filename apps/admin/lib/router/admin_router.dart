@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 // Package imports: Auth
 import 'package:alhai_auth/alhai_auth.dart' show SplashScreen, LoginScreen, StoreSelectScreen, authStateProvider, AuthStatus, currentStoreIdProvider, userRoleProvider;
@@ -294,19 +295,20 @@ final adminRouterProvider = Provider<GoRouter>((ref) {
 });
 
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
+  final l10n = AppLocalizations.of(context);
   return Scaffold(
-    appBar: AppBar(title: const Text('خطأ')),
+    appBar: AppBar(title: Text(l10n.error)),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
-          Text('الصفحة غير موجودة: ${state.uri.path}'),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.md),
+          Text(l10n.pageNotFoundPath(state.uri.path)),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => context.go(AppRoutes.home),
-            child: const Text('الرئيسية'),
+            child: Text(l10n.home),
           ),
         ],
       ),
@@ -858,17 +860,18 @@ final List<RouteBase> _routes = [
         path: AppRoutes.aiInvoiceReview,
         name: 'ai-invoice-review',
         pageBuilder: (context, state) {
+          final l10n = AppLocalizations.of(context);
           final invoiceData = state.extra as AiInvoiceResult?;
           final child = invoiceData == null
               ? Scaffold(
-                  appBar: AppBar(title: const Text('AI Invoice Review')),
+                  appBar: AppBar(title: Text(l10n.aiInvoiceReview)),
                   body: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.receipt_long, size: 64, color: Theme.of(context).hintColor),
-                        const SizedBox(height: 16),
-                        Text('No invoice data available', style: TextStyle(color: Theme.of(context).hintColor)),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        Text(l10n.noInvoiceDataAvailable, style: TextStyle(color: Theme.of(context).hintColor)),
                       ],
                     ),
                   ),

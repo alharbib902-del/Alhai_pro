@@ -9,6 +9,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../providers/purchases_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Receiving Goods Screen - شاشة استلام البضاعة
 class ReceivingGoodsScreen extends ConsumerStatefulWidget {
@@ -76,16 +77,16 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           builder: (context) => ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: AlertDialog(
-              title: const Text('تغييرات غير محفوظة'),
-              content: const Text('هل تريد المغادرة بدون حفظ التغييرات؟'),
+              title: Text(AppLocalizations.of(context).unsavedChanges),
+              content: Text(AppLocalizations.of(context).leaveWithoutSaving),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('إلغاء'),
+                  child: Text(AppLocalizations.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('مغادرة'),
+                  child: Text(AppLocalizations.of(context).leave),
                 ),
               ],
             ),
@@ -96,7 +97,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
       child: Column(
         children: [
           AppHeader(
-            title: 'استلام البضاعة',
+            title: l10n.receivingGoods,
             onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () =>
                 context.push(AppRoutes.notificationsCenter),
@@ -110,7 +111,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               error: (e, _) => _buildError(isDark, e.toString()),
               data: (data) {
                 if (data == null) {
-                  return _buildError(isDark, 'لم يتم العثور على طلب الشراء');
+                  return _buildError(isDark, l10n.purchaseNotFound);
                 }
                 _ensureControllers(data.items);
                 return _buildContent(context, data, isWide, isDark, l10n);
@@ -128,7 +129,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
             style: TextStyle(
@@ -136,12 +137,12 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           FilledButton.icon(
             onPressed: () =>
                 context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
             icon: const Icon(Icons.arrow_back),
-            label: const Text('العودة'),
+            label: Text(AppLocalizations.of(context).goBack),
           ),
         ],
       ),
@@ -180,10 +181,10 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
-                    'استلام البضاعة - ${purchase.purchaseNumber}',
+                    l10n.receivingGoodsTitle(purchase.purchaseNumber),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -193,7 +194,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             if (isWide)
               Row(
@@ -204,18 +205,18 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                     child: Column(
                       children: [
                         _buildPurchaseInfoCard(purchase, isDark),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         _buildItemsTable(items, isDark, isWide),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 24),
+                  const SizedBox(width: AlhaiSpacing.lg),
                   Expanded(
                     flex: 1,
                     child: Column(
                       children: [
                         _buildReceiverCard(isDark),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         _buildConfirmButton(isDark),
                       ],
                     ),
@@ -226,16 +227,16 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               Column(
                 children: [
                   _buildPurchaseInfoCard(purchase, isDark),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   _buildItemsTable(items, isDark, isWide),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   _buildReceiverCard(isDark),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   _buildConfirmButton(isDark),
                 ],
               ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
           ],
         ),
       ),
@@ -249,7 +250,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
   // ---------------------------------------------------------------------------
   Widget _buildPurchaseInfoCard(PurchasesTableData purchase, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -263,7 +264,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -271,9 +272,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 child: const Icon(Icons.receipt_long_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'بيانات الطلب',
+                AppLocalizations.of(context).orderData,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -282,14 +283,14 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _infoRow('رقم الطلب', purchase.purchaseNumber, isDark),
-          const SizedBox(height: 8),
-          _infoRow('المورد', purchase.supplierName ?? '-', isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.md),
+          _infoRow(AppLocalizations.of(context).orderNumber, purchase.purchaseNumber, isDark),
+          const SizedBox(height: AlhaiSpacing.xs),
+          _infoRow(AppLocalizations.of(context).supplierInfoLabel, purchase.supplierName ?? '-', isDark),
+          const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
-            'الإجمالي',
-            '${purchase.total.toStringAsFixed(2)} ر.س',
+            AppLocalizations.of(context).totalLabel,
+            AppLocalizations.of(context).amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -328,7 +329,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
     bool isWide,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -342,7 +343,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -350,9 +351,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 child: const Icon(Icons.inventory_2_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'الأصناف المستلمة',
+                AppLocalizations.of(context).receivedItems,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -361,10 +362,13 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Divider(
             color: Theme.of(context).dividerColor,
           ),
+          if (items.isEmpty)
+            AppEmptyState.noProducts(context)
+          else
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -377,7 +381,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               final item = items[index];
               final qtyCtrl = _qtyControllers[item.id]!;
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                 child: isWide
                     ? Row(
                         children: [
@@ -395,7 +399,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                           // Ordered qty
                           Expanded(
                             child: Text(
-                              'الطلب: ${item.qty}',
+                              AppLocalizations.of(context).orderedQty(item.qty.toInt()),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -413,7 +417,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                 if (!_isDirty) setState(() => _isDirty = true);
                               },
                               decoration: InputDecoration(
-                                labelText: 'المستلم',
+                                labelText: AppLocalizations.of(context).receivedQtyLabel,
                                 isDense: true,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -428,7 +432,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                           // Unit cost
                           Expanded(
                             child: Text(
-                              '${item.unitCost.toStringAsFixed(2)} ر.س',
+                              AppLocalizations.of(context).amountSar(item.unitCost.toStringAsFixed(2)),
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onSurface,
@@ -447,19 +451,19 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           Row(
                             children: [
                               Text(
-                                'الطلب: ${item.qty}',
+                                AppLocalizations.of(context).orderedQty(item.qty.toInt()),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: AlhaiSpacing.sm),
                               Text(
-                                '${item.unitCost.toStringAsFixed(2)} ر.س/وحدة',
+                                AppLocalizations.of(context).pricePerUnit(item.unitCost.toStringAsFixed(2)),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -476,7 +480,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                     if (!_isDirty) setState(() => _isDirty = true);
                                   },
                                   decoration: InputDecoration(
-                                    labelText: 'المستلم',
+                                    labelText: AppLocalizations.of(context).receivedQtyLabel,
                                     isDense: true,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -506,7 +510,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
   // ---------------------------------------------------------------------------
   Widget _buildReceiverCard(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -520,7 +524,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -528,9 +532,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 child: const Icon(Icons.person_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'بيانات الاستلام',
+                AppLocalizations.of(context).receivingInfo,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -539,7 +543,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // Receiver name (required)
           TextFormField(
             controller: _receiverNameController,
@@ -552,14 +556,14 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             maxLength: 100,
             validator: FormValidators.name(isRequired: true),
             decoration: InputDecoration(
-              labelText: 'اسم المستلم *',
+              labelText: AppLocalizations.of(context).receiverName,
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // Notes (optional)
           TextFormField(
             controller: _notesController,
@@ -572,7 +576,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             maxLength: 500,
             validator: FormValidators.notes(),
             decoration: InputDecoration(
-              labelText: 'ملاحظات الاستلام',
+              labelText: AppLocalizations.of(context).receivingNotes,
               prefixIcon: const Icon(Icons.notes_rounded),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -603,10 +607,10 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 ),
               )
             : const Icon(Icons.check_circle_rounded),
-        label: Text(_isSaving ? 'جاري التأكيد...' : 'تأكيد الاستلام'),
+        label: Text(_isSaving ? AppLocalizations.of(context).confirmingReceipt : AppLocalizations.of(context).confirmReceipt),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),

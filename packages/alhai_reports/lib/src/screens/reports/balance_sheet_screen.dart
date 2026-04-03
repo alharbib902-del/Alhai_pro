@@ -114,9 +114,9 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(onPressed: _loadData, child: const Text('إعادة المحاولة')),
             ],
           ),
@@ -140,12 +140,12 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
         child: RefreshIndicator(
         onRefresh: _loadData,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           children: [
             // Date
             Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
@@ -159,7 +159,7 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // ASSETS
             _SectionHeader(
@@ -168,7 +168,7 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               color: AlhaiColors.info,
               icon: Icons.account_balance_wallet_rounded,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             _GroupCard(
               title: 'الأصول المتداولة',
               isDark: isDark,
@@ -180,12 +180,12 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               total: _totalCurrentAssets,
               totalLabel: 'إجمالي الأصول المتداولة',
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             _TotalRow(label: 'إجمالي الأصول', amount: _totalAssets, color: AlhaiColors.info),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             const Divider(thickness: 2),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // LIABILITIES
             _SectionHeader(
@@ -194,7 +194,7 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               color: AlhaiColors.error,
               icon: Icons.account_balance_rounded,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             _GroupCard(
               title: 'الالتزامات المتداولة',
               isDark: isDark,
@@ -204,12 +204,12 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               total: _totalLiabilities,
               totalLabel: 'إجمالي الالتزامات المتداولة',
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             _TotalRow(label: 'إجمالي الالتزامات', amount: _totalLiabilities, color: AlhaiColors.error),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             const Divider(thickness: 2),
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
 
             // EQUITY
             _SectionHeader(
@@ -218,13 +218,13 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               color: AlhaiColors.success,
               icon: Icons.trending_up_rounded,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Card(
               color: _equity >= 0
                   ? AlhaiColors.success.withValues(alpha: 0.08)
                   : AlhaiColors.error.withValues(alpha: 0.08),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -243,22 +243,22 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AlhaiSpacing.mdl),
             // Equation check
             Card(
               color: isDark ? const Color(0xFF1E293B) : theme.colorScheme.surfaceContainerLowest,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Column(
                   children: [
                     Text('معادلة المحاسبة',
                         style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text(
                       'الأصول = الالتزامات + حقوق الملكية',
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${_totalAssets.toStringAsFixed(0)} = '
                       '${_totalLiabilities.toStringAsFixed(0)} + '
@@ -300,7 +300,7 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, color: color, size: 22),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Text(title,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
         const Spacer(),
@@ -332,7 +332,7 @@ class _GroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -344,7 +344,7 @@ class _GroupCard extends StatelessWidget {
                 )),
             const Divider(),
             ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -385,7 +385,7 @@ class _TotalRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),

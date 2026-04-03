@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مفاتيح إعدادات الباركود
 const String _kEnableBarcodeScanner = 'barcode_enable_scanner';
@@ -159,7 +160,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildPageHeader(isDark, l10n),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
 
         // Scanner activation
         _buildSettingsGroup(l10n.enableScanner, Icons.qr_code_scanner_rounded,
@@ -202,7 +203,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               },
             ),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         // Feedback settings
@@ -231,7 +232,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
               _saveAllSettings();
             },
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         // Behavior settings
@@ -259,7 +260,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _showBarcodeFormatPicker,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
 
         // Test scanner
@@ -274,7 +275,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             trailing: const AdaptiveIcon(Icons.chevron_right),
             onTap: _testScanner,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
         ]),
       ],
     );
@@ -288,7 +289,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           icon: Icon(Icons.arrow_back_rounded,
               color: Theme.of(context).colorScheme.onSurface),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -298,7 +299,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           child: const Icon(Icons.qr_code_scanner_rounded,
               color: Color(0xFFF59E0B), size: 24),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -320,7 +321,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
   Widget _buildSettingsGroup(String title, IconData icon, Color color,
       bool isDark, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -332,18 +333,18 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(title,
                     style: TextStyle(
                         fontSize: 16,
@@ -420,7 +421,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
       context: context,
       builder: (ctx) => Container(
         height: 400,
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius:
@@ -431,12 +432,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             Icon(Icons.qr_code_scanner,
                 size: 64,
                 color: isDark ? Colors.white70 : AppColors.primary),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.pointCameraAtBarcode,
                 style: TextStyle(
                     fontSize: 18,
                     color: Theme.of(context).colorScheme.onSurface)),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -450,7 +451,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(

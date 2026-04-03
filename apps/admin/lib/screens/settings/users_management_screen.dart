@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة إدارة المستخدمين
 class UsersManagementScreen extends ConsumerStatefulWidget {
@@ -69,17 +70,17 @@ class _UsersManagementScreenState
         FilledButton.icon(onPressed: _addUser, icon: const Icon(Icons.person_add_rounded, size: 18), label: Text(l10n.addUser),
             style: FilledButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),
       ]),
-      const SizedBox(height: 16),
+      const SizedBox(height: AlhaiSpacing.md),
       _buildSettingsGroup('${l10n.users} (${_users.length})', _users.map((user) => _buildUserTile(user, isDark)).toList(), isDark),
     ]);
   }
 
   Widget _buildSettingsGroup(String title, List<Widget> children, bool isDark) {
-    return Container(margin: const EdgeInsets.only(bottom: 16),
+    return Container(margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
         ...children,
       ]),
@@ -99,7 +100,7 @@ class _UsersManagementScreenState
       ]),
       title: Row(children: [
         Text(user.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500)),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         if (!user.active)
           Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(color: AppColors.error.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
@@ -113,7 +114,7 @@ class _UsersManagementScreenState
         itemBuilder: (context) {
           final l10n = AppLocalizations.of(context);
           return [
-            PopupMenuItem(value: 'profile', child: Row(children: const [Icon(Icons.person_rounded, size: 18), SizedBox(width: 8), Text('الملف الوظيفي')])),
+            PopupMenuItem(value: 'profile', child: Row(children: [const Icon(Icons.person_rounded, size: 18), const SizedBox(width: AlhaiSpacing.xs), Text(l10n.jobProfile)])),
             PopupMenuItem(value: 'edit', child: Text(l10n.editMenuAction)),
             PopupMenuItem(value: user.active ? 'disable' : 'enable', child: Text(user.active ? l10n.disableMenuAction : l10n.enableMenuAction)),
             if (user.role != 'owner') PopupMenuItem(value: 'delete', child: Text(l10n.delete, style: const TextStyle(color: AppColors.error))),
@@ -168,9 +169,9 @@ class _UsersManagementScreenState
       final l10n = AppLocalizations.of(context);
       return StatefulBuilder(builder: (context, setDialogState) => AlertDialog(title: Text(l10n.addUserTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.nameRequired, prefixIcon: const Icon(Icons.person), border: const OutlineInputBorder())),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l10n.phoneNumber, prefixIcon: const Icon(Icons.phone), border: const OutlineInputBorder())),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         DropdownButtonFormField<String>(initialValue: role, decoration: InputDecoration(labelText: l10n.roleLabel, prefixIcon: const Icon(Icons.security), border: const OutlineInputBorder()),
             items: [DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)), DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)), DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole))],
             onChanged: (v) => setDialogState(() => role = v!)),
@@ -201,9 +202,9 @@ class _UsersManagementScreenState
       final l10n = AppLocalizations.of(context);
       return StatefulBuilder(builder: (context, setDialogState) => AlertDialog(title: Text(l10n.editUserTitle), content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: nameController, decoration: InputDecoration(labelText: l10n.nameRequired, prefixIcon: const Icon(Icons.person), border: const OutlineInputBorder())),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l10n.phoneNumber, prefixIcon: const Icon(Icons.phone), border: const OutlineInputBorder())),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         if (user.role != 'owner')
           DropdownButtonFormField<String>(initialValue: role, decoration: InputDecoration(labelText: l10n.roleLabel, prefixIcon: const Icon(Icons.security), border: const OutlineInputBorder()),
               items: [DropdownMenuItem(value: 'manager', child: Text(l10n.managerRole)), DropdownMenuItem(value: 'supervisor', child: Text(l10n.supervisorRole)), DropdownMenuItem(value: 'cashier', child: Text(l10n.cashierRole))],
@@ -231,17 +232,17 @@ class _UsersManagementScreenState
   void _showUserDetails(_User user) {
     final l10n = AppLocalizations.of(context);
     showModalBottomSheet(context: context, builder: (context) => Container(
-      color: Theme.of(context).colorScheme.surface, padding: const EdgeInsets.all(24),
+      color: Theme.of(context).colorScheme.surface, padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         CircleAvatar(radius: 40, backgroundColor: _getRoleColor(user.role).withValues(alpha: 0.1),
           child: Text(user.name[0], style: TextStyle(fontSize: 32, color: _getRoleColor(user.role)))),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         Text(user.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-        const SizedBox(height: 4),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
+        Container(padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
           decoration: BoxDecoration(color: _getRoleColor(user.role).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
           child: Text(_getRoleName(user.role), style: TextStyle(color: _getRoleColor(user.role)))),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         ListTile(leading: const Icon(Icons.phone), title: Text(l10n.phoneNumber, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)), subtitle: Text(user.phone)),
         ListTile(leading: Icon(user.active ? Icons.check_circle : Icons.cancel, color: user.active ? AppColors.success : AppColors.error),
           title: Text(l10n.status, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)), subtitle: Text(user.active ? l10n.activeStatus : l10n.disabledStatus)),

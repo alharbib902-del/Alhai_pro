@@ -113,8 +113,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أدخل رقم الجوال'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.enterPhoneNumber),
           backgroundColor: AlhaiColors.warning,
         ),
       );
@@ -151,7 +151,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
         setState(() => _isSending = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تعذر إرسال واتساب: $e'),
+            content: Text(AppLocalizations.of(context)!.whatsappSendError(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -169,7 +169,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -190,17 +190,17 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // العنوان
               Text(
-                'تم الدفع بنجاح!',
+                AppLocalizations.of(context)!.paymentSuccessful,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.success,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
 
               // تفاصيل
               Text(
@@ -209,11 +209,11 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                   color: isDark ? Colors.white60 : AppColors.textMuted,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // المبلغ ورقم الفاتورة
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -226,7 +226,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'رقم الفاتورة',
+                          AppLocalizations.of(context)!.invoiceNumberTitle,
                           style: TextStyle(
                             color: isDark ? Colors.white60 : AppColors.textMuted,
                           ),
@@ -237,12 +237,12 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'المبلغ المدفوع',
+                          AppLocalizations.of(context)!.amountPaidTitle,
                           style: TextStyle(
                             color: isDark ? Colors.white60 : AppColors.textMuted,
                           ),
@@ -259,19 +259,19 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // قسم الواتساب
               Divider(color: isDark ? Colors.white12 : AppColors.grey200),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
 
               Text(
-                'إرسال الفاتورة عبر واتساب',
+                AppLocalizations.of(context)!.sendReceiptViaWhatsapp,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
 
               // حقل رقم الجوال
               TextField(
@@ -288,13 +288,13 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.sm,
                   ),
                   isDense: true,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
 
               // زر واتساب
               SizedBox(
@@ -314,18 +314,18 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                           _sent ? Icons.check : Icons.send,
                           size: 18,
                         ),
-                  label: Text(_sent ? 'تم الإرسال' : 'إرسال واتساب'),
+                  label: Text(_sent ? AppLocalizations.of(context)!.sentLabel : AppLocalizations.of(context)!.sendWhatsapp),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF25D366), // WhatsApp green
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AlhaiSpacing.mdl),
 
               // أزرار الإجراءات
               Row(
@@ -347,14 +347,14 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       icon: const Icon(Icons.print_outlined, size: 18),
                       label: Text(AppLocalizations.of(context)!.print),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   // بيع جديدة
                   Expanded(
                     flex: 2,
@@ -363,9 +363,9 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Navigator.pop(context, PaymentSuccessAction.newSale);
                       },
                       icon: const Icon(Icons.add_shopping_cart, size: 18),
-                      label: const Text('بيع جديدة'),
+                      label: Text(AppLocalizations.of(context)!.newSaleButton),
                       style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

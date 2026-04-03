@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 /// حوار إضافة ملاحظة على الفاتورة
 ///
@@ -22,7 +23,7 @@ class SaleNoteDialog extends StatefulWidget {
 
 class _SaleNoteDialogState extends State<SaleNoteDialog> {
   late final TextEditingController _controller;
-  final _quickNotes = ['توصيل', 'تغليف هدية', 'هش - حساس', 'عاجل', 'حجز'];
+  List<String> _quickNotes(AppLocalizations l10n) => [l10n.quickNoteDelivery, l10n.quickNoteGiftWrap, l10n.quickNoteFragile, l10n.quickNoteUrgent, l10n.quickNoteReservation];
 
   @override
   void initState() {
@@ -39,16 +40,17 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('ملاحظة على الفاتورة'),
+      title: Text(l10n.invoiceNote),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _quickNotes
+            spacing: AlhaiSpacing.xs,
+            runSpacing: AlhaiSpacing.xs,
+            children: _quickNotes(l10n)
                 .map((note) => ActionChip(
                       label: Text(note),
                       onPressed: () {
@@ -62,15 +64,15 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
                     ))
                 .toList(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _controller,
             maxLines: 3,
             maxLength: 200,
             autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'أضف ملاحظة...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.addNoteHint,
+              border: const OutlineInputBorder(),
             ),
           ),
         ],
@@ -78,16 +80,16 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('إلغاء'),
+          child: Text(l10n.cancel),
         ),
         if (_controller.text.isNotEmpty)
           TextButton(
             onPressed: () => Navigator.pop(context, ''),
-            child: const Text('مسح', style: TextStyle(color: AlhaiColors.error)),
+            child: Text(l10n.clearNote, style: const TextStyle(color: AlhaiColors.error)),
           ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text),
-          child: const Text('حفظ'),
+          child: Text(l10n.save),
         ),
       ],
     );

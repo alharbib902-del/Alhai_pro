@@ -27,7 +27,7 @@ class BundleSuggestionCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -49,7 +49,7 @@ class BundleSuggestionCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
@@ -58,7 +58,7 @@ class BundleSuggestionCard extends StatelessWidget {
                 ),
                 child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +93,7 @@ class BundleSuggestionCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.trending_up_rounded, size: 14, color: AppColors.success),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '+${bundle.expectedUplift.toStringAsFixed(0)}%',
                       style: const TextStyle(
@@ -108,11 +108,11 @@ class BundleSuggestionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Products list
           ...bundle.products.map((product) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                 child: Row(
                   children: [
                     Container(
@@ -161,7 +161,7 @@ class BundleSuggestionCard extends StatelessWidget {
 
           // Divider
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             child: Divider(
               color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
             ),
@@ -218,7 +218,7 @@ class BundleSuggestionCard extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -235,7 +235,7 @@ class BundleSuggestionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Reasoning
           Container(
@@ -251,7 +251,7 @@ class BundleSuggestionCard extends StatelessWidget {
                   size: 16,
                   color: AppColors.warning,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     bundle.reasoning,
@@ -266,7 +266,7 @@ class BundleSuggestionCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Action buttons
           Row(
@@ -287,7 +287,7 @@ class BundleSuggestionCard extends StatelessWidget {
                   child: Text(l10n.cancel, style: const TextStyle(fontSize: 13)),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(

@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_typography.dart';
 import 'app_button.dart';
@@ -48,111 +49,128 @@ class AppEmptyState extends StatelessWidget {
   });
 
   /// لا توجد نتائج بحث
-  factory AppEmptyState.noSearchResults({
+  static AppEmptyState noSearchResults(
+    BuildContext context, {
     String? query,
     VoidCallback? onClear,
   }) {
+    final l10n = AppLocalizations.of(context);
     final description = query != null && query.isNotEmpty
-        ? 'لا توجد نتائج لـ "$query"'
-        : 'جرب البحث بكلمات مختلفة';
+        ? l10n.noResultsFor(query)
+        : l10n.tryDifferentSearch;
     return AppEmptyState(
       icon: Icons.search_off,
-      title: 'لا توجد نتائج',
+      title: l10n.noSearchResultsFound,
       description: description,
-      actionText: onClear != null ? 'مسح البحث' : null,
+      actionText: onClear != null ? l10n.clearSearch : null,
       onAction: onClear,
       actionIcon: Icons.clear,
     );
   }
 
   /// لا توجد منتجات
-  factory AppEmptyState.noProducts({
+  static AppEmptyState noProducts(
+    BuildContext context, {
     VoidCallback? onAdd,
   }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.inventory_2_outlined,
-      title: 'لا توجد منتجات',
-      description: 'ابدأ بإضافة منتجاتك الآن',
-      actionText: onAdd != null ? 'إضافة منتج' : null,
+      title: l10n.noProducts,
+      description: l10n.emptyStateStartAddProducts,
+      actionText: onAdd != null ? l10n.addProduct : null,
       onAction: onAdd,
       actionIcon: Icons.add,
     );
   }
 
   /// لا يوجد عملاء
-  factory AppEmptyState.noCustomers({
+  static AppEmptyState noCustomers(
+    BuildContext context, {
     VoidCallback? onAdd,
   }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.people_outline,
-      title: 'لا يوجد عملاء',
-      description: 'ابدأ بإضافة عملائك الآن',
-      actionText: onAdd != null ? 'إضافة عميل' : null,
+      title: l10n.noCustomers,
+      description: l10n.emptyStateStartAddCustomers,
+      actionText: onAdd != null ? l10n.addCustomer : null,
       onAction: onAdd,
       actionIcon: Icons.person_add,
     );
   }
 
   /// السلة فارغة
-  factory AppEmptyState.emptyCart({
+  static AppEmptyState emptyCart(
+    BuildContext context, {
     VoidCallback? onBrowse,
   }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.shopping_cart_outlined,
-      title: 'السلة فارغة',
-      description: 'أضف منتجات للسلة لبدء البيع',
-      actionText: onBrowse != null ? 'تصفح المنتجات' : null,
+      title: l10n.cartIsEmpty,
+      description: l10n.emptyStateAddProductsToCart,
+      actionText: onBrowse != null ? l10n.browseProducts : null,
       onAction: onBrowse,
       actionIcon: Icons.storefront,
     );
   }
 
   /// لا توجد فواتير
-  factory AppEmptyState.noInvoices() {
-    return const AppEmptyState(
+  static AppEmptyState noInvoices(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.receipt_long_outlined,
-      title: 'لا توجد فواتير',
-      description: 'ستظهر الفواتير هنا بعد إتمام عمليات البيع',
+      title: l10n.noInvoices,
+      description: l10n.emptyStateInvoicesAppearAfterSale,
     );
   }
 
   /// لا توجد بيانات
-  factory AppEmptyState.noData({
+  static AppEmptyState noData(
+    BuildContext context, {
     String? title,
     String? description,
   }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.folder_open,
-      title: title ?? 'لا توجد بيانات',
+      title: title ?? l10n.noData,
       description: description,
     );
   }
 
   /// لا توجد طلبات
-  factory AppEmptyState.noOrders() {
-    return const AppEmptyState(
+  static AppEmptyState noOrders(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.shopping_bag_outlined,
-      title: 'لا توجد طلبات',
-      description: 'ستظهر الطلبات الجديدة هنا',
+      title: l10n.noOrders,
+      description: l10n.emptyStateNewOrdersAppearHere,
     );
   }
 
   /// لا توجد إشعارات
-  factory AppEmptyState.noNotifications() {
-    return const AppEmptyState(
+  static AppEmptyState noNotifications(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.notifications_none,
-      title: 'لا توجد إشعارات',
-      description: 'ستظهر الإشعارات الجديدة هنا',
+      title: l10n.noNotifications,
+      description: l10n.emptyStateNewNotificationsAppearHere,
     );
   }
 
   /// لا يوجد اتصال
-  factory AppEmptyState.noConnection({VoidCallback? onRetry}) {
+  static AppEmptyState noConnection(
+    BuildContext context, {
+    VoidCallback? onRetry,
+  }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.wifi_off,
-      title: 'لا يوجد اتصال',
-      description: 'تحقق من اتصالك بالإنترنت',
-      actionText: onRetry != null ? 'إعادة المحاولة' : null,
+      title: l10n.noConnection,
+      description: l10n.emptyStateCheckYourConnection,
+      actionText: onRetry != null ? l10n.retry : null,
       onAction: onRetry,
       actionIcon: Icons.refresh,
       iconColor: AppColors.warning,
@@ -160,50 +178,58 @@ class AppEmptyState extends StatelessWidget {
   }
 
   /// لا توجد تقارير
-  factory AppEmptyState.noReports() {
-    return const AppEmptyState(
+  static AppEmptyState noReports(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.assessment_outlined,
-      title: 'لا توجد تقارير',
-      description: 'ستظهر التقارير بعد إتمام عمليات البيع',
+      title: l10n.noReports,
+      description: l10n.emptyStateReportsAppearAfterSale,
     );
   }
 
   /// لا يوجد مخزون منخفض
-  factory AppEmptyState.noLowStock() {
-    return const AppEmptyState(
+  static AppEmptyState noLowStock(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.inventory_outlined,
-      title: 'المخزون في حالة جيدة',
-      description: 'لا توجد منتجات تحتاج إعادة تعبئة',
+      title: l10n.stockGood,
+      description: l10n.emptyStateNoNeedToRestock,
       iconColor: AppColors.success,
     );
   }
 
   /// لا توجد ديون
-  factory AppEmptyState.noDebts() {
-    return const AppEmptyState(
+  static AppEmptyState noDebts(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.account_balance_wallet_outlined,
-      title: 'لا توجد ديون',
-      description: 'جميع العملاء قاموا بالسداد',
+      title: l10n.noDebts,
+      description: l10n.emptyStateAllCustomersPaid,
       iconColor: AppColors.success,
     );
   }
 
   /// لا توجد مرتجعات
-  factory AppEmptyState.noReturns() {
-    return const AppEmptyState(
+  static AppEmptyState noReturns(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppEmptyState(
       icon: Icons.assignment_return_outlined,
-      title: 'لا توجد مرتجعات',
-      description: 'ستظهر المرتجعات هنا',
+      title: l10n.noReturns,
+      description: l10n.emptyStateReturnsAppearHere,
     );
   }
 
   /// لا توجد عروض
-  factory AppEmptyState.noOffers({VoidCallback? onAdd}) {
+  static AppEmptyState noOffers(
+    BuildContext context, {
+    VoidCallback? onAdd,
+  }) {
+    final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.local_offer_outlined,
-      title: 'لا توجد عروض',
-      description: 'أضف عروضاً لجذب المزيد من العملاء',
-      actionText: onAdd != null ? 'إضافة عرض' : null,
+      title: l10n.noOffers,
+      description: l10n.emptyStateAddOffersToAttract,
+      actionText: onAdd != null ? l10n.addOffer : null,
       onAction: onAdd,
       actionIcon: Icons.add,
     );
@@ -297,32 +323,36 @@ class AppErrorState extends StatelessWidget {
   });
 
   /// خطأ الشبكة
-  factory AppErrorState.network({VoidCallback? onRetry}) {
+  static AppErrorState network(BuildContext context, {VoidCallback? onRetry}) {
+    final l10n = AppLocalizations.of(context);
     return AppErrorState(
       icon: Icons.wifi_off,
-      message: 'لا يوجد اتصال بالإنترنت',
-      details: 'تحقق من اتصالك بالإنترنت وحاول مرة أخرى',
+      message: l10n.errorNoInternetConnection,
+      details: l10n.errorCheckConnectionAndRetry,
       onRetry: onRetry,
     );
   }
 
   /// خطأ الخادم
-  factory AppErrorState.server({VoidCallback? onRetry}) {
+  static AppErrorState server(BuildContext context, {VoidCallback? onRetry}) {
+    final l10n = AppLocalizations.of(context);
     return AppErrorState(
       icon: Icons.cloud_off,
-      message: 'خطأ في الخادم',
-      details: 'حدث خطأ أثناء الاتصال بالخادم',
+      message: l10n.errorServerError,
+      details: l10n.errorServerConnectionFailed,
       onRetry: onRetry,
     );
   }
 
   /// خطأ عام
-  factory AppErrorState.general({
+  static AppErrorState general(
+    BuildContext context, {
     String? message,
     VoidCallback? onRetry,
   }) {
+    final l10n = AppLocalizations.of(context);
     return AppErrorState(
-      message: message ?? 'حدث خطأ غير متوقع',
+      message: message ?? l10n.errorUnexpectedError,
       onRetry: onRetry,
     );
   }
@@ -379,7 +409,7 @@ class AppErrorState extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: AppSpacing.xl),
               AppButton(
-                label: 'إعادة المحاولة',
+                label: AppLocalizations.of(context).retry,
                 onPressed: onRetry,
                 icon: Icons.refresh,
                 color: AppColors.error,

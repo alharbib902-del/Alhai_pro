@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Conflict Resolution Screen - Admin version
 /// Displays sync conflicts with side-by-side comparison and resolution actions
@@ -59,7 +60,7 @@ class _ConflictResolutionScreenState
                 children: [
                   const Icon(Icons.error_outline,
                       size: 64, color: AppColors.error),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     error.toString(),
                     style: TextStyle(
@@ -69,7 +70,7 @@ class _ConflictResolutionScreenState
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   FilledButton.icon(
                     onPressed: () =>
                         ref.invalidate(conflictSyncItemsProvider),
@@ -90,7 +91,7 @@ class _ConflictResolutionScreenState
                           color: isDark
                               ? Colors.white24
                               : AppColors.success),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noConflicts,
                         style: TextStyle(
@@ -131,7 +132,7 @@ class _ConflictResolutionScreenState
       children: [
         // Warning header
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.error.withValues(alpha: 0.1)
@@ -144,7 +145,7 @@ class _ConflictResolutionScreenState
             children: [
               const Icon(Icons.warning_amber_rounded,
                   color: AppColors.error),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +170,7 @@ class _ConflictResolutionScreenState
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
 
         // Conflicts list
         ...List.generate(conflicts.length, (index) {
@@ -186,7 +187,7 @@ class _ConflictResolutionScreenState
           );
         }),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
 
         // Quick actions
         if (conflicts.isNotEmpty)
@@ -201,7 +202,7 @@ class _ConflictResolutionScreenState
                   label: Text(l10n.useAllLocal),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: FilledButton.icon(
                   onPressed: _isResolving
@@ -384,8 +385,8 @@ class _ConflictCard extends StatelessWidget {
     final payloadPreview = _getPayloadPreview(item.payload);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -403,7 +404,7 @@ class _ConflictCard extends StatelessWidget {
                 _getTableIcon(item.tableName_),
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,7 +429,7 @@ class _ConflictCard extends StatelessWidget {
               if (item.retryCount > 0)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -442,7 +443,7 @@ class _ConflictCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: 20),
                 color: AppColors.error,
@@ -454,10 +455,10 @@ class _ConflictCard extends StatelessWidget {
 
           // Error message
           if (item.lastError != null && item.lastError!.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(6),
@@ -473,7 +474,7 @@ class _ConflictCard extends StatelessWidget {
 
           // Local value option
           if (payloadPreview.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             _ConflictOption(
               title: l10n.localValueLabel,
               value: payloadPreview,
@@ -484,7 +485,7 @@ class _ConflictCard extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Server value option
           _ConflictOption(
@@ -496,7 +497,7 @@ class _ConflictCard extends StatelessWidget {
             onSelect: isResolving ? null : onAcceptServer,
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Retry button
           SizedBox(
@@ -572,7 +573,7 @@ class _ConflictOption extends StatelessWidget {
       onTap: onSelect,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
@@ -581,7 +582,7 @@ class _ConflictOption extends StatelessWidget {
         child: Row(
           children: [
             Icon(Icons.radio_button_unchecked, color: color),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'core/router/app_router.dart';
 import 'di/injection.dart';
-
-// L78: This app uses a router with placeholder screens per route.
-// The router lives in core/router/app_router.dart with auth guard redirect.
-// Responsive layout patterns (ResponsiveBuilder, breakpoints, adaptive
-// navigation) should be applied when building real UI screens.
-// See alhai_design_system responsive tokens and alhai_shared_ui ResponsiveScaffold.
 
 void main() {
   configureDependencies();
@@ -29,7 +25,14 @@ class SuperAdminApp extends ConsumerWidget {
       darkTheme: AlhaiTheme.dark,
       themeMode: ThemeMode.dark, // Dark mode by default for admin
       routerConfig: router,
-      locale: const Locale('ar'),
+      locale: const Locale('en'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }

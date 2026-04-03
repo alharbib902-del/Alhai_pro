@@ -157,7 +157,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
       children: [
         // العنوان
         Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
           child: Text(
             'رقم الجوال',
             style: TextStyle(
@@ -203,8 +203,8 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                 ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.md,
                   ),
                   decoration: BoxDecoration(
                     color: isDarkMode ? const Color(0xFF374151) : AppColors.backgroundSecondary,
@@ -220,7 +220,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                         _selectedCountry.flag,
                         style: const TextStyle(fontSize: 24),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       // مفتاح الدولة
                       Text(
                         _selectedCountry.dialCode,
@@ -230,7 +230,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       // سهم
                       Icon(
                         Icons.keyboard_arrow_down_rounded,
@@ -277,8 +277,8 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
+                        horizontal: AlhaiSpacing.md,
+                        vertical: AlhaiSpacing.md,
                       ),
                     ),
                     inputFormatters: [
@@ -297,7 +297,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
 
         // رسالة الخطأ
         if (hasError) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               const Icon(
@@ -392,9 +392,9 @@ class _CountryPickerSheet extends StatelessWidget {
         children: [
           // المقبض
           Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
+            margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
+            width: AlhaiSpacing.xxl,
+            height: AlhaiSpacing.dragHandleHeight,
             decoration: BoxDecoration(
               color: handleColor,
               borderRadius: BorderRadius.circular(2),
@@ -403,7 +403,7 @@ class _CountryPickerSheet extends StatelessWidget {
 
           // العنوان
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Text(
               'اختر الدولة',
               style: TextStyle(
@@ -446,7 +446,7 @@ class _CountryPickerSheet extends StatelessWidget {
             );
           }),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
         ],
       ),
     );
@@ -506,7 +506,7 @@ class WhatsAppOtpButton extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   const Text(
                     'إرسال رمز التحقق',
                     style: TextStyle(

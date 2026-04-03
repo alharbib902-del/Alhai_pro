@@ -129,7 +129,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           content: Row(
             children: [
               const Icon(Icons.check_circle, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(AppLocalizations.of(context)!.copiedToClipboard(label)),
             ],
           ),
@@ -137,7 +137,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(AlhaiSpacing.md),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -177,7 +177,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               _loadProductData();
                             },
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                           AlhaiButton(
                             label: l10n.printLabel,
                             variant: AlhaiButtonVariant.filled,
@@ -185,7 +185,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             leadingIcon: Icons.print_outlined,
                             onPressed: () {},
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                           AlhaiIconButton(
                             icon: Icons.more_horiz,
                             onPressed: () => _showMoreOptions(context),
@@ -199,7 +199,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     onRefresh: _loadProductData,
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: _buildContent(
                           isWideScreen, isMediumScreen, isDark, l10n),
                     ),
@@ -217,7 +217,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     if (_isLoading) {
       return const Center(
         child: Padding(
-          padding: EdgeInsets.all(64),
+          padding: EdgeInsets.all(AlhaiSpacing.massive),
           child: CircularProgressIndicator(),
         ),
       );
@@ -243,7 +243,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             flex: 3,
             child: _buildLeftColumn(isDark, isMediumScreen, l10n),
           ),
-          const SizedBox(width: 24),
+          SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: _buildRightColumn(isDark, l10n),
@@ -264,9 +264,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return Column(
       children: [
         _buildProductInfoCard(isDark, isMediumScreen, l10n),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
         _buildStockPanel(isDark, l10n),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
         _buildTabsSection(isDark, l10n),
       ],
     );
@@ -280,9 +280,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return Column(
       children: [
         _buildQuickStats(isDark, l10n),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
         _buildCategoryCard(isDark, l10n),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
         _buildLastSaleCard(isDark, l10n),
       ],
     );
@@ -296,15 +296,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return Column(
       children: [
         _buildProductInfoCard(isDark, false, l10n),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         _buildQuickStats(isDark, l10n),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         _buildMobileStockCard(isDark, l10n),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         _buildCategoryCard(isDark, l10n),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         _buildTabsSection(isDark, l10n),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         _buildLastSaleCard(isDark, l10n),
       ],
     );
@@ -372,7 +372,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                         },
                                         tooltip: l10n.edit,
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: AlhaiSpacing.xs),
                                       IconButton(
                                         icon: Icon(Icons.fullscreen_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 22),
                                         onPressed: () {
@@ -389,12 +389,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AlhaiSpacing.xs),
                     // Status badge below image
                     _statusBadge(product.isActive, l10n),
                   ],
                 ),
-                const SizedBox(width: 24),
+                SizedBox(width: AlhaiSpacing.lg),
                 Expanded(
                   child: _buildProductMeta(product, isDark, l10n),
                 ),
@@ -420,9 +420,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AlhaiSpacing.xs),
             Center(child: _statusBadge(product.isActive, l10n)),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             _buildProductMeta(product, isDark, l10n),
           ],
         ],
@@ -449,7 +449,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
 
         // SKU & Barcode badges
         Wrap(
@@ -473,7 +473,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
 
         // Prices
         _buildPriceSection(product, isDark, l10n),
@@ -481,9 +481,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         // Description
         if (product.description != null &&
             product.description!.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Divider(color: AppColors.getBorder(isDark)),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Text(
             l10n.description,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -491,7 +491,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: AppColors.getTextPrimary(isDark),
                 ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             product.description!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -507,7 +507,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget _buildPriceSection(
       Product product, bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
@@ -527,7 +527,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         color: AppColors.getTextSecondary(isDark),
                       ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AlhaiSpacing.xxs),
                 AlhaiPriceText(
                   amount: product.price,
                   currency: l10n.sar,
@@ -553,7 +553,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                           color: AppColors.getTextSecondary(isDark),
                         ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     CurrencyFormatter.format(product.costPrice ?? 0),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -583,7 +583,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             color: AppColors.getTextSecondary(isDark),
                           ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${product.profitMargin!.toStringAsFixed(1)}%',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -618,7 +618,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               Icon(Icons.inventory_2_outlined, size: 20,
                   color: AppColors.getTextSecondary(isDark)),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -628,7 +628,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
 
           // 3 stat cards
           Row(
@@ -643,7 +643,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   isDark: isDark,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _stockStatCard(
                   label: l10n.alertLevel,
@@ -654,7 +654,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   isDark: isDark,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _stockStatCard(
                   label: l10n.reorderPoint,
@@ -670,7 +670,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
           // Mini chart for stock movements
           if (_stockMovements.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             SizedBox(
               height: 120,
               child: SimpleBarChart(
@@ -711,7 +711,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 20, color: color),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Text(
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -719,7 +719,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: color,
                 ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             '$label ($suffix)',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -750,7 +750,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               Icon(Icons.inventory_2_outlined, size: 20,
                   color: AppColors.getTextSecondary(isDark)),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -761,7 +761,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               const Spacer(),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: stockColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -780,7 +780,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               Expanded(
@@ -821,7 +821,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 color: AppColors.getTextPrimary(isDark),
               ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: AlhaiSpacing.xxxs),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -869,7 +869,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget _stockMovementsTab(bool isDark, AppLocalizations l10n) {
     if (_stockMovements.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         child: AlhaiEmptyState(
           icon: Icons.swap_vert_rounded,
           title: l10n.noStockMovements,
@@ -881,7 +881,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -952,7 +952,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
     if (sampleData.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         child: AlhaiEmptyState(
           icon: Icons.trending_up_rounded,
           title: l10n.noPriceHistory,
@@ -964,7 +964,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -1031,7 +1031,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
     if (_totalSalesCount == 0 && sampleSales.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
         child: AlhaiEmptyState(
           icon: Icons.receipt_long_outlined,
           title: l10n.noSalesHistory,
@@ -1043,7 +1043,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -1109,7 +1109,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -1117,7 +1117,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   child: const Icon(Icons.shopping_bag_outlined,
                       size: 20, color: AppColors.primary),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   '$_totalSalesCount',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -1125,7 +1125,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         color: AppColors.getTextPrimary(isDark),
                       ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   l10n.totalSales,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -1136,7 +1136,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: _card(
             isDark: isDark,
@@ -1144,7 +1144,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -1152,7 +1152,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   child: const Icon(Icons.monetization_on_outlined,
                       size: 20, color: AppColors.secondary),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   CurrencyFormatter.formatCompact(revenue),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -1160,7 +1160,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         color: AppColors.getTextPrimary(isDark),
                       ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   l10n.revenue,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -1192,7 +1192,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: AppColors.getTextPrimary(isDark),
                 ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
               Container(
@@ -1212,7 +1212,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       : AppColors.grey400,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1237,9 +1237,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Divider(color: AppColors.getBorder(isDark)),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
               Container(
@@ -1251,7 +1251,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 child: const Icon(Icons.local_shipping_outlined,
                     size: 20, color: AppColors.info),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1263,7 +1263,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                 color: AppColors.getTextMuted(isDark),
                               ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       l10n.noSupplier,
                       style:
@@ -1294,7 +1294,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildLastSaleCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
@@ -1310,7 +1310,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
@@ -1330,7 +1330,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Text(
             '#ORD-0245',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -1339,7 +1339,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   fontFamily: 'monospace',
                 ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             _formatRelativeTime(
                 DateTime.now().subtract(const Duration(hours: 2)), l10n),
@@ -1347,7 +1347,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: Colors.white70,
                 ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1362,7 +1362,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 onTap: () {},
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
+                      horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -1394,7 +1394,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }) {
     return Container(
       width: double.infinity,
-      padding: padding ?? const EdgeInsets.all(20),
+      padding: padding ?? const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -1410,7 +1410,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget _statusBadge(bool isActive, AppLocalizations l10n) {
     final color = isActive ? AppColors.success : AppColors.grey400;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -1523,7 +1523,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -1556,7 +1556,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               Container(
                 width: 40,
                 height: 4,
@@ -1565,7 +1565,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               ListTile(
                 leading: const Icon(Icons.share_outlined),
                 title: Text(l10n.shareReceipt),
@@ -1582,7 +1582,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     style: const TextStyle(color: AppColors.error)),
                 onTap: () => Navigator.pop(context),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
             ],
           ),
         );

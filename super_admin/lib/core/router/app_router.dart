@@ -3,17 +3,52 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../../ui/super_admin_shell.dart';
+import '../../screens/dashboard/sa_dashboard_screen.dart';
+import '../../screens/stores/sa_stores_list_screen.dart';
+import '../../screens/stores/sa_store_detail_screen.dart';
+import '../../screens/stores/sa_create_store_screen.dart';
+import '../../screens/stores/sa_store_settings_screen.dart';
+import '../../screens/subscriptions/sa_plans_screen.dart';
+import '../../screens/subscriptions/sa_subscriptions_list_screen.dart';
+import '../../screens/subscriptions/sa_billing_screen.dart';
+import '../../screens/users/sa_users_list_screen.dart';
+import '../../screens/users/sa_user_detail_screen.dart';
+import '../../screens/analytics/sa_revenue_analytics_screen.dart';
+import '../../screens/analytics/sa_usage_analytics_screen.dart';
+import '../../screens/settings/sa_platform_settings_screen.dart';
+import '../../screens/settings/sa_system_health_screen.dart';
+
 /// Route paths
 class SuperAdminRoutes {
   static const splash = '/';
   static const login = '/login';
+
+  // Dashboard
   static const dashboard = '/dashboard';
+
+  // Stores
   static const stores = '/stores';
   static const storeDetail = '/stores/:id';
+  static const storeSettings = '/stores/:id/settings';
+  static const createStore = '/stores/new';
+
+  // Subscriptions
+  static const subscriptions = '/subscriptions';
+  static const plans = '/subscriptions/plans';
+  static const billing = '/subscriptions/billing';
+
+  // Users
   static const users = '/users';
-  static const analytics = '/analytics';
-  static const billing = '/billing';
-  static const settings = '/settings';
+  static const userDetail = '/users/:id';
+
+  // Analytics
+  static const revenueAnalytics = '/analytics/revenue';
+  static const usageAnalytics = '/analytics/usage';
+
+  // Settings
+  static const platformSettings = '/settings/platform';
+  static const systemHealth = '/settings/health';
 }
 
 /// Auth notifier that triggers GoRouter redirect on auth changes
@@ -42,16 +77,16 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   const publicPaths = [SuperAdminRoutes.splash, SuperAdminRoutes.login];
   final isPublic = publicPaths.contains(path);
 
-  // Still resolving → stay on current page
+  // Still resolving -> stay on current page
   if (authState.status == AuthStatus.unknown) return null;
 
-  // Not authenticated → login
+  // Not authenticated -> login
   if (authState.status == AuthStatus.unauthenticated ||
       authState.status == AuthStatus.sessionExpired) {
     return isPublic ? null : SuperAdminRoutes.login;
   }
 
-  // Already logged in, trying to access login/splash → dashboard
+  // Already logged in, trying to access login/splash -> dashboard
   if (isPublic && authState.status == AuthStatus.authenticated) {
     return SuperAdminRoutes.dashboard;
   }
@@ -59,52 +94,109 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   return null;
 }
 
+/// Navigation shell key for the ShellRoute
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Routes list
 final List<RouteBase> _routes = [
+  // Public routes (no shell)
   GoRoute(
     path: SuperAdminRoutes.splash,
     builder: (c, s) => const _Placeholder(title: 'Splash'),
   ),
   GoRoute(
     path: SuperAdminRoutes.login,
-    builder: (c, s) => const _Placeholder(title: 'تسجيل الدخول'),
+    builder: (c, s) => const _Placeholder(title: 'Login'),
   ),
-  GoRoute(
-    path: SuperAdminRoutes.dashboard,
-    builder: (c, s) => const _Placeholder(title: 'لوحة التحكم'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.stores,
-    builder: (c, s) => const _Placeholder(title: 'المتاجر'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.storeDetail,
-    builder: (c, s) => _Placeholder(title: 'متجر ${s.pathParameters['id']}'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.users,
-    builder: (c, s) => const _Placeholder(title: 'المستخدمين'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.analytics,
-    builder: (c, s) => const _Placeholder(title: 'التحليلات'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.billing,
-    builder: (c, s) => const _Placeholder(title: 'الفوترة'),
-  ),
-  GoRoute(
-    path: SuperAdminRoutes.settings,
-    builder: (c, s) => const _Placeholder(title: 'الإعدادات'),
+
+  // Shell route with sidebar navigation
+  ShellRoute(
+    navigatorKey: _shellNavigatorKey,
+    builder: (context, state, child) => SuperAdminShell(child: child),
+    routes: [
+      // Dashboard
+      GoRoute(
+        path: SuperAdminRoutes.dashboard,
+        builder: (c, s) => const SADashboardScreen(),
+      ),
+
+      // Stores
+      GoRoute(
+        path: SuperAdminRoutes.createStore,
+        builder: (c, s) => const SACreateStoreScreen(),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.storeSettings,
+        builder: (c, s) => SAStoreSettingsScreen(
+          storeId: s.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.storeDetail,
+        builder: (c, s) => SAStoreDetailScreen(
+          storeId: s.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.stores,
+        builder: (c, s) => const SAStoresListScreen(),
+      ),
+
+      // Subscriptions
+      GoRoute(
+        path: SuperAdminRoutes.plans,
+        builder: (c, s) => const SAPlansScreen(),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.billing,
+        builder: (c, s) => const SABillingScreen(),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.subscriptions,
+        builder: (c, s) => const SASubscriptionsListScreen(),
+      ),
+
+      // Users
+      GoRoute(
+        path: SuperAdminRoutes.userDetail,
+        builder: (c, s) => SAUserDetailScreen(
+          userId: s.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.users,
+        builder: (c, s) => const SAUsersListScreen(),
+      ),
+
+      // Analytics
+      GoRoute(
+        path: SuperAdminRoutes.revenueAnalytics,
+        builder: (c, s) => const SARevenueAnalyticsScreen(),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.usageAnalytics,
+        builder: (c, s) => const SAUsageAnalyticsScreen(),
+      ),
+
+      // Settings
+      GoRoute(
+        path: SuperAdminRoutes.platformSettings,
+        builder: (c, s) => const SAPlatformSettingsScreen(),
+      ),
+      GoRoute(
+        path: SuperAdminRoutes.systemHealth,
+        builder: (c, s) => const SASystemHealthScreen(),
+      ),
+    ],
   ),
 ];
 
 /// Error page builder
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
   return Scaffold(
-    appBar: AppBar(title: const Text('خطأ')),
+    appBar: AppBar(title: const Text('Error')),
     body: Center(
-      child: Text('الصفحة غير موجودة: ${state.uri.path}'),
+      child: Text('Page not found: ${state.uri.path}'),
     ),
   );
 }
@@ -187,7 +279,7 @@ class _Placeholder extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'قريباً - قيد التطوير',
+                      'Coming Soon',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.amber.shade700,
                         fontWeight: FontWeight.w600,
@@ -195,14 +287,6 @@ class _Placeholder extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'هذه الشاشة قيد التطوير وستكون متاحة قريباً',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

@@ -210,7 +210,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Text(
-                    'نظام نقطة البيع',
+                    l10n.posSystemLabel,
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textMuted,
                     ),
@@ -227,7 +227,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
               icon: const Icon(Icons.menu_open),
               iconSize: 20,
               color: AppColors.textMuted,
-              tooltip: 'طي القائمة',
+              tooltip: l10n.collapseMenu,
             ),
         ],
       ),
@@ -257,7 +257,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                   onPressed: widget.onToggleCollapse,
                   icon: const Icon(Icons.menu),
                   color: AppColors.textMuted,
-                  tooltip: 'توسيع القائمة',
+                  tooltip: l10n.expandMenu,
                 ),
               ],
             )

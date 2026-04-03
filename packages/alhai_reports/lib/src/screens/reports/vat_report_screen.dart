@@ -1,3 +1,4 @@
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,18 +88,18 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
           : _error != null
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.error_outline_rounded, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           AppLocalizations.of(context)!.errorLoadingVatReport,
                           style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         FilledButton.icon(
                           onPressed: _loadVatData,
                           icon: const Icon(Icons.refresh_rounded),
@@ -125,7 +126,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                     onTap: _selectDateRange,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 
                 // Sales VAT
                 _VatCard(
@@ -137,7 +138,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                     _VatItem(AppLocalizations.of(context)!.vatCollected, _vatCollected, isVat: true),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
 
                 // Purchases VAT
                 _VatCard(
@@ -149,20 +150,20 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                     _VatItem(AppLocalizations.of(context)!.vatPaid, _vatPaid, isVat: true),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 
                 // Net VAT
                 Card(
                   color: _netVat >= 0 ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                     child: Column(
                       children: [
                         Text(
                           AppLocalizations.of(context)!.netVatDue,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           '${_netVat.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                           style: TextStyle(
@@ -171,7 +172,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                             color: _netVat >= 0 ? Colors.green.shade700 : Colors.red.shade700,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           _netVat >= 0 ? AppLocalizations.of(context)!.dueToAuthority : AppLocalizations.of(context)!.dueFromAuthority,
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -180,7 +181,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 
                 // Actions
                 Row(
@@ -200,7 +201,7 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
                         label: Text(AppLocalizations.of(context)!.printAction),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: () {
@@ -292,20 +293,20 @@ class _VatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(icon, color: color),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(title, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
             const Divider(),
             ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

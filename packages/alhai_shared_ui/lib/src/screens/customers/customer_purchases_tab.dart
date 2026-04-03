@@ -74,12 +74,12 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 const Icon(Icons.receipt_long_outlined,
                     size: 20, color: AppColors.primary),
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.recentTransactions,
                   style: TextStyle(
@@ -123,7 +123,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 0),
+                          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.zero),
                       border: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(AppSizes.radiusMd),
@@ -134,7 +134,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                   ),
                 ),
                 if (!isMobile) ...[
-                  const SizedBox(width: 8),
+                  SizedBox(width: AlhaiSpacing.xs),
                   OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.download_outlined, size: 16),
@@ -145,7 +145,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                       side: BorderSide(
                           color: AppColors.getBorder(isDark)),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                       shape: RoundedRectangleBorder(
                         borderRadius:
                             BorderRadius.circular(AppSizes.radiusMd),
@@ -161,7 +161,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
           // Content: DataTable on desktop, cards on mobile
           if (filteredPurchases.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Center(
                 child: Text(
                   l10n.noTransactions,
@@ -270,15 +270,15 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       itemCount: purchases.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => SizedBox(height: AlhaiSpacing.xs),
       itemBuilder: (context, index) {
         final t = purchases[index];
         final dateStr = formatDate(t.createdAt);
         final invoiceRef = t.referenceId ?? t.id;
         return Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: AppColors.getSurfaceVariant(isDark),
             borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -300,7 +300,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                   buildStatusBadge(l10n.completed, false, isDark),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -327,7 +327,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
   Widget _buildPagination(
       bool isDark, int totalPages, int totalItems) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -346,11 +346,11 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                 isDark: isDark,
                 onTap: () => setState(() => _currentPage--),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               ...List.generate(totalPages, (i) {
                 final isSelected = i == _currentPage;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
                   child: InkWell(
                     onTap: () => setState(() => _currentPage = i),
                     borderRadius:
@@ -382,7 +382,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                   ),
                 );
               }),
-              const SizedBox(width: 4),
+              SizedBox(width: AlhaiSpacing.xxs),
               PaginationButton(
                 icon: Icons.chevron_right_rounded,
                 enabled: _currentPage < totalPages - 1,
@@ -401,7 +401,7 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
 Widget buildStatusBadge(String label, bool isReturned, bool isDark) {
   final color = isReturned ? AppColors.warning : AppColors.success;
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
     decoration: BoxDecoration(
       color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(AppSizes.radiusFull),

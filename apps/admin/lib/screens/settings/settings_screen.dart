@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider;
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Provider for store info
 final _storeInfoProvider = FutureProvider.autoDispose<StoresTableData?>((ref) async {
@@ -64,13 +65,13 @@ class SettingsScreen extends ConsumerWidget {
                     loading: () => const Center(child: CircularProgressIndicator()),
                     error: (error, _) => Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(32),
+                        padding: const EdgeInsets.all(AlhaiSpacing.xl),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.error_outline_rounded, size: 64,
                                 color: isDark ? Colors.white38 : AppColors.textSecondary),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             Text(
                               '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A',
                               style: TextStyle(
@@ -79,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AlhaiSpacing.md),
                             FilledButton.icon(
                               onPressed: () => ref.invalidate(_storeInfoProvider),
                               icon: const Icon(Icons.refresh_rounded),
@@ -114,7 +115,7 @@ class SettingsScreen extends ConsumerWidget {
       children: [
         // Title Row
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.mdl),
           child: Row(
             children: [
               Container(
@@ -126,7 +127,7 @@ class SettingsScreen extends ConsumerWidget {
                 child: const Icon(Icons.settings_rounded,
                     color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,7 +179,7 @@ class SettingsScreen extends ConsumerWidget {
         onTap: cat.onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
@@ -190,14 +191,14 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: cat.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(cat.icon, color: cat.color, size: 28),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Text(
                 cat.title,
                 textAlign: TextAlign.center,
@@ -210,7 +211,7 @@ class SettingsScreen extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               if (cat.subtitle != null) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   cat.subtitle!,
                   textAlign: TextAlign.center,

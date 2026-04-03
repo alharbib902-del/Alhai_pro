@@ -73,7 +73,7 @@ class LanguageSelectorButton extends ConsumerWidget {
                 ),
               ),
             ],
-            const SizedBox(width: 4),
+            SizedBox(width: AlhaiSpacing.xxs),
             Icon(
               Icons.keyboard_arrow_down_rounded,
               size: compact ? 16 : 18,
@@ -132,7 +132,7 @@ class LanguagePickerSheet extends ConsumerWidget {
         children: [
           // المقبض
           Container(
-            margin: const EdgeInsets.only(top: 12),
+            margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
             width: 40,
             height: 4,
             decoration: BoxDecoration(
@@ -143,7 +143,7 @@ class LanguagePickerSheet extends ConsumerWidget {
 
           // العنوان
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Text(
               AppLocalizations.of(context)?.selectLanguage ?? 'Select Language',
               style: TextStyle(
@@ -173,7 +173,7 @@ class LanguagePickerSheet extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
         ],
       ),
     );
@@ -266,11 +266,11 @@ class LanguageSettingsScreen extends ConsumerWidget {
         title: Text(l10n?.language ?? 'Language'),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           // معلومات
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.info.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
@@ -281,7 +281,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                   Icons.info_outline_rounded,
                   color: AppColors.info,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
                     l10n?.languageChangeInfo ?? 'Choose your preferred display language. Changes will be applied immediately.',
@@ -295,13 +295,13 @@ class LanguageSettingsScreen extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: AlhaiSpacing.lg),
 
           // قائمة اللغات
           ...SupportedLocales.all.map((locale) {
             final isSelected = locale.languageCode == currentLocale.languageCode;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               child: _LanguageCard(
                 locale: locale,
                 isSelected: isSelected,
@@ -337,7 +337,7 @@ class _LanguageCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.05)
@@ -366,7 +366,7 @@ class _LanguageCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
 
               // المعلومات
               Expanded(
@@ -381,14 +381,14 @@ class _LanguageCard extends StatelessWidget {
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
                         if (SupportedLocales.isRtl(locale)) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
-                              vertical: 2,
+                              vertical: AlhaiSpacing.xxxs,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withValues(alpha: 0.1),
@@ -403,7 +403,7 @@ class _LanguageCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: AlhaiSpacing.xs),
                         ],
                         Text(
                           locale.countryCode ?? '',

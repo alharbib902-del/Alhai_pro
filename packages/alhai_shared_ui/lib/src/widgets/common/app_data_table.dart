@@ -80,11 +80,11 @@ class AppDataTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const AppLoadingState(message: 'جاري تحميل البيانات...');
+      return AppLoadingState(message: AppLocalizations.of(context)!.loadingData);
     }
 
     if (data.isEmpty) {
-      return emptyWidget ?? AppEmptyState.noData();
+      return emptyWidget ?? AppEmptyState.noData(context);
     }
 
     return Container(

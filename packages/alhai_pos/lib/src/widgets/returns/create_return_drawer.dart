@@ -103,11 +103,11 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
           Expanded(
             child: ListView(
               controller: widget.scrollController,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               children: [
                 // Wizard steps
                 _buildStepIndicator(l10n, isDark, colorScheme),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 // Step content
                 AnimatedSwitcher(
                   duration: AlhaiDurations.standard,
@@ -129,7 +129,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
 
   Widget _buildHeader(AppLocalizations l10n, bool isDark, bool isDesktop, ColorScheme colorScheme) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
         borderRadius: isDesktop
@@ -212,7 +212,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                             ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     steps[i],
                     style: TextStyle(
@@ -230,7 +230,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                 Expanded(
                   child: Container(
                     height: 2,
-                    margin: const EdgeInsetsDirectional.only(bottom: 18, start: 4, end: 4),
+                    margin: const EdgeInsetsDirectional.only(bottom: 18, start: AlhaiSpacing.xxs, end: AlhaiSpacing.xxs),
                     color: isCompleted
                         ? AppColors.success
                         : (isDark ? const Color(0xFF374151) : colorScheme.surfaceContainer),
@@ -269,7 +269,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.enterInvoiceNumber, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -288,13 +288,13 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                 style: TextStyle(fontSize: 16, fontFamily: 'Courier', color: colorScheme.onSurface),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             FilledButton(
               onPressed: _loadInvoice,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(l10n.loadInvoice, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
@@ -302,7 +302,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
           ],
         ),
         if (_invoiceLoaded) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -320,7 +320,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                   ),
                   child: const Icon(Icons.check, size: 18, color: AppColors.success),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +352,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: isDark ? AppColors.info.withValues(alpha: 0.1) : const Color(0xFFDBEAFE),
             borderRadius: BorderRadius.circular(10),
@@ -360,7 +360,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
           child: Row(
             children: [
               Icon(Icons.info_outline, size: 16, color: isDark ? const Color(0xFF60A5FA) : AppColors.info),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
                   l10n.selectItemsInfo,
@@ -370,7 +370,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         ...List.generate(_items.length, (i) => _buildItemCard(i, l10n, isDark, colorScheme)),
       ],
     );
@@ -382,7 +382,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
     final isSelected = _selectedItems.contains(index);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -457,9 +457,9 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
               ),
             ],
             if (isDisabled) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               Container(
-                padding: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                 decoration: BoxDecoration(border: Border(top: BorderSide(color: colorScheme.outlineVariant))),
                 child: Text(l10n.alreadyReturnedFully, style: const TextStyle(fontSize: 11, color: AppColors.error, fontWeight: FontWeight.w500)),
               ),
@@ -492,12 +492,12 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.returnReasonLabel, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         _buildReasonOption('defective', Icons.broken_image_outlined, l10n.defectiveProduct, isDark, colorScheme),
         _buildReasonOption('wrong', Icons.warning_amber, l10n.wrongProduct, isDark, colorScheme),
         _buildReasonOption('customer_request', Icons.assignment_return_outlined, l10n.customerRequest, isDark, colorScheme),
         _buildReasonOption('other', Icons.edit_note, l10n.otherReason, isDark, colorScheme),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         TextField(
           maxLines: 3,
           decoration: InputDecoration(
@@ -520,8 +520,8 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
     return GestureDetector(
       onTap: () => setState(() => _selectedReason = value),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: isSelected
               ? (isDark ? AppColors.primary.withValues(alpha: 0.1) : AppColors.primarySurface)
@@ -537,7 +537,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
             Container(
               width: 24,
               height: 24,
-              margin: const EdgeInsets.symmetric(horizontal: 8),
+              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -582,7 +582,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
       children: [
         // Summary
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF0F172A) : colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(14),
@@ -610,14 +610,14 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         // Refund method
         Text(l10n.refundMethod, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(child: _buildRefundMethodButton('cash', Icons.wallet, l10n.cashRefund, isDark, colorScheme)),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(child: _buildRefundMethodButton('credit', Icons.credit_card_outlined, l10n.storeCredit, isDark, colorScheme)),
           ],
         ),
@@ -640,7 +640,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
     return GestureDetector(
       onTap: () => setState(() => _refundMethod = method),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
               ? (isDark ? AppColors.primary.withValues(alpha: 0.1) : AppColors.primarySurface)
@@ -675,7 +675,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
 
   Widget _buildFooter(AppLocalizations l10n, bool isDark, ColorScheme colorScheme) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : colorScheme.surfaceContainerLow,
         border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
@@ -695,7 +695,7 @@ class _CreateReturnDrawerState extends ConsumerState<CreateReturnDrawer> {
                 child: Text(l10n.previous, style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
               ),
             ),
-          if (_currentStep > 0) const SizedBox(width: 12),
+          if (_currentStep > 0) const SizedBox(width: AlhaiSpacing.sm),
           // Next / Submit button
           Expanded(
             child: FilledButton.icon(

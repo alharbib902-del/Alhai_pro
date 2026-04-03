@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -110,11 +110,11 @@ class _EditInventoryScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(message: _error!, onRetry: _loadProduct)
+                  ? AppErrorState.general(context, message: _error!, onRetry: _loadProduct)
                   : _product == null
                       ? _buildNotFound(isDark, l10n)
                       : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                          padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                           child: _buildContent(
                               isWideScreen, isMediumScreen, isDark, l10n),
                         ),
@@ -131,7 +131,7 @@ class _EditInventoryScreenState
           Icon(Icons.search_off_rounded,
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.productNotFound,
               style: TextStyle(
                   fontSize: 16,
@@ -153,20 +153,20 @@ class _EditInventoryScreenState
             child: Column(
               children: [
                 _buildCurrentStockCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildAdjustmentCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildReasonCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildNoteCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSaveButton(isDark, l10n),
               ],
             ),
@@ -179,13 +179,13 @@ class _EditInventoryScreenState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildCurrentStockCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildAdjustmentCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildReasonCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildNoteCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildSaveButton(isDark, l10n),
       ],
     );
@@ -199,7 +199,7 @@ class _EditInventoryScreenState
     final newStock = _isAdding ? stock + adjustment : stock - adjustment;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -220,7 +220,7 @@ class _EditInventoryScreenState
                 child: const Icon(Icons.inventory_2_rounded,
                     color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class _EditInventoryScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -304,7 +304,7 @@ class _EditInventoryScreenState
     final activeColor = _isAdding ? AppColors.success : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -316,7 +316,7 @@ class _EditInventoryScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: activeColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -324,7 +324,7 @@ class _EditInventoryScreenState
                 child: Icon(Icons.tune_rounded,
                     color: activeColor, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text('Adjust Quantity',
                   style: TextStyle(
                       fontSize: 16,
@@ -332,7 +332,7 @@ class _EditInventoryScreenState
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           // Add / Subtract toggle
           Row(
             children: [
@@ -342,7 +342,7 @@ class _EditInventoryScreenState
                   borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     decoration: BoxDecoration(
                       color: _isAdding
                           ? AppColors.success.withValues(alpha: 0.1)
@@ -377,14 +377,14 @@ class _EditInventoryScreenState
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: InkWell(
                   onTap: () => setState(() => _isAdding = false),
                   borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                     decoration: BoxDecoration(
                       color: !_isAdding
                           ? AppColors.error.withValues(alpha: 0.1)
@@ -421,7 +421,7 @@ class _EditInventoryScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _adjustmentController,
             keyboardType: TextInputType.number,
@@ -440,7 +440,7 @@ class _EditInventoryScreenState
                 fontWeight: FontWeight.bold,
               ),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(
                   _isAdding
                       ? Icons.add_rounded
@@ -479,7 +479,7 @@ class _EditInventoryScreenState
     ];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -491,7 +491,7 @@ class _EditInventoryScreenState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -499,7 +499,7 @@ class _EditInventoryScreenState
                 child: const Icon(Icons.list_alt_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.reason,
                   style: TextStyle(
                       fontSize: 16,
@@ -507,7 +507,7 @@ class _EditInventoryScreenState
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -563,7 +563,7 @@ class _EditInventoryScreenState
 
   Widget _buildNoteCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -577,7 +577,7 @@ class _EditInventoryScreenState
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.getTextPrimary(isDark))),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           TextField(
             controller: _noteController,
             maxLines: 3,
@@ -600,7 +600,7 @@ class _EditInventoryScreenState
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 2),
               ),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
         ],
@@ -630,7 +630,7 @@ class _EditInventoryScreenState
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),
@@ -688,8 +688,8 @@ class _EditInventoryScreenState
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم تحديث المخزون'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).inventoryUpdatedMsg),
           backgroundColor: AppColors.success,
         ),
       );

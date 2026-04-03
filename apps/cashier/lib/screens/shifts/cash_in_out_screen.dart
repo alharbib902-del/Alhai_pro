@@ -12,7 +12,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -70,13 +70,14 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 return _buildNoShiftMessage(isDark, l10n);
               }
               return SingleChildScrollView(
-                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                 child: _buildContent(
                     shift, isWideScreen, isMediumScreen, isDark, l10n),
               );
             },
             loading: () => const AppLoadingState(),
             error: (e, _) => AppErrorState.general(
+              context,
               message: '$e',
               onRetry: () => ref.invalidate(openShiftProvider),
             ),
@@ -98,15 +99,15 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         children: [
           Icon(Icons.timer_off_rounded, size: 64,
               color: AppColors.getTextMuted(isDark)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noOpenShift,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,
                   color: AppColors.getTextSecondary(isDark))),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(l10n.noOpenShiftCurrently,
               style: TextStyle(fontSize: 13,
                   color: AppColors.getTextMuted(isDark))),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
             onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_rounded),
@@ -133,18 +134,18 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
             child: Column(
               children: [
                 _buildTypeSelector(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildAmountCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildReasonCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildConfirmButton(shift, isDark, l10n),
               ],
             ),
@@ -157,11 +158,11 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildTypeSelector(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildAmountCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildReasonCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildConfirmButton(shift, isDark, l10n),
       ],
     );
@@ -169,7 +170,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
 
   Widget _buildTypeSelector(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -181,7 +182,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -189,13 +190,13 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 child: const Icon(Icons.swap_vert_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.movementType,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Row(
             children: [
               Expanded(
@@ -208,7 +209,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                   isDark,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _buildTypeOption(
                   l10n.cashOut,
@@ -233,7 +234,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.mdl),
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
@@ -270,7 +271,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
     final activeColor = _isCashIn ? AppColors.success : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -282,7 +283,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: activeColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -290,13 +291,13 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 child: Icon(Icons.attach_money_rounded,
                     color: activeColor, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.amount,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
@@ -318,7 +319,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                   fontSize: 16,
                   color: AppColors.getTextSecondary(isDark)),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(
                   _isCashIn
                       ? Icons.add_rounded
@@ -343,9 +344,9 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           // زر عد العملات
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
@@ -361,14 +362,14 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 }
               },
               icon: const Icon(Icons.calculate_rounded, size: 18),
-              label: const Text('عد العملات 🪙'),
+              label: Text('${AppLocalizations.of(context).countCurrencyBtn} 🪙'),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // Quick amount chips
           Wrap(
             spacing: 8,
@@ -386,7 +387,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                        horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? activeColor.withValues(alpha: 0.1)
@@ -416,7 +417,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
 
   Widget _buildReasonCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -428,7 +429,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -436,13 +437,13 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                 child: const Icon(Icons.note_alt_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(l10n.noteLabel,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark))),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _reasonController,
             maxLines: 3,
@@ -466,10 +467,10 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // Quick reason chips
           Wrap(
             spacing: 8,
@@ -499,7 +500,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.1)
@@ -555,7 +556,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: activeColor,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
         ),

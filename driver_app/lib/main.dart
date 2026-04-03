@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+
 import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
+import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
-
-// L78: This app uses a router with placeholder screens per route.
-// Responsive layout patterns (ResponsiveBuilder, breakpoints, adaptive
-// navigation) should be applied when building real UI screens.
-// See alhai_design_system responsive tokens and alhai_shared_ui ResponsiveScaffold.
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase
+  await AppSupabase.initialize();
 
   // Initialize DI
   configureDependencies();
@@ -26,27 +26,28 @@ void main() async {
   );
 }
 
-class DriverApp extends StatelessWidget {
+class DriverApp extends ConsumerWidget {
   const DriverApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(driverRouterProvider);
+
     return MaterialApp.router(
       title: 'Alhai Driver',
       debugShowCheckedModeBanner: false,
       theme: AlhaiTheme.light,
       darkTheme: AlhaiTheme.dark,
       themeMode: ThemeMode.system,
-      routerConfig: AppRouter.router,
-      // Multi-language Support (6 languages)
+      routerConfig: router,
       locale: const Locale('ar'),
       supportedLocales: const [
-        Locale('ar'), // العربية
-        Locale('en'), // English
-        Locale('ur'), // اردو
-        Locale('hi'), // हिंदी
-        Locale('id'), // Indonesia
-        Locale('bn'), // বাংলা
+        Locale('ar'),
+        Locale('en'),
+        Locale('ur'),
+        Locale('hi'),
+        Locale('id'),
+        Locale('bn'),
       ],
     );
   }

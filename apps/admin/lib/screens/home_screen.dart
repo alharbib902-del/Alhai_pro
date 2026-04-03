@@ -31,7 +31,7 @@ class AdminHomeScreen extends ConsumerWidget {
               size: 80,
               color: AppColors.primary,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
             Text(
               l10n.home,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -39,14 +39,14 @@ class AdminHomeScreen extends ConsumerWidget {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               'Al-HAI Admin Dashboard',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
             Text(
               '123 Screens - Full Management System',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

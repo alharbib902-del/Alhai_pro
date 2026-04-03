@@ -92,7 +92,7 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                               color: isDark ? AppColors.textMutedDark : AppColors.textSecondary,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             d.value,
                             style: TextStyle(
@@ -123,12 +123,12 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AlhaiSpacing.sm),
                 if (d.changeValue != null)
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                         decoration: BoxDecoration(
                           color: (d.isPositive ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -141,7 +141,7 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                               size: 14,
                               color: d.isPositive ? AppColors.success : AppColors.error,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: AlhaiSpacing.xxs),
                             Text(
                               d.changeValue!,
                               style: TextStyle(
@@ -153,7 +153,7 @@ class _InvoiceStatCardState extends State<InvoiceStatCard> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AlhaiSpacing.xs),
                       if (d.subtitle != null)
                         Flexible(
                           child: Text(

@@ -48,10 +48,11 @@ class ExpensesScreen extends ConsumerWidget {
           Expanded(
             child: ref.watch(expensesStreamProvider).when(
               loading: () => const Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(AlhaiSpacing.md),
                 child: ShimmerList(itemCount: 6, itemHeight: 72),
               ),
               error: (e, _) => AppErrorState.general(
+                context,
                 message: e.toString(),
                 onRetry: () => ref.invalidate(expensesStreamProvider),
               ),
@@ -60,7 +61,7 @@ class ExpensesScreen extends ConsumerWidget {
                 color: AppColors.primary,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(context, ref, isWideScreen, isMediumScreen, isDark, l10n, expenses),
                 ),
               ),
@@ -77,11 +78,11 @@ class ExpensesScreen extends ConsumerWidget {
       children: [
         // Stat cards
         _buildStatsSection(context, isWideScreen, isMediumScreen, isDark, l10n, expenses),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Categories row - تحميل التصنيفات من قاعدة البيانات
         _buildCategoriesRow(isDark, isMediumScreen, l10n, ref, expenses),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Expenses list
         _buildExpensesList(context, isDark, l10n, expenses),
@@ -129,7 +130,7 @@ class ExpensesScreen extends ConsumerWidget {
       ),
     ];
 
-    final spacing = isMediumScreen ? 16.0 : 12.0;
+    final spacing = isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm;
 
     if (isWideScreen) {
       return Row(
@@ -176,7 +177,7 @@ class ExpensesScreen extends ConsumerWidget {
     required bool isDark,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -207,7 +208,7 @@ class ExpensesScreen extends ConsumerWidget {
               const Spacer(),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Text(
             value,
             style: TextStyle(
@@ -216,7 +217,7 @@ class ExpensesScreen extends ConsumerWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             title,
             style: TextStyle(
@@ -266,12 +267,12 @@ class ExpensesScreen extends ConsumerWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            separatorBuilder: (_, __) => SizedBox(width: AlhaiSpacing.sm),
             itemBuilder: (context, index) {
               final cat = categories[index];
               return Container(
                 width: isMediumScreen ? 120 : 100,
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -283,7 +284,7 @@ class ExpensesScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(cat.icon, color: cat.color, size: 24),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       cat.label,
                       style: TextStyle(
@@ -339,7 +340,7 @@ class ExpensesScreen extends ConsumerWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Row(
               children: [
                 Text(
@@ -362,12 +363,12 @@ class ExpensesScreen extends ConsumerWidget {
           const Divider(height: 1),
           if (expenses.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxl),
               child: Center(
                 child: Column(
                   children: [
                     Icon(Icons.receipt_long_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
-                    const SizedBox(height: 12),
+                    SizedBox(height: AlhaiSpacing.sm),
                     Text(l10n.noExpenses, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
@@ -383,7 +384,7 @@ class ExpensesScreen extends ConsumerWidget {
                 final expense = expenses[index];
                 final category = expense.categoryId ?? 'other';
                 return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.xs),
                   leading: Container(
                     width: 44,
                     height: 44,
@@ -488,7 +489,7 @@ class ExpensesScreen extends ConsumerWidget {
                   prefixIcon: const Icon(Icons.description),
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
@@ -498,7 +499,7 @@ class ExpensesScreen extends ConsumerWidget {
                   suffixText: l10n.sar,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               DropdownButtonFormField<String>(
                 value: category,
                 decoration: InputDecoration(

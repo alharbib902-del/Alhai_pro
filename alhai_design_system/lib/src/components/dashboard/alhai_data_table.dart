@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../tokens/alhai_spacing.dart';
+
 /// Alhai Data Table - Dashboard data table (v1.1.0)
 /// Used in: admin_pos, super_admin dashboards
 class AlhaiDataTable<T> extends StatelessWidget {
@@ -37,13 +39,13 @@ class AlhaiDataTable<T> extends StatelessWidget {
         side: BorderSide(color: colorScheme.outlineVariant),
       ),
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(16),
+        padding: padding ?? const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           children: [
             // Header
             if (showHeader)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
@@ -62,13 +64,13 @@ class AlhaiDataTable<T> extends StatelessWidget {
                   }).toList(),
                 ),
               ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             // Body
             if (isLoading)
               ...List.generate(loadingRowCount, (_) => _buildSkeletonRow(context))
             else if (data.isEmpty)
               Padding(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(AlhaiSpacing.xl),
                 child: Column(
                   children: [
                     Icon(
@@ -76,7 +78,7 @@ class AlhaiDataTable<T> extends StatelessWidget {
                       size: 48,
                       color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text(
                       'لا توجد بيانات',
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -102,7 +104,7 @@ class AlhaiDataTable<T> extends StatelessWidget {
       onTap: onRowTap != null ? () => onRowTap!(item) : null,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
@@ -121,13 +123,13 @@ class AlhaiDataTable<T> extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
       child: Row(
         children: columns.map((_) {
           return Expanded(
             child: Container(
               height: 16,
-              margin: const EdgeInsetsDirectional.only(start: 16),
+              margin: const EdgeInsetsDirectional.only(start: AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(4),

@@ -10,6 +10,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../providers/settings_db_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 const String _kProductDisplay = 'pos_product_display';
 const String _kGridColumns = 'pos_grid_columns';
@@ -150,17 +151,17 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark, AppLocalizations l10n) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildPageHeader(isDark, l10n),
-      const SizedBox(height: 20),
+      const SizedBox(height: AlhaiSpacing.mdl),
       _buildDisplaySettings(isDark, l10n),
       _buildCartSettings(isDark, l10n),
       _buildPaymentSettings(isDark, l10n),
       _buildReceiptSettings(isDark, l10n),
       _buildAdvancedSettings(isDark, l10n),
-      const SizedBox(height: 16),
+      const SizedBox(height: AlhaiSpacing.md),
       SizedBox(width: double.infinity, child: FilledButton.icon(
         onPressed: _saveSettings, icon: const Icon(Icons.save_rounded),
         label: Text(l10n.saveSettings),
-        style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16),
+        style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
       )),
     ]);
@@ -170,11 +171,11 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
     return Row(children: [
       IconButton(onPressed: () => context.pop(),
         icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
-      const SizedBox(width: 8),
+      const SizedBox(width: AlhaiSpacing.xs),
       Container(padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.point_of_sale_rounded, color: AppColors.info, size: 24)),
-      const SizedBox(width: 12),
+      const SizedBox(width: AlhaiSpacing.sm),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(l10n.posSettings, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface)),
@@ -185,12 +186,12 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
   }
 
   Widget _buildSettingsGroup(String title, IconData icon, Color color, bool isDark, List<Widget> children) {
-    return Container(margin: const EdgeInsets.only(bottom: 16),
+    return Container(margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+        Padding(padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
           child: Row(children: [
             Container(padding: const EdgeInsets.all(AppSizes.sm),
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1),
@@ -230,7 +231,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         subtitle: Text(l10n.showPricesDesc), value: _showProductPrices, onChanged: (v) => setState(() => _showProductPrices = v)),
       SwitchListTile(title: Text(l10n.showStockLevel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         subtitle: Text(l10n.showStockLevelDesc), value: _showStockLevel, onChanged: (v) => setState(() => _showStockLevel = v)),
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
     ]);
   }
 
@@ -244,7 +245,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
         subtitle: Text(l10n.confirmBeforeDeleteDesc), value: _confirmBeforeDelete, onChanged: (v) => setState(() => _confirmBeforeDelete = v)),
       SwitchListTile(title: Text(l10n.showItemNotes, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         subtitle: Text(l10n.showItemNotesDesc), value: _showItemNotes, onChanged: (v) => setState(() => _showItemNotes = v)),
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
     ]);
   }
 
@@ -264,7 +265,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       if (_enableCreditPayment)
         SwitchListTile(title: Text(l10n.requireCustomerForCredit, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           subtitle: Text(l10n.requireCustomerForCreditDesc), value: _requireCustomerForCredit, onChanged: (v) => setState(() => _requireCustomerForCredit = v)),
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
     ]);
   }
 
@@ -293,7 +294,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       ListTile(leading: const Icon(Icons.design_services), title: Text(l10n.receiptDesign, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         subtitle: Text(l10n.receiptDesignDesc), trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
         onTap: () => context.push(AppRoutes.settingsReceipt)),
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
     ]);
   }
 
@@ -322,7 +323,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
       ListTile(leading: const Icon(Icons.restore, color: AppColors.error),
         title: Text(l10n.resetSettings, style: const TextStyle(color: AppColors.error)),
         subtitle: Text(l10n.resetSettingsDesc), onTap: _showResetConfirmation),
-      const SizedBox(height: 8),
+      const SizedBox(height: AlhaiSpacing.xs),
     ]);
   }
 

@@ -11,6 +11,7 @@ import '../../widgets/pos/customer_search_dialog.dart';
 import '../../widgets/pos/sale_note_dialog.dart';
 import '../../providers/held_invoices_providers.dart';
 import '../../services/manager_approval_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // M160: Locale-aware currency formatting helper for this file
 String _fmtCurrency(BuildContext context, double amount) =>
@@ -83,7 +84,7 @@ class PosCartPanel extends ConsumerWidget {
                 ? _buildEmptyCart(context, isDark, l10n)
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                        horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                     itemCount: items.length,
                     separatorBuilder: (_, __) => Divider(
                       height: 16,
@@ -96,7 +97,7 @@ class PosCartPanel extends ConsumerWidget {
                         direction: DismissDirection.endToStart,
                         background: Container(
                           alignment: AlignmentDirectional.centerEnd,
-                          padding: const EdgeInsetsDirectional.only(end: 16),
+                          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.error,
                             borderRadius: BorderRadius.circular(8),
@@ -148,7 +149,7 @@ class PosCartPanel extends ConsumerWidget {
           // Discount + Coupon links
           if (items.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               child: Row(
                 children: [
                   // زر تطبيق خصم
@@ -171,7 +172,7 @@ class PosCartPanel extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   // كوبون
                   Flexible(
                     child: TextButton.icon(
@@ -249,7 +250,7 @@ class PosCartPanel extends ConsumerWidget {
                     ),
                   ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   // ملاحظة
                   Flexible(
                     child: TextButton.icon(
@@ -297,10 +298,10 @@ class PosCartPanel extends ConsumerWidget {
           // Note indicator chip
           if (cartState.notes != null && cartState.notes!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -312,7 +313,7 @@ class PosCartPanel extends ConsumerWidget {
                   children: [
                     const Icon(Icons.note_rounded,
                         size: 16, color: AppColors.warning),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
                         cartState.notes!,
@@ -350,7 +351,7 @@ class PosCartPanel extends ConsumerWidget {
       CartState cartState, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         border: Border(
@@ -364,7 +365,7 @@ class PosCartPanel extends ConsumerWidget {
           Icon(Icons.shopping_cart_rounded,
               size: 20,
               color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Flexible(
             child: Text(
               l10n.shoppingCart,
@@ -408,7 +409,7 @@ class PosCartPanel extends ConsumerWidget {
               ),
             ),
           if (cartState.items.isNotEmpty) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Material(
               color: Colors.transparent,
               child: InkWell(
@@ -431,7 +432,7 @@ class PosCartPanel extends ConsumerWidget {
       CartState cartState, bool isDark, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       child: Row(
         children: [
           Expanded(
@@ -447,7 +448,7 @@ class PosCartPanel extends ConsumerWidget {
               },
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(10),
@@ -460,7 +461,7 @@ class PosCartPanel extends ConsumerWidget {
                     Icon(Icons.person_outline_rounded,
                         size: 18,
                         color: colorScheme.onSurfaceVariant),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
                         cartState.customerName ?? l10n.selectOrSearchCustomer,
@@ -479,7 +480,7 @@ class PosCartPanel extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           OutlinedButton(
             onPressed: () {
               final nameCtrl = TextEditingController();
@@ -500,7 +501,7 @@ class PosCartPanel extends ConsumerWidget {
                           border: const OutlineInputBorder(),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AlhaiSpacing.sm),
                       TextField(
                         controller: phoneCtrl,
                         keyboardType: TextInputType.phone,
@@ -604,7 +605,7 @@ class PosCartPanel extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
               minimumSize: const Size(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -631,7 +632,7 @@ class PosCartPanel extends ConsumerWidget {
               size: 64,
               color: colorScheme.outlineVariant,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.cartEmpty,
               style: TextStyle(
@@ -640,7 +641,7 @@ class PosCartPanel extends ConsumerWidget {
                 color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               l10n.addProductsToStart,
               style: TextStyle(
@@ -666,7 +667,7 @@ class PosCartPanel extends ConsumerWidget {
       bool hasItems) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         border: Border(
@@ -737,7 +738,7 @@ class PosCartPanel extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Action buttons: Draft + Pay
           Row(
@@ -753,7 +754,7 @@ class PosCartPanel extends ConsumerWidget {
                   onLongPress: onShowHeldInvoices,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
 
               // Pay button
               Expanded(
@@ -792,7 +793,7 @@ class PosCartPanel extends ConsumerWidget {
                               ),
                             ),
                             if (hasItems) ...[
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AlhaiSpacing.xs),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 3),
@@ -836,7 +837,7 @@ class PosCartPanel extends ConsumerWidget {
           title: Row(
             children: [
               const Icon(Icons.percent_rounded, color: AppColors.success, size: 22),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(child: Text(l10n.discount, overflow: TextOverflow.ellipsis, maxLines: 1)),
             ],
           ),
@@ -939,7 +940,7 @@ class PosTotalRow extends StatelessWidget {
             maxLines: 1,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         Text(
           value,
           style: TextStyle(
@@ -1116,7 +1117,7 @@ class PosCartItemTile extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         TextField(
                           controller: priceCtrl,
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -1149,7 +1150,7 @@ class PosCartItemTile extends ConsumerWidget {
             },
             borderRadius: BorderRadius.circular(8),
             child: Padding(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               child: Icon(
                 Icons.edit_outlined,
                 size: 18,
@@ -1175,7 +1176,7 @@ class PosCartItemTile extends ConsumerWidget {
             },
             borderRadius: BorderRadius.circular(8),
             child: Padding(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
               child: Icon(
                 Icons.delete_outline_rounded,
                 size: 18,
@@ -1292,7 +1293,7 @@ class PosDraftButton extends ConsumerWidget {
               children: [
                 if (heldCount > 0) ...[
                   const Icon(Icons.pause_circle_outline, size: 16, color: AppColors.warning),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                 ],
                 Flexible(
                   child: Text(
@@ -1319,7 +1320,7 @@ class PosDraftButton extends ConsumerWidget {
               top: -6,
               end: -4,
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                 constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
                 decoration: const BoxDecoration(
                   color: AppColors.warning,

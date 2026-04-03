@@ -8,6 +8,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_ai/alhai_ai.dart' show AiInvoiceResult, AiInvoiceItem;
 import '../../providers/purchases_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// AI Invoice Review Screen - شاشة مراجعة ومطابقة المنتجات المستخرجة بالـ AI
 class AiInvoiceReviewScreen extends ConsumerStatefulWidget {
@@ -74,16 +75,19 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
         Row(
           children: [
             IconButton(onPressed: () => context.pop(), icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             Expanded(child: Text(l10n.reviewInvoice, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
             FilledButton.tonalIcon(onPressed: _confirmAll, icon: const Icon(Icons.done_all, size: 18), label: Text(l10n.confirmAllItems)),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildInvoiceHeader(isDark),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         _buildProgressBar(isDark),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
+        if (_items.isEmpty)
+          AppEmptyState.noData(context, title: l10n.noProducts)
+        else
         ...List.generate(_items.length, (index) => _buildItemCard(_items[index], index, isDark)),
       ],
     );
@@ -92,7 +96,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
   Widget _buildInvoiceHeader(bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
@@ -107,11 +111,11 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
             child: Icon(Icons.receipt_long, color: isDark ? Colors.blue.shade200 : AppColors.info, size: 32),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +152,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     final progress = _items.isEmpty ? 0.0 : _confirmedCount / _items.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -166,13 +170,13 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
                   decoration: BoxDecoration(color: AppColors.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     const Icon(Icons.warning, size: 14, color: AppColors.warning),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(l10n.needsReviewCount(_needsReviewCount), style: const TextStyle(color: AppColors.warning, fontSize: 12)),
                   ]),
                 ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
@@ -192,8 +196,8 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     final needsReview = item.needsReview && !item.isConfirmed;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -211,13 +215,13 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
           Row(
             children: [
               _buildConfidenceBadge(item.confidence, isDark),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(item.rawName, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Row(children: [
                       Text(
                         '${item.quantity.toStringAsFixed(0)} \u00D7 ${item.unitPrice.toStringAsFixed(2)}',
@@ -231,23 +235,23 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Divider(height: 1, color: Theme.of(context).dividerColor),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
               Expanded(
                 child: item.matchedProductId != null
                     ? Row(children: [
                         const Icon(Icons.link, size: 16, color: AppColors.success),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AlhaiSpacing.xxs),
                         Text(item.matchedProductName ?? l10n.matchedProductLabel, style: const TextStyle(color: AppColors.success)),
                       ])
                     : Text(l10n.notMatchedStatus, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
               ),
               if (!item.isConfirmed) ...[
                 TextButton(onPressed: () => _showMatchDialog(item, index), child: Text(l10n.matchedStatus)),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
               ],
               item.isConfirmed
                   ? const Icon(Icons.check_circle, color: AppColors.success)
@@ -282,7 +286,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
       decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
       child: Column(children: [
         Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         Text('$confidence%', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12)),
       ]),
     );
@@ -293,7 +297,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
     final allConfirmed = _confirmedCount == _items.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
@@ -352,10 +356,10 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
         builder: (context, scrollController) => Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Column(children: [
                 Text(AppLocalizations.of(context).matchLabel(item.rawName), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 TextField(decoration: InputDecoration(hintText: AppLocalizations.of(context).search, prefixIcon: const Icon(Icons.search), border: const OutlineInputBorder())),
               ]),
             ),
@@ -380,7 +384,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: OutlinedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
@@ -409,7 +413,7 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               decoration: InputDecoration(labelText: AppLocalizations.of(context).productNameLabel, hintText: item.rawName, border: const OutlineInputBorder()),
               controller: TextEditingController(text: item.rawName),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             TextField(
               decoration: InputDecoration(labelText: AppLocalizations.of(context).purchasePriceLabel, hintText: item.unitPrice.toString(), border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,

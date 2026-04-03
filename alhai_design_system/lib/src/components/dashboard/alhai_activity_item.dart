@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../tokens/alhai_spacing.dart';
+
 /// Alhai Activity Item - Dashboard activity/notification item (v1.1.0)
 /// Used in: admin_pos, super_admin dashboards
 class AlhaiActivityItem extends StatelessWidget {
@@ -29,7 +31,7 @@ class AlhaiActivityItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,7 +50,7 @@ class AlhaiActivityItem extends StatelessWidget {
                     color: type.color,
                   ),
                 ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             // Content
             Expanded(
               child: Column(
@@ -63,7 +65,7 @@ class AlhaiActivityItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       subtitle!,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -78,7 +80,7 @@ class AlhaiActivityItem extends StatelessWidget {
             ),
             // Time
             if (time != null) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 time!,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -182,7 +184,7 @@ class AlhaiActivityList extends StatelessWidget {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -204,12 +206,12 @@ class AlhaiActivityList extends StatelessWidget {
           // Items
           if (isLoading)
             const Padding(
-              padding: EdgeInsets.all(32),
+              padding: EdgeInsets.all(AlhaiSpacing.xl),
               child: Center(child: CircularProgressIndicator()),
             )
           else if (items.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Center(
                 child: Text(
                   'لا توجد أنشطة',

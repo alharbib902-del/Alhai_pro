@@ -89,7 +89,7 @@ class RecommendationCard extends StatelessWidget {
                 ),
                 child: Icon(_getCategoryIcon(), color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +160,7 @@ class RecommendationCard extends StatelessWidget {
             children: [
               // Confidence
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: confColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -169,7 +169,7 @@ class RecommendationCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.psychology_rounded, size: 12, color: confColor),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '${(product.confidence * 100).toInt()}%',
                       style: TextStyle(
@@ -182,12 +182,12 @@ class RecommendationCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
 
               // Purchase interval
               if (product.avgPurchaseInterval > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey100,
                     borderRadius: BorderRadius.circular(8),
@@ -200,7 +200,7 @@ class RecommendationCard extends StatelessWidget {
                         size: 12,
                         color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         'كل ${product.avgPurchaseInterval} يوم', // Every X days
                         style: TextStyle(
@@ -225,7 +225,7 @@ class RecommendationCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   ),
                 ),
             ],
@@ -237,7 +237,7 @@ class RecommendationCard extends StatelessWidget {
 
   Widget _buildCompact(bool isDark, Color confColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
@@ -265,7 +265,7 @@ class RecommendationCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
             decoration: BoxDecoration(
               color: confColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),

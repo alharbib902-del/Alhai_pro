@@ -42,7 +42,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
                 AppColors.primary,
                 'Monthly Spending',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AlhaiSpacing.sm),
               _buildChartPlaceholder(
                 isDark,
                 l10n.categories,
@@ -65,7 +65,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
                   'Monthly Spending',
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: _buildChartPlaceholder(
                   isDark,
@@ -77,7 +77,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               ),
             ],
           ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         // Stats cards row
         _buildAnalyticsStatsGrid(isDark, l10n, isMobile),
       ],
@@ -92,7 +92,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
     String title,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -105,7 +105,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
           Row(
             children: [
               Icon(icon, size: 20, color: color),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
                 title,
                 style: TextStyle(
@@ -116,7 +116,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             subtitle,
             style: TextStyle(
@@ -124,7 +124,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               color: AppColors.getTextMuted(isDark),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: AlhaiSpacing.lg),
           // Placeholder chart bars
           SizedBox(
             height: 160,
@@ -145,7 +145,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
       children: List.generate(values.length, (i) {
         return Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -251,7 +251,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
             );
           }).toList(),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
       ],
     );
   }
@@ -303,7 +303,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
       return Column(
         children: stats.map((s) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
             child: _buildAnalyticStatCard(s, isDark),
           );
         }).toList(),
@@ -328,7 +328,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
       Map<String, dynamic> stat, bool isDark) {
     final color = stat['color'] as Color;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
@@ -350,7 +350,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
             child: Icon(stat['icon'] as IconData,
                 size: 18, color: color),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Text(
             stat['label'] as String,
             style: TextStyle(
@@ -358,7 +358,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               color: AppColors.getTextMuted(isDark),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             stat['value'] as String,
             style: TextStyle(
@@ -367,7 +367,7 @@ class CustomerAnalyticsTab extends StatelessWidget {
               color: AppColors.getTextPrimary(isDark),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             stat['change'] as String,
             style: TextStyle(

@@ -103,7 +103,7 @@ class FraudAlertCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -138,10 +138,10 @@ class FraudAlertCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   // Pattern icon
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       color: severityColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
@@ -152,7 +152,7 @@ class FraudAlertCard extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +165,7 @@ class FraudAlertCard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AlhaiSpacing.xxxs),
                         Text(
                           _formatTimeAgo(alert.timestamp),
                           style: TextStyle(
@@ -178,7 +178,7 @@ class FraudAlertCard extends StatelessWidget {
                   ),
                   // Severity badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: severityColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -196,7 +196,7 @@ class FraudAlertCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
 
               // Description
               Text(
@@ -208,7 +208,7 @@ class FraudAlertCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
 
               // Cashier + Amount row
               Row(
@@ -218,7 +218,7 @@ class FraudAlertCard extends StatelessWidget {
                     size: 16,
                     color: isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.textMuted,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AlhaiSpacing.xxs),
                   Text(
                     alert.cashierName,
                     style: TextStyle(
@@ -238,14 +238,14 @@ class FraudAlertCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
 
               // Confidence + Review button
               Row(
                 children: [
                   // Confidence
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.backgroundSecondary,
                       borderRadius: BorderRadius.circular(6),
@@ -266,7 +266,7 @@ class FraudAlertCard extends StatelessWidget {
                       label: Text(l10n.review),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                         textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                       ),
                     )
@@ -275,7 +275,7 @@ class FraudAlertCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
-                        SizedBox(width: 4),
+                        SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'تمت المراجعة', // Reviewed
                           style: TextStyle(

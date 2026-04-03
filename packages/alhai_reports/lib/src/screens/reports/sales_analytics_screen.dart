@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
 /// شاشة تحليلات المبيعات - بيانات حقيقية من قاعدة البيانات
@@ -63,7 +64,7 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -73,12 +74,12 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
                       style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   _buildMetricGrid(context, l10n, stats, deviceType),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -113,7 +114,7 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
     if (deviceType == DeviceType.desktop) {
       return Row(
         children: cards.map((c) => Expanded(child: Padding(
-          padding: const EdgeInsetsDirectional.only(end: 12),
+          padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
           child: c,
         ))).toList(),
       );
@@ -121,9 +122,9 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
 
     return Column(
       children: [
-        Row(children: [Expanded(child: cards[0]), const SizedBox(width: 12), Expanded(child: cards[1])]),
-        const SizedBox(height: 12),
-        Row(children: [Expanded(child: cards[2]), const SizedBox(width: 12), Expanded(child: cards[3])]),
+        Row(children: [Expanded(child: cards[0]), const SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[1])]),
+        const SizedBox(height: AlhaiSpacing.sm),
+        Row(children: [Expanded(child: cards[2]), const SizedBox(width: AlhaiSpacing.sm), Expanded(child: cards[3])]),
       ],
     );
   }
@@ -142,16 +143,16 @@ class _MetricCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
               Icon(icon, size: 20, color: color),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(child: Text(title, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))),
             ]),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
           ],
         ),

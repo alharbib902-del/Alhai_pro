@@ -71,11 +71,11 @@ class _MarketPositionChartState extends State<MarketPositionChart>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -84,7 +84,7 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                   ),
                   child: const Icon(Icons.scatter_plot_rounded, color: Colors.white, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +127,7 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(40, 0, 20, 40),
+              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xxl, AlhaiSpacing.zero, AlhaiSpacing.mdl, AlhaiSpacing.xxl),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {
@@ -163,7 +163,7 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           // Legend
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
+            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
             child: Wrap(
               spacing: 16,
               runSpacing: 6,
@@ -184,7 +184,7 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                             : null,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       point.name,
                       style: TextStyle(

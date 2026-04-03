@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 
@@ -140,7 +141,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'نقاط الولاء المتاحة: $availablePoints نقطة (تساوي ${maxSarEquivalent.toStringAsFixed(2)} ريال)',
+                AppLocalizations.of(context)!.availableLoyaltyPoints(availablePoints.toString(), maxSarEquivalent.toStringAsFixed(2)),
                 style: AppTypography.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -158,7 +159,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
           if (useLoyaltyPoints) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
-              'استخدام نقاط الولاء',
+              AppLocalizations.of(context)!.useLoyaltyPoints,
               style: AppTypography.labelLarge.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -174,7 +175,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      hintText: 'عدد النقاط (الحد الأقصى $availablePoints)',
+                      hintText: AppLocalizations.of(context)!.pointsCountHint(availablePoints.toString()),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         borderSide: const BorderSide(color: AppColors.border),
@@ -188,7 +189,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                         vertical: AppSpacing.sm,
                       ),
                       isDense: true,
-                      suffixText: 'نقطة',
+                      suffixText: AppLocalizations.of(context)!.pointsUnitLabel,
                     ),
                     onChanged: (val) {
                       final entered = int.tryParse(val) ?? 0;
@@ -217,7 +218,7 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                     border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    'خصم: ${(pointsToRedeem * loyaltySettings.pointValueSar).toStringAsFixed(2)} ريال',
+                    AppLocalizations.of(context)!.discountAmountSar((pointsToRedeem * loyaltySettings.pointValueSar).toStringAsFixed(2)),
                     style: AppTypography.labelLarge.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w700,
@@ -234,19 +235,19 @@ class PaymentLoyaltyWidget extends StatelessWidget {
               spacing: AppSpacing.sm,
               children: [
                 LoyaltyQuickChip(
-                  label: 'كل النقاط',
+                  label: AppLocalizations.of(context)!.allPointsLabel,
                   points: availablePoints,
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,
                 ),
                 LoyaltyQuickChip(
-                  label: '${(availablePoints * 0.5).floor()} نقطة',
+                  label: AppLocalizations.of(context)!.pointsCountLabel((availablePoints * 0.5).floor().toString()),
                   points: (availablePoints * 0.5).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,
                 ),
                 LoyaltyQuickChip(
-                  label: '${(availablePoints * 0.25).floor()} نقطة',
+                  label: AppLocalizations.of(context)!.pointsCountLabel((availablePoints * 0.25).floor().toString()),
                   points: (availablePoints * 0.25).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,

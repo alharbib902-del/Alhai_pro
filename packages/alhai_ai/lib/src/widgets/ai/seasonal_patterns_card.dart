@@ -22,7 +22,7 @@ class SeasonalPatternsCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -46,7 +46,7 @@ class SeasonalPatternsCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -81,7 +81,7 @@ class SeasonalPatternsCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // الرسم البياني العمودي
           if (patterns.isNotEmpty)
@@ -90,7 +90,7 @@ class SeasonalPatternsCard extends StatelessWidget {
               child: _buildBarChart(isDark),
             ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // القائمة
           ...patterns.map((p) => _buildPatternRow(p, isDark)),
@@ -130,7 +130,7 @@ class SeasonalPatternsCard extends StatelessWidget {
                                 : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 // العمود
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 400),
@@ -200,11 +200,11 @@ class SeasonalPatternsCard extends StatelessWidget {
             : AppColors.textSecondary;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Icon(icon, size: 16, color: color),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
               pattern.description,

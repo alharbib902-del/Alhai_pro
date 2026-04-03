@@ -11,6 +11,7 @@ import '../../providers/ai_sentiment_analysis_providers.dart';
 import '../../services/ai_sentiment_analysis_service.dart';
 import '../../widgets/ai/sentiment_gauge.dart';
 import '../../widgets/ai/keyword_cloud.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiSentimentAnalysisScreen extends ConsumerStatefulWidget {
   const AiSentimentAnalysisScreen({super.key});
@@ -50,7 +51,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
         : feedback.where((f) => f.sentiment == filter).toList();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         children: [
           // Top row: Gauge + Distribution
@@ -68,7 +69,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                         totalReviews: result.totalReviews,
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: AlhaiSpacing.mdl),
                     Expanded(child: _buildDistribution(result, isDark)),
                   ],
                 )
@@ -81,27 +82,27 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                       nps: result.nps,
                       totalReviews: result.totalReviews,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildDistribution(result, isDark),
                   ],
                 ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Keyword cloud
           KeywordCloud(keywords: keywords),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Trend chart
           _buildTrendChart(trend, isDark),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Feedback filter
           _buildFeedbackFilter(filter, isDark),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Feedback list
           ...filteredFeedback.map((f) => _buildFeedbackCard(f, isDark)),
@@ -122,7 +123,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
     final total = result.totalReviews;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -146,7 +147,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
               color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           ...entries.map((entry) {
             final percent = total > 0 ? entry.count / total : 0.0;
             return Padding(
@@ -175,7 +176,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   SizedBox(
                     width: 30,
                     child: Text(
@@ -200,7 +201,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
   Widget _buildTrendChart(List<SentimentTrend> trend, bool isDark) {
     return Container(
       height: 220,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -219,7 +220,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF10B981), Color(0xFF059669)],
@@ -228,7 +229,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                 ),
                 child: const Icon(Icons.trending_up_rounded, color: Colors.white, size: 18),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 AppLocalizations.of(context)!.sentimentTrendTitle,
                 style: TextStyle(
@@ -239,7 +240,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Expanded(
             child: CustomPaint(
               size: Size.infinite,
@@ -268,7 +269,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
         children: filters.map((f) {
           final isSelected = f.score == current;
           return Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8),
+            padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
             child: FilterChip(
               selected: isSelected,
               label: Text(f.label),
@@ -312,8 +313,8 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -335,14 +336,14 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
             children: [
               // Sentiment icon
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: sentimentColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(sentimentIcon, color: sentimentColor, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +383,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Feedback text
           Text(
@@ -411,7 +412,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                     final color = isPositive ? AppColors.success : isNegative ? AppColors.error : AppColors.warning;
 
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(6),
@@ -430,9 +431,9 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                 ),
               ),
               if (feedback.productName != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   decoration: BoxDecoration(
                     color: AppColors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -441,7 +442,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.inventory_2_rounded, size: 12, color: AppColors.info),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         feedback.productName!,
                         style: const TextStyle(
@@ -457,7 +458,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // Sentiment bar
           Row(
@@ -469,7 +470,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   color: isDark ? Colors.white.withValues(alpha: 0.3) : AppColors.textMuted,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(3),
@@ -481,7 +482,7 @@ class _AiSentimentAnalysisScreenState extends ConsumerState<AiSentimentAnalysisS
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 '${(feedback.sentimentValue * 100).toInt()}%',
                 style: TextStyle(

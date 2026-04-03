@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// تعريفات اختصارات الكيبورد لشاشة POS
 ///
@@ -167,7 +168,7 @@ class KeyboardShortcutHint extends StatelessWidget {
           ),
         ),
         if (label != null) ...[
-          const SizedBox(width: 4),
+          const SizedBox(width: AlhaiSpacing.xxs),
           Text(
             label!,
             style: theme.textTheme.labelSmall,

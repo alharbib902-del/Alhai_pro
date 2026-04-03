@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Monthly Close Screen - شاشة إقفال الشهر وحساب الفوائد
 class MonthlyCloseScreen extends ConsumerStatefulWidget {
@@ -143,7 +144,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
 
   Widget _buildPeriodInfo(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.info.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(16),
@@ -156,7 +157,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
             decoration: BoxDecoration(color: AppColors.info.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
             child: const Icon(Icons.calendar_month_rounded, color: AppColors.info, size: 28),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +209,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
 
   Widget _buildSummaryCard({required String title, required String value, required IconData icon, required Color color, required bool isDark}) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -218,9 +219,9 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 22)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(title, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
@@ -230,7 +231,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
   Widget _buildCustomersList(bool isDark, AppLocalizations l10n) {
     if (_customers.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(AlhaiSpacing.xxl),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -239,9 +240,9 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         child: Center(
           child: Column(children: [
             Icon(Icons.check_circle_rounded, size: 64, color: AppColors.success.withValues(alpha: 0.6)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noDebtsNeedClosing, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
-            const SizedBox(height: 4),
+            const SizedBox(height: AlhaiSpacing.xxs),
             Text(l10n.allCustomersWithinGrace, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
           ]),
         ),
@@ -256,7 +257,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       ),
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           child: Row(children: [
             Text(l10n.debtors, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
             const Spacer(),
@@ -296,7 +297,7 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     final selectedCount = _customers.where((c) => c.isSelected).length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
@@ -326,15 +327,15 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         title: Text(l10n.confirm),
         content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(l10n.interestWillBeAdded(selectedCustomers.length)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(l10n.totalInterestsLabel(totalInterest.toStringAsFixed(2)), style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(color: AppColors.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
             child: Row(children: [
               const Icon(Icons.warning_rounded, color: AppColors.warning),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(child: Text(l10n.cannotUndo, style: const TextStyle(fontSize: 13))),
             ]),
           ),

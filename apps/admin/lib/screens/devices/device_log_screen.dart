@@ -5,6 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Device audit log screen with date range filtering, event type icons,
 /// user info, and searchable event list.
@@ -104,97 +105,97 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
 
   /// Get icon and color based on action type
   ({IconData icon, Color color, String label}) _getActionMeta(
-      String action) {
+      String action, AppLocalizations l10n) {
     switch (action) {
       case 'login':
         return (
           icon: Icons.login,
           color: AppColors.success,
-          label: 'Login'
+          label: l10n.auditActionLogin
         );
       case 'logout':
         return (
           icon: Icons.logout,
           color: AppColors.warning,
-          label: 'Logout'
+          label: l10n.auditActionLogout
         );
       case 'saleCreate':
         return (
           icon: Icons.point_of_sale,
           color: AppColors.info,
-          label: 'Sale'
+          label: l10n.auditActionSale
         );
       case 'saleCancel':
         return (
           icon: Icons.cancel_outlined,
           color: AppColors.error,
-          label: 'Cancel Sale'
+          label: l10n.auditActionCancelSale
         );
       case 'saleRefund':
         return (
           icon: Icons.undo,
           color: Colors.deepOrange, // specific audit action color
-          label: 'Refund'
+          label: l10n.auditActionRefund
         );
       case 'productCreate':
         return (
           icon: Icons.add_box_outlined,
           color: Colors.teal, // specific audit action color
-          label: 'Add Product'
+          label: l10n.auditActionAddProduct
         );
       case 'productEdit':
         return (
           icon: Icons.edit,
           color: Colors.indigo, // specific audit action color
-          label: 'Edit Product'
+          label: l10n.auditActionEditProduct
         );
       case 'productDelete':
         return (
           icon: Icons.delete_outline,
           color: AppColors.error,
-          label: 'Delete Product'
+          label: l10n.auditActionDeleteProduct
         );
       case 'priceChange':
         return (
           icon: Icons.price_change,
           color: AppColors.warning,
-          label: 'Price Change'
+          label: l10n.auditActionPriceChange
         );
       case 'stockAdjust':
         return (
           icon: Icons.inventory,
           color: Colors.purple, // specific audit action color
-          label: 'Stock Adjust'
+          label: l10n.auditActionStockAdjust
         );
       case 'stockReceive':
         return (
           icon: Icons.move_to_inbox,
           color: Colors.cyan, // specific audit action color
-          label: 'Stock Receive'
+          label: l10n.auditActionStockReceive
         );
       case 'shiftOpen':
         return (
           icon: Icons.play_circle_outline,
           color: AppColors.success,
-          label: 'Open Shift'
+          label: l10n.auditActionOpenShift
         );
       case 'shiftClose':
         return (
           icon: Icons.stop_circle_outlined,
           color: Theme.of(context).hintColor,
-          label: 'Close Shift'
+          label: l10n.auditActionCloseShift
         );
       case 'settingsChange':
         return (
           icon: Icons.settings,
           color: Colors.blueGrey,
-          label: 'Settings Change'
+          label: l10n.auditActionSettingsChange
         );
       case 'cashDrawerOpen':
         return (
           icon: Icons.point_of_sale_outlined,
           color: Colors.brown,
-          label: 'Cash Drawer'
+          label: l10n.auditActionCashDrawer
         );
       default:
         return (
@@ -254,11 +255,11 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         // Search bar
         Container(
           padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
           color: Theme.of(context).colorScheme.surface,
           child: TextField(
             decoration: InputDecoration(
-              hintText: 'Search logs...',
+              hintText: l10n.searchLogsHint,
               prefixIcon: const Icon(Icons.search, size: 20),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -278,7 +279,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         ),
         // Info banner
         Container(
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(AlhaiSpacing.md),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: AppColors.info.withValues(alpha: 0.08),
@@ -318,7 +319,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(l10n.loading,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant)),
@@ -335,11 +336,11 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
             Icon(Icons.error_outline,
                 size: 48,
                 color: AppColors.error.withValues(alpha: 0.7)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text(_error!,
                 style: const TextStyle(color: AppColors.error),
                 textAlign: TextAlign.center),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: _loadLogs,
               icon: const Icon(Icons.refresh),
@@ -353,31 +354,19 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
     final filteredLogs = _filteredLogs;
 
     if (filteredLogs.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.history_outlined,
-                size: 48,
-                color: isDark
-                    ? Colors.white38
-                    : AppColors.textTertiary),
-            const SizedBox(height: 16),
-            Text(
-              l10n.noData,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-          ],
-        ),
+      return AppEmptyState.noData(
+        context,
+        title: l10n.noData,
+        description: _searchQuery.isNotEmpty
+            ? l10n.noSearchResultsForQuery
+            : l10n.noLogsToDisplay,
       );
     }
 
     return RefreshIndicator(
       onRefresh: _loadLogs,
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
         itemCount: filteredLogs.length,
         itemBuilder: (context, index) {
           final log = filteredLogs[index];
@@ -388,12 +377,13 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
   }
 
   Widget _buildLogItem(AuditLogTableData log, bool isDark) {
-    final meta = _getActionMeta(log.action);
+    final l10n = AppLocalizations.of(context);
+    final meta = _getActionMeta(log.action, l10n);
     final timeStr = _formatDateTime(log.createdAt);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -445,7 +435,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                   ],
                 ),
                 if (log.description != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     log.description!,
                     style: TextStyle(
@@ -455,7 +445,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.access_time,
@@ -463,7 +453,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                         color: isDark
                             ? Colors.white38
                             : AppColors.textTertiary),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       timeStr,
                       style: TextStyle(
@@ -473,13 +463,13 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                               : AppColors.textTertiary),
                     ),
                     if (log.deviceInfo != null) ...[
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Icon(Icons.devices,
                           size: 12,
                           color: isDark
                               ? Colors.white38
                               : AppColors.textTertiary),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(
                           log.deviceInfo!,

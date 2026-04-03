@@ -46,7 +46,7 @@ class AbcAnalysisChart extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -68,7 +68,7 @@ class AbcAnalysisChart extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.bar_chart_rounded, color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'مخطط باريتو - تحليل ABC', // Pareto Chart - ABC Analysis
                 style: TextStyle(
@@ -82,7 +82,7 @@ class AbcAnalysisChart extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Pareto chart
           SizedBox(
@@ -97,7 +97,7 @@ class AbcAnalysisChart extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Items list
           ...items.take(8).map((item) => _AbcItemRow(
@@ -117,9 +117,9 @@ class AbcAnalysisChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _LegendDot(color: _getCategoryColor(AbcCategory.a), label: 'A', isDark: isDark),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         _LegendDot(color: _getCategoryColor(AbcCategory.b), label: 'B', isDark: isDark),
-        const SizedBox(width: 8),
+        const SizedBox(width: AlhaiSpacing.xs),
         _LegendDot(color: _getCategoryColor(AbcCategory.c), label: 'C', isDark: isDark),
       ],
     );
@@ -266,7 +266,7 @@ class _AbcItemRow extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs, vertical: 6),
           child: Row(
             children: [
               // Category badge
@@ -314,7 +314,7 @@ class _AbcItemRow extends StatelessWidget {
                   textAlign: TextAlign.end,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               // Percentage bar
               SizedBox(
                 width: 60,
@@ -328,7 +328,7 @@ class _AbcItemRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               SizedBox(
                 width: 40,
                 child: Text(

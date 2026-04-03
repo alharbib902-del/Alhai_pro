@@ -65,7 +65,7 @@ class OrdersPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer,
         border: Border(
@@ -78,20 +78,20 @@ class OrdersPanel extends ConsumerWidget {
             Icons.shopping_bag_outlined,
             color: theme.colorScheme.onPrimaryContainer,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'الطلبات الأونلاين',
+                  l10n.onlineOrdersTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
                 ),
                 Text(
-                  '${state.pendingOrders.length} طلب بانتظار القبول',
+                  l10n.pendingOrdersCount(state.pendingOrders.length),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
                   ),
@@ -120,7 +120,7 @@ class OrdersPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -131,21 +131,21 @@ class OrdersPanel extends ConsumerWidget {
               isSelected: true,
               color: Theme.of(context).hintColor,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _StatusChip(
               label: l10n.newLabel,
               count: state.pendingOrders.length,
               color: AlhaiColors.warning,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _StatusChip(
-              label: 'قيد التجهيز',
+              label: l10n.inPreparationTab,
               count: state.preparingOrders.length,
               color: AlhaiColors.info,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             _StatusChip(
-              label: 'في التوصيل',
+              label: l10n.inDeliveryTab,
               count: state.deliveryOrders.length,
               color: Colors.purple,
             ),
@@ -157,7 +157,8 @@ class OrdersPanel extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -167,16 +168,16 @@ class OrdersPanel extends ConsumerWidget {
             size: 64,
             color: theme.colorScheme.outline,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
-            'لا توجد طلبات',
+            l10n.noOrdersMessage,
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.outline,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            'الطلبات الجديدة ستظهر هنا',
+            l10n.newOrdersAppearHere,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.outline,
             ),
@@ -199,12 +200,12 @@ class OrdersPanel extends ConsumerWidget {
     });
 
     return ListView.builder(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(AlhaiSpacing.xs),
       itemCount: sortedOrders.length,
       itemBuilder: (context, index) {
         final order = sortedOrders[index];
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
           child: OrderCard(
             order: order,
             onAccept: () => ref.read(onlineOrdersProvider.notifier).acceptOrder(order.id),
@@ -223,8 +224,8 @@ class OrdersPanel extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('رفض الطلب'),
-        content: const Text('هل أنت متأكد من رفض هذا الطلب؟'),
+        title: Text(l10n.rejectOrderTitle),
+        content: Text(l10n.rejectOrderConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -232,7 +233,7 @@ class OrdersPanel extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () {
-              ref.read(onlineOrdersProvider.notifier).cancelOrder(order.id, reason: 'رفض من البائع');
+              ref.read(onlineOrdersProvider.notifier).cancelOrder(order.id, reason: l10n.rejectedBySeller);
               Navigator.pop(context);
             },
             style: FilledButton.styleFrom(
@@ -251,7 +252,7 @@ class OrdersPanel extends ConsumerWidget {
     // TODO: طباعة الفاتورة
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('طباعة الطلب ${order.id}...'),
+        content: Text(l10n.printingOrderMessage(order.id)),
         action: SnackBarAction(
           label: l10n.done,
           onPressed: () {},
@@ -271,7 +272,7 @@ class OrdersPanel extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('اختر السائق'),
+        title: Text(AppLocalizations.of(context)!.selectDriverTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: drivers.map((driver) => ListTile(
@@ -286,7 +287,7 @@ class OrdersPanel extends ConsumerWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('تم تسليم الطلب للسائق ${driver['name']}'),
+                  content: Text(AppLocalizations.of(context)!.orderDeliveredToDriver(driver['name']!)),
                   backgroundColor: AppColors.success,
                 ),
               );
@@ -317,7 +318,7 @@ class _StatusChip extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
       decoration: BoxDecoration(
         color: isSelected ? color.withValues(alpha: 0.2) : theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),

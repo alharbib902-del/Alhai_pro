@@ -101,7 +101,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
           borderRadius: BorderRadius.circular(12),
           child: Container(
             width: 350,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -118,7 +118,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(AlhaiSpacing.xs),
                       decoration: BoxDecoration(
                         color: AppColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
@@ -129,13 +129,13 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         size: 24,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'طلب جديد #${widget.order.id}',
+                            AppLocalizations.of(context)!.newOrderNotification(widget.order.id),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -158,35 +158,35 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 const Divider(),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
 
                 // Customer Info
                 Row(
                   children: [
                     const Icon(Icons.person_outline, size: 16),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(widget.order.customerName),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     const Icon(Icons.phone_outlined, size: 16),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Text(widget.order.customerPhone),
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
 
                 // Payment & Total
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: widget.order.isPaid
                             ? AppColors.success.withValues(alpha: 0.2)
@@ -197,7 +197,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(widget.order.paymentStatus.icon),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             widget.order.paymentStatus.arabicName,
                             style: TextStyle(
@@ -210,7 +210,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       ),
                     ),
                     Text(
-                      '${widget.order.total.toStringAsFixed(2)} ر.س',
+                      AppLocalizations.of(context)!.priceSar(widget.order.total.toStringAsFixed(2)),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
@@ -219,15 +219,15 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                   ],
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
 
                 // Items count
                 Text(
-                  '📦 ${widget.order.itemCount} منتج',
+                  '📦 ${AppLocalizations.of(context)!.productCountItems(widget.order.itemCount)}',
                   style: theme.textTheme.bodyMedium,
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
 
                 // Action Buttons
                 Row(
@@ -244,7 +244,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         child: Text(l10n.reject),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
@@ -254,7 +254,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         child: Text(l10n.details),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       flex: 2,
                       child: FilledButton.icon(
@@ -303,7 +303,7 @@ class OrdersBadge extends ConsumerWidget {
             color: hasNew ? AppColors.warning : null,
           ),
           onPressed: onTap,
-          tooltip: 'الطلبات الأونلاين',
+          tooltip: AppLocalizations.of(context)!.onlineOrdersTooltip,
         ),
         if (count > 0)
           PositionedDirectional(

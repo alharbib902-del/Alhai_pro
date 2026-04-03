@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../tokens/alhai_spacing.dart';
+
 /// Alhai Quick Action - Dashboard quick action button (v1.1.0)
 /// Used in: admin_pos, super_admin dashboards
 class AlhaiQuickAction extends StatelessWidget {
@@ -28,7 +30,7 @@ class AlhaiQuickAction extends StatelessWidget {
       onTap: isLoading ? null : onPressed,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         decoration: BoxDecoration(
           color: actionColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
@@ -46,7 +48,7 @@ class AlhaiQuickAction extends StatelessWidget {
               ),
               child: isLoading
                   ? const Padding(
-                      padding: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(AlhaiSpacing.sm),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
@@ -54,7 +56,7 @@ class AlhaiQuickAction extends StatelessWidget {
                     )
                   : Icon(icon, color: Colors.white, size: 24),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               label,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -82,7 +84,7 @@ class AlhaiQuickActionsGrid extends StatelessWidget {
     super.key,
     required this.actions,
     this.crossAxisCount = 4,
-    this.spacing = 12,
+    this.spacing = AlhaiSpacing.sm,
   });
 
   @override

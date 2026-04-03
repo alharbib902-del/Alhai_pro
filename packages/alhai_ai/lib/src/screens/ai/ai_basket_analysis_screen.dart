@@ -11,6 +11,7 @@ import '../../widgets/ai/association_matrix.dart';
 import '../../widgets/ai/bundle_suggestion_card.dart';
 import '../../providers/ai_basket_analysis_providers.dart';
 import '../../services/ai_basket_analysis_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiBasketAnalysisScreen extends ConsumerStatefulWidget {
   const AiBasketAnalysisScreen({super.key});
@@ -56,7 +57,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
     final insightsAsync = ref.watch(basketInsightsProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -67,7 +68,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
             error: (e, _) => Text('$e'),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // Tabs
           Container(
@@ -93,7 +94,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Tab content
           SizedBox(
@@ -156,7 +157,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
               ? (constraints.maxWidth) / 4 - 16
               : double.infinity,
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -181,7 +182,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                   ),
                   child: Icon(card.icon, color: card.color, size: 22),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +194,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                           fontSize: 11,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AlhaiSpacing.xxxs),
                       Text(
                         card.value,
                         style: TextStyle(
@@ -275,7 +276,7 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
 
         return ListView.separated(
           itemCount: bundles.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
           itemBuilder: (context, index) {
             return BundleSuggestionCard(
               bundle: bundles[index],
@@ -304,11 +305,11 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
         final opportunities = insights.crossSellOpportunities;
         return ListView.separated(
           itemCount: opportunities.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
           itemBuilder: (context, index) {
             final opp = opportunities[index];
             return Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -323,14 +324,14 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.info.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.shopping_bag_outlined, color: AppColors.info, size: 24),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.triggerProduct,
                           style: TextStyle(
@@ -353,9 +354,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                           color: AppColors.primary,
                           size: 24,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -377,14 +378,14 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.add_shopping_cart_rounded, color: AppColors.success, size: 24),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.suggestedProduct,
                           style: TextStyle(

@@ -19,7 +19,7 @@ class _DarkModeToggle extends StatelessWidget {
         onTap: onToggle,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: isDarkMode
                 ? AppColors.surfaceVariantDark
@@ -164,8 +164,8 @@ class _SearchFieldState extends State<_SearchField> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxs,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.border,
@@ -180,12 +180,12 @@ class _SearchFieldState extends State<_SearchField> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AlhaiSpacing.sm),
                     ],
                   ),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
+              horizontal: AlhaiSpacing.md,
               vertical: 14,
             ),
           ),
@@ -298,7 +298,7 @@ class _NotificationButtonState extends State<_NotificationButton> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 5,
-                        vertical: 2,
+                        vertical: AlhaiSpacing.xxxs,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.error,
@@ -362,8 +362,8 @@ class _UserInfoState extends State<_UserInfo> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
+              horizontal: AlhaiSpacing.sm,
+              vertical: AlhaiSpacing.xs,
             ),
             decoration: BoxDecoration(
               color: _isHovered
@@ -423,7 +423,7 @@ class _UserInfoState extends State<_UserInfo> {
                   );
                 }),
 
-                const SizedBox(width: 8),
+                SizedBox(width: AlhaiSpacing.xs),
 
                 // السهم
                 Builder(builder: (context) {

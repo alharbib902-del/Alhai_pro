@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_pos/alhai_pos.dart' show showDenominationCounterSheet;
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Shift Close Screen - Admin version
 /// Displays shift summary and allows closing with actual cash count
@@ -118,7 +119,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 ? Colors.white.withValues(alpha: 0.3)
                 : AppColors.textMuted,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             l10n.noOpenShift,
             style: TextStyle(
@@ -127,7 +128,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton.icon(
             onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_rounded),
@@ -177,7 +178,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
             child: Column(
               children: [
                 _buildShiftInfoCard(shift, isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildSalesSummaryCard(
                   openingCash,
                   totalSalesAmount,
@@ -191,13 +192,13 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildActualCashCard(actualCash, difference, isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildCloseButton(shift, expectedCash, isDark, l10n),
               ],
             ),
@@ -223,7 +224,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         ),
         SizedBox(height: isMediumScreen ? 24 : 16),
         _buildActualCashCard(actualCash, difference, isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildCloseButton(shift, expectedCash, isDark, l10n),
       ],
     );
@@ -232,7 +233,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   Widget _buildShiftInfoCard(
       ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -245,7 +246,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -253,7 +254,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 child: const Icon(Icons.info_outline_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.shiftInfoLabel,
                 style: TextStyle(
@@ -264,7 +265,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _InfoRow(
             label: l10n.cashierLabel,
             value: shift.cashierName,
@@ -305,7 +306,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     AppLocalizations l10n,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -318,7 +319,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -326,7 +327,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 child: const Icon(Icons.receipt_long_rounded,
                     color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.salesSummaryLabel,
                 style: TextStyle(
@@ -337,7 +338,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _SummaryRow(
               label: l10n.openingBalance,
               value: openingCash,
@@ -376,7 +377,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               height: 24,
               color: Theme.of(context).dividerColor),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -422,7 +423,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   Widget _buildActualCashCard(
       double actualCash, double difference, bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -435,7 +436,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -443,7 +444,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 child: const Icon(Icons.calculate_rounded,
                     color: AppColors.warning, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.actualCashInDrawer,
                 style: TextStyle(
@@ -454,7 +455,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _actualCashController,
             keyboardType: TextInputType.number,
@@ -479,7 +480,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(Icons.money_rounded,
                     size: 28,
                     color: isDark
@@ -505,7 +506,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           // زر عد العملات بالفئات
           SizedBox(
             width: double.infinity,
@@ -522,18 +523,18 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 }
               },
               icon: const Icon(Icons.calculate_rounded, size: 18),
-              label: const Text('عد العملات بالفئات 🪙'),
+              label: Text(l10n.countDenominationsBtn),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primary,
                 side: BorderSide(color: AppColors.primary.withValues(alpha: 0.5)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
               ),
             ),
           ),
           if (_actualCashController.text.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: difference == 0
                     ? AppColors.success
@@ -570,7 +571,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                                 : AppColors.error),
                         size: 20,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         difference == 0
                             ? l10n.drawerMatched
@@ -631,7 +632,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.error,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -657,7 +658,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                 expectedCash.toStringAsFixed(0), l10n.sar)),
             Text(l10n.actualAmountCurrency(
                 actualCash.toStringAsFixed(0), l10n.sar)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               difference == 0
                   ? l10n.drawerMatchedMessage
@@ -673,7 +674,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
                     : (difference > 0 ? AppColors.warning : AppColors.error),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(l10n.confirmCloseShift),
           ],
         ),
@@ -747,7 +748,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Icon(icon,

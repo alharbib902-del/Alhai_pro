@@ -14,7 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -103,7 +103,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                  padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                   child: _buildContent(
                       isWideScreen, isMediumScreen, isDark, l10n),
                 ),
@@ -126,7 +126,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
             flex: 2,
             child: _buildStoreCard(isDark, l10n),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 3,
             child: _buildDetailsCard(isDark, l10n),
@@ -139,7 +139,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildStoreCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildDetailsCard(isDark, l10n),
       ],
     );
@@ -147,7 +147,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
 
   Widget _buildStoreCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -191,7 +191,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
                     color: Colors.white,
                   ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             _storeName.isNotEmpty ? _storeName : l10n.storeName,
             style: TextStyle(
@@ -211,9 +211,9 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
               ),
             ),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(20),
@@ -234,7 +234,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
 
   Widget _buildDetailsCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -246,7 +246,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -257,7 +257,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Store Details',
                 style: TextStyle(
@@ -268,7 +268,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           _InfoRow(
             icon: Icons.store_rounded,
             label: l10n.storeName,
@@ -355,7 +355,7 @@ class _InfoRow extends StatelessWidget {
             size: 20,
             color: AppColors.getTextMuted(isDark),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             flex: 2,
             child: Text(

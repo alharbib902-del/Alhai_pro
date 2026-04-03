@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -228,21 +228,21 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
         Expanded(
           child: _isLoading
               ? const Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(AlhaiSpacing.md),
                   child: ShimmerList(itemCount: 6, itemHeight: 72),
                 )
               : _error != null
                   ? AppErrorState.general(
-                      message: _error!, onRetry: _loadOrders)
+                      context, message: _error!, onRetry: _loadOrders)
                   : Column(
                   children: [
                     // Filters & Search Bar
                     Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: Column(
                         children: [
                           _buildSearchBar(isDark, l10n),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           _buildDateFilters(isDark, l10n),
                         ],
                       ),
@@ -253,7 +253,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                           horizontal: isMediumScreen ? 24 : 16),
                       child: _buildSummaryStats(isDark, l10n),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     // Orders list
                     Expanded(
                       child: _filteredOrders.isEmpty
@@ -266,10 +266,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: EdgeInsets.symmetric(
                                   horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: 8),
+                                  vertical: AlhaiSpacing.xs),
                               itemCount: _filteredOrders.length + (_isLoadingMore || _hasMore ? 1 : 0),
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AlhaiSpacing.xs),
                               itemBuilder: (context, index) {
                                 if (index < _filteredOrders.length) {
                                   return _buildOrderCard(
@@ -278,19 +278,19 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                                 // مؤشر تحميل المزيد
                                 if (_isLoadingMore) {
                                   return const Padding(
-                                    padding: EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(AlhaiSpacing.md),
                                     child: Center(child: CircularProgressIndicator()),
                                   );
                                 }
                                 // زر تحميل المزيد
                                 if (_hasMore) {
                                   return Padding(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                                     child: Center(
                                       child: OutlinedButton.icon(
                                         onPressed: _loadMore,
                                         icon: const Icon(Icons.expand_more),
-                                        label: const Text('تحميل المزيد'),
+                                        label: Text(AppLocalizations.of(context).loadMoreBtn),
                                       ),
                                     ),
                                   );
@@ -346,7 +346,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -360,22 +360,22 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             setState(() => _dateFilter = 'today');
             _loadOrders();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.thisWeek, _dateFilter == 'week', () {
             setState(() => _dateFilter = 'week');
             _loadOrders();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.thisMonthPeriod, _dateFilter == 'month', () {
             setState(() => _dateFilter = 'month');
             _loadOrders();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.allPeriods, _dateFilter == 'all', () {
             setState(() => _dateFilter = 'all');
             _loadOrders();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(
             l10n.dateFromTo,
             _dateFilter == 'custom',
@@ -409,7 +409,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
@@ -490,7 +490,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       children: [
         // الصف الأول: إجمالي المبيعات والمبلغ
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(12),
@@ -505,7 +505,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                         style: TextStyle(
                             fontSize: 12,
                             color: AppColors.getTextSecondary(isDark))),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text('$count',
                         style: TextStyle(
                             fontSize: 20,
@@ -526,7 +526,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                         style: TextStyle(
                             fontSize: 12,
                             color: AppColors.getTextSecondary(isDark))),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text('${totalAmount.toStringAsFixed(2)} ${l10n.sar}',
                         style: const TextStyle(
                             fontSize: 20,
@@ -538,10 +538,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         // الصف الثاني: تفصيل طرق الدفع (نقد - بطاقة - آجل)
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(12),
@@ -614,7 +614,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: color),
-            const SizedBox(width: 4),
+            const SizedBox(width: AlhaiSpacing.xxs),
             Text(label,
                 style: TextStyle(
                     fontSize: 11,
@@ -622,7 +622,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                     color: AppColors.getTextSecondary(isDark))),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         Text(
           '${amount.toStringAsFixed(2)} ${l10n.sar}',
           style: TextStyle(
@@ -644,7 +644,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
         '${utc.day}/${utc.month}/${utc.year}';
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -679,11 +679,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                         color: AppColors.getTextPrimary(isDark),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     // شارة طريقة الدفع
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 6, vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: _getPaymentMethodColor(order.paymentMethod)
                             .withValues(alpha: 0.1),
@@ -701,13 +701,13 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.person_outline_rounded,
                         size: 13,
                         color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Flexible(
                       child: Text(
                         order.customerName ?? order.customerId ?? l10n.cashCustomer,
@@ -718,11 +718,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Icon(Icons.access_time_rounded,
                         size: 13,
                         color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text('$date $time',
                         style: TextStyle(
                           fontSize: 12,
@@ -744,13 +744,13 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               // تفاصيل الدفع
               _buildPaymentDetails(order, isDark, l10n),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                 decoration: BoxDecoration(
                   color: _getStatusColor(order.status)
                       .withValues(alpha: 0.1),
@@ -977,7 +977,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           Icon(Icons.receipt_long_outlined,
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noTransactions,
               style: TextStyle(
                   fontSize: 16,

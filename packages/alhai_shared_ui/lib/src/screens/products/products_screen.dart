@@ -535,7 +535,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSizes.xs,
-                    vertical: 2,
+                    vertical: AlhaiSpacing.xxxs,
                   ),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
@@ -580,6 +580,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     if (filteredProducts.isEmpty) {
       if (_searchController.text.isNotEmpty) {
         return AppEmptyState.noSearchResults(
+          context,
           query: _searchController.text,
           onClear: () {
             _searchController.clear();
@@ -588,6 +589,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         );
       }
       return AppEmptyState.noProducts(
+        context,
         onAdd: () => context.push(AppRoutes.productsAdd),
       );
     }
@@ -803,7 +805,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         final l10n = AppLocalizations.of(ctx)!;
         return AlertDialog(
           title: Text('${l10n.edit}: ${product.name}'),
-          content: const Text('هذه الميزة غير متاحة حالياً'),
+          content: Text(l10n.featureNotAvailableNow),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),

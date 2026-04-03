@@ -32,7 +32,7 @@ class ProfitImpactCalculator extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -56,7 +56,7 @@ class ProfitImpactCalculator extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -91,25 +91,25 @@ class ProfitImpactCalculator extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // Slider للسعر
           _buildPriceSlider(isDark),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // النتائج
           if (isLoading)
             const Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(AlhaiSpacing.md),
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             )
           else if (impact != null)
             _buildImpactResults(isDark),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // زر التطبيق
           SizedBox(
@@ -161,7 +161,7 @@ class ProfitImpactCalculator extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
@@ -177,7 +177,7 @@ class ProfitImpactCalculator extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AlhaiSpacing.xxs),
         SliderTheme(
           data: SliderThemeData(
             activeTrackColor: AppColors.primary,
@@ -206,7 +206,7 @@ class ProfitImpactCalculator extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
               decoration: BoxDecoration(
                 color: isUp
                     ? AppColors.primary.withValues(alpha: 0.1)
@@ -251,7 +251,7 @@ class ProfitImpactCalculator extends StatelessWidget {
                 isDark: isDark,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _buildMetric(
                 label: 'الربح السنوي', // Yearly profit
@@ -261,7 +261,7 @@ class ProfitImpactCalculator extends StatelessWidget {
                 isDark: isDark,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _buildMetric(
                 label: 'حجم المبيعات', // Sales volume
@@ -307,7 +307,7 @@ class ProfitImpactCalculator extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(

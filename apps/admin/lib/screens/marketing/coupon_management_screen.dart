@@ -5,6 +5,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Coupon Management Screen - شاشة إدارة الكوبونات
 class CouponManagementScreen extends ConsumerWidget {
@@ -33,6 +34,7 @@ class CouponManagementScreen extends ConsumerWidget {
           child: couponsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => AppErrorState.general(
+              context,
               message: error.toString(),
               onRetry: () => ref.invalidate(couponsListProvider),
             ),
@@ -86,7 +88,7 @@ class _CouponsContent extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         Row(
           children: [
             Expanded(child: _buildStatCard(Icons.confirmation_number, l10n.couponsTitle, '${coupons.length}', AppColors.info, isDark, context)),
@@ -96,23 +98,23 @@ class _CouponsContent extends ConsumerWidget {
             Expanded(child: _buildStatCard(Icons.analytics, l10n.usages, '${coupons.fold(0, (sum, c) => sum + c.currentUses)}', AppColors.secondary, isDark, context)),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AlhaiSpacing.mdl),
         if (coupons.isEmpty)
-          AppEmptyState.noOffers()
+          AppEmptyState.noOffers(context)
         else
         ...coupons.map((coupon) {
           final isExpired = coupon.expiresAt?.isBefore(DateTime.now()) ?? false;
           return Container(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: !coupon.isActive || isExpired ? Theme.of(context).colorScheme.surfaceContainerLowest : cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
               leading: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: _getTypeColor(coupon.type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -122,7 +124,7 @@ class _CouponsContent extends ConsumerWidget {
               title: Row(
                 children: [
                   Text(coupon.code, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace', color: textColor)),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   if (!coupon.isActive || isExpired)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -150,7 +152,7 @@ class _CouponsContent extends ConsumerWidget {
 
   Widget _buildStatCard(IconData icon, String label, String value, Color color, bool isDark, BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -159,7 +161,7 @@ class _CouponsContent extends ConsumerWidget {
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
           Text(label, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
@@ -237,7 +239,7 @@ class _CouponsContent extends ConsumerWidget {
                   decoration: InputDecoration(labelText: l10n.couponCode, prefixIcon: const Icon(Icons.confirmation_number)),
                   textCapitalization: TextCapitalization.characters,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
                   initialValue: type,
                   decoration: InputDecoration(labelText: l10n.couponTypeLabel, prefixIcon: const Icon(Icons.category)),
@@ -249,7 +251,7 @@ class _CouponsContent extends ConsumerWidget {
                   onChanged: (v) => setDialogState(() => type = v!),
                 ),
                 if (type != 'freeDelivery') ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   TextField(
                     controller: valueController,
                     keyboardType: TextInputType.number,
@@ -290,18 +292,18 @@ class _CouponsContent extends ConsumerWidget {
       context: context,
       backgroundColor: isDarkTheme ? const Color(0xFF1E293B) : Colors.white,
       builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(c.code, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace', color: isDarkTheme ? Colors.white : AppColors.textPrimary)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(label: l10n.couponTypeLabel, value: _getTypeLabel(c, l10n), isDark: isDarkTheme),
             _DetailRow(label: l10n.minimumOrder, value: '${c.minPurchase.toInt()} ${l10n.currency}', isDark: isDarkTheme),
             _DetailRow(label: l10n.usages, value: '${c.currentUses}/${c.maxUses}', isDark: isDarkTheme),
             _DetailRow(label: l10n.expiryDate, value: c.expiresAt != null ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}' : '-', isDark: isDarkTheme),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Row(
               children: [
                 Expanded(
@@ -311,7 +313,7 @@ class _CouponsContent extends ConsumerWidget {
                     label: Text(l10n.delete, style: const TextStyle(color: AppColors.error)),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: FilledButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.copy),
@@ -336,7 +338,7 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

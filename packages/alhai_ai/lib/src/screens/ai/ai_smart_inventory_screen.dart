@@ -13,6 +13,7 @@ import '../../widgets/ai/abc_analysis_chart.dart';
 import '../../widgets/ai/waste_prediction_card.dart';
 import '../../providers/ai_smart_inventory_providers.dart';
 import '../../services/ai_smart_inventory_service.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 class AiSmartInventoryScreen extends ConsumerStatefulWidget {
   const AiSmartInventoryScreen({super.key});
@@ -57,7 +58,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     final summaryAsync = ref.watch(smartInventorySummaryProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,7 +69,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
             error: (e, _) => Text('$e'),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // Tabs
           Container(
@@ -96,7 +97,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // Tab content
           SizedBox(
@@ -159,7 +160,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                   ? constraints.maxWidth / 4 - 16
                   : double.infinity,
               child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -184,7 +185,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                   ),
                   child: Icon(card.icon, color: card.color, size: 22),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +258,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
 
         return ListView.separated(
           itemCount: results.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
           itemBuilder: (context, index) {
             return EoqCalculatorCard(
               result: results[index],
@@ -298,7 +299,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               AbcAnalysisChart(items: items),
             ],
           ),
@@ -327,7 +328,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
     }
 
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 8),
+      padding: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
       child: FilterChip(
         selected: isSelected,
         label: Text(label),
@@ -385,7 +386,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
 
         return ListView.separated(
           itemCount: sorted.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.md),
           itemBuilder: (context, index) {
             return WastePredictionCard(
               prediction: sorted[index],
@@ -413,7 +414,7 @@ class _AiSmartInventoryScreenState extends ConsumerState<AiSmartInventoryScreen>
       data: (suggestions) {
         return ListView.separated(
           itemCount: suggestions.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
           itemBuilder: (context, index) {
             final sug = suggestions[index];
             return _ReorderCard(suggestion: sug, isDark: isDark);
@@ -485,7 +486,7 @@ class _ReorderCard extends StatelessWidget {
     final urgencyColor = _getUrgencyColor();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -517,7 +518,7 @@ class _ReorderCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,7 +543,7 @@ class _ReorderCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: urgencyColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -559,7 +560,7 @@ class _ReorderCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Stock details
           Row(
@@ -569,20 +570,20 @@ class _ReorderCard extends StatelessWidget {
                 value: '${suggestion.currentStock}',
                 isDark: isDark,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _StockDetail(
                 label: l10n.reorderPointLabel,
                 value: '${suggestion.reorderPoint}',
                 isDark: isDark,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _StockDetail(
                 label: l10n.suggestedQtyLabel,
                 value: '${suggestion.suggestedQty}',
                 isDark: isDark,
                 highlight: true,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AlhaiSpacing.md),
               _StockDetail(
                 label: l10n.daysOfStockLabel,
                 value: '${suggestion.daysOfStock}',
@@ -592,7 +593,7 @@ class _ReorderCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Cost + order button
           Row(
@@ -625,7 +626,7 @@ class _ReorderCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
                 ),
               ),
             ],

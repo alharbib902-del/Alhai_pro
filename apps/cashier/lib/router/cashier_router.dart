@@ -19,6 +19,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_pos/alhai_pos.dart';
 import 'package:alhai_reports/alhai_reports.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../ui/cashier_shell.dart';
 import '../screens/purchases/cashier_receiving_screen.dart';
@@ -190,19 +191,20 @@ final cashierRouterProvider = Provider<GoRouter>((ref) {
 });
 
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
+  final l10n = AppLocalizations.of(context)!;
   return Scaffold(
-    appBar: AppBar(title: const Text('خطأ')),
+    appBar: AppBar(title: Text(l10n.pageNotFoundTitle)),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
-          Text('الصفحة غير موجودة: ${state.uri.path}'),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.md),
+          Text(l10n.pageNotFoundMessage(state.uri.path)),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => GoRouter.of(context).go(AppRoutes.pos),
-            child: const Text('نقطة البيع'),
+            child: Text(l10n.pointOfSale),
           ),
         ],
       ),

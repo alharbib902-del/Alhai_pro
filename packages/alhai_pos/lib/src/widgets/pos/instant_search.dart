@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../providers/cart_providers.dart';
 
@@ -100,7 +101,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
           onChanged: _onSearchChanged,
           maxLength: 100,
           decoration: InputDecoration(
-            hintText: widget.hintText ?? 'بحث سريع (اسم / كود / باركود)...',
+            hintText: widget.hintText ?? AppLocalizations.of(context)!.quickSearchHintFull,
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _controller.text.isNotEmpty 
               ? IconButton(
@@ -124,7 +125,7 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
         if (_showResults && query.isNotEmpty)
           Container(
             constraints: const BoxConstraints(maxHeight: 300),
-            margin: const EdgeInsets.only(top: 4),
+            margin: const EdgeInsets.only(top: AlhaiSpacing.xxs),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -138,14 +139,14 @@ class _InstantSearchFieldState extends ConsumerState<InstantSearchField> {
             ),
             child: results.isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.search_off, color: Theme.of(context).colorScheme.outline),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AlhaiSpacing.xs),
                         Text(
-                          'لا توجد نتائج لـ "$query"',
+                          AppLocalizations.of(context)!.noResultsForQuery(query),
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ],
@@ -208,7 +209,7 @@ class _SearchResultItem extends StatelessWidget {
         children: [
           if (product.barcode != null) ...[
             Icon(Icons.qr_code, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
-            const SizedBox(width: 4),
+            const SizedBox(width: AlhaiSpacing.xxs),
             _HighlightedText(
               text: product.barcode!,
               highlight: query,
@@ -217,10 +218,10 @@ class _SearchResultItem extends StatelessWidget {
                 backgroundColor: Colors.yellow.shade200,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
           ],
           Text(
-            '${product.price.toStringAsFixed(2)} ر.س',
+            AppLocalizations.of(context)!.priceSar(product.price.toStringAsFixed(2)),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,

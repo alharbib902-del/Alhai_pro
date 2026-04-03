@@ -12,6 +12,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/utils/currency_formatter.dart';
+import '../../widgets/common/app_empty_state.dart';
 import '../../providers/expenses_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
@@ -96,13 +97,13 @@ class _ExpenseCategoriesScreenState
                 Expanded(
                   child: ref.watch(allExpenseCategoriesProvider).when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text(l10n.errorPrefix(e))),
+                    error: (e, _) => Center(child: Text(l10n.errorPrefix('$e', e ?? ''))),
                     data: (categoriesData) {
                       final categories = categoriesData.map(_fromData).toList();
                       final totalBudget = categories.fold(0.0, (sum, c) => sum + c.budget);
                       final totalSpent = categories.fold(0.0, (sum, c) => sum + c.spent);
                       return SingleChildScrollView(
-                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: _buildContent(categories, isWideScreen, isMediumScreen, isDark, l10n, totalBudget, totalSpent),
                       );
                     },
@@ -124,22 +125,11 @@ class _ExpenseCategoriesScreenState
       children: [
         // Budget summary card
         _buildBudgetSummary(totalBudget, totalSpent, isDark),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
 
         // Categories grid/list
         if (categories.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                children: [
-                  Icon(Icons.category_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
-                  const SizedBox(height: 8),
-                  Text(l10n.noCategoriesFound, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                ],
-              ),
-            ),
-          )
+          AppEmptyState.noData(context, title: l10n.noCategoriesFound)
         else if (isWideScreen)
           _buildCategoriesGrid(categories, isDark, l10n)
         else
@@ -154,7 +144,7 @@ class _ExpenseCategoriesScreenState
     final remaining = totalBudget - totalSpent;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
@@ -180,7 +170,7 @@ class _ExpenseCategoriesScreenState
                     l10n.monthlyBudget,
                     style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     CurrencyFormatter.formatCompact(totalBudget),
                     style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
@@ -188,7 +178,7 @@ class _ExpenseCategoriesScreenState
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -200,7 +190,7 @@ class _ExpenseCategoriesScreenState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -210,7 +200,7 @@ class _ExpenseCategoriesScreenState
               valueColor: AlwaysStoppedAnimation(percentage > 90 ? AppColors.error : Colors.white),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -228,7 +218,7 @@ class _ExpenseCategoriesScreenState
     return Row(
       children: [
         Icon(icon, color: Colors.white70, size: 20),
-        const SizedBox(width: 8),
+        SizedBox(width: AlhaiSpacing.xs),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -254,7 +244,7 @@ class _ExpenseCategoriesScreenState
   Widget _buildCategoriesList(List<ExpenseCategory> categories, bool isDark, AppLocalizations l10n) {
     return Column(
       children: categories.map((cat) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
         child: _buildCategoryCard(cat, isDark, l10n),
       )).toList(),
     );
@@ -265,7 +255,7 @@ class _ExpenseCategoriesScreenState
     final isOverBudget = percentage > 100;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -290,7 +280,7 @@ class _ExpenseCategoriesScreenState
                   ),
                   child: Icon(category.icon, color: category.color, size: 24),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +299,7 @@ class _ExpenseCategoriesScreenState
                           ),
                           if (isOverBudget)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                               decoration: BoxDecoration(
                                 color: AppColors.error.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
@@ -318,14 +308,14 @@ class _ExpenseCategoriesScreenState
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(Icons.warning, size: 12, color: AppColors.error),
-                                  const SizedBox(width: 2),
+                                  SizedBox(width: AlhaiSpacing.xxxs),
                                   Text(l10n.overBudget, style: const TextStyle(color: AppColors.error, fontSize: 10)),
                                 ],
                               ),
                             ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: AlhaiSpacing.xxs),
                       Text(
                         l10n.expenseCount(category.expensesCount),
                         style: TextStyle(
@@ -347,7 +337,7 @@ class _ExpenseCategoriesScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
                 Expanded(
@@ -361,7 +351,7 @@ class _ExpenseCategoriesScreenState
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   '${percentage.toStringAsFixed(0)}%',
                   style: TextStyle(
@@ -372,7 +362,7 @@ class _ExpenseCategoriesScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AlhaiSpacing.xs),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -415,19 +405,19 @@ class _ExpenseCategoriesScreenState
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.grey300, borderRadius: BorderRadius.circular(2))),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(color: category.color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                     child: Icon(category.icon, color: category.color, size: 28),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,20 +433,20 @@ class _ExpenseCategoriesScreenState
             ),
             const Divider(height: 32),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
               child: Row(
                 children: [
                   Expanded(child: _buildDetailStat(l10n.budgetLabel, CurrencyFormatter.formatCompact(category.budget), AppColors.info, isDark)),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _buildDetailStat(l10n.spentAmount, CurrencyFormatter.formatCompact(category.spent), AppColors.warning, isDark)),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AlhaiSpacing.xs),
                   Expanded(child: _buildDetailStat(l10n.remainingAmount, CurrencyFormatter.formatCompact(category.budget - category.spent), AppColors.success, isDark)),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: AlhaiSpacing.mdl),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
               child: Row(
                 children: [
                   Text(l10n.recentExpenses, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
@@ -467,7 +457,7 @@ class _ExpenseCategoriesScreenState
             ),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
                 itemCount: 5,
                 itemBuilder: (context, index) {
                   return ListTile(
@@ -496,7 +486,7 @@ class _ExpenseCategoriesScreenState
 
   Widget _buildDetailStat(String label, String value, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -504,7 +494,7 @@ class _ExpenseCategoriesScreenState
       child: Column(
         children: [
           Text(value, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11)),
         ],
       ),
@@ -639,16 +629,16 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(controller: _nameController, decoration: InputDecoration(labelText: l10n.categoryName, hintText: l10n.categoryNameHint)),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             TextField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(labelText: l10n.monthlyBudgetLabel, hintText: '5000', suffixText: l10n.sar),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             Text(l10n.categoryIcon, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            const SizedBox(height: 8),
+            SizedBox(height: AlhaiSpacing.xs),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -658,7 +648,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                   onTap: () => setState(() => _selectedIcon = icon),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       color: isSelected ? _selectedColor.withValues(alpha: 0.2) : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
@@ -669,9 +659,9 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                 );
               }).toList(),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             Text(l10n.categoryColor, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            const SizedBox(height: 8),
+            SizedBox(height: AlhaiSpacing.xs),
             Wrap(
               spacing: 8,
               runSpacing: 8,

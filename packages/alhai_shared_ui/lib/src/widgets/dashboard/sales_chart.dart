@@ -210,10 +210,10 @@ class _SalesChartCardState extends State<SalesChartCard> {
     final isMobile = context.isMobile;
 
     return Container(
-      padding: EdgeInsets.all(isMobile ? 16 : 24),
+      padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+        borderRadius: BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
         border: Border.all(
           color: isDark
               ? Colors.white.withAlpha(13)
@@ -242,7 +242,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
                     ),
                   ),
                   if (widget.subtitle != null) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       widget.subtitle!,
                       style: TextStyle(
@@ -258,7 +258,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
 
               // أزرار الفترة - pill style
               Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
@@ -277,7 +277,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
                             ? Duration.zero
                             : AlhaiDurations.standard,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
+                          horizontal: AlhaiSpacing.sm,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
@@ -311,7 +311,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
             ],
           ),
 
-          SizedBox(height: isMobile ? 16 : 24),
+          SizedBox(height: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
 
           // الرسم البياني الشريطي
           SimpleBarChart(
@@ -346,7 +346,7 @@ class TopProductsList extends StatelessWidget {
     final displayProducts = products.take(maxItems).toList();
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
@@ -369,7 +369,7 @@ class TopProductsList extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
 
           // القائمة بدون ترتيب
           ...displayProducts.asMap().entries.map((entry) {
@@ -428,7 +428,7 @@ class _TopProductRow extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         border: isLast
             ? null
@@ -469,7 +469,7 @@ class _TopProductRow extends StatelessWidget {
                   ),
           ),
 
-          const SizedBox(width: 12),
+          SizedBox(width: AlhaiSpacing.sm),
 
           // الاسم والكمية
           Expanded(
@@ -486,7 +486,7 @@ class _TopProductRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   product.quantityLabel ??
                       '${product.quantity} ${l10n.ordersText}',

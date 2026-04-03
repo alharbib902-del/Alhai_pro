@@ -13,7 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -134,15 +134,15 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
               ? const AppLoadingState()
               : _error != null
                   ? AppErrorState.general(
-                      message: _error!, onRetry: _loadPayments)
+                      context, message: _error!, onRetry: _loadPayments)
                   : Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                      padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                       child: Column(
                         children: [
                           _buildSearchBar(isDark, l10n),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AlhaiSpacing.sm),
                           _buildMethodFilters(isDark, l10n),
                         ],
                       ),
@@ -152,17 +152,17 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                           horizontal: isMediumScreen ? 24 : 16),
                       child: _buildSummaryStats(isDark, l10n),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Expanded(
                       child: _filteredOrders.isEmpty
                           ? _buildEmptyState(isDark, l10n)
                           : ListView.separated(
                               padding: EdgeInsets.symmetric(
                                   horizontal: isMediumScreen ? 24 : 16,
-                                  vertical: 8),
+                                  vertical: AlhaiSpacing.xs),
                               itemCount: _filteredOrders.length,
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AlhaiSpacing.xs),
                               itemBuilder: (context, index) =>
                                   _buildPaymentCard(
                                       _filteredOrders[index], isDark, l10n),
@@ -211,7 +211,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
       ),
     );
   }
@@ -225,17 +225,17 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
             setState(() => _methodFilter = 'all');
             _applyFilters();
           }, isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.cash, _methodFilter == 'cash', () {
             setState(() => _methodFilter = 'cash');
             _applyFilters();
           }, isDark, icon: Icons.money_rounded),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.card, _methodFilter == 'card', () {
             setState(() => _methodFilter = 'card');
             _applyFilters();
           }, isDark, icon: Icons.credit_card_rounded),
-          const SizedBox(width: 8),
+          const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(l10n.credit, _methodFilter == 'credit', () {
             setState(() => _methodFilter = 'credit');
             _applyFilters();
@@ -252,7 +252,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
@@ -297,7 +297,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
     final count = _filteredOrders.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -312,7 +312,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('$count',
                     style: TextStyle(
                         fontSize: 20,
@@ -333,7 +333,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark))),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text('${totalAmount.toStringAsFixed(0)} ${l10n.sar}',
                     style: const TextStyle(
                         fontSize: 20,
@@ -359,7 +359,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
         '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}';
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -386,7 +386,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
+                          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
@@ -400,7 +400,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AlhaiSpacing.xs),
                     Flexible(
                       child: Text(
                         '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
@@ -414,13 +414,13 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
                     Icon(Icons.person_outline_rounded,
                         size: 13,
                         color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Flexible(
                       child: Text(
                         order.customerId ?? l10n.cashCustomer,
@@ -431,11 +431,11 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Icon(Icons.access_time_rounded,
                         size: 13,
                         color: AppColors.getTextMuted(isDark)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AlhaiSpacing.xxs),
                     Text('$date $time',
                         style: TextStyle(
                           fontSize: 12,
@@ -467,7 +467,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           Icon(Icons.payments_outlined,
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.noTransactions,
               style: TextStyle(
                   fontSize: 16,

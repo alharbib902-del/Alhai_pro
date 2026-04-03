@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Driver Management Screen - شاشة إدارة السائقين
 class DriverManagementScreen extends ConsumerStatefulWidget {
@@ -93,7 +94,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
               tooltip: l10n.trackingMap,
               onPressed: _showTrackingMap,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AlhaiSpacing.xs),
             FilledButton.icon(onPressed: _addDriver, icon: const Icon(Icons.person_add, size: 18), label: Text(l10n.addDriver)),
           ],
         ),
@@ -101,7 +102,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? AppErrorState.general(message: _error, onRetry: _loadData)
+                  ? AppErrorState.general(context, message: _error, onRetry: _loadData)
                   : SingleChildScrollView(
                       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                       child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
@@ -121,21 +122,21 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
       children: [
         Row(children: [
           Expanded(child: _buildStatCard(icon: Icons.people, label: l10n.total, value: '${_drivers.length}', color: AppColors.info, isDark: isDark)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: _buildStatCard(icon: Icons.check_circle, label: l10n.available, value: '$activeCount', color: AppColors.success, isDark: isDark)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: _buildStatCard(icon: Icons.delivery_dining, label: l10n.delivering, value: '$deliveringCount', color: AppColors.warning, isDark: isDark)),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           Expanded(child: _buildStatCard(icon: Icons.local_shipping, label: l10n.totalDeliveries, value: '$todayTotal', color: const Color(0xFF8B5CF6), isDark: isDark)),
         ]),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         if (_drivers.isEmpty)
-          AppEmptyState.noData(title: l10n.noDriversRegistered, description: l10n.addDriversForDelivery)
+          AppEmptyState.noData(context, title: l10n.noDriversRegistered, description: l10n.addDriversForDelivery)
         else
           ...List.generate(_drivers.length, (index) {
             final driver = _drivers[index];
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
@@ -145,7 +146,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                 onTap: () => _showDriverDetails(driver),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Row(
                     children: [
                       Stack(children: [
@@ -168,7 +169,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                           ),
                         ),
                       ]),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AlhaiSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,9 +178,9 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                             Text(driver.vehicle.isNotEmpty ? driver.vehicle : '\u2014', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             Row(children: [
                               const Icon(Icons.star, size: 14, color: AppColors.warning),
-                              const SizedBox(width: 2),
+                              const SizedBox(width: AlhaiSpacing.xxxs),
                               Text(driver.rating.toStringAsFixed(1), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AlhaiSpacing.xs),
                               Text(l10n.deliveriesToday(driver.todayDeliveries), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ]),
                           ],
@@ -187,12 +188,12 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
                       ),
                       Column(children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                           decoration: BoxDecoration(color: _getStatusColor(driver.status).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                           child: Text(_getStatusName(driver.status, l10n), style: TextStyle(fontSize: 11, color: _getStatusColor(driver.status), fontWeight: FontWeight.w500)),
                         ),
                         if (driver.status == 'active' || driver.status == 'available') ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           IconButton(icon: const Icon(Icons.add_box_outlined, color: AppColors.info), onPressed: () => _assignOrder(driver), tooltip: l10n.assignOrder),
                         ],
                       ]),
@@ -208,7 +209,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
   Widget _buildStatCard({required IconData icon, required String label, required String value, required Color color, required bool isDark}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? color.withValues(alpha: 0.1) : color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
@@ -216,7 +217,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
       ),
       child: Column(children: [
         Icon(icon, color: color, size: 24),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
         Text(label, style: TextStyle(fontSize: 12, color: color.withValues(alpha: 0.8))),
       ]),
@@ -238,7 +239,7 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
             child: Center(
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Icon(Icons.map, size: 64, color: isDark ? Colors.white24 : AppColors.textTertiary),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Text(l10n.driversTrackingMap, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                 Text(l10n.gpsSubscriptionRequired, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
               ]),
@@ -264,11 +265,11 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
         content: SingleChildScrollView(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             TextField(controller: nameController, decoration: InputDecoration(labelText: '${l10n.driverName} *', prefixIcon: const Icon(Icons.person))),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: '${l10n.phone} *', prefixIcon: const Icon(Icons.phone))),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(controller: vehicleController, decoration: InputDecoration(labelText: l10n.vehicleLabel, prefixIcon: const Icon(Icons.directions_car), hintText: l10n.vehicleHint)),
-            const SizedBox(height: 12),
+            const SizedBox(height: AlhaiSpacing.sm),
             TextField(controller: plateController, decoration: InputDecoration(labelText: l10n.plateNumberLabel, prefixIcon: const Icon(Icons.confirmation_number))),
           ]),
         ),
@@ -320,44 +321,44 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
           color: Theme.of(context).colorScheme.surface,
           child: ListView(
             controller: scrollController,
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AlhaiSpacing.lg),
             children: [
-              Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24), decoration: BoxDecoration(color: isDark ? Colors.white24 : AppColors.textTertiary, borderRadius: BorderRadius.circular(2)))),
+              Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg), decoration: BoxDecoration(color: isDark ? Colors.white24 : AppColors.textTertiary, borderRadius: BorderRadius.circular(2)))),
               Row(children: [
                 CircleAvatar(radius: 32, backgroundColor: AppColors.info.withValues(alpha: 0.1), child: Text(driver.name.isNotEmpty ? driver.name[0] : '?', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.info))),
-                const SizedBox(width: 16),
+                const SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       Expanded(child: Text(driver.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface))),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                         decoration: BoxDecoration(color: _getStatusColor(driver.status).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                         child: Text(_getStatusName(driver.status, l10n), style: TextStyle(color: _getStatusColor(driver.status), fontWeight: FontWeight.w500)),
                       ),
                     ]),
                     Row(children: [
                       const Icon(Icons.star, size: 16, color: AppColors.warning),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(driver.rating.toStringAsFixed(1), style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ]),
                   ]),
                 ),
               ]),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _DetailTile(icon: Icons.phone, label: l10n.phone, value: driver.phone, isDark: isDark),
               _DetailTile(icon: Icons.directions_car, label: l10n.vehicleLabel, value: driver.vehicle.isNotEmpty ? driver.vehicle : '\u2014', isDark: isDark),
               _DetailTile(icon: Icons.confirmation_number, label: l10n.plateNumberLabel, value: driver.plateNumber.isNotEmpty ? driver.plateNumber : '\u2014', isDark: isDark),
               Divider(height: 32, color: Theme.of(context).dividerColor),
               Row(children: [
                 Expanded(child: _buildDetailCard(icon: Icons.today, label: l10n.totalDeliveries, value: '${driver.todayDeliveries}', color: AppColors.info, isDark: isDark)),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(child: _buildDetailCard(icon: Icons.all_inclusive, label: l10n.total, value: '${driver.totalDeliveries}', color: AppColors.success, isDark: isDark)),
               ]),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               Row(children: [
                 Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.edit), label: Text(l10n.edit))),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
@@ -378,11 +379,11 @@ class _DriverManagementScreenState extends ConsumerState<DriverManagementScreen>
 
   Widget _buildDetailCard({required IconData icon, required String label, required String value, required Color color, required bool isDark}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
       child: Column(children: [
         Icon(icon, color: color),
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
         Text(label, style: TextStyle(fontSize: 12, color: color)),
       ]),
@@ -467,10 +468,10 @@ class _DetailTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(children: [
         Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         const Spacer(),
         Text(value, style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),

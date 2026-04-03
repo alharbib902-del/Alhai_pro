@@ -7,7 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 class _Denomination {
@@ -118,7 +118,7 @@ class _DenominationCounterWidgetState
         // الإجمالي في الأعلى
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
@@ -129,7 +129,7 @@ class _DenominationCounterWidgetState
             children: [
               Text(l10n.totalAmountLabel,
                   style: const TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 l10n.amountRiyal(_total.toStringAsFixed(2)),
                 style: const TextStyle(
@@ -141,7 +141,7 @@ class _DenominationCounterWidgetState
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
 
         // قسم الأوراق
         _buildSectionHeader(l10n.banknotes, Icons.money, isDark),
@@ -149,14 +149,14 @@ class _DenominationCounterWidgetState
             .where((d) => d.isNote)
             .map((d) => _buildRow(d, isDark, l10n)),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: AlhaiSpacing.xs),
         // قسم العملات المعدنية
         _buildSectionHeader(l10n.coins, Icons.toll, isDark),
         ..._denominations
             .where((d) => !d.isNote)
             .map((d) => _buildRow(d, isDark, l10n)),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         // زر الإعادة
         TextButton.icon(
           onPressed: _reset,
@@ -194,7 +194,7 @@ class _DenominationCounterWidgetState
     final subtotal = d.value * count;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           SizedBox(
@@ -230,7 +230,7 @@ class _DenominationCounterWidgetState
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
             child: Text('\u00d7',
                 style: TextStyle(color: AppColors.textSecondary)),
           ),
@@ -282,7 +282,7 @@ Future<double?> showDenominationCounterSheet(
               children: [
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 8),
+                    margin: const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -292,12 +292,12 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                   child: Row(
                     children: [
                       const Icon(Icons.calculate_rounded,
                           color: Color(0xFF1A8FE3)),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AlhaiSpacing.xs),
                       Text(l10n.countCurrency,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
@@ -313,7 +313,7 @@ Future<double?> showDenominationCounterSheet(
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollCtrl,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AlhaiSpacing.md),
                     child: DenominationCounterWidget(
                       initialTotal: initialTotal,
                       onTotalChanged: (t) {
@@ -324,9 +324,9 @@ Future<double?> showDenominationCounterSheet(
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom,
+                    left: AlhaiSpacing.md,
+                    right: AlhaiSpacing.md,
+                    bottom: AlhaiSpacing.md + MediaQuery.of(ctx).viewInsets.bottom,
                     top: 8,
                   ),
                   child: Row(
@@ -337,7 +337,7 @@ Future<double?> showDenominationCounterSheet(
                           child: Text(l10n.cancel),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         flex: 2,
                         child: FilledButton.icon(

@@ -25,7 +25,7 @@ class QueryResultView extends StatelessWidget {
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -53,7 +53,7 @@ class QueryResultView extends StatelessWidget {
                 color: AppColors.primary,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
                   result.title,
@@ -65,7 +65,7 @@ class QueryResultView extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -83,7 +83,7 @@ class QueryResultView extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
 
           // الاستعلام الأصلي
           Text(
@@ -95,7 +95,7 @@ class QueryResultView extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // المحتوى حسب النوع
           _buildContent(isDark, textColor, subtextColor),
@@ -126,7 +126,7 @@ class QueryResultView extends StatelessWidget {
   Widget _buildNumberView(bool isDark, Color textColor, Color subtextColor) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.mdl),
         child: Column(
           children: [
             Text(
@@ -271,7 +271,7 @@ class QueryResultView extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AlhaiSpacing.md),
         Wrap(
           spacing: 16,
           runSpacing: 8,

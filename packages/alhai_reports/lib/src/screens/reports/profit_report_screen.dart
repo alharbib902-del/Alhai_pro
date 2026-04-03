@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../utils/csv_export_helper.dart';
 
@@ -217,9 +217,9 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Text(_error!),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               ElevatedButton(
                 onPressed: () { setState(() { _isLoading = true; _error = null; }); _loadData(); },
                 child: Text(l10n.retry),
@@ -243,7 +243,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
               const PopupMenuItem(value: 'year', child: Text('سنوي')),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(
                 children: [
                   Text(_getPeriodName(l10n)),
@@ -271,11 +271,11 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                     ? AlhaiColors.success.withValues(alpha: 0.1)
                     : AlhaiColors.error.withValues(alpha: 0.1),
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AlhaiSpacing.lg),
                   child: Column(
                     children: [
                       Text(l10n.netProfit),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Text(
                         '${_netProfit.toStringAsFixed(0)} ${l10n.sar}',
                         style: TextStyle(
@@ -284,9 +284,9 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                           color: _netProfit >= 0 ? AlhaiColors.successDark : AlhaiColors.errorDark,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
                         decoration: BoxDecoration(
                           color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
@@ -303,12 +303,12 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Income statement
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -336,7 +336,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                         isHeader: true,
                         color: AlhaiColors.info,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
 
                       _StatementRow(
                         label: l10n.expenses,
@@ -363,17 +363,17 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Breakdown chart
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(l10n.revenue, style: theme.textTheme.titleMedium),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AlhaiSpacing.md),
                       if (_totalRevenue > 0) ...[
                         SizedBox(
                           height: 24,
@@ -401,7 +401,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AlhaiSpacing.md),
                         Wrap(
                           spacing: 16,
                           runSpacing: 8,
@@ -422,12 +422,12 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
 
               // Top products by profit
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -435,7 +435,7 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                       const Divider(),
                       if (_topProducts.isEmpty)
                         Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(AlhaiSpacing.md),
                           child: Center(child: Text(l10n.noData)),
                         )
                       else
@@ -527,7 +527,7 @@ class _LegendItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(width: 12, height: 12, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text('$label (${percent.toStringAsFixed(0)}%)', style: const TextStyle(fontSize: 12)),
       ],
     );

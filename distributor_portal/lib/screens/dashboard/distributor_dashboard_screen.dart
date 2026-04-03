@@ -19,7 +19,7 @@ class DistributorDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AlhaiSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,7 +32,7 @@ class DistributorDashboardScreen extends StatelessWidget {
                 color: isDark ? Colors.white : AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             Text(
               'نظرة عامة على أداء التوزيع',
               style: TextStyle(
@@ -40,14 +40,14 @@ class DistributorDashboardScreen extends StatelessWidget {
                 color: isDark ? Colors.white54 : AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AlhaiSpacing.lg),
 
             // Summary cards
             GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossCount,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
+                mainAxisSpacing: AlhaiSpacing.md,
+                crossAxisSpacing: AlhaiSpacing.md,
                 childAspectRatio: 1.8,
               ),
               shrinkWrap: true,
@@ -72,11 +72,11 @@ class DistributorDashboardScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
 
             // Chart section
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -101,7 +101,7 @@ class DistributorDashboardScreen extends StatelessWidget {
                       color: isDark ? Colors.white : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AlhaiSpacing.lg),
                   SizedBox(
                     height: 250,
                     child: BarChart(
@@ -128,7 +128,7 @@ class DistributorDashboardScreen extends StatelessWidget {
                                 if (value.toInt() >= 0 &&
                                     value.toInt() < months.length) {
                                   return Padding(
-                                    padding: const EdgeInsets.only(top: 8),
+                                    padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                                     child: Text(
                                       months[value.toInt()],
                                       style: TextStyle(
@@ -189,11 +189,11 @@ class DistributorDashboardScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AlhaiSpacing.xl),
 
             // Recent orders section
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AlhaiSpacing.mdl),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -218,7 +218,7 @@ class DistributorDashboardScreen extends StatelessWidget {
                       color: isDark ? Colors.white : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AlhaiSpacing.md),
                   ..._mockRecentOrders.map((order) => _RecentOrderTile(
                         order: order,
                         isDark: isDark,
@@ -284,7 +284,7 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -315,8 +315,8 @@ class _SummaryCard extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
                 ),
                 decoration: BoxDecoration(
                   color: trend.startsWith('+')
@@ -346,7 +346,7 @@ class _SummaryCard extends StatelessWidget {
               color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             title,
             style: TextStyle(
@@ -399,7 +399,7 @@ class _RecentOrderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       child: Row(
         children: [
           Expanded(

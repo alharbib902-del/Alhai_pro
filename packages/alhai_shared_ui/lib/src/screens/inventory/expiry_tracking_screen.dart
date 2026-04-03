@@ -66,12 +66,12 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 64, color: colorScheme.error),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               Text(l10n.errorLoadingExpiryData,
                   style: TextStyle(color: colorScheme.error, fontSize: 16)),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text('$error', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
-              const SizedBox(height: 16),
+              SizedBox(height: AlhaiSpacing.md),
               TextButton.icon(
                 onPressed: () => ref.invalidate(expiryTrackingProvider),
                 icon: const Icon(Icons.refresh),
@@ -145,7 +145,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
             builder: (context, constraints) {
               final isMobile = constraints.maxWidth < 600;
               final isDesktop = constraints.maxWidth >= 1200;
-              final padding = isMobile ? 12.0 : isDesktop ? 24.0 : 16.0;
+              final padding = isMobile ? 12.0 : isDesktop ? AlhaiSpacing.lg : AlhaiSpacing.md;
               return TabBarView(
                 controller: _tabController,
                 children: [
@@ -192,7 +192,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -201,7 +201,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -219,7 +219,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     color: statusColor,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,13 +231,13 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: AlhaiSpacing.xxs),
                       Row(
                         children: [
                           if (item.expiry.batchNumber != null) ...[
                             Icon(Icons.inventory,
                                 size: 14, color: colorScheme.onSurfaceVariant),
-                            const SizedBox(width: 4),
+                            SizedBox(width: AlhaiSpacing.xxs),
                             Text(
                               '${l10n.batch}: ${item.expiry.batchNumber}',
                               style: TextStyle(
@@ -245,11 +245,11 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                                 color: colorScheme.onSurfaceVariant,
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: AlhaiSpacing.md),
                           ],
                           Icon(Icons.inventory_2,
                               size: 14, color: colorScheme.onSurfaceVariant),
-                          const SizedBox(width: 4),
+                          SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             '${l10n.quantity}: ${item.expiry.quantity}',
                             style: TextStyle(
@@ -264,7 +264,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -282,12 +282,12 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AlhaiSpacing.sm),
             Row(
               children: [
                 Icon(Icons.calendar_today,
                     size: 14, color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 4),
+                SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   '${l10n.expiryDate}: ${dateFormatter.format(item.expiry.expiryDate)}',
                   style: TextStyle(
@@ -304,10 +304,10 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.primary,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: AlhaiSpacing.xxs),
                 TextButton.icon(
                   onPressed: () => _confirmRemove(item, l10n),
                   icon: const Icon(Icons.delete_outline, size: 16),
@@ -315,7 +315,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.error,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
                   ),
                 ),
               ],
@@ -333,7 +333,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.check_circle_outline, size: 64, color: AlhaiColors.success.withValues(alpha: 0.7)),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
             style: TextStyle(
@@ -342,7 +342,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Text(
             l10n.pressToAddExpiryTracking,
             style: TextStyle(
@@ -358,7 +358,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
   void _showDiscountDialog(ExpiryItemData item, AppLocalizations l10n) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${l10n.applyDiscountTo} "${item.productName}" - هذه الميزة غير متاحة حالياً'),
+        content: Text('${l10n.applyDiscountTo} "${item.productName}" - ${l10n.featureNotAvailableNow}'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
@@ -446,9 +446,9 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                       _searchProduct(value, setDialogState),
                 ),
                 if (_selectedProductName != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: AlhaiSpacing.xs),
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
                     decoration: BoxDecoration(
                       color: AlhaiColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -457,7 +457,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     child: Row(
                       children: [
                         Icon(Icons.check_circle, size: 16, color: AlhaiColors.success),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AlhaiSpacing.xs),
                         Expanded(
                           child: Text(
                             _selectedProductName!,
@@ -471,7 +471,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     ),
                   ),
                 ],
-                const SizedBox(height: 16),
+                SizedBox(height: AlhaiSpacing.md),
                 // Expiry date
                 InkWell(
                   onTap: () async {
@@ -506,7 +506,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AlhaiSpacing.md),
                 TextField(
                   controller: _batchController,
                   decoration: InputDecoration(
@@ -515,7 +515,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     border: const OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AlhaiSpacing.md),
                 TextField(
                   controller: _quantityController,
                   keyboardType: TextInputType.number,
@@ -525,7 +525,7 @@ class _ExpiryTrackingScreenState extends ConsumerState<ExpiryTrackingScreen>
                     border: const OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AlhaiSpacing.md),
                 TextField(
                   controller: _notesController,
                   maxLines: 2,

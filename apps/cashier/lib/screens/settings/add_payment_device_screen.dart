@@ -14,7 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -81,8 +81,8 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         setState(() => _testPassed = true);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم الاتصال بنجاح'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).connectionSuccessMsg),
             backgroundColor: AppColors.success,
           ),
         );
@@ -92,7 +92,7 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل الاتصال: $e'),
+            content: Text(AppLocalizations.of(context).connectionFailedMsg('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -128,8 +128,8 @@ class _AddPaymentDeviceScreenState
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ الجهاز'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).deviceSavedMsg),
             backgroundColor: AppColors.success,
           ),
         );
@@ -140,7 +140,7 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في حفظ الإعدادات: $e'),
+            content: Text(AppLocalizations.of(context).settingsSaveErrorMsg('$e')),
             backgroundColor: AppColors.error,
           ),
         );
@@ -179,7 +179,7 @@ class _AddPaymentDeviceScreenState
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             // M121: constrain form width on desktop
             child: Center(
               child: ConstrainedBox(
@@ -211,17 +211,17 @@ class _AddPaymentDeviceScreenState
             child: Column(
               children: [
                 _buildBasicInfoCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildConnectionCard(isDark, l10n),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             child: Column(
               children: [
                 _buildNetworkCard(isDark, l10n),
-                const SizedBox(height: 24),
+                const SizedBox(height: AlhaiSpacing.lg),
                 _buildActionsCard(isDark, l10n),
               ],
             ),
@@ -234,12 +234,12 @@ class _AddPaymentDeviceScreenState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildBasicInfoCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildConnectionCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         if (_connectionMethod == 'Network') ...[
           _buildNetworkCard(isDark, l10n),
-          SizedBox(height: isMediumScreen ? 24 : 16),
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         ],
         _buildActionsCard(isDark, l10n),
       ],
@@ -248,7 +248,7 @@ class _AddPaymentDeviceScreenState
 
   Widget _buildBasicInfoCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -263,7 +263,7 @@ class _AddPaymentDeviceScreenState
             AppColors.primary,
             isDark,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'Device Name',
             style: TextStyle(
@@ -272,7 +272,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextFormField(
             controller: _nameController,
             style: TextStyle(
@@ -283,7 +283,7 @@ class _AddPaymentDeviceScreenState
                 v == null || v.isEmpty ? 'Field required' : null,
             decoration: _inputDecoration('e.g. Main Terminal', isDark),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'Device Type',
             style: TextStyle(
@@ -292,7 +292,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -302,7 +302,7 @@ class _AddPaymentDeviceScreenState
                 onTap: () => setState(() => _selectedType = type),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 10),
+                      horizontal: AlhaiSpacing.md, vertical: 10),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
@@ -335,7 +335,7 @@ class _AddPaymentDeviceScreenState
 
   Widget _buildConnectionCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -350,7 +350,7 @@ class _AddPaymentDeviceScreenState
             AppColors.info,
             isDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           ...List.generate(_connectionMethods.length, (index) {
             final method = _connectionMethods[index];
             final isSelected = _connectionMethod == method;
@@ -362,7 +362,7 @@ class _AddPaymentDeviceScreenState
                     setState(() => _connectionMethod = method),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
+                      horizontal: AlhaiSpacing.md, vertical: 14),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.info.withValues(alpha: 0.08)
@@ -384,7 +384,7 @@ class _AddPaymentDeviceScreenState
                             : AppColors.getTextMuted(isDark),
                         size: 22,
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AlhaiSpacing.sm),
                       Text(
                         method,
                         style: TextStyle(
@@ -420,7 +420,7 @@ class _AddPaymentDeviceScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -435,7 +435,7 @@ class _AddPaymentDeviceScreenState
             AppColors.warning,
             isDark,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'IP Address',
             style: TextStyle(
@@ -444,7 +444,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextFormField(
             controller: _ipController,
             keyboardType: TextInputType.number,
@@ -458,7 +458,7 @@ class _AddPaymentDeviceScreenState
                     : null,
             decoration: _inputDecoration('192.168.1.100', isDark),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           Text(
             'Port',
             style: TextStyle(
@@ -467,7 +467,7 @@ class _AddPaymentDeviceScreenState
               color: AppColors.getTextSecondary(isDark),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           TextFormField(
             controller: _portController,
             keyboardType: TextInputType.number,
@@ -488,8 +488,8 @@ class _AddPaymentDeviceScreenState
       children: [
         if (_testPassed)
           Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(12),
@@ -500,7 +500,7 @@ class _AddPaymentDeviceScreenState
               children: [
                 const Icon(Icons.check_circle_rounded,
                     color: AppColors.success, size: 20),
-                const SizedBox(width: 12),
+                const SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   'Connection test passed',
                   style: TextStyle(
@@ -538,7 +538,7 @@ class _AddPaymentDeviceScreenState
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: FilledButton.icon(
                 onPressed: _isSaving ? null : _saveDevice,
@@ -586,14 +586,14 @@ class _AddPaymentDeviceScreenState
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AlhaiSpacing.sm),
         Text(
           title,
           style: TextStyle(

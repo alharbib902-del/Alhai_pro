@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Privacy policy and data rights screen
@@ -46,7 +46,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+            padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 800),
@@ -68,7 +68,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.storage_rounded,
@@ -83,7 +83,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         _PolicyBullet('بيانات الجهاز: نوع الجهاز، نظام التشغيل (لأغراض الدعم الفني فقط).'),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.analytics_rounded,
@@ -102,7 +102,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.shield_rounded,
@@ -116,7 +116,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         _PolicyBullet('العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال، بياناتك لا تُرسل لخوادم خارجية.'),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.gavel_rounded,
@@ -145,7 +145,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.delete_outline_rounded,
@@ -164,7 +164,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AlhaiSpacing.md),
                     _buildSection(
                       isDark: isDark,
                       icon: Icons.contact_mail_rounded,
@@ -179,7 +179,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         _PolicyBullet('الدعم الفني داخل التطبيق'),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AlhaiSpacing.xl),
                   ],
                 ),
               ),
@@ -198,7 +198,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
     required List<Widget> children,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -210,14 +210,14 @@ class PrivacyPolicyScreen extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: color, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   title,
@@ -230,7 +230,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           ...children,
         ],
       ),
@@ -249,7 +249,7 @@ class _PolicyText extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: Text(
         text,
         style: TextStyle(
@@ -273,12 +273,12 @@ class _PolicyBullet extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6, right: 8, left: 8),
+      padding: const EdgeInsets.only(bottom: 6, right: AlhaiSpacing.xs, left: AlhaiSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
             child: Container(
               width: 6,
               height: 6,
@@ -316,7 +316,7 @@ class _PolicyRight extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -335,7 +335,7 @@ class _PolicyRight extends StatelessWidget {
                     color: AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   description,
                   style: TextStyle(

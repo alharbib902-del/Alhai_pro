@@ -8,7 +8,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 // ============================================================================
@@ -250,7 +250,7 @@ class PaymentSummaryRow extends StatelessWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, size: 14, color: valueColor ?? AppColors.textSecondary),
-              const SizedBox(width: 4),
+              const SizedBox(width: AlhaiSpacing.xxs),
             ],
             Text(
               label,

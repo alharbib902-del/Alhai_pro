@@ -73,7 +73,7 @@ class WastePredictionCard extends StatelessWidget {
     final actionColor = _getActionColor();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -126,7 +126,7 @@ class WastePredictionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +139,7 @@ class WastePredictionCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       'المخزون: ${prediction.currentStock} وحدة', // Stock: X units
                       style: TextStyle(
@@ -199,7 +199,7 @@ class WastePredictionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Estimated loss
           Container(
@@ -212,7 +212,7 @@ class WastePredictionCard extends StatelessWidget {
             child: Row(
               children: [
                 const Icon(Icons.money_off_rounded, color: AppColors.error, size: 18),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'الخسارة المتوقعة: ', // Estimated Loss:
                   style: TextStyle(
@@ -232,7 +232,7 @@ class WastePredictionCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
 
           // Suggested action button
           if (prediction.suggestedAction != WasteSuggestedAction.none)

@@ -110,7 +110,7 @@ class _DistributorPricingScreenState
           actions: [
             if (_changedCount > 0)
               Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
+                margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _DistributorPricingScreenState
                   ),
                 ),
               ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
           ],
         ),
         body: Column(
@@ -152,7 +152,7 @@ class _DistributorPricingScreenState
 
   Widget _buildSummaryHeader(bool isDark, bool isMedium) {
     return Container(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -168,7 +168,7 @@ class _DistributorPricingScreenState
             AppColors.primary,
             isDark,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AlhaiSpacing.sm),
           _summaryCard(
             Icons.edit_rounded,
             '$_changedCount',
@@ -177,7 +177,7 @@ class _DistributorPricingScreenState
             isDark,
           ),
           if (isMedium) ...[
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             _summaryCard(
               Icons.update_rounded,
               DateFormat('dd/MM', 'ar').format(DateTime.now()),
@@ -195,7 +195,7 @@ class _DistributorPricingScreenState
       IconData icon, String value, String label, Color color, bool isDark) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: color.withValues(alpha: isDark ? 0.1 : 0.05),
           borderRadius: BorderRadius.circular(12),
@@ -237,7 +237,7 @@ class _DistributorPricingScreenState
 
   Widget _buildPricingTable(bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.getSurface(isDark),
@@ -249,7 +249,7 @@ class _DistributorPricingScreenState
             // Header
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl, vertical: 14),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius:
@@ -275,7 +275,7 @@ class _DistributorPricingScreenState
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12),
+                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: hasDiff
                       ? AppColors.warning.withValues(alpha: isDark ? 0.05 : 0.02)
@@ -316,7 +316,7 @@ class _DistributorPricingScreenState
                     Expanded(
                       flex: 3,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
                         child: TextField(
                           controller: controller,
                           keyboardType: TextInputType.number,
@@ -431,7 +431,7 @@ class _DistributorPricingScreenState
 
   Widget _buildPricingCards(bool isDark, bool isMedium) {
     return ListView.separated(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       itemCount: _items.length,
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (_, index) {
@@ -441,7 +441,7 @@ class _DistributorPricingScreenState
         final hasDiff = newPrice != null && newPrice != item.currentPrice;
 
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(14),
@@ -475,7 +475,7 @@ class _DistributorPricingScreenState
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AlhaiSpacing.sm),
               Row(
                 children: [
                   // Current price
@@ -490,7 +490,7 @@ class _DistributorPricingScreenState
                             color: AppColors.getTextMuted(isDark),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           '${NumberFormat('#,##0.00').format(item.currentPrice)} ر.س',
                           style: TextStyle(
@@ -504,7 +504,7 @@ class _DistributorPricingScreenState
                   ),
                   const Icon(Icons.arrow_forward_rounded,
                       color: AppColors.textMuted, size: 18),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AlhaiSpacing.sm),
                   // New price
                   Expanded(
                     child: TextField(
@@ -568,7 +568,7 @@ class _DistributorPricingScreenState
     if (changed == 0 && !_hasChanges) return const SizedBox.shrink();
 
     return Container(
-      padding: EdgeInsets.all(isMedium ? 20 : 16),
+      padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(

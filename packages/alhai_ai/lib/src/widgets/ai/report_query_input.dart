@@ -107,7 +107,7 @@ class _ReportQueryInputState extends State<ReportQueryInput> {
               Padding(
                 padding: const EdgeInsetsDirectional.only(end: 14, start: 8),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -134,7 +134,7 @@ class _ReportQueryInputState extends State<ReportQueryInput> {
                       fontSize: 14,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                   ),
                 ),
               ),
@@ -145,7 +145,7 @@ class _ReportQueryInputState extends State<ReportQueryInput> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     margin: const EdgeInsets.all(6),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
@@ -183,7 +183,7 @@ class _ReportQueryInputState extends State<ReportQueryInput> {
 
         // Suggestions dropdown
         if (_showSuggestions) ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: AlhaiSpacing.xxs),
           Container(
             constraints: const BoxConstraints(maxHeight: 260),
             decoration: BoxDecoration(
@@ -290,7 +290,7 @@ class _SuggestionItemState extends State<_SuggestionItem> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AlhaiSpacing.xxxs),
                   decoration: BoxDecoration(
                     color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
@@ -299,7 +299,7 @@ class _SuggestionItemState extends State<_SuggestionItem> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(chartIcon, size: 12, color: const Color(0xFF8B5CF6)),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AlhaiSpacing.xxs),
                       Text(
                         widget.suggestion.category,
                         style: const TextStyle(

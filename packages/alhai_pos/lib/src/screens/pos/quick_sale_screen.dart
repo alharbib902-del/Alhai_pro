@@ -14,6 +14,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:uuid/uuid.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// شاشة البيع السريع
 class QuickSaleScreen extends ConsumerStatefulWidget {
@@ -169,9 +170,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               Text(_error == 'storeNotSet' ? l10n.storeNotSet : _error!, style: AppTypography.bodyLarge),
-              const SizedBox(height: 16),
+              const SizedBox(height: AlhaiSpacing.md),
               ElevatedButton(
                 onPressed: () {
                   setState(() { _isLoading = true; _error = null; });
@@ -371,6 +372,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
     if (products.isEmpty) {
       return AppEmptyState.noSearchResults(
+        context,
         onClear: () {
           setState(() {
             _searchController.clear();
@@ -412,7 +414,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           // Cart Items
           Expanded(
             child: _cartItems.isEmpty
-                ? AppEmptyState.emptyCart()
+                ? AppEmptyState.emptyCart(context)
                 : _buildCartItemsList(),
           ),
 
@@ -674,28 +676,29 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
     final now = DateTime.now();
     final defaultName =
-        'بيع سريع ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+        AppLocalizations.of(context)!.quickSaleHold('${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
 
+    final l10n = AppLocalizations.of(context)!;
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) {
         final controller = TextEditingController(text: defaultName);
         return AlertDialog(
-          title: const Text('تعليق الفاتورة'),
+          title: Text(l10n.holdInvoiceTitle),
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'اسم الفاتورة المعلقة',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.holdInvoiceNameLabel,
+              border: const OutlineInputBorder(),
             ),
             onSubmitted: (v) => Navigator.pop(ctx, v.trim().isEmpty ? defaultName : v.trim()),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, controller.text.trim().isEmpty ? defaultName : controller.text.trim()),
-              child: const Text('تعليق'),
+              child: Text(l10n.holdAction),
             ),
           ],
         );
@@ -737,8 +740,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           SnackBar(
             content: Row(children: [
               const Icon(Icons.pause_circle_outline, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Text('تم تعليق: $name'),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Text(l10n.heldMessage(name)),
             ]),
             backgroundColor: AppColors.warning,
           ),
@@ -748,7 +751,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في التعليق: $e'),
+            content: Text(l10n.holdError(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );

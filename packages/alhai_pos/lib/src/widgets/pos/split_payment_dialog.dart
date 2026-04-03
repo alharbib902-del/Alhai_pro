@@ -105,8 +105,8 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
                 child: Row(
                   children: [
-                    const Text(
-                      'الدفع المقسم',
+                    Text(
+                      AppLocalizations.of(context)!.splitPaymentTitle,
                       style: AppTypography.headlineSmall,
                     ),
                     const Spacer(),
@@ -182,7 +182,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                '${widget.totalAmount.toStringAsFixed(2)} ر.س',
+                AppLocalizations.of(context)!.priceSar(widget.totalAmount.toStringAsFixed(2)),
                 style: AppTypography.titleLarge.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -199,7 +199,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                '${_totalPaid.toStringAsFixed(2)} ر.س',
+                AppLocalizations.of(context)!.priceSar(_totalPaid.toStringAsFixed(2)),
                 style: const TextStyle(color: Colors.white),
               ),
             ],
@@ -218,7 +218,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
               Text(
                 _isComplete
                     ? '✓'
-                    : '${_remaining.toStringAsFixed(2)} ر.س',
+                    : AppLocalizations.of(context)!.priceSar(_remaining.toStringAsFixed(2)),
                 style: AppTypography.titleMedium.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -236,7 +236,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'طريقة الدفع',
+          AppLocalizations.of(context)!.paymentMethodTitle,
           style: AppTypography.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -247,7 +247,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             final isSelected = _selectedMethod == method;
             return Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
                 child: _PaymentMethodCard(
                   method: method,
                   isSelected: isSelected,
@@ -283,7 +283,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             fontWeight: FontWeight.bold,
           ),
           decoration: InputDecoration(
-            suffixText: 'ر.س',
+            suffixText: AppLocalizations.of(context)!.sarCurrency,
             filled: true,
             fillColor: AppColors.grey100,
             border: OutlineInputBorder(
@@ -312,7 +312,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       runSpacing: AppSizes.sm,
       children: quickAmounts.map((amount) {
         return ActionChip(
-          label: Text('${amount.toStringAsFixed(0)} ر.س'),
+          label: Text(AppLocalizations.of(context)!.amountSar(amount.toStringAsFixed(0))),
           onPressed: () {
             _amountController.text = amount.toStringAsFixed(2);
           },
@@ -325,7 +325,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     return ElevatedButton.icon(
       onPressed: _addSplit,
       icon: const Icon(Icons.add),
-      label: const Text('إضافة دفعة'),
+      label: Text(AppLocalizations.of(context)!.addPaymentEntry),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.secondary,
         minimumSize: const Size.fromHeight(48),
@@ -359,7 +359,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${split.amount.toStringAsFixed(2)} ر.س',
+                    AppLocalizations.of(context)!.priceSar(split.amount.toStringAsFixed(2)),
                     style: AppTypography.titleSmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -388,7 +388,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             minimumSize: const Size.fromHeight(56),
           ),
           child: Text(
-            _isComplete ? 'تأكيد الدفع' : 'أكمل الدفع أولاً',
+            _isComplete ? AppLocalizations.of(context)!.confirmSplitPayment : AppLocalizations.of(context)!.completePaymentToConfirm,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
@@ -400,14 +400,14 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     final amount = double.tryParse(_amountController.text) ?? 0;
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('أدخل مبلغ صحيح')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterValidAmountSplit)),
       );
       return;
     }
 
     if (amount > _remaining) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('المبلغ أكبر من المتبقي')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.amountExceedsSplit)),
       );
       return;
     }
@@ -478,7 +478,7 @@ class _PaymentMethodCard extends StatelessWidget {
                   color: isSelected ? method.color : AppColors.textMuted,
                   size: 28,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
                   method.localizedLabel(AppLocalizations.of(context)!),
                   style: AppTypography.labelSmall.copyWith(

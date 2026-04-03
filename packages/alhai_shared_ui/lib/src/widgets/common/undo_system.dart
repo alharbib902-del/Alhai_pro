@@ -138,7 +138,7 @@ Future<bool> confirmLargeOperation(
       title: Row(
         children: [
           Icon(Icons.warning_amber, color: AlhaiColors.warningDark),
-          const SizedBox(width: 8),
+          SizedBox(width: AlhaiSpacing.xs),
           Expanded(child: Text(title)),
         ],
       ),
@@ -148,9 +148,9 @@ Future<bool> confirmLargeOperation(
         children: [
           Text(message),
           if (amount != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: AlhaiColors.warning.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
@@ -159,7 +159,7 @@ Future<bool> confirmLargeOperation(
               child: Row(
                 children: [
                   Icon(Icons.attach_money, color: AlhaiColors.warningDark),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     'المبلغ: ${amount.toStringAsFixed(2)} ${StoreSettings.defaultCurrencySymbol}',
                     style: TextStyle(
@@ -220,7 +220,7 @@ class UndoFloatingButton extends ConsumerWidget {
               action.undoCallback();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('✅ تم التراجع: ${action.description}'),
+                  content: Text('✅ ${l10n.undoCompleted(action.description)}'),
                   duration: const Duration(seconds: 2),
                 ),
               );

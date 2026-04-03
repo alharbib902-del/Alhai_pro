@@ -44,7 +44,7 @@ class AbTestConfigPanel extends StatelessWidget {
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -61,7 +61,7 @@ class AbTestConfigPanel extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -98,7 +98,7 @@ class AbTestConfigPanel extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // المقارنة بين A و B
           Row(
@@ -152,7 +152,7 @@ class AbTestConfigPanel extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
 
           // مدة الاختبار
           Text(
@@ -163,7 +163,7 @@ class AbTestConfigPanel extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: const Color(0xFF8B5CF6),
@@ -184,7 +184,7 @@ class AbTestConfigPanel extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
 
           // نسبة مجموعة التحكم
           Text(
@@ -195,7 +195,7 @@ class AbTestConfigPanel extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: AppColors.warning,
@@ -216,11 +216,11 @@ class AbTestConfigPanel extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
 
           // توزيع المجموعات
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.04)
@@ -235,14 +235,14 @@ class AbTestConfigPanel extends StatelessWidget {
                   const Color(0xFF3B82F6),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildGroupIndicator(
                   'B',
                   ((100 - controlGroupPercent) / 2),
                   const Color(0xFFEF4444),
                   isDark,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AlhaiSpacing.xs),
                 _buildGroupIndicator(
                   l10n.control,
                   controlGroupPercent,
@@ -253,7 +253,7 @@ class AbTestConfigPanel extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
 
           // زر الإطلاق
           SizedBox(
@@ -306,7 +306,7 @@ class AbTestConfigPanel extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: isDark
               ? color.withValues(alpha: 0.08)
@@ -320,7 +320,7 @@ class AbTestConfigPanel extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
@@ -334,7 +334,7 @@ class AbTestConfigPanel extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AlhaiSpacing.xs),
             if (promotion != null) ...[
               Text(
                 promotion.title,
@@ -347,7 +347,7 @@ class AbTestConfigPanel extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 'ROI: ${promotion.roi.toStringAsFixed(0)}%',
                 style: TextStyle(
@@ -362,7 +362,7 @@ class AbTestConfigPanel extends StatelessWidget {
                 color: subtextColor,
                 size: 28,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 'اختر عرضاً',
                 style: TextStyle(
@@ -387,7 +387,7 @@ class AbTestConfigPanel extends StatelessWidget {
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,12 +400,12 @@ class AbTestConfigPanel extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Flexible(
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: options.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.xs),
               itemBuilder: (ctx, i) {
                 final promo = options[i];
                 final typeColor = Color(

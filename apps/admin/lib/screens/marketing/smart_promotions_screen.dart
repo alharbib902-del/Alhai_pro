@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
 import '../../providers/marketing_providers.dart';
+import 'package:alhai_design_system/alhai_design_system.dart';
 
 // مزود المنتجات بطيئة الحركة (low stock)
 final _lowStockProductsProvider =
@@ -83,6 +84,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               ? const Center(child: CircularProgressIndicator())
               : error != null
                   ? AppErrorState.general(
+                      context,
                       message: error.toString(),
                       onRetry: () {
                         ref.invalidate(activePromotionsProvider);
@@ -111,7 +113,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: isDark ? AppColors.info.withValues(alpha: 0.15) : AppColors.infoSurface,
               borderRadius: BorderRadius.circular(12),
@@ -120,11 +122,11 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AlhaiSpacing.sm),
                   decoration: BoxDecoration(color: AppColors.info, borderRadius: BorderRadius.circular(12)),
                   child: const Icon(Icons.auto_awesome, color: Colors.white),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,14 +139,14 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           if (lowStockProducts.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Column(
                 children: [
                   Icon(Icons.lightbulb_outline, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AlhaiSpacing.sm),
                   Text('\u0644\u0627 \u062a\u0648\u062c\u062f \u0627\u0642\u062a\u0631\u0627\u062d\u0627\u062a \u062d\u0627\u0644\u064a\u0627\u064b', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
                 ],
               ),
@@ -164,8 +166,8 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     final suggestedDiscount = deficit > 10 ? 30 : (deficit > 5 ? 20 : 15);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(12),
@@ -184,20 +186,20 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               const Icon(Icons.lightbulb_outline, size: 16, color: AppColors.warning),
-              const SizedBox(width: 4),
+              const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(child: Text(l10n.slowMovementReason('${product.stockQty}'), style: TextStyle(color: subtextColor))),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AlhaiSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               OutlinedButton(onPressed: () {}, child: Text(l10n.ignore)),
-              const SizedBox(width: 8),
+              const SizedBox(width: AlhaiSpacing.xs),
               FilledButton.icon(
                 onPressed: () => _applyPromotionForProduct(product, l10n),
                 icon: const Icon(Icons.check, size: 18),
@@ -222,7 +224,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.local_offer_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AlhaiSpacing.md),
             Text('\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0631\u0648\u0636 \u0646\u0634\u0637\u0629', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
           ],
         ),
@@ -233,7 +235,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
       child: Column(
         children: activePromotions.map((p) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
           decoration: BoxDecoration(
             color: cardColor,
             borderRadius: BorderRadius.circular(12),
@@ -242,7 +244,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           child: ListTile(
             onTap: () => _showPromotionDetails(p, l10n),
             leading: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AlhaiSpacing.xs),
               decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: const Icon(Icons.local_offer, color: AppColors.success),
             ),
@@ -265,7 +267,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.history, size: 64, color: subtextColor),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n.promotionHistory, style: TextStyle(color: subtextColor)),
         ],
       ),
@@ -300,7 +302,7 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
             Text('${l10n.startDateLabel}: ${promotion.startDate.toString().split(' ').first}'),
             Text('${l10n.endDateLabel}: ${promotion.endDate.toString().split(' ').first}'),
             if (promotion.description != null && promotion.description!.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AlhaiSpacing.xs),
               Text(promotion.description!, style: const TextStyle(fontSize: 13)),
             ],
           ],

@@ -12,7 +12,7 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints;
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../widgets/zatca_qr_widget.dart';
@@ -117,11 +117,11 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                 ? const AppLoadingState()
                 : _error != null
                     ? AppErrorState.general(
-                        message: _error!, onRetry: _loadData)
+                        context, message: _error!, onRetry: _loadData)
                     : _order == null
                         ? _buildNotFound(isDark)
                         : SingleChildScrollView(
-                        padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                        padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                         child: isWideScreen
                             ? _buildWideLayout(isDark, l10n)
                             : _buildNarrowLayout(
@@ -135,7 +135,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
 
   Widget _buildTopBar(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -156,7 +156,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                     borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +193,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           Icon(Icons.receipt_long_outlined,
               size: 64,
               color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text('Order not found',
               style: TextStyle(
                   fontSize: 16,
@@ -213,18 +213,18 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           child: Column(
             children: [
               _buildOrderSummaryCard(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildPaymentBreakdownCard(isDark, l10n),
             ],
           ),
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: AlhaiSpacing.lg),
         Expanded(
           flex: 2,
           child: Column(
             children: [
               _buildQrCodeCard(isDark, l10n),
-              const SizedBox(height: 24),
+              const SizedBox(height: AlhaiSpacing.lg),
               _buildActionsCard(isDark, l10n),
             ],
           ),
@@ -239,13 +239,13 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildOrderSummaryCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildPaymentBreakdownCard(isDark, l10n),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQrCodeCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
         _buildActionsCard(isDark, l10n),
-        const SizedBox(height: 24),
+        const SizedBox(height: AlhaiSpacing.lg),
       ],
     );
   }
@@ -258,7 +258,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
         '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -270,7 +270,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -278,7 +278,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                 child: const Icon(Icons.receipt_long_rounded,
                     color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.invoiceDetails,
                 style: TextStyle(
@@ -289,7 +289,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           _buildInfoRow(l10n.invoiceNumber,
               '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
               isDark),
@@ -300,11 +300,11 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               order.customerId ?? l10n.cashCustomer, isDark),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(l10n.totalAmount,
+                Text(l10n.totalAmountLabel,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -326,7 +326,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
 
   Widget _buildInfoRow(String label, String value, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Text('$label:',
@@ -346,7 +346,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
 
   Widget _buildPaymentBreakdownCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -358,7 +358,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -366,7 +366,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                 child: const Icon(Icons.payments_rounded,
                     color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'Payment Breakdown',
                 style: TextStyle(
@@ -377,7 +377,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           ..._splits.map((split) => _buildSplitRow(split, isDark, l10n)),
         ],
       ),
@@ -391,7 +391,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     final label = _getPaymentLabel(split.method, l10n);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
       child: Row(
         children: [
           Container(
@@ -444,7 +444,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   Widget _buildQrCodeCard(bool isDark, AppLocalizations l10n) {
     final order = _order!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
@@ -455,7 +455,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -463,7 +463,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                 child: const Icon(Icons.qr_code_rounded,
                     color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AlhaiSpacing.sm),
               Text(
                 'ZATCA QR',
                 style: TextStyle(
@@ -474,7 +474,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AlhaiSpacing.mdl),
           ZatcaQrWidget(
             sellerName: _store?.name ?? 'Al-HAI Store',
             vatNumber: _store?.taxNumber ?? '300000000000003',
@@ -510,13 +510,13 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -528,7 +528,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),

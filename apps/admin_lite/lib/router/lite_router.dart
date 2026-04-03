@@ -1,14 +1,19 @@
 /// Admin Lite Router
 ///
-/// GoRouter configuration with ~55 routes for the Lite admin app.
+/// GoRouter configuration with ~80 routes for the Lite admin app.
 /// Uses BottomNavigationBar shell with 5 tabs:
 /// Dashboard, Reports, AI, Monitoring, More
+///
+/// Includes 25 Lite-specific screens across 7 groups:
+/// Dashboard (3), Quick Reports (6), Alerts (4),
+/// Order Tracking (5), Quick Management (4), Settings (3).
 library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
+import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_reports/alhai_reports.dart';
 import 'package:alhai_ai/alhai_ai.dart';
@@ -16,8 +21,31 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../ui/lite_shell.dart';
 import '../screens/dashboard/lite_dashboard_screen.dart';
+import '../screens/dashboard/lite_sales_trend_screen.dart';
+import '../screens/dashboard/lite_alerts_summary_screen.dart';
 import '../screens/approvals/approval_center_screen.dart';
+import '../screens/reports/lite_daily_sales_screen.dart';
+import '../screens/reports/lite_weekly_comparison_screen.dart';
+import '../screens/reports/lite_top_products_screen.dart';
+import '../screens/reports/lite_low_stock_screen.dart';
+import '../screens/reports/lite_employee_performance_screen.dart';
+import '../screens/reports/lite_cash_flow_screen.dart';
+import '../screens/alerts/lite_notifications_list_screen.dart';
+import '../screens/alerts/lite_stock_alerts_screen.dart';
+import '../screens/alerts/lite_order_alerts_screen.dart';
+import '../screens/alerts/lite_system_alerts_screen.dart';
+import '../screens/orders/lite_active_orders_screen.dart';
+import '../screens/orders/lite_order_detail_screen.dart';
+import '../screens/orders/lite_order_status_screen.dart';
+import '../screens/orders/lite_delivery_tracking_screen.dart';
+import '../screens/orders/lite_order_history_screen.dart';
+import '../screens/management/lite_quick_price_screen.dart';
+import '../screens/management/lite_stock_adjustment_screen.dart';
+import '../screens/management/lite_employee_schedule_screen.dart';
+import '../screens/management/lite_pending_approvals_screen.dart';
 import '../screens/settings/lite_settings_screen.dart';
+import '../screens/settings/lite_profile_screen.dart';
+import '../screens/settings/lite_notification_prefs_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 
 /// Route parameter extraction helper
@@ -142,11 +170,11 @@ Widget _errorBuilder(BuildContext context, GoRouterState state) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(l10n != null
               ? '${l10n.error}: ${state.uri.path}'
               : 'Page not found: ${state.uri.path}'),
-          const SizedBox(height: 24),
+          const SizedBox(height: AlhaiSpacing.lg),
           FilledButton(
             onPressed: () => context.go(AppRoutes.dashboard),
             child: Text(l10n?.home ?? 'Home'),
@@ -209,6 +237,151 @@ final List<RouteBase> _routes = [
         path: '/approvals',
         name: 'approvals',
         builder: (context, state) => const ApprovalCenterScreen(),
+      ),
+
+      // ======================================================================
+      // DASHBOARD: Sales Trend & Alerts Summary
+      // ======================================================================
+      GoRoute(
+        path: '/lite/sales-trend',
+        name: 'lite-sales-trend',
+        builder: (context, state) => const LiteSalesTrendScreen(),
+      ),
+      GoRoute(
+        path: '/lite/alerts-summary',
+        name: 'lite-alerts-summary',
+        builder: (context, state) => const LiteAlertsSummaryScreen(),
+      ),
+
+      // ======================================================================
+      // QUICK REPORTS (6 screens)
+      // ======================================================================
+      GoRoute(
+        path: '/lite/reports/daily-sales',
+        name: 'lite-daily-sales',
+        builder: (context, state) => const LiteDailySalesScreen(),
+      ),
+      GoRoute(
+        path: '/lite/reports/weekly',
+        name: 'lite-weekly-comparison',
+        builder: (context, state) => const LiteWeeklyComparisonScreen(),
+      ),
+      GoRoute(
+        path: '/lite/reports/top-products',
+        name: 'lite-top-products',
+        builder: (context, state) => const LiteTopProductsScreen(),
+      ),
+      GoRoute(
+        path: '/lite/reports/low-stock',
+        name: 'lite-low-stock',
+        builder: (context, state) => const LiteLowStockScreen(),
+      ),
+      GoRoute(
+        path: '/lite/reports/employee-performance',
+        name: 'lite-employee-performance',
+        builder: (context, state) => const LiteEmployeePerformanceScreen(),
+      ),
+      GoRoute(
+        path: '/lite/reports/cash-flow',
+        name: 'lite-cash-flow',
+        builder: (context, state) => const LiteCashFlowScreen(),
+      ),
+
+      // ======================================================================
+      // ALERTS & NOTIFICATIONS (4 screens)
+      // ======================================================================
+      GoRoute(
+        path: '/lite/alerts/notifications',
+        name: 'lite-notifications-list',
+        builder: (context, state) => const LiteNotificationsListScreen(),
+      ),
+      GoRoute(
+        path: '/lite/alerts/stock',
+        name: 'lite-stock-alerts',
+        builder: (context, state) => const LiteStockAlertsScreen(),
+      ),
+      GoRoute(
+        path: '/lite/alerts/orders',
+        name: 'lite-order-alerts',
+        builder: (context, state) => const LiteOrderAlertsScreen(),
+      ),
+      GoRoute(
+        path: '/lite/alerts/system',
+        name: 'lite-system-alerts',
+        builder: (context, state) => const LiteSystemAlertsScreen(),
+      ),
+
+      // ======================================================================
+      // ORDER TRACKING (5 screens)
+      // ======================================================================
+      GoRoute(
+        path: '/lite/orders',
+        name: 'lite-active-orders',
+        builder: (context, state) => const LiteActiveOrdersScreen(),
+      ),
+      GoRoute(
+        path: '/lite/orders/:id',
+        name: 'lite-order-detail',
+        builder: (context, state) {
+          final id = state.pathId();
+          return LiteOrderDetailScreen(orderId: id);
+        },
+      ),
+      GoRoute(
+        path: '/lite/orders/:id/status',
+        name: 'lite-order-status',
+        builder: (context, state) {
+          final id = state.pathId();
+          return LiteOrderStatusScreen(orderId: id);
+        },
+      ),
+      GoRoute(
+        path: '/lite/delivery-tracking',
+        name: 'lite-delivery-tracking',
+        builder: (context, state) => const LiteDeliveryTrackingScreen(),
+      ),
+      GoRoute(
+        path: '/lite/order-history',
+        name: 'lite-order-history',
+        builder: (context, state) => const LiteOrderHistoryScreen(),
+      ),
+
+      // ======================================================================
+      // QUICK MANAGEMENT (4 screens)
+      // ======================================================================
+      GoRoute(
+        path: '/lite/management/quick-price',
+        name: 'lite-quick-price',
+        builder: (context, state) => const LiteQuickPriceScreen(),
+      ),
+      GoRoute(
+        path: '/lite/management/stock-adjustment',
+        name: 'lite-stock-adjustment',
+        builder: (context, state) => const LiteStockAdjustmentScreen(),
+      ),
+      GoRoute(
+        path: '/lite/management/employee-schedule',
+        name: 'lite-employee-schedule',
+        builder: (context, state) => const LiteEmployeeScheduleScreen(),
+      ),
+      GoRoute(
+        path: '/lite/management/pending-approvals',
+        name: 'lite-pending-approvals',
+        builder: (context, state) => const LitePendingApprovalsScreen(),
+      ),
+
+      // ======================================================================
+      // SETTINGS: Profile & Notification Preferences
+      // ======================================================================
+      GoRoute(
+        path: '/lite/profile',
+        name: 'lite-profile',
+        builder: (context, state) => const LiteProfileScreen(),
+      ),
+      GoRoute(
+        path: '/lite/settings/notification-prefs',
+        name: 'lite-notification-prefs',
+        builder: (context, state) => const LiteNotificationPrefsScreen(),
       ),
 
       // ======================================================================
@@ -515,7 +688,7 @@ class _MonitoringHubScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Monitoring')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           _MonitoringTile(
             icon: Icons.warning_amber_rounded,
@@ -562,7 +735,7 @@ class _MoreMenuScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('More')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           _MonitoringTile(
             icon: Icons.people_outline,
@@ -594,7 +767,7 @@ class _MoreMenuScreen extends StatelessWidget {
             subtitle: 'Expense tracking',
             onTap: () => context.go(AppRoutes.expenses),
           ),
-          const Divider(height: 32),
+          const Divider(height: AlhaiSpacing.xl),
           _MonitoringTile(
             icon: Icons.person_outline,
             title: 'Profile',
@@ -643,7 +816,7 @@ class _MonitoringTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       child: ListTile(
         leading: Icon(icon, color: theme.colorScheme.primary),
         title: Text(title),

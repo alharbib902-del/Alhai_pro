@@ -84,7 +84,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 Expanded(
                   child: _isLoading
                       ? const Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(AlhaiSpacing.md),
                           child: ShimmerList(itemCount: 5, itemHeight: 72),
                         )
                       : _supplier == null
@@ -98,7 +98,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                               ),
                             )
                           : SingleChildScrollView(
-                              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                              padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                               child:
                                   _buildContent(isDark, isMediumScreen, l10n),
                             ),
@@ -129,7 +129,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               isDark: isDark,
               onTap: _editSupplier,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             _ActionButton(
               icon: Icons.add_shopping_cart_rounded,
               label: l10n.newPurchaseInvoice,
@@ -137,7 +137,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               isPrimary: true,
               onTap: _newPurchase,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AlhaiSpacing.xs),
             _ActionButton(
               icon: Icons.delete_outline_rounded,
               label: l10n.delete,
@@ -147,7 +147,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: AlhaiSpacing.mdl),
 
         // Supplier info + Balance cards
         if (isMediumScreen)
@@ -158,12 +158,12 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 flex: 2,
                 child: _buildSupplierInfoCard(isDark),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   children: [
                     _buildBalanceCard(isDark),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AlhaiSpacing.md),
                     _buildStatsCards(isDark),
                   ],
                 ),
@@ -172,13 +172,13 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           )
         else ...[
           _buildSupplierInfoCard(isDark),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           _buildBalanceCard(isDark),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           _buildStatsCards(isDark),
         ],
 
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
 
         // Recent purchases section
         _buildRecentPurchasesSection(isDark),
@@ -190,7 +190,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -233,7 +233,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,10 +246,10 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                         color: colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                          horizontal: 10, vertical: AlhaiSpacing.xxs),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -269,11 +269,11 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             ],
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: AlhaiSpacing.mdl),
           Divider(
             color: colorScheme.outlineVariant,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
 
           // Contact info
           _InfoRow(
@@ -282,14 +282,14 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             value: _supplier!.phone ?? '-',
             isDark: isDark,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           _InfoRow(
             icon: Icons.email_outlined,
             label: l10n.supplierEmail,
             value: _supplier!.email ?? '-',
             isDark: isDark,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           _InfoRow(
             icon: Icons.location_on_outlined,
             label: l10n.supplierAddress,
@@ -309,7 +309,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     final balanceColor = isNegative ? AppColors.error : AppColors.success;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -337,7 +337,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +351,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                         fontSize: 13,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${balance.abs().toStringAsFixed(0)} ${l10n.sar}',
                       style: TextStyle(
@@ -366,7 +366,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             ],
           ),
           if (isNegative) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: AlhaiSpacing.md),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
@@ -375,7 +375,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 label: Text(l10n.registerPayment),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.error,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -409,7 +409,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             isDark: isDark,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: _StatCard(
             icon: Icons.calendar_today_outlined,
@@ -462,12 +462,12 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: AlhaiSpacing.sm),
 
         // Purchase list
         if (_recentPurchases.isEmpty)
           Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(AlhaiSpacing.xl),
             child: Center(
               child: Column(
                 children: [
@@ -476,7 +476,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     size: 48,
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     l10n.noPurchasesLabel, // لا توجد مشتريات
                     style: TextStyle(
@@ -497,7 +497,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
 
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
@@ -536,7 +536,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                             color: colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           _formatDate(purchase.createdAt),
                           style: TextStyle(
@@ -551,7 +551,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   // Status badge
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                        horizontal: 10, vertical: AlhaiSpacing.xxs),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -567,7 +567,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AlhaiSpacing.sm),
 
                   // Amount
                   Text(
@@ -749,7 +749,7 @@ class _ActionButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 18, color: fgColor),
-              const SizedBox(width: 8),
+              SizedBox(width: AlhaiSpacing.xs),
               Text(
                 label,
                 style: TextStyle(
@@ -785,7 +785,7 @@ class _InfoRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(8),
@@ -796,7 +796,7 @@ class _InfoRow extends StatelessWidget {
             color: colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -807,7 +807,7 @@ class _InfoRow extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: AlhaiSpacing.xxxs),
             Text(
               value,
               style: TextStyle(
@@ -842,7 +842,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
@@ -854,14 +854,14 @@ class _StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AlhaiSpacing.sm),
           Text(
             label,
             style: TextStyle(
@@ -869,7 +869,7 @@ class _StatCard extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
             style: TextStyle(

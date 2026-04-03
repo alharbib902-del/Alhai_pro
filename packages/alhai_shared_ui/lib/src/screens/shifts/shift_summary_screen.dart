@@ -78,7 +78,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    padding: EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
                     child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n, shift),
                   ),
                 ),
@@ -101,18 +101,18 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             child: Column(
               children: [
                 _buildSuccessCard(isDark, l10n, shift),
-                const SizedBox(height: 24),
+                SizedBox(height: AlhaiSpacing.lg),
                 _buildStatsCard(isDark, l10n, shift),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          SizedBox(width: AlhaiSpacing.lg),
           Expanded(
             flex: 2,
             child: Column(
               children: [
                 _buildCashStatusCard(isDark, l10n, shift),
-                const SizedBox(height: 24),
+                SizedBox(height: AlhaiSpacing.lg),
                 _buildActionButtons(isDark, l10n),
               ],
             ),
@@ -124,11 +124,11 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     return Column(
       children: [
         _buildSuccessCard(isDark, l10n, shift),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildStatsCard(isDark, l10n, shift),
-        SizedBox(height: isMediumScreen ? 24 : 16),
+        SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildCashStatusCard(isDark, l10n, shift),
-        const SizedBox(height: 24),
+        SizedBox(height: AlhaiSpacing.lg),
         _buildActionButtons(isDark, l10n),
       ],
     );
@@ -138,7 +138,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     // عرض وقت الإغلاق الفعلي من بيانات الوردية أو الوقت الحالي
     final closedTime = shift?.closedAt ?? DateTime.now();
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AlhaiSpacing.lg),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
@@ -158,7 +158,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             ),
             child: const Icon(Icons.check_circle_rounded, size: 40, color: Colors.white),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           Text(
             l10n.shiftClosedSuccessfully,
             style: TextStyle(
@@ -167,7 +167,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               color: Colors.white.withValues(alpha: 0.95),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AlhaiSpacing.xs),
           Text(
             closedTime.toString().substring(0, 16),
             style: TextStyle(
@@ -194,7 +194,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     final cardSales = shift != null ? totalSales - cashSales.clamp(0, totalSales) : 0.0;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -206,14 +206,14 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.analytics_rounded, color: AppColors.info, size: 20),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.shiftStatsLabel,
                 style: TextStyle(
@@ -224,7 +224,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           _StatRow(
             icon: Icons.timer_rounded,
             label: l10n.shiftDurationLabel,
@@ -290,7 +290,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     final diffIcon = isBalanced ? Icons.check_circle_rounded : (isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -302,14 +302,14 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.account_balance_wallet_rounded, color: AppColors.success, size: 20),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: AlhaiSpacing.sm),
               Text(
                 l10n.drawerStatus,
                 style: TextStyle(
@@ -320,7 +320,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AlhaiSpacing.md),
           _CashRow(
             label: l10n.expectedInDrawerLabel,
             value: '${_formatAmount(expectedCash)} ${l10n.sar}',
@@ -345,7 +345,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
                 decoration: BoxDecoration(
                   color: diffColor.withValues(alpha: isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -391,7 +391,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
                 },
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: _ActionButton(
                 icon: Icons.share_rounded,
@@ -407,7 +407,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -417,7 +417,7 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -465,7 +465,7 @@ class _StatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         children: [
           Container(
@@ -476,7 +476,7 @@ class _StatRow extends StatelessWidget {
             ),
             child: Icon(icon, size: 16, color: color),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               label,
@@ -547,7 +547,7 @@ class _ActionButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
@@ -556,7 +556,7 @@ class _ActionButton extends StatelessWidget {
           child: Column(
             children: [
               Icon(icon, color: color, size: 28),
-              const SizedBox(height: 8),
+              SizedBox(height: AlhaiSpacing.xs),
               Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13)),
             ],
           ),

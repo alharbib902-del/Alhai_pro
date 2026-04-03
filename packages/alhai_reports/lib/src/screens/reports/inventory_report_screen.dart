@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
 /// شاشة تقرير المخزون
@@ -67,18 +68,18 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
         appBar: AppBar(title: Text(l10n.inventoryReport)),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(AlhaiSpacing.xl),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.error_outline_rounded, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Text(
                   '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
                   style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 FilledButton.icon(
                   onPressed: _loadProducts,
                   icon: const Icon(Icons.refresh_rounded),
@@ -96,17 +97,17 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
         appBar: AppBar(title: Text(l10n.inventoryReport)),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(AlhaiSpacing.xl),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.inventory_2_outlined, size: 80, color: Theme.of(context).dividerColor),
-                const SizedBox(height: 16),
+                const SizedBox(height: AlhaiSpacing.md),
                 Text(
                   '\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0646\u062A\u062C\u0627\u062A \u0641\u064A \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
                   style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AlhaiSpacing.xs),
                 Text(
                   '\u0623\u0636\u0641 \u0645\u0646\u062A\u062C\u0627\u062A \u0644\u0639\u0631\u0636 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0645\u062E\u0632\u0648\u0646',
                   style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -149,15 +150,15 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
             children: [
               // الإحصائيات
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Row(
                   children: [
                     _StatCard(icon: Icons.inventory_2, label: l10n.products, value: '${inventory.length}', color: AppColors.info),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(icon: Icons.shopping_bag, label: l10n.inventory, value: '$totalItems', color: AppColors.success),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(icon: Icons.warning, label: l10n.lowStock, value: '$lowStock', color: AppColors.warning),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     _StatCard(icon: Icons.remove_shopping_cart, label: l10n.outOfStock, value: '$outOfStock', color: AppColors.error),
                   ],
                 ),
@@ -165,8 +166,8 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
 
               // قيمة المخزون
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(colors: [Color(0xFF16A34A), Color(0xFF4ADE80)]),
                   borderRadius: BorderRadius.circular(12),
@@ -174,7 +175,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.attach_money, color: Theme.of(context).colorScheme.surface, size: 32),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AlhaiSpacing.sm),
                     Text(l10n.inventoryReport, style: TextStyle(color: Theme.of(context).colorScheme.surface)),
                     const Spacer(),
                     Text('${totalValue.toStringAsFixed(0)} ${l10n.sar}', style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 24, fontWeight: FontWeight.bold)),
@@ -185,7 +186,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
               // التصفية
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
                 child: Row(
                   children: [
                     _FilterChip(label: l10n.all, selected: _selectedCategory == 'all', onTap: () => setState(() => _selectedCategory = 'all')),
@@ -251,7 +252,7 @@ class _StatCard extends StatelessWidget {
   final Color color;
   const _StatCard({required this.icon, required this.label, required this.value, required this.color});
   @override
-  Widget build(BuildContext context) => Expanded(child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Column(children: [Icon(icon, color: color, size: 20), Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 18)), Text(label, style: TextStyle(fontSize: 10, color: color))])));
+  Widget build(BuildContext context) => Expanded(child: Container(padding: const EdgeInsets.all(AlhaiSpacing.sm), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Column(children: [Icon(icon, color: color, size: 20), Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 18)), Text(label, style: TextStyle(fontSize: 10, color: color))])));
 }
 
 class _FilterChip extends StatelessWidget {

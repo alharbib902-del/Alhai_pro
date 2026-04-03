@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../tokens/alhai_spacing.dart';
+
 /// Alhai Stat Card - Dashboard statistics card (v1.1.0)
 /// Used in: admin_pos, super_admin dashboards
 class AlhaiStatCard extends StatelessWidget {
@@ -42,7 +44,7 @@ class AlhaiStatCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           child: isLoading
               ? _buildSkeleton(context)
               : Column(
@@ -63,7 +65,7 @@ class AlhaiStatCard extends StatelessWidget {
                         ),
                         if (icon != null)
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(AlhaiSpacing.xs),
                             decoration: BoxDecoration(
                               color: (iconColor ?? colorScheme.primary)
                                   .withValues(alpha: 0.1),
@@ -77,7 +79,7 @@ class AlhaiStatCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       value,
                       style: theme.textTheme.headlineMedium?.copyWith(
@@ -86,12 +88,12 @@ class AlhaiStatCard extends StatelessWidget {
                       ),
                     ),
                     if (subtitle != null || trend != null) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AlhaiSpacing.xs),
                       Row(
                         children: [
                           if (trend != null) trend!,
                           if (trend != null && subtitle != null)
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AlhaiSpacing.xs),
                           if (subtitle != null)
                             Expanded(
                               child: Text(
@@ -126,7 +128,7 @@ class AlhaiStatCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AlhaiSpacing.sm),
         Container(
           width: 120,
           height: 32,
@@ -162,7 +164,7 @@ class AlhaiTrendIndicator extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 16, color: color),
-        const SizedBox(width: 4),
+        const SizedBox(width: AlhaiSpacing.xxs),
         Text(
           '${value.abs().toStringAsFixed(1)}$suffix',
           style: TextStyle(
