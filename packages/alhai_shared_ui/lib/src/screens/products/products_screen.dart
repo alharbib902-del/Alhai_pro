@@ -1184,7 +1184,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                           ),
                           const Spacer(),
                           Text(
-                            AppLocalizations.of(context)!.stockCount(widget.product.stockQty),
+                            AppLocalizations.of(context)!.stockCount(widget.product.stockQty.toInt()),
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),

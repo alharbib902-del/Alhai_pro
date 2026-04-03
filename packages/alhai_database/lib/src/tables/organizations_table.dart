@@ -27,6 +27,8 @@ class OrganizationsTable extends Table {
   IntColumn get maxStores => integer().withDefault(const Constant(1))();
   IntColumn get maxUsers => integer().withDefault(const Constant(3))();
   IntColumn get maxProducts => integer().withDefault(const Constant(100))();
+  TextColumn get status => text().withDefault(const Constant('trial'))();
+  TextColumn get companyType => text().withDefault(const Constant('agency'))();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get trialEndsAt => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();

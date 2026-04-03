@@ -55,8 +55,8 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
 
   void _setQuantity(int qty) {
     if (qty < 1) qty = 1;
-    if (widget.product.trackInventory && qty > widget.product.stockQty) {
-      qty = widget.product.stockQty;
+    if (widget.product.trackInventory && qty > widget.product.stockQty.toInt()) {
+      qty = widget.product.stockQty.toInt();
     }
     setState(() {
       _quantity = qty;
@@ -71,7 +71,7 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
   Widget build(BuildContext context) {
     final product = widget.product;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final maxQty = product.trackInventory ? product.stockQty : 9999;
+    final int maxQty = product.trackInventory ? product.stockQty.toInt() : 9999;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 360),

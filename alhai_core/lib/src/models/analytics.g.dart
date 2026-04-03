@@ -13,7 +13,7 @@ _$SlowMovingProductImpl _$$SlowMovingProductImplFromJson(
       productName: json['productName'] as String,
       categoryName: json['categoryName'] as String?,
       daysSinceLastSale: (json['daysSinceLastSale'] as num).toInt(),
-      stockQty: (json['stockQty'] as num).toInt(),
+      stockQty: (json['stockQty'] as num).toDouble(),
       stockValue: (json['stockValue'] as num).toDouble(),
       suggestedDiscount: (json['suggestedDiscount'] as num?)?.toDouble() ?? 0,
       lastSaleDate: json['lastSaleDate'] == null

@@ -16,8 +16,8 @@ class Product with _$Product {
     String? barcode,
     required double price,
     double? costPrice,
-    required int stockQty,
-    @Default(1) int minQty,
+    required double stockQty,
+    @Default(0) double minQty,
     String? unit,
     String? description,
     @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')

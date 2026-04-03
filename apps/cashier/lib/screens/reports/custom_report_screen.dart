@@ -209,7 +209,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
         grouped[key]!['value'] =
             (grouped[key]!['value'] as double) + item.value;
         grouped[key]!['count'] =
-            (grouped[key]!['count'] as int) + item.count;
+            (grouped[key]!['count'] as double) + item.count;
       } else {
         grouped[key] = {
           'label': key,
@@ -1066,7 +1066,7 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
 class _GroupItem {
   final DateTime date;
   final double value;
-  final int count;
+  final double count;
   final String? label;
 
   _GroupItem({

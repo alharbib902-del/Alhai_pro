@@ -253,6 +253,6 @@ class _ScannedProduct {
   final String id;
   final String barcode, name;
   final double price;
-  final int stock;
+  final double stock;
   _ScannedProduct({required this.id, required this.barcode, required this.name, required this.price, required this.stock});
 }

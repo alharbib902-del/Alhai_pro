@@ -76,7 +76,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
     required String productId,
     required String storeId,
     required AdjustmentType type,
-    required int quantity,
+    required double quantity,
     String? reason,
     String? referenceId,
   }) async {

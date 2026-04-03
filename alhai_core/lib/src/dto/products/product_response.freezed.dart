@@ -30,9 +30,9 @@ mixin _$ProductResponse {
   @JsonKey(name: 'cost_price')
   double? get costPrice => throw _privateConstructorUsedError;
   @JsonKey(name: 'stock_qty')
-  int get stockQty => throw _privateConstructorUsedError;
+  double get stockQty => throw _privateConstructorUsedError;
   @JsonKey(name: 'min_qty')
-  int get minQty => throw _privateConstructorUsedError;
+  double get minQty => throw _privateConstructorUsedError;
   String? get unit => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -82,8 +82,8 @@ abstract class $ProductResponseCopyWith<$Res> {
       String? barcode,
       double price,
       @JsonKey(name: 'cost_price') double? costPrice,
-      @JsonKey(name: 'stock_qty') int stockQty,
-      @JsonKey(name: 'min_qty') int minQty,
+      @JsonKey(name: 'stock_qty') double stockQty,
+      @JsonKey(name: 'min_qty') double minQty,
       String? unit,
       String? description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -169,11 +169,11 @@ class _$ProductResponseCopyWithImpl<$Res, $Val extends ProductResponse>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       minQty: null == minQty
           ? _value.minQty
           : minQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       unit: freezed == unit
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -242,8 +242,8 @@ abstract class _$$ProductResponseImplCopyWith<$Res>
       String? barcode,
       double price,
       @JsonKey(name: 'cost_price') double? costPrice,
-      @JsonKey(name: 'stock_qty') int stockQty,
-      @JsonKey(name: 'min_qty') int minQty,
+      @JsonKey(name: 'stock_qty') double stockQty,
+      @JsonKey(name: 'min_qty') double minQty,
       String? unit,
       String? description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -327,11 +327,11 @@ class __$$ProductResponseImplCopyWithImpl<$Res>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       minQty: null == minQty
           ? _value.minQty
           : minQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       unit: freezed == unit
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -396,7 +396,7 @@ class _$ProductResponseImpl extends _ProductResponse {
       required this.price,
       @JsonKey(name: 'cost_price') this.costPrice,
       @JsonKey(name: 'stock_qty') required this.stockQty,
-      @JsonKey(name: 'min_qty') this.minQty = 1,
+      @JsonKey(name: 'min_qty') this.minQty = 0,
       this.unit,
       this.description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -434,10 +434,10 @@ class _$ProductResponseImpl extends _ProductResponse {
   final double? costPrice;
   @override
   @JsonKey(name: 'stock_qty')
-  final int stockQty;
+  final double stockQty;
   @override
   @JsonKey(name: 'min_qty')
-  final int minQty;
+  final double minQty;
   @override
   final String? unit;
   @override
@@ -578,8 +578,8 @@ abstract class _ProductResponse extends ProductResponse {
           final String? barcode,
           required final double price,
           @JsonKey(name: 'cost_price') final double? costPrice,
-          @JsonKey(name: 'stock_qty') required final int stockQty,
-          @JsonKey(name: 'min_qty') final int minQty,
+          @JsonKey(name: 'stock_qty') required final double stockQty,
+          @JsonKey(name: 'min_qty') final double minQty,
           final String? unit,
           final String? description,
           @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -618,10 +618,10 @@ abstract class _ProductResponse extends ProductResponse {
   double? get costPrice;
   @override
   @JsonKey(name: 'stock_qty')
-  int get stockQty;
+  double get stockQty;
   @override
   @JsonKey(name: 'min_qty')
-  int get minQty;
+  double get minQty;
   @override
   String? get unit;
   @override

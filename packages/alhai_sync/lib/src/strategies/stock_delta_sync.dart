@@ -208,7 +208,7 @@ class StockDeltaSync {
             .timeout(_networkTimeout);
 
         if (response != null) {
-          final serverStock = (response['stock_qty'] as num?)?.toInt() ?? 0;
+          final serverStock = (response['stock_qty'] as num?)?.toDouble() ?? 0.0;
           await _updateLocalStock(productId, serverStock);
           productsUpdated++;
         }
@@ -231,7 +231,7 @@ class StockDeltaSync {
   }
 
   /// تحديث المخزون المحلي
-  Future<void> _updateLocalStock(String productId, int newStock) async {
+  Future<void> _updateLocalStock(String productId, double newStock) async {
     await _db.customStatement(
       'UPDATE products SET stock_qty = ?, synced_at = ? WHERE id = ?',
       [
@@ -247,7 +247,7 @@ class StockDeltaSync {
 /// Uses null-safe parsing with fallbacks to avoid runtime cast errors.
 class _StockDeltaRpcResult {
   final String productId;
-  final int newStock;
+  final double newStock;
   final bool isOversold;
 
   const _StockDeltaRpcResult({
@@ -259,7 +259,7 @@ class _StockDeltaRpcResult {
   factory _StockDeltaRpcResult.fromJson(Map<String, dynamic> json) {
     return _StockDeltaRpcResult(
       productId: json['product_id'] as String? ?? '',
-      newStock: (json['new_stock'] as num?)?.toInt() ?? 0,
+      newStock: (json['new_stock'] as num?)?.toDouble() ?? 0.0,
       isOversold: json['is_oversold'] as bool? ?? false,
     );
   }

@@ -11,8 +11,8 @@ void main() {
     String storeId = 'store-1',
     required String name,
     double price = 10.0,
-    int stockQty = 100,
-    int minQty = 5,
+    double stockQty = 100,
+    double minQty = 5,
     bool isActive = true,
   }) {
     return ProductsTableCompanion.insert(
@@ -36,7 +36,7 @@ void main() {
         await db.productsDao.insertProduct(_makeProduct(
           id: 'prod_$i',
           name: 'Product $i - منتج $i',
-          stockQty: 100 + i,
+          stockQty: (100 + i).toDouble(),
         ));
       }
     });
@@ -47,9 +47,9 @@ void main() {
 
     test('batchUpdateStock for 100 products completes under 1s', () async {
       // Build a map of stock updates for all 100 products
-      final stockUpdates = <String, int>{};
+      final stockUpdates = <String, double>{};
       for (int i = 0; i < 100; i++) {
-        stockUpdates['prod_$i'] = 50 + (i * 2);
+        stockUpdates['prod_$i'] = (50 + (i * 2)).toDouble();
       }
 
       final sw = Stopwatch()..start();
@@ -70,7 +70,7 @@ void main() {
     test('individual updateStock for 100 products completes under 2s', () async {
       final sw = Stopwatch()..start();
       for (int i = 0; i < 100; i++) {
-        await db.productsDao.updateStock('prod_$i', 75 + i);
+        await db.productsDao.updateStock('prod_$i', (75 + i).toDouble());
       }
       sw.stop();
 
@@ -94,8 +94,8 @@ void main() {
         await db.productsDao.insertProduct(_makeProduct(
           id: 'prod_$i',
           name: 'Product $i',
-          stockQty: isLowStock ? (i % 5) : (50 + i), // Low stock: 0-4, Normal: 50+
-          minQty: 10, // Threshold at 10
+          stockQty: isLowStock ? (i % 5).toDouble() : (50 + i).toDouble(), // Low stock: 0-4, Normal: 50+
+          minQty: 10.0, // Threshold at 10
         ));
       }
     });

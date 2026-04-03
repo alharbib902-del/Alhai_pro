@@ -23,7 +23,7 @@ abstract class InventoryRepository {
     required String productId,
     required String storeId,
     required AdjustmentType type,
-    required int quantity,
+    required double quantity,
     String? reason,
     String? referenceId,
   });
@@ -39,8 +39,8 @@ abstract class InventoryRepository {
 class LowStockProduct {
   final String productId;
   final String productName;
-  final int currentQty;
-  final int minQty;
+  final double currentQty;
+  final double minQty;
 
   const LowStockProduct({
     required this.productId,
@@ -49,5 +49,5 @@ class LowStockProduct {
     required this.minQty,
   });
 
-  int get deficit => minQty - currentQty;
+  double get deficit => minQty - currentQty;
 }

@@ -614,7 +614,7 @@ class _QuickAddProductScreenState
               ? sanitizedBarcode
               : null),
           categoryId: Value(_selectedCategoryId),
-          stockQty: Value(quantity),
+          stockQty: Value(quantity.toDouble()),
           createdAt: DateTime.now(),
           updatedAt: Value(DateTime.now()),
         ),

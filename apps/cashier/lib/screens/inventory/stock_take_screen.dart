@@ -522,7 +522,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 createdAt: DateTime.now(),
               ),
             );
-            await _db.productsDao.updateStock(product.id, counted);
+            await _db.productsDao.updateStock(product.id, counted.toDouble());
             adjustedProducts.add(product);
           }
         }

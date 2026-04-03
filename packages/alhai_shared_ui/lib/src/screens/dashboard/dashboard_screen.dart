@@ -390,7 +390,7 @@ class DashboardScreen extends ConsumerWidget {
         id: product.id,
         name: product.name,
         icon: Icons.inventory_2_rounded,
-        quantity: product.stockQty,
+        quantity: product.stockQty.toInt(),
         revenue: product.price * product.stockQty,
       );
     }).toList();

@@ -47,9 +47,9 @@ class ProductsTable extends Table {
   RealColumn get price => real()();
   RealColumn get costPrice => real().nullable()();
 
-  // المخزون
-  IntColumn get stockQty => integer().withDefault(const Constant(0))();
-  IntColumn get minQty => integer().withDefault(const Constant(0))();
+  // المخزون (REAL لدعم الكميات الكسرية مثل 2.5 كجم)
+  RealColumn get stockQty => real().withDefault(const Constant(0))();
+  RealColumn get minQty => real().withDefault(const Constant(0))();
   TextColumn get unit => text().nullable()();
 
   // الوصف

@@ -20,8 +20,8 @@ void main() {
     required String name,
     double price = 10.0,
     String? barcode,
-    int stockQty = 100,
-    int minQty = 5,
+    double stockQty = 100,
+    double minQty = 5,
   }) {
     return ProductsTableCompanion.insert(
       id: id,
@@ -97,7 +97,7 @@ void main() {
     for (final entry in stockDeductions.entries) {
       final product = await db.productsDao.getProductById(entry.key);
       if (product != null) {
-        await db.productsDao.updateStock(entry.key, (product.stockQty - entry.value).toInt());
+        await db.productsDao.updateStock(entry.key, (product.stockQty - entry.value).toDouble());
       }
     }
   }

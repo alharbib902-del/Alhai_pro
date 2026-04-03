@@ -182,7 +182,26 @@
       "Bash(git submodule status)",
       "Bash(git add ai_server/)",
       "Bash(git add ai_server/config.py ai_server/requirements.txt ai_server/services/openai_service.py ai_server/routers/chat_with_data.py ai_server/routers/assistant.py)",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(/tmp/edit_routers.py:*)",
+      "Bash(/tmp/edit_chat.py:*)",
+      "Bash(/tmp/edit_assistant.py:*)",
+      "Bash(git add ai_server/i18n/__init__.py ai_server/i18n/translations.py ai_server/models/schemas.py ai_server/services/ml_service.py ai_server/services/openai_service.py ai_server/routers/assistant.py ai_server/routers/basket_analysis.py ai_server/routers/chat_with_data.py ai_server/routers/competitor.py ai_server/routers/customer_recs.py ai_server/routers/fraud_detection.py ai_server/routers/product_recognition.py ai_server/routers/promotion_designer.py ai_server/routers/return_prediction.py ai_server/routers/sales_forecast.py ai_server/routers/sentiment.py ai_server/routers/smart_inventory.py ai_server/routers/smart_pricing.py ai_server/routers/smart_reports.py ai_server/routers/staff_analytics.py)",
+      "Bash(vercel link --yes --project alhai-cashier)",
+      "WebFetch(domain:wasenderapi.com)",
+      "Bash(vercel --prod --yes --archive=tgz)",
+      "Bash(npx wrangler --version)",
+      "Bash(npx wrangler whoami)",
+      "Bash(npx wrangler login)",
+      "Bash(npx wrangler pages project create alhai-cashier --production-branch=main)",
+      "Bash(npx wrangler pages project create alhai-admin --production-branch=main)",
+      "Bash(npx wrangler pages project create alhai-admin-lite --production-branch=main)",
+      "Bash(npx wrangler pages deploy C:/Users/basem/OneDrive/Desktop/Alhai/apps/cashier/build/web --project-name=alhai-cashier --branch=main)",
+      "Bash(npx wrangler pages deploy C:/Users/basem/OneDrive/Desktop/Alhai/apps/admin/build/web --project-name=alhai-admin --branch=main)",
+      "Bash(npx wrangler pages deploy C:/Users/basem/OneDrive/Desktop/Alhai/apps/admin_lite/build/web --project-name=alhai-admin-lite --branch=main)",
+      "Bash(cmd.exe /c \"del /f C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock\")",
+      "Bash(GIT_INDEX_FILE=.git/index git status --short)",
+      "Bash(powershell -Command \"Remove-Item -Force ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock'' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500; if \\(Test-Path ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock''\\) { ''Still exists'' } else { ''Removed'' }\")"
     ]
   }
 }

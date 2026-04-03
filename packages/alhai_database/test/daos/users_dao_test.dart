@@ -16,7 +16,7 @@ void main() {
 
   UsersTableCompanion _makeUser({
     String id = 'user-1',
-    String storeId = 'store-1',
+    String? storeId = 'store-1',
     String name = 'محمد الكاشير',
     String? phone = '0501112222',
     String? pin = '1234',
@@ -25,7 +25,7 @@ void main() {
   }) {
     return UsersTableCompanion.insert(
       id: id,
-      storeId: storeId,
+      storeId: Value(storeId),
       name: name,
       phone: Value(phone),
       pin: Value(pin),

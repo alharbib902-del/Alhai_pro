@@ -23,8 +23,8 @@ void main() {
     String? sku,
     String? categoryId,
     bool isActive = true,
-    int stockQty = 100,
-    int minQty = 5,
+    double stockQty = 100,
+    double minQty = 5,
   }) {
     return ProductsTableCompanion.insert(
       id: id,

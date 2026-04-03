@@ -171,7 +171,7 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
             .getSingleOrNull();
         if (sourceProduct != null) {
           final newQty =
-              (sourceProduct.stockQty - qty).clamp(0, double.infinity).toInt();
+              (sourceProduct.stockQty - qty).clamp(0.0, double.infinity);
           await db.productsDao.updateStock(sourceProduct.id, newQty);
         }
       }
@@ -358,7 +358,7 @@ Future<bool> completeStockTake(WidgetRef ref, String id) async {
 
     final items = jsonDecode(stockTake.items) as List<dynamic>;
     int varianceCount = 0;
-    final stockUpdates = <String, int>{};
+    final stockUpdates = <String, double>{};
 
     // حساب الفروقات وتحديث المخزون
     for (final item in items) {
@@ -371,7 +371,7 @@ Future<bool> completeStockTake(WidgetRef ref, String id) async {
           varianceCount++;
         }
         // تحديث المخزون بالكمية الفعلية المعدودة
-        stockUpdates[productId] = countedQty;
+        stockUpdates[productId] = countedQty.toDouble();
       }
     }
 

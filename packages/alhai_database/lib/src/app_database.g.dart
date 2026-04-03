@@ -1601,16 +1601,16 @@ class $ProductsTableTable extends ProductsTable
   static const VerificationMeta _stockQtyMeta =
       const VerificationMeta('stockQty');
   @override
-  late final GeneratedColumn<int> stockQty = GeneratedColumn<int>(
+  late final GeneratedColumn<double> stockQty = GeneratedColumn<double>(
       'stock_qty', aliasedName, false,
-      type: DriftSqlType.int,
+      type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _minQtyMeta = const VerificationMeta('minQty');
   @override
-  late final GeneratedColumn<int> minQty = GeneratedColumn<int>(
+  late final GeneratedColumn<double> minQty = GeneratedColumn<double>(
       'min_qty', aliasedName, false,
-      type: DriftSqlType.int,
+      type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _unitMeta = const VerificationMeta('unit');
@@ -2042,9 +2042,9 @@ class $ProductsTableTable extends ProductsTable
       costPrice: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}cost_price']),
       stockQty: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}stock_qty'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}stock_qty'])!,
       minQty: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}min_qty'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}min_qty'])!,
       unit: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}unit']),
       description: attachedDatabase.typeMapping
@@ -2114,8 +2114,8 @@ class ProductsTableData extends DataClass
   final String? barcode;
   final double price;
   final double? costPrice;
-  final int stockQty;
-  final int minQty;
+  final double stockQty;
+  final double minQty;
   final String? unit;
   final String? description;
   final String? imageThumbnail;
@@ -2196,8 +2196,8 @@ class ProductsTableData extends DataClass
     if (!nullToAbsent || costPrice != null) {
       map['cost_price'] = Variable<double>(costPrice);
     }
-    map['stock_qty'] = Variable<int>(stockQty);
-    map['min_qty'] = Variable<int>(minQty);
+    map['stock_qty'] = Variable<double>(stockQty);
+    map['min_qty'] = Variable<double>(minQty);
     if (!nullToAbsent || unit != null) {
       map['unit'] = Variable<String>(unit);
     }
@@ -2357,8 +2357,8 @@ class ProductsTableData extends DataClass
       barcode: serializer.fromJson<String?>(json['barcode']),
       price: serializer.fromJson<double>(json['price']),
       costPrice: serializer.fromJson<double?>(json['costPrice']),
-      stockQty: serializer.fromJson<int>(json['stockQty']),
-      minQty: serializer.fromJson<int>(json['minQty']),
+      stockQty: serializer.fromJson<double>(json['stockQty']),
+      minQty: serializer.fromJson<double>(json['minQty']),
       unit: serializer.fromJson<String?>(json['unit']),
       description: serializer.fromJson<String?>(json['description']),
       imageThumbnail: serializer.fromJson<String?>(json['imageThumbnail']),
@@ -2399,8 +2399,8 @@ class ProductsTableData extends DataClass
       'barcode': serializer.toJson<String?>(barcode),
       'price': serializer.toJson<double>(price),
       'costPrice': serializer.toJson<double?>(costPrice),
-      'stockQty': serializer.toJson<int>(stockQty),
-      'minQty': serializer.toJson<int>(minQty),
+      'stockQty': serializer.toJson<double>(stockQty),
+      'minQty': serializer.toJson<double>(minQty),
       'unit': serializer.toJson<String?>(unit),
       'description': serializer.toJson<String?>(description),
       'imageThumbnail': serializer.toJson<String?>(imageThumbnail),
@@ -2438,8 +2438,8 @@ class ProductsTableData extends DataClass
           Value<String?> barcode = const Value.absent(),
           double? price,
           Value<double?> costPrice = const Value.absent(),
-          int? stockQty,
-          int? minQty,
+          double? stockQty,
+          double? minQty,
           Value<String?> unit = const Value.absent(),
           Value<String?> description = const Value.absent(),
           Value<String?> imageThumbnail = const Value.absent(),
@@ -2710,8 +2710,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
   final Value<String?> barcode;
   final Value<double> price;
   final Value<double?> costPrice;
-  final Value<int> stockQty;
-  final Value<int> minQty;
+  final Value<double> stockQty;
+  final Value<double> minQty;
   final Value<String?> unit;
   final Value<String?> description;
   final Value<String?> imageThumbnail;
@@ -2827,8 +2827,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     Expression<String>? barcode,
     Expression<double>? price,
     Expression<double>? costPrice,
-    Expression<int>? stockQty,
-    Expression<int>? minQty,
+    Expression<double>? stockQty,
+    Expression<double>? minQty,
     Expression<String>? unit,
     Expression<String>? description,
     Expression<String>? imageThumbnail,
@@ -2905,8 +2905,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       Value<String?>? barcode,
       Value<double>? price,
       Value<double?>? costPrice,
-      Value<int>? stockQty,
-      Value<int>? minQty,
+      Value<double>? stockQty,
+      Value<double>? minQty,
       Value<String?>? unit,
       Value<String?>? description,
       Value<String?>? imageThumbnail,
@@ -3001,10 +3001,10 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       map['cost_price'] = Variable<double>(costPrice.value);
     }
     if (stockQty.present) {
-      map['stock_qty'] = Variable<int>(stockQty.value);
+      map['stock_qty'] = Variable<double>(stockQty.value);
     }
     if (minQty.present) {
-      map['min_qty'] = Variable<int>(minQty.value);
+      map['min_qty'] = Variable<double>(minQty.value);
     }
     if (unit.present) {
       map['unit'] = Variable<String>(unit.value);
@@ -3151,8 +3151,8 @@ class $UsersTableTable extends UsersTable
       const VerificationMeta('storeId');
   @override
   late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
-      'store_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'store_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -3278,8 +3278,6 @@ class $UsersTableTable extends UsersTable
     if (data.containsKey('store_id')) {
       context.handle(_storeIdMeta,
           storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
-    } else if (isInserting) {
-      context.missing(_storeIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -3357,7 +3355,7 @@ class $UsersTableTable extends UsersTable
       orgId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}org_id']),
       storeId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}store_id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       phone: attachedDatabase.typeMapping
@@ -3398,7 +3396,7 @@ class $UsersTableTable extends UsersTable
 class UsersTableData extends DataClass implements Insertable<UsersTableData> {
   final String id;
   final String? orgId;
-  final String storeId;
+  final String? storeId;
   final String name;
   final String? phone;
   final String? email;
@@ -3416,7 +3414,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
   const UsersTableData(
       {required this.id,
       this.orgId,
-      required this.storeId,
+      this.storeId,
       required this.name,
       this.phone,
       this.email,
@@ -3438,7 +3436,9 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
     if (!nullToAbsent || orgId != null) {
       map['org_id'] = Variable<String>(orgId);
     }
-    map['store_id'] = Variable<String>(storeId);
+    if (!nullToAbsent || storeId != null) {
+      map['store_id'] = Variable<String>(storeId);
+    }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
@@ -3481,7 +3481,9 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
       id: Value(id),
       orgId:
           orgId == null && nullToAbsent ? const Value.absent() : Value(orgId),
-      storeId: Value(storeId),
+      storeId: storeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storeId),
       name: Value(name),
       phone:
           phone == null && nullToAbsent ? const Value.absent() : Value(phone),
@@ -3519,7 +3521,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
     return UsersTableData(
       id: serializer.fromJson<String>(json['id']),
       orgId: serializer.fromJson<String?>(json['orgId']),
-      storeId: serializer.fromJson<String>(json['storeId']),
+      storeId: serializer.fromJson<String?>(json['storeId']),
       name: serializer.fromJson<String>(json['name']),
       phone: serializer.fromJson<String?>(json['phone']),
       email: serializer.fromJson<String?>(json['email']),
@@ -3542,7 +3544,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'orgId': serializer.toJson<String?>(orgId),
-      'storeId': serializer.toJson<String>(storeId),
+      'storeId': serializer.toJson<String?>(storeId),
       'name': serializer.toJson<String>(name),
       'phone': serializer.toJson<String?>(phone),
       'email': serializer.toJson<String?>(email),
@@ -3563,7 +3565,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
   UsersTableData copyWith(
           {String? id,
           Value<String?> orgId = const Value.absent(),
-          String? storeId,
+          Value<String?> storeId = const Value.absent(),
           String? name,
           Value<String?> phone = const Value.absent(),
           Value<String?> email = const Value.absent(),
@@ -3581,7 +3583,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
       UsersTableData(
         id: id ?? this.id,
         orgId: orgId.present ? orgId.value : this.orgId,
-        storeId: storeId ?? this.storeId,
+        storeId: storeId.present ? storeId.value : this.storeId,
         name: name ?? this.name,
         phone: phone.present ? phone.value : this.phone,
         email: email.present ? email.value : this.email,
@@ -3689,7 +3691,7 @@ class UsersTableData extends DataClass implements Insertable<UsersTableData> {
 class UsersTableCompanion extends UpdateCompanion<UsersTableData> {
   final Value<String> id;
   final Value<String?> orgId;
-  final Value<String> storeId;
+  final Value<String?> storeId;
   final Value<String> name;
   final Value<String?> phone;
   final Value<String?> email;
@@ -3728,7 +3730,7 @@ class UsersTableCompanion extends UpdateCompanion<UsersTableData> {
   UsersTableCompanion.insert({
     required String id,
     this.orgId = const Value.absent(),
-    required String storeId,
+    this.storeId = const Value.absent(),
     required String name,
     this.phone = const Value.absent(),
     this.email = const Value.absent(),
@@ -3745,7 +3747,6 @@ class UsersTableCompanion extends UpdateCompanion<UsersTableData> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
-        storeId = Value(storeId),
         name = Value(name),
         createdAt = Value(createdAt);
   static Insertable<UsersTableData> custom({
@@ -3793,7 +3794,7 @@ class UsersTableCompanion extends UpdateCompanion<UsersTableData> {
   UsersTableCompanion copyWith(
       {Value<String>? id,
       Value<String?>? orgId,
-      Value<String>? storeId,
+      Value<String?>? storeId,
       Value<String>? name,
       Value<String?>? phone,
       Value<String?>? email,
@@ -31655,6 +31656,21 @@ class $OrganizationsTableTable extends OrganizationsTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(100));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('trial'));
+  static const VerificationMeta _companyTypeMeta =
+      const VerificationMeta('companyType');
+  @override
+  late final GeneratedColumn<String> companyType = GeneratedColumn<String>(
+      'company_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('agency'));
   static const VerificationMeta _isActiveMeta =
       const VerificationMeta('isActive');
   @override
@@ -31711,6 +31727,8 @@ class $OrganizationsTableTable extends OrganizationsTable
         maxStores,
         maxUsers,
         maxProducts,
+        status,
+        companyType,
         isActive,
         trialEndsAt,
         createdAt,
@@ -31815,6 +31833,16 @@ class $OrganizationsTableTable extends OrganizationsTable
           maxProducts.isAcceptableOrUnknown(
               data['max_products']!, _maxProductsMeta));
     }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('company_type')) {
+      context.handle(
+          _companyTypeMeta,
+          companyType.isAcceptableOrUnknown(
+              data['company_type']!, _companyTypeMeta));
+    }
     if (data.containsKey('is_active')) {
       context.handle(_isActiveMeta,
           isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta));
@@ -31888,6 +31916,10 @@ class $OrganizationsTableTable extends OrganizationsTable
           .read(DriftSqlType.int, data['${effectivePrefix}max_users'])!,
       maxProducts: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}max_products'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      companyType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}company_type'])!,
       isActive: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
       trialEndsAt: attachedDatabase.typeMapping
@@ -31929,6 +31961,8 @@ class OrganizationsTableData extends DataClass
   final int maxStores;
   final int maxUsers;
   final int maxProducts;
+  final String status;
+  final String companyType;
   final bool isActive;
   final DateTime? trialEndsAt;
   final DateTime createdAt;
@@ -31955,6 +31989,8 @@ class OrganizationsTableData extends DataClass
       required this.maxStores,
       required this.maxUsers,
       required this.maxProducts,
+      required this.status,
+      required this.companyType,
       required this.isActive,
       this.trialEndsAt,
       required this.createdAt,
@@ -32003,6 +32039,8 @@ class OrganizationsTableData extends DataClass
     map['max_stores'] = Variable<int>(maxStores);
     map['max_users'] = Variable<int>(maxUsers);
     map['max_products'] = Variable<int>(maxProducts);
+    map['status'] = Variable<String>(status);
+    map['company_type'] = Variable<String>(companyType);
     map['is_active'] = Variable<bool>(isActive);
     if (!nullToAbsent || trialEndsAt != null) {
       map['trial_ends_at'] = Variable<DateTime>(trialEndsAt);
@@ -32050,6 +32088,8 @@ class OrganizationsTableData extends DataClass
       maxStores: Value(maxStores),
       maxUsers: Value(maxUsers),
       maxProducts: Value(maxProducts),
+      status: Value(status),
+      companyType: Value(companyType),
       isActive: Value(isActive),
       trialEndsAt: trialEndsAt == null && nullToAbsent
           ? const Value.absent()
@@ -32088,6 +32128,8 @@ class OrganizationsTableData extends DataClass
       maxStores: serializer.fromJson<int>(json['maxStores']),
       maxUsers: serializer.fromJson<int>(json['maxUsers']),
       maxProducts: serializer.fromJson<int>(json['maxProducts']),
+      status: serializer.fromJson<String>(json['status']),
+      companyType: serializer.fromJson<String>(json['companyType']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       trialEndsAt: serializer.fromJson<DateTime?>(json['trialEndsAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -32119,6 +32161,8 @@ class OrganizationsTableData extends DataClass
       'maxStores': serializer.toJson<int>(maxStores),
       'maxUsers': serializer.toJson<int>(maxUsers),
       'maxProducts': serializer.toJson<int>(maxProducts),
+      'status': serializer.toJson<String>(status),
+      'companyType': serializer.toJson<String>(companyType),
       'isActive': serializer.toJson<bool>(isActive),
       'trialEndsAt': serializer.toJson<DateTime?>(trialEndsAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -32148,6 +32192,8 @@ class OrganizationsTableData extends DataClass
           int? maxStores,
           int? maxUsers,
           int? maxProducts,
+          String? status,
+          String? companyType,
           bool? isActive,
           Value<DateTime?> trialEndsAt = const Value.absent(),
           DateTime? createdAt,
@@ -32175,6 +32221,8 @@ class OrganizationsTableData extends DataClass
         maxStores: maxStores ?? this.maxStores,
         maxUsers: maxUsers ?? this.maxUsers,
         maxProducts: maxProducts ?? this.maxProducts,
+        status: status ?? this.status,
+        companyType: companyType ?? this.companyType,
         isActive: isActive ?? this.isActive,
         trialEndsAt: trialEndsAt.present ? trialEndsAt.value : this.trialEndsAt,
         createdAt: createdAt ?? this.createdAt,
@@ -32206,6 +32254,9 @@ class OrganizationsTableData extends DataClass
       maxUsers: data.maxUsers.present ? data.maxUsers.value : this.maxUsers,
       maxProducts:
           data.maxProducts.present ? data.maxProducts.value : this.maxProducts,
+      status: data.status.present ? data.status.value : this.status,
+      companyType:
+          data.companyType.present ? data.companyType.value : this.companyType,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       trialEndsAt:
           data.trialEndsAt.present ? data.trialEndsAt.value : this.trialEndsAt,
@@ -32238,6 +32289,8 @@ class OrganizationsTableData extends DataClass
           ..write('maxStores: $maxStores, ')
           ..write('maxUsers: $maxUsers, ')
           ..write('maxProducts: $maxProducts, ')
+          ..write('status: $status, ')
+          ..write('companyType: $companyType, ')
           ..write('isActive: $isActive, ')
           ..write('trialEndsAt: $trialEndsAt, ')
           ..write('createdAt: $createdAt, ')
@@ -32269,6 +32322,8 @@ class OrganizationsTableData extends DataClass
         maxStores,
         maxUsers,
         maxProducts,
+        status,
+        companyType,
         isActive,
         trialEndsAt,
         createdAt,
@@ -32299,6 +32354,8 @@ class OrganizationsTableData extends DataClass
           other.maxStores == this.maxStores &&
           other.maxUsers == this.maxUsers &&
           other.maxProducts == this.maxProducts &&
+          other.status == this.status &&
+          other.companyType == this.companyType &&
           other.isActive == this.isActive &&
           other.trialEndsAt == this.trialEndsAt &&
           other.createdAt == this.createdAt &&
@@ -32328,6 +32385,8 @@ class OrganizationsTableCompanion
   final Value<int> maxStores;
   final Value<int> maxUsers;
   final Value<int> maxProducts;
+  final Value<String> status;
+  final Value<String> companyType;
   final Value<bool> isActive;
   final Value<DateTime?> trialEndsAt;
   final Value<DateTime> createdAt;
@@ -32355,6 +32414,8 @@ class OrganizationsTableCompanion
     this.maxStores = const Value.absent(),
     this.maxUsers = const Value.absent(),
     this.maxProducts = const Value.absent(),
+    this.status = const Value.absent(),
+    this.companyType = const Value.absent(),
     this.isActive = const Value.absent(),
     this.trialEndsAt = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -32383,6 +32444,8 @@ class OrganizationsTableCompanion
     this.maxStores = const Value.absent(),
     this.maxUsers = const Value.absent(),
     this.maxProducts = const Value.absent(),
+    this.status = const Value.absent(),
+    this.companyType = const Value.absent(),
     this.isActive = const Value.absent(),
     this.trialEndsAt = const Value.absent(),
     required DateTime createdAt,
@@ -32413,6 +32476,8 @@ class OrganizationsTableCompanion
     Expression<int>? maxStores,
     Expression<int>? maxUsers,
     Expression<int>? maxProducts,
+    Expression<String>? status,
+    Expression<String>? companyType,
     Expression<bool>? isActive,
     Expression<DateTime>? trialEndsAt,
     Expression<DateTime>? createdAt,
@@ -32441,6 +32506,8 @@ class OrganizationsTableCompanion
       if (maxStores != null) 'max_stores': maxStores,
       if (maxUsers != null) 'max_users': maxUsers,
       if (maxProducts != null) 'max_products': maxProducts,
+      if (status != null) 'status': status,
+      if (companyType != null) 'company_type': companyType,
       if (isActive != null) 'is_active': isActive,
       if (trialEndsAt != null) 'trial_ends_at': trialEndsAt,
       if (createdAt != null) 'created_at': createdAt,
@@ -32471,6 +32538,8 @@ class OrganizationsTableCompanion
       Value<int>? maxStores,
       Value<int>? maxUsers,
       Value<int>? maxProducts,
+      Value<String>? status,
+      Value<String>? companyType,
       Value<bool>? isActive,
       Value<DateTime?>? trialEndsAt,
       Value<DateTime>? createdAt,
@@ -32498,6 +32567,8 @@ class OrganizationsTableCompanion
       maxStores: maxStores ?? this.maxStores,
       maxUsers: maxUsers ?? this.maxUsers,
       maxProducts: maxProducts ?? this.maxProducts,
+      status: status ?? this.status,
+      companyType: companyType ?? this.companyType,
       isActive: isActive ?? this.isActive,
       trialEndsAt: trialEndsAt ?? this.trialEndsAt,
       createdAt: createdAt ?? this.createdAt,
@@ -32570,6 +32641,12 @@ class OrganizationsTableCompanion
     if (maxProducts.present) {
       map['max_products'] = Variable<int>(maxProducts.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (companyType.present) {
+      map['company_type'] = Variable<String>(companyType.value);
+    }
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
@@ -32614,6 +32691,8 @@ class OrganizationsTableCompanion
           ..write('maxStores: $maxStores, ')
           ..write('maxUsers: $maxUsers, ')
           ..write('maxProducts: $maxProducts, ')
+          ..write('status: $status, ')
+          ..write('companyType: $companyType, ')
           ..write('isActive: $isActive, ')
           ..write('trialEndsAt: $trialEndsAt, ')
           ..write('createdAt: $createdAt, ')
@@ -39379,6 +39458,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_products_is_active ON products (is_active)');
   late final Index idxProductsStoreBarcode = Index('idx_products_store_barcode',
       'CREATE INDEX idx_products_store_barcode ON products (store_id, barcode)');
+  late final Index idxProductsStoreCategoryActive = Index(
+      'idx_products_store_category_active',
+      'CREATE INDEX idx_products_store_category_active ON products (store_id, category_id, is_active)');
   late final Index idxSalesStoreId = Index('idx_sales_store_id',
       'CREATE INDEX idx_sales_store_id ON sales (store_id)');
   late final Index idxSalesCashierId = Index('idx_sales_cashier_id',
@@ -39391,6 +39473,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_sales_synced_at ON sales (synced_at)');
   late final Index idxSalesStoreCreated = Index('idx_sales_store_created',
       'CREATE INDEX idx_sales_store_created ON sales (store_id, created_at)');
+  late final Index idxSalesStoreStatusCreated = Index(
+      'idx_sales_store_status_created',
+      'CREATE INDEX idx_sales_store_status_created ON sales (store_id, status, created_at)');
   late final Index idxSalesStoreReceiptUnique = Index(
       'idx_sales_store_receipt_unique',
       'CREATE UNIQUE INDEX idx_sales_store_receipt_unique ON sales (store_id, receipt_no)');
@@ -39398,6 +39483,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_sale_items_sale_id ON sale_items (sale_id)');
   late final Index idxSaleItemsProductId = Index('idx_sale_items_product_id',
       'CREATE INDEX idx_sale_items_product_id ON sale_items (product_id)');
+  late final Index idxSaleItemsProductSale = Index(
+      'idx_sale_items_product_sale',
+      'CREATE INDEX idx_sale_items_product_sale ON sale_items (product_id, sale_id)');
   late final Index idxInventoryProductId = Index('idx_inventory_product_id',
       'CREATE INDEX idx_inventory_product_id ON inventory_movements (product_id)');
   late final Index idxInventoryStoreId = Index('idx_inventory_store_id',
@@ -39430,6 +39518,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE UNIQUE INDEX idx_sync_idempotency ON sync_queue (idempotency_key)');
   late final Index idxSyncStatusPriority = Index('idx_sync_status_priority',
       'CREATE INDEX idx_sync_status_priority ON sync_queue (status, priority)');
+  late final Index idxSyncStatusPriorityCreated = Index(
+      'idx_sync_status_priority_created',
+      'CREATE INDEX idx_sync_status_priority_created ON sync_queue (status, priority, created_at)');
+  late final Index idxSyncTableRecordStatus = Index(
+      'idx_sync_table_record_status',
+      'CREATE INDEX idx_sync_table_record_status ON sync_queue (table_name, record_id, status)');
   late final Index idxTransactionsStoreId = Index('idx_transactions_store_id',
       'CREATE INDEX idx_transactions_store_id ON transactions (store_id)');
   late final Index idxTransactionsAccountId = Index(
@@ -39524,6 +39618,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_customers_name ON customers (name)');
   late final Index idxCustomersIsActive = Index('idx_customers_is_active',
       'CREATE INDEX idx_customers_is_active ON customers (is_active)');
+  late final Index idxCustomersStorePhone = Index('idx_customers_store_phone',
+      'CREATE INDEX idx_customers_store_phone ON customers (store_id, phone)');
   late final Index idxCustomerAddressesCustomerId = Index(
       'idx_customer_addresses_customer_id',
       'CREATE INDEX idx_customer_addresses_customer_id ON customer_addresses (customer_id)');
@@ -39541,6 +39637,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'idx_shifts_status', 'CREATE INDEX idx_shifts_status ON shifts (status)');
   late final Index idxShiftsOpenedAt = Index('idx_shifts_opened_at',
       'CREATE INDEX idx_shifts_opened_at ON shifts (opened_at)');
+  late final Index idxShiftsStoreCashierStatus = Index(
+      'idx_shifts_store_cashier_status',
+      'CREATE INDEX idx_shifts_store_cashier_status ON shifts (store_id, cashier_id, status)');
   late final Index idxCashMovementsShiftId = Index(
       'idx_cash_movements_shift_id',
       'CREATE INDEX idx_cash_movements_shift_id ON cash_movements (shift_id)');
@@ -39572,6 +39671,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_expenses_category_id ON expenses (category_id)');
   late final Index idxExpensesCreatedAt = Index('idx_expenses_created_at',
       'CREATE INDEX idx_expenses_created_at ON expenses (created_at)');
+  late final Index idxExpensesStoreCreated = Index('idx_expenses_store_created',
+      'CREATE INDEX idx_expenses_store_created ON expenses (store_id, created_at)');
   late final Index idxExpenseCategoriesStoreId = Index(
       'idx_expense_categories_store_id',
       'CREATE INDEX idx_expense_categories_store_id ON expense_categories (store_id)');
@@ -39856,15 +39957,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxProductsSyncedAt,
         idxProductsIsActive,
         idxProductsStoreBarcode,
+        idxProductsStoreCategoryActive,
         idxSalesStoreId,
         idxSalesCashierId,
         idxSalesCreatedAt,
         idxSalesStatus,
         idxSalesSyncedAt,
         idxSalesStoreCreated,
+        idxSalesStoreStatusCreated,
         idxSalesStoreReceiptUnique,
         idxSaleItemsSaleId,
         idxSaleItemsProductId,
+        idxSaleItemsProductSale,
         idxInventoryProductId,
         idxInventoryStoreId,
         idxInventoryCreatedAt,
@@ -39881,6 +39985,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxSyncCreatedAt,
         idxSyncIdempotency,
         idxSyncStatusPriority,
+        idxSyncStatusPriorityCreated,
+        idxSyncTableRecordStatus,
         idxTransactionsStoreId,
         idxTransactionsAccountId,
         idxTransactionsType,
@@ -39925,6 +40031,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxCustomersPhone,
         idxCustomersName,
         idxCustomersIsActive,
+        idxCustomersStorePhone,
         idxCustomerAddressesCustomerId,
         idxSuppliersStoreId,
         idxSuppliersPhone,
@@ -39933,6 +40040,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxShiftsCashierId,
         idxShiftsStatus,
         idxShiftsOpenedAt,
+        idxShiftsStoreCashierStatus,
         idxCashMovementsShiftId,
         idxCashMovementsStoreId,
         idxCashMovementsCreatedAt,
@@ -39946,6 +40054,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxExpensesStoreId,
         idxExpensesCategoryId,
         idxExpensesCreatedAt,
+        idxExpensesStoreCreated,
         idxExpenseCategoriesStoreId,
         idxPurchasesStoreId,
         idxPurchasesSupplierId,
@@ -42143,8 +42252,8 @@ typedef $$ProductsTableTableCreateCompanionBuilder = ProductsTableCompanion
   Value<String?> barcode,
   required double price,
   Value<double?> costPrice,
-  Value<int> stockQty,
-  Value<int> minQty,
+  Value<double> stockQty,
+  Value<double> minQty,
   Value<String?> unit,
   Value<String?> description,
   Value<String?> imageThumbnail,
@@ -42182,8 +42291,8 @@ typedef $$ProductsTableTableUpdateCompanionBuilder = ProductsTableCompanion
   Value<String?> barcode,
   Value<double> price,
   Value<double?> costPrice,
-  Value<int> stockQty,
-  Value<int> minQty,
+  Value<double> stockQty,
+  Value<double> minQty,
   Value<String?> unit,
   Value<String?> description,
   Value<String?> imageThumbnail,
@@ -42365,10 +42474,10 @@ class $$ProductsTableTableFilterComposer
   ColumnFilters<double> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get stockQty => $composableBuilder(
+  ColumnFilters<double> get stockQty => $composableBuilder(
       column: $table.stockQty, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get minQty => $composableBuilder(
+  ColumnFilters<double> get minQty => $composableBuilder(
       column: $table.minQty, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get unit => $composableBuilder(
@@ -42627,10 +42736,10 @@ class $$ProductsTableTableOrderingComposer
   ColumnOrderings<double> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get stockQty => $composableBuilder(
+  ColumnOrderings<double> get stockQty => $composableBuilder(
       column: $table.stockQty, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get minQty => $composableBuilder(
+  ColumnOrderings<double> get minQty => $composableBuilder(
       column: $table.minQty, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get unit => $composableBuilder(
@@ -42787,10 +42896,10 @@ class $$ProductsTableTableAnnotationComposer
   GeneratedColumn<double> get costPrice =>
       $composableBuilder(column: $table.costPrice, builder: (column) => column);
 
-  GeneratedColumn<int> get stockQty =>
+  GeneratedColumn<double> get stockQty =>
       $composableBuilder(column: $table.stockQty, builder: (column) => column);
 
-  GeneratedColumn<int> get minQty =>
+  GeneratedColumn<double> get minQty =>
       $composableBuilder(column: $table.minQty, builder: (column) => column);
 
   GeneratedColumn<String> get unit =>
@@ -43052,8 +43161,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             Value<String?> barcode = const Value.absent(),
             Value<double> price = const Value.absent(),
             Value<double?> costPrice = const Value.absent(),
-            Value<int> stockQty = const Value.absent(),
-            Value<int> minQty = const Value.absent(),
+            Value<double> stockQty = const Value.absent(),
+            Value<double> minQty = const Value.absent(),
             Value<String?> unit = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<String?> imageThumbnail = const Value.absent(),
@@ -43128,8 +43237,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             Value<String?> barcode = const Value.absent(),
             required double price,
             Value<double?> costPrice = const Value.absent(),
-            Value<int> stockQty = const Value.absent(),
-            Value<int> minQty = const Value.absent(),
+            Value<double> stockQty = const Value.absent(),
+            Value<double> minQty = const Value.absent(),
             Value<String?> unit = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<String?> imageThumbnail = const Value.absent(),
@@ -43350,7 +43459,7 @@ typedef $$ProductsTableTableProcessedTableManager = ProcessedTableManager<
 typedef $$UsersTableTableCreateCompanionBuilder = UsersTableCompanion Function({
   required String id,
   Value<String?> orgId,
-  required String storeId,
+  Value<String?> storeId,
   required String name,
   Value<String?> phone,
   Value<String?> email,
@@ -43370,7 +43479,7 @@ typedef $$UsersTableTableCreateCompanionBuilder = UsersTableCompanion Function({
 typedef $$UsersTableTableUpdateCompanionBuilder = UsersTableCompanion Function({
   Value<String> id,
   Value<String?> orgId,
-  Value<String> storeId,
+  Value<String?> storeId,
   Value<String> name,
   Value<String?> phone,
   Value<String?> email,
@@ -43725,7 +43834,7 @@ class $$UsersTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String?> orgId = const Value.absent(),
-            Value<String> storeId = const Value.absent(),
+            Value<String?> storeId = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String?> phone = const Value.absent(),
             Value<String?> email = const Value.absent(),
@@ -43765,7 +43874,7 @@ class $$UsersTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             Value<String?> orgId = const Value.absent(),
-            required String storeId,
+            Value<String?> storeId = const Value.absent(),
             required String name,
             Value<String?> phone = const Value.absent(),
             Value<String?> email = const Value.absent(),
@@ -60570,6 +60679,8 @@ typedef $$OrganizationsTableTableCreateCompanionBuilder
   Value<int> maxStores,
   Value<int> maxUsers,
   Value<int> maxProducts,
+  Value<String> status,
+  Value<String> companyType,
   Value<bool> isActive,
   Value<DateTime?> trialEndsAt,
   required DateTime createdAt,
@@ -60599,6 +60710,8 @@ typedef $$OrganizationsTableTableUpdateCompanionBuilder
   Value<int> maxStores,
   Value<int> maxUsers,
   Value<int> maxProducts,
+  Value<String> status,
+  Value<String> companyType,
   Value<bool> isActive,
   Value<DateTime?> trialEndsAt,
   Value<DateTime> createdAt,
@@ -60698,6 +60811,12 @@ class $$OrganizationsTableTableFilterComposer
 
   ColumnFilters<int> get maxProducts => $composableBuilder(
       column: $table.maxProducts, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get companyType => $composableBuilder(
+      column: $table.companyType, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get isActive => $composableBuilder(
       column: $table.isActive, builder: (column) => ColumnFilters(column));
@@ -60806,6 +60925,12 @@ class $$OrganizationsTableTableOrderingComposer
   ColumnOrderings<int> get maxProducts => $composableBuilder(
       column: $table.maxProducts, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get companyType => $composableBuilder(
+      column: $table.companyType, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<bool> get isActive => $composableBuilder(
       column: $table.isActive, builder: (column) => ColumnOrderings(column));
 
@@ -60891,6 +61016,12 @@ class $$OrganizationsTableTableAnnotationComposer
   GeneratedColumn<int> get maxProducts => $composableBuilder(
       column: $table.maxProducts, builder: (column) => column);
 
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get companyType => $composableBuilder(
+      column: $table.companyType, builder: (column) => column);
+
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
 
@@ -60973,6 +61104,8 @@ class $$OrganizationsTableTableTableManager extends RootTableManager<
             Value<int> maxStores = const Value.absent(),
             Value<int> maxUsers = const Value.absent(),
             Value<int> maxProducts = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String> companyType = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
             Value<DateTime?> trialEndsAt = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -61001,6 +61134,8 @@ class $$OrganizationsTableTableTableManager extends RootTableManager<
             maxStores: maxStores,
             maxUsers: maxUsers,
             maxProducts: maxProducts,
+            status: status,
+            companyType: companyType,
             isActive: isActive,
             trialEndsAt: trialEndsAt,
             createdAt: createdAt,
@@ -61029,6 +61164,8 @@ class $$OrganizationsTableTableTableManager extends RootTableManager<
             Value<int> maxStores = const Value.absent(),
             Value<int> maxUsers = const Value.absent(),
             Value<int> maxProducts = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String> companyType = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
             Value<DateTime?> trialEndsAt = const Value.absent(),
             required DateTime createdAt,
@@ -61057,6 +61194,8 @@ class $$OrganizationsTableTableTableManager extends RootTableManager<
             maxStores: maxStores,
             maxUsers: maxUsers,
             maxProducts: maxProducts,
+            status: status,
+            companyType: companyType,
             isActive: isActive,
             trialEndsAt: trialEndsAt,
             createdAt: createdAt,

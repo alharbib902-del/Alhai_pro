@@ -185,7 +185,7 @@ class LocalProductsRepository implements ProductsRepository {
   }
 
   /// Update stock
-  Future<void> updateStock(String productId, int newQty) async {
+  Future<void> updateStock(String productId, double newQty) async {
     await _db.productsDao.updateStock(productId, newQty);
   }
 }

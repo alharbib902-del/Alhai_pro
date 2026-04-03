@@ -218,7 +218,7 @@ Future<void> receivePurchaseWithDetails(
     final product = await db.productsDao.getProductById(item.productId);
     if (product != null) {
       final newStock = product.stockQty + receivedQty;
-      await db.productsDao.updateStock(item.productId, newStock.toInt());
+      await db.productsDao.updateStock(item.productId, newStock.toDouble());
 
       // تسجيل حركة المخزون
       if (storeId != null) {

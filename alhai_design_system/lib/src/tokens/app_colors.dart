@@ -396,7 +396,7 @@ class AppColors {
   // ==========================================================================
 
   /// الحصول على لون المخزون حسب الحالة
-  static Color getStockColor(int quantity, int minQuantity) {
+  static Color getStockColor(double quantity, double minQuantity) {
     if (quantity <= 0) return stockOut;
     if (quantity <= minQuantity) return stockLow;
     return stockAvailable;

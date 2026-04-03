@@ -38,7 +38,7 @@ class SlowMovingProductResponse {
       productName: productName,
       categoryName: categoryName,
       daysSinceLastSale: daysSinceLastSale,
-      stockQty: stockQty,
+      stockQty: stockQty.toDouble(),
       stockValue: stockValue,
       suggestedDiscount: suggestedDiscount ?? 0,
       lastSaleDate: lastSaleDate != null ? DateTime.tryParse(lastSaleDate!) : null,

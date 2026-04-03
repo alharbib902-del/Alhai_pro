@@ -347,7 +347,7 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             final itemCost = _suggestions[i].price * _suggestions[i].quantity;
             if (runningTotal + itemCost > budget) {
               final remaining = budget - runningTotal;
-              final maxQty = (remaining / _suggestions[i].price).floor();
+              final maxQty = (remaining / _suggestions[i].price).floorToDouble();
               if (maxQty > 0) {
                 _suggestions[i].quantity = maxQty;
                 runningTotal += _suggestions[i].price * maxQty;
@@ -402,11 +402,11 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
 
 class _ReorderItem {
   final String name;
-  final int currentStock;
-  final int minStock;
+  final double currentStock;
+  final double minStock;
   final int turnoverRate;
   final double price;
-  int quantity;
+  double quantity;
 
   _ReorderItem({required this.name, required this.currentStock, required this.minStock, required this.turnoverRate, required this.price, required this.quantity});
 }
@@ -447,7 +447,7 @@ class _SummaryCard extends StatelessWidget {
 class _ReorderItemCard extends StatelessWidget {
   final _ReorderItem item;
   final bool isDark;
-  final ValueChanged<int> onQuantityChanged;
+  final ValueChanged<double> onQuantityChanged;
 
   const _ReorderItemCard({required this.item, required this.isDark, required this.onQuantityChanged});
 
@@ -471,7 +471,7 @@ class _ReorderItemCard extends StatelessWidget {
                 Text(item.name, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 const SizedBox(height: AlhaiSpacing.xs),
                 Row(children: [
-                  _Tag(icon: Icons.inventory, label: l10n.stockLabelCount(item.currentStock), color: item.currentStock < item.minStock ? AppColors.error : AppColors.textSecondary, isDark: isDark),
+                  _Tag(icon: Icons.inventory, label: l10n.stockLabelCount(item.currentStock.toInt()), color: item.currentStock < item.minStock ? AppColors.error : AppColors.textSecondary, isDark: isDark),
                   const SizedBox(width: AlhaiSpacing.xs),
                   _Tag(icon: Icons.trending_up, label: l10n.turnoverLabel(item.turnoverRate), color: AppColors.info, isDark: isDark),
                 ]),
@@ -486,7 +486,7 @@ class _ReorderItemCard extends StatelessWidget {
                 icon: Icon(Icons.remove_circle_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 onPressed: item.quantity > 0 ? () => onQuantityChanged(item.quantity - 1) : null,
               ),
-              Text('${item.quantity}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
+              Text('${item.quantity.toInt()}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
               IconButton(icon: const Icon(Icons.add_circle_outline, color: AppColors.primary), onPressed: () => onQuantityChanged(item.quantity + 1)),
             ]),
           ]),

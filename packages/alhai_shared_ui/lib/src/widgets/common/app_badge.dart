@@ -90,7 +90,7 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المخزون
-  static AppBadge stock(BuildContext context, int quantity, {int minQuantity = 5}) {
+  static AppBadge stock(BuildContext context, double quantity, {double minQuantity = 5}) {
     final l10n = AppLocalizations.of(context)!;
     if (quantity <= 0) {
       return AppBadge(
@@ -102,7 +102,7 @@ class AppBadge extends StatelessWidget {
     }
     if (quantity <= minQuantity) {
       return AppBadge(
-        label: '${l10n.lowStockLabel} ($quantity)',
+        label: '${l10n.lowStockLabel} (${quantity.round()})',
         color: AppColors.stockLow,
         variant: AppBadgeVariant.soft,
         size: AppBadgeSize.small,

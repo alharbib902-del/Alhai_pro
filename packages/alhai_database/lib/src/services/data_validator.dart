@@ -137,7 +137,7 @@ class DataValidator {
     required String? storeId,
     required String? name,
     required double? price,
-    required int? stockQty,
+    required double? stockQty,
   }) {
     final errors = <String>[];
     final warnings = <String>[];

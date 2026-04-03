@@ -99,7 +99,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
         final price = (row.data['price'] is int)
             ? (row.data['price'] as int).toDouble()
             : row.data['price'] as double? ?? 0.0;
-        final stockQty = row.data['stock_qty'] as int? ?? 0;
+        final stockQty = (row.data['stock_qty'] as num?)?.toDouble() ?? 0.0;
 
         // تحديد الاتجاه بناءً على الكمية المباعة
         String trend;
@@ -901,7 +901,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      l10n.inStockCount(product.stockLevel),
+                      l10n.inStockCount(product.stockLevel.round()),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -961,7 +961,7 @@ class _TopProductsReportScreenState extends ConsumerState<TopProductsReportScree
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
-                      l10n.soldUnitsStock(product.unitsSold, product.stockLevel),
+                      l10n.soldUnitsStock(product.unitsSold, product.stockLevel.round()),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -1067,7 +1067,7 @@ class ProductReport {
   final double revenue;
   final double profit;
   final double avgPrice;
-  final int stockLevel;
+  final double stockLevel;
   final double returnRate;
   final String trend;
 

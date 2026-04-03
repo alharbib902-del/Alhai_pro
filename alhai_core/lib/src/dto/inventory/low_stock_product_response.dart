@@ -8,8 +8,8 @@ part 'low_stock_product_response.g.dart';
 class LowStockProductResponse {
   final String productId;
   final String productName;
-  final int currentQty;
-  final int minQty;
+  final double currentQty;
+  final double minQty;
 
   const LowStockProductResponse({
     required this.productId,

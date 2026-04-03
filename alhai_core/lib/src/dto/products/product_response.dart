@@ -18,8 +18,8 @@ class ProductResponse with _$ProductResponse {
     String? barcode,
     required double price,
     @JsonKey(name: 'cost_price') double? costPrice,
-    @JsonKey(name: 'stock_qty') required int stockQty,
-    @JsonKey(name: 'min_qty') @Default(1) int minQty,
+    @JsonKey(name: 'stock_qty') required double stockQty,
+    @JsonKey(name: 'min_qty') @Default(0) double minQty,
     String? unit,
     String? description,
     @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')

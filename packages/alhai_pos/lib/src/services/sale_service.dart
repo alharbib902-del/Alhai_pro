@@ -94,7 +94,7 @@ class SaleService {
         if (existingUser == null) {
           await _db.usersDao.ensureUser(UsersTableCompanion.insert(
             id: cashierId,
-            storeId: storeId,
+            storeId: Value(storeId),
             name: 'Cashier',
             role: const Value('cashier'),
             isActive: const Value(true),
@@ -159,7 +159,7 @@ class SaleService {
           throw SaleException.insufficientStock(
             product.name,
             product.stockQty,
-            item.quantity,
+            item.quantity.toDouble(),
           );
         }
       }

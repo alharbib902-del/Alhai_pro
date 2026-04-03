@@ -11,8 +11,8 @@ LowStockProductResponse _$LowStockProductResponseFromJson(
     LowStockProductResponse(
       productId: json['productId'] as String,
       productName: json['productName'] as String,
-      currentQty: (json['currentQty'] as num).toInt(),
-      minQty: (json['minQty'] as num).toInt(),
+      currentQty: (json['currentQty'] as num).toDouble(),
+      minQty: (json['minQty'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$LowStockProductResponseToJson(

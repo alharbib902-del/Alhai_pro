@@ -95,8 +95,8 @@ class ProductFactory {
     String? barcode,
     double? price,
     double? costPrice,
-    int? stockQty,
-    int? minQty,
+    double? stockQty,
+    double? minQty,
     String? categoryId,
     bool? isActive,
     DateTime? createdAt,
@@ -118,7 +118,7 @@ class ProductFactory {
     );
   }
 
-  static Product inStock({String? id, int? qty}) => create(
+  static Product inStock({String? id, double? qty}) => create(
         id: id,
         stockQty: qty ?? 100,
       );

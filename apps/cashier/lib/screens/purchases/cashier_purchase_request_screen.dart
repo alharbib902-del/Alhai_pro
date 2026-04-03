@@ -347,7 +347,7 @@ class _CashierPurchaseRequestScreenState
     );
   }
 
-  Color _getStockColor(int qty) {
+  Color _getStockColor(double qty) {
     if (qty <= 0) return AppColors.error;
     if (qty < 10) return AppColors.warning;
     return AppColors.success;

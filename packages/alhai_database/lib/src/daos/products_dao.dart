@@ -158,7 +158,7 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   }
   
   /// تحديث المخزون
-  Future<int> updateStock(String productId, int newQty) {
+  Future<int> updateStock(String productId, double newQty) {
     return (update(productsTable)..where((p) => p.id.equals(productId)))
       .write(ProductsTableCompanion(
         stockQty: Value(newQty),
@@ -403,7 +403,7 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   }
 
   /// تحديث batch للمنتجات (لتحسين الأداء)
-  Future<void> batchUpdateStock(Map<String, int> stockUpdates) async {
+  Future<void> batchUpdateStock(Map<String, double> stockUpdates) async {
     await batch((b) {
       for (final entry in stockUpdates.entries) {
         b.update(

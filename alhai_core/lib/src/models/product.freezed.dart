@@ -27,8 +27,8 @@ mixin _$Product {
   String? get barcode => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
   double? get costPrice => throw _privateConstructorUsedError;
-  int get stockQty => throw _privateConstructorUsedError;
-  int get minQty => throw _privateConstructorUsedError;
+  double get stockQty => throw _privateConstructorUsedError;
+  double get minQty => throw _privateConstructorUsedError;
   String? get unit => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -70,8 +70,8 @@ abstract class $ProductCopyWith<$Res> {
       String? barcode,
       double price,
       double? costPrice,
-      int stockQty,
-      int minQty,
+      double stockQty,
+      double minQty,
       String? unit,
       String? description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -156,11 +156,11 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       minQty: null == minQty
           ? _value.minQty
           : minQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       unit: freezed == unit
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -228,8 +228,8 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
       String? barcode,
       double price,
       double? costPrice,
-      int stockQty,
-      int minQty,
+      double stockQty,
+      double minQty,
       String? unit,
       String? description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -312,11 +312,11 @@ class __$$ProductImplCopyWithImpl<$Res>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       minQty: null == minQty
           ? _value.minQty
           : minQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       unit: freezed == unit
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -381,7 +381,7 @@ class _$ProductImpl extends _Product {
       required this.price,
       this.costPrice,
       required this.stockQty,
-      this.minQty = 1,
+      this.minQty = 0,
       this.unit,
       this.description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -415,10 +415,10 @@ class _$ProductImpl extends _Product {
   @override
   final double? costPrice;
   @override
-  final int stockQty;
+  final double stockQty;
   @override
   @JsonKey()
-  final int minQty;
+  final double minQty;
   @override
   final String? unit;
   @override
@@ -549,8 +549,8 @@ abstract class _Product extends Product {
       final String? barcode,
       required final double price,
       final double? costPrice,
-      required final int stockQty,
-      final int minQty,
+      required final double stockQty,
+      final double minQty,
       final String? unit,
       final String? description,
       @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
@@ -583,9 +583,9 @@ abstract class _Product extends Product {
   @override
   double? get costPrice;
   @override
-  int get stockQty;
+  double get stockQty;
   @override
-  int get minQty;
+  double get minQty;
   @override
   String? get unit;
   @override

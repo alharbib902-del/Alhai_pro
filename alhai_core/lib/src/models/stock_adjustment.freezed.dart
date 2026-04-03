@@ -24,9 +24,9 @@ mixin _$StockAdjustment {
   String get productId => throw _privateConstructorUsedError;
   String get storeId => throw _privateConstructorUsedError;
   AdjustmentType get type => throw _privateConstructorUsedError;
-  int get quantity => throw _privateConstructorUsedError;
-  int get previousQty => throw _privateConstructorUsedError;
-  int get newQty => throw _privateConstructorUsedError;
+  double get quantity => throw _privateConstructorUsedError;
+  double get previousQty => throw _privateConstructorUsedError;
+  double get newQty => throw _privateConstructorUsedError;
   String? get reason => throw _privateConstructorUsedError;
   String? get referenceId => throw _privateConstructorUsedError;
   String? get createdBy => throw _privateConstructorUsedError;
@@ -53,9 +53,9 @@ abstract class $StockAdjustmentCopyWith<$Res> {
       String productId,
       String storeId,
       AdjustmentType type,
-      int quantity,
-      int previousQty,
-      int newQty,
+      double quantity,
+      double previousQty,
+      double newQty,
       String? reason,
       String? referenceId,
       String? createdBy,
@@ -109,15 +109,15 @@ class _$StockAdjustmentCopyWithImpl<$Res, $Val extends StockAdjustment>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       previousQty: null == previousQty
           ? _value.previousQty
           : previousQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       newQty: null == newQty
           ? _value.newQty
           : newQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       reason: freezed == reason
           ? _value.reason
           : reason // ignore: cast_nullable_to_non_nullable
@@ -151,9 +151,9 @@ abstract class _$$StockAdjustmentImplCopyWith<$Res>
       String productId,
       String storeId,
       AdjustmentType type,
-      int quantity,
-      int previousQty,
-      int newQty,
+      double quantity,
+      double previousQty,
+      double newQty,
       String? reason,
       String? referenceId,
       String? createdBy,
@@ -205,15 +205,15 @@ class __$$StockAdjustmentImplCopyWithImpl<$Res>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       previousQty: null == previousQty
           ? _value.previousQty
           : previousQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       newQty: null == newQty
           ? _value.newQty
           : newQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       reason: freezed == reason
           ? _value.reason
           : reason // ignore: cast_nullable_to_non_nullable
@@ -262,11 +262,11 @@ class _$StockAdjustmentImpl implements _StockAdjustment {
   @override
   final AdjustmentType type;
   @override
-  final int quantity;
+  final double quantity;
   @override
-  final int previousQty;
+  final double previousQty;
   @override
-  final int newQty;
+  final double newQty;
   @override
   final String? reason;
   @override
@@ -333,9 +333,9 @@ abstract class _StockAdjustment implements StockAdjustment {
       required final String productId,
       required final String storeId,
       required final AdjustmentType type,
-      required final int quantity,
-      required final int previousQty,
-      required final int newQty,
+      required final double quantity,
+      required final double previousQty,
+      required final double newQty,
       final String? reason,
       final String? referenceId,
       final String? createdBy,
@@ -353,11 +353,11 @@ abstract class _StockAdjustment implements StockAdjustment {
   @override
   AdjustmentType get type;
   @override
-  int get quantity;
+  double get quantity;
   @override
-  int get previousQty;
+  double get previousQty;
   @override
-  int get newQty;
+  double get newQty;
   @override
   String? get reason;
   @override

@@ -503,7 +503,7 @@
           {
             "name": "stock_qty",
             "getter_name": "stockQty",
-            "moor_type": "int",
+            "moor_type": "double",
             "nullable": false,
             "customConstraints": null,
             "default_dart": "const CustomExpression('0')",
@@ -513,10 +513,10 @@
           {
             "name": "min_qty",
             "getter_name": "minQty",
-            "moor_type": "int",
+            "moor_type": "double",
             "nullable": false,
             "customConstraints": null,
-            "default_dart": "const CustomExpression('1')",
+            "default_dart": "const CustomExpression('0')",
             "default_client_dart": null,
             "dsl_features": []
           },

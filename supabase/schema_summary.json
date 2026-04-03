@@ -1,0 +1,4198 @@
+{
+  "accounts": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "supplier_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "balance": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "credit_limit": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "last_transaction_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "app_users": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "auth_id": {
+      "type": "string:uuid",
+      "required": false,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "pin": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "role": {
+      "type": "string:text",
+      "required": true,
+      "default": "cashier"
+    },
+    "avatar": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "last_login_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "audit_log": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "action": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "entity_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "entity_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "old_value": {
+      "type": "unknown:jsonb",
+      "required": false,
+      "default": null
+    },
+    "new_value": {
+      "type": "unknown:jsonb",
+      "required": false,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "ip_address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "device_info": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "cash_movements": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "shift_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "reason": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "categories": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "parent_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "image_url": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "color": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "icon": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "sort_order": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "coupons": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "code": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "discount_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "value": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "max_uses": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "current_uses": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "min_purchase": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "expires_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "customer_addresses": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "label": {
+      "type": "string:text",
+      "required": true,
+      "default": "home"
+    },
+    "address": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "city": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "lat": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "lng": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "is_default": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "customers": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "city": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "tax_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": "individual"
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "daily_summaries": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": null
+    },
+    "total_sales": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_sales_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total_orders": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_orders_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total_refunds": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_refunds_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total_expenses": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "cash_total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "card_total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "credit_total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "net_profit": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "discounts": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "value": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "min_purchase": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "max_discount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "applies_to": {
+      "type": "string:text",
+      "required": true,
+      "default": "all"
+    },
+    "product_ids": {
+      "type": "unknown:jsonb",
+      "required": false,
+      "default": null
+    },
+    "category_ids": {
+      "type": "unknown:jsonb",
+      "required": false,
+      "default": null
+    },
+    "start_date": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "end_date": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "drivers": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "vehicle_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "vehicle_plate": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "available"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "expense_categories": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "icon": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "color": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "expenses": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "category_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": true,
+      "default": "cash"
+    },
+    "receipt_image": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "expense_date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "favorites": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "sort_order": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    }
+  },
+  "held_invoices": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "cashier_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "items": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    }
+  },
+  "inventory_movements": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "previous_qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "new_qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "reference_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reason": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "invoices": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "invoice_number": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "invoice_type": {
+      "type": "string:text",
+      "required": true,
+      "default": "simplified_tax"
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "issued"
+    },
+    "sale_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "ref_invoice_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "ref_reason": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_vat_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "tax_rate": {
+      "type": "number:double precision",
+      "required": false,
+      "default": 15
+    },
+    "tax_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "amount_paid": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "amount_due": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "currency": {
+      "type": "string:text",
+      "required": false,
+      "default": "SAR"
+    },
+    "zatca_hash": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "zatca_qr": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "zatca_uuid": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "pdf_url": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "cashier_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "issued_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "due_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "paid_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "loyalty_points": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "current_points": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_earned": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_redeemed": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "tier_level": {
+      "type": "string:text",
+      "required": true,
+      "default": "bronze"
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "loyalty_rewards": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "points_required": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "reward_type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "reward_value": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "min_purchase": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "required_tier": {
+      "type": "string:text",
+      "required": true,
+      "default": "all"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "expires_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "loyalty_transactions": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "loyalty_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "transaction_type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "points": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "balance_after": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "sale_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "sale_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "cashier_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "notifications": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "title": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "body": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": "info"
+    },
+    "is_read": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "data": {
+      "type": "unknown:jsonb",
+      "required": false,
+      "default": null
+    },
+    "action_url": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "read_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "order_items": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "order_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "barcode": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "quantity": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "unit_price": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "tax_rate": {
+      "type": "number:double precision",
+      "required": true,
+      "default": 15
+    },
+    "tax_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_reserved": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "order_status_history": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "order_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "from_status": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "to_status": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "changed_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "orders": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "order_number": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "channel": {
+      "type": "string:text",
+      "required": true,
+      "default": "app"
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "created"
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "tax_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "delivery_fee": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "payment_status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "delivery_type": {
+      "type": "string:text",
+      "required": true,
+      "default": "delivery"
+    },
+    "delivery_address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "delivery_lat": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "delivery_lng": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "driver_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "cancel_reason": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "order_date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "confirmed_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "preparing_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "ready_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "delivering_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "delivered_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "cancelled_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "confirmation_code": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "confirmation_attempts": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "auto_reorder_triggered": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    }
+  },
+  "org_members": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "role": {
+      "type": "string:text",
+      "required": true,
+      "default": "staff"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "invited_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "invited_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "joined_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": "now()"
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "org_products": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "sku": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "barcode": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "default_price": {
+      "type": "number:numeric",
+      "required": true,
+      "default": null
+    },
+    "cost_price": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "category_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "unit": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_thumbnail": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_medium": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_large": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_hash": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "online_available": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "online_max_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "min_alert_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "auto_reorder": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "reorder_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "organizations": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "slug": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "logo": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "owner_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "city": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "country": {
+      "type": "string:text",
+      "required": true,
+      "default": "SA"
+    },
+    "tax_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "commercial_reg": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "currency": {
+      "type": "string:text",
+      "required": true,
+      "default": "SAR"
+    },
+    "timezone": {
+      "type": "string:text",
+      "required": true,
+      "default": "Asia/Riyadh"
+    },
+    "locale": {
+      "type": "string:text",
+      "required": true,
+      "default": "ar"
+    },
+    "plan": {
+      "type": "string:text",
+      "required": true,
+      "default": "free"
+    },
+    "max_stores": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 1
+    },
+    "max_users": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 3
+    },
+    "max_products": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 100
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "trial_ends_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "trial"
+    },
+    "company_type": {
+      "type": "string:text",
+      "required": true,
+      "default": "agency"
+    }
+  },
+  "pos_terminals": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "terminal_number": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 1
+    },
+    "device_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "device_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "device_model": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "os_version": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "app_version": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "active"
+    },
+    "current_shift_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "current_user_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "last_heartbeat_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "last_sync_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "settings": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "receipt_header": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "receipt_footer": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "product_expiry": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "batch_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "expiry_date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": null
+    },
+    "quantity": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "products": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "sku": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "barcode": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "price": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "cost_price": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "stock_qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "min_qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": 0
+    },
+    "unit": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "image_thumbnail": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "image_medium": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "image_large": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "image_hash": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "category_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "track_inventory": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_image_thumbnail": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_medium": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_large": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_image_hash": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_product_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "online_available": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "online_max_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "online_reserved_qty": {
+      "type": "number:numeric",
+      "required": true,
+      "default": null
+    },
+    "min_alert_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "auto_reorder": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "reorder_qty": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    },
+    "turnover_rate": {
+      "type": "number:numeric",
+      "required": false,
+      "default": null
+    }
+  },
+  "promotions": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "rules": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "start_date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": null
+    },
+    "end_date": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "purchase_items": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "purchase_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_barcode": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "received_qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "unit_cost": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "purchases": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "supplier_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "supplier_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "purchase_number": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "draft"
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "tax": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "payment_status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "received_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "return_items": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "return_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "sale_item_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "unit_price": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "refund_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "returns": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "return_number": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "sale_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reason": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": "full"
+    },
+    "refund_method": {
+      "type": "string:text",
+      "required": true,
+      "default": "cash"
+    },
+    "total_refund": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "completed"
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "roles": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "permissions": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "is_system": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "sale_items": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "sale_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_sku": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "product_barcode": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "qty": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "unit_price": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "cost_price": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "sales": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "receipt_no": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "cashier_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "subtotal": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "discount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "tax": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "is_paid": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "amount_received": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "change_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "channel": {
+      "type": "string:text",
+      "required": true,
+      "default": "POS"
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "completed"
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "terminal_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "cash_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "card_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "credit_amount": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    }
+  },
+  "settings": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "key": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "value": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    }
+  },
+  "shifts": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "cashier_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "cashier_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "opening_cash": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "closing_cash": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "expected_cash": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "difference": {
+      "type": "number:double precision",
+      "required": false,
+      "default": null
+    },
+    "total_sales": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_sales_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "total_refunds": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "total_refunds_amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "open"
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "opened_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "closed_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "terminal_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "stock_deltas": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "product_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "quantity_change": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "device_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "operation_type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "reference_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "sync_status": {
+      "type": "string:text",
+      "required": false,
+      "default": "synced"
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": "now()"
+    }
+  },
+  "stock_takes": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "in_progress"
+    },
+    "items": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "total_items": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "counted_items": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "variance_items": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "started_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "completed_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  },
+  "stock_transfers": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "transfer_number": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "from_store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "to_store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "items": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "approved_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "approved_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "completed_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "received_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "approval_status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "received_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "store_members": {
+    "id": {
+      "type": "string:uuid",
+      "required": true,
+      "default": "gen_random_uuid()"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:uuid",
+      "required": true,
+      "default": null
+    },
+    "role_in_store": {
+      "type": "string:public.store_role enum[owner,manager,cashier]",
+      "required": true,
+      "default": "cashier"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": false,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "stores": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name_en": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "city": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "logo": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "tax_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "commercial_reg": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "currency": {
+      "type": "string:text",
+      "required": true,
+      "default": "SAR"
+    },
+    "timezone": {
+      "type": "string:text",
+      "required": true,
+      "default": "Asia/Riyadh"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "owner_id": {
+      "type": "string:uuid",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "subscriptions": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "plan": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "active"
+    },
+    "amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "currency": {
+      "type": "string:text",
+      "required": true,
+      "default": "SAR"
+    },
+    "billing_cycle": {
+      "type": "string:text",
+      "required": true,
+      "default": "monthly"
+    },
+    "current_period_start": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "current_period_end": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": null
+    },
+    "cancel_at_period_end": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "external_subscription_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "features": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "suppliers": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "address": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "city": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "tax_number": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "payment_terms": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "rating": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "balance": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "notes": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "sync_queue": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "table_name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "record_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "operation": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "payload": {
+      "type": "unknown:jsonb",
+      "required": true,
+      "default": null
+    },
+    "idempotency_key": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "retry_count": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "max_retries": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 3
+    },
+    "last_error": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "priority": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 1
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "last_attempt_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "transactions": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": "(extensions.uuid_generate_v4())"
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "account_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "amount": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "balance_after": {
+      "type": "number:double precision",
+      "required": true,
+      "default": null
+    },
+    "description": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "period_key": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "payment_method": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_by": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "user_stores": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "user_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "role": {
+      "type": "string:text",
+      "required": true,
+      "default": "cashier"
+    },
+    "is_primary": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "users": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "auth_uid": {
+      "type": "string:uuid",
+      "required": false,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "email": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "pin": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "role": {
+      "type": "string:text",
+      "required": true,
+      "default": "cashier"
+    },
+    "role_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "avatar": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "last_login_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "synced_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "password": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "deleted_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "whatsapp_messages": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "phone": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "customer_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "customer_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "message_type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "text_content": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "media_url": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "media_local_path": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "file_name": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "template_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "reference_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "status": {
+      "type": "string:text",
+      "required": true,
+      "default": "pending"
+    },
+    "external_msg_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "retry_count": {
+      "type": "integer:integer",
+      "required": true,
+      "default": null
+    },
+    "max_retries": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 3
+    },
+    "last_error": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "priority": {
+      "type": "integer:integer",
+      "required": true,
+      "default": 2
+    },
+    "batch_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "sent_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "delivered_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "read_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "last_attempt_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    }
+  },
+  "whatsapp_templates": {
+    "id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "store_id": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "name": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "type": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "content": {
+      "type": "string:text",
+      "required": true,
+      "default": null
+    },
+    "language": {
+      "type": "string:text",
+      "required": true,
+      "default": "ar"
+    },
+    "is_active": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": true
+    },
+    "is_default": {
+      "type": "boolean:boolean",
+      "required": true,
+      "default": null
+    },
+    "media_type": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    },
+    "created_at": {
+      "type": "string:timestamp with time zone",
+      "required": true,
+      "default": "now()"
+    },
+    "updated_at": {
+      "type": "string:timestamp with time zone",
+      "required": false,
+      "default": null
+    },
+    "org_id": {
+      "type": "string:text",
+      "required": false,
+      "default": null
+    }
+  }
+}

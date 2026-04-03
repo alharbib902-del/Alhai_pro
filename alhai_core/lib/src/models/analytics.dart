@@ -73,7 +73,7 @@ class SlowMovingProduct with _$SlowMovingProduct {
     required String productName,
     String? categoryName,
     required int daysSinceLastSale,
-    required int stockQty,
+    required double stockQty,
     required double stockValue,
     @Default(0) double suggestedDiscount,
     DateTime? lastSaleDate,

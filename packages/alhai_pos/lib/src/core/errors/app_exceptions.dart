@@ -319,7 +319,7 @@ class SaleException extends AppException {
   }
 
   /// المخزون غير كافٍ
-  factory SaleException.insufficientStock(String productName, int available, int requested) {
+  factory SaleException.insufficientStock(String productName, double available, double requested) {
     return SaleException(
       message: 'Insufficient stock for "$productName": available=$available, requested=$requested',
       userMessage: 'المنتج "$productName" لا يتوفر بالكمية المطلوبة. المتاح: $available، المطلوب: $requested',

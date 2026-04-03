@@ -4,8 +4,8 @@ import 'package:alhai_core/alhai_core.dart';
 /// Helper to create a Product for stock tests
 Product _product({
   String id = 'p1',
-  int stockQty = 100,
-  int minQty = 5,
+  double stockQty = 100,
+  double minQty = 5,
   bool trackInventory = true,
 }) {
   return Product(

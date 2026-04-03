@@ -255,7 +255,7 @@ class FtsSearchResult {
   final String? sku;
   final String? description;
   final double price;
-  final int stockQty;
+  final double stockQty;
   final String? imageThumbnail;
   final String? categoryId;
   final double rank;
@@ -283,7 +283,7 @@ class FtsSearchResult {
       sku: row.readNullable<String>('sku'),
       description: row.readNullable<String>('description'),
       price: row.read<double>('price'),
-      stockQty: row.read<int>('stock_qty'),
+      stockQty: row.read<double>('stock_qty'),
       imageThumbnail: row.readNullable<String>('image_thumbnail'),
       categoryId: row.readNullable<String>('category_id'),
       rank: row.read<double>('rank'),

@@ -24,7 +24,7 @@ mixin _$SlowMovingProduct {
   String get productName => throw _privateConstructorUsedError;
   String? get categoryName => throw _privateConstructorUsedError;
   int get daysSinceLastSale => throw _privateConstructorUsedError;
-  int get stockQty => throw _privateConstructorUsedError;
+  double get stockQty => throw _privateConstructorUsedError;
   double get stockValue => throw _privateConstructorUsedError;
   double get suggestedDiscount => throw _privateConstructorUsedError;
   DateTime? get lastSaleDate => throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ abstract class $SlowMovingProductCopyWith<$Res> {
       String productName,
       String? categoryName,
       int daysSinceLastSale,
-      int stockQty,
+      double stockQty,
       double stockValue,
       double suggestedDiscount,
       DateTime? lastSaleDate});
@@ -100,7 +100,7 @@ class _$SlowMovingProductCopyWithImpl<$Res, $Val extends SlowMovingProduct>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       stockValue: null == stockValue
           ? _value.stockValue
           : stockValue // ignore: cast_nullable_to_non_nullable
@@ -130,7 +130,7 @@ abstract class _$$SlowMovingProductImplCopyWith<$Res>
       String productName,
       String? categoryName,
       int daysSinceLastSale,
-      int stockQty,
+      double stockQty,
       double stockValue,
       double suggestedDiscount,
       DateTime? lastSaleDate});
@@ -178,7 +178,7 @@ class __$$SlowMovingProductImplCopyWithImpl<$Res>
       stockQty: null == stockQty
           ? _value.stockQty
           : stockQty // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       stockValue: null == stockValue
           ? _value.stockValue
           : stockValue // ignore: cast_nullable_to_non_nullable
@@ -221,7 +221,7 @@ class _$SlowMovingProductImpl extends _SlowMovingProduct {
   @override
   final int daysSinceLastSale;
   @override
-  final int stockQty;
+  final double stockQty;
   @override
   final double stockValue;
   @override
@@ -294,7 +294,7 @@ abstract class _SlowMovingProduct extends SlowMovingProduct {
       required final String productName,
       final String? categoryName,
       required final int daysSinceLastSale,
-      required final int stockQty,
+      required final double stockQty,
       required final double stockValue,
       final double suggestedDiscount,
       final DateTime? lastSaleDate}) = _$SlowMovingProductImpl;
@@ -312,7 +312,7 @@ abstract class _SlowMovingProduct extends SlowMovingProduct {
   @override
   int get daysSinceLastSale;
   @override
-  int get stockQty;
+  double get stockQty;
   @override
   double get stockValue;
   @override

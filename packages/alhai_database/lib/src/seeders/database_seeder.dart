@@ -171,7 +171,7 @@ class DatabaseSeeder {
         final price = double.tryParse(row[3].toString()) ?? 0.0;
         final categoryId = row[4].toString();
         final barcode = row[5].toString();
-        final stockQty = int.tryParse(row[6].toString()) ?? 0;
+        final stockQty = double.tryParse(row[6].toString()) ?? 0.0;
         final isActive = row[7].toString().toLowerCase() == 'true';
         final imageUrl = row.length > 8 ? row[8].toString().trim() : '';
 

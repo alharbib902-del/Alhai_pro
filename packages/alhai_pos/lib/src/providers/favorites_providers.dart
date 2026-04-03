@@ -50,7 +50,7 @@ class FavoriteProductData {
   String get barcode => product.barcode ?? '';
 
   /// المخزون
-  int get stock => product.stockQty;
+  double get stock => product.stockQty;
 
   /// صورة المنتج المصغرة
   String? get imageUrl => product.imageThumbnail;

@@ -10,9 +10,9 @@ class StockAdjustmentResponse {
   final String productId;
   final String storeId;
   final String type;
-  final int quantity;
-  final int previousQty;
-  final int newQty;
+  final double quantity;
+  final double previousQty;
+  final double newQty;
   final String? reason;
   final String? referenceId;
   final String? createdBy;

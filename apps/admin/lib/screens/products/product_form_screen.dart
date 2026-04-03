@@ -822,8 +822,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           price: double.tryParse(priceText) ?? 0.0,
           costPrice:
               drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
-          stockQty: int.tryParse(stockText) ?? 0,
-          minQty: int.tryParse(minStockText) ?? 1,
+          stockQty: double.tryParse(stockText) ?? 0.0,
+          minQty: double.tryParse(minStockText) ?? 1.0,
           categoryId: drift.Value(_selectedCategoryId),
           isActive: _isActive,
           trackInventory: _trackInventory,
@@ -851,8 +851,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           price: drift.Value(double.tryParse(priceText) ?? 0.0),
           costPrice:
               drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
-          stockQty: drift.Value(int.tryParse(stockText) ?? 0),
-          minQty: drift.Value(int.tryParse(minStockText) ?? 1),
+          stockQty: drift.Value(double.tryParse(stockText) ?? 0.0),
+          minQty: drift.Value(double.tryParse(minStockText) ?? 1.0),
           categoryId: drift.Value(_selectedCategoryId),
           isActive: drift.Value(_isActive),
           trackInventory: drift.Value(_trackInventory),

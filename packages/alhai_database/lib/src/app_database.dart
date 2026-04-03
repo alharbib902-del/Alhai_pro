@@ -131,7 +131,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 16;
+  int get schemaVersion => 19;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -345,6 +345,54 @@ class AppDatabase extends _$AppDatabase {
         await customStatement('ALTER TABLE sales ADD COLUMN card_amount REAL');
         await customStatement(
             'ALTER TABLE sales ADD COLUMN credit_amount REAL');
+      case 17:
+        // Migration v16 -> v17: إضافة أعمدة status و company_type للمؤسسات
+        await customStatement(
+            "ALTER TABLE organizations ADD COLUMN status TEXT NOT NULL DEFAULT 'trial'");
+        await customStatement(
+            "ALTER TABLE organizations ADD COLUMN company_type TEXT NOT NULL DEFAULT 'agency'");
+      case 18:
+        // Migration v17 -> v18: جعل عمود store_id في جدول users قابل لـ null
+        // المستخدمون على مستوى المؤسسة (org-level admins) قد لا ينتمون لمتجر محدد
+        // SQLite لا يدعم ALTER COLUMN، لذا نعيد إنشاء الجدول
+        await customStatement('''
+          CREATE TABLE users_new (
+            id TEXT NOT NULL PRIMARY KEY,
+            org_id TEXT,
+            store_id TEXT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT,
+            pin TEXT,
+            auth_uid TEXT,
+            role TEXT NOT NULL DEFAULT 'cashier',
+            role_id TEXT,
+            avatar TEXT,
+            is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+            last_login_at INTEGER,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER,
+            synced_at INTEGER,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          INSERT INTO users_new SELECT * FROM users
+        ''');
+        await customStatement('DROP TABLE users');
+        await customStatement('ALTER TABLE users_new RENAME TO users');
+        // إعادة إنشاء الفهارس
+        await customStatement(
+            'CREATE INDEX idx_users_store_id ON users (store_id)');
+        await customStatement(
+            'CREATE INDEX idx_users_phone ON users (phone)');
+        await customStatement(
+            'CREATE INDEX idx_users_is_active ON users (is_active)');
+      case 19:
+        // Migration v18 -> v19: تحويل stock_qty و min_qty من INTEGER إلى REAL
+        // لدعم الكميات الكسرية (مثل 2.5 كجم أرز)
+        // SQLite لا يدعم ALTER COLUMN TYPE لذا نعيد إنشاء الجدول
+        await _migrateToV19();
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }
@@ -615,6 +663,83 @@ class AppDatabase extends _$AppDatabase {
         "ALTER TABLE stock_transfers ADD COLUMN approval_status TEXT NOT NULL DEFAULT 'pending'");
     await customStatement(
         'ALTER TABLE stock_transfers ADD COLUMN received_at INTEGER');
+  }
+
+  /// Migration v18 -> v19: تحويل stock_qty و min_qty في products من INTEGER إلى REAL
+  Future<void> _migrateToV19() async {
+    // SQLite لا يدعم ALTER COLUMN TYPE لذا نعيد إنشاء الجدول
+    await customStatement('''
+      CREATE TABLE products_tmp AS SELECT * FROM products
+    ''');
+    await customStatement('DROP TABLE products');
+    await customStatement('''
+      CREATE TABLE products (
+        id TEXT NOT NULL PRIMARY KEY,
+        org_id TEXT,
+        store_id TEXT NOT NULL REFERENCES stores(id) ON DELETE RESTRICT,
+        name TEXT NOT NULL,
+        sku TEXT,
+        barcode TEXT,
+        price REAL NOT NULL,
+        cost_price REAL,
+        stock_qty REAL NOT NULL DEFAULT 0,
+        min_qty REAL NOT NULL DEFAULT 0,
+        unit TEXT,
+        description TEXT,
+        image_thumbnail TEXT,
+        image_medium TEXT,
+        image_large TEXT,
+        image_hash TEXT,
+        category_id TEXT REFERENCES categories(id) ON DELETE SET NULL,
+        is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+        track_inventory INTEGER NOT NULL DEFAULT 1 CHECK (track_inventory IN (0, 1)),
+        org_image_thumbnail TEXT,
+        org_image_medium TEXT,
+        org_image_large TEXT,
+        org_image_hash TEXT,
+        org_product_id TEXT,
+        online_available INTEGER NOT NULL DEFAULT 0,
+        online_max_qty REAL,
+        online_reserved_qty REAL NOT NULL DEFAULT 0,
+        min_alert_qty REAL,
+        auto_reorder INTEGER NOT NULL DEFAULT 0,
+        reorder_qty REAL,
+        turnover_rate REAL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER,
+        synced_at INTEGER,
+        deleted_at INTEGER
+      )
+    ''');
+    await customStatement('''
+      INSERT INTO products SELECT * FROM products_tmp
+    ''');
+    await customStatement('DROP TABLE products_tmp');
+    // إعادة إنشاء الفهارس
+    await customStatement(
+        'CREATE INDEX idx_products_store_id ON products (store_id)');
+    await customStatement(
+        'CREATE INDEX idx_products_barcode ON products (barcode)');
+    await customStatement(
+        'CREATE INDEX idx_products_sku ON products (sku)');
+    await customStatement(
+        'CREATE INDEX idx_products_category_id ON products (category_id)');
+    await customStatement(
+        'CREATE INDEX idx_products_name ON products (name)');
+    await customStatement(
+        'CREATE INDEX idx_products_synced_at ON products (synced_at)');
+    await customStatement(
+        'CREATE INDEX idx_products_is_active ON products (is_active)');
+    await customStatement(
+        'CREATE INDEX idx_products_store_barcode ON products (store_id, barcode)');
+    await customStatement(
+        'CREATE INDEX idx_products_store_category_active ON products (store_id, category_id, is_active)');
+    // إعادة بناء FTS (يعتمد على جدول products)
+    try {
+      await ftsService.rebuildFtsIndex();
+    } catch (e) {
+      debugPrint('[Migration v19] FTS rebuild skipped: $e');
+    }
   }
 
   // ==========================================================================

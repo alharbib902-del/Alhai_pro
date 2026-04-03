@@ -8,7 +8,7 @@ class AdjustStockRequest {
   final String productId;
   final String storeId;
   final String type;
-  final int quantity;
+  final double quantity;
   final String? reason;
   final String? referenceId;
 

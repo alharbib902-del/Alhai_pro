@@ -7,7 +7,7 @@ Product _product({
   String id = 'p1',
   String name = 'Test Product',
   double price = 25.0,
-  int stockQty = 100,
+  double stockQty = 100,
 }) {
   return Product(
     id: id,

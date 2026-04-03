@@ -329,7 +329,7 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen> w
   String _getAlertMessage(_AlertItem alert) {
     final l10n = AppLocalizations.of(context)!;
     if (alert.type == 'low_stock') {
-      return l10n.stockAlertMessage(alert.currentStock, alert.threshold);
+      return l10n.stockAlertMessage(alert.currentStock.toInt(), alert.threshold.toInt());
     } else {
       return l10n.expiryAlertLabel;
     }
@@ -543,8 +543,8 @@ class _AlertItem {
   final String productName;
   final String barcode;
   final String type;
-  final int currentStock;
-  final int threshold;
+  final double currentStock;
+  final double threshold;
   final String priority;
   final DateTime createdAt;
 

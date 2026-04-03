@@ -31,8 +31,8 @@ ProductsTableData createFakeProduct({
   String name = 'Test Product',
   double price = 25.0,
   double? costPrice = 15.0,
-  int stockQty = 100,
-  int minQty = 10,
+  double stockQty = 100,
+  double minQty = 10,
   String? categoryId,
   bool isActive = true,
 }) {

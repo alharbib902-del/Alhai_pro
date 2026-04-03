@@ -23,8 +23,8 @@ ProductsTableData createTestProduct({
   String? barcode,
   double price = 25.0,
   double? costPrice = 15.0,
-  int stockQty = 100,
-  int minQty = 5,
+  double stockQty = 100,
+  double minQty = 5,
   String? unit,
   String? description,
   String? categoryId,
@@ -368,7 +368,7 @@ List<ProductsTableData> createTestProductList(int n, {String storeId = 'test-sto
       storeId: storeId,
       name: '\u0645\u0646\u062a\u062c ${i + 1}', // منتج N
       price: 10.0 + i,
-      stockQty: 50 + i,
+      stockQty: (50 + i).toDouble(),
     );
   });
 }

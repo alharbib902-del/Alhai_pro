@@ -11,7 +11,7 @@ AdjustStockRequest _$AdjustStockRequestFromJson(Map<String, dynamic> json) =>
       productId: json['productId'] as String,
       storeId: json['storeId'] as String,
       type: json['type'] as String,
-      quantity: (json['quantity'] as num).toInt(),
+      quantity: (json['quantity'] as num).toDouble(),
       reason: json['reason'] as String?,
       referenceId: json['referenceId'] as String?,
     );

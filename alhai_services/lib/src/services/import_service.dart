@@ -35,7 +35,7 @@ class ImportService {
           name: values[1].trim(),
           price: double.tryParse(values[2].trim()) ?? 0,
           barcode: values[0].trim().isNotEmpty ? values[0].trim() : null,
-          stockQty: values.length > 3 ? (int.tryParse(values[3].trim()) ?? 0) : 0,
+          stockQty: values.length > 3 ? (double.tryParse(values[3].trim()) ?? 0) : 0,
           categoryId: values.length > 4 && values[4].trim().isNotEmpty ? values[4].trim() : null,
           isActive: true,
           createdAt: DateTime.now(),
