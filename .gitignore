@@ -23,3 +23,15 @@ Thumbs.db
 *.apk
 *.ipa
 *.aab
+
+# Test artifacts
+**/test-results/
+**/playwright-report/data/
+**/.auth/
+**/.last-run.json
+
+# IDE & tool artifacts
+**/.settings/
+.wrangler/
+.claude/worktrees/
+.claude/settings.local.json
