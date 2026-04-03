@@ -31,17 +31,23 @@ class OrdersDatasource {
     }
 
     // 3. Insert order
-    final orderData = await _client.from('orders').insert({
+    final orderMap = <String, dynamic>{
       'customer_id': _client.auth.currentUser!.id,
       'store_id': params.storeId,
       'status': 'created',
       'subtotal': subtotal,
       'total': subtotal,
       'payment_method': params.paymentMethod.name,
-      'delivery_address': params.deliveryAddress,
-      'channel': 'online',
       'created_at': DateTime.now().toIso8601String(),
-    }).select().single();
+    };
+    if (params.addressId != null) {
+      orderMap['address_id'] = params.addressId;
+    }
+    if (params.deliveryAddress != null) {
+      orderMap['notes'] = params.deliveryAddress;
+    }
+
+    final orderData = await _client.from('orders').insert(orderMap).select().single();
 
     final orderId = orderData['id'] as String;
 
@@ -181,8 +187,8 @@ class OrdersDatasource {
       confirmedAt: row['confirmed_at'] != null
           ? DateTime.parse(row['confirmed_at'] as String)
           : null,
-      deliveredAt: row['delivered_at'] != null
-          ? DateTime.parse(row['delivered_at'] as String)
+      deliveredAt: row['completed_at'] != null
+          ? DateTime.parse(row['completed_at'] as String)
           : null,
       cancelledAt: row['cancelled_at'] != null
           ? DateTime.parse(row['cancelled_at'] as String)

@@ -14,6 +14,7 @@ _$CreateOrderParamsImpl _$$CreateOrderParamsImplFromJson(
       items: (json['items'] as List<dynamic>)
           .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      addressId: json['addressId'] as String?,
       deliveryAddress: json['deliveryAddress'] as String?,
       paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
     );
@@ -24,6 +25,7 @@ Map<String, dynamic> _$$CreateOrderParamsImplToJson(
       'clientOrderId': instance.clientOrderId,
       'storeId': instance.storeId,
       'items': instance.items,
+      'addressId': instance.addressId,
       'deliveryAddress': instance.deliveryAddress,
       'paymentMethod': _$PaymentMethodEnumMap[instance.paymentMethod]!,
     };

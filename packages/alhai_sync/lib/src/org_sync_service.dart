@@ -60,7 +60,7 @@ class OrgSyncService {
     String tableName,
     Map<String, dynamic> payload,
   ) async {
-    final cleanPayload = _cleanPayload(payload);
+    final cleanPayload = _cleanPayload(payload, tableName: tableName);
     try {
       await _client.from(tableName).upsert(cleanPayload, onConflict: 'id').timeout(const Duration(seconds: 30));
     } on PostgrestException catch (e) {
@@ -184,7 +184,10 @@ class OrgSyncService {
     }
   }
 
-  Map<String, dynamic> _cleanPayload(Map<String, dynamic> payload) {
-    return cleanSyncPayload(payload, removeItems: false);
+  Map<String, dynamic> _cleanPayload(
+    Map<String, dynamic> payload, {
+    String? tableName,
+  }) {
+    return cleanSyncPayload(payload, removeItems: false, tableName: tableName);
   }
 }

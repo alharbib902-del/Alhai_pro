@@ -147,8 +147,10 @@ class SyncApiService {
   /// تنظيف الحمولة من الحقول المحلية فقط
   Map<String, dynamic> _cleanPayload(
       String tableName, Map<String, dynamic> payload) {
-    // Remove local-only fields (including embedded items), then convert to snake_case for Supabase
-    return toSnakeCase(cleanSyncPayload(payload, removeItems: true));
+    // Remove local-only fields (including embedded items and per-table
+    // local-only columns), then convert to snake_case for Supabase
+    return toSnakeCase(
+        cleanSyncPayload(payload, removeItems: true, tableName: tableName));
   }
 
   /// مزامنة مجموعة عمليات (batch)

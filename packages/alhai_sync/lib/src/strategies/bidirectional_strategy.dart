@@ -227,7 +227,8 @@ class BidirectionalStrategy {
         await _syncQueueDao.markAsSyncing(item.id);
         final payload = jsonDecode(item.payload) as Map<String, dynamic>;
         final remotePayload = _jsonConverter.toRemote(tableName, payload);
-        final cleanPayload = _cleanPayload(remotePayload);
+        final cleanPayload =
+            _cleanPayload(remotePayload, tableName: tableName);
         // M36: إعادة تسمية الأعمدة المحلية لتتوافق مع مخطط Supabase
         final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
 
@@ -262,7 +263,8 @@ class BidirectionalStrategy {
         if (e.code == '23505') {
           try {
             await _client.from(tableName).upsert(
-              _cleanPayload(_jsonConverter.toRemote(tableName, payload)),
+              _cleanPayload(_jsonConverter.toRemote(tableName, payload),
+                  tableName: tableName),
               onConflict: 'id',
             ).timeout(const Duration(seconds: 30));
             await _syncQueueDao.markAsSynced(item.id);
@@ -311,7 +313,9 @@ class BidirectionalStrategy {
             try {
               final mappedPayload = mapColumnsToRemote(
                 tableName,
-                _cleanPayload(_jsonConverter.toRemote(tableName, resolution.resolvedData!)),
+                _cleanPayload(
+                    _jsonConverter.toRemote(tableName, resolution.resolvedData!),
+                    tableName: tableName),
               );
               await _client.from(tableName).upsert(
                 mappedPayload,
@@ -654,8 +658,11 @@ class BidirectionalStrategy {
     );
   }
 
-  Map<String, dynamic> _cleanPayload(Map<String, dynamic> payload) {
-    return cleanSyncPayload(payload, removeItems: true);
+  Map<String, dynamic> _cleanPayload(
+    Map<String, dynamic> payload, {
+    String? tableName,
+  }) {
+    return cleanSyncPayload(payload, removeItems: true, tableName: tableName);
   }
 }
 

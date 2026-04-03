@@ -26,6 +26,7 @@ final placeOrderProvider = FutureProvider.family<Order, Cart>((ref, cart) async 
     clientOrderId: const Uuid().v4(),
     storeId: cart.storeId!,
     items: cart.items.map((item) => item.toOrderItem()).toList(),
+    addressId: address?.id,
     deliveryAddress: address?.fullAddress,
     paymentMethod: paymentMethod,
   );

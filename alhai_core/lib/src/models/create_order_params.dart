@@ -13,6 +13,7 @@ class CreateOrderParams with _$CreateOrderParams {
     required String clientOrderId,
     required String storeId,
     required List<OrderItem> items,
+    String? addressId,
     String? deliveryAddress,
     required PaymentMethod paymentMethod,
   }) = _CreateOrderParams;

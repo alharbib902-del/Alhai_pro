@@ -23,6 +23,7 @@ mixin _$CreateOrderParams {
   String get clientOrderId => throw _privateConstructorUsedError;
   String get storeId => throw _privateConstructorUsedError;
   List<OrderItem> get items => throw _privateConstructorUsedError;
+  String? get addressId => throw _privateConstructorUsedError;
   String? get deliveryAddress => throw _privateConstructorUsedError;
   PaymentMethod get paymentMethod => throw _privateConstructorUsedError;
 
@@ -46,6 +47,7 @@ abstract class $CreateOrderParamsCopyWith<$Res> {
       {String clientOrderId,
       String storeId,
       List<OrderItem> items,
+      String? addressId,
       String? deliveryAddress,
       PaymentMethod paymentMethod});
 }
@@ -68,6 +70,7 @@ class _$CreateOrderParamsCopyWithImpl<$Res, $Val extends CreateOrderParams>
     Object? clientOrderId = null,
     Object? storeId = null,
     Object? items = null,
+    Object? addressId = freezed,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
   }) {
@@ -84,6 +87,10 @@ class _$CreateOrderParamsCopyWithImpl<$Res, $Val extends CreateOrderParams>
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<OrderItem>,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as String?,
       deliveryAddress: freezed == deliveryAddress
           ? _value.deliveryAddress
           : deliveryAddress // ignore: cast_nullable_to_non_nullable
@@ -108,6 +115,7 @@ abstract class _$$CreateOrderParamsImplCopyWith<$Res>
       {String clientOrderId,
       String storeId,
       List<OrderItem> items,
+      String? addressId,
       String? deliveryAddress,
       PaymentMethod paymentMethod});
 }
@@ -128,6 +136,7 @@ class __$$CreateOrderParamsImplCopyWithImpl<$Res>
     Object? clientOrderId = null,
     Object? storeId = null,
     Object? items = null,
+    Object? addressId = freezed,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
   }) {
@@ -144,6 +153,10 @@ class __$$CreateOrderParamsImplCopyWithImpl<$Res>
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
               as List<OrderItem>,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as String?,
       deliveryAddress: freezed == deliveryAddress
           ? _value.deliveryAddress
           : deliveryAddress // ignore: cast_nullable_to_non_nullable
@@ -163,6 +176,7 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
       {required this.clientOrderId,
       required this.storeId,
       required final List<OrderItem> items,
+      this.addressId,
       this.deliveryAddress,
       required this.paymentMethod})
       : _items = items;
@@ -183,13 +197,15 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
   }
 
   @override
+  final String? addressId;
+  @override
   final String? deliveryAddress;
   @override
   final PaymentMethod paymentMethod;
 
   @override
   String toString() {
-    return 'CreateOrderParams(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod)';
+    return 'CreateOrderParams(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, addressId: $addressId, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod)';
   }
 
   @override
@@ -201,6 +217,8 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
                 other.clientOrderId == clientOrderId) &&
             (identical(other.storeId, storeId) || other.storeId == storeId) &&
             const DeepCollectionEquality().equals(other._items, _items) &&
+            (identical(other.addressId, addressId) ||
+                other.addressId == addressId) &&
             (identical(other.deliveryAddress, deliveryAddress) ||
                 other.deliveryAddress == deliveryAddress) &&
             (identical(other.paymentMethod, paymentMethod) ||
@@ -214,6 +232,7 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
       clientOrderId,
       storeId,
       const DeepCollectionEquality().hash(_items),
+      addressId,
       deliveryAddress,
       paymentMethod);
 
@@ -239,6 +258,7 @@ abstract class _CreateOrderParams implements CreateOrderParams {
       {required final String clientOrderId,
       required final String storeId,
       required final List<OrderItem> items,
+      final String? addressId,
       final String? deliveryAddress,
       required final PaymentMethod paymentMethod}) = _$CreateOrderParamsImpl;
 
@@ -251,6 +271,8 @@ abstract class _CreateOrderParams implements CreateOrderParams {
   String get storeId;
   @override
   List<OrderItem> get items;
+  @override
+  String? get addressId;
   @override
   String? get deliveryAddress;
   @override

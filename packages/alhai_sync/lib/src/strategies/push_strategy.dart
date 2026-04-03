@@ -37,12 +37,10 @@ class PushStrategy {
   /// NOTE: 'customers' is NOT here — it is in BidirectionalStrategy only,
   /// because customers can be modified both locally and from the admin panel.
   ///
-  /// WARNING: 'cash_movements' and 'audit_log' do NOT exist as tables in
-  /// Supabase yet. They are tracked locally in Drift but push will fail with
-  /// a 404/42P01 "relation does not exist" error. These tables are kept in
-  /// the list so that when the corresponding Supabase migration is applied,
-  /// sync will work automatically. Until then, [_tablesNotInSupabase] skips
-  /// them with a clear debug log instead of wasting retry attempts.
+  /// All tables below exist in both Drift (local) and Supabase (remote).
+  /// 'cash_movements' and 'audit_log' were previously skipped via an
+  /// exclusion list because Supabase lacked the tables — the migration has
+  /// since been applied so they now push normally.
   static const List<String> pushTables = [
     'sales',
     'sale_items',
@@ -57,16 +55,8 @@ class PushStrategy {
     'whatsapp_messages',
   ];
 
-  /// Tables listed in [pushTables] that do not yet have a corresponding table
-  /// in Supabase. Push operations for these tables are skipped and the queue
-  /// items are marked as conflicts immediately with a descriptive message,
-  /// instead of retrying 5 times and failing silently.
-  ///
-  /// Remove a table from this set once the Supabase migration is applied.
-  static const Set<String> _tablesNotInSupabase = {
-    'cash_movements',
-    'audit_log',
-  };
+  // _tablesNotInSupabase removed — both cash_movements and audit_log now
+  // exist in Supabase (confirmed in schema_summary.json).
 
   /// الحد الأقصى لعدد المحاولات
   static const int maxRetries = 5;
@@ -103,21 +93,6 @@ class PushStrategy {
           .toList();
 
       for (final item in itemsToPush) {
-        // Skip tables that don't exist in Supabase yet — mark as conflict
-        // immediately with a clear message instead of wasting retry attempts.
-        if (_tablesNotInSupabase.contains(item.tableName_)) {
-          final msg =
-              'Table "${item.tableName_}" does not exist in Supabase yet. '
-              'Skipping push — apply the Supabase migration first.';
-          await _syncQueueDao.markAsConflict(item.id, msg);
-          failedCount++;
-          errors.add('${item.tableName_}/${item.recordId}: $msg');
-          if (kDebugMode) {
-            debugPrint('PushStrategy: $msg (record: ${item.recordId})');
-          }
-          continue;
-        }
-
         try {
           // تعيين كـ "جاري المزامنة"
           await _syncQueueDao.markAsSyncing(item.id);
@@ -452,8 +427,8 @@ class PushStrategy {
     // تحويل JSONB fields من نص إلى كائنات
     final remotePayload = _jsonConverter.toRemote(tableName, payload);
 
-    // تنظيف الحقول المحلية
-    final cleanPayload = _cleanPayload(remotePayload);
+    // تنظيف الحقول المحلية (including per-table local-only columns)
+    final cleanPayload = _cleanPayload(remotePayload, tableName: tableName);
 
     // M36: إعادة تسمية الأعمدة المحلية لتتوافق مع مخطط Supabase
     final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
@@ -498,7 +473,7 @@ class PushStrategy {
     required Map<String, dynamic> payload,
   }) async {
     final remotePayload = _jsonConverter.toRemote(tableName, payload);
-    final cleanPayload = _cleanPayload(remotePayload);
+    final cleanPayload = _cleanPayload(remotePayload, tableName: tableName);
     final mappedPayload = mapColumnsToRemote(tableName, cleanPayload);
 
     if (OrgTables.all.contains(tableName)) return;
@@ -524,8 +499,11 @@ class PushStrategy {
   bool _isSacredTable(String tableName) => _sacredTables.contains(tableName);
 
   /// تنظيف الحقول المحلية قبل الإرسال
-  Map<String, dynamic> _cleanPayload(Map<String, dynamic> payload) {
-    return cleanSyncPayload(payload, removeItems: true);
+  Map<String, dynamic> _cleanPayload(
+    Map<String, dynamic> payload, {
+    String? tableName,
+  }) {
+    return cleanSyncPayload(payload, removeItems: true, tableName: tableName);
   }
 
   /// حساب تأخير إعادة المحاولة (Exponential Backoff)

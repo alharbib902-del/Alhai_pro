@@ -11,12 +11,14 @@
 /// This removes:
 /// - `syncedAt` / `synced_at` (local sync tracking fields)
 /// - `items` (embedded items that are synced via their own tables, e.g. sale_items)
+/// - Per-table local-only columns (see [_localOnlyColumns])
 ///
 /// If [removeItems] is false, the `items` field is kept (used by OrgSyncService
 /// and SyncApiService which do not embed items).
 Map<String, dynamic> cleanSyncPayload(
   Map<String, dynamic> payload, {
   bool removeItems = true,
+  String? tableName,
 }) {
   final clean = Map<String, dynamic>.from(payload);
   clean.remove('syncedAt');
@@ -24,8 +26,29 @@ Map<String, dynamic> cleanSyncPayload(
   if (removeItems) {
     clean.remove('items');
   }
+  // Strip columns that exist in Drift but not in Supabase for this table
+  if (tableName != null) {
+    final excluded = _localOnlyColumns[tableName];
+    if (excluded != null) {
+      for (final col in excluded) {
+        clean.remove(col);
+      }
+    }
+  }
   return clean;
 }
+
+/// Columns that exist in the local Drift schema but NOT in Supabase.
+///
+/// These are stripped from push payloads by [cleanSyncPayload] to prevent
+/// Supabase "column does not exist" errors. Add entries here when Drift has
+/// a column that Supabase lacks (rather than removing the column from Drift,
+/// which would require a local migration).
+const Map<String, Set<String>> _localOnlyColumns = {
+  // cash_movements.org_id exists in Drift for local org filtering,
+  // but the Supabase cash_movements table does not have this column.
+  'cash_movements': {'org_id', 'orgId'},
+};
 
 /// Converts map keys from camelCase to snake_case for Supabase compatibility.
 Map<String, dynamic> toSnakeCase(Map<String, dynamic> map) {
