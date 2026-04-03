@@ -1,0 +1,232 @@
+# Security checks: dependency audit, secret scanning, strict analysis.
+# Runs on PRs and weekly to catch new vulnerabilities.
+
+name: Security Check
+
+on:
+  pull_request:
+    branches: [main]
+  # Weekly scan on Monday at 06:00 UTC
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # DEPENDENCY AUDIT
+  # Checks all packages for outdated or vulnerable dependencies.
+  # ============================================================================
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Check outdated dependencies
+        run: |
+          echo "## Dependency Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          EXIT_CODE=0
+          for pubspec in $(find . -name "pubspec.yaml" \
+            -not -path "./.claude/*" \
+            -not -path "./.dart_tool/*" \
+            -not -path "*/build/*"); do
+            PKG_DIR=$(dirname "$pubspec")
+            PKG_NAME=$(basename "$PKG_DIR")
+
+            echo "### $PKG_NAME" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            cd "$PKG_DIR"
+            # flutter pub outdated returns non-zero if there are major updates
+            flutter pub outdated 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cd "$GITHUB_WORKSPACE"
+          done
+
+      - name: Check for known vulnerable packages
+        run: |
+          VULNERABLE_PACKAGES=(
+            # Add known vulnerable package versions here as they are discovered
+            # Format: "package_name:version_pattern"
+          )
+
+          EXIT_CODE=0
+          for entry in "${VULNERABLE_PACKAGES[@]}"; do
+            PKG=$(echo "$entry" | cut -d: -f1)
+            VERSION=$(echo "$entry" | cut -d: -f2)
+            if grep -rq "\"$PKG\".*\"$VERSION\"" --include="pubspec.lock" .; then
+              echo "::error::Vulnerable package found: $PKG $VERSION"
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "No known vulnerable packages detected."
+          fi
+          exit $EXIT_CODE
+
+  # ============================================================================
+  # SECRET SCANNING
+  # Scans Dart source for accidentally committed secrets.
+  # ============================================================================
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for hardcoded secrets in Dart files
+        run: |
+          echo "Scanning for potential secrets in source code..."
+          EXIT_CODE=0
+
+          # Patterns that indicate hardcoded secrets
+          # Each pattern: "description|regex"
+          PATTERNS=(
+            "API Key|api[_-]?key\s*[:=]\s*['\"][A-Za-z0-9_\-]{20,}['\"]"
+            "Secret Key|secret[_-]?key\s*[:=]\s*['\"][A-Za-z0-9_\-]{20,}['\"]"
+            "Password|password\s*[:=]\s*['\"][^'\"]{8,}['\"]"
+            "Private Key|-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+            "Supabase Key|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\."
+            "AWS Key|AKIA[0-9A-Z]{16}"
+            "Firebase Key|AIza[0-9A-Za-z_\-]{35}"
+            "Slack Token|xox[bpors]-[0-9a-zA-Z]{10,48}"
+          )
+
+          for entry in "${PATTERNS[@]}"; do
+            DESC=$(echo "$entry" | cut -d'|' -f1)
+            PATTERN=$(echo "$entry" | cut -d'|' -f2)
+
+            MATCHES=$(grep -rn --include="*.dart" \
+              -not -path "*/test/*" \
+              -not -path "*/.dart_tool/*" \
+              -not -path "./.claude/*" \
+              -not -path "*/build/*" \
+              -E "$PATTERN" . 2>/dev/null || true)
+
+            if [ -n "$MATCHES" ]; then
+              echo "::error::Potential $DESC found in source code:"
+              echo "$MATCHES" | head -10
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "No hardcoded secrets detected."
+          fi
+          exit $EXIT_CODE
+
+      - name: Check for secrets in configuration files
+        run: |
+          EXIT_CODE=0
+
+          # Ensure no .env files are tracked
+          if git ls-files --cached | grep -q '\.env$'; then
+            echo "::error::.env file is tracked by git! Remove it and add to .gitignore."
+            EXIT_CODE=1
+          fi
+
+          # Check that dart-define secrets are not hardcoded in workflow files
+          HARDCODED=$(grep -rn --include="*.yml" --include="*.yaml" \
+            -E "(SUPABASE_URL|SUPABASE_ANON_KEY|SENTRY_DSN)\s*[:=]\s*['\"]?[A-Za-z0-9]" \
+            .github/ 2>/dev/null | grep -v '\${{ secrets\.' || true)
+
+          if [ -n "$HARDCODED" ]; then
+            echo "::error::Hardcoded secrets found in workflow files (should use \${{ secrets.* }}):"
+            echo "$HARDCODED"
+            EXIT_CODE=1
+          fi
+
+          exit $EXIT_CODE
+
+  # ============================================================================
+  # STRICT ANALYSIS
+  # Runs dart analyze with stricter rules than the default melos analyze.
+  # ============================================================================
+  strict-analyze:
+    name: Strict Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Run strict analysis on critical packages
+        run: |
+          # Run strict analysis on security-critical packages
+          CRITICAL_PACKAGES=(
+            "packages/alhai_zatca"
+            "packages/alhai_auth"
+            "alhai_core"
+          )
+
+          EXIT_CODE=0
+          for PKG in "${CRITICAL_PACKAGES[@]}"; do
+            if [ -d "$PKG" ]; then
+              echo "=== Analyzing $PKG (strict) ==="
+              cd "$PKG"
+              dart analyze --fatal-infos --fatal-warnings 2>&1 || EXIT_CODE=1
+              cd "$GITHUB_WORKSPACE"
+            fi
+          done
+
+          exit $EXIT_CODE
+
+      - name: Check for unsafe patterns in ZATCA package
+        run: |
+          EXIT_CODE=0
+
+          # Ensure no plaintext certificate storage
+          if grep -rn "SharedPreferences\|shared_preferences" \
+            --include="*.dart" packages/alhai_zatca/lib/ 2>/dev/null | \
+            grep -i "certificate\|private.key\|secret"; then
+            echo "::error::ZATCA package may store certificates in SharedPreferences (insecure)."
+            EXIT_CODE=1
+          fi
+
+          # Check for proper error handling in API calls
+          API_FILES=$(find packages/alhai_zatca/lib/src/api -name "*.dart" 2>/dev/null || true)
+          for f in $API_FILES; do
+            if ! grep -q "try\|catch\|on DioException" "$f" 2>/dev/null; then
+              echo "::warning::$f may lack error handling for API calls."
+            fi
+          done
+
+          exit $EXIT_CODE

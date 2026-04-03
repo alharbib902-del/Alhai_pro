@@ -1,0 +1,202 @@
+# ZATCA-specific test workflow.
+# Runs all ZATCA package tests: XML generation, digital signing, TLV encoding,
+# and invoice hashing. Triggers on changes to the alhai_zatca package.
+
+name: ZATCA Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/alhai_zatca/**'
+      - '.github/workflows/zatca-test.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/alhai_zatca/**'
+      - '.github/workflows/zatca-test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: zatca-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # ZATCA UNIT TESTS
+  # Runs all unit tests in the alhai_zatca package with coverage.
+  # ============================================================================
+  zatca-unit-tests:
+    name: ZATCA Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Run ZATCA tests with coverage
+        run: |
+          cd packages/alhai_zatca
+          flutter test --coverage --reporter expanded
+
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Check ZATCA coverage
+        run: |
+          if [ -f "packages/alhai_zatca/coverage/lcov.info" ]; then
+            COVERAGE=$(lcov --summary packages/alhai_zatca/coverage/lcov.info 2>&1 | grep "lines" | grep -oP '[\d.]+%' | head -1 | tr -d '%')
+            echo "ZATCA package coverage: ${COVERAGE}%"
+            echo "## ZATCA Coverage: ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+
+            THRESHOLD=60
+            if [ -n "$COVERAGE" ] && (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+              echo "::error::ZATCA coverage ${COVERAGE}% is below threshold ${THRESHOLD}%"
+              exit 1
+            fi
+          else
+            echo "::warning::No coverage report generated for alhai_zatca"
+          fi
+
+      - name: Upload ZATCA coverage
+        if: hashFiles('packages/alhai_zatca/coverage/lcov.info') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: zatca-coverage
+          path: packages/alhai_zatca/coverage/lcov.info
+
+  # ============================================================================
+  # XML GENERATION VALIDATION
+  # Validates that generated UBL 2.1 XML meets ZATCA structural requirements.
+  # ============================================================================
+  xml-validation:
+    name: XML Generation Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Run XML builder tests
+        run: |
+          cd packages/alhai_zatca
+          flutter test test/xml/ --reporter expanded
+
+      - name: Verify XML test results
+        run: |
+          echo "## XML Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- UBL Invoice Builder: tested" >> $GITHUB_STEP_SUMMARY
+          echo "- Invoice Line Builder: tested" >> $GITHUB_STEP_SUMMARY
+          echo "- Tax Total Builder: tested" >> $GITHUB_STEP_SUMMARY
+          echo "- XML Canonicalizer: tested" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # SIGNING TESTS
+  # Tests digital signing: SHA-256 hashing, ECDSA signing, XAdES structure.
+  # ============================================================================
+  signing-tests:
+    name: Signing Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Run signing tests
+        run: |
+          cd packages/alhai_zatca
+          flutter test test/signing/ --reporter expanded
+
+      - name: Run QR / TLV encoding tests
+        run: |
+          cd packages/alhai_zatca
+          flutter test test/qr/ --reporter expanded
+
+      - name: Run model tests
+        run: |
+          cd packages/alhai_zatca
+          flutter test test/models/ --reporter expanded
+
+      - name: Signing test summary
+        run: |
+          echo "## Signing Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Invoice Hasher (SHA-256): tested" >> $GITHUB_STEP_SUMMARY
+          echo "- ECDSA Signer: tested" >> $GITHUB_STEP_SUMMARY
+          echo "- TLV Encoder (QR): tested" >> $GITHUB_STEP_SUMMARY
+          echo "- Invoice Model: tested" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # ZATCA STATIC ANALYSIS
+  # Runs strict analysis on the ZATCA package specifically.
+  # ============================================================================
+  zatca-analyze:
+    name: ZATCA Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Analyze ZATCA package (strict)
+        run: |
+          cd packages/alhai_zatca
+          dart analyze --fatal-infos --fatal-warnings
+
+      - name: Check ZATCA code formatting
+        run: |
+          cd packages/alhai_zatca
+          dart format --set-exit-if-changed .

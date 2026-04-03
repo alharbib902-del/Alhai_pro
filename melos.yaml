@@ -124,3 +124,31 @@ scripts:
     description: Update golden files for responsive layout tests
     packageFilters:
       dirExists: test/responsive
+
+  # ZATCA-specific test scripts
+  test:zatca:
+    run: melos exec --scope="alhai_zatca" -- flutter test --reporter expanded
+    description: Run all ZATCA package tests
+
+  test:zatca:coverage:
+    run: melos exec --scope="alhai_zatca" -- flutter test --coverage --reporter expanded
+    description: Run ZATCA tests with coverage reporting
+
+  test:zatca:xml:
+    run: melos exec --scope="alhai_zatca" -- flutter test test/xml/ --reporter expanded
+    description: Run ZATCA XML generation tests only
+
+  test:zatca:signing:
+    run: melos exec --scope="alhai_zatca" -- flutter test test/signing/ --reporter expanded
+    description: Run ZATCA signing tests only
+
+  analyze:strict:
+    run: >
+      melos exec -c 4 --
+      dart analyze --fatal-infos --fatal-warnings
+    description: Run strict analysis (fatal infos + warnings) on all packages
+    packageFilters:
+      scope:
+        - alhai_zatca
+        - alhai_auth
+        - alhai_core
