@@ -46,7 +46,7 @@ packages:
     source: path
     version: "1.0.0"
   alhai_l10n:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "../packages/alhai_l10n"
       relative: true

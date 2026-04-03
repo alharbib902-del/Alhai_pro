@@ -21,6 +21,8 @@ dependencies:
     path: ../alhai_design_system
   alhai_auth:
     path: ../packages/alhai_auth
+  alhai_l10n:
+    path: ../packages/alhai_l10n
 
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
