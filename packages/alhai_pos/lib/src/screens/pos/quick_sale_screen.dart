@@ -678,7 +678,6 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     final defaultName =
         AppLocalizations.of(context)!.quickSaleHold('${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
 
-    final l10n = AppLocalizations.of(context)!;
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) {

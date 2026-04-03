@@ -229,7 +229,7 @@ class _ReturnsScreenState extends ConsumerState<ReturnsScreen> {
                 Expanded(
                   child: ref.watch(returnsListProvider).when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text(l10n.errorPrefix(e))),
+                    error: (e, _) => Center(child: Text(l10n.errorPrefix(e.toString(), e))),
                     data: (returnsData) {
                       final allReturns = returnsData.map((r) => ReturnModel.fromData(r)).toList();
                       final filteredReturns = _filterReturns(allReturns);

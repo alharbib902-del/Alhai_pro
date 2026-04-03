@@ -153,7 +153,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: Text(l10n.totalAmount, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, maxLines: 1)),
+                Flexible(child: Text(l10n.totalAmountLabel, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, maxLines: 1)),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(l10n.amountWithSar(_subtotal.toStringAsFixed(2)),
                     style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
