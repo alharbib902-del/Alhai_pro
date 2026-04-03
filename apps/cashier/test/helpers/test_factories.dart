@@ -30,6 +30,9 @@ ProductsTableData createTestProduct({
   String? categoryId,
   bool isActive = true,
   bool trackInventory = true,
+  bool autoReorder = false,
+  bool onlineAvailable = false,
+  double onlineReservedQty = 0.0,
   DateTime? createdAt,
 }) {
   return ProductsTableData(
@@ -47,6 +50,9 @@ ProductsTableData createTestProduct({
     categoryId: categoryId,
     isActive: isActive,
     trackInventory: trackInventory,
+    autoReorder: autoReorder,
+    onlineAvailable: onlineAvailable,
+    onlineReservedQty: onlineReservedQty,
     createdAt: createdAt ?? DateTime(2026, 1, 1),
   );
 }
@@ -163,6 +169,8 @@ OrdersTableData createTestOrder({
   DateTime? orderDate,
   DateTime? createdAt,
   DateTime? updatedAt,
+  int confirmationAttempts = 0,
+  bool autoReorderTriggered = false,
 }) {
   final now = createdAt ?? DateTime(2026, 1, 15, 10, 30);
   return OrdersTableData(
@@ -186,6 +194,8 @@ OrdersTableData createTestOrder({
     orderDate: orderDate ?? now,
     createdAt: now,
     updatedAt: updatedAt ?? now,
+    confirmationAttempts: confirmationAttempts,
+    autoReorderTriggered: autoReorderTriggered,
   );
 }
 
