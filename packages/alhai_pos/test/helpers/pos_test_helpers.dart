@@ -189,6 +189,9 @@ ProductsTableData createTestProductsTableData({
     trackInventory: trackInventory,
     barcode: barcode,
     minQty: 1,
+    onlineAvailable: false,
+    onlineReservedQty: 0,
+    autoReorder: false,
     createdAt: DateTime(2026, 1, 1),
   );
 }
@@ -239,7 +242,7 @@ SaleItemsTableData createTestSaleItemsTableData({
   String productId = 'prod-1',
   String productName = 'Test Product',
   double unitPrice = 10.0,
-  int qty = 2,
+  double qty = 2.0,
   double subtotal = 20.0,
   double discount = 0.0,
   double total = 20.0,

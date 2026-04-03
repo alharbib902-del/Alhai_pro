@@ -31,6 +31,7 @@ void main() {
       totalEarned: Value(totalEarned),
       totalRedeemed: Value(totalRedeemed),
       tierLevel: Value(tierLevel),
+      createdAt: DateTime.now(),
     );
   }
 
@@ -146,6 +147,7 @@ void main() {
           transactionType: 'earn',
           points: 50,
           balanceAfter: 150,
+          createdAt: DateTime.now(),
         ),
       );
 
@@ -167,6 +169,7 @@ void main() {
           pointsRequired: 500,
           rewardType: 'discount_percentage',
           rewardValue: 10.0,
+          createdAt: DateTime.now(),
         ),
       );
 
@@ -186,6 +189,7 @@ void main() {
           rewardType: 'discount_fixed',
           rewardValue: 5.0,
           isActive: const Value(true),
+          createdAt: DateTime.now(),
         ),
       );
       await db.loyaltyDao.createReward(
@@ -197,6 +201,7 @@ void main() {
           rewardType: 'discount_fixed',
           rewardValue: 2.0,
           isActive: const Value(false),
+          createdAt: DateTime.now(),
         ),
       );
 
@@ -214,6 +219,7 @@ void main() {
           pointsRequired: 100,
           rewardType: 'free_item',
           rewardValue: 1.0,
+          createdAt: DateTime.now(),
         ),
       );
 

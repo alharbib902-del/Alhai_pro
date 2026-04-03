@@ -47,6 +47,9 @@ ProductsTableData createFakeProduct({
     categoryId: categoryId,
     isActive: isActive,
     trackInventory: true,
+    onlineAvailable: false,
+    onlineReservedQty: 0,
+    autoReorder: false,
     createdAt: DateTime.now(),
   );
 }

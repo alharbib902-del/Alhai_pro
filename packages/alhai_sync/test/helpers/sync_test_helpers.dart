@@ -219,7 +219,7 @@ StockDeltasTableData createStockDelta({
   String productId = 'product-1',
   String storeId = 'store-1',
   String? orgId,
-  int quantityChange = -3,
+  double quantityChange = -3.0,
   String deviceId = 'device-1',
   String operationType = 'sale',
   String? referenceId,

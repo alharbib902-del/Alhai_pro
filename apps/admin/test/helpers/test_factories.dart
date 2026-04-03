@@ -43,6 +43,8 @@ OrdersTableData createTestOrder({
   DateTime? createdAt,
   DateTime? updatedAt,
   DateTime? syncedAt,
+  int confirmationAttempts = 0,
+  bool autoReorderTriggered = false,
 }) {
   final now = DateTime(2026, 1, 15, 10, 30);
   return OrdersTableData(
@@ -77,6 +79,8 @@ OrdersTableData createTestOrder({
     createdAt: createdAt ?? now,
     updatedAt: updatedAt ?? now,
     syncedAt: syncedAt,
+    confirmationAttempts: confirmationAttempts,
+    autoReorderTriggered: autoReorderTriggered,
   );
 }
 
@@ -104,6 +108,9 @@ ProductsTableData createTestProduct({
   String? categoryId,
   bool isActive = true,
   bool trackInventory = true,
+  bool onlineAvailable = false,
+  double onlineReservedQty = 0.0,
+  bool autoReorder = false,
   DateTime? createdAt,
   DateTime? updatedAt,
   DateTime? syncedAt,
@@ -128,6 +135,9 @@ ProductsTableData createTestProduct({
     categoryId: categoryId,
     isActive: isActive,
     trackInventory: trackInventory,
+    onlineAvailable: onlineAvailable,
+    onlineReservedQty: onlineReservedQty,
+    autoReorder: autoReorder,
     createdAt: createdAt ?? DateTime(2026, 1, 1),
     updatedAt: updatedAt,
     syncedAt: syncedAt,

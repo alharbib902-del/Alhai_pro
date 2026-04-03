@@ -66,7 +66,7 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsSending('wa-1');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'sending');
     });
 
@@ -75,7 +75,7 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsSent('wa-1', 'ext-msg-123');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'sent');
       expect(messages.first.externalMsgId, 'ext-msg-123');
       expect(messages.first.sentAt, isNotNull);
@@ -87,7 +87,7 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsDelivered('wa-1');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'delivered');
       expect(messages.first.deliveredAt, isNotNull);
     });
@@ -97,7 +97,7 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsRead('wa-1');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'read');
       expect(messages.first.readAt, isNotNull);
     });
@@ -107,7 +107,7 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsFailed('wa-1', 'فشل الإرسال');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'failed');
       expect(messages.first.retryCount, 1);
       expect(messages.first.lastError, 'فشل الإرسال');
@@ -171,7 +171,7 @@ void main() {
 
       await db.whatsAppMessagesDao.retryMessage('wa-1');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.status, 'pending');
       expect(messages.first.retryCount, 0);
     });
@@ -195,7 +195,7 @@ void main() {
       await db.whatsAppMessagesDao
           .updateMediaUrl('wa-1', 'https://cdn.example.com/image.jpg');
 
-      final messages = await db.whatsAppMessagesDao.getAllMessages();
+      final messages = await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
       expect(messages.first.mediaUrl, 'https://cdn.example.com/image.jpg');
     });
 

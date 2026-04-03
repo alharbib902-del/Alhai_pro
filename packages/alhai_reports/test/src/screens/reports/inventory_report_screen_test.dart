@@ -86,8 +86,10 @@ void main() {
                   costPrice: 30.0,
                   createdAt: now,
                   isActive: true,
-                  taxable: true,
-                  trackStock: true,
+                  trackInventory: true,
+                  onlineAvailable: false,
+                  onlineReservedQty: 0,
+                  autoReorder: false,
                 ),
               ]);
 

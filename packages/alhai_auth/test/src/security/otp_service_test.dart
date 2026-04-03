@@ -100,7 +100,7 @@ void main() {
       final json = state.toJson();
       final restored = OtpState.fromJson(json);
 
-      expect(restored.phone, equals(state.phone));
+      expect(restored!.phone, equals(state.phone));
       expect(restored.attempts, equals(2));
       expect(restored.isBlocked, isFalse);
     });

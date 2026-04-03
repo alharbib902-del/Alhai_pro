@@ -1,7 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/src/widgets/common/app_empty_state.dart';
-import '../../helpers/shared_ui_test_helpers.dart';
+
+/// Wraps a widget builder that needs BuildContext in a MaterialApp with l10n.
+Widget createL10nTestWidget(Widget Function(BuildContext context) builder) {
+  return MaterialApp(
+    locale: const Locale('en'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Directionality(
+      textDirection: TextDirection.ltr,
+      child: Scaffold(
+        body: Builder(builder: (context) => builder(context)),
+      ),
+    ),
+  );
+}
+
+/// Simple test widget without l10n (for basic constructor tests).
+Widget createSimpleTestWidget(Widget child) {
+  return MaterialApp(
+    theme: ThemeData.light(),
+    home: Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: child,
+      ),
+    ),
+  );
+}
 
 void main() {
   group('AppEmptyState', () {
@@ -87,109 +115,124 @@ void main() {
     });
   });
 
-  group('AppEmptyState factories', () {
+  group('AppEmptyState static methods', () {
     testWidgets('noSearchResults should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noSearchResults(query: 'test'),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noSearchResults(context, query: 'test'),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.search_off), findsOneWidget);
     });
 
     testWidgets('noProducts should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noProducts(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noProducts(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);
     });
 
     testWidgets('noCustomers should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noCustomers(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noCustomers(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.people_outline), findsOneWidget);
     });
 
     testWidgets('emptyCart should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.emptyCart(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.emptyCart(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.shopping_cart_outlined), findsOneWidget);
     });
 
     testWidgets('noInvoices should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noInvoices(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noInvoices(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
     });
 
     testWidgets('noData should render with defaults', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noData(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noData(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.folder_open), findsOneWidget);
     });
 
     testWidgets('noData should render with custom title', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noData(title: 'Custom Title'),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noData(context, title: 'Custom Title'),
       ));
+      await tester.pumpAndSettle();
       expect(find.text('Custom Title'), findsOneWidget);
     });
 
     testWidgets('noOrders should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noOrders(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noOrders(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.shopping_bag_outlined), findsOneWidget);
     });
 
     testWidgets('noNotifications should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noNotifications(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noNotifications(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
     });
 
     testWidgets('noConnection should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noConnection(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noConnection(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.wifi_off), findsOneWidget);
     });
 
     testWidgets('noReports should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noReports(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noReports(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.assessment_outlined), findsOneWidget);
     });
 
     testWidgets('noLowStock should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noLowStock(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noLowStock(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.inventory_outlined), findsOneWidget);
     });
 
     testWidgets('noDebts should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noDebts(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noDebts(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
     });
 
     testWidgets('noReturns should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noReturns(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noReturns(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.assignment_return_outlined), findsOneWidget);
     });
 
     testWidgets('noOffers should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppEmptyState.noOffers(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppEmptyState.noOffers(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.local_offer_outlined), findsOneWidget);
     });
   });
@@ -214,33 +257,37 @@ void main() {
 
     testWidgets('should show retry button when onRetry provided',
         (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppErrorState(
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppErrorState(
           message: 'Error',
           onRetry: () {},
         ),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.refresh), findsOneWidget);
     });
 
     testWidgets('network factory should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppErrorState.network(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppErrorState.network(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.wifi_off), findsOneWidget);
     });
 
     testWidgets('server factory should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppErrorState.server(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppErrorState.server(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.cloud_off), findsOneWidget);
     });
 
     testWidgets('general factory should render', (tester) async {
-      await tester.pumpWidget(createSimpleTestWidget(
-        AppErrorState.general(),
+      await tester.pumpWidget(createL10nTestWidget(
+        (context) => AppErrorState.general(context),
       ));
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
     });
   });

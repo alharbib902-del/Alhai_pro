@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:alhai_database/alhai_database.dart';
 import '../helpers/database_test_helpers.dart';
 
@@ -91,12 +92,14 @@ void main() {
       // Insert sales records for the JOIN
       await db.salesDao.insertSale(SalesTableCompanion.insert(
         id: 'sale-1', storeId: 'store-1', receiptNo: 'R001',
-        total: 11.0, paymentMethod: 'cash', status: 'completed',
+        subtotal: 11.0, total: 11.0, paymentMethod: 'cash',
+        status: const Value('completed'),
         cashierId: 'cashier-1', createdAt: DateTime.now(),
       ));
       await db.salesDao.insertSale(SalesTableCompanion.insert(
         id: 'sale-2', storeId: 'store-1', receiptNo: 'R002',
-        total: 27.5, paymentMethod: 'cash', status: 'completed',
+        subtotal: 27.5, total: 27.5, paymentMethod: 'cash',
+        status: const Value('completed'),
         cashierId: 'cashier-1', createdAt: DateTime.now(),
       ));
 
