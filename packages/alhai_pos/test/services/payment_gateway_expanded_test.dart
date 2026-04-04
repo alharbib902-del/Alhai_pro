@@ -21,6 +21,13 @@ class ThrowingGateway implements PaymentGateway {
   List<PaymentMethod> get supportedMethods => [PaymentMethod.wallet];
 
   @override
+  PaymentGatewayStatus get configurationStatus =>
+      PaymentGatewayStatus.available;
+
+  @override
+  bool get isSimulated => false;
+
+  @override
   Future<bool> isAvailable() async => true;
 
   @override
@@ -95,7 +102,7 @@ void main() {
         final result = await service.processPayment(request);
 
         expect(result.success, isFalse);
-        expect(result.errorType, equals(PaymentErrorType.terminalError));
+        expect(result.errorType, equals(PaymentErrorType.gatewayNotConfigured));
       });
     });
 

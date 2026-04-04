@@ -16,6 +16,7 @@ _$CreateOrderRequestImpl _$$CreateOrderRequestImplFromJson(
           .toList(),
       deliveryAddress: json['delivery_address'] as String?,
       paymentMethod: json['payment_method'] as String,
+      deliveryFee: (json['delivery_fee'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$$CreateOrderRequestImplToJson(
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$CreateOrderRequestImplToJson(
       'items': instance.items,
       'delivery_address': instance.deliveryAddress,
       'payment_method': instance.paymentMethod,
+      'delivery_fee': instance.deliveryFee,
     };

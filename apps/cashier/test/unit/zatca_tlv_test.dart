@@ -1,16 +1,21 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/core/services/zatca/zatca_tlv_encoder.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show ZatcaTlvEncoder;
 import 'package:cashier/core/services/zatca/zatca_qr_service.dart';
 import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 void main() {
-  group('ZatcaTlvEncoder', () {
-    group('encode', () {
-      test('should produce valid TLV bytes with all 5 tags', () {
-        final bytes = ZatcaTlvEncoder.encode(
+  late ZatcaTlvEncoder encoder;
+
+  setUp(() {
+    encoder = ZatcaTlvEncoder();
+  });
+
+  group('ZatcaTlvEncoder (package)', () {
+    group('encodeSimplified', () {
+      test('should produce valid base64 with all 5 tags', () {
+        final base64 = encoder.encodeSimplified(
           sellerName: 'Al-HAI Store',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 3, 1, 14, 30),
@@ -18,7 +23,7 @@ void main() {
           vatAmount: 15.0,
         );
 
-        final tags = ZatcaTlvEncoder.decode(bytes);
+        final tags = encoder.decodeToStrings(base64);
 
         expect(tags.length, equals(5));
         expect(tags[1], equals('Al-HAI Store'));
@@ -29,7 +34,7 @@ void main() {
       });
 
       test('should encode Arabic seller name correctly', () {
-        final bytes = ZatcaTlvEncoder.encode(
+        final base64 = encoder.encodeSimplified(
           sellerName: 'متجر الهاي',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 1, 1),
@@ -37,12 +42,12 @@ void main() {
           vatAmount: 6.52,
         );
 
-        final tags = ZatcaTlvEncoder.decode(bytes);
+        final tags = encoder.decodeToStrings(base64);
         expect(tags[1], equals('متجر الهاي'));
       });
 
       test('should format amounts to 2 decimal places', () {
-        final bytes = ZatcaTlvEncoder.encode(
+        final base64 = encoder.encodeSimplified(
           sellerName: 'Test',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 1, 1),
@@ -50,13 +55,13 @@ void main() {
           vatAmount: 13.0347826,
         );
 
-        final tags = ZatcaTlvEncoder.decode(bytes);
+        final tags = encoder.decodeToStrings(base64);
         expect(tags[4], equals('99.90'));
         expect(tags[5], equals('13.03'));
       });
 
       test('should handle zero amounts', () {
-        final bytes = ZatcaTlvEncoder.encode(
+        final base64 = encoder.encodeSimplified(
           sellerName: 'Store',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 1, 1),
@@ -64,13 +69,13 @@ void main() {
           vatAmount: 0.0,
         );
 
-        final tags = ZatcaTlvEncoder.decode(bytes);
+        final tags = encoder.decodeToStrings(base64);
         expect(tags[4], equals('0.00'));
         expect(tags[5], equals('0.00'));
       });
 
       test('should handle very large amounts', () {
-        final bytes = ZatcaTlvEncoder.encode(
+        final base64 = encoder.encodeSimplified(
           sellerName: 'Store',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 6, 15),
@@ -78,36 +83,13 @@ void main() {
           vatAmount: 130434.78,
         );
 
-        final tags = ZatcaTlvEncoder.decode(bytes);
+        final tags = encoder.decodeToStrings(base64);
         expect(tags[4], equals('999999.99'));
         expect(tags[5], equals('130434.78'));
       });
 
-      test('TLV tags should be in sequential order 1-5', () {
-        final bytes = ZatcaTlvEncoder.encode(
-          sellerName: 'Test',
-          vatNumber: '300000000000003',
-          timestamp: DateTime(2026, 1, 1),
-          totalWithVat: 100.0,
-          vatAmount: 13.04,
-        );
-
-        // Parse tag numbers in order
-        final tagOrder = <int>[];
-        int index = 0;
-        while (index < bytes.length) {
-          tagOrder.add(bytes[index]);
-          final length = bytes[index + 1];
-          index += 2 + length;
-        }
-
-        expect(tagOrder, equals([1, 2, 3, 4, 5]));
-      });
-    });
-
-    group('encodeToBase64', () {
       test('should return valid Base64 string', () {
-        final result = ZatcaTlvEncoder.encodeToBase64(
+        final result = encoder.encodeSimplified(
           sellerName: 'Al-HAI Store',
           vatNumber: '300000000000003',
           timestamp: DateTime(2026, 1, 15, 10, 30),
@@ -117,66 +99,11 @@ void main() {
 
         expect(() => base64Decode(result), returnsNormally);
       });
-
-      test('should produce same result as encode + base64Encode', () {
-        final timestamp = DateTime(2026, 3, 1, 12, 0);
-        final bytes = ZatcaTlvEncoder.encode(
-          sellerName: 'Store',
-          vatNumber: '300000000000003',
-          timestamp: timestamp,
-          totalWithVat: 200.0,
-          vatAmount: 26.09,
-        );
-        final directBase64 = base64Encode(bytes);
-
-        final serviceBase64 = ZatcaTlvEncoder.encodeToBase64(
-          sellerName: 'Store',
-          vatNumber: '300000000000003',
-          timestamp: timestamp,
-          totalWithVat: 200.0,
-          vatAmount: 26.09,
-        );
-
-        expect(serviceBase64, equals(directBase64));
-      });
     });
 
-    group('decode', () {
-      test('should decode TLV bytes back to original values', () {
-        final original = {
-          'sellerName': 'Test Store',
-          'vatNumber': '300000000000003',
-          'total': 230.0,
-          'vat': 30.0,
-        };
-        final timestamp = DateTime(2026, 2, 15, 9, 45);
-
-        final bytes = ZatcaTlvEncoder.encode(
-          sellerName: original['sellerName'] as String,
-          vatNumber: original['vatNumber'] as String,
-          timestamp: timestamp,
-          totalWithVat: original['total'] as double,
-          vatAmount: original['vat'] as double,
-        );
-
-        final decoded = ZatcaTlvEncoder.decode(bytes);
-
-        expect(decoded[1], equals(original['sellerName']));
-        expect(decoded[2], equals(original['vatNumber']));
-        expect(decoded[3], equals(timestamp.toIso8601String()));
-        expect(decoded[4], equals('230.00'));
-        expect(decoded[5], equals('30.00'));
-      });
-
-      test('should handle empty bytes gracefully', () {
-        final decoded = ZatcaTlvEncoder.decode(Uint8List(0));
-        expect(decoded, isEmpty);
-      });
-    });
-
-    group('decodeFromBase64', () {
-      test('should roundtrip encode → decode correctly', () {
-        final base64 = ZatcaTlvEncoder.encodeToBase64(
+    group('decode roundtrip', () {
+      test('should roundtrip encode -> decode correctly', () {
+        final base64 = encoder.encodeSimplified(
           sellerName: 'متجر الهاي',
           vatNumber: '312345678901234',
           timestamp: DateTime(2026, 6, 1, 15, 0),
@@ -184,7 +111,7 @@ void main() {
           vatAmount: 75.0,
         );
 
-        final decoded = ZatcaTlvEncoder.decodeFromBase64(base64);
+        final decoded = encoder.decodeToStrings(base64);
 
         expect(decoded[1], equals('متجر الهاي'));
         expect(decoded[2], equals('312345678901234'));
@@ -205,7 +132,7 @@ void main() {
           vatAmount: 15.0,
         );
 
-        final decoded = ZatcaTlvEncoder.decodeFromBase64(qrData);
+        final decoded = encoder.decodeToStrings(qrData);
         expect(decoded.length, equals(5));
         expect(decoded[1], equals('Al-HAI Store'));
         expect(decoded[2], equals('300000000000003'));

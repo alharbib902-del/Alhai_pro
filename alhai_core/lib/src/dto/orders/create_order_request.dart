@@ -17,6 +17,7 @@ class CreateOrderRequest with _$CreateOrderRequest {
     required List<OrderItemRequest> items,
     @JsonKey(name: 'delivery_address') String? deliveryAddress,
     @JsonKey(name: 'payment_method') required String paymentMethod,
+    @JsonKey(name: 'delivery_fee') @Default(0) double deliveryFee,
   }) = _CreateOrderRequest;
 
   factory CreateOrderRequest.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +31,7 @@ class CreateOrderRequest with _$CreateOrderRequest {
       items: params.items.map((i) => OrderItemRequest.fromDomain(i)).toList(),
       deliveryAddress: params.deliveryAddress,
       paymentMethod: params.paymentMethod.name,
+      deliveryFee: params.deliveryFee,
     );
   }
 }

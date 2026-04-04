@@ -1,5 +1,14 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_database/alhai_database.dart' hide OrderStatus, PaymentStatus;
+import 'package:get_it/get_it.dart';
+import 'package:uuid/uuid.dart';
 import '../models/online_order.dart';
+
+const _uuid = Uuid();
 
 /// حالة الطلبات الأونلاين
 class OnlineOrdersState {
@@ -18,25 +27,25 @@ class OnlineOrdersState {
   });
 
   /// الطلبات المعلقة
-  List<OnlineOrder> get pendingOrders => 
+  List<OnlineOrder> get pendingOrders =>
     orders.where((o) => o.status == OrderStatus.pending).toList();
 
   /// الطلبات المقبولة
-  List<OnlineOrder> get acceptedOrders => 
+  List<OnlineOrder> get acceptedOrders =>
     orders.where((o) => o.status == OrderStatus.accepted).toList();
 
   /// الطلبات قيد التجهيز
-  List<OnlineOrder> get preparingOrders => 
+  List<OnlineOrder> get preparingOrders =>
     orders.where((o) => o.status == OrderStatus.preparing).toList();
 
   /// الطلبات في التوصيل
-  List<OnlineOrder> get deliveryOrders => 
+  List<OnlineOrder> get deliveryOrders =>
     orders.where((o) => o.status == OrderStatus.outForDelivery).toList();
 
   /// الطلبات المكتملة اليوم
   List<OnlineOrder> get completedToday {
     final today = DateTime.now();
-    return orders.where((o) => 
+    return orders.where((o) =>
       o.status == OrderStatus.delivered &&
       o.deliveredAt != null &&
       o.deliveredAt!.day == today.day &&
@@ -46,7 +55,7 @@ class OnlineOrdersState {
   }
 
   /// عدد الطلبات التي تحتاج إجراء
-  int get actionRequiredCount => 
+  int get actionRequiredCount =>
     orders.where((o) => o.needsAction).length;
 
   /// إجمالي المبيعات اليوم
@@ -71,71 +80,114 @@ class OnlineOrdersState {
 
 /// مدير الطلبات الأونلاين
 class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
-  OnlineOrdersNotifier() : super(const OnlineOrdersState()) {
-    // تحميل بيانات تجريبية للاختبار
-    _loadMockData();
+  final String? _storeId;
+  final AppDatabase _db;
+
+  OnlineOrdersNotifier(this._storeId)
+      : _db = GetIt.I<AppDatabase>(),
+        super(const OnlineOrdersState()) {
+    _loadOrders();
   }
 
-  /// تحميل بيانات تجريبية
-  void _loadMockData() {
-    final mockOrders = [
-      OnlineOrder(
-        id: 'ORD-001',
-        storeId: 'store1',
-        customerId: 'cust1',
-        customerName: 'أحمد محمد',
-        customerPhone: '0512345678',
-        customerAddress: 'شارع الملك فهد، جدة',
-        items: [
-          const OrderItem(productId: 'p1', productName: 'بيبسي كبير', quantity: 2, unitPrice: 5),
-          const OrderItem(productId: 'p2', productName: 'شيبس ليز', quantity: 1, unitPrice: 3),
-        ],
-        subtotal: 13,
-        deliveryFee: 5,
-        total: 18,
-        paymentStatus: PaymentStatus.paid,
-        createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
-      ),
-      OnlineOrder(
-        id: 'ORD-002',
-        storeId: 'store1',
-        customerId: 'cust2',
-        customerName: 'سارة علي',
-        customerPhone: '0598765432',
-        customerAddress: 'حي النزهة، الرياض',
-        items: [
-          const OrderItem(productId: 'p3', productName: 'ماء معدني', quantity: 6, unitPrice: 1),
-          const OrderItem(productId: 'p4', productName: 'عصير برتقال', quantity: 2, unitPrice: 4),
-        ],
-        subtotal: 14,
-        deliveryFee: 5,
-        total: 19,
-        paymentStatus: PaymentStatus.cashOnDelivery,
-        createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-      ),
-      OnlineOrder(
-        id: 'ORD-003',
-        storeId: 'store1',
-        customerId: 'cust3',
-        customerName: 'خالد عبدالله',
-        customerPhone: '0551234567',
-        customerAddress: 'حي الروضة، جدة',
-        items: [
-          const OrderItem(productId: 'p5', productName: 'حليب طازج', quantity: 2, unitPrice: 8),
-          const OrderItem(productId: 'p6', productName: 'خبز', quantity: 3, unitPrice: 2),
-          const OrderItem(productId: 'p7', productName: 'بيض', quantity: 1, unitPrice: 15),
-        ],
-        subtotal: 37,
-        deliveryFee: 5,
-        total: 42,
-        status: OrderStatus.accepted,
-        paymentStatus: PaymentStatus.paid,
-        createdAt: DateTime.now().subtract(const Duration(minutes: 10)),
-        acceptedAt: DateTime.now().subtract(const Duration(minutes: 8)),
-      ),
-    ];
+  /// تحميل الطلبات من قاعدة البيانات
+  Future<void> _loadOrders() async {
+    if (_storeId == null) return;
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final dbOrders = await _db.ordersDao.getPendingOrders(_storeId);
+      final onlineOrders = await _mapDbOrdersToOnlineOrders(dbOrders);
+      state = state.copyWith(
+        orders: onlineOrders,
+        isLoading: false,
+        hasNewOrders: onlineOrders.isNotEmpty,
+      );
+    } catch (e) {
+      debugPrint('[OnlineOrders] Error loading orders: $e');
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
 
-    state = state.copyWith(orders: mockOrders, hasNewOrders: true);
+  /// تحويل بيانات الطلبات من قاعدة البيانات إلى نموذج OnlineOrder
+  Future<List<OnlineOrder>> _mapDbOrdersToOnlineOrders(
+      List<OrdersTableData> dbOrders) async {
+    final result = <OnlineOrder>[];
+    for (final dbOrder in dbOrders) {
+      final dbItems = await _db.ordersDao.getOrderItems(dbOrder.id);
+      final customer = dbOrder.customerId != null
+          ? await _db.customersDao.getCustomerById(dbOrder.customerId!)
+          : null;
+
+      result.add(OnlineOrder(
+        id: dbOrder.id,
+        storeId: dbOrder.storeId,
+        customerId: dbOrder.customerId ?? '',
+        customerName: customer?.name ?? '',
+        customerPhone: customer?.phone ?? '',
+        customerAddress: dbOrder.deliveryAddress,
+        items: dbItems
+            .map((item) => OrderItem(
+                  productId: item.productId,
+                  productName: item.productName,
+                  quantity: item.quantity.toInt(),
+                  unitPrice: item.unitPrice,
+                  discount: item.discount,
+                  notes: item.notes,
+                ))
+            .toList(),
+        subtotal: dbOrder.subtotal,
+        deliveryFee: dbOrder.deliveryFee,
+        discount: dbOrder.discount,
+        total: dbOrder.total,
+        status: _mapDbStatus(dbOrder.status),
+        paymentStatus: _mapDbPaymentStatus(dbOrder.paymentStatus),
+        createdAt: dbOrder.orderDate,
+        acceptedAt: dbOrder.confirmedAt,
+        preparedAt: dbOrder.readyAt,
+        deliveredAt: dbOrder.deliveredAt,
+        driverId: dbOrder.driverId,
+        notes: dbOrder.notes,
+        cancellationReason: dbOrder.cancelReason,
+      ));
+    }
+    return result;
+  }
+
+  /// تحويل حالة الطلب من النص إلى enum
+  OrderStatus _mapDbStatus(String status) {
+    switch (status) {
+      case 'created':
+        return OrderStatus.pending;
+      case 'confirmed':
+        return OrderStatus.accepted;
+      case 'preparing':
+        return OrderStatus.preparing;
+      case 'ready':
+      case 'out_for_delivery':
+        return OrderStatus.outForDelivery;
+      case 'delivered':
+      case 'picked_up':
+      case 'completed':
+        return OrderStatus.delivered;
+      case 'cancelled':
+      case 'refunded':
+        return OrderStatus.cancelled;
+      default:
+        return OrderStatus.pending;
+    }
+  }
+
+  /// تحويل حالة الدفع من النص إلى enum
+  PaymentStatus _mapDbPaymentStatus(String paymentStatus) {
+    switch (paymentStatus) {
+      case 'paid':
+        return PaymentStatus.paid;
+      case 'pending':
+        return PaymentStatus.cashOnDelivery;
+      case 'refunded':
+        return PaymentStatus.failed;
+      default:
+        return PaymentStatus.cashOnDelivery;
+    }
   }
 
   /// إضافة طلب جديد (من WebSocket)
@@ -147,36 +199,19 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
   }
 
   /// قبول الطلب
-  void acceptOrder(String orderId) {
-    final updatedOrders = state.orders.map((order) {
-      if (order.id == orderId) {
-        return order.copyWith(
-          status: OrderStatus.accepted,
-          acceptedAt: DateTime.now(),
-        );
-      }
-      return order;
-    }).toList();
-
-    state = state.copyWith(orders: updatedOrders);
+  Future<void> acceptOrder(String orderId) async {
+    _updateLocalStatus(orderId, OrderStatus.accepted);
+    await _updateOrderStatusInDb(orderId, 'confirmed');
   }
 
   /// بدء التجهيز
-  void startPreparing(String orderId) {
-    final updatedOrders = state.orders.map((order) {
-      if (order.id == orderId) {
-        return order.copyWith(
-          status: OrderStatus.preparing,
-        );
-      }
-      return order;
-    }).toList();
-
-    state = state.copyWith(orders: updatedOrders);
+  Future<void> startPreparing(String orderId) async {
+    _updateLocalStatus(orderId, OrderStatus.preparing);
+    await _updateOrderStatusInDb(orderId, 'preparing');
   }
 
   /// تسليم للسائق
-  void assignDriver(String orderId, String driverId, String driverName) {
+  Future<void> assignDriver(String orderId, String driverId, String driverName) async {
     final updatedOrders = state.orders.map((order) {
       if (order.id == orderId) {
         return order.copyWith(
@@ -188,27 +223,22 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
       }
       return order;
     }).toList();
-
     state = state.copyWith(orders: updatedOrders);
+
+    // تحديث قاعدة البيانات وطابور المزامنة
+    await _db.ordersDao.assignDriver(orderId, driverId);
+    await _enqueueSyncUpdate(orderId, 'out_for_delivery',
+        extra: {'driver_id': driverId});
   }
 
   /// إتمام التسليم
-  void markDelivered(String orderId) {
-    final updatedOrders = state.orders.map((order) {
-      if (order.id == orderId) {
-        return order.copyWith(
-          status: OrderStatus.delivered,
-          deliveredAt: DateTime.now(),
-        );
-      }
-      return order;
-    }).toList();
-
-    state = state.copyWith(orders: updatedOrders);
+  Future<void> markDelivered(String orderId) async {
+    _updateLocalStatus(orderId, OrderStatus.delivered);
+    await _updateOrderStatusInDb(orderId, 'delivered');
   }
 
   /// إلغاء الطلب
-  void cancelOrder(String orderId, {String? reason}) {
+  Future<void> cancelOrder(String orderId, {String? reason}) async {
     final updatedOrders = state.orders.map((order) {
       if (order.id == orderId) {
         return order.copyWith(
@@ -218,8 +248,11 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
       }
       return order;
     }).toList();
-
     state = state.copyWith(orders: updatedOrders);
+
+    await _db.ordersDao.cancelOrder(orderId, reason ?? '');
+    await _enqueueSyncUpdate(orderId, 'cancelled',
+        extra: {'cancel_reason': reason ?? ''});
   }
 
   /// تحديد طلب
@@ -232,23 +265,71 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
     state = state.copyWith(hasNewOrders: false);
   }
 
-  /// تحديث الطلبات من الخادم
+  /// تحديث الطلبات من قاعدة البيانات
   Future<void> refreshOrders() async {
-    state = state.copyWith(isLoading: true, error: null);
-    
+    await _loadOrders();
+  }
+
+  // =========================================================================
+  // PRIVATE HELPERS
+  // =========================================================================
+
+  /// تحديث الحالة محلياً في الذاكرة
+  void _updateLocalStatus(String orderId, OrderStatus newStatus) {
+    final updatedOrders = state.orders.map((order) {
+      if (order.id == orderId) {
+        return order.copyWith(
+          status: newStatus,
+          acceptedAt: newStatus == OrderStatus.accepted ? DateTime.now() : null,
+          preparedAt: newStatus == OrderStatus.outForDelivery ? DateTime.now() : null,
+          deliveredAt: newStatus == OrderStatus.delivered ? DateTime.now() : null,
+        );
+      }
+      return order;
+    }).toList();
+    state = state.copyWith(orders: updatedOrders);
+  }
+
+  /// تحديث حالة الطلب في قاعدة البيانات وإضافة للمزامنة
+  Future<void> _updateOrderStatusInDb(String orderId, String dbStatus) async {
     try {
-      // TODO: استدعاء API حقيقي
-      await Future.delayed(const Duration(seconds: 1));
-      state = state.copyWith(isLoading: false);
+      await _db.ordersDao.updateOrderStatus(orderId, dbStatus);
+      await _enqueueSyncUpdate(orderId, dbStatus);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      debugPrint('[OnlineOrders] Error updating order status: $e');
+    }
+  }
+
+  /// إضافة تحديث للطابور المزامنة
+  Future<void> _enqueueSyncUpdate(String orderId, String status,
+      {Map<String, dynamic>? extra}) async {
+    try {
+      final payload = <String, dynamic>{
+        'id': orderId,
+        'status': status,
+      };
+      if (extra != null) payload.addAll(extra);
+
+      await _db.syncQueueDao.enqueue(
+        id: _uuid.v4(),
+        tableName: 'orders',
+        recordId: orderId,
+        operation: 'UPDATE',
+        payload: jsonEncode(payload),
+        idempotencyKey: 'order_status_${orderId}_$status',
+      );
+    } catch (e) {
+      debugPrint('[OnlineOrders] Error enqueueing sync: $e');
     }
   }
 }
 
 /// مزود الطلبات الأونلاين
 final onlineOrdersProvider = StateNotifierProvider<OnlineOrdersNotifier, OnlineOrdersState>(
-  (ref) => OnlineOrdersNotifier(),
+  (ref) {
+    final storeId = ref.watch(currentStoreIdProvider);
+    return OnlineOrdersNotifier(storeId);
+  },
 );
 
 /// الطلبات المعلقة

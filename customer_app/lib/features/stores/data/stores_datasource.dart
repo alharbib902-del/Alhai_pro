@@ -14,7 +14,31 @@ class StoresDatasource {
     required double lng,
     double radiusKm = 10,
   }) async {
-    // Fetch active stores with location
+    // Try server-side RPC first (Haversine on Postgres)
+    try {
+      final data = await _client
+          .rpc('get_nearby_stores', params: {
+            'p_lat': lat,
+            'p_lng': lng,
+            'p_radius_km': radiusKm,
+          })
+          .timeout(AppConstants.networkTimeout);
+
+      return (data as List)
+          .map((row) => _storeFromRow(row as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      // Fallback: client-side filtering if RPC is unavailable
+      return _getNearbyStoresClientSide(lat: lat, lng: lng, radiusKm: radiusKm);
+    }
+  }
+
+  /// Client-side fallback for nearby stores (fetches all, filters locally)
+  Future<List<Store>> _getNearbyStoresClientSide({
+    required double lat,
+    required double lng,
+    required double radiusKm,
+  }) async {
     final data = await _client
         .from('stores')
         .select()

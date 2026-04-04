@@ -24,6 +24,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final cart = ref.read(cartProvider);
     if (cart.isEmpty) return;
 
+    // Check minimum order amount
+    final minOrderAmount = ref.read(minOrderAmountProvider);
+    if (minOrderAmount > 0 && cart.total < minOrderAmount) {
+      setState(() {
+        _error =
+            'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س';
+      });
+      return;
+    }
+
     setState(() {
       _loading = true;
       _error = null;
@@ -54,6 +64,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final selectedAddress = ref.watch(selectedAddressProvider);
     final paymentMethod = ref.watch(selectedPaymentMethodProvider);
     final addressesAsync = ref.watch(addressesListProvider);
+    final deliveryFee = ref.watch(deliveryFeeProvider);
+    final minOrderAmount = ref.watch(minOrderAmountProvider);
+    final orderTotal = cart.total + deliveryFee;
+
+    final belowMinOrder = minOrderAmount > 0 && cart.total < minOrderAmount;
 
     return Scaffold(
       appBar: AppBar(
@@ -170,6 +185,32 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   }),
                   const SizedBox(height: AlhaiSpacing.lg),
 
+                  // Minimum order warning
+                  if (belowMinOrder) ...[
+                    Card(
+                      color: theme.colorScheme.errorContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: theme.colorScheme.onErrorContainer),
+                            const SizedBox(width: AlhaiSpacing.xs),
+                            Expanded(
+                              child: Text(
+                                'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س',
+                                style: TextStyle(
+                                  color: theme.colorScheme.onErrorContainer,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                  ],
+
                   // Order Summary
                   Text(
                     'ملخص الطلب',
@@ -190,12 +231,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           const Divider(),
                           _SummaryRow(
                             label: 'رسوم التوصيل',
-                            value: 'مجاني',
+                            value: deliveryFee > 0
+                                ? '${deliveryFee.toStringAsFixed(2)} ر.س'
+                                : 'مجاني',
                           ),
                           const Divider(),
                           _SummaryRow(
                             label: 'الإجمالي',
-                            value: '${cart.total.toStringAsFixed(2)} ر.س',
+                            value: '${orderTotal.toStringAsFixed(2)} ر.س',
                             isBold: true,
                           ),
                         ],
@@ -229,7 +272,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             ),
             child: SafeArea(
               child: FilledButton(
-                onPressed: _loading ? null : _placeOrder,
+                onPressed: _loading || belowMinOrder ? null : _placeOrder,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
                   shape: RoundedRectangleBorder(
@@ -246,7 +289,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ),
                       )
                     : Text(
-                        'تأكيد الطلب - ${cart.total.toStringAsFixed(2)} ر.س',
+                        'تأكيد الطلب - ${orderTotal.toStringAsFixed(2)} ر.س',
                         style: const TextStyle(fontSize: 16),
                       ),
               ),

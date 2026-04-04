@@ -17,6 +17,7 @@ _$CreateOrderParamsImpl _$$CreateOrderParamsImplFromJson(
       addressId: json['addressId'] as String?,
       deliveryAddress: json['deliveryAddress'] as String?,
       paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
+      deliveryFee: (json['deliveryFee'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$$CreateOrderParamsImplToJson(
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$CreateOrderParamsImplToJson(
       'addressId': instance.addressId,
       'deliveryAddress': instance.deliveryAddress,
       'paymentMethod': _$PaymentMethodEnumMap[instance.paymentMethod]!,
+      'deliveryFee': instance.deliveryFee,
     };
 
 const _$PaymentMethodEnumMap = {

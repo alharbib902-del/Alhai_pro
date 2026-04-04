@@ -90,6 +90,12 @@ class ZatcaInvoice {
 
   // ─── Submission Status ─────────────────────────────────────
 
+  /// Invoice Counter Value (ICV) - sequential integer required by ZATCA
+  ///
+  /// Must be a pure numeric counter (1, 2, 3, ...) without any prefix.
+  /// If null, falls back to extracting digits from [invoiceNumber].
+  final int? invoiceCounterValue;
+
   /// Current reporting status
   final ReportingStatus reportingStatus;
 
@@ -121,6 +127,7 @@ class ZatcaInvoice {
     this.qrCode,
     this.signedXml,
     this.invoiceHash,
+    this.invoiceCounterValue,
     this.reportingStatus = ReportingStatus.pending,
     this.warnings = const [],
     this.errors = const [],
@@ -153,6 +160,17 @@ class ZatcaInvoice {
 
   // ─── Copy ──────────────────────────────────────────────────
 
+  /// Resolved ICV: uses [invoiceCounterValue] if set, otherwise
+  /// extracts digits from [invoiceNumber] as fallback.
+  String get resolvedIcv {
+    if (invoiceCounterValue != null) {
+      return invoiceCounterValue.toString();
+    }
+    // Fallback: extract digits from invoiceNumber (e.g. "INV-2026-00001" → "202600001")
+    final digits = invoiceNumber.replaceAll(RegExp(r'[^0-9]'), '');
+    return digits.isNotEmpty ? digits : '1';
+  }
+
   ZatcaInvoice copyWith({
     String? invoiceNumber,
     String? uuid,
@@ -175,6 +193,7 @@ class ZatcaInvoice {
     String? qrCode,
     String? signedXml,
     String? invoiceHash,
+    int? invoiceCounterValue,
     ReportingStatus? reportingStatus,
     List<String>? warnings,
     List<String>? errors,
@@ -201,6 +220,7 @@ class ZatcaInvoice {
       qrCode: qrCode ?? this.qrCode,
       signedXml: signedXml ?? this.signedXml,
       invoiceHash: invoiceHash ?? this.invoiceHash,
+      invoiceCounterValue: invoiceCounterValue ?? this.invoiceCounterValue,
       reportingStatus: reportingStatus ?? this.reportingStatus,
       warnings: warnings ?? this.warnings,
       errors: errors ?? this.errors,

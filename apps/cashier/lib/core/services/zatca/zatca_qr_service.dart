@@ -1,11 +1,15 @@
-import 'zatca_tlv_encoder.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show ZatcaTlvEncoder;
 
-/// خدمة إنشاء QR Code متوافق مع ZATCA
+/// ZATCA-compliant QR code service for the cashier app
 ///
-/// ينتج بيانات QR Code بترميز Base64 من بيانات TLV
-/// للاستخدام مع [QrImageView] من حزمة qr_flutter
+/// Delegates TLV encoding to [ZatcaTlvEncoder] from the alhai_zatca package
+/// (Phase 2 compliant, tags 1-9 capable). For the cashier receipt QR,
+/// we use the simplified encoding (tags 1-5) which is the minimum
+/// required for printed invoices.
 class ZatcaQrService {
-  /// إنشاء بيانات QR Code بترميز Base64
+  static final _encoder = ZatcaTlvEncoder();
+
+  /// Generate base64-encoded QR data using the package TLV encoder
   static String generateQrData({
     required String sellerName,
     required String vatNumber,
@@ -13,7 +17,7 @@ class ZatcaQrService {
     required double totalWithVat,
     required double vatAmount,
   }) {
-    return ZatcaTlvEncoder.encodeToBase64(
+    return _encoder.encodeSimplified(
       sellerName: sellerName,
       vatNumber: vatNumber,
       timestamp: timestamp,
@@ -22,8 +26,8 @@ class ZatcaQrService {
     );
   }
 
-  /// التحقق من صحة الرقم الضريبي السعودي
-  /// الرقم الضريبي: 15 رقم يبدأ بـ 3
+  /// Validate a Saudi VAT registration number
+  /// Must be 15 digits starting with 3
   static bool isValidVatNumber(String vatNumber) {
     if (vatNumber.length != 15) return false;
     if (!vatNumber.startsWith('3')) return false;
@@ -31,8 +35,8 @@ class ZatcaQrService {
     return true;
   }
 
-  /// تنسيق الرقم الضريبي للعرض
-  /// مثال: 300000000000003 → 300 000 000 000 003
+  /// Format a VAT number for display
+  /// Example: 300000000000003 -> 300 000 000 000 003
   static String formatVatNumber(String vatNumber) {
     if (vatNumber.length != 15) return vatNumber;
     return '${vatNumber.substring(0, 3)} '
@@ -42,10 +46,10 @@ class ZatcaQrService {
         '${vatNumber.substring(12)}';
   }
 
-  /// التحقق من صحة بيانات QR Code عبر فك ترميز TLV
+  /// Validate QR data by decoding and checking required TLV tags
   static bool validateQrData(String base64Data) {
     try {
-      final tags = ZatcaTlvEncoder.decodeFromBase64(base64Data);
+      final tags = _encoder.decodeToStrings(base64Data);
       return tags.containsKey(1) &&
           tags.containsKey(2) &&
           tags.containsKey(3) &&

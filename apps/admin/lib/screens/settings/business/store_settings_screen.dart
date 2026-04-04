@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -25,6 +26,15 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
   final _phoneController = TextEditingController();
   final _vatController = TextEditingController();
   final _crController = TextEditingController();
+
+  // Location & delivery controllers
+  final _latController = TextEditingController();
+  final _lngController = TextEditingController();
+  final _deliveryRadiusController = TextEditingController(text: '10');
+  final _minOrderController = TextEditingController(text: '0');
+  final _deliveryFeeController = TextEditingController(text: '0');
+  bool _acceptsDelivery = true;
+  bool _acceptsPickup = true;
 
   String _currency = 'SAR';
   String _language = 'ar';
@@ -58,11 +68,33 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         _vatController.text = store.taxNumber ?? '';
         _crController.text = store.commercialReg ?? '';
         _currency = store.currency;
-        _isLoading = false;
       });
-    } else if (mounted) {
-      setState(() => _isLoading = false);
     }
+
+    // Load delivery/location fields from Supabase (not in local Drift table)
+    try {
+      final supabase = Supabase.instance.client;
+      final row = await supabase
+          .from('stores')
+          .select('lat, lng, delivery_radius, min_order_amount, delivery_fee, accepts_delivery, accepts_pickup')
+          .eq('id', storeId)
+          .maybeSingle();
+      if (row != null && mounted) {
+        setState(() {
+          _latController.text = (row['lat'] as num?)?.toString() ?? '';
+          _lngController.text = (row['lng'] as num?)?.toString() ?? '';
+          _deliveryRadiusController.text = (row['delivery_radius'] as num?)?.toString() ?? '10';
+          _minOrderController.text = (row['min_order_amount'] as num?)?.toString() ?? '0';
+          _deliveryFeeController.text = (row['delivery_fee'] as num?)?.toString() ?? '0';
+          _acceptsDelivery = row['accepts_delivery'] as bool? ?? true;
+          _acceptsPickup = row['accepts_pickup'] as bool? ?? true;
+        });
+      }
+    } catch (_) {
+      // Supabase unavailable - keep defaults
+    }
+
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override
@@ -72,6 +104,11 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     _phoneController.dispose();
     _vatController.dispose();
     _crController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
+    _deliveryRadiusController.dispose();
+    _minOrderController.dispose();
+    _deliveryFeeController.dispose();
     super.dispose();
   }
   @override
@@ -305,6 +342,132 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           ),
         ]),
 
+        // Location & Delivery settings
+        _buildSettingsGroup(
+            '\u0627\u0644\u0645\u0648\u0642\u0639 \u0648\u0627\u0644\u062A\u0648\u0635\u064A\u0644', // الموقع والتوصيل
+            Icons.delivery_dining_rounded,
+            const Color(0xFF8B5CF6),
+            isDark, [
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, 0),
+            child: Text(
+              '\u064A\u0645\u0643\u0646\u0643 \u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u0627\u0644\u0625\u062D\u062F\u0627\u062B\u064A\u0627\u062A \u0645\u0646 \u062E\u0631\u0627\u0626\u0637 Google', // يمكنك الحصول على الإحداثيات من خرائط Google
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _latController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: '\u062E\u0637 \u0627\u0644\u0639\u0631\u0636', // خط العرض
+                      hintText: '24.7136',
+                      prefixIcon: const Icon(Icons.my_location),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
+                  child: TextFormField(
+                    controller: _lngController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: '\u062E\u0637 \u0627\u0644\u0637\u0648\u0644', // خط الطول
+                      hintText: '46.6753',
+                      prefixIcon: const Icon(Icons.explore),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            child: TextFormField(
+              controller: _deliveryRadiusController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+              ],
+              decoration: InputDecoration(
+                labelText: '\u0646\u0637\u0627\u0642 \u0627\u0644\u062A\u0648\u0635\u064A\u0644 \u0628\u0627\u0644\u0643\u064A\u0644\u0648\u0645\u062A\u0631', // نطاق التوصيل بالكيلومتر
+                prefixIcon: const Icon(Icons.radar),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _minOrderController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: '\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0644\u0644\u0637\u0644\u0628', // الحد الأدنى للطلب
+                      prefixIcon: const Icon(Icons.shopping_bag_outlined),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
+                  child: TextFormField(
+                    controller: _deliveryFeeController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: '\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // رسوم التوصيل
+                      prefixIcon: const Icon(Icons.payments_outlined),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SwitchListTile(
+            title: Text(
+              '\u064A\u0642\u0628\u0644 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // يقبل التوصيل
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            ),
+            secondary: const Icon(Icons.delivery_dining),
+            value: _acceptsDelivery,
+            onChanged: (v) => setState(() => _acceptsDelivery = v),
+          ),
+          SwitchListTile(
+            title: Text(
+              '\u064A\u0642\u0628\u0644 \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645', // يقبل الاستلام
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            ),
+            secondary: const Icon(Icons.store_outlined),
+            value: _acceptsPickup,
+            onChanged: (v) => setState(() => _acceptsPickup = v),
+          ),
+          const SizedBox(height: AlhaiSpacing.xs),
+        ]),
+
         const SizedBox(height: AlhaiSpacing.lg),
         SizedBox(
           width: double.infinity,
@@ -459,19 +622,46 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           await db.storesDao.updateStore(updatedStore);
 
           final syncService = ref.read(syncServiceProvider);
+          // Build the sync changes map including location/delivery fields
+          final changes = <String, dynamic>{
+            'id': _currentStoreId,
+            'name': name,
+            'phone': phone,
+            'address': address,
+            'tax_number': vat,
+            'commercial_reg': cr,
+            'currency': _currency,
+            'updated_at': DateTime.now().toIso8601String(),
+          };
+
+          // Add location/delivery fields (Supabase-only columns)
+          final latText = _latController.text.trim();
+          final lngText = _lngController.text.trim();
+          if (latText.isNotEmpty) {
+            changes['lat'] = double.tryParse(latText);
+          }
+          if (lngText.isNotEmpty) {
+            changes['lng'] = double.tryParse(lngText);
+          }
+          final radiusText = _deliveryRadiusController.text.trim();
+          if (radiusText.isNotEmpty) {
+            changes['delivery_radius'] = double.tryParse(radiusText) ?? 10.0;
+          }
+          final minOrderText = _minOrderController.text.trim();
+          if (minOrderText.isNotEmpty) {
+            changes['min_order_amount'] = double.tryParse(minOrderText) ?? 0;
+          }
+          final feeText = _deliveryFeeController.text.trim();
+          if (feeText.isNotEmpty) {
+            changes['delivery_fee'] = double.tryParse(feeText) ?? 0;
+          }
+          changes['accepts_delivery'] = _acceptsDelivery;
+          changes['accepts_pickup'] = _acceptsPickup;
+
           await syncService.enqueueUpdate(
             tableName: 'stores',
             recordId: _currentStoreId!,
-            changes: {
-              'id': _currentStoreId,
-              'name': name,
-              'phone': phone,
-              'address': address,
-              'tax_number': vat,
-              'commercial_reg': cr,
-              'currency': _currency,
-              'updated_at': DateTime.now().toIso8601String(),
-            },
+            changes: changes,
           );
         }
       } catch (e) {

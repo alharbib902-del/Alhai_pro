@@ -16,6 +16,7 @@ class CreateOrderParams with _$CreateOrderParams {
     String? addressId,
     String? deliveryAddress,
     required PaymentMethod paymentMethod,
+    @Default(0) double deliveryFee,
   }) = _CreateOrderParams;
 
   factory CreateOrderParams.fromJson(Map<String, dynamic> json) =>

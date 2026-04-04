@@ -4,6 +4,7 @@
 /// - واجهة موحدة لجميع بوابات الدفع
 /// - دعم مدى، Apple Pay، STC Pay، تمارا
 /// - معالجة الأخطاء والاسترجاع
+/// - تتبع حالة التهيئة لكل بوابة
 library payment_gateway;
 
 import 'package:flutter/foundation.dart';
@@ -52,6 +53,28 @@ enum PaymentStatus {
   bool get isFinal => [approved, declined, failed, cancelled, refunded].contains(this);
 }
 
+/// حالة تهيئة بوابة الدفع
+///
+/// تُستخدم لتمييز البوابات المُهيّأة فعلاً عن المحاكاة:
+/// - [notConfigured]: لم يتم إعداد SDK أو مفاتيح API بعد
+/// - [configured]: تم إدخال المفاتيح لكن لم يتم التحقق من الاتصال
+/// - [available]: البوابة جاهزة لمعالجة المدفوعات
+/// - [unavailable]: تم الإعداد لكن الخدمة غير متاحة حالياً (صيانة، خطأ شبكة)
+enum PaymentGatewayStatus {
+  notConfigured('غير مفعّل - يتطلب إعداد'),
+  configured('تم الإعداد - جاري التحقق'),
+  available('متاح'),
+  unavailable('غير متاح حالياً');
+
+  final String arabicName;
+  const PaymentGatewayStatus(this.arabicName);
+
+  bool get isReady => this == PaymentGatewayStatus.available;
+  bool get isConfigured =>
+      this == PaymentGatewayStatus.configured ||
+      this == PaymentGatewayStatus.available;
+}
+
 /// نوع خطأ الدفع
 enum PaymentErrorType {
   network('خطأ في الاتصال'),
@@ -63,6 +86,7 @@ enum PaymentErrorType {
   authenticationFailed('فشل التحقق'),
   terminalError('خطأ في الجهاز'),
   cancelled('تم الإلغاء'),
+  gatewayNotConfigured('البوابة غير مفعّلة'),
   unknown('خطأ غير معروف');
 
   final String arabicMessage;
@@ -220,8 +244,14 @@ abstract class PaymentGateway {
   /// طرق الدفع المدعومة
   List<PaymentMethod> get supportedMethods;
 
-  /// هل البوابة متاحة
+  /// حالة تهيئة البوابة
+  PaymentGatewayStatus get configurationStatus;
+
+  /// هل البوابة متاحة (مهيأة + متصلة)
   Future<bool> isAvailable();
+
+  /// هل البوابة في وضع المحاكاة (للتطوير فقط)
+  bool get isSimulated;
 
   /// معالجة الدفع
   Future<PaymentResult> processPayment(PaymentRequest request);
@@ -247,6 +277,13 @@ class CashPaymentGateway implements PaymentGateway {
 
   @override
   List<PaymentMethod> get supportedMethods => [PaymentMethod.cash];
+
+  @override
+  PaymentGatewayStatus get configurationStatus =>
+      PaymentGatewayStatus.available;
+
+  @override
+  bool get isSimulated => false;
 
   @override
   Future<bool> isAvailable() async => true;
@@ -284,6 +321,14 @@ class CashPaymentGateway implements PaymentGateway {
 // ============================================================================
 
 /// بوابة مدى (محاكاة للتطوير)
+///
+/// TODO: تكامل الإنتاج - Nearpay SDK (https://docs.nearpay.io)
+///   أو SoftPOS SDK لدعم الدفع بدون جهاز POS مادي.
+///   الخطوات المطلوبة:
+///   1. إضافة nearpay_flutter إلى pubspec.yaml
+///   2. تسجيل حساب تاجر في Nearpay وإعداد Terminal ID
+///   3. استبدال محاكاة processPayment بالتكامل الفعلي
+///   4. تحديث configurationStatus بناءً على وجود المفاتيح
 class MadaPaymentGateway implements PaymentGateway {
   final String merchantId;
   final String terminalId;
@@ -307,23 +352,33 @@ class MadaPaymentGateway implements PaymentGateway {
   ];
 
   @override
+  PaymentGatewayStatus get configurationStatus {
+    // TODO: عند تكامل Nearpay SDK، تحقق من:
+    //   - وجود merchantId و terminalId صالحين
+    //   - اتصال الجهاز / SoftPOS جاهز
+    if (kReleaseMode) return PaymentGatewayStatus.notConfigured;
+    if (isTestMode) return PaymentGatewayStatus.available; // محاكاة فقط
+    return PaymentGatewayStatus.notConfigured;
+  }
+
+  @override
+  bool get isSimulated => !kReleaseMode && isTestMode;
+
+  @override
   Future<bool> isAvailable() async {
-    // البوابة غير متاحة حتى يتم تكامل SDK الجهاز
-    // TODO: التحقق من اتصال الجهاز عند تكامل SDK
-    if (kReleaseMode) return false;
-    return isTestMode;
+    return configurationStatus == PaymentGatewayStatus.available;
   }
 
   @override
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[Mada] Processing payment: ${request.amount} SAR');
 
-    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    // في وضع الإنتاج: رفض الدفع - SDK غير مُدمج
     if (kReleaseMode) {
       return PaymentResult.failed(
-        errorType: PaymentErrorType.terminalError,
+        errorType: PaymentErrorType.gatewayNotConfigured,
         errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+            'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
       );
     }
 
@@ -331,8 +386,7 @@ class MadaPaymentGateway implements PaymentGateway {
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
-      // في وضع الاختبار: نجاح دائماً (للتطوير فقط)
-      debugPrint('[Mada] ⚠ SIMULATED payment - dev/test mode only');
+      debugPrint('[Mada] SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'MADA-${DateTime.now().millisecondsSinceEpoch}',
         authCode: '123456',
@@ -346,11 +400,11 @@ class MadaPaymentGateway implements PaymentGateway {
       );
     }
 
-    // TODO: تكامل مع SDK الجهاز
+    // TODO: تكامل مع Nearpay SDK / SoftPOS SDK
     return PaymentResult.failed(
-      errorType: PaymentErrorType.terminalError,
+      errorType: PaymentErrorType.gatewayNotConfigured,
       errorMessage:
-          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+          'الدفع بمدى غير مفعّل - يتطلب إعداد Nearpay SDK',
     );
   }
 
@@ -362,8 +416,7 @@ class MadaPaymentGateway implements PaymentGateway {
       return RefundResult(
         success: false,
         refundedAmount: 0,
-        errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        errorMessage: 'الاسترجاع غير متاح - بوابة مدى غير مفعّلة',
         timestamp: DateTime.now(),
       );
     }
@@ -395,6 +448,14 @@ class MadaPaymentGateway implements PaymentGateway {
 // ============================================================================
 
 /// بوابة STC Pay
+///
+/// TODO: تكامل الإنتاج - STC Pay Merchant SDK
+///   الخطوات المطلوبة:
+///   1. التقديم على STC Pay Merchant Portal للحصول على API credentials
+///   2. إضافة STC Pay Merchant SDK (حزمة Flutter أو REST API wrapper)
+///   3. إعداد webhook URL لاستلام إشعارات الدفع
+///   4. استبدال محاكاة processPayment بتدفق OTP الفعلي
+///   5. تحديث configurationStatus بناءً على وجود المفاتيح
 class StcPayGateway implements PaymentGateway {
   final String merchantId;
   final String apiKey;
@@ -413,23 +474,33 @@ class StcPayGateway implements PaymentGateway {
   List<PaymentMethod> get supportedMethods => [PaymentMethod.stcPay];
 
   @override
+  PaymentGatewayStatus get configurationStatus {
+    // TODO: عند تكامل STC Pay Merchant SDK، تحقق من:
+    //   - وجود merchantId و apiKey صالحين
+    //   - إعداد webhook URL
+    if (kReleaseMode) return PaymentGatewayStatus.notConfigured;
+    if (isTestMode) return PaymentGatewayStatus.available; // محاكاة فقط
+    return PaymentGatewayStatus.notConfigured;
+  }
+
+  @override
+  bool get isSimulated => !kReleaseMode && isTestMode;
+
+  @override
   Future<bool> isAvailable() async {
-    // البوابة غير متاحة حتى يتم تكامل STC Pay API
-    // TODO: التحقق من إعداد API عند التكامل
-    if (kReleaseMode) return false;
-    return isTestMode;
+    return configurationStatus == PaymentGatewayStatus.available;
   }
 
   @override
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[STC Pay] Processing payment: ${request.amount} SAR');
 
-    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    // في وضع الإنتاج: رفض الدفع - SDK غير مُدمج
     if (kReleaseMode) {
       return PaymentResult.failed(
-        errorType: PaymentErrorType.terminalError,
+        errorType: PaymentErrorType.gatewayNotConfigured,
         errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+            'الدفع بـ STC Pay غير مفعّل - يتطلب إعداد STC Pay Merchant SDK',
       );
     }
 
@@ -444,7 +515,7 @@ class StcPayGateway implements PaymentGateway {
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
-      debugPrint('[STC Pay] ⚠ SIMULATED payment - dev/test mode only');
+      debugPrint('[STC Pay] SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'STC-${DateTime.now().millisecondsSinceEpoch}',
         authCode: 'STC123',
@@ -455,11 +526,11 @@ class StcPayGateway implements PaymentGateway {
       );
     }
 
-    // TODO: تكامل مع STC Pay API
+    // TODO: تكامل مع STC Pay Merchant SDK
     return PaymentResult.failed(
-      errorType: PaymentErrorType.unknown,
+      errorType: PaymentErrorType.gatewayNotConfigured,
       errorMessage:
-          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+          'الدفع بـ STC Pay غير مفعّل - يتطلب إعداد STC Pay Merchant SDK',
     );
   }
 
@@ -469,8 +540,7 @@ class StcPayGateway implements PaymentGateway {
       return RefundResult(
         success: false,
         refundedAmount: 0,
-        errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        errorMessage: 'الاسترجاع غير متاح - بوابة STC Pay غير مفعّلة',
         timestamp: DateTime.now(),
       );
     }
@@ -497,6 +567,15 @@ class StcPayGateway implements PaymentGateway {
 // ============================================================================
 
 /// بوابة تمارا (اشتري الآن وادفع لاحقاً)
+///
+/// TODO: تكامل الإنتاج - Tamara Flutter SDK (https://pub.dev/packages/tamara_sdk)
+///   أو tamara_checkout حسب المتاح.
+///   الخطوات المطلوبة:
+///   1. التسجيل في Tamara Merchant Portal
+///   2. إضافة tamara_sdk إلى pubspec.yaml
+///   3. إعداد API token و notification webhook
+///   4. استبدال محاكاة processPayment بتدفق Checkout الفعلي
+///   5. تحديث configurationStatus بناءً على وجود المفاتيح
 class TamaraGateway implements PaymentGateway {
   final String apiToken;
   final String merchantUrl;
@@ -515,11 +594,21 @@ class TamaraGateway implements PaymentGateway {
   List<PaymentMethod> get supportedMethods => [PaymentMethod.tamara];
 
   @override
+  PaymentGatewayStatus get configurationStatus {
+    // TODO: عند تكامل Tamara Flutter SDK، تحقق من:
+    //   - وجود apiToken صالح
+    //   - إعداد merchantUrl و notification webhook
+    if (kReleaseMode) return PaymentGatewayStatus.notConfigured;
+    if (isTestMode) return PaymentGatewayStatus.available; // محاكاة فقط
+    return PaymentGatewayStatus.notConfigured;
+  }
+
+  @override
+  bool get isSimulated => !kReleaseMode && isTestMode;
+
+  @override
   Future<bool> isAvailable() async {
-    // البوابة غير متاحة حتى يتم تكامل Tamara API
-    // TODO: التحقق من إعداد API عند التكامل
-    if (kReleaseMode) return false;
-    return isTestMode;
+    return configurationStatus == PaymentGatewayStatus.available;
   }
 
   /// الحد الأدنى للطلب
@@ -532,12 +621,12 @@ class TamaraGateway implements PaymentGateway {
   Future<PaymentResult> processPayment(PaymentRequest request) async {
     debugPrint('[Tamara] Processing payment: ${request.amount} SAR');
 
-    // في وضع الإنتاج: رفض الدفع مع رسالة واضحة
+    // في وضع الإنتاج: رفض الدفع - SDK غير مُدمج
     if (kReleaseMode) {
       return PaymentResult.failed(
-        errorType: PaymentErrorType.terminalError,
+        errorType: PaymentErrorType.gatewayNotConfigured,
         errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+            'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
       );
     }
 
@@ -567,7 +656,7 @@ class TamaraGateway implements PaymentGateway {
     await Future.delayed(const Duration(seconds: 2));
 
     if (isTestMode) {
-      debugPrint('[Tamara] ⚠ SIMULATED payment - dev/test mode only');
+      debugPrint('[Tamara] SIMULATED payment - dev/test mode only');
       return PaymentResult.success(
         transactionId: 'TAMARA-${DateTime.now().millisecondsSinceEpoch}',
         referenceNumber: request.orderId,
@@ -579,11 +668,11 @@ class TamaraGateway implements PaymentGateway {
       );
     }
 
-    // TODO: تكامل مع Tamara API
+    // TODO: تكامل مع Tamara Flutter SDK
     return PaymentResult.failed(
-      errorType: PaymentErrorType.unknown,
+      errorType: PaymentErrorType.gatewayNotConfigured,
       errorMessage:
-          'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+          'الدفع بتمارا غير مفعّل - يتطلب إعداد Tamara Flutter SDK',
     );
   }
 
@@ -593,8 +682,7 @@ class TamaraGateway implements PaymentGateway {
       return RefundResult(
         success: false,
         refundedAmount: 0,
-        errorMessage:
-            'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي',
+        errorMessage: 'الاسترجاع غير متاح - بوابة تمارا غير مفعّلة',
         timestamp: DateTime.now(),
       );
     }
@@ -620,12 +708,20 @@ class TamaraGateway implements PaymentGateway {
 // PAYMENT SERVICE
 // ============================================================================
 
+/// معلومات بوابة دفع مسجّلة
+class RegisteredGateway {
+  final PaymentMethod method;
+  final PaymentGateway gateway;
+
+  const RegisteredGateway({required this.method, required this.gateway});
+
+  PaymentGatewayStatus get status => gateway.configurationStatus;
+  bool get isSimulated => gateway.isSimulated;
+  String get displayName => gateway.name;
+}
+
 /// خدمة الدفع الموحدة
 class PaymentService {
-  /// رسالة الدفع الإلكتروني غير المفعل
-  static const String _electronicPaymentUnavailableMessage =
-      'الدفع الإلكتروني غير مفعل حالياً. يرجى استخدام الدفع النقدي';
-
   final Map<PaymentMethod, PaymentGateway> _gateways = {};
 
   PaymentService() {
@@ -634,8 +730,11 @@ class PaymentService {
   }
 
   /// التحقق من توفر طريقة الدفع
-  /// في الإصدار الحالي، النقد فقط متاح
-  // TODO: Enable electronic payments when terminal SDK is integrated
+  /// في الإصدار الحالي، النقد فقط متاح فعلياً
+  // TODO: Enable electronic payments when SDKs are integrated:
+  //   - mada: Nearpay SDK / SoftPOS SDK
+  //   - STC Pay: STC Pay Merchant SDK
+  //   - Tamara: Tamara Flutter SDK
   static bool isMethodAvailable(PaymentMethod method) {
     return method == PaymentMethod.cash;
   }
@@ -649,19 +748,61 @@ class PaymentService {
   /// الحصول على البوابة
   PaymentGateway? getGateway(PaymentMethod method) => _gateways[method];
 
-  /// طرق الدفع المتاحة
-  List<PaymentMethod> get availableMethods => _gateways.keys.toList();
+  /// جميع طرق الدفع المسجّلة (بما فيها غير المفعّلة)
+  List<PaymentMethod> get registeredMethods => _gateways.keys.toList();
+
+  /// طرق الدفع المتاحة فعلياً (مهيأة وجاهزة)
+  ///
+  /// تُرجع فقط البوابات التي [PaymentGatewayStatus.available].
+  /// في وضع التطوير تشمل البوابات المحاكاة.
+  List<PaymentMethod> get availableMethods => _gateways.entries
+      .where((e) =>
+          e.value.configurationStatus == PaymentGatewayStatus.available)
+      .map((e) => e.key)
+      .toList();
+
+  /// البوابات المهيأة فعلياً (ليست محاكاة)
+  ///
+  /// تُرجع البوابات التي تم إعداد SDK/API لها وهي جاهزة للإنتاج.
+  List<RegisteredGateway> get configuredGateways => _gateways.entries
+      .where((e) => !e.value.isSimulated && e.value.configurationStatus.isReady)
+      .map((e) => RegisteredGateway(method: e.key, gateway: e.value))
+      .toList();
+
+  /// البوابات المحاكاة (وضع التطوير فقط)
+  ///
+  /// تُرجع البوابات التي تعمل بالمحاكاة ولم يتم تكامل SDK الفعلي لها.
+  List<RegisteredGateway> get simulatedGateways => _gateways.entries
+      .where((e) => e.value.isSimulated)
+      .map((e) => RegisteredGateway(method: e.key, gateway: e.value))
+      .toList();
+
+  /// الحصول على جميع البوابات مع حالة كل منها
+  ///
+  /// مفيدة لعرض حالة كل بوابة في واجهة الإعدادات:
+  /// - متاح / محاكاة / غير مفعّل
+  List<RegisteredGateway> getGatewayStatuses() => _gateways.entries
+      .map((e) => RegisteredGateway(method: e.key, gateway: e.value))
+      .toList();
 
   /// معالجة الدفع
   Future<PaymentResult> processPayment(PaymentRequest request) async {
-    // في وضع الإنتاج: رفض طرق الدفع الإلكترونية غير المفعلة
+    // التحقق من أن الطريقة متاحة فعلياً
     if (!isMethodAvailable(request.method)) {
+      final gateway = _gateways[request.method];
+      final status = gateway?.configurationStatus ??
+          PaymentGatewayStatus.notConfigured;
+
       debugPrint(
-        '[PaymentService] Rejected unavailable method: ${request.method.arabicName}',
+        '[PaymentService] Rejected ${request.method.arabicName} '
+        '(status: ${status.arabicName})',
       );
+
       return PaymentResult.failed(
-        errorType: PaymentErrorType.terminalError,
-        errorMessage: _electronicPaymentUnavailableMessage,
+        errorType: PaymentErrorType.gatewayNotConfigured,
+        errorMessage: status == PaymentGatewayStatus.notConfigured
+            ? '${request.method.arabicName} غير مفعّل - يتطلب إعداد'
+            : 'بوابة ${request.method.arabicName} غير متاحة حالياً',
       );
     }
 
@@ -677,7 +818,7 @@ class PaymentService {
     final isAvailable = await gateway.isAvailable();
     if (!isAvailable) {
       return PaymentResult.failed(
-        errorType: PaymentErrorType.terminalError,
+        errorType: PaymentErrorType.gatewayNotConfigured,
         errorMessage: 'بوابة الدفع غير متاحة حالياً',
       );
     }

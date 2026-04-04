@@ -29,6 +29,8 @@ mixin _$CreateOrderRequest {
   String? get deliveryAddress => throw _privateConstructorUsedError;
   @JsonKey(name: 'payment_method')
   String get paymentMethod => throw _privateConstructorUsedError;
+  @JsonKey(name: 'delivery_fee')
+  double get deliveryFee => throw _privateConstructorUsedError;
 
   /// Serializes this CreateOrderRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,7 +53,8 @@ abstract class $CreateOrderRequestCopyWith<$Res> {
       @JsonKey(name: 'store_id') String storeId,
       List<OrderItemRequest> items,
       @JsonKey(name: 'delivery_address') String? deliveryAddress,
-      @JsonKey(name: 'payment_method') String paymentMethod});
+      @JsonKey(name: 'payment_method') String paymentMethod,
+      @JsonKey(name: 'delivery_fee') double deliveryFee});
 }
 
 /// @nodoc
@@ -74,6 +77,7 @@ class _$CreateOrderRequestCopyWithImpl<$Res, $Val extends CreateOrderRequest>
     Object? items = null,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
+    Object? deliveryFee = null,
   }) {
     return _then(_value.copyWith(
       clientOrderId: null == clientOrderId
@@ -96,6 +100,10 @@ class _$CreateOrderRequestCopyWithImpl<$Res, $Val extends CreateOrderRequest>
           ? _value.paymentMethod
           : paymentMethod // ignore: cast_nullable_to_non_nullable
               as String,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
     ) as $Val);
   }
 }
@@ -113,7 +121,8 @@ abstract class _$$CreateOrderRequestImplCopyWith<$Res>
       @JsonKey(name: 'store_id') String storeId,
       List<OrderItemRequest> items,
       @JsonKey(name: 'delivery_address') String? deliveryAddress,
-      @JsonKey(name: 'payment_method') String paymentMethod});
+      @JsonKey(name: 'payment_method') String paymentMethod,
+      @JsonKey(name: 'delivery_fee') double deliveryFee});
 }
 
 /// @nodoc
@@ -134,6 +143,7 @@ class __$$CreateOrderRequestImplCopyWithImpl<$Res>
     Object? items = null,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
+    Object? deliveryFee = null,
   }) {
     return _then(_$CreateOrderRequestImpl(
       clientOrderId: null == clientOrderId
@@ -156,6 +166,10 @@ class __$$CreateOrderRequestImplCopyWithImpl<$Res>
           ? _value.paymentMethod
           : paymentMethod // ignore: cast_nullable_to_non_nullable
               as String,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -168,7 +182,8 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
       @JsonKey(name: 'store_id') required this.storeId,
       required final List<OrderItemRequest> items,
       @JsonKey(name: 'delivery_address') this.deliveryAddress,
-      @JsonKey(name: 'payment_method') required this.paymentMethod})
+      @JsonKey(name: 'payment_method') required this.paymentMethod,
+      @JsonKey(name: 'delivery_fee') this.deliveryFee = 0})
       : _items = items,
         super._();
 
@@ -195,10 +210,13 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
   @override
   @JsonKey(name: 'payment_method')
   final String paymentMethod;
+  @override
+  @JsonKey(name: 'delivery_fee')
+  final double deliveryFee;
 
   @override
   String toString() {
-    return 'CreateOrderRequest(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod)';
+    return 'CreateOrderRequest(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod, deliveryFee: $deliveryFee)';
   }
 
   @override
@@ -213,7 +231,9 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
             (identical(other.deliveryAddress, deliveryAddress) ||
                 other.deliveryAddress == deliveryAddress) &&
             (identical(other.paymentMethod, paymentMethod) ||
-                other.paymentMethod == paymentMethod));
+                other.paymentMethod == paymentMethod) &&
+            (identical(other.deliveryFee, deliveryFee) ||
+                other.deliveryFee == deliveryFee));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -224,7 +244,8 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
       storeId,
       const DeepCollectionEquality().hash(_items),
       deliveryAddress,
-      paymentMethod);
+      paymentMethod,
+      deliveryFee);
 
   /// Create a copy of CreateOrderRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -249,8 +270,9 @@ abstract class _CreateOrderRequest extends CreateOrderRequest {
       @JsonKey(name: 'store_id') required final String storeId,
       required final List<OrderItemRequest> items,
       @JsonKey(name: 'delivery_address') final String? deliveryAddress,
-      @JsonKey(name: 'payment_method')
-      required final String paymentMethod}) = _$CreateOrderRequestImpl;
+      @JsonKey(name: 'payment_method') required final String paymentMethod,
+      @JsonKey(name: 'delivery_fee')
+      final double deliveryFee}) = _$CreateOrderRequestImpl;
   const _CreateOrderRequest._() : super._();
 
   factory _CreateOrderRequest.fromJson(Map<String, dynamic> json) =
@@ -270,6 +292,9 @@ abstract class _CreateOrderRequest extends CreateOrderRequest {
   @override
   @JsonKey(name: 'payment_method')
   String get paymentMethod;
+  @override
+  @JsonKey(name: 'delivery_fee')
+  double get deliveryFee;
 
   /// Create a copy of CreateOrderRequest
   /// with the given fields replaced by the non-null parameter values.

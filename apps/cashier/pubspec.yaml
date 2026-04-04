@@ -40,6 +40,10 @@ dependencies:
   # Images
   cached_network_image: ^3.3.1
 
+  # ZATCA e-invoicing (Phase 2)
+  alhai_zatca:
+    path: ../../packages/alhai_zatca
+
   # QR Code (ZATCA)
   qr_flutter: ^4.1.0
 

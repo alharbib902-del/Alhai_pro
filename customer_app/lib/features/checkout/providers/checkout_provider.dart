@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../../di/injection.dart';
 import '../data/orders_datasource.dart';
 import '../../addresses/providers/address_providers.dart';
+import '../../../core/providers/app_providers.dart';
 
 /// Selected payment method for checkout.
 final selectedPaymentMethodProvider =
@@ -13,10 +14,23 @@ final selectedPaymentMethodProvider =
 /// Delivery notes.
 final deliveryNotesProvider = StateProvider<String>((ref) => '');
 
+/// Computed delivery fee from selected store.
+final deliveryFeeProvider = Provider<double>((ref) {
+  final store = ref.watch(selectedStoreProvider);
+  return store?.deliveryFee ?? 0;
+});
+
+/// Minimum order amount from selected store.
+final minOrderAmountProvider = Provider<double>((ref) {
+  final store = ref.watch(selectedStoreProvider);
+  return store?.minOrderAmount ?? 0;
+});
+
 /// Place order action.
 final placeOrderProvider = FutureProvider.family<Order, Cart>((ref, cart) async {
   final address = ref.read(selectedAddressProvider);
   final paymentMethod = ref.read(selectedPaymentMethodProvider);
+  final deliveryFee = ref.read(deliveryFeeProvider);
 
   if (cart.storeId == null || cart.isEmpty) {
     throw Exception('السلة فارغة');
@@ -29,6 +43,7 @@ final placeOrderProvider = FutureProvider.family<Order, Cart>((ref, cart) async 
     addressId: address?.id,
     deliveryAddress: address?.fullAddress,
     paymentMethod: paymentMethod,
+    deliveryFee: deliveryFee,
   );
 
   final datasource = locator<OrdersDatasource>();

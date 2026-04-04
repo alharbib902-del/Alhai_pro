@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_database/alhai_database.dart' hide OrderStatus, PaymentStatus;
+import 'package:get_it/get_it.dart';
 import '../../models/online_order.dart';
 import '../../providers/online_orders_provider.dart';
 import 'order_card.dart';
@@ -262,38 +266,75 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   void _showDriverDialog(BuildContext context, WidgetRef ref, OnlineOrder order) {
-    // قائمة سائقين تجريبية
-    final drivers = [
-      {'id': 'd1', 'name': 'محمد أحمد'},
-      {'id': 'd2', 'name': 'علي سعيد'},
-      {'id': 'd3', 'name': 'خالد عبدالله'},
-    ];
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final db = GetIt.I<AppDatabase>();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.selectDriverTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: drivers.map((driver) => ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.person)),
-            title: Text(driver['name']!),
-            onTap: () {
-              ref.read(onlineOrdersProvider.notifier).assignDriver(
-                order.id,
-                driver['id']!,
-                driver['name']!,
-              );
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context)!.orderDeliveredToDriver(driver['name']!)),
-                  backgroundColor: AppColors.success,
+      builder: (dialogContext) => FutureBuilder<List<DriversTableData>>(
+        future: (db.select(db.driversTable)
+              ..where((d) => d.storeId.equals(storeId) & d.isActive.equals(true))
+              ..orderBy([(d) => OrderingTerm.asc(d.name)]))
+            .get(),
+        builder: (ctx, snapshot) {
+          final l10n = AppLocalizations.of(ctx)!;
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return AlertDialog(
+              title: Text(l10n.selectDriverTitle),
+              content: const SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            );
+          }
+
+          final drivers = snapshot.data ?? [];
+
+          if (drivers.isEmpty) {
+            return AlertDialog(
+              title: Text(l10n.selectDriverTitle),
+              content: const Padding(
+                padding: EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                child: Center(child: Text('No active drivers found')),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.close),
                 ),
-              );
-            },
-          )).toList(),
-        ),
+              ],
+            );
+          }
+
+          return AlertDialog(
+            title: Text(l10n.selectDriverTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: drivers.map((driver) => ListTile(
+                leading: const CircleAvatar(child: Icon(Icons.person)),
+                title: Text(driver.name),
+                subtitle: driver.phone != null ? Text(driver.phone!) : null,
+                onTap: () {
+                  ref.read(onlineOrdersProvider.notifier).assignDriver(
+                    order.id,
+                    driver.id,
+                    driver.name,
+                  );
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.orderDeliveredToDriver(driver.name)),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                },
+              )).toList(),
+            ),
+          );
+        },
       ),
     );
   }

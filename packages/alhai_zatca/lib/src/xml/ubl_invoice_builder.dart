@@ -101,8 +101,9 @@ class UblInvoiceBuilder {
     }
 
     // 13. AdditionalDocumentReference - ICV (Invoice Counter Value)
+    // ZATCA requires ICV to be a pure sequential integer, not the invoice number
     children.add(_buildDocumentReference(
-      id: invoice.invoiceNumber,
+      id: invoice.resolvedIcv,
       uuid: 'ICV',
     ));
 

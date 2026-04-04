@@ -273,7 +273,7 @@ void main() {
       final result = await service.processPayment(request);
 
       expect(result.success, isFalse);
-      expect(result.errorType, equals(PaymentErrorType.terminalError));
+      expect(result.errorType, equals(PaymentErrorType.gatewayNotConfigured));
     });
 
     test('isMethodAvailable only returns true for cash', () {

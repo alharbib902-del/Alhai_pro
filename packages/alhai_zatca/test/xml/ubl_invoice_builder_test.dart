@@ -294,6 +294,44 @@ void main() {
       );
     });
 
+    test('ICV uses resolvedIcv (digits only) not invoiceNumber', () {
+      final xml = builder.build(standardInvoice);
+      final doc = XmlDocument.parse(xml);
+
+      // Find the ICV AdditionalDocumentReference
+      final addDocRefs = doc.rootElement
+          .findAllElements('AdditionalDocumentReference', namespace: '*');
+      final icvRef = addDocRefs.where((el) {
+        final uuid = el.findAllElements('UUID', namespace: '*');
+        return uuid.isNotEmpty && uuid.first.innerText == 'ICV';
+      }).first;
+
+      final icvId = icvRef.findAllElements('ID', namespace: '*').first;
+      // Without invoiceCounterValue set, resolvedIcv extracts digits
+      // from "INV-2026-001" -> "2026001"
+      expect(icvId.innerText, '2026001');
+      // Must NOT contain the prefix
+      expect(icvId.innerText, isNot(contains('INV')));
+    });
+
+    test('ICV uses invoiceCounterValue when provided', () {
+      final invoiceWithIcv = standardInvoice.copyWith(
+        invoiceCounterValue: 42,
+      );
+      final xml = builder.build(invoiceWithIcv);
+      final doc = XmlDocument.parse(xml);
+
+      final addDocRefs = doc.rootElement
+          .findAllElements('AdditionalDocumentReference', namespace: '*');
+      final icvRef = addDocRefs.where((el) {
+        final uuid = el.findAllElements('UUID', namespace: '*');
+        return uuid.isNotEmpty && uuid.first.innerText == 'ICV';
+      }).first;
+
+      final icvId = icvRef.findAllElements('ID', namespace: '*').first;
+      expect(icvId.innerText, '42');
+    });
+
     test('simplified invoice works without buyer', () {
       final xml = builder.build(simplifiedInvoice);
       expect(() => XmlDocument.parse(xml), returnsNormally);

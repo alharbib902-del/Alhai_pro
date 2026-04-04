@@ -84,6 +84,26 @@ void main() {
       expect(invoice.reportingStatus, ReportingStatus.pending);
     });
 
+    test('resolvedIcv returns invoiceCounterValue when set', () {
+      final withIcv = invoice.copyWith(invoiceCounterValue: 42);
+      expect(withIcv.resolvedIcv, '42');
+    });
+
+    test('resolvedIcv extracts digits from invoiceNumber as fallback', () {
+      // invoiceNumber is 'INV-001' -> digits '001'
+      expect(invoice.resolvedIcv, '001');
+    });
+
+    test('resolvedIcv handles invoice number with year prefix', () {
+      final inv = invoice.copyWith(invoiceNumber: 'INV-2026-00001');
+      expect(inv.resolvedIcv, '202600001');
+    });
+
+    test('resolvedIcv returns "1" for non-numeric invoice number', () {
+      final inv = invoice.copyWith(invoiceNumber: 'DRAFT');
+      expect(inv.resolvedIcv, '1');
+    });
+
     test('copyWith should create a modified copy', () {
       final updated = invoice.copyWith(
         invoiceNumber: 'INV-002',

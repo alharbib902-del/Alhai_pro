@@ -26,6 +26,7 @@ mixin _$CreateOrderParams {
   String? get addressId => throw _privateConstructorUsedError;
   String? get deliveryAddress => throw _privateConstructorUsedError;
   PaymentMethod get paymentMethod => throw _privateConstructorUsedError;
+  double get deliveryFee => throw _privateConstructorUsedError;
 
   /// Serializes this CreateOrderParams to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,7 +50,8 @@ abstract class $CreateOrderParamsCopyWith<$Res> {
       List<OrderItem> items,
       String? addressId,
       String? deliveryAddress,
-      PaymentMethod paymentMethod});
+      PaymentMethod paymentMethod,
+      double deliveryFee});
 }
 
 /// @nodoc
@@ -73,6 +75,7 @@ class _$CreateOrderParamsCopyWithImpl<$Res, $Val extends CreateOrderParams>
     Object? addressId = freezed,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
+    Object? deliveryFee = null,
   }) {
     return _then(_value.copyWith(
       clientOrderId: null == clientOrderId
@@ -99,6 +102,10 @@ class _$CreateOrderParamsCopyWithImpl<$Res, $Val extends CreateOrderParams>
           ? _value.paymentMethod
           : paymentMethod // ignore: cast_nullable_to_non_nullable
               as PaymentMethod,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
     ) as $Val);
   }
 }
@@ -117,7 +124,8 @@ abstract class _$$CreateOrderParamsImplCopyWith<$Res>
       List<OrderItem> items,
       String? addressId,
       String? deliveryAddress,
-      PaymentMethod paymentMethod});
+      PaymentMethod paymentMethod,
+      double deliveryFee});
 }
 
 /// @nodoc
@@ -139,6 +147,7 @@ class __$$CreateOrderParamsImplCopyWithImpl<$Res>
     Object? addressId = freezed,
     Object? deliveryAddress = freezed,
     Object? paymentMethod = null,
+    Object? deliveryFee = null,
   }) {
     return _then(_$CreateOrderParamsImpl(
       clientOrderId: null == clientOrderId
@@ -165,6 +174,10 @@ class __$$CreateOrderParamsImplCopyWithImpl<$Res>
           ? _value.paymentMethod
           : paymentMethod // ignore: cast_nullable_to_non_nullable
               as PaymentMethod,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -178,7 +191,8 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
       required final List<OrderItem> items,
       this.addressId,
       this.deliveryAddress,
-      required this.paymentMethod})
+      required this.paymentMethod,
+      this.deliveryFee = 0})
       : _items = items;
 
   factory _$CreateOrderParamsImpl.fromJson(Map<String, dynamic> json) =>
@@ -202,10 +216,13 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
   final String? deliveryAddress;
   @override
   final PaymentMethod paymentMethod;
+  @override
+  @JsonKey()
+  final double deliveryFee;
 
   @override
   String toString() {
-    return 'CreateOrderParams(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, addressId: $addressId, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod)';
+    return 'CreateOrderParams(clientOrderId: $clientOrderId, storeId: $storeId, items: $items, addressId: $addressId, deliveryAddress: $deliveryAddress, paymentMethod: $paymentMethod, deliveryFee: $deliveryFee)';
   }
 
   @override
@@ -222,7 +239,9 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
             (identical(other.deliveryAddress, deliveryAddress) ||
                 other.deliveryAddress == deliveryAddress) &&
             (identical(other.paymentMethod, paymentMethod) ||
-                other.paymentMethod == paymentMethod));
+                other.paymentMethod == paymentMethod) &&
+            (identical(other.deliveryFee, deliveryFee) ||
+                other.deliveryFee == deliveryFee));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -234,7 +253,8 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
       const DeepCollectionEquality().hash(_items),
       addressId,
       deliveryAddress,
-      paymentMethod);
+      paymentMethod,
+      deliveryFee);
 
   /// Create a copy of CreateOrderParams
   /// with the given fields replaced by the non-null parameter values.
@@ -260,7 +280,8 @@ abstract class _CreateOrderParams implements CreateOrderParams {
       required final List<OrderItem> items,
       final String? addressId,
       final String? deliveryAddress,
-      required final PaymentMethod paymentMethod}) = _$CreateOrderParamsImpl;
+      required final PaymentMethod paymentMethod,
+      final double deliveryFee}) = _$CreateOrderParamsImpl;
 
   factory _CreateOrderParams.fromJson(Map<String, dynamic> json) =
       _$CreateOrderParamsImpl.fromJson;
@@ -277,6 +298,8 @@ abstract class _CreateOrderParams implements CreateOrderParams {
   String? get deliveryAddress;
   @override
   PaymentMethod get paymentMethod;
+  @override
+  double get deliveryFee;
 
   /// Create a copy of CreateOrderParams
   /// with the given fields replaced by the non-null parameter values.
