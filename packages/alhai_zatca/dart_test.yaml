@@ -1,0 +1,8 @@
+# Exclude sandbox integration tests from the default `flutter test` run.
+# To include them: flutter test --tags sandbox
+tags:
+  sandbox:
+    # Metadata only. Tests with this tag need ZATCA sandbox network access.
+
+# When running without explicit --tags, skip sandbox tests automatically.
+# Running `flutter test --tags sandbox` overrides this and includes them.

@@ -1,3 +1,50 @@
+// ---------------------------------------------------------------------------
+// DUAL-QUEUE ARCHITECTURE -- APP-LEVEL QUEUE (Queue 1 of 2)
+// ---------------------------------------------------------------------------
+//
+// The Alhai POS monorepo has TWO independent offline queuing systems.
+// This file is Queue 1. Queue 2 lives in `packages/alhai_sync`.
+//
+// Queue 1 -- OfflineQueueService (THIS FILE)
+//   Scope:      Cashier app only.
+//   Storage:    FlutterSecureStorage (AES-encrypted on-device key-value store).
+//   Operations: saleCreate, saleUpdate, refund, inventoryUpdate, customerSync.
+//   Why it exists:
+//     - Payloads contain sale amounts and customer PII that warrant encrypted
+//       storage rather than plain SQLite.
+//     - Provides cashier-specific retry semantics: 3 retries max, exponential
+//       backoff (2s/4s/8s), batch size 5, 7-day stale cleanup.
+//     - HTTP 409 (conflict) and validation errors (4xx) are not retried.
+//   Entry point: OfflineQueueService.instance.enqueue(...)
+//   Flush:       OfflineQueueService.instance.flush()
+//
+// Queue 2 -- sync_queue table + PushStrategy (packages/alhai_sync)
+//   Scope:      ALL apps (cashier, admin, distributor) via the shared
+//               alhai_database + alhai_sync packages.
+//   Storage:    Drift/SQLite `sync_queue` table (unencrypted, indexed).
+//   Operations: Standard CRUD sync for: sales, sale_items, orders,
+//               order_items, cash_movements, audit_log, inventory_movements,
+//               order_status_history, daily_summaries, whatsapp_messages.
+//   Why it exists:
+//     - General-purpose offline-first sync engine that handles all table-level
+//       mutations, conflict resolution (version, duplicate key, delete-update,
+//       schema mismatch), and priority ordering (sales = high priority).
+//     - 5 retries max, exponential backoff with jitter, batch size 100.
+//   Entry point: SyncQueueDao.enqueue(...)
+//   Flush:       SyncEngine.syncNow() -> PushStrategy.pushPending()
+//
+// On reconnect, BOTH queues flush independently:
+//   1. ConnectivityMonitor detects connectivity restored.
+//   2. OfflineQueueService.flush()  -- drains the encrypted cashier queue.
+//   3. SyncEngine.syncNow()         -- drains the sync_queue SQLite table.
+//   Order does not matter; they do not depend on each other.
+//
+// Idempotency:
+//   Both queues generate idempotency keys per operation. Even if the same
+//   logical operation ends up in both queues (e.g. a sale), the server-side
+//   idempotency check prevents duplicate processing.
+// ---------------------------------------------------------------------------
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
