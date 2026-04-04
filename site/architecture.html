@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>البنية المعمارية | Alhai Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body{font-family:'Tajawal',sans-serif}
+.arch-tree{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:28px 32px;font-family:'Courier New',monospace;font-size:15px;line-height:2;direction:ltr;text-align:left;color:var(--text-secondary);max-width:520px;margin:0 auto}
+.arch-tree .folder{color:var(--primary);font-weight:700}
+.arch-tree .comment{color:var(--text-muted);font-size:13px}
+.flow-steps{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin:24px auto;max-width:800px}
+.flow-step{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-weight:600;font-size:15px;color:var(--text-primary)}
+.flow-arrow{font-size:22px;color:var(--text-muted)}
+.security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px}
+.security-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:center}
+.security-item .sec-icon{font-size:28px;margin-bottom:8px}
+.security-item h4{margin:0 0 4px;font-size:15px;color:var(--text-primary)}
+.security-item p{margin:0;font-size:13px;color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+    <a href="ai.html">الذكاء الاصطناعي</a>
+    <a href="pos.html">نقطة البيع</a>
+    <a href="reports.html">التقارير</a>
+    <a href="architecture.html" class="active">البنية المعمارية</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+  <a href="ai.html">الذكاء الاصطناعي</a>
+  <a href="pos.html">نقطة البيع</a>
+  <a href="reports.html">التقارير</a>
+  <a href="architecture.html" class="active">البنية المعمارية</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#9881;</div>
+  <h1 class="fade-in">البنية المعمارية</h1>
+  <p class="fade-in">Clean Architecture مع 4 طبقات وأنماط تصميم مثبتة</p>
+</div>
+
+<div class="container">
+
+  <!-- DESIGN PATTERNS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الأنماط</span>
+      <h2>أنماط التصميم المستخدمة</h2>
+      <p>أنماط معمارية مثبتة تضمن قابلية الصيانة والتوسع</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#127959; Clean Architecture</div>
+        <div class="pkg-desc">فصل واضح بين الطبقات - كل طبقة تعتمد على ما تحتها فقط مع عكس التبعيات</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top blue"></div>
+        <div class="pkg-name">&#128260; Riverpod</div>
+        <div class="pkg-desc">State Management - إدارة الحالة التفاعلية مع إعادة بناء ذكية للواجهة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">&#128268; GetIt + Injectable</div>
+        <div class="pkg-desc">Dependency Injection - حقن التبعيات التلقائي مع توليد الكود</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#128739; GoRouter</div>
+        <div class="pkg-desc">Navigation - نظام تنقل تصريحي مع حماية المسارات والتعمق</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#128451; Drift ORM</div>
+        <div class="pkg-desc">Database - طبقة قاعدة بيانات آمنة النوع مع ترحيلات وعلاقات</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#128246; Offline-First</div>
+        <div class="pkg-desc">العمل بدون اتصال أولا - كل العمليات تعمل محليا ثم تُزامن</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top blue"></div>
+        <div class="pkg-name">&#128193; Feature-Based</div>
+        <div class="pkg-desc">تنظيم حسب الميزة - كل ميزة في مجلد مستقل بكامل طبقاتها</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP STRUCTURE -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-purple">الهيكل</span>
+      <h2>هيكل كل تطبيق</h2>
+      <p>بنية موحدة عبر جميع التطبيقات لتسهيل التنقل والصيانة</p>
+    </div>
+    <div class="arch-tree fade-in">
+      <span class="folder">lib/</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">core/</span> <span class="comment">&larr; settings, constants, base services</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">data/</span> <span class="comment">&larr; data sources, repositories</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">di/</span> <span class="comment">&larr; dependency injection</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">providers/</span> <span class="comment">&larr; state management</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">router/</span> <span class="comment">&larr; navigation &amp; routes</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">screens/</span> <span class="comment">&larr; screens (by feature)</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">services/</span> <span class="comment">&larr; business services</span><br>
+      &#9500;&#9472;&#9472; <span class="folder">ui/</span> <span class="comment">&larr; shell &amp; layout</span><br>
+      &#9492;&#9472;&#9472; <span class="folder">widgets/</span> <span class="comment">&larr; custom components</span>
+    </div>
+  </section>
+
+  <!-- DATA FLOW -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">التدفق</span>
+      <h2>تدفق البيانات</h2>
+      <p>مسار البيانات من الشاشة إلى قاعدة البيانات وبالعكس</p>
+    </div>
+    <div class="flow-steps fade-in">
+      <div class="flow-step">Screen</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">Provider</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">Repository</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">DataSource</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">Database / API</div>
+    </div>
+  </section>
+
+  <!-- LAYER DIAGRAM -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الطبقات</span>
+      <h2>طبقات الحزم</h2>
+      <p>4 طبقات من الأساس إلى الواجهة - كل طبقة تعتمد على ما تحتها فقط</p>
+    </div>
+    <div class="layer-diagram">
+      <div class="layer-row fade-in">
+        <div class="layer-num l0">0</div>
+        <div class="layer-content">
+          <h4>طبقة النواة - Foundation</h4>
+          <p>alhai_core, alhai_l10n, alhai_design_system - النماذج، الترجمة، نظام التصميم</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l1">1</div>
+        <div class="layer-content">
+          <h4>طبقة البيانات - Data</h4>
+          <p>alhai_database, alhai_sync - قاعدة البيانات، المزامنة، وحدات الوصول</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l2">2</div>
+        <div class="layer-content">
+          <h4>طبقة الخدمات - Services</h4>
+          <p>alhai_auth, alhai_reports, alhai_zatca, alhai_notifications - المصادقة، التقارير، الفوترة</p>
+        </div>
+      </div>
+      <div class="layer-arrow fade-in">&#8595;</div>
+      <div class="layer-row fade-in">
+        <div class="layer-num l3">3</div>
+        <div class="layer-content">
+          <h4>طبقة الواجهة - UI</h4>
+          <p>alhai_shared_ui, alhai_pos, alhai_ai - الواجهات المشتركة، نقطة البيع، الذكاء الاصطناعي</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CI/CD -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">CI/CD</span>
+      <h2>CI/CD</h2>
+      <p>GitHub Actions - تكامل وتوصيل مستمر لجميع المنصات</p>
+    </div>
+    <div class="flow-steps fade-in">
+      <div class="flow-step">&#128270; Analyze</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">&#9989; Test</div>
+      <div class="flow-arrow">&#8592;</div>
+      <div class="flow-step">&#128230; Build Matrix</div>
+    </div>
+    <div class="grid grid-3" style="margin-top:24px">
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#129302; Android Build</div>
+        <div class="pkg-desc">بناء APK وBundle لمتجر Google Play مع التوقيع التلقائي</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top blue"></div>
+        <div class="pkg-name">&#127822; iOS Build</div>
+        <div class="pkg-desc">بناء IPA لمتجر App Store مع إدارة الشهادات والتوقيع</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">&#127760; Web Build</div>
+        <div class="pkg-desc">بناء تطبيق الويب مع تحسين الأداء والتحميل التدريجي</div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#128274; Weekly Security Scan</div>
+        <div class="pkg-desc">فحص أمني أسبوعي للتبعيات والثغرات المعروفة مع تنبيهات تلقائية</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#128640; Auto Deploy</div>
+        <div class="pkg-desc">نشر تلقائي للبيئات المختلفة: تطوير، اختبار، إنتاج</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTION SECURITY -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">الأمان</span>
+      <h2>أمان الإنتاج</h2>
+      <p>طبقات أمان متعددة لحماية البيانات والعمليات</p>
+    </div>
+    <div class="security-grid fade-in">
+      <div class="security-item">
+        <div class="sec-icon">&#128274;</div>
+        <h4>SQLCipher</h4>
+        <p>تشفير قاعدة البيانات المحلية بالكامل بخوارزمية AES-256</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128220;</div>
+        <h4>Certificate Pinning</h4>
+        <p>تثبيت شهادة SSL لمنع هجمات الوسيط على الاتصالات</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128737;</div>
+        <h4>Input Sanitization</h4>
+        <p>تنظيف جميع المدخلات لمنع حقن SQL وXSS</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128272;</div>
+        <h4>RLS</h4>
+        <p>Row Level Security - كل مستخدم يرى بياناته فقط على مستوى Supabase</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128587;</div>
+        <h4>Biometric Auth</h4>
+        <p>مصادقة بالبصمة أو الوجه للعمليات الحساسة</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128209;</div>
+        <h4>Audit Logging</h4>
+        <p>تسجيل كامل لجميع العمليات مع المستخدم والوقت والتفاصيل</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTING -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الاختبارات</span>
+      <h2>الاختبارات</h2>
+      <p>4 أنواع من الاختبارات لضمان جودة الكود على جميع المستويات</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#9989; Unit Tests</div>
+        <div class="pkg-desc">اختبارات الوحدات - اختبار كل دالة ومستودع وخدمة بشكل مستقل مع mock</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#128296; Widget Tests</div>
+        <div class="pkg-desc">اختبارات الواجهة - اختبار كل ويدجت ومكون بصري مع التفاعلات</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#128279; Integration Tests</div>
+        <div class="pkg-desc">اختبارات التكامل - اختبار تدفق البيانات بين الطبقات والخدمات المتعددة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">&#128187; E2E Tests</div>
+        <div class="pkg-desc">اختبارات شاملة - محاكاة سيناريوهات المستخدم الكاملة على الجهاز الحقيقي</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق البنية المعمارية | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

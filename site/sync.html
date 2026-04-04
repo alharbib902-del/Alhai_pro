@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محرك المزامنة | Alhai Sync Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128260;</div>
+  <h1 class="fade-in">محرك المزامنة</h1>
+  <p class="fade-in">مزامنة 4 مراحل مع العمل بدون إنترنت - 23 ملف، 7,258 سطر</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">23</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">7,258</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">استراتيجيات</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SYNC STRATEGIES -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الاستراتيجيات</span>
+      <h2>استراتيجيات المزامنة الأربع</h2>
+      <p>كل استراتيجية مصممة لحالة استخدام محددة لضمان تناسق البيانات</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>Pull - سحب من الخادم</h3>
+        <p>تستخدم عند فتح التطبيق أو عند طلب تحديث يدوي. تسحب أحدث البيانات من الخادم وتحدث قاعدة البيانات المحلية. مناسبة للبيانات التي يتحكم بها الخادم مثل الكتالوج والأسعار والعروض.</p>
+        <div class="tags">
+          <span class="ftag">فتح التطبيق</span>
+          <span class="ftag">تحديث يدوي</span>
+          <span class="ftag">بيانات القراءة فقط</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>Push - دفع للخادم</h3>
+        <p>تستخدم لإرسال البيانات المنشأة محليا إلى الخادم. تعمل كل 15 ثانية تلقائيا لدفع المبيعات والفواتير والعمليات الجديدة. تضمن عدم فقدان أي عملية حتى في حالة انقطاع الإنترنت.</p>
+        <div class="tags">
+          <span class="ftag">كل 15 ثانية</span>
+          <span class="ftag">المبيعات</span>
+          <span class="ftag">الفواتير</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>Bidirectional - ثنائي الاتجاه</h3>
+        <p>تستخدم للبيانات التي يمكن تعديلها من الطرفين مثل بيانات العملاء والمنتجات. تقارن الطوابع الزمنية وتحل النزاعات تلقائيا مع الاحتفاظ بسجل التعارضات للمراجعة.</p>
+        <div class="tags">
+          <span class="ftag">العملاء</span>
+          <span class="ftag">المنتجات</span>
+          <span class="ftag">حل النزاعات</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>StockDelta - فروقات المخزون</h3>
+        <p>استراتيجية متخصصة للمخزون تتعامل مع الفروقات بدلا من القيم المطلقة. ترسل التغييرات (+5, -3) بدلا من الكمية الكاملة لتجنب تعارضات المخزون بين عدة أجهزة تعمل على نفس المتجر.</p>
+        <div class="tags">
+          <span class="ftag">المخزون</span>
+          <span class="ftag">فروقات الكميات</span>
+          <span class="ftag">أجهزة متعددة</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE SERVICES -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الخدمات</span>
+      <h2>خدمات المزامنة الأساسية</h2>
+      <p>10 خدمات متخصصة تعمل معا لضمان تزامن البيانات بشكل موثوق</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>SyncEngine</h4>
+        <p>المحرك الرئيسي الذي ينسق جميع عمليات المزامنة. يحدد الاستراتيجية المناسبة لكل جدول ويدير ترتيب التنفيذ.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>SyncManager</h4>
+        <p>يدير حالة المزامنة الكاملة: متى آخر مزامنة، ما الذي تغير، هل هناك عمليات معلقة. واجهة عليا لـ SyncEngine.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>ConflictResolver</h4>
+        <p>يحل التعارضات بين البيانات المحلية والخادم. يستخدم استراتيجية "آخر تعديل يفوز" مع الاحتفاظ بسجل كامل للتعارضات.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>InitialSync</h4>
+        <p>مزامنة أولية عند تسجيل الدخول لأول مرة. تسحب جميع البيانات الأساسية للمتجر: المنتجات، العملاء، الإعدادات.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h4>PullSyncService</h4>
+        <p>ينفذ عمليات السحب من الخادم بكفاءة مع دعم المزامنة التفاضلية (فقط ما تغير منذ آخر سحب).</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h4>SyncStatusTracker</h4>
+        <p>يتتبع حالة كل عملية مزامنة ويوفر معلومات مباشرة للواجهة عن التقدم والأخطاء.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>RealtimeListener</h4>
+        <p>يستمع للتحديثات اللحظية من الخادم عبر Supabase Realtime. يستقبل التغييرات فور حدوثها دون انتظار دورة المزامنة.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>SyncApiService</h4>
+        <p>طبقة الاتصال مع واجهة برمجة التطبيقات. يدير الطلبات، المصادقة، إعادة المحاولة، ومعالجة الأخطاء.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>OrgSyncService</h4>
+        <p>يدير مزامنة بيانات المنظمة بين الفروع المختلفة. يضمن تناسق الإعدادات والسياسات عبر جميع المتاجر.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>OrgCatalogService</h4>
+        <p>يزامن كتالوج المنتجات على مستوى المنظمة. يضمن توحيد الأسعار والعروض عبر جميع الفروع.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFLINE SYSTEM -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">بدون إنترنت</span>
+      <h2>نظام العمل بدون إنترنت</h2>
+      <p>استمرارية العمل حتى في انقطاع الاتصال الكامل</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#128229;</div>
+        <h3>OfflineManager</h3>
+        <p>يدير قائمة انتظار العمليات غير المرسلة. يستخدم Exponential Backoff لإعادة المحاولة: 1s, 2s, 4s, 8s... حتى نجاح الإرسال. يضمن ترتيب العمليات وعدم التكرار.</p>
+        <div class="tags">
+          <span class="ftag">Queue</span>
+          <span class="ftag">Exponential Backoff</span>
+          <span class="ftag">Retry</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128225;</div>
+        <h3>ConnectivityService</h3>
+        <p>يكتشف حالة الاتصال تلقائيا ويبلغ النظام بالتغييرات. يميز بين أنواع الاتصال (WiFi, Mobile, None) ويفعل/يعطل المزامنة حسب الحالة.</p>
+        <div class="tags">
+          <span class="ftag">Auto-detect</span>
+          <span class="ftag">WiFi / Mobile</span>
+          <span class="ftag">State Stream</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#128248;</div>
+        <h3>ImageUploadService</h3>
+        <p>يرفع الصور إلى Cloudflare R2 Storage. يضغط الصور محليا قبل الرفع ويحتفظ بقائمة انتظار للصور غير المرفوعة حتى عودة الاتصال.</p>
+        <div class="tags">
+          <span class="ftag">R2 Storage</span>
+          <span class="ftag">Compression</span>
+          <span class="ftag">Queue</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELPER TOOLS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">أدوات</span>
+      <h2>أدوات مساعدة</h2>
+      <p>أدوات تحويل ومعالجة البيانات لدعم عمليات المزامنة</p>
+    </div>
+    <div class="grid grid-2" style="max-width:700px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>JsonConverter</h4>
+        <p>يحول البيانات بين تنسيقات Dart و JSON. يدعم التحويل العميق للكائنات المتداخلة والقوائم مع معالجة القيم الفارغة.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>SyncPayloadUtils</h4>
+        <p>يبني حزم البيانات للإرسال والاستقبال. يضغط البيانات، يضيف البيانات الوصفية (metadata)، ويتحقق من سلامة الحزمة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYNC JOURNEY -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الرحلة</span>
+      <h2>كيف تعمل المزامنة</h2>
+      <p>رحلة البيانات من فتح التطبيق حتى حل التعارضات</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>فتح التطبيق <span class="step-tag">بداية</span></h4>
+        <p>يتحقق من وجود بيانات محلية. إذا كان أول تشغيل ينتقل إلى Initial Sync.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Initial Sync <span class="step-tag">مزامنة أولية</span></h4>
+        <p>يسحب جميع البيانات الأساسية: المنتجات، العملاء، الإعدادات، الأسعار. يحدث مرة واحدة فقط.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Realtime Listener <span class="step-tag">استماع مباشر</span></h4>
+        <p>يفعل الاستماع للتحديثات اللحظية من Supabase Realtime. يستقبل التغييرات فور حدوثها.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Push every 15s <span class="step-tag">دفع دوري</span></h4>
+        <p>كل 15 ثانية يفحص قائمة الانتظار ويدفع العمليات المعلقة: مبيعات، فواتير، تعديلات.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Pull on demand <span class="step-tag">سحب عند الطلب</span></h4>
+        <p>يسحب التحديثات عند الطلب أو عند اكتشاف تغييرات عبر Realtime Listener.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Conflict Resolution <span class="step-tag">حل التعارضات</span></h4>
+        <p>يكتشف التعارضات ويحلها تلقائيا. يحتفظ بسجل لكل تعارض للمراجعة اللاحقة.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>Stock Delta <span class="step-tag">فروقات المخزون</span></h4>
+        <p>يعالج تغييرات المخزون كفروقات (+/-) بدلا من قيم مطلقة لدعم الأجهزة المتعددة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>18 اختبار يغطي جميع سيناريوهات المزامنة</p>
+    </div>
+    <div style="max-width:800px;margin:0 auto">
+      <div class="ai-feature fade-in">
+        <div class="ai-num">1</div>
+        <div class="ai-info">
+          <h4>Sync Pull</h4>
+          <p>اختبار سحب البيانات من الخادم، المزامنة التفاضلية، معالجة الأخطاء</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">2</div>
+        <div class="ai-info">
+          <h4>Sync Push</h4>
+          <p>اختبار دفع البيانات المحلية، إعادة المحاولة عند الفشل، ترتيب العمليات</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">3</div>
+        <div class="ai-info">
+          <h4>Conflict Resolution</h4>
+          <p>اختبار حل التعارضات، أولوية الطوابع الزمنية، سجل التعارضات</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">4</div>
+        <div class="ai-info">
+          <h4>Offline Queue</h4>
+          <p>اختبار قائمة الانتظار، Exponential Backoff، استعادة العمليات بعد عودة الاتصال</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">5</div>
+        <div class="ai-info">
+          <h4>Realtime</h4>
+          <p>اختبار الاستماع اللحظي، معالجة الأحداث، إعادة الاتصال التلقائي</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">6</div>
+        <div class="ai-info">
+          <h4>Stock Delta</h4>
+          <p>اختبار فروقات المخزون، تعدد الأجهزة، تزامن الكميات</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق محرك المزامنة | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

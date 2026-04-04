@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حزمة نقطة البيع | Alhai POS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+    <a href="ai.html">الذكاء الاصطناعي</a>
+    <a href="pos.html" class="active">نقطة البيع</a>
+    <a href="reports.html">التقارير</a>
+    <a href="architecture.html">البنية المعمارية</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+  <a href="ai.html">الذكاء الاصطناعي</a>
+  <a href="pos.html" class="active">نقطة البيع</a>
+  <a href="reports.html">التقارير</a>
+  <a href="architecture.html">البنية المعمارية</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128179;</div>
+  <h1 class="fade-in">حزمة نقطة البيع</h1>
+  <p class="fade-in">شاشات وخدمات POS المشتركة - 64 ملف، 26,581 سطر</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">64</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">26,581</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">17</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">14</div><div class="stat-label">شاشة</div></div>
+    <div class="stat-item"><div class="stat-number">9</div><div class="stat-label">خدمات</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- POS SCREENS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الشاشات</span>
+      <h2>شاشات نقطة البيع (7)</h2>
+      <p>شاشات البيع الأساسية - من المسح إلى الدفع إلى الإيصال</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#128722; PosScreen</div>
+        <div class="pkg-desc">الشاشة الرئيسية لنقطة البيع - مسح الباركود، إضافة المنتجات، عرض السلة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#128179; PaymentScreen</div>
+        <div class="pkg-desc">شاشة الدفع - نقدي، بطاقة، تقسيط، دفع متعدد الطرق</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#129534; ReceiptScreen</div>
+        <div class="pkg-desc">شاشة الإيصال - عرض وطباعة وإرسال الفاتورة عبر WhatsApp</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#9889; QuickSaleScreen</div>
+        <div class="pkg-desc">شاشة البيع السريع - بيع بدون مسح باركود للمنتجات المتكررة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#11088; FavoritesScreen</div>
+        <div class="pkg-desc">المنتجات المفضلة - وصول سريع للمنتجات الأكثر مبيعا</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#9208; HoldInvoicesScreen</div>
+        <div class="pkg-desc">الفواتير المعلقة - تعليق فاتورة واستكمالها لاحقا</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">&#128187; KioskScreen</div>
+        <div class="pkg-desc">وضع الكشك - شاشة خدمة ذاتية للعملاء بدون كاشير</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RETURNS SCREENS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">المرتجعات</span>
+      <h2>شاشات المرتجعات (5)</h2>
+      <p>إدارة كاملة لعمليات الإرجاع والاسترداد</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#128260; ReturnsScreen</div>
+        <div class="pkg-desc">الشاشة الرئيسية للمرتجعات - عرض جميع عمليات الإرجاع وحالاتها</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#128221; RefundRequestScreen</div>
+        <div class="pkg-desc">طلب استرداد جديد - تحديد المنتجات والكميات المراد إرجاعها</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#128196; RefundReasonScreen</div>
+        <div class="pkg-desc">سبب الإرجاع - توثيق سبب الإرجاع وحالة المنتج المُرجع</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#129534; RefundReceiptScreen</div>
+        <div class="pkg-desc">إيصال الاسترداد - طباعة وإرسال إيصال المبلغ المسترد</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">&#10060; VoidTransactionScreen</div>
+        <div class="pkg-desc">إلغاء معاملة - إلغاء فاتورة كاملة قبل إغلاق الوردية</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELPER SCREENS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">مساعدة</span>
+      <h2>شاشات مساعدة (2)</h2>
+      <p>أدوات مساعدة لعمليات البيع اليومية</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="pkg-card fade-in">
+        <div class="card-top blue"></div>
+        <div class="pkg-name">&#128247; BarcodeScannerScreen</div>
+        <div class="pkg-desc">ماسح الباركود - مسح بالكاميرا أو بالقارئ الخارجي مع التعرف التلقائي</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top blue"></div>
+        <div class="pkg-name">&#128176; CashDrawerScreen</div>
+        <div class="pkg-desc">درج النقود - فتح وإغلاق الدرج، عد النقود، تسوية الفروقات</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-purple">الخدمات</span>
+      <h2>الخدمات (9)</h2>
+      <p>طبقة الأعمال التي تدير عمليات البيع والدفع والفوترة</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">SaleService</div>
+        <div class="pkg-desc">خدمة البيع الأساسية - إنشاء وإدارة عمليات البيع</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">InvoiceService</div>
+        <div class="pkg-desc">خدمة الفواتير - إنشاء وتخزين واسترجاع الفواتير</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">ReceiptPrinterService</div>
+        <div class="pkg-desc">خدمة الطباعة - طباعة حرارية على طابعات POS المختلفة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">ReceiptPdfGenerator</div>
+        <div class="pkg-desc">مولد PDF - إنشاء إيصالات بصيغة PDF للإرسال الإلكتروني</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">PaymentGateway</div>
+        <div class="pkg-desc">بوابة الدفع - إدارة طرق الدفع المتعددة والتقسيط</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">ManagerApprovalService</div>
+        <div class="pkg-desc">موافقة المدير - طلب موافقة للخصومات والإلغاءات الكبيرة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">ZatcaService</div>
+        <div class="pkg-desc">خدمة زاتكا - الفوترة الإلكترونية المتوافقة مع المرحلة الثانية</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">WhatsappService</div>
+        <div class="pkg-desc">خدمة واتساب - إرسال إشعارات ورسائل تسويقية للعملاء</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top purple"></div>
+        <div class="pkg-name">WhatsappReceiptService</div>
+        <div class="pkg-desc">إيصال واتساب - إرسال الفاتورة مباشرة عبر WhatsApp للعميل</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROVIDERS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الحالة</span>
+      <h2>Providers (5)</h2>
+      <p>مزودات إدارة الحالة - Riverpod</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">CartProviders</div>
+        <div class="pkg-desc">إدارة حالة السلة - إضافة وحذف وتعديل المنتجات والكميات</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">SaleProviders</div>
+        <div class="pkg-desc">إدارة حالة عملية البيع - من البداية حتى اكتمال الدفع</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">FavoritesProviders</div>
+        <div class="pkg-desc">إدارة المنتجات المفضلة - حفظ واسترجاع المفضلة لكل كاشير</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">HeldInvoicesProviders</div>
+        <div class="pkg-desc">إدارة الفواتير المعلقة - تعليق واستئناف الفواتير</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">ReturnsProviders</div>
+        <div class="pkg-desc">إدارة حالة المرتجعات - تتبع طلبات الإرجاع والاسترداد</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POS WIDGETS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">ويدجتات</span>
+      <h2>ويدجتات POS (10)</h2>
+      <p>مكونات واجهة نقطة البيع القابلة لإعادة الاستخدام</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">BarcodeListener</div>
+        <div class="pkg-desc">مستمع الباركود - يلتقط مدخلات القارئ الخارجي تلقائيا</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">FavoritesRow</div>
+        <div class="pkg-desc">صف المفضلة - شريط أفقي للوصول السريع للمنتجات المفضلة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">InstantSearch</div>
+        <div class="pkg-desc">بحث فوري - بحث سريع بالاسم أو الباركود أثناء الكتابة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">SaleNoteDialog</div>
+        <div class="pkg-desc">حوار الملاحظات - إضافة ملاحظة على الفاتورة أو المنتج</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">CustomerSearchDialog</div>
+        <div class="pkg-desc">بحث العملاء - ربط العميل بالفاتورة أو إنشاء عميل جديد</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">InlinePayment</div>
+        <div class="pkg-desc">دفع مضمن - دفع سريع بدون الانتقال لشاشة الدفع المنفصلة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">PaymentSuccessDialog</div>
+        <div class="pkg-desc">حوار نجاح الدفع - تأكيد بصري باكتمال عملية الدفع</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">QuantityInputDialog</div>
+        <div class="pkg-desc">حوار الكمية - إدخال كمية مخصصة مع دعم الكميات الكسرية</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top green"></div>
+        <div class="pkg-name">SplitPaymentDialog</div>
+        <div class="pkg-desc">حوار تقسيم الدفع - تقسيم المبلغ بين طرق دفع متعددة</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RETURNS WIDGETS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">ويدجتات المرتجعات</span>
+      <h2>ويدجتات المرتجعات (3)</h2>
+      <p>مكونات واجهة خاصة بإدارة المرتجعات</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">CreateReturnDrawer</div>
+        <div class="pkg-desc">درج إنشاء مرتجع - واجهة جانبية لإنشاء طلب إرجاع جديد</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">ReturnsDataTable</div>
+        <div class="pkg-desc">جدول المرتجعات - عرض تفصيلي لجميع عمليات الإرجاع مع الفلترة</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top red"></div>
+        <div class="pkg-name">ReturnsStatCard</div>
+        <div class="pkg-desc">بطاقة إحصائيات المرتجعات - نسبة الإرجاع والأسباب الشائعة</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>17 اختبار لضمان جودة عمليات البيع والدفع</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">اختبارات البيع</div>
+        <div class="pkg-desc">اختبار دورة البيع الكاملة - من مسح المنتج حتى طباعة الإيصال</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">اختبارات الدفع</div>
+        <div class="pkg-desc">اختبار جميع طرق الدفع - نقدي، بطاقة، تقسيط، دفع متعدد</div>
+      </div>
+      <div class="pkg-card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="pkg-name">اختبارات المرتجعات</div>
+        <div class="pkg-desc">اختبار عمليات الإرجاع والاسترداد والإلغاء بجميع السيناريوهات</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق نقطة البيع | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

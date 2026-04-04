@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام التصميم | Alhai Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#127912;</div>
+  <h1 class="fade-in">نظام التصميم</h1>
+  <p class="fade-in">30+ مكون جاهز مع 8 رموز تصميم - 56 ملف، 13,940 سطر</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">56</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">13,940</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">35</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">30+</div><div class="stat-label">مكون</div></div>
+    <div class="stat-item"><div class="stat-number">3</div><div class="stat-label">خطوط</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- DESIGN TOKENS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الرموز</span>
+      <h2>رموز التصميم</h2>
+      <p>8 رموز تصميم (Design Tokens) تحكم مظهر التطبيق بالكامل</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#127912;</div>
+        <h4>AlhaiColors</h4>
+        <p>لوحة الألوان الكاملة: الأساسي، الثانوي، السطحي، الخطأ، والدرجات</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#127912;</div>
+        <h4>AppColors</h4>
+        <p>ألوان الاستخدام المحدد: الحالات، الأيقونات، الخلفيات، والحدود</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128221;</div>
+        <h4>AlhaiTypography</h4>
+        <p>أنماط النصوص: العناوين، المتن، التسميات بـ 4 أوزان و 8 أحجام</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128207;</div>
+        <h4>AlhaiSpacing</h4>
+        <p>نظام المسافات الموحد: xs(4), sm(8), md(16), lg(24), xl(32), xxl(48)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#9898;</div>
+        <h4>AlhaiRadius</h4>
+        <p>نظام الزوايا المنحنية: sm(8), md(12), lg(16), xl(24), full(999)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#128241;</div>
+        <h4>AlhaiBreakpoints</h4>
+        <p>نقاط التجاوب: mobile(600), tablet(900), desktop(1200), wide(1600)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#9201;</div>
+        <h4>AlhaiDurations</h4>
+        <p>مدد الحركات: fast(150ms), normal(300ms), slow(500ms), page(800ms)</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#127917;</div>
+        <h4>AlhaiMotion</h4>
+        <p>منحنيات الحركة: easeIn, easeOut, easeInOut, spring, bounce</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THEME -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الثيم</span>
+      <h2>نظام الثيم</h2>
+      <p>ثيم متكامل يربط جميع رموز التصميم معا</p>
+    </div>
+    <div class="grid grid-3" style="max-width:900px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>AlhaiColorScheme</h4>
+        <p>مخطط الألوان الموحد لجميع المكونات. يدعم الوضع الفاتح والداكن مع تبديل سلس.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>AlhaiTheme</h4>
+        <p>الثيم الرئيسي الذي يجمع الألوان والخطوط والمسافات والحركات في وحدة واحدة.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>ThemeExtensions</h4>
+        <p>امتدادات مخصصة للثيم: ألوان الحالات، أنماط البطاقات، ظلال مخصصة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS BY CATEGORY -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">المكونات</span>
+      <h2>المكونات حسب الفئة</h2>
+      <p>30+ مكون مصنف في 9 فئات</p>
+    </div>
+
+    <!-- Buttons -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g1">&#128073; أزرار (2)</span>
+      <div class="grid grid-2">
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>AlhaiButton</h4>
+          <p>زر أساسي بـ 4 أنواع (primary, secondary, outline, text) و 3 أحجام (sm, md, lg) مع دعم التحميل والأيقونات</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>AlhaiIconButton</h4>
+          <p>زر أيقونة دائري بـ 3 أحجام مع تأثيرات ضغط وتلميح (tooltip)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Fields -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g2">&#128221; حقول الإدخال (7)</span>
+      <div class="grid grid-3">
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>TextField</h4>
+          <p>حقل إدخال نصي مع تسمية، رسالة خطأ، وأيقونات</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>SearchField</h4>
+          <p>حقل بحث مع أيقونة وتأخير ذكي (debounce)</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>Dropdown</h4>
+          <p>قائمة منسدلة قابلة للبحث مع خيارات متعددة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>QuantityControl</h4>
+          <p>متحكم كميات (+/-) مع حد أدنى وأقصى</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>Checkbox</h4>
+          <p>مربع اختيار مع تسمية ودعم الحالة غير المحددة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>Switch</h4>
+          <p>مفتاح تبديل (toggle) بتأثيرات حركة سلسة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>RadioGroup</h4>
+          <p>مجموعة أزرار اختيار أحادي مع اتجاه مرن</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g3">&#128276; التنبيهات (9)</span>
+      <div class="grid grid-3">
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>Badge</h4>
+          <p>شارة عددية أو نقطية على الأيقونات</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>EmptyState</h4>
+          <p>حالة فارغة مع رسم توضيحي ورسالة مخصصة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>Snackbar</h4>
+          <p>رسالة عابرة أسفل الشاشة مع إجراء اختياري</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>BottomSheet</h4>
+          <p>لوحة سفلية قابلة للسحب مع محتوى مخصص</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>Dialog</h4>
+          <p>نافذة حوار مع أزرار تأكيد وإلغاء</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>StateView</h4>
+          <p>عرض الحالات: تحميل، خطأ، فارغ، نجاح</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>InlineAlert</h4>
+          <p>تنبيه مضمن بـ 4 أنواع: info, success, warning, error</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>Skeleton</h4>
+          <p>هيكل تحميل متحرك (shimmer) لعرض حالة التحميل</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>StatusBadge</h4>
+          <p>شارة حالة ملونة (نشط، معلق، ملغي، مكتمل)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g4">&#128640; التنقل (4)</span>
+      <div class="grid grid-2">
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>AppBar</h4>
+          <p>شريط العنوان العلوي مع أزرار إجراءات وبحث</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>Tabs</h4>
+          <p>تبويبات أفقية مع مؤشر متحرك ومحتوى قابل للتمرير</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>BottomNavBar</h4>
+          <p>شريط تنقل سفلي مع أيقونات وتسميات وشارات</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>TabBar</h4>
+          <p>شريط تبويبات مخصص يدعم التمرير والاختيار المتعدد</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g5">&#128200; التخطيط (6)</span>
+      <div class="grid grid-3">
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>Card</h4>
+          <p>بطاقة متعددة الاستخدامات مع ظل وحدود</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>Section</h4>
+          <p>قسم بعنوان وإجراء مع حشوة موحدة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>Scaffold</h4>
+          <p>هيكل الصفحة مع AppBar و BottomNav و FAB</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>ListTile</h4>
+          <p>عنصر قائمة بأيقونة وعنوان ووصف وإجراء</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>Avatar</h4>
+          <p>صورة مستخدم دائرية مع حالة اتصال وحروف بديلة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>Divider</h4>
+          <p>فاصل أفقي أو رأسي بسماكة وتباعد مخصص</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Display -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g6">&#128176; عرض البيانات (5)</span>
+      <div class="grid grid-3">
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>PriceText</h4>
+          <p>عرض السعر بتنسيق العملة والخصم المشطوب</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>ProductCard</h4>
+          <p>بطاقة منتج بصورة واسم وسعر ومخزون</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>CartItem</h4>
+          <p>عنصر سلة بتفاصيل المنتج والكمية والسعر</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>OrderStatus</h4>
+          <p>عرض حالة الطلب بمراحل وتقدم مرئي</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top green"></div>
+          <h4>OrderCard</h4>
+          <p>بطاقة طلب ملخصة بالحالة والمبلغ والتاريخ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Images -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g1">&#128248; الصور (1)</span>
+      <div class="grid grid-3" style="max-width:400px">
+        <div class="card fade-in">
+          <div class="card-top purple"></div>
+          <h4>ProductImage</h4>
+          <p>صورة منتج مع تحميل كسول وصورة بديلة وتكبير</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g2">&#128202; لوحة المعلومات (5)</span>
+      <div class="grid grid-3">
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>StatCard</h4>
+          <p>بطاقة إحصائية بقيمة كبيرة وتغيير نسبي وأيقونة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>ChartCard</h4>
+          <p>بطاقة رسم بياني مع عنوان وفلتر زمني</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>DataTable</h4>
+          <p>جدول بيانات مع ترتيب وتصفية وتصدير</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>ActivityItem</h4>
+          <p>عنصر نشاط بطابع زمني ووصف وأيقونة</p>
+        </div>
+        <div class="card fade-in">
+          <div class="card-top red"></div>
+          <h4>QuickAction</h4>
+          <p>زر إجراء سريع بأيقونة كبيرة وتسمية مختصرة</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div style="max-width:1000px;margin:0 auto 32px">
+      <span class="group-badge g5">&#128295; أدوات (1)</span>
+      <div class="grid grid-3" style="max-width:400px">
+        <div class="card fade-in">
+          <div class="card-top yellow"></div>
+          <h4>InputFormatters</h4>
+          <p>منسقات إدخال: أرقام، عملات، هواتف، باركود</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FONTS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الخطوط</span>
+      <h2>الخطوط المدعومة</h2>
+      <p>3 خطوط تغطي 7 لغات مع أوزان متعددة</p>
+    </div>
+    <div class="grid grid-3" style="max-width:900px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon" style="font-family:'Tajawal';font-weight:700;font-size:28px">أهلا</div>
+        <h4>Tajawal</h4>
+        <p>الخط العربي الأساسي - يدعم العربية والأردية. 4 أوزان: Light (300), Regular (400), Medium (500), Bold (700).</p>
+        <div class="tags">
+          <span class="ftag">عربي</span>
+          <span class="ftag">4 أوزان</span>
+          <span class="ftag">RTL</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon" style="font-size:28px;font-weight:700">&#2344;&#2350;&#2360;&#2381;&#2340;&#2375;</div>
+        <h4>NotoSansDevanagari</h4>
+        <p>خط هندي لدعم لغة الهندي (Devanagari script). 3 أوزان: Regular (400), Medium (500), Bold (700).</p>
+        <div class="tags">
+          <span class="ftag">هندي</span>
+          <span class="ftag">3 أوزان</span>
+          <span class="ftag">LTR</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon" style="font-size:28px;font-weight:700">&#2488;&#2509;&#2476;&#2494;&#2455;&#2468;</div>
+        <h4>NotoSansBengali</h4>
+        <p>خط بنغالي لدعم لغة البنغالية (Bengali script). 3 أوزان: Regular (400), Medium (500), Bold (700).</p>
+        <div class="tags">
+          <span class="ftag">بنغالي</span>
+          <span class="ftag">3 أوزان</span>
+          <span class="ftag">LTR</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESPONSIVE -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">التجاوب</span>
+      <h2>نظام التجاوب</h2>
+      <p>مكونات تتكيف تلقائيا مع جميع أحجام الشاشات</p>
+    </div>
+    <div class="grid grid-2" style="max-width:700px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top blue"></div>
+        <h4>ResponsiveBuilder</h4>
+        <p>يبني واجهات مختلفة حسب حجم الشاشة. يوفر builders منفصلة لـ mobile, tablet, desktop مع نقاط تحول قابلة للتخصيص.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top blue"></div>
+        <h4>ContextExt</h4>
+        <p>امتدادات BuildContext للوصول السريع: context.isMobile, context.isTablet, context.isDesktop, context.screenWidth مع وصول مباشر للثيم.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق نظام التصميم | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

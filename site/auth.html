@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المصادقة والأمان | Alhai Auth & Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">Alhai</span>
+  <div class="nav-links">
+    <a href="super-admin.html">المشرف العام</a>
+    <a href="distributor.html">بوابة الموزعين</a>
+    <a href="database.html">قاعدة البيانات</a>
+    <a href="packages.html">الحزم المشتركة</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">&#9776;</button>
+</nav>
+<div class="nav-mobile">
+  <a href="super-admin.html">المشرف العام</a>
+  <a href="distributor.html">بوابة الموزعين</a>
+  <a href="database.html">قاعدة البيانات</a>
+  <a href="packages.html">الحزم المشتركة</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="icon fade-in">&#128274;</div>
+  <h1 class="fade-in">المصادقة والأمان</h1>
+  <p class="fade-in">6 طبقات أمان - 26 ملف، 12,272 سطر</p>
+  <div class="stats-bar fade-in">
+    <div class="stat-item"><div class="stat-number">26</div><div class="stat-label">ملف</div></div>
+    <div class="stat-item"><div class="stat-number">12,272</div><div class="stat-label">سطر</div></div>
+    <div class="stat-item"><div class="stat-number">8</div><div class="stat-label">اختبار</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">شاشات</div></div>
+    <div class="stat-item"><div class="stat-number">6</div><div class="stat-label">خدمات أمان</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SCREENS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">الشاشات</span>
+      <h2>شاشات المصادقة</h2>
+      <p>4 شاشات تقود المستخدم من فتح التطبيق حتى الدخول للمتجر</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <div class="card-icon">&#9889;</div>
+        <h3>SplashScreen</h3>
+        <p>شاشة البداية - تتحقق من وجود جلسة سابقة وصلاحية التوكن. إذا كانت الجلسة صالحة تنتقل مباشرة للمتجر، وإلا تعرض شاشة تسجيل الدخول.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <div class="card-icon">&#128241;</div>
+        <h3>LoginScreen</h3>
+        <p>شاشة تسجيل الدخول برقم الهاتف. يدخل المستخدم رقمه ويختار طريقة التحقق (SMS أو WhatsApp). تصميم جذاب مع التميمة (Mascot) وخلفية متدرجة.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <div class="card-icon">&#127978;</div>
+        <h3>StoreSelectScreen</h3>
+        <p>شاشة اختيار المتجر/الفرع. تعرض الفروع المتاحة للموظف ويختار الفرع الذي سيعمل فيه. تتحقق من صلاحيات الموظف للفرع المختار.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <div class="card-icon">&#128101;</div>
+        <h3>ManagerApprovalScreen</h3>
+        <p>شاشة موافقة المدير للعمليات الحساسة. تطلب إدخال رمز المدير أو بصمته لتنفيذ عمليات مثل الإلغاء أو الخصم اليدوي.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY SERVICES -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">الأمان</span>
+      <h2>خدمات الأمان الست</h2>
+      <p>6 طبقات أمان متكاملة لحماية البيانات والعمليات</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>&#128272; SecureStorageService</h3>
+        <p>تخزين آمن مشفر للبيانات الحساسة. يستخدم FlutterSecureStorage مع EncryptedSharedPreferences على Android و Keychain على iOS. يحفظ التوكنات والمفاتيح بتشفير AES-256.</p>
+        <div class="tags">
+          <span class="ftag">FlutterSecureStorage</span>
+          <span class="ftag">EncryptedSharedPreferences</span>
+          <span class="ftag">Keychain</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>&#9201; SessionManager</h3>
+        <p>يدير جلسات المستخدم مع انتهاء تلقائي بعد فترة عدم نشاط. يجدد التوكنات تلقائيا قبل انتهائها ويتحقق من صلاحية الجلسة عند كل عملية حساسة.</p>
+        <div class="tags">
+          <span class="ftag">Timeout Management</span>
+          <span class="ftag">Token Refresh</span>
+          <span class="ftag">Session Validation</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h3>&#128286; BiometricService</h3>
+        <p>دعم المصادقة البيومترية: بصمة الإصبع (Fingerprint) و Face ID. يستخدم كطبقة أمان إضافية للعمليات الحساسة أو كبديل للرقم السري.</p>
+        <div class="tags">
+          <span class="ftag">Fingerprint</span>
+          <span class="ftag">Face ID</span>
+          <span class="ftag">Fallback to PIN</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h3>&#128290; PinService</h3>
+        <p>إدارة الرقم السري (PIN) للموظفين. يتحقق من صحة الرقم المدخل، يدعم تغيير الرقم، ويقفل الحساب بعد محاولات فاشلة متعددة.</p>
+        <div class="tags">
+          <span class="ftag">PIN Validation</span>
+          <span class="ftag">Lock After Failures</span>
+          <span class="ftag">PIN Change</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h3>&#128172; OtpService</h3>
+        <p>توليد والتحقق من رموز OTP. يولد رمز مكون من 6 أرقام مع مدة صلاحية محددة. يدعم الإرسال عبر SMS وWhatsApp مع إعادة الإرسال.</p>
+        <div class="tags">
+          <span class="ftag">OTP Generation</span>
+          <span class="ftag">Verification</span>
+          <span class="ftag">Expiry Timer</span>
+        </div>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h3>&#128209; SecurityLogger</h3>
+        <p>تسجيل مسار المراجعة الأمنية (Audit Trail). يوثق كل عملية تسجيل دخول، خروج، محاولة فاشلة، وصول للعمليات الحساسة مع الطابع الزمني والجهاز.</p>
+        <div class="tags">
+          <span class="ftag">Audit Trail</span>
+          <span class="ftag">Login Tracking</span>
+          <span class="ftag">Device Info</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHATSAPP OTP -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">واتساب</span>
+      <h2>خدمة واتساب OTP</h2>
+      <p>إرسال رموز التحقق عبر WhatsApp للوصول الأسرع</p>
+    </div>
+    <div class="grid grid-2" style="max-width:700px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>WhatsappOtpService</h4>
+        <p>يرسل رموز التحقق عبر WhatsApp Business API. أسرع وأرخص من SMS مع معدل توصيل أعلى. يدعم إعادة الإرسال والتبديل التلقائي إلى SMS عند الفشل.</p>
+        <div class="tags">
+          <span class="ftag">WhatsApp Business API</span>
+          <span class="ftag">SMS Fallback</span>
+          <span class="ftag">Auto-retry</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH WIDGETS -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-yellow">الودجات</span>
+      <h2>ويدجتات المصادقة</h2>
+      <p>مكونات واجهة مخصصة لتجربة تسجيل دخول سلسة</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>PhoneInputField</h4>
+        <p>حقل إدخال رقم الهاتف مع اكتشاف تلقائي للدولة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>PinNumpad</h4>
+        <p>لوحة أرقام مخصصة لإدخال الرقم السري</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h4>BranchCard</h4>
+        <p>بطاقة عرض معلومات الفرع في شاشة الاختيار</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>OtpInputField</h4>
+        <p>حقل إدخال رمز OTP المكون من 6 خانات</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>MascotWidget</h4>
+        <p>تميمة التطبيق المتحركة في شاشة الدخول</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>GradientBackground</h4>
+        <p>خلفية متدرجة متحركة لشاشات المصادقة</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top red"></div>
+        <h4>FeatureBadge</h4>
+        <p>شارة عرض مميزات التطبيق في شاشة البداية</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top yellow"></div>
+        <h4>LanguageSelector</h4>
+        <p>قائمة اختيار اللغة مع أعلام الدول</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROVIDERS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-blue">المزودات</span>
+      <h2>Providers</h2>
+      <p>مزودات البيانات لإدارة حالة المصادقة</p>
+    </div>
+    <div class="grid grid-2" style="max-width:700px;margin:0 auto">
+      <div class="card fade-in">
+        <div class="card-top purple"></div>
+        <h4>AuthProviders</h4>
+        <p>يدير حالة المصادقة الكاملة: المستخدم الحالي، الصلاحيات، الجلسة، والتوكنات. يوفر واجهة موحدة لجميع عمليات المصادقة.</p>
+      </div>
+      <div class="card fade-in">
+        <div class="card-top green"></div>
+        <h4>ThemeProvider</h4>
+        <p>يدير ثيم المصادقة المخصص: الألوان المتدرجة، الحركات، وتخصيص مظهر شاشات تسجيل الدخول.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH JOURNEY -->
+  <section class="alt fade-in">
+    <div class="section-header">
+      <span class="tag tag-green">الرحلة</span>
+      <h2>رحلة المصادقة</h2>
+      <p>من فتح التطبيق حتى الوصول للمتجر</p>
+    </div>
+    <div class="journey">
+      <div class="journey-step fade-in">
+        <h4>فتح التطبيق <span class="step-tag">بداية</span></h4>
+        <p>يعرض SplashScreen مع شعار التطبيق وحركة تحميل.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>فحص التوكن <span class="step-tag">SplashScreen</span></h4>
+        <p>يتحقق من وجود توكن مخزن وصلاحيته. إذا كان صالحا يتخطى تسجيل الدخول.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>شاشة تسجيل الدخول <span class="step-tag">LoginScreen</span></h4>
+        <p>يدخل المستخدم رقم هاتفه ويختار طريقة التحقق.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>إرسال OTP <span class="step-tag">SMS / WhatsApp</span></h4>
+        <p>يرسل رمز تحقق مكون من 6 أرقام عبر SMS أو WhatsApp.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>التحقق من الرمز <span class="step-tag">OTP Verification</span></h4>
+        <p>يدخل المستخدم الرمز المرسل. يتحقق النظام من صحته وصلاحيته.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>اختيار المتجر <span class="step-tag">StoreSelectScreen</span></h4>
+        <p>يعرض الفروع المتاحة للموظف ويختار فرعه.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>فحص الصلاحيات <span class="step-tag">Role Check</span></h4>
+        <p>يتحقق من دور الموظف (كاشير، مدير، مشرف) ويحدد الواجهة المناسبة.</p>
+      </div>
+      <div class="journey-step fade-in">
+        <h4>الدخول للتطبيق <span class="step-tag">Redirect</span></h4>
+        <p>يوجه المستخدم للواجهة المناسبة حسب دوره مع تفعيل المزامنة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS -->
+  <section class="fade-in">
+    <div class="section-header">
+      <span class="tag tag-red">الاختبارات</span>
+      <h2>الاختبارات المطلوبة</h2>
+      <p>8 اختبارات تغطي سيناريوهات المصادقة والأمان</p>
+    </div>
+    <div style="max-width:800px;margin:0 auto">
+      <div class="ai-feature fade-in">
+        <div class="ai-num">1</div>
+        <div class="ai-info">
+          <h4>تسجيل الدخول الناجح</h4>
+          <p>اختبار الرحلة الكاملة من إدخال الهاتف حتى الوصول للمتجر</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">2</div>
+        <div class="ai-info">
+          <h4>OTP Verification</h4>
+          <p>اختبار التحقق من الرمز الصحيح والخاطئ وانتهاء الصلاحية</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">3</div>
+        <div class="ai-info">
+          <h4>Session Management</h4>
+          <p>اختبار انتهاء الجلسة التلقائي وتجديد التوكن</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">4</div>
+        <div class="ai-info">
+          <h4>Secure Storage</h4>
+          <p>اختبار التخزين المشفر وقراءة البيانات الحساسة</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">5</div>
+        <div class="ai-info">
+          <h4>Biometric Auth</h4>
+          <p>اختبار المصادقة البيومترية والتراجع إلى PIN</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">6</div>
+        <div class="ai-info">
+          <h4>Role-based Access</h4>
+          <p>اختبار توجيه المستخدم حسب دوره وصلاحياته</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">7</div>
+        <div class="ai-info">
+          <h4>Manager Approval</h4>
+          <p>اختبار طلب موافقة المدير للعمليات الحساسة</p>
+        </div>
+      </div>
+      <div class="ai-feature fade-in">
+        <div class="ai-num">8</div>
+        <div class="ai-info">
+          <h4>Security Logger</h4>
+          <p>اختبار تسجيل الأحداث الأمنية ومسار المراجعة</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer fade-in">
+    <p>نظام الحي لنقاط البيع - Alhai POS Platform</p>
+    <p style="margin-top:4px;font-size:12px;color:var(--text-muted)">وثائق المصادقة والأمان | أبريل 2026</p>
+  </div>
+
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
