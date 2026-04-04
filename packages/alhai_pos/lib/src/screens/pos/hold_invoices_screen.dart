@@ -116,7 +116,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                               color: AppColors.error,
                               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                             ),
-                            child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+                            child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary, size: 28),
                           ),
                           confirmDismiss: (_) async {
                             return await showDialog<bool>(
@@ -133,7 +133,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                                     onPressed: () => Navigator.pop(ctx, true),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.error,
-                                      foregroundColor: Colors.white,
+                                      foregroundColor: AppColors.textOnPrimary,
                                     ),
                                     child: Text(l10n.delete),
                                   ),
@@ -185,7 +185,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                             color: AppColors.error,
                             borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                           ),
-                          child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+                          child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary, size: 28),
                         ),
                         confirmDismiss: (_) async {
                           return await showDialog<bool>(
@@ -202,7 +202,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
                                   onPressed: () => Navigator.pop(ctx, true),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.error,
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: AppColors.textOnPrimary,
                                   ),
                                   child: Text(l10n.delete),
                                 ),
@@ -252,7 +252,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
         content: Row(
           children: [
             const Icon(Icons.play_arrow_rounded,
-                color: Colors.white, size: 20),
+                color: AppColors.textOnPrimary, size: 20),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(l10n.resumedInvoice(invoice.description)),
           ],
@@ -292,7 +292,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
             ),
             child: Text(l10n.delete),
           ),
@@ -329,7 +329,7 @@ class HoldInvoicesScreen extends ConsumerWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.textOnPrimary,
             ),
             child: Text(l10n.deleteAllLabel),
           ),
@@ -594,7 +594,7 @@ class _HoldInvoiceCard extends StatelessWidget {
                       label: Text(l10n.resume),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.textOnPrimary,
                       ),
                     ),
                   ),

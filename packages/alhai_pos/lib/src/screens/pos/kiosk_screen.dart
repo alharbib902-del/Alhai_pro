@@ -244,7 +244,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                 color: AlhaiColors.success,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_rounded, color: Colors.white, size: 64),
+              child: const Icon(Icons.check_rounded, color: AppColors.textOnPrimary, size: 64),
             ),
             const SizedBox(height: AlhaiSpacing.lg),
             Text(
@@ -274,11 +274,11 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
       child: Row(
         children: [
-          const Icon(Icons.store_rounded, color: Colors.white, size: 28),
+          const Icon(Icons.store_rounded, color: AppColors.textOnPrimary, size: 28),
           const SizedBox(width: AlhaiSpacing.sm),
           Text(
             l10n.orderNow,
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: AppColors.textOnPrimary, fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
           if (_cart.isNotEmpty)
@@ -288,7 +288,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   onPressed: () => setState(() => _showCart = !_showCart),
                   icon: Icon(
                     _showCart ? Icons.grid_view_rounded : Icons.shopping_cart_rounded,
-                    color: Colors.white,
+                    color: AppColors.textOnPrimary,
                     size: 28,
                   ),
                 ),
@@ -300,7 +300,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                     decoration: const BoxDecoration(color: AlhaiColors.error, shape: BoxShape.circle),
                     child: Text(
                       '${_cart.length}',
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: AppColors.textOnPrimary, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -315,7 +315,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       height: 56,
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
@@ -336,7 +336,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               child: Text(
                 cat.id == 'all' ? l10n.allCategories : cat.name,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                  color: isSelected ? AppColors.textOnPrimary : Theme.of(context).colorScheme.onSurface,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -414,7 +414,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text('${inCart.qty}',
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                                  style: const TextStyle(color: AppColors.textOnPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
                             )
                           else
                             const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 20),
@@ -492,7 +492,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Row(
         children: [
           if (_cart.isNotEmpty) ...[

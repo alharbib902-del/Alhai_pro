@@ -395,7 +395,7 @@ class _AnimatedBadgeState extends State<_AnimatedBadge>
         child: Text(
           widget.count > 9 ? '9+' : widget.count.toString(),
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textOnPrimary,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),

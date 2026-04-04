@@ -342,7 +342,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                             child: Text(
                               _localizedTier(l10n, customer.tier),
                               style: AppTypography.labelSmall.copyWith(
-                                color: Colors.white,
+                                color: AppColors.textOnPrimary,
                                 fontSize: 10,
                               ),
                             ),

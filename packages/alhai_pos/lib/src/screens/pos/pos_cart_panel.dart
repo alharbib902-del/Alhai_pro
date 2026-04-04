@@ -377,7 +377,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               color: Theme.of(context).colorScheme.error,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.delete_outline, color: Colors.white),
+            child: const Icon(Icons.delete_outline, color: AppColors.textOnPrimary),
           ),
           confirmDismiss: (_) async {
             final confirmed = await showDialog<bool>(

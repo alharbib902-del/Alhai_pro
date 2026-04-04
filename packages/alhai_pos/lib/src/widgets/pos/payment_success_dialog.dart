@@ -307,7 +307,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                           height: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: AppColors.textOnPrimary,
                           ),
                         )
                       : Icon(
@@ -317,7 +317,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                   label: Text(_sent ? AppLocalizations.of(context)!.sentLabel : AppLocalizations.of(context)!.sendWhatsapp),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.whatsappGreen,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

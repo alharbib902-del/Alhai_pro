@@ -347,7 +347,7 @@ class _StatusChip extends StatelessWidget {
               child: Text(
                 count.toString(),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textOnPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),

@@ -177,7 +177,7 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? AppColors.textOnPrimary
                     : AppColors.getTextSecondary(isDark))),
       ),
     );

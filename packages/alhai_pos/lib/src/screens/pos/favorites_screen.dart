@@ -192,7 +192,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                               child: Text(
                                 '${favoriteData.stock}',
                                 style: AppTypography.labelSmall.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.textOnPrimary,
                                   fontSize: 10,
                                 ),
                               ),
@@ -248,7 +248,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 child: const Center(
                   child: Icon(
                     Icons.remove_circle,
-                    color: Colors.white,
+                    color: AppColors.textOnPrimary,
                     size: 36,
                   ),
                 ),

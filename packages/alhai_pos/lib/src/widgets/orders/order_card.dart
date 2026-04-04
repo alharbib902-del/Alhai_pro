@@ -97,7 +97,7 @@ class OrderCard extends StatelessWidget {
                         child: Text(
                           l10n.newLabel,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textOnPrimary,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),

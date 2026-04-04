@@ -728,7 +728,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(children: [
-              const Icon(Icons.pause_circle_outline, color: Colors.white, size: 18),
+              const Icon(Icons.pause_circle_outline, color: AppColors.textOnPrimary, size: 18),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(l10n.heldMessage(name)),
             ]),

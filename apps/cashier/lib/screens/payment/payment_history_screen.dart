@@ -271,7 +271,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
               Icon(icon,
                   size: 14,
                   color: isSelected
-                      ? Colors.white
+                      ? AppColors.textOnPrimary
                       : AppColors.getTextSecondary(isDark)),
               const SizedBox(width: 6),
             ],

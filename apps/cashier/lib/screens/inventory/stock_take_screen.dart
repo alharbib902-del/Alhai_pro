@@ -286,7 +286,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? AppColors.textOnPrimary
                     : AppColors.getTextSecondary(isDark))),
       ),
     );
