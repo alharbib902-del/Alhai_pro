@@ -87,7 +87,6 @@ class _AuthNotifier extends ChangeNotifier {
 /// Routes that require admin role (not just non-employee).
 const _sensitiveRoutes = {
   '/settings',
-  '/more/settings',
   '/approvals',
 };
 

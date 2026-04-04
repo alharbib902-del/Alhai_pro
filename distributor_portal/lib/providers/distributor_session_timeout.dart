@@ -60,6 +60,7 @@ class SessionTimeoutWrapper extends ConsumerStatefulWidget {
 
 class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
   late final SessionTimeoutManager _manager;
+  bool _isTimerRunning = false;
 
   @override
   void initState() {
@@ -68,12 +69,14 @@ class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
     // Start only if authenticated
     if (AppSupabase.isAuthenticated) {
       _manager.start();
+      _isTimerRunning = true;
     }
   }
 
   @override
   void dispose() {
     _manager.dispose();
+    _isTimerRunning = false;
     super.dispose();
   }
 
@@ -95,14 +98,17 @@ class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    // Watch auth state to start/stop timer
-    final authState = ref.watch(authStateProvider);
-    authState.whenData((state) {
-      if (state.event == AuthChangeEvent.signedIn) {
-        _manager.start();
-      } else if (state.event == AuthChangeEvent.signedOut) {
-        _manager.dispose();
-      }
+    // Watch auth state to start/stop timer — guarded to avoid repeated side effects
+    ref.listen<AsyncValue<AuthState>>(authStateProvider, (previous, next) {
+      next.whenData((state) {
+        if (state.event == AuthChangeEvent.signedIn && !_isTimerRunning) {
+          _manager.start();
+          _isTimerRunning = true;
+        } else if (state.event == AuthChangeEvent.signedOut && _isTimerRunning) {
+          _manager.dispose();
+          _isTimerRunning = false;
+        }
+      });
     });
 
     return Listener(

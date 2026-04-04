@@ -1,26 +1,29 @@
 /// Lite Profile Screen
 ///
 /// User profile with personal info, store info, role display,
-/// and quick settings access.
+/// and quick settings access. Reads from currentUserProvider.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_auth/alhai_auth.dart';
 
 /// Profile screen for Admin Lite
-class LiteProfileScreen extends StatelessWidget {
+class LiteProfileScreen extends ConsumerWidget {
   const LiteProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -35,14 +38,16 @@ class LiteProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             // Profile header
-            _buildProfileHeader(context, isDark, l10n),
+            _buildProfileHeader(context, isDark, l10n, user),
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Store info
             _buildSection(context, isDark, l10n.settings, Icons.store, [
-              _InfoTile(Icons.store, 'Al-Hal Supermarket', 'Riyadh, Al-Olaya'),
-              _InfoTile(Icons.badge, 'Admin', 'Manager'),
-              _InfoTile(Icons.calendar_today, 'Member since', 'Jan 2024'),
+              _InfoTile(Icons.badge, user?.role.name ?? 'Admin', l10n.profileTitle),
+              if (user?.phone != null)
+                _InfoTile(Icons.phone, user!.phone, l10n.profileTitle),
+              if (user?.email != null)
+                _InfoTile(Icons.email, user!.email!, l10n.profileTitle),
             ]),
             const SizedBox(height: AlhaiSpacing.lg),
 
@@ -51,7 +56,6 @@ class LiteProfileScreen extends StatelessWidget {
               _ActionTile(Icons.notifications_outlined, l10n.notifications, () => context.go('/lite/settings/notification-prefs')),
               _ActionTile(Icons.language, l10n.language, () => context.go(AppRoutes.settingsLanguage)),
               _ActionTile(Icons.palette_outlined, l10n.theme, () => context.go(AppRoutes.settingsTheme)),
-              _ActionTile(Icons.lock_outline, l10n.security, () {}),
             ]),
 
             const SizedBox(height: AlhaiSpacing.lg),
@@ -61,7 +65,12 @@ class LiteProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildProfileHeader(BuildContext context, bool isDark, AppLocalizations l10n, dynamic user) {
+    final name = user?.name ?? '?';
+    final email = user?.email ?? '';
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final roleName = user?.role?.name ?? 'Admin';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -77,9 +86,9 @@ class LiteProfileScreen extends StatelessWidget {
           CircleAvatar(
             radius: 40,
             backgroundColor: AlhaiColors.primary.withValues(alpha: 0.15),
-            child: const Text(
-              'A',
-              style: TextStyle(
+            child: Text(
+              initial,
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: AlhaiColors.primary,
@@ -88,21 +97,23 @@ class LiteProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            'Ahmed Al-Rashid',
+            name,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
             ),
           ),
-          const SizedBox(height: AlhaiSpacing.xxs),
-          Text(
-            'admin@alhal.sa',
-            style: TextStyle(
-              fontSize: 14,
-              color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+          if (email.isNotEmpty) ...[
+            const SizedBox(height: AlhaiSpacing.xxs),
+            Text(
+              email,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white54 : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: AlhaiSpacing.xs),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: AlhaiSpacing.xxs),
@@ -110,53 +121,13 @@ class LiteProfileScreen extends StatelessWidget {
               color: AlhaiColors.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'Admin',
-              style: TextStyle(
+            child: Text(
+              roleName,
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: AlhaiColors.primary,
               ),
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildStatPill(l10n.orders, '1,248', isDark, context),
-              const SizedBox(width: AlhaiSpacing.sm),
-              _buildStatPill(l10n.products, '456', isDark, context),
-              const SizedBox(width: AlhaiSpacing.sm),
-              _buildStatPill(l10n.customers, '89', isDark, context),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatPill(String label, String value, bool isDark, BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.white38 : Colors.black45,
             ),
           ),
         ],
@@ -225,25 +196,13 @@ class _InfoTile extends StatelessWidget {
           ),
           const SizedBox(width: 14),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white38 : Theme.of(context).colorScheme.outline,
-                  ),
-                ),
-              ],
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
             ),
           ),
         ],

@@ -164,28 +164,28 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.receipt_long_rounded,
         color: AppColors.primary,
         title: l10n?.distributorOrders ?? 'Review Orders',
-        subtitle: 'Review and manage incoming purchase orders from stores',
+        subtitle: l10n?.distributorReviewOrdersDesc ?? 'Review and manage incoming purchase orders from stores',
         route: '/orders',
       ),
       (
         icon: Icons.price_change_rounded,
         color: AppColors.secondary,
-        title: 'Manage Prices',
-        subtitle: 'Set and update product prices for your distribution',
+        title: l10n?.distributorManagePrices ?? 'Manage Prices',
+        subtitle: l10n?.distributorManagePricesDesc ?? 'Set and update product prices for your distribution',
         route: '/pricing',
       ),
       (
         icon: Icons.bar_chart_rounded,
         color: AppColors.info,
-        title: 'View Reports',
-        subtitle: 'Track sales performance and view analytics',
+        title: l10n?.distributorViewReports ?? 'View Reports',
+        subtitle: l10n?.distributorViewReportsDesc ?? 'Track sales performance and view analytics',
         route: '/reports',
       ),
       (
         icon: Icons.settings_rounded,
         color: AppColors.warning,
-        title: 'Update Settings',
-        subtitle: 'Configure company info, delivery zones, and notifications',
+        title: l10n?.distributorUpdateSettings ?? 'Update Settings',
+        subtitle: l10n?.distributorUpdateSettingsDesc ?? 'Configure company info, delivery zones, and notifications',
         route: '/settings',
       ),
     ];
@@ -222,7 +222,7 @@ class _OnboardingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Welcome to the Distributor Portal!',
+                      l10n?.distributorWelcomePortal ?? 'Welcome to the Distributor Portal!',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class _OnboardingCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
-                      'Get started by exploring these key features:',
+                      l10n?.distributorGetStarted ?? 'Get started by exploring these key features:',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.getTextSecondary(isDark),
@@ -385,6 +385,7 @@ class _ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final maxY = monthlySales.fold<double>(
             0, (max, s) => s.amount > max ? s.amount : max) *
@@ -535,7 +536,7 @@ class _ChartCard extends StatelessWidget {
               ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
-                'Monthly Sales (SAR)',
+                l10n?.distributorMonthlySalesSar ?? 'Monthly Sales (SAR)',
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColors.getTextSecondary(isDark),

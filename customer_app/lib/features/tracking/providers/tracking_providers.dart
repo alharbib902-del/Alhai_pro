@@ -5,8 +5,9 @@ import '../../../di/injection.dart';
 import '../data/delivery_datasource.dart';
 
 /// Real-time delivery tracking for an order.
+/// Emits `null` when no delivery is assigned yet.
 final deliveryTrackingProvider =
-    StreamProvider.family<Delivery, String>((ref, orderId) {
+    StreamProvider.family<Delivery?, String>((ref, orderId) {
   final datasource = locator<DeliveryDatasource>();
   return datasource.trackDelivery(orderId);
 });

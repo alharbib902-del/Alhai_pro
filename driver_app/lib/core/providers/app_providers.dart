@@ -48,7 +48,10 @@ final isProfileCompleteProvider = Provider<bool>((ref) {
 /// connectivity_plus v5+ emits List<ConnectivityResult>; we're online if
 /// at least one result is not ConnectivityResult.none.
 final connectivityProvider = StreamProvider<bool>((ref) {
-  return Connectivity()
-      .onConnectivityChanged
-      .map((results) => results.any((r) => r != ConnectivityResult.none));
+  return Connectivity().onConnectivityChanged.map((results) {
+    if (results is List) {
+      return (results as List).any((r) => r != ConnectivityResult.none);
+    }
+    return results != ConnectivityResult.none;
+  });
 });

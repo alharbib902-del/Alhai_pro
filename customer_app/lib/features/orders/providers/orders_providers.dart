@@ -33,14 +33,24 @@ final orderRealtimeProvider =
 });
 
 /// Active orders (for home screen banner).
+/// Uses individual error isolation so one failing status doesn't break the whole list.
 final activeOrdersProvider = FutureProvider<List<Order>>((ref) async {
   final datasource = locator<OrdersDatasource>();
-  final results = await Future.wait([
-    datasource.getOrders(status: OrderStatus.created),
-    datasource.getOrders(status: OrderStatus.confirmed),
-    datasource.getOrders(status: OrderStatus.preparing),
-    datasource.getOrders(status: OrderStatus.ready),
-    datasource.getOrders(status: OrderStatus.outForDelivery),
-  ]);
+  final statuses = [
+    OrderStatus.created,
+    OrderStatus.confirmed,
+    OrderStatus.preparing,
+    OrderStatus.ready,
+    OrderStatus.outForDelivery,
+  ];
+  final results = await Future.wait(
+    statuses.map((s) async {
+      try {
+        return await datasource.getOrders(status: s);
+      } catch (_) {
+        return const Paginated<Order>(items: [], page: 1, limit: 20, total: 0, hasMore: false);
+      }
+    }),
+  );
   return results.expand((p) => p.items).toList();
 });

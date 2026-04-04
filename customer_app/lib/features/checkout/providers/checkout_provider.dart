@@ -36,12 +36,21 @@ final placeOrderProvider = FutureProvider.family<Order, Cart>((ref, cart) async 
     throw Exception('السلة فارغة');
   }
 
+  if (address == null) {
+    throw Exception('يرجى اختيار عنوان التوصيل');
+  }
+
+  final minOrder = ref.read(minOrderAmountProvider);
+  if (minOrder > 0 && cart.total < minOrder) {
+    throw Exception('الحد الأدنى للطلب ${minOrder.toStringAsFixed(0)} ر.س');
+  }
+
   final params = CreateOrderParams(
     clientOrderId: const Uuid().v4(),
     storeId: cart.storeId!,
     items: cart.items.map((item) => item.toOrderItem()).toList(),
-    addressId: address?.id,
-    deliveryAddress: address?.fullAddress,
+    addressId: address.id,
+    deliveryAddress: address.fullAddress,
     paymentMethod: paymentMethod,
     deliveryFee: deliveryFee,
   );

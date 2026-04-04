@@ -10,9 +10,8 @@ final addressesListProvider = FutureProvider<List<Address>>((ref) async {
   return datasource.getAddresses();
 });
 
-/// Selected address for checkout.
-final selectedAddressProvider = StateProvider<Address?>((ref) {
-  // Auto-select default address
+/// Auto-selected default address (derived from addressesListProvider).
+final _defaultAddressProvider = Provider<Address?>((ref) {
   final addresses = ref.watch(addressesListProvider).valueOrNull;
   if (addresses != null && addresses.isNotEmpty) {
     return addresses.firstWhere(
@@ -21,4 +20,10 @@ final selectedAddressProvider = StateProvider<Address?>((ref) {
     );
   }
   return null;
+});
+
+/// Selected address for checkout.
+/// Starts with the default address but can be overridden by user selection.
+final selectedAddressProvider = StateProvider<Address?>((ref) {
+  return ref.watch(_defaultAddressProvider);
 });

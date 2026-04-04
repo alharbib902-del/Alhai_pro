@@ -198,7 +198,7 @@ class _SAStoreSettingsScreenState
                                                 CircularProgressIndicator(
                                                     strokeWidth: 2),
                                           )
-                                        : const Text('Save Changes'),
+                                        : Text(l10n.save),
                                   ),
                                 ],
                               ),
@@ -209,7 +209,7 @@ class _SAStoreSettingsScreenState
 
                         // Danger zone
                         _SettingsCard(
-                          title: 'Danger Zone',
+                          title: l10n.dangerZone,
                           icon: Icons.warning_rounded,
                           borderColor: theme.colorScheme.error.withValues(alpha: 0.3),
                           child: Column(
@@ -239,9 +239,9 @@ class _SAStoreSettingsScreenState
                                         final confirmed = await showDialog<bool>(
                                           context: context,
                                           builder: (ctx) => AlertDialog(
-                                            title: const Text('تأكيد الإيقاف'),
+                                            title: Text(l10n.confirm),
                                             content: const Text(
-                                              'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.',
+                                              'Are you sure you want to suspend this store? All user access will be revoked immediately.',
                                             ),
                                             actions: [
                                               TextButton(

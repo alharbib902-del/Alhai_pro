@@ -6,7 +6,11 @@ class ChatDatasource {
 
   ChatDatasource(this._client);
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('المستخدم غير مسجّل الدخول');
+    return user.id;
+  }
 
   /// Stream chat messages for an order (Realtime).
   Stream<List<Map<String, dynamic>>> streamMessages(String orderId) {

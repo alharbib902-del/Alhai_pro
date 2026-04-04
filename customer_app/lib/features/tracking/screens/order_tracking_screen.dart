@@ -44,7 +44,10 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
       body: deliveryAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => _WaitingForDriver(),
-        data: (delivery) {
+        data: (deliveryOrNull) {
+          if (deliveryOrNull == null) return _WaitingForDriver();
+          final delivery = deliveryOrNull;
+
           // Watch driver location if available
           final driverLocationAsync = delivery.driverId.isNotEmpty
               ? ref.watch(driverLocationProvider(delivery.driverId))

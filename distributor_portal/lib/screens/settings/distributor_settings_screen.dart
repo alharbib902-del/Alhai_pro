@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
@@ -102,6 +103,7 @@ class _DistributorSettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
+    final l10n = AppLocalizations.of(context);
     final settingsAsync = ref.watch(orgSettingsProvider);
 
     return PopScope(
@@ -125,7 +127,7 @@ class _DistributorSettingsScreenState
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
         title: Text(
-          'الإعدادات',
+          l10n?.distributorSettings ?? 'الإعدادات',
           style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
         centerTitle: false,
@@ -140,7 +142,7 @@ class _DistributorSettingsScreenState
                   size: 48, color: AppColors.getTextMuted(isDark)),
               const SizedBox(height: AlhaiSpacing.md),
               Text(
-                'حدث خطأ في تحميل الإعدادات',
+                l10n?.distributorLoadError ?? 'حدث خطأ في تحميل الإعدادات',
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColors.getTextSecondary(isDark),
@@ -150,7 +152,7 @@ class _DistributorSettingsScreenState
               FilledButton.icon(
                 onPressed: () => ref.invalidate(orgSettingsProvider),
                 icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('إعادة المحاولة'),
+                label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.textOnPrimary,
@@ -179,7 +181,7 @@ class _DistributorSettingsScreenState
                   FilledButton.icon(
                     onPressed: () => ref.invalidate(orgSettingsProvider),
                     icon: const Icon(Icons.refresh, size: 18),
-                    label: const Text('إعادة المحاولة'),
+                    label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.textOnPrimary,
@@ -256,16 +258,17 @@ class _DistributorSettingsScreenState
   }
 
   Future<bool> _showUnsavedDialog() async {
+    final l10n = AppLocalizations.of(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('تغييرات غير محفوظة'),
-        content: const Text(
-            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        title: Text(l10n?.distributorUnsavedChanges ?? 'تغييرات غير محفوظة'),
+        content: Text(
+            l10n?.distributorUnsavedChangesMessage ?? 'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('البقاء'),
+            child: Text(l10n?.distributorStay ?? 'البقاء'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -273,7 +276,7 @@ class _DistributorSettingsScreenState
               backgroundColor: AppColors.error,
               foregroundColor: AppColors.textOnPrimary,
             ),
-            child: const Text('مغادرة'),
+            child: Text(l10n?.distributorLeave ?? 'مغادرة'),
           ),
         ],
       ),
@@ -821,9 +824,10 @@ class _DistributorSettingsScreenState
     if (emailText.isNotEmpty) {
       final emailRegex = RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
       if (!emailRegex.hasMatch(emailText)) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('يرجى إدخال بريد إلكتروني صحيح'),
+          SnackBar(
+            content: Text(l10n?.distributorInvalidEmail ?? 'يرجى إدخال بريد إلكتروني صحيح'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -835,9 +839,10 @@ class _DistributorSettingsScreenState
     if (phoneText.isNotEmpty) {
       final phoneRegex = RegExp(r'^[\d\s\-\+\(\)]{7,20}$');
       if (!phoneRegex.hasMatch(phoneText)) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('يرجى إدخال رقم هاتف صحيح'),
+          SnackBar(
+            content: Text(l10n?.distributorInvalidPhone ?? 'يرجى إدخال رقم هاتف صحيح'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -866,27 +871,32 @@ class _DistributorSettingsScreenState
       smsNotifications: _smsNotifications,
     );
 
-    final ds = ref.read(distributorDatasourceProvider);
-    final success = await ds.updateOrgSettings(updated);
+    try {
+      final ds = ref.read(distributorDatasourceProvider);
+      await ds.updateOrgSettings(updated);
 
-    if (!mounted) return;
-    setState(() => _isSaving = false);
+      if (!mounted) return;
+      setState(() => _isSaving = false);
 
-    if (success) {
       // Refresh the provider so next build picks up the saved data
       ref.invalidate(orgSettingsProvider);
       _hasChanges = false;
 
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم حفظ الإعدادات بنجاح'),
+        SnackBar(
+          content: Text(l10n?.distributorSettingsSaved ?? 'تم حفظ الإعدادات بنجاح'),
           backgroundColor: AppColors.success,
         ),
       );
-    } else {
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('حدث خطأ أثناء حفظ الإعدادات'),
+        SnackBar(
+          content: Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الإعدادات'),
           backgroundColor: AppColors.error,
         ),
       );

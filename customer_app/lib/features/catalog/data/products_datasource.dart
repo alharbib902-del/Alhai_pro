@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
@@ -15,6 +16,7 @@ class ProductsDatasource {
     String? categoryId,
     String? searchQuery,
   }) async {
+   try {
     var query = _client
         .from('products')
         .select()
@@ -26,14 +28,8 @@ class ProductsDatasource {
     }
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      // Sanitize special PostgREST characters to prevent filter injection
-      final sanitized = searchQuery
-          .replaceAll('%', '')
-          .replaceAll('_', r'\_')
-          .replaceAll('.', '')
-          .replaceAll(',', '')
-          .replaceAll('(', '')
-          .replaceAll(')', '');
+      // Sanitize: keep only alphanumeric, Arabic, and spaces
+      final sanitized = searchQuery.replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), '').trim();
       if (sanitized.isNotEmpty) {
         query = query.or('name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%');
       }
@@ -58,16 +54,23 @@ class ProductsDatasource {
       total: null,
       hasMore: products.length == limit,
     );
+   } on TimeoutException {
+     throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
+   }
   }
 
   Future<Product> getProduct(String id) async {
-    final data = await _client
-        .from('products')
-        .select()
-        .eq('id', id)
-        .single()
-        .timeout(AppConstants.networkTimeout);
-    return _productFromRow(data);
+    try {
+      final data = await _client
+          .from('products')
+          .select()
+          .eq('id', id)
+          .single()
+          .timeout(AppConstants.networkTimeout);
+      return _productFromRow(data);
+    } on TimeoutException {
+      throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
+    }
   }
 
   Product _productFromRow(Map<String, dynamic> row) {

@@ -12789,6 +12789,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get distributorRiyal => 'SAR';
 
   @override
+  String get distributorUnsavedChanges => 'Unsaved Changes';
+
+  @override
+  String get distributorUnsavedChangesMessage =>
+      'You have unsaved changes. Do you want to leave without saving?';
+
+  @override
+  String get distributorStay => 'Stay';
+
+  @override
+  String get distributorLeave => 'Leave';
+
+  @override
+  String get distributorNoDataToExport => 'No data to export';
+
+  @override
+  String get distributorReportExported => 'Report exported successfully';
+
+  @override
+  String get distributorExportWebOnly => 'Export is only available on web';
+
+  @override
+  String get distributorPrintWebOnly => 'Printing is only available on web';
+
+  @override
+  String get distributorSaveError => 'An error occurred while saving';
+
+  @override
+  String get distributorInvalidEmail => 'Please enter a valid email address';
+
+  @override
+  String get distributorInvalidPhone => 'Please enter a valid phone number';
+
+  @override
+  String get distributorActionUndone => 'Action undone';
+
+  @override
+  String get distributorSessionExpired =>
+      'Session expired due to inactivity. Please log in again.';
+
+  @override
+  String get distributorWelcomePortal => 'Welcome to the Distributor Portal!';
+
+  @override
+  String get distributorGetStarted =>
+      'Get started by exploring these key features:';
+
+  @override
+  String get distributorManagePrices => 'Manage Prices';
+
+  @override
+  String get distributorManagePricesDesc =>
+      'Set and update product prices for your distribution';
+
+  @override
+  String get distributorViewReports => 'View Reports';
+
+  @override
+  String get distributorViewReportsDesc =>
+      'Track sales performance and view analytics';
+
+  @override
+  String get distributorUpdateSettings => 'Update Settings';
+
+  @override
+  String get distributorUpdateSettingsDesc =>
+      'Configure company info, delivery zones, and notifications';
+
+  @override
+  String get distributorReviewOrdersDesc =>
+      'Review and manage incoming purchase orders from stores';
+
+  @override
+  String get distributorMonthlySalesSar => 'Monthly Sales (SAR)';
+
+  @override
+  String get distributorPrintReport => 'Print Report';
+
+  @override
+  String get distributorPrint => 'Print';
+
+  @override
+  String get distributorExportCsv => 'Export report as CSV';
+
+  @override
+  String get distributorExportCsvShort => 'Export CSV';
+
+  @override
+  String get distributorSaveCtrlS => 'Save Changes (Ctrl+S)';
+
+  @override
   String get scanCouponBarcode => 'Scan Coupon Barcode';
 
   @override

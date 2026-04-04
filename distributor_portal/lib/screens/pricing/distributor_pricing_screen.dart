@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:intl/intl.dart' show NumberFormat, DateFormat;
 
 import '../../data/models.dart';
@@ -91,16 +92,17 @@ class _DistributorPricingScreenState
 
   Future<bool> _onWillPop() async {
     if (!_hasChanges) return true;
+    final l10n = AppLocalizations.of(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('تغييرات غير محفوظة'),
-        content: const Text(
-            'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
+        title: Text(l10n?.distributorUnsavedChanges ?? 'تغييرات غير محفوظة'),
+        content: Text(
+            l10n?.distributorUnsavedChangesMessage ?? 'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('البقاء'),
+            child: Text(l10n?.distributorStay ?? 'البقاء'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -108,7 +110,7 @@ class _DistributorPricingScreenState
               backgroundColor: AppColors.error,
               foregroundColor: AppColors.textOnPrimary,
             ),
-            child: const Text('مغادرة'),
+            child: Text(l10n?.distributorLeave ?? 'مغادرة'),
           ),
         ],
       ),
@@ -124,6 +126,7 @@ class _DistributorPricingScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
+    final l10n = AppLocalizations.of(context);
     final productsAsync = ref.watch(productsProvider);
 
     return PopScope(
@@ -152,7 +155,7 @@ class _DistributorPricingScreenState
             backgroundColor: AppColors.getBackground(isDark),
             appBar: AppBar(
               title: Text(
-                'إدارة الأسعار',
+                l10n?.distributorPricing ?? 'إدارة الأسعار',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: cs.onSurface),
               ),
@@ -193,7 +196,7 @@ class _DistributorPricingScreenState
                         size: 48, color: AppColors.getTextMuted(isDark)),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
-                      'حدث خطأ في تحميل البيانات',
+                      l10n?.distributorLoadError ?? 'حدث خطأ في تحميل البيانات',
                       style: TextStyle(
                         fontSize: 16,
                         color: AppColors.getTextSecondary(isDark),
@@ -203,7 +206,7 @@ class _DistributorPricingScreenState
                     FilledButton.icon(
                       onPressed: () => ref.invalidate(productsProvider),
                       icon: const Icon(Icons.refresh, size: 18),
-                      label: const Text('إعادة المحاولة'),
+                      label: Text(l10n?.distributorRetry ?? 'إعادة المحاولة'),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
@@ -213,6 +216,25 @@ class _DistributorPricingScreenState
                 ),
               ),
               data: (products) {
+                if (products.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.price_change_outlined,
+                            size: 64, color: AppColors.getTextMuted(isDark)),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        Text(
+                          l10n?.distributorNoProducts ?? 'لا توجد منتجات',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
                 _ensureControllers(products);
                 final changed = _changedCount(products);
                 final sortedProducts = _sortProducts(products);
@@ -557,6 +579,7 @@ class _DistributorPricingScreenState
 
   Widget _buildPricingCards(
       bool isDark, bool isMedium, List<DistributorProduct> products) {
+    final l10n = AppLocalizations.of(context);
     return ListView.separated(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       itemCount: products.length,
@@ -602,7 +625,7 @@ class _DistributorPricingScreenState
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text('السعر الحالي',
+                      Text(l10n?.distributorCurrentPrice ?? 'السعر الحالي',
                           style: TextStyle(
                               fontSize: 11,
                               color: AppColors.getTextMuted(isDark))),
@@ -670,6 +693,7 @@ class _DistributorPricingScreenState
   Widget _buildSaveBar(bool isDark, bool isMedium,
       List<DistributorProduct> products, int changed) {
     if (changed == 0 && !_hasChanges) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding:
@@ -686,7 +710,7 @@ class _DistributorPricingScreenState
         child: Row(children: [
           if (changed > 0)
             Expanded(
-                child: Text('$changed منتج سيتم تحديث سعره',
+                child: Text(l10n?.distributorProductsWillUpdate(changed) ?? '$changed منتج سيتم تحديث سعره',
                     style: TextStyle(
                         fontSize: 13,
                         color: AppColors.getTextSecondary(isDark)))),
@@ -694,7 +718,7 @@ class _DistributorPricingScreenState
             width: isMedium ? 200 : 160,
             child: Semantics(
               button: true,
-              label: 'حفظ التغييرات (Ctrl+S)',
+              label: l10n?.distributorSaveCtrlS ?? 'حفظ التغييرات (Ctrl+S)',
               child: FilledButton.icon(
                 onPressed: _isSaving || changed == 0
                     ? null
@@ -707,7 +731,7 @@ class _DistributorPricingScreenState
                             strokeWidth: 2,
                             color: AppColors.textOnPrimary))
                     : const Icon(Icons.save_rounded, size: 18),
-                label: const Text('حفظ التغييرات',
+                label: Text(l10n?.distributorSaveChanges ?? 'حفظ التغييرات',
                     style: TextStyle(
                         fontSize: 14, fontWeight: FontWeight.w600)),
                 style: FilledButton.styleFrom(
@@ -725,6 +749,7 @@ class _DistributorPricingScreenState
   }
 
   Future<void> _savePrices(List<DistributorProduct> products) async {
+    final l10n = AppLocalizations.of(context);
     setState(() => _isSaving = true);
 
     final prices = <String, double>{};
@@ -737,26 +762,27 @@ class _DistributorPricingScreenState
     }
 
     if (prices.isNotEmpty) {
-      final ds = ref.read(distributorDatasourceProvider);
-      final success = await ds.updateProductPrices(prices);
+      try {
+        final ds = ref.read(distributorDatasourceProvider);
+        await ds.updateProductPrices(prices);
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      if (success) {
         for (final c in _controllers.values) {
           c.clear();
         }
         ref.invalidate(productsProvider);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('تم حفظ التغييرات بنجاح'),
+          SnackBar(
+              content: Text(l10n?.distributorChangesSaved ?? 'تم حفظ التغييرات بنجاح'),
               backgroundColor: AppColors.success),
         );
-      } else {
+      } catch (_) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('حدث خطأ أثناء حفظ الأسعار'),
+          SnackBar(
+              content: Text(l10n?.distributorSaveError ?? 'حدث خطأ أثناء حفظ الأسعار'),
               backgroundColor: AppColors.error),
         );
       }

@@ -137,6 +137,7 @@ class ProfileScreen extends ConsumerWidget {
               },
             ),
           ),
+          ),
 
           const SizedBox(height: AlhaiSpacing.lg),
           Center(

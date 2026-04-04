@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/profile_setup_screen.dart';
@@ -123,7 +122,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
           child: OrderDetailsScreen(
-            deliveryId: state.pathParameters['id']!,
+            deliveryId: state.pathParameters['id'] ?? '',
           ),
         ),
       ),
@@ -133,7 +132,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
           child: NavigationScreen(
-            deliveryId: state.pathParameters['id']!,
+            deliveryId: state.pathParameters['id'] ?? '',
           ),
         ),
       ),
@@ -143,7 +142,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
           child: DeliveryProofScreen(
-            deliveryId: state.pathParameters['id']!,
+            deliveryId: state.pathParameters['id'] ?? '',
           ),
         ),
       ),
@@ -153,7 +152,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
           child: ChatScreen(
-            orderId: state.pathParameters['orderId']!,
+            orderId: state.pathParameters['orderId'] ?? '',
           ),
         ),
       ),
@@ -219,19 +218,25 @@ CustomTransitionPage<void> _slideTransitionPage({
 /// Auth guard redirect logic.
 String? _guardRedirect(Ref ref, GoRouterState state) {
   final isAuth = ref.read(isAuthenticatedProvider);
+  final isProfileComplete = ref.read(isProfileCompleteProvider);
   final currentPath = state.uri.path;
 
   // Public routes that don't need auth
   const publicRoutes = ['/', '/login'];
   if (publicRoutes.contains(currentPath)) {
     if (isAuth && currentPath == '/login') {
-      return '/home';
+      return isProfileComplete ? '/home' : '/profile-setup';
     }
     return null;
   }
 
   // Redirect to login if not authenticated
   if (!isAuth) return '/login';
+
+  // Redirect to profile setup if profile incomplete
+  if (!isProfileComplete && currentPath != '/profile-setup') {
+    return '/profile-setup';
+  }
 
   return null;
 }
@@ -240,6 +245,7 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(this._ref) {
     _ref.listen(isAuthenticatedProvider, (_, __) => notifyListeners());
+    _ref.listen(isProfileCompleteProvider, (_, __) => notifyListeners());
   }
 
   final Ref _ref;

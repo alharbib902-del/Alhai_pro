@@ -1,25 +1,35 @@
 /// Alerts Summary Screen
 ///
 /// Displays a summary of active alerts grouped by type:
-/// stock alerts, order alerts, system alerts, and expiry alerts.
+/// stock alerts, order alerts, system alerts, and notifications.
+/// Pulls real counts from providers.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_database/alhai_database.dart';
+
+import '../../providers/lite_screen_providers.dart';
 
 /// Alerts summary screen with grouped alert counts
-class LiteAlertsSummaryScreen extends StatelessWidget {
+class LiteAlertsSummaryScreen extends ConsumerWidget {
   const LiteAlertsSummaryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
+
+    final stockAsync = ref.watch(liteStockAlertsProvider);
+    final orderAsync = ref.watch(liteOrderAlertsProvider);
+    final systemAsync = ref.watch(liteSystemAlertsProvider);
+    final notifAsync = ref.watch(liteNotificationsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -27,9 +37,14 @@ class LiteAlertsSummaryScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.done_all),
-            tooltip: l10n.done,
+            onPressed: () {
+              ref.invalidate(liteStockAlertsProvider);
+              ref.invalidate(liteOrderAlertsProvider);
+              ref.invalidate(liteSystemAlertsProvider);
+              ref.invalidate(liteNotificationsProvider);
+            },
+            icon: const Icon(Icons.refresh),
+            tooltip: l10n.tryAgain,
           ),
           const SizedBox(width: AlhaiSpacing.xs),
         ],
@@ -40,48 +55,65 @@ class LiteAlertsSummaryScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Alert summary cards
-            _buildAlertCategories(context, isDark, isMobile, l10n),
+            _buildAlertCategories(context, isDark, isMobile, l10n,
+              stockCount: stockAsync.valueOrNull?.length ?? 0,
+              orderCount: orderAsync.valueOrNull?.length ?? 0,
+              systemCount: systemAsync.valueOrNull?.length ?? 0,
+              notifCount: notifAsync.valueOrNull?.where((n) => !n.isRead).length ?? 0,
+            ),
             const SizedBox(height: AlhaiSpacing.lg),
 
-            // Recent alerts list
+            // Recent notifications
             _buildSectionTitle(l10n.notifications, Icons.access_time, isDark),
             const SizedBox(height: AlhaiSpacing.sm),
-            _buildRecentAlerts(context, isDark, l10n),
+            notifAsync.when(
+              data: (notifs) => _buildRecentAlerts(context, isDark, l10n, notifs.take(5).toList()),
+              loading: () => const Center(child: Padding(
+                padding: EdgeInsets.all(AlhaiSpacing.lg),
+                child: CircularProgressIndicator(),
+              )),
+              error: (_, __) => Center(child: Text(l10n.errorOccurred)),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAlertCategories(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildAlertCategories(BuildContext context, bool isDark, bool isMobile, AppLocalizations l10n, {
+    required int stockCount,
+    required int orderCount,
+    required int systemCount,
+    required int notifCount,
+  }) {
     final categories = [
       _AlertCategory(
         title: l10n.lowStock,
-        count: 8,
+        count: stockCount,
         icon: Icons.inventory_2_outlined,
         color: AlhaiColors.warning,
         route: '/lite/alerts/stock',
       ),
       _AlertCategory(
         title: l10n.orders,
-        count: 3,
+        count: orderCount,
         icon: Icons.receipt_long_outlined,
         color: AlhaiColors.info,
         route: '/lite/alerts/orders',
       ),
       _AlertCategory(
         title: l10n.notifications,
-        count: 2,
+        count: systemCount,
         icon: Icons.settings_outlined,
         color: AlhaiColors.error,
         route: '/lite/alerts/system',
       ),
       _AlertCategory(
-        title: l10n.products,
-        count: 5,
-        icon: Icons.calendar_today,
+        title: l10n.notifications,
+        count: notifCount,
+        icon: Icons.notifications_outlined,
         color: Colors.orange,
-        route: '/lite/alerts/stock',
+        route: '/lite/alerts/notifications',
       ),
     ];
 
@@ -200,65 +232,30 @@ class LiteAlertsSummaryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentAlerts(BuildContext context, bool isDark, AppLocalizations l10n) {
-    final alerts = [
-      _AlertItem(
-        title: l10n.lowStock,
-        subtitle: 'Rice 5kg - 3 units remaining',
-        time: '10m',
-        icon: Icons.warning_amber_rounded,
-        color: AlhaiColors.warning,
-        isRead: false,
-      ),
-      _AlertItem(
-        title: l10n.orders,
-        subtitle: 'New order #1052 received',
-        time: '25m',
-        icon: Icons.receipt_long,
-        color: AlhaiColors.info,
-        isRead: false,
-      ),
-      _AlertItem(
-        title: l10n.products,
-        subtitle: 'Yogurt expires in 3 days',
-        time: '1h',
-        icon: Icons.calendar_today,
-        color: Colors.orange,
-        isRead: true,
-      ),
-      _AlertItem(
-        title: l10n.lowStock,
-        subtitle: 'Olive Oil 1L - 5 units remaining',
-        time: '2h',
-        icon: Icons.warning_amber_rounded,
-        color: AlhaiColors.warning,
-        isRead: true,
-      ),
-      _AlertItem(
-        title: l10n.sync,
-        subtitle: l10n.syncComplete,
-        time: '3h',
-        icon: Icons.sync,
-        color: AlhaiColors.success,
-        isRead: true,
-      ),
-    ];
+  Widget _buildRecentAlerts(BuildContext context, bool isDark, AppLocalizations l10n, List<NotificationsTableData> notifs) {
+    if (notifs.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.lg),
+          child: Text(l10n.noResults, style: TextStyle(color: isDark ? Colors.white54 : Colors.black45)),
+        ),
+      );
+    }
 
     return Column(
-      children: alerts.map((alert) {
-        return _buildAlertTile(context, alert, isDark);
-      }).toList(),
+      children: notifs.map((n) => _buildNotifTile(context, n, isDark)).toList(),
     );
   }
 
-  Widget _buildAlertTile(BuildContext context, _AlertItem alert, bool isDark) {
+  Widget _buildNotifTile(BuildContext context, NotificationsTableData notif, bool isDark) {
+    final color = notif.isRead ? Colors.grey : AlhaiColors.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withValues(alpha: alert.isRead ? 0.04 : 0.08)
-            : (alert.isRead ? Colors.white : alert.color.withValues(alpha: 0.04)),
+            ? Colors.white.withValues(alpha: notif.isRead ? 0.04 : 0.08)
+            : (notif.isRead ? Colors.white : AlhaiColors.primary.withValues(alpha: 0.04)),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark ? Colors.white12 : Theme.of(context).colorScheme.outlineVariant,
@@ -270,10 +267,10 @@ class LiteAlertsSummaryScreen extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: alert.color.withValues(alpha: 0.12),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(alert.icon, color: alert.color, size: 18),
+            child: Icon(Icons.notifications_outlined, color: color, size: 18),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
@@ -281,40 +278,35 @@ class LiteAlertsSummaryScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  alert.title,
+                  notif.title,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: alert.isRead ? FontWeight.normal : FontWeight.bold,
+                    fontWeight: notif.isRead ? FontWeight.normal : FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
-                const SizedBox(height: AlhaiSpacing.xxxs),
-                Text(
-                  alert.subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
+                if (notif.body != null) ...[
+                  const SizedBox(height: AlhaiSpacing.xxxs),
+                  Text(
+                    notif.body!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white38 : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                ],
               ],
             ),
           ),
-          Text(
-            alert.time,
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.white24 : Colors.black38,
-            ),
-          ),
-          if (!alert.isRead)
+          if (!notif.isRead)
             Container(
               width: 8,
               height: 8,
               margin: const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
-              decoration: BoxDecoration(
-                color: alert.color,
+              decoration: const BoxDecoration(
+                color: AlhaiColors.primary,
                 shape: BoxShape.circle,
               ),
             ),
@@ -337,23 +329,5 @@ class _AlertCategory {
     required this.icon,
     required this.color,
     required this.route,
-  });
-}
-
-class _AlertItem {
-  final String title;
-  final String subtitle;
-  final String time;
-  final IconData icon;
-  final Color color;
-  final bool isRead;
-
-  const _AlertItem({
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.icon,
-    required this.color,
-    required this.isRead,
   });
 }

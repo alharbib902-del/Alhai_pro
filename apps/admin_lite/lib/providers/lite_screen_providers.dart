@@ -9,6 +9,7 @@
 ///   - lite_dashboard_providers.dart
 library;
 
+export 'approval_providers.dart';
 export 'lite_alerts_providers.dart';
 export 'lite_reports_providers.dart';
 export 'lite_orders_providers.dart';

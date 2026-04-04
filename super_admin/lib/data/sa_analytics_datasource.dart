@@ -30,22 +30,23 @@ class SAAnalyticsDatasource {
       // RPC may not exist, use fallback
     }
 
-    // Fallback: calculate from subscriptions + plans
+    // Fallback: calculate from subscriptions amount
     final subs = await _client
         .from('subscriptions')
-        .select('created_at, plans(monthly_price)')
+        .select('created_at, amount, billing_cycle')
         .eq('status', 'active');
 
     final monthlyMap = <String, double>{};
     for (final row in subs as List) {
       final createdAt = row['created_at'] as String?;
-      final price =
-          (row['plans'] as Map<String, dynamic>?)?['monthly_price'] as num?;
-      if (createdAt == null || price == null) continue;
+      final amount = (row['amount'] as num?)?.toDouble() ?? 0;
+      final cycle = row['billing_cycle'] as String? ?? 'monthly';
+      if (createdAt == null || amount == 0) continue;
       final dt = DateTime.tryParse(createdAt);
       if (dt == null) continue;
       final key = '${dt.year}-${dt.month.toString().padLeft(2, '0')}';
-      monthlyMap[key] = (monthlyMap[key] ?? 0) + price.toDouble();
+      final monthly = cycle == 'yearly' ? amount / 12 : amount;
+      monthlyMap[key] = (monthlyMap[key] ?? 0) + monthly;
     }
 
     final result = monthlyMap.entries
@@ -56,26 +57,26 @@ class SAAnalyticsDatasource {
     return result;
   }
 
-  /// Revenue breakdown by plan.
+  /// Revenue breakdown by plan slug.
   Future<List<SARevenueByPlan>> getRevenueByPlan() async {
     final data = await _client
         .from('subscriptions')
-        .select('plans(name, slug, monthly_price)')
+        .select('plan, amount, billing_cycle')
         .eq('status', 'active');
 
     final planRevenue = <String, _PlanAccumulator>{};
     for (final row in data as List) {
-      final plan = row['plans'] as Map<String, dynamic>?;
-      if (plan == null) continue;
-      final slug = plan['slug'] as String? ?? 'unknown';
-      final price = (plan['monthly_price'] as num?)?.toDouble() ?? 0;
-      final name = plan['name'] as String? ?? slug;
+      final slug = row['plan'] as String? ?? 'unknown';
+      final amount = (row['amount'] as num?)?.toDouble() ?? 0;
+      final cycle = row['billing_cycle'] as String? ?? 'monthly';
+      final monthly = cycle == 'yearly' ? amount / 12 : amount;
 
       if (!planRevenue.containsKey(slug)) {
-        planRevenue[slug] = _PlanAccumulator(name: name, slug: slug);
+        planRevenue[slug] = _PlanAccumulator(
+            name: slug.replaceAll('_', ' '), slug: slug);
       }
       planRevenue[slug]!.subscribers += 1;
-      planRevenue[slug]!.revenue += price;
+      planRevenue[slug]!.revenue += monthly;
     }
 
     return planRevenue.values
@@ -233,10 +234,10 @@ class SAAnalyticsDatasource {
       final thirtyDaysAgo =
           DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
       final countResult = await _client
-          .from('app_users')
+          .from('users')
           .select('id')
           .eq('store_id', storeId)
-          .gte('last_sign_in_at', thirtyDaysAgo)
+          .gte('last_login_at', thirtyDaysAgo)
           .count(CountOption.exact);
 
       result.add(SAActiveUsersPerStore(
@@ -273,7 +274,7 @@ class SAAnalyticsDatasource {
           .eq('status', 'trial')
           .count(CountOption.exact), // 2: trial subs
       _client
-          .from('app_users')
+          .from('users')
           .select('id')
           .gte(
             'created_at',
@@ -284,16 +285,16 @@ class SAAnalyticsDatasource {
           .count(CountOption.exact), // 3: new signups (30d)
     ]);
 
-    // Calculate MRR
+    // Calculate MRR from subscription amounts
     final subsData = await _client
         .from('subscriptions')
-        .select('plans(monthly_price)')
+        .select('amount, billing_cycle')
         .eq('status', 'active');
     double mrr = 0;
     for (final row in subsData as List) {
-      final price =
-          (row['plans'] as Map<String, dynamic>?)?['monthly_price'] as num?;
-      if (price != null) mrr += price.toDouble();
+      final amount = (row['amount'] as num?)?.toDouble() ?? 0;
+      final cycle = row['billing_cycle'] as String? ?? 'monthly';
+      mrr += cycle == 'yearly' ? amount / 12 : amount;
     }
 
     return SADashboardKPIs(

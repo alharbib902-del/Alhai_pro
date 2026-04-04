@@ -47,7 +47,11 @@ class DeliveryDatasource {
 
   DeliveryDatasource(this._client, this._cache);
 
-  String get _driverId => _client.auth.currentUser!.id;
+  String get _driverId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('المستخدم غير مسجّل الدخول');
+    return user.id;
+  }
 
   // ─── Client-side rate limiting ───────────────────────────────────────────
 

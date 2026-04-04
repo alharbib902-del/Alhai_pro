@@ -12761,6 +12761,94 @@ class AppLocalizationsHi extends AppLocalizations {
   String get distributorRiyal => 'ريال';
 
   @override
+  String get distributorUnsavedChanges => 'تغييرات غير محفوظة';
+
+  @override
+  String get distributorUnsavedChangesMessage =>
+      'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟';
+
+  @override
+  String get distributorStay => 'البقاء';
+
+  @override
+  String get distributorLeave => 'مغادرة';
+
+  @override
+  String get distributorNoDataToExport => 'لا توجد بيانات للتصدير';
+
+  @override
+  String get distributorReportExported => 'تم تصدير التقرير بنجاح';
+
+  @override
+  String get distributorExportWebOnly => 'التصدير متاح فقط على الويب';
+
+  @override
+  String get distributorPrintWebOnly => 'الطباعة متاحة فقط على الويب';
+
+  @override
+  String get distributorSaveError => 'حدث خطأ أثناء الحفظ';
+
+  @override
+  String get distributorInvalidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get distributorInvalidPhone => 'يرجى إدخال رقم هاتف صحيح';
+
+  @override
+  String get distributorActionUndone => 'تم التراجع عن الإجراء';
+
+  @override
+  String get distributorSessionExpired =>
+      'انتهت الجلسة بسبب عدم النشاط. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get distributorWelcomePortal => 'مرحباً في بوابة الموزع!';
+
+  @override
+  String get distributorGetStarted => 'ابدأ باستكشاف هذه الميزات الرئيسية:';
+
+  @override
+  String get distributorManagePrices => 'إدارة الأسعار';
+
+  @override
+  String get distributorManagePricesDesc => 'تحديد وتحديث أسعار منتجاتك';
+
+  @override
+  String get distributorViewReports => 'عرض التقارير';
+
+  @override
+  String get distributorViewReportsDesc => 'تتبع أداء المبيعات والتحليلات';
+
+  @override
+  String get distributorUpdateSettings => 'تحديث الإعدادات';
+
+  @override
+  String get distributorUpdateSettingsDesc =>
+      'إعداد معلومات الشركة ومناطق التوصيل والإشعارات';
+
+  @override
+  String get distributorReviewOrdersDesc =>
+      'مراجعة وإدارة طلبات الشراء الواردة';
+
+  @override
+  String get distributorMonthlySalesSar => 'المبيعات الشهرية (ر.س)';
+
+  @override
+  String get distributorPrintReport => 'طباعة التقرير';
+
+  @override
+  String get distributorPrint => 'طباعة';
+
+  @override
+  String get distributorExportCsv => 'تصدير التقرير كملف CSV';
+
+  @override
+  String get distributorExportCsvShort => 'تصدير CSV';
+
+  @override
+  String get distributorSaveCtrlS => 'حفظ التغييرات (Ctrl+S)';
+
+  @override
   String get scanCouponBarcode => 'مسح باركود الكوبون';
 
   @override

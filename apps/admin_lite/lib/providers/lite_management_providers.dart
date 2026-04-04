@@ -24,24 +24,6 @@ final liteAllProductsProvider = FutureProvider.autoDispose<List<ProductsTableDat
   return db.productsDao.getAllProducts(storeId, limit: 500);
 });
 
-/// Provider: Employee shifts schedule
-class ScheduleEntry {
-  final String id;
-  final String employeeName;
-  final String role;
-  final DateTime openedAt;
-  final DateTime? closedAt;
-  final String status;
-  const ScheduleEntry({
-    required this.id,
-    required this.employeeName,
-    required this.role,
-    required this.openedAt,
-    this.closedAt,
-    required this.status,
-  });
-}
-
 /// Provider: Employee schedule from shifts
 final liteEmployeeScheduleProvider = FutureProvider.autoDispose<List<ShiftWithCashier>>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
@@ -89,7 +71,7 @@ final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingAppr
     // Batch both queries in parallel
     final batchResults = await Future.wait([
       db.customSelect(
-        '''SELECT r.id, r.total_amount, r.reason, r.created_at, u.name as user_name
+        '''SELECT r.id, r.total_refund, r.reason, r.created_at, u.name as user_name
            FROM returns r
            LEFT JOIN users u ON r.cashier_id = u.id
            WHERE r.store_id = ? AND r.status = 'pending'
@@ -106,7 +88,7 @@ final litePendingApprovalsProvider = FutureProvider.autoDispose<List<PendingAppr
         type: 'refund',
         reference: row.data['id'] as String,
         description: row.data['reason'] as String? ?? 'Refund request',
-        amount: _toDouble(row.data['total_amount']),
+        amount: _toDouble(row.data['total_refund']),
         requestedBy: row.data['user_name'] as String? ?? 'Unknown',
         createdAt: DateTime.tryParse(row.data['created_at'].toString()) ?? DateTime.now(),
       ));

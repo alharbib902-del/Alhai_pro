@@ -14,6 +14,8 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_auth/alhai_auth.dart' show isAdminProvider, currentUserProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../../core/constants/admin_permissions.dart';
+
 /// شاشة الأدوار والصلاحيات
 class RolesPermissionsScreen extends ConsumerStatefulWidget {
   const RolesPermissionsScreen({super.key});
@@ -1091,30 +1093,31 @@ enum Permission {
   settingsView, settingsManage,
   staffView, staffManage;
 
+  /// Returns the permission string identifier from [AdminPermissions].
   String get name {
     switch (this) {
-      case Permission.posAccess: return 'pos_access';
-      case Permission.posHold: return 'pos_hold';
-      case Permission.posSplitPayment: return 'pos_split_payment';
-      case Permission.productsView: return 'products_view';
-      case Permission.productsManage: return 'products_manage';
-      case Permission.productsDelete: return 'products_delete';
-      case Permission.inventoryView: return 'inventory_view';
-      case Permission.inventoryManage: return 'inventory_manage';
-      case Permission.inventoryAdjust: return 'inventory_adjust';
-      case Permission.customersView: return 'customers_view';
-      case Permission.customersManage: return 'customers_manage';
-      case Permission.customersDelete: return 'customers_delete';
-      case Permission.discountsApply: return 'discounts_apply';
-      case Permission.discountsCreate: return 'discounts_create';
-      case Permission.refundsRequest: return 'refunds_request';
-      case Permission.refundsApprove: return 'refunds_approve';
-      case Permission.reportsView: return 'reports_view';
-      case Permission.reportsExport: return 'reports_export';
-      case Permission.settingsView: return 'settings_view';
-      case Permission.settingsManage: return 'settings_manage';
-      case Permission.staffView: return 'staff_view';
-      case Permission.staffManage: return 'staff_manage';
+      case Permission.posAccess: return AdminPermissions.posAccess;
+      case Permission.posHold: return AdminPermissions.posHold;
+      case Permission.posSplitPayment: return AdminPermissions.posSplitPayment;
+      case Permission.productsView: return AdminPermissions.productsView;
+      case Permission.productsManage: return AdminPermissions.productsManage;
+      case Permission.productsDelete: return AdminPermissions.productsDelete;
+      case Permission.inventoryView: return AdminPermissions.inventoryView;
+      case Permission.inventoryManage: return AdminPermissions.inventoryManage;
+      case Permission.inventoryAdjust: return AdminPermissions.inventoryAdjust;
+      case Permission.customersView: return AdminPermissions.customersView;
+      case Permission.customersManage: return AdminPermissions.customersManage;
+      case Permission.customersDelete: return AdminPermissions.customersDelete;
+      case Permission.discountsApply: return AdminPermissions.discountsApply;
+      case Permission.discountsCreate: return AdminPermissions.discountsCreate;
+      case Permission.refundsRequest: return AdminPermissions.refundsRequest;
+      case Permission.refundsApprove: return AdminPermissions.refundsApprove;
+      case Permission.reportsView: return AdminPermissions.reportsView;
+      case Permission.reportsExport: return AdminPermissions.reportsExport;
+      case Permission.settingsView: return AdminPermissions.settingsView;
+      case Permission.settingsManage: return AdminPermissions.settingsManage;
+      case Permission.staffView: return AdminPermissions.staffView;
+      case Permission.staffManage: return AdminPermissions.staffManage;
     }
   }
 

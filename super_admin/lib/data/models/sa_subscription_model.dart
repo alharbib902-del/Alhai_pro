@@ -1,43 +1,79 @@
 import 'sa_store_model.dart';
 
 /// Typed model for a subscription in the super admin context.
+/// Matches Supabase schema: org_id, plan (TEXT slug),
+/// current_period_start, current_period_end, amount, billing_cycle.
 class SASubscription {
   final String id;
   final String? status;
   final String? startDate;
   final String? endDate;
-  final String? storeId;
+  final String? orgId;
+  final double? amount;
+  final String? currency;
+  final String? billingCycle;
 
-  /// Nested store info from the join.
+  /// Resolved store name (from org_id lookup).
   final SASubscriptionStore? store;
 
-  /// Nested plan info from the join.
-  final SAStorePlan? plan;
+  /// Plan slug from the TEXT field.
+  final String? planSlug;
 
   const SASubscription({
     required this.id,
     this.status,
     this.startDate,
     this.endDate,
-    this.storeId,
+    this.orgId,
+    this.amount,
+    this.currency,
+    this.billingCycle,
     this.store,
-    this.plan,
+    this.planSlug,
   });
 
+  /// Parse from the old nested-join format (backwards compat).
   factory SASubscription.fromJson(Map<String, dynamic> json) {
     final rawStore = json['stores'];
     final rawPlan = json['plans'];
     return SASubscription(
       id: json['id'] as String? ?? '',
       status: json['status'] as String?,
-      startDate: json['start_date'] as String?,
-      endDate: json['end_date'] as String?,
-      storeId: json['store_id'] as String?,
+      startDate: json['start_date'] as String? ??
+          json['current_period_start'] as String?,
+      endDate: json['end_date'] as String? ??
+          json['current_period_end'] as String?,
+      orgId: json['org_id'] as String? ?? json['store_id'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+      currency: json['currency'] as String?,
+      billingCycle: json['billing_cycle'] as String?,
       store: rawStore is Map<String, dynamic>
           ? SASubscriptionStore.fromJson(rawStore)
           : null,
-      plan: rawPlan is Map<String, dynamic>
-          ? SAStorePlan.fromJson(rawPlan)
+      planSlug: json['plan'] as String? ??
+          (rawPlan is Map<String, dynamic>
+              ? rawPlan['slug'] as String?
+              : null),
+    );
+  }
+
+  /// Parse from the actual Supabase schema with optional resolved store name.
+  factory SASubscription.fromSupabase(
+    Map<String, dynamic> json, {
+    String? storeName,
+  }) {
+    return SASubscription(
+      id: json['id'] as String? ?? '',
+      status: json['status'] as String?,
+      startDate: json['current_period_start'] as String?,
+      endDate: json['current_period_end'] as String?,
+      orgId: json['org_id'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+      currency: json['currency'] as String?,
+      billingCycle: json['billing_cycle'] as String?,
+      planSlug: json['plan'] as String?,
+      store: storeName != null
+          ? SASubscriptionStore(id: json['org_id'] as String? ?? '', name: storeName)
           : null,
     );
   }
@@ -45,24 +81,27 @@ class SASubscription {
   Map<String, dynamic> toJson() => {
         'id': id,
         'status': status,
-        'start_date': startDate,
-        'end_date': endDate,
-        'store_id': storeId,
-        'stores': store?.toJson(),
-        'plans': plan?.toJson(),
+        'current_period_start': startDate,
+        'current_period_end': endDate,
+        'org_id': orgId,
+        'plan': planSlug,
+        'amount': amount,
+        'currency': currency,
+        'billing_cycle': billingCycle,
       };
 
   /// Convenience: store name.
   String get storeName => store?.name ?? 'Unknown';
 
-  /// Convenience: plan name.
-  String get planName => plan?.name ?? 'Unknown';
-
-  /// Convenience: plan slug.
-  String get planSlug => plan?.slug ?? 'unknown';
+  /// Convenience: plan name (derived from slug).
+  String get planName => planSlug?.replaceAll('_', ' ') ?? 'Unknown';
 
   /// Convenience: monthly price.
-  double get monthlyPrice => plan?.monthlyPrice ?? 0;
+  double get monthlyPrice {
+    if (amount == null) return 0;
+    if (billingCycle == 'yearly') return amount! / 12;
+    return amount!;
+  }
 }
 
 /// Nested store info within a subscription.

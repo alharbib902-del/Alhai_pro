@@ -25,13 +25,14 @@ class DeliveryDatasource {
   }
 
   /// Stream real-time delivery updates for an order.
-  Stream<Delivery> trackDelivery(String orderId) {
+  /// Emits `null` when no delivery is assigned yet (instead of throwing).
+  Stream<Delivery?> trackDelivery(String orderId) {
     return _client
         .from('deliveries')
         .stream(primaryKey: ['id'])
         .eq('order_id', orderId)
         .map((rows) {
-          if (rows.isEmpty) throw Exception('No delivery found');
+          if (rows.isEmpty) return null;
           return _deliveryFromRow(rows.first);
         });
   }

@@ -53,11 +53,11 @@ class EarningsScreen extends ConsumerWidget {
           Expanded(
             child: summary.when(
               data: (data) {
-                final total = (data['total_earnings'] as num).toDouble();
-                final count = data['total_deliveries'] as int;
-                final avg = (data['avg_per_delivery'] as num).toDouble();
+                final total = (data['total_earnings'] as num?)?.toDouble() ?? 0;
+                final count = (data['total_deliveries'] as num?)?.toInt() ?? 0;
+                final avg = (data['avg_per_delivery'] as num?)?.toDouble() ?? 0;
                 final distance =
-                    (data['total_distance_km'] as num).toDouble();
+                    (data['total_distance_km'] as num?)?.toDouble() ?? 0;
                 final deliveries =
                     data['deliveries'] as List<Map<String, dynamic>>;
 

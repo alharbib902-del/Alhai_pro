@@ -37,7 +37,14 @@ class OrderDetailScreen extends ConsumerWidget {
       ),
       body: orderAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(child: Text('فشل تحميل الطلب')),
+        error: (_, __) => Center(
+          child: AlhaiEmptyState.error(
+            title: 'فشل تحميل الطلب',
+            description: 'تحقق من اتصالك بالإنترنت',
+            actionText: 'إعادة المحاولة',
+            onAction: () => ref.invalidate(orderDetailProvider(orderId)),
+          ),
+        ),
         data: (order) => SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.md),
           child: Column(

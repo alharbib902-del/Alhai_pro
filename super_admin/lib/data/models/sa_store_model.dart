@@ -82,24 +82,27 @@ class SAStore {
 }
 
 /// Nested subscription info as returned by the stores query join.
+/// Supabase schema: org_id, plan (TEXT), current_period_start/end, amount.
 class SAStoreSubscription {
   final String? id;
-  final String? planId;
+  final String? planSlug;
   final String? status;
   final String? startDate;
   final String? endDate;
-  final String? storeId;
+  final String? orgId;
+  final double? amount;
 
-  /// Nested plan info from the join.
+  /// Nested plan info from join (if sa_plans table exists).
   final SAStorePlan? plan;
 
   const SAStoreSubscription({
     this.id,
-    this.planId,
+    this.planSlug,
     this.status,
     this.startDate,
     this.endDate,
-    this.storeId,
+    this.orgId,
+    this.amount,
     this.plan,
   });
 
@@ -107,11 +110,14 @@ class SAStoreSubscription {
     final rawPlan = json['plans'] ?? json['plan'];
     return SAStoreSubscription(
       id: json['id'] as String?,
-      planId: json['plan_id'] as String?,
+      planSlug: json['plan'] as String? ?? json['plan_id'] as String?,
       status: json['status'] as String?,
-      startDate: json['start_date'] as String?,
-      endDate: json['end_date'] as String?,
-      storeId: json['store_id'] as String?,
+      startDate: json['current_period_start'] as String? ??
+          json['start_date'] as String?,
+      endDate: json['current_period_end'] as String? ??
+          json['end_date'] as String?,
+      orgId: json['org_id'] as String? ?? json['store_id'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
       plan: rawPlan is Map<String, dynamic>
           ? SAStorePlan.fromJson(rawPlan)
           : null,
@@ -120,16 +126,15 @@ class SAStoreSubscription {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'plan_id': planId,
+        'plan': planSlug,
         'status': status,
-        'start_date': startDate,
-        'end_date': endDate,
-        'store_id': storeId,
-        'plans': plan?.toJson(),
+        'current_period_start': startDate,
+        'current_period_end': endDate,
+        'org_id': orgId,
+        'amount': amount,
       };
 
-  String? get planName => plan?.name;
-  String? get planSlug => plan?.slug;
+  String? get planName => plan?.name ?? planSlug?.replaceAll('_', ' ');
 }
 
 /// Nested plan info within a subscription.

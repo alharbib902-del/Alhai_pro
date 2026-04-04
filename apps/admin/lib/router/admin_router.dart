@@ -325,27 +325,115 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   if (authState.status == AuthStatus.authenticated && storeId != null) {
     final permissions = _permissionsForRole(role);
 
-    // Users management → requires AdminPermissions.usersManage
-    if (path == AppRoutes.settingsUsers &&
-        !permissions.contains(AdminPermissions.usersManage)) {
+    // Helper: redirect to home if permission is missing
+    bool lacks(String perm) => !permissions.contains(perm);
+
+    // ── Users & Roles ──────────────────────────────────────────
+    if (path == AppRoutes.settingsUsers && lacks(AdminPermissions.usersManage)) {
+      return AppRoutes.home;
+    }
+    if (path == AppRoutes.settingsRoles && lacks(AdminPermissions.rolesManage)) {
+      return AppRoutes.home;
+    }
+    if (path == AppRoutes.employees && lacks(AdminPermissions.staffManage)) {
+      return AppRoutes.home;
+    }
+    if (path.startsWith('/employees/') && lacks(AdminPermissions.staffView)) {
       return AppRoutes.home;
     }
 
-    // Roles & permissions → requires AdminPermissions.rolesManage
-    if (path == AppRoutes.settingsRoles &&
-        !permissions.contains(AdminPermissions.rolesManage)) {
+    // ── Settings (all sub-routes) ──────────────────────────────
+    if (path == AppRoutes.settings && lacks(AdminPermissions.settingsManage)) {
+      return AppRoutes.home;
+    }
+    if (path.startsWith('/settings/') &&
+        path != AppRoutes.settingsLanguage &&
+        path != AppRoutes.settingsTheme &&
+        path != AppRoutes.settingsHelp &&
+        lacks(AdminPermissions.settingsManage) &&
+        lacks(AdminPermissions.settingsView)) {
       return AppRoutes.home;
     }
 
-    // Settings root → requires AdminPermissions.settingsManage
-    if (path == AppRoutes.settings &&
-        !permissions.contains(AdminPermissions.settingsManage)) {
+    // ── Reports ────────────────────────────────────────────────
+    if ((path == AppRoutes.reports || path == AppRoutes.complaintsReport) &&
+        lacks(AdminPermissions.reportsView)) {
       return AppRoutes.home;
     }
 
-    // Reports → requires AdminPermissions.reportsView
-    if (path == AppRoutes.reports &&
-        !permissions.contains(AdminPermissions.reportsView)) {
+    // ── Purchases ──────────────────────────────────────────────
+    if ((path == AppRoutes.purchaseForm ||
+         path == AppRoutes.smartReorder ||
+         path == AppRoutes.aiInvoiceImport ||
+         path == AppRoutes.aiInvoiceReview ||
+         path == AppRoutes.supplierReturns ||
+         path.startsWith('/purchases/')) &&
+        lacks(AdminPermissions.purchasesManage) &&
+        lacks(AdminPermissions.purchasesView)) {
+      return AppRoutes.home;
+    }
+
+    // ── Marketing ──────────────────────────────────────────────
+    if ((path == AppRoutes.discounts ||
+         path == AppRoutes.coupons ||
+         path == AppRoutes.specialOffers ||
+         path == AppRoutes.smartPromotions ||
+         path == AppRoutes.loyalty ||
+         path == AppRoutes.giftCards) &&
+        lacks(AdminPermissions.marketingManage)) {
+      return AppRoutes.home;
+    }
+
+    // ── Inventory ──────────────────────────────────────────────
+    if ((path == AppRoutes.inventory ||
+         path == AppRoutes.expiryTracking ||
+         path == AppRoutes.damagedGoods) &&
+        lacks(AdminPermissions.inventoryManage) &&
+        lacks(AdminPermissions.inventoryView)) {
+      return AppRoutes.home;
+    }
+
+    // ── Products ───────────────────────────────────────────────
+    if ((path == AppRoutes.productsAdd || path.startsWith('/products/edit/')) &&
+        lacks(AdminPermissions.productsManage)) {
+      return AppRoutes.home;
+    }
+
+    // ── Customers ──────────────────────────────────────────────
+    if ((path == AppRoutes.customerAnalytics ||
+         path == AppRoutes.customerGroups) &&
+        lacks(AdminPermissions.customersManage) &&
+        lacks(AdminPermissions.customersView)) {
+      return AppRoutes.home;
+    }
+
+    // ── Financial ──────────────────────────────────────────────
+    if ((path == AppRoutes.expenses ||
+         path == AppRoutes.expenseCategories ||
+         path == AppRoutes.monthlyClose) &&
+        lacks(AdminPermissions.financialManage)) {
+      return AppRoutes.home;
+    }
+
+    // ── Backup & Audit ─────────────────────────────────────────
+    if (path == AppRoutes.settingsBackup && lacks(AdminPermissions.backupManage)) {
+      return AppRoutes.home;
+    }
+    if (path == AppRoutes.settingsActivityLog && lacks(AdminPermissions.auditLogView)) {
+      return AppRoutes.home;
+    }
+
+    // ── Devices & Sync ─────────────────────────────────────────
+    if ((path == AppRoutes.deviceLog ||
+         path == AppRoutes.syncStatus ||
+         path == AppRoutes.pendingTransactions ||
+         path == AppRoutes.conflictResolution) &&
+        lacks(AdminPermissions.devicesManage)) {
+      return AppRoutes.home;
+    }
+
+    // ── Branches ───────────────────────────────────────────────
+    if (path == AppRoutes.branches && lacks(AdminPermissions.settingsManage)) {
       return AppRoutes.home;
     }
   }

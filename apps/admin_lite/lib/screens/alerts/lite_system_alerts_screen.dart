@@ -7,6 +7,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
@@ -15,6 +16,14 @@ import '../../providers/lite_screen_providers.dart';
 /// System alerts screen for Admin Lite
 class LiteSystemAlertsScreen extends ConsumerWidget {
   const LiteSystemAlertsScreen({super.key});
+
+  void _handleAlertAction(BuildContext context, WidgetRef ref, SystemAlertData alert) {
+    if (alert.title.contains('Sync') || alert.title.contains('Unsynced')) {
+      context.go('/sync-status');
+    } else {
+      ref.invalidate(liteSystemAlertsProvider);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +47,7 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
               padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
               itemCount: alerts.length,
               itemBuilder: (context, index) {
-                return _buildAlertTile(context, alerts[index], isDark);
+                return _buildAlertTile(context, ref, alerts[index], isDark);
               },
             ),
           );
@@ -85,7 +94,7 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
     return Icons.warning_amber_rounded;
   }
 
-  Widget _buildAlertTile(BuildContext context, SystemAlertData alert, bool isDark) {
+  Widget _buildAlertTile(BuildContext context, WidgetRef ref, SystemAlertData alert, bool isDark) {
     final color = _severityColor(alert.severity);
     final icon = _alertIcon(alert.title);
 
@@ -125,7 +134,7 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () => _handleAlertAction(context, ref, alert),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
                   minimumSize: const Size(0, 32),

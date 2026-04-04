@@ -70,21 +70,23 @@ class AddressesDatasource {
         .from('addresses')
         .delete()
         .eq('id', id)
-        .eq('user_id', _userId);
+        .eq('user_id', _userId)
+        .timeout(AppConstants.networkTimeout);
   }
 
   Future<void> setDefaultAddress(String id) async {
-    // Unset all defaults
+    // Unset all defaults then set new — single RPC would be better but this works
     await _client
         .from('addresses')
         .update({'is_default': false})
-        .eq('user_id', _userId);
+        .eq('user_id', _userId)
+        .timeout(AppConstants.networkTimeout);
 
-    // Set new default
     await _client
         .from('addresses')
         .update({'is_default': true})
-        .eq('id', id);
+        .eq('id', id)
+        .timeout(AppConstants.networkTimeout);
   }
 
   Address _addressFromRow(Map<String, dynamic> row) {

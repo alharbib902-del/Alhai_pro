@@ -11,21 +11,32 @@ final cartProvider = StateNotifierProvider<CartNotifier, Cart>((ref) {
   return CartNotifier();
 });
 
+/// Whether the cart has finished loading from disk.
+final cartLoadedProvider = FutureProvider<bool>((ref) async {
+  final notifier = ref.read(cartProvider.notifier);
+  await notifier.loadFromDisk();
+  return true;
+});
+
 class CartNotifier extends StateNotifier<Cart> {
+  bool _loaded = false;
+
   CartNotifier() : super(const Cart()) {
-    _loadFromDisk();
+    loadFromDisk();
   }
 
-  Future<void> _loadFromDisk() async {
+  Future<void> loadFromDisk() async {
+    if (_loaded) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       final json = prefs.getString(_cartKey);
-      if (json != null) {
+      if (json != null && mounted) {
         state = Cart.fromJson(jsonDecode(json) as Map<String, dynamic>);
       }
     } catch (e) {
       debugPrint('[CartProvider] Error loading cart from disk: $e');
     }
+    _loaded = true;
   }
 
   Future<void> _saveToDisk() async {

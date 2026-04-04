@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,9 +29,9 @@ class ProofDatasource {
             photoBytes,
             fileOptions: const FileOptions(contentType: 'image/jpeg'),
           );
-      photoUrl = _client.storage
+      photoUrl = await _client.storage
           .from('delivery-proofs')
-          .getPublicUrl(fileName);
+          .createSignedUrl(fileName, 60 * 60 * 24 * 365);
     }
 
     // Save proof record

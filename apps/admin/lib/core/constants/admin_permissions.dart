@@ -1,13 +1,12 @@
 /// Centralised Permission Constants for the Admin App
 ///
-/// Provides a single source of truth for all permission string identifiers
-/// used across the admin dashboard. Currently the router guards check
-/// [UserRole] directly; when a full RBAC system is wired these constants
-/// should be matched against the authenticated user's permission set
-/// (e.g. stored in `role_permissions` table).
+/// Single source of truth for all permission string identifiers used across
+/// the admin dashboard — router guards, roles screen, and sync payloads.
 ///
-/// See also: `admin_router.dart` – `_guardRedirect` uses role-level checks
-/// that should eventually be replaced with these granular permissions.
+/// The router guards in `admin_router.dart` use [_permissionsForRole] to
+/// derive a permission set from the user's [UserRole]. When a full RBAC
+/// system is wired (permissions stored per-user in the DB), replace that
+/// helper with a live permission-set lookup.
 library;
 
 /// Permission string constants for the Admin app.
@@ -50,8 +49,17 @@ abstract class AdminPermissions {
   /// View product catalogue (read-only).
   static const String productsView = 'products_view';
 
+  /// Delete products from the system.
+  static const String productsDelete = 'products_delete';
+
+  /// View inventory counts (read-only).
+  static const String inventoryView = 'inventory_view';
+
   /// Manage inventory counts, adjustments, and transfers.
   static const String inventoryManage = 'inventory_manage';
+
+  /// Manually adjust inventory quantities.
+  static const String inventoryAdjust = 'inventory_adjust';
 
   // ── Purchases & Suppliers ───────────────────────────────────────
   /// Create and manage purchase orders and supplier returns.
@@ -64,6 +72,12 @@ abstract class AdminPermissions {
   /// Create and manage discounts, coupons, and promotions.
   static const String marketingManage = 'marketing_manage';
 
+  /// Apply existing discounts at POS.
+  static const String discountsApply = 'discounts_apply';
+
+  /// Create new discount rules.
+  static const String discountsCreate = 'discounts_create';
+
   // ── Customers ───────────────────────────────────────────────────
   /// Create, edit, or delete customer records.
   static const String customersManage = 'customers_manage';
@@ -71,19 +85,38 @@ abstract class AdminPermissions {
   /// View customer list and details (read-only).
   static const String customersView = 'customers_view';
 
+  /// Delete customers from the system.
+  static const String customersDelete = 'customers_delete';
+
   // ── Financial ───────────────────────────────────────────────────
   /// Manage expenses, invoices, and financial records.
   static const String financialManage = 'financial_manage';
 
-  /// Process refunds and returns.
-  static const String refundsManage = 'refunds_manage';
+  /// Request a refund for products.
+  static const String refundsRequest = 'refunds_request';
+
+  /// Approve refund requests.
+  static const String refundsApprove = 'refunds_approve';
 
   // ── POS Operations ──────────────────────────────────────────────
   /// Access the POS / sales screens.
   static const String posAccess = 'pos_access';
 
+  /// Hold invoices and resume later.
+  static const String posHold = 'pos_hold';
+
+  /// Split payment across multiple methods.
+  static const String posSplitPayment = 'pos_split_payment';
+
   /// Open and close cash drawers / shifts.
   static const String shiftsManage = 'shifts_manage';
+
+  // ── Staff ───────────────────────────────────────────────────────
+  /// View employee list (read-only).
+  static const String staffView = 'staff_view';
+
+  /// Add, edit, or manage employees.
+  static const String staffManage = 'staff_manage';
 
   // ── System ──────────────────────────────────────────────────────
   /// View activity / audit logs.
@@ -108,16 +141,27 @@ abstract class AdminPermissions {
     reportsExport,
     productsManage,
     productsView,
+    productsDelete,
+    inventoryView,
     inventoryManage,
+    inventoryAdjust,
     purchasesManage,
     purchasesView,
     marketingManage,
+    discountsApply,
+    discountsCreate,
     customersManage,
     customersView,
+    customersDelete,
     financialManage,
-    refundsManage,
+    refundsRequest,
+    refundsApprove,
     posAccess,
+    posHold,
+    posSplitPayment,
     shiftsManage,
+    staffView,
+    staffManage,
     auditLogView,
     backupManage,
     devicesManage,
@@ -134,16 +178,26 @@ abstract class AdminPermissions {
     reportsExport,
     productsManage,
     productsView,
+    productsDelete,
+    inventoryView,
     inventoryManage,
+    inventoryAdjust,
     purchasesManage,
     purchasesView,
     marketingManage,
+    discountsApply,
+    discountsCreate,
     customersManage,
     customersView,
     financialManage,
-    refundsManage,
+    refundsRequest,
+    refundsApprove,
     posAccess,
+    posHold,
+    posSplitPayment,
     shiftsManage,
+    staffView,
+    staffManage,
     auditLogView,
   ];
 
@@ -152,6 +206,8 @@ abstract class AdminPermissions {
     productsView,
     customersView,
     posAccess,
+    posHold,
     shiftsManage,
+    discountsApply,
   ];
 }

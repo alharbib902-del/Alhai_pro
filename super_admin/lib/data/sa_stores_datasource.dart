@@ -17,8 +17,8 @@ class SAStoresDatasource {
   }) async {
     var query = _client.from('stores').select('''
       id, name, address, phone, email, is_active, owner_id,
-      business_type, created_at, logo,
-      subscriptions(plan_id, status, plans(name, slug))
+      business_type, created_at, logo, org_id,
+      subscriptions(id, plan, status, amount, current_period_start, current_period_end, org_id)
     ''').order('created_at', ascending: false);
 
     if (statusFilter != null && statusFilter != 'all') {
@@ -47,7 +47,7 @@ class SAStoresDatasource {
         .from('stores')
         .select('''
           *,
-          subscriptions(*, plans(*))
+          subscriptions(*)
         ''')
         .eq('id', storeId)
         .single();
@@ -71,22 +71,18 @@ class SAStoresDatasource {
           .eq('store_id', storeId)
           .count(CountOption.exact),
       _client
-          .from('app_users')
-          .select('id')
-          .eq('store_id', storeId)
-          .count(CountOption.exact),
-      _client
-          .from('branches')
+          .from('users')
           .select('id')
           .eq('store_id', storeId)
           .count(CountOption.exact),
     ]);
 
+    // branches table does not exist; default to 1 (main store)
     return SAStoreUsageStats(
       transactions: results[0].count,
       products: results[1].count,
       employees: results[2].count,
-      branches: results[3].count,
+      branches: 1,
     );
   }
 
@@ -115,26 +111,22 @@ class SAStoresDatasource {
     final storeId = storeData['id'] as String;
 
     try {
-      // Step 2: Fetch plan ID by slug
-      final planData = await _client
-          .from('plans')
-          .select('id')
-          .eq('slug', planSlug)
-          .maybeSingle();
+      // Step 2: Create subscription with plan slug
+      final now = DateTime.now();
+      final endDate = now.add(const Duration(days: 30));
+      final orgId = storeData['org_id'] as String? ?? storeId;
 
-      // Step 3: Insert subscription
-      if (planData != null) {
-        final now = DateTime.now();
-        final endDate = now.add(const Duration(days: 30));
-
-        await _client.from('subscriptions').insert({
-          'store_id': storeId,
-          'plan_id': planData['id'],
-          'status': planSlug == 'trial' ? 'trial' : 'active',
-          'start_date': now.toIso8601String(),
-          'end_date': endDate.toIso8601String(),
-        });
-      }
+      await _client.from('subscriptions').insert({
+        'id': '${storeId}_sub_${now.millisecondsSinceEpoch}',
+        'org_id': orgId,
+        'plan': planSlug,
+        'status': planSlug == 'trial' ? 'trial' : 'active',
+        'current_period_start': now.toIso8601String(),
+        'current_period_end': endDate.toIso8601String(),
+        'amount': 0,
+        'currency': 'SAR',
+        'billing_cycle': 'monthly',
+      });
     } catch (e) {
       // Rollback: delete the store if subscription creation fails
       await _client.from('stores').delete().eq('id', storeId);
@@ -154,19 +146,19 @@ class SAStoresDatasource {
 
   /// Update store subscription plan.
   Future<void> updateStorePlan(String storeId, String planSlug) async {
-    final planData = await _client
-        .from('plans')
-        .select('id')
-        .eq('slug', planSlug)
+    // Get org_id for this store
+    final store = await _client
+        .from('stores')
+        .select('org_id')
+        .eq('id', storeId)
         .maybeSingle();
 
-    if (planData != null) {
-      await _client
-          .from('subscriptions')
-          .update({'plan_id': planData['id']})
-          .eq('store_id', storeId)
-          .eq('status', 'active');
-    }
+    final orgId = store?['org_id'] as String? ?? storeId;
+    await _client
+        .from('subscriptions')
+        .update({'plan': planSlug})
+        .eq('org_id', orgId)
+        .eq('status', 'active');
   }
 
   /// Get total store count.
@@ -204,10 +196,10 @@ class SAStoresDatasource {
         .eq('id', storeId);
   }
 
-  /// Get store owner info from app_users.
+  /// Get store owner info from users.
   Future<SAStoreOwner?> getStoreOwner(String storeId) async {
     final data = await _client
-        .from('app_users')
+        .from('users')
         .select('id, name, phone, email, role')
         .eq('store_id', storeId)
         .eq('role', 'owner')

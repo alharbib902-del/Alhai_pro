@@ -22,22 +22,30 @@ class CustomerChatDatasource {
     required String orderId,
     required String text,
   }) async {
-    await _client.from('chat_messages').insert({
-      'order_id': orderId,
-      'sender_type': 'customer',
-      'sender_id': _userId,
-      'text': text,
-      'language': 'ar',
-    });
+    try {
+      await _client.from('chat_messages').insert({
+        'order_id': orderId,
+        'sender_type': 'customer',
+        'sender_id': _userId,
+        'text': text,
+        'language': 'ar',
+      });
+    } catch (e) {
+      throw Exception('فشل إرسال الرسالة');
+    }
   }
 
   /// Mark messages as read.
   Future<void> markAsRead(String orderId) async {
-    await _client
-        .from('chat_messages')
-        .update({'is_read': true})
-        .eq('order_id', orderId)
-        .neq('sender_id', _userId)
-        .eq('is_read', false);
+    try {
+      await _client
+          .from('chat_messages')
+          .update({'is_read': true})
+          .eq('order_id', orderId)
+          .neq('sender_id', _userId)
+          .eq('is_read', false);
+    } catch (_) {
+      // Best-effort — don't block UI for read receipts
+    }
   }
 }

@@ -12,7 +12,7 @@ void main() {
         'email': 'ahmed@test.com',
         'role': 'storeOwner',
         'created_at': '2024-01-15T10:00:00.000Z',
-        'last_sign_in_at': '2024-06-01T08:00:00.000Z',
+        'last_login_at': '2024-06-01T08:00:00.000Z',
         'is_active': true,
         'store_id': 'store-001',
       };
@@ -27,7 +27,7 @@ void main() {
       expect(user.email, equals('ahmed@test.com'));
       expect(user.role, equals('storeOwner'));
       expect(user.createdAt, equals('2024-01-15T10:00:00.000Z'));
-      expect(user.lastSignInAt, equals('2024-06-01T08:00:00.000Z'));
+      expect(user.lastLoginAt, equals('2024-06-01T08:00:00.000Z'));
       expect(user.isActive, isTrue);
       expect(user.storeId, equals('store-001'));
     });
@@ -61,7 +61,7 @@ void main() {
         email: 'test@test.com',
         role: 'employee',
         createdAt: '2024-01-01T00:00:00Z',
-        lastSignInAt: '2024-06-01T00:00:00Z',
+        lastLoginAt: '2024-06-01T00:00:00Z',
         isActive: true,
         storeId: 'store-1',
       );
@@ -85,7 +85,7 @@ void main() {
 
       final user = SAUser(
         id: 'u1',
-        lastSignInAt: recentTime,
+        lastLoginAt: recentTime,
       );
 
       expect(user.isOnline, isTrue);
@@ -98,19 +98,19 @@ void main() {
 
       final user = SAUser(
         id: 'u2',
-        lastSignInAt: oldTime,
+        lastLoginAt: oldTime,
       );
 
       expect(user.isOnline, isFalse);
     });
 
-    test('returns false when lastSignInAt is null', () {
+    test('returns false when lastLoginAt is null', () {
       const user = SAUser(id: 'u3');
       expect(user.isOnline, isFalse);
     });
 
-    test('returns false when lastSignInAt is unparseable', () {
-      const user = SAUser(id: 'u4', lastSignInAt: 'not-a-date');
+    test('returns false when lastLoginAt is unparseable', () {
+      const user = SAUser(id: 'u4', lastLoginAt: 'not-a-date');
       expect(user.isOnline, isFalse);
     });
   });
@@ -121,7 +121,7 @@ void main() {
           .subtract(const Duration(minutes: 1))
           .toIso8601String();
 
-      final user = SAUser(id: 'u1', lastSignInAt: recentTime);
+      final user = SAUser(id: 'u1', lastLoginAt: recentTime);
       expect(user.lastActiveFormatted, equals('Just now'));
     });
 
@@ -130,7 +130,7 @@ void main() {
           .subtract(const Duration(minutes: 30))
           .toIso8601String();
 
-      final user = SAUser(id: 'u2', lastSignInAt: time);
+      final user = SAUser(id: 'u2', lastLoginAt: time);
       expect(user.lastActiveFormatted, equals('30 min ago'));
     });
 
@@ -139,7 +139,7 @@ void main() {
           .subtract(const Duration(hours: 3))
           .toIso8601String();
 
-      final user = SAUser(id: 'u3', lastSignInAt: time);
+      final user = SAUser(id: 'u3', lastLoginAt: time);
       expect(user.lastActiveFormatted, equals('3 hr ago'));
     });
 
@@ -148,7 +148,7 @@ void main() {
           .subtract(const Duration(days: 3))
           .toIso8601String();
 
-      final user = SAUser(id: 'u4', lastSignInAt: time);
+      final user = SAUser(id: 'u4', lastLoginAt: time);
       expect(user.lastActiveFormatted, equals('3 days ago'));
     });
 
@@ -157,18 +157,18 @@ void main() {
           .subtract(const Duration(days: 30))
           .toIso8601String();
 
-      final user = SAUser(id: 'u5', lastSignInAt: time);
+      final user = SAUser(id: 'u5', lastLoginAt: time);
       // Should be YYYY-MM-DD format
       expect(user.lastActiveFormatted, matches(RegExp(r'\d{4}-\d{2}-\d{2}')));
     });
 
-    test('returns "Never" when lastSignInAt is null', () {
+    test('returns "Never" when lastLoginAt is null', () {
       const user = SAUser(id: 'u6');
       expect(user.lastActiveFormatted, equals('Never'));
     });
 
-    test('returns "Unknown" when lastSignInAt is unparseable', () {
-      const user = SAUser(id: 'u7', lastSignInAt: 'invalid');
+    test('returns "Unknown" when lastLoginAt is unparseable', () {
+      const user = SAUser(id: 'u7', lastLoginAt: 'invalid');
       expect(user.lastActiveFormatted, equals('Unknown'));
     });
   });

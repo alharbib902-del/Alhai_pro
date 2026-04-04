@@ -23720,6 +23720,174 @@ abstract class AppLocalizations {
   /// **'ريال'**
   String get distributorRiyal;
 
+  /// No description provided for @distributorUnsavedChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغييرات غير محفوظة'**
+  String get distributorUnsavedChanges;
+
+  /// No description provided for @distributorUnsavedChangesMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك تغييرات غير محفوظة. هل تريد المغادرة بدون حفظ؟'**
+  String get distributorUnsavedChangesMessage;
+
+  /// No description provided for @distributorStay.
+  ///
+  /// In ar, this message translates to:
+  /// **'البقاء'**
+  String get distributorStay;
+
+  /// No description provided for @distributorLeave.
+  ///
+  /// In ar, this message translates to:
+  /// **'مغادرة'**
+  String get distributorLeave;
+
+  /// No description provided for @distributorNoDataToExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات للتصدير'**
+  String get distributorNoDataToExport;
+
+  /// No description provided for @distributorReportExported.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تصدير التقرير بنجاح'**
+  String get distributorReportExported;
+
+  /// No description provided for @distributorExportWebOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصدير متاح فقط على الويب'**
+  String get distributorExportWebOnly;
+
+  /// No description provided for @distributorPrintWebOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطباعة متاحة فقط على الويب'**
+  String get distributorPrintWebOnly;
+
+  /// No description provided for @distributorSaveError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء الحفظ'**
+  String get distributorSaveError;
+
+  /// No description provided for @distributorInvalidEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال بريد إلكتروني صحيح'**
+  String get distributorInvalidEmail;
+
+  /// No description provided for @distributorInvalidPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إدخال رقم هاتف صحيح'**
+  String get distributorInvalidPhone;
+
+  /// No description provided for @distributorActionUndone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التراجع عن الإجراء'**
+  String get distributorActionUndone;
+
+  /// No description provided for @distributorSessionExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت الجلسة بسبب عدم النشاط. يرجى تسجيل الدخول مرة أخرى.'**
+  String get distributorSessionExpired;
+
+  /// No description provided for @distributorWelcomePortal.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً في بوابة الموزع!'**
+  String get distributorWelcomePortal;
+
+  /// No description provided for @distributorGetStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ باستكشاف هذه الميزات الرئيسية:'**
+  String get distributorGetStarted;
+
+  /// No description provided for @distributorManagePrices.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة الأسعار'**
+  String get distributorManagePrices;
+
+  /// No description provided for @distributorManagePricesDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد وتحديث أسعار منتجاتك'**
+  String get distributorManagePricesDesc;
+
+  /// No description provided for @distributorViewReports.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض التقارير'**
+  String get distributorViewReports;
+
+  /// No description provided for @distributorViewReportsDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبع أداء المبيعات والتحليلات'**
+  String get distributorViewReportsDesc;
+
+  /// No description provided for @distributorUpdateSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث الإعدادات'**
+  String get distributorUpdateSettings;
+
+  /// No description provided for @distributorUpdateSettingsDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد معلومات الشركة ومناطق التوصيل والإشعارات'**
+  String get distributorUpdateSettingsDesc;
+
+  /// No description provided for @distributorReviewOrdersDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراجعة وإدارة طلبات الشراء الواردة'**
+  String get distributorReviewOrdersDesc;
+
+  /// No description provided for @distributorMonthlySalesSar.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات الشهرية (ر.س)'**
+  String get distributorMonthlySalesSar;
+
+  /// No description provided for @distributorPrintReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة التقرير'**
+  String get distributorPrintReport;
+
+  /// No description provided for @distributorPrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة'**
+  String get distributorPrint;
+
+  /// No description provided for @distributorExportCsv.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير التقرير كملف CSV'**
+  String get distributorExportCsv;
+
+  /// No description provided for @distributorExportCsvShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير CSV'**
+  String get distributorExportCsvShort;
+
+  /// No description provided for @distributorSaveCtrlS.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التغييرات (Ctrl+S)'**
+  String get distributorSaveCtrlS;
+
   /// No description provided for @scanCouponBarcode.
   ///
   /// In ar, this message translates to:

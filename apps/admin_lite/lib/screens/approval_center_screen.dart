@@ -468,13 +468,14 @@ class _RefundCard extends ConsumerWidget {
     if (!context.mounted) return;
 
     final storeId = ref.read(currentStoreIdProvider);
+    final user = ref.read(currentUserProvider);
     if (storeId == null) return;
 
     final success = await approveRefund(
       returnId: refund.id,
       storeId: storeId,
-      userId: 'admin',
-      userName: 'Admin',
+      userId: user?.id ?? 'unknown',
+      userName: user?.name ?? 'Unknown',
     );
 
     if (!context.mounted) return;
@@ -507,13 +508,14 @@ class _RefundCard extends ConsumerWidget {
     if (!context.mounted) return;
 
     final storeId = ref.read(currentStoreIdProvider);
+    final user = ref.read(currentUserProvider);
     if (storeId == null) return;
 
     final success = await rejectRefund(
       returnId: refund.id,
       storeId: storeId,
-      userId: 'admin',
-      userName: 'Admin',
+      userId: user?.id ?? 'unknown',
+      userName: user?.name ?? 'Unknown',
     );
 
     if (!context.mounted) return;

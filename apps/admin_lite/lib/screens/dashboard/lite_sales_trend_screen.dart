@@ -1,23 +1,27 @@
 /// Sales Trend Mini Chart Screen
 ///
-/// Displays sales trends with a simple line chart visualization,
+/// Displays sales trends with a simple bar chart visualization,
 /// period selector (day/week/month), and comparison indicators.
+/// Uses liteDailySalesProvider and liteWeeklyComparisonProvider.
 /// Supports RTL, dark mode, and responsive layouts.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../providers/lite_screen_providers.dart';
+
 /// Sales Trend Screen - mini chart with period comparison
-class LiteSalesTrendScreen extends StatefulWidget {
+class LiteSalesTrendScreen extends ConsumerStatefulWidget {
   const LiteSalesTrendScreen({super.key});
 
   @override
-  State<LiteSalesTrendScreen> createState() => _LiteSalesTrendScreenState();
+  ConsumerState<LiteSalesTrendScreen> createState() => _LiteSalesTrendScreenState();
 }
 
-class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
+class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
   int _selectedPeriod = 0; // 0=day, 1=week, 2=month
 
   @override
@@ -27,10 +31,22 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
     final isMobile = size.width < 600;
     final l10n = AppLocalizations.of(context)!;
 
+    final dailyAsync = ref.watch(liteDailySalesProvider);
+    final weeklyAsync = ref.watch(liteWeeklyComparisonProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.salesAnalytics),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              ref.invalidate(liteDailySalesProvider);
+              ref.invalidate(liteWeeklyComparisonProvider);
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
@@ -42,15 +58,33 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Summary cards
-            _buildSummaryCards(isDark, isMobile, l10n),
+            dailyAsync.when(
+              data: (data) => _buildSummaryCards(isDark, isMobile, l10n, data),
+              loading: () => const Center(child: Padding(
+                padding: EdgeInsets.all(AlhaiSpacing.lg),
+                child: CircularProgressIndicator(),
+              )),
+              error: (_, __) => Center(child: Text(l10n.errorOccurred)),
+            ),
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Chart area
-            _buildChartCard(isDark, l10n),
+            weeklyAsync.when(
+              data: (data) => _buildChartCard(isDark, l10n, data),
+              loading: () => const Center(child: Padding(
+                padding: EdgeInsets.all(AlhaiSpacing.lg),
+                child: CircularProgressIndicator(),
+              )),
+              error: (_, __) => Center(child: Text(l10n.errorOccurred)),
+            ),
             const SizedBox(height: AlhaiSpacing.lg),
 
             // Comparison section
-            _buildComparisonSection(isDark, l10n),
+            weeklyAsync.when(
+              data: (data) => _buildComparisonSection(isDark, l10n, data),
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
@@ -101,11 +135,13 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
     );
   }
 
-  Widget _buildSummaryCards(bool isDark, bool isMobile, AppLocalizations l10n) {
+  Widget _buildSummaryCards(bool isDark, bool isMobile, AppLocalizations l10n, DailySalesData data) {
     final items = [
-      _SummaryItem(l10n.totalSales, '12,450', AlhaiColors.success, Icons.trending_up, '+8.2%'),
-      _SummaryItem(l10n.orders, '186', AlhaiColors.info, Icons.receipt_long, '+12'),
-      _SummaryItem(l10n.averageSale, '67', AlhaiColors.primary, Icons.analytics, '-2.1%'),
+      _SummaryItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0), AlhaiColors.success, Icons.trending_up),
+      _SummaryItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info, Icons.receipt_long),
+      _SummaryItem(l10n.averageSale, data.todayStats.count > 0
+          ? (data.todayStats.total / data.todayStats.count).toStringAsFixed(0)
+          : '0', AlhaiColors.primary, Icons.analytics),
     ];
 
     return Row(
@@ -155,21 +191,12 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: AlhaiSpacing.xxs),
-          Text(
-            item.change,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: item.change.startsWith('+') ? AlhaiColors.success : AlhaiColors.error,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildChartCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildChartCard(bool isDark, AppLocalizations l10n, WeeklyComparisonData data) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -191,21 +218,19 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.lg),
-          // Placeholder chart using simple bars
           SizedBox(
             height: MediaQuery.of(context).size.width < 600 ? 150 : 200,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: _buildChartBars(isDark, MediaQuery.of(context).size.width < 600 ? 150.0 : 200.0),
+              children: _buildChartBars(isDark, MediaQuery.of(context).size.width < 600 ? 150.0 : 200.0, data.dailyBreakdown),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          // X-axis labels
           Row(
-            children: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+            children: data.dailyBreakdown
                 .map((d) => Expanded(
                       child: Text(
-                        d,
+                        d.dayName,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 10,
@@ -220,16 +245,34 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
     );
   }
 
-  List<Widget> _buildChartBars(bool isDark, double chartHeight) {
-    final values = [0.6, 0.8, 0.5, 0.9, 0.7, 1.0, 0.65];
-    return values.asMap().entries.map((entry) {
+  List<Widget> _buildChartBars(bool isDark, double chartHeight, List<DaySalesData> days) {
+    if (days.isEmpty) return [];
+    final maxVal = days.map((d) => d.current).fold(0.0, (a, b) => a > b ? a : b);
+    if (maxVal == 0) {
+      return days.map((_) => Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
+          child: Container(
+            height: 4,
+            decoration: BoxDecoration(
+              color: AlhaiColors.primary.withValues(alpha: 0.3),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+            ),
+          ),
+        ),
+      )).toList();
+    }
+
+    return days.asMap().entries.map((entry) {
+      final ratio = entry.value.current / maxVal;
+      final isToday = entry.key == days.length - 1;
       return Expanded(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
           child: Container(
-            height: chartHeight * entry.value,
+            height: chartHeight * ratio.clamp(0.05, 1.0),
             decoration: BoxDecoration(
-              color: AlhaiColors.primary.withValues(alpha: entry.key == 5 ? 1.0 : 0.5),
+              color: AlhaiColors.primary.withValues(alpha: isToday ? 1.0 : 0.5),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
             ),
           ),
@@ -238,7 +281,7 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
     }).toList();
   }
 
-  Widget _buildComparisonSection(bool isDark, AppLocalizations l10n) {
+  Widget _buildComparisonSection(bool isDark, AppLocalizations l10n, WeeklyComparisonData data) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -262,22 +305,22 @@ class _LiteSalesTrendScreenState extends State<LiteSalesTrendScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           _ComparisonRow(
             label: l10n.totalSales,
-            current: '87,200',
-            previous: '80,150',
+            current: data.thisWeek.total.toStringAsFixed(0),
+            previous: data.lastWeek.total.toStringAsFixed(0),
             isDark: isDark,
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           _ComparisonRow(
             label: l10n.orders,
-            current: '1,240',
-            previous: '1,105',
+            current: '${data.thisWeek.count}',
+            previous: '${data.lastWeek.count}',
             isDark: isDark,
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           _ComparisonRow(
             label: l10n.customers,
-            current: '342',
-            previous: '310',
+            current: '${data.thisWeekCustomers}',
+            previous: '${data.lastWeekCustomers}',
             isDark: isDark,
           ),
         ],
@@ -291,9 +334,8 @@ class _SummaryItem {
   final String value;
   final Color color;
   final IconData icon;
-  final String change;
 
-  const _SummaryItem(this.label, this.value, this.color, this.icon, this.change);
+  const _SummaryItem(this.label, this.value, this.color, this.icon);
 }
 
 class _ComparisonRow extends StatelessWidget {

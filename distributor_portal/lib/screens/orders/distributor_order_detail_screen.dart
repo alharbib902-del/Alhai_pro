@@ -166,20 +166,20 @@ class _DistributorOrderDetailScreenState
       }
     }
 
-    final success = await ds.updateOrderStatus(
-      widget.orderId,
-      newStatus,
-      notes: _notesController.text.isNotEmpty ? _notesController.text : null,
-      itemPrices: itemPrices.isNotEmpty ? itemPrices : null,
-    );
+    try {
+      await ds.updateOrderStatus(
+        widget.orderId,
+        newStatus,
+        notes: _notesController.text.isNotEmpty ? _notesController.text : null,
+        itemPrices: itemPrices.isNotEmpty ? itemPrices : null,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() => _isProcessing = false);
+      setState(() => _isProcessing = false);
 
-    final l10n = AppLocalizations.of(context);
+      final l10n = AppLocalizations.of(context);
 
-    if (success) {
       // Only invalidate the specific providers for this order.
       // Dashboard and order list will refresh when navigated to.
       ref.invalidate(orderDetailProvider(widget.orderId));
@@ -205,26 +205,33 @@ class _DistributorOrderDetailScreenState
             textColor: AppColors.textOnPrimary,
             onPressed: () async {
               // Revert the status back
-              final revertDs = ref.read(distributorDatasourceProvider);
-              final reverted = await revertDs.updateOrderStatus(
-                widget.orderId,
-                previousStatus,
-              );
-              if (reverted && mounted) {
-                ref.invalidate(orderDetailProvider(widget.orderId));
-                ref.invalidate(orderItemsProvider(widget.orderId));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Action undone'),
-                    backgroundColor: AppColors.info,
-                  ),
+              try {
+                final revertDs = ref.read(distributorDatasourceProvider);
+                await revertDs.updateOrderStatus(
+                  widget.orderId,
+                  previousStatus,
                 );
+                if (mounted) {
+                  ref.invalidate(orderDetailProvider(widget.orderId));
+                  ref.invalidate(orderItemsProvider(widget.orderId));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n?.distributorActionUndone ?? 'Action undone'),
+                      backgroundColor: AppColors.info,
+                    ),
+                  );
+                }
+              } catch (_) {
+                // Undo failed silently — original action already applied
               }
             },
           ),
         ),
       );
-    } else {
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n?.distributorLoadError ?? 'Error'),

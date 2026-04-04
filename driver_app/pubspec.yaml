@@ -31,6 +31,7 @@ dependencies:
   # Backend
   supabase_flutter: ^2.3.4
   dio: ^5.4.0
+  http: ^1.2.1
 
   # Storage
   shared_preferences: ^2.2.2
@@ -58,6 +59,7 @@ dependencies:
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
   flutter_polyline_points: ^2.0.0
+  url_launcher: ^6.2.5
   
   # Background Location Tracking
   flutter_background_service: ^5.0.1

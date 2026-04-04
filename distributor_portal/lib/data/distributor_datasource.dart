@@ -439,11 +439,11 @@ class DistributorDatasource {
     } catch (e) {
       if (e is DatasourceError) {
         if (kDebugMode) debugPrint('updateOrderStatus: $e');
-        return false;
+        rethrow;
       }
       final error = _categorizeError(e, 'updateOrderStatus');
       if (kDebugMode) debugPrint('$error');
-      return false;
+      throw error;
     }
   }
 
@@ -517,11 +517,11 @@ class DistributorDatasource {
     } catch (e) {
       if (e is DatasourceError) {
         if (kDebugMode) debugPrint('updateProductPrice: $e');
-        return false;
+        rethrow;
       }
       final error = _categorizeError(e, 'updateProductPrice');
       if (kDebugMode) debugPrint('$error');
-      return false;
+      throw error;
     }
   }
 
@@ -559,11 +559,11 @@ class DistributorDatasource {
     } catch (e) {
       if (e is DatasourceError) {
         if (kDebugMode) debugPrint('updateProductPrices: $e');
-        return false;
+        rethrow;
       }
       final error = _categorizeError(e, 'updateProductPrices');
       if (kDebugMode) debugPrint('$error');
-      return false;
+      throw error;
     }
   }
 
@@ -942,11 +942,11 @@ class DistributorDatasource {
     } catch (e) {
       if (e is DatasourceError) {
         if (kDebugMode) debugPrint('updateOrgSettings: $e');
-        return false;
+        rethrow;
       }
       final error = _categorizeError(e, 'updateOrgSettings');
       if (kDebugMode) debugPrint('$error');
-      return false;
+      throw error;
     }
   }
 

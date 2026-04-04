@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
@@ -9,32 +10,40 @@ class CategoriesDatasource {
   CategoriesDatasource(this._client);
 
   Future<List<Category>> getCategories(String storeId) async {
-    final data = await _client
-        .from('categories')
-        .select()
-        .eq('store_id', storeId)
-        .eq('is_active', true)
-        .order('sort_order')
-        .timeout(AppConstants.networkTimeout);
+    try {
+      final data = await _client
+          .from('categories')
+          .select()
+          .eq('store_id', storeId)
+          .eq('is_active', true)
+          .order('sort_order')
+          .timeout(AppConstants.networkTimeout);
 
-    return (data as List)
-        .map((row) => _categoryFromRow(row as Map<String, dynamic>))
-        .toList();
+      return (data as List)
+          .map((row) => _categoryFromRow(row as Map<String, dynamic>))
+          .toList();
+    } on TimeoutException {
+      throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
+    }
   }
 
   Future<List<Category>> getRootCategories(String storeId) async {
-    final data = await _client
-        .from('categories')
-        .select()
-        .eq('store_id', storeId)
-        .eq('is_active', true)
-        .isFilter('parent_id', null)
-        .order('sort_order')
-        .timeout(AppConstants.networkTimeout);
+    try {
+      final data = await _client
+          .from('categories')
+          .select()
+          .eq('store_id', storeId)
+          .eq('is_active', true)
+          .isFilter('parent_id', null)
+          .order('sort_order')
+          .timeout(AppConstants.networkTimeout);
 
-    return (data as List)
-        .map((row) => _categoryFromRow(row as Map<String, dynamic>))
-        .toList();
+      return (data as List)
+          .map((row) => _categoryFromRow(row as Map<String, dynamic>))
+          .toList();
+    } on TimeoutException {
+      throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
+    }
   }
 
   Category _categoryFromRow(Map<String, dynamic> row) {

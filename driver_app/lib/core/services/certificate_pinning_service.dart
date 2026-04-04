@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 /// Certificate pinning service for production security.
 ///
@@ -60,44 +62,43 @@ class CertificatePinningService {
   // HttpClient factory
   // ---------------------------------------------------------------------------
 
-  /// Creates an [HttpClient] with certificate pinning enabled in release mode.
+  /// Creates an [http.Client] with certificate pinning enabled in release mode.
   ///
   /// Pass the returned client to `Supabase.initialize(httpClient: ...)` so all
   /// Supabase HTTP traffic goes through the pinned connection.
-  static HttpClient createPinnedClient() {
-    final client = HttpClient()
+  static http.Client createPinnedClient() {
+    final ioClient = HttpClient()
       ..connectionTimeout = const Duration(seconds: 15)
       ..idleTimeout = const Duration(seconds: 30);
 
     if (kDebugMode) {
       // In debug mode, allow all certificates for proxy/inspection tools.
-      if (kDebugMode) {
-        debugPrint('[CertificatePinning] Debug mode - pinning disabled');
-      }
-      return client;
+      debugPrint('[CertificatePinning] Debug mode - pinning disabled');
+      return IOClient(ioClient);
     }
 
     if (_pinnedHashes.isEmpty) {
       // No pins configured yet. Reject bad certificates but skip pin check.
-      client.badCertificateCallback = (cert, host, port) {
+      ioClient.badCertificateCallback = (cert, host, port) {
         debugPrint(
           '[CertificatePinning] Bad certificate for $host:$port '
           '(no pins configured)',
         );
         return false;
       };
-      return client;
+      return IOClient(ioClient);
     }
 
     // Production mode with pins configured: validate fingerprints.
-    client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+    ioClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) {
       debugPrint(
         '[CertificatePinning] Certificate validation failed for $host:$port',
       );
       return false;
     };
 
-    return client;
+    return IOClient(ioClient);
   }
 
   /// Returns a human-readable status string for diagnostics.

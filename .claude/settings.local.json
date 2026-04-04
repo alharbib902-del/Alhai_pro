@@ -201,7 +201,15 @@
       "Bash(npx wrangler pages deploy C:/Users/basem/OneDrive/Desktop/Alhai/apps/admin_lite/build/web --project-name=alhai-admin-lite --branch=main)",
       "Bash(cmd.exe /c \"del /f C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock\")",
       "Bash(GIT_INDEX_FILE=.git/index git status --short)",
-      "Bash(powershell -Command \"Remove-Item -Force ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock'' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500; if \\(Test-Path ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock''\\) { ''Still exists'' } else { ''Removed'' }\")"
+      "Bash(powershell -Command \"Remove-Item -Force ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock'' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500; if \\(Test-Path ''C:\\\\Users\\\\basem\\\\OneDrive\\\\Desktop\\\\Alhai\\\\.git\\\\index.lock''\\) { ''Still exists'' } else { ''Removed'' }\")",
+      "Bash(do echo:*)",
+      "Read(//c/Users/basem/OneDrive/Desktop/Alhai/**)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(dart test:*)",
+      "Bash(git -C C:/Users/basem/OneDrive/Desktop/Alhai ls-files apps/cashier/tmp-*.png apps/cashier/test-results/ apps/cashier/build/)",
+      "WebSearch"
     ]
   }
 }

@@ -14,6 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../providers/lite_screen_providers.dart';
+import '../../providers/approval_providers.dart';
 
 /// Pending approvals screen for Admin Lite
 class LitePendingApprovalsScreen extends ConsumerWidget {
@@ -85,6 +86,43 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _handleAction(BuildContext context, WidgetRef ref, PendingApprovalItem item, String newStatus, AppLocalizations l10n) async {
+    // PIN verification
+    final approved = await ManagerApprovalScreen.showApprovalDialog(
+      context,
+      action: newStatus == 'approved'
+          ? '${l10n.approve} ${item.type} #${item.reference}'
+          : '${l10n.reject} ${item.type} #${item.reference}',
+    );
+    if (!approved) return;
+    if (!context.mounted) return;
+
+    final storeId = ref.read(currentStoreIdProvider);
+    final user = ref.read(currentUserProvider);
+    if (storeId == null) return;
+
+    final userId = user?.id ?? 'unknown';
+    final userName = user?.name ?? 'Unknown';
+
+    if (item.type == 'refund') {
+      final fn = newStatus == 'approved' ? approveRefund : rejectRefund;
+      await fn(returnId: item.id, storeId: storeId, userId: userId, userName: userName);
+    } else {
+      final db = GetIt.I<AppDatabase>();
+      await db.purchasesDao.updateStatus(item.id, newStatus);
+      await db.auditLogDao.log(
+        storeId: storeId,
+        userId: userId,
+        userName: userName,
+        action: AuditAction.saleRefund,
+        entityType: 'purchase',
+        entityId: item.id,
+        description: '${newStatus == 'approved' ? 'Approved' : 'Rejected'} purchase: ${item.id}',
+      );
+    }
+    ref.invalidate(litePendingApprovalsProvider);
+  }
+
   IconData _typeIcon(String type) => type == 'refund' ? Icons.undo : Icons.shopping_cart;
   Color _typeColor(String type) => type == 'refund' ? AlhaiColors.warning : AlhaiColors.info;
 
@@ -151,16 +189,7 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () async {
-                    if (item.type == 'refund') {
-                      final db = GetIt.I<AppDatabase>();
-                      await db.customStatement("UPDATE returns SET status = 'rejected' WHERE id = ?", [item.id]);
-                    } else {
-                      final db = GetIt.I<AppDatabase>();
-                      await db.purchasesDao.updateStatus(item.id, 'rejected');
-                    }
-                    ref.invalidate(litePendingApprovalsProvider);
-                  },
+                  onPressed: () => _handleAction(context, ref, item, 'rejected', l10n),
                   icon: const Icon(Icons.close, size: 16),
                   label: Text(l10n.reject),
                   style: OutlinedButton.styleFrom(
@@ -174,16 +203,7 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: () async {
-                    if (item.type == 'refund') {
-                      final db = GetIt.I<AppDatabase>();
-                      await db.customStatement("UPDATE returns SET status = 'approved' WHERE id = ?", [item.id]);
-                    } else {
-                      final db = GetIt.I<AppDatabase>();
-                      await db.purchasesDao.updateStatus(item.id, 'approved');
-                    }
-                    ref.invalidate(litePendingApprovalsProvider);
-                  },
+                  onPressed: () => _handleAction(context, ref, item, 'approved', l10n),
                   icon: const Icon(Icons.check, size: 16),
                   label: Text(l10n.approve),
                   style: FilledButton.styleFrom(

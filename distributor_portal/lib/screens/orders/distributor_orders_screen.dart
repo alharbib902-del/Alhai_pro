@@ -156,28 +156,38 @@ class _DistributorOrdersScreenState
 
     if (confirmed != true) return;
 
-    final ds = ref.read(distributorDatasourceProvider);
-    for (final orderId in _selectedOrderIds.toList()) {
-      await ds.updateOrderStatus(orderId, newStatus);
+    try {
+      final ds = ref.read(distributorDatasourceProvider);
+      for (final orderId in _selectedOrderIds.toList()) {
+        await ds.updateOrderStatus(orderId, newStatus);
+      }
+
+      if (!mounted) return;
+
+      setState(() => _selectedOrderIds.clear());
+
+      // Refresh orders
+      final statusFilter = _tabStatuses[_tabController.index];
+      ref.invalidate(ordersProvider(statusFilter));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(newStatus == 'approved'
+              ? '$count orders accepted'
+              : '$count orders rejected'),
+          backgroundColor:
+              newStatus == 'approved' ? AppColors.success : AppColors.error,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n?.distributorLoadError ?? 'Error'),
+          backgroundColor: AppColors.error,
+        ),
+      );
     }
-
-    if (!mounted) return;
-
-    setState(() => _selectedOrderIds.clear());
-
-    // Refresh orders
-    final statusFilter = _tabStatuses[_tabController.index];
-    ref.invalidate(ordersProvider(statusFilter));
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(newStatus == 'approved'
-            ? '$count orders accepted'
-            : '$count orders rejected'),
-        backgroundColor:
-            newStatus == 'approved' ? AppColors.success : AppColors.error,
-      ),
-    );
   }
 
   @override

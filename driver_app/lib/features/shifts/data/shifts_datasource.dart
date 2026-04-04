@@ -6,7 +6,11 @@ class ShiftsDatasource {
 
   ShiftsDatasource(this._client);
 
-  String get _driverId => _client.auth.currentUser!.id;
+  String get _driverId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('المستخدم غير مسجّل الدخول');
+    return user.id;
+  }
 
   /// Get active shift for current driver.
   Future<Map<String, dynamic>?> getActiveShift() async {

@@ -6,7 +6,7 @@ class SAUser {
   final String? email;
   final String? role;
   final String? createdAt;
-  final String? lastSignInAt;
+  final String? lastLoginAt;
   final bool? isActive;
 
   /// Additional fields returned by getUser(*) select.
@@ -19,7 +19,7 @@ class SAUser {
     this.email,
     this.role,
     this.createdAt,
-    this.lastSignInAt,
+    this.lastLoginAt,
     this.isActive,
     this.storeId,
   });
@@ -32,7 +32,7 @@ class SAUser {
       email: json['email'] as String?,
       role: json['role'] as String?,
       createdAt: json['created_at'] as String?,
-      lastSignInAt: json['last_sign_in_at'] as String?,
+      lastLoginAt: json['last_login_at'] as String?,
       isActive: json['is_active'] as bool?,
       storeId: json['store_id'] as String?,
     );
@@ -45,23 +45,23 @@ class SAUser {
         'email': email,
         'role': role,
         'created_at': createdAt,
-        'last_sign_in_at': lastSignInAt,
+        'last_login_at': lastLoginAt,
         'is_active': isActive,
         'store_id': storeId,
       };
 
   /// Check if user is currently online (last sign-in within 5 minutes).
   bool get isOnline {
-    if (lastSignInAt == null) return false;
-    final dt = DateTime.tryParse(lastSignInAt!);
+    if (lastLoginAt == null) return false;
+    final dt = DateTime.tryParse(lastLoginAt!);
     if (dt == null) return false;
     return DateTime.now().difference(dt).inMinutes < 5;
   }
 
   /// Format "last active" as a human-readable relative time.
   String get lastActiveFormatted {
-    if (lastSignInAt == null) return 'Never';
-    final dt = DateTime.tryParse(lastSignInAt!);
+    if (lastLoginAt == null) return 'Never';
+    final dt = DateTime.tryParse(lastLoginAt!);
     if (dt == null) return 'Unknown';
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 5) return 'Just now';

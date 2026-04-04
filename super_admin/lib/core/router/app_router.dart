@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 
 import '../../ui/super_admin_shell.dart';
+import '../../screens/auth/sa_login_screen.dart';
 import '../../screens/dashboard/sa_dashboard_screen.dart';
 import '../../screens/stores/sa_stores_list_screen.dart';
 import '../../screens/stores/sa_store_detail_screen.dart';
@@ -14,6 +16,8 @@ import '../../screens/subscriptions/sa_subscriptions_list_screen.dart';
 import '../../screens/users/sa_users_list_screen.dart';
 import '../../screens/users/sa_user_detail_screen.dart';
 import '../../screens/settings/sa_platform_settings_screen.dart';
+import '../../screens/logs/sa_logs_screen.dart';
+import '../../screens/reports/sa_reports_screen.dart';
 
 // Deferred imports for heavy screens (analytics, billing, system health)
 import '../../screens/analytics/sa_revenue_analytics_screen.dart'
@@ -55,6 +59,10 @@ class SuperAdminRoutes {
   // Settings
   static const platformSettings = '/settings/platform';
   static const systemHealth = '/settings/health';
+
+  // Logs & Reports
+  static const logs = '/logs';
+  static const reports = '/reports';
 }
 
 /// Auth notifier that triggers GoRouter redirect on auth changes
@@ -92,9 +100,16 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
     return isPublic ? null : SuperAdminRoutes.login;
   }
 
-  // Already logged in, trying to access login/splash -> dashboard
-  if (isPublic && authState.status == AuthStatus.authenticated) {
-    return SuperAdminRoutes.dashboard;
+  // Authenticated: check super_admin role
+  if (authState.status == AuthStatus.authenticated) {
+    // Redirect to dashboard if on public page
+    if (isPublic) return SuperAdminRoutes.dashboard;
+
+    // Enforce super_admin role for all protected routes
+    final role = authState.user?.role;
+    if (role != UserRole.superAdmin) {
+      return SuperAdminRoutes.login;
+    }
   }
 
   return null;
@@ -112,7 +127,7 @@ final List<RouteBase> _routes = [
   ),
   GoRoute(
     path: SuperAdminRoutes.login,
-    builder: (c, s) => const _Placeholder(title: 'Login'),
+    builder: (c, s) => const SALoginScreen(),
   ),
 
   // Shell route with sidebar navigation
@@ -204,6 +219,18 @@ final List<RouteBase> _routes = [
           libraryLoader: health.loadLibrary,
           builder: () => const health.SASystemHealthScreen(),
         ),
+      ),
+
+      // Logs
+      GoRoute(
+        path: SuperAdminRoutes.logs,
+        builder: (c, s) => const SALogsScreen(),
+      ),
+
+      // Reports
+      GoRoute(
+        path: SuperAdminRoutes.reports,
+        builder: (c, s) => const SAReportsScreen(),
       ),
     ],
   ),

@@ -16,12 +16,11 @@ enum _SendStatus { sending, sent, failed }
 class _LocalMessage {
   final String id;
   final String text;
-  _SendStatus status;
+  _SendStatus status = _SendStatus.sending;
 
   _LocalMessage({
     required this.id,
     required this.text,
-    this.status = _SendStatus.sending,
   });
 }
 
@@ -351,7 +350,7 @@ class _MessageBubble extends StatelessWidget {
     return Semantics(
       label: semanticsLabel,
       child: Align(
-        alignment: isMe ? Alignment.centerLeft : Alignment.centerRight,
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
           padding:
@@ -368,8 +367,8 @@ class _MessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
-              bottomLeft: Radius.circular(isMe ? 4 : 16),
-              bottomRight: Radius.circular(isMe ? 16 : 4),
+              bottomLeft: Radius.circular(isMe ? 16 : 4),
+              bottomRight: Radius.circular(isMe ? 4 : 16),
             ),
           ),
           child: Column(

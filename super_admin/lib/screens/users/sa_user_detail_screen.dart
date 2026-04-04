@@ -50,8 +50,14 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
           final isOnline = user.isOnline;
           final lastActive = user.lastActiveFormatted;
 
-          // Initialize selected role from data on first build
-          _selectedRole ??= role;
+          // Initialize selected role from data (safe: only sets once)
+          if (_selectedRole == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _selectedRole == null) {
+                setState(() => _selectedRole = role);
+              }
+            });
+          }
 
           final statusColor = isOnline ? onlineColor : offlineColor;
 
@@ -154,7 +160,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                       const SizedBox(
                                           width: AlhaiSpacing.xxs),
                                       Text(
-                                        isOnline ? 'Online' : 'Offline',
+                                        isOnline ? l10n.online : l10n.offline,
                                         style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                           color: statusColor,
                                         ),
@@ -168,7 +174,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                   value: lastActive,
                                 ),
                                 _InfoRow(
-                                  label: 'Joined',
+                                  label: l10n.joinDate,
                                   value: dateStr,
                                 ),
                                 _InfoRow(
@@ -208,7 +214,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     const SizedBox(
                                         width: AlhaiSpacing.xs),
                                     Text(
-                                      'Danger Zone',
+                                      l10n.dangerZone,
                                       style: theme
                                           .textTheme.titleMedium
                                           ?.copyWith(
@@ -220,7 +226,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                 const Divider(
                                     height: AlhaiSpacing.xl),
                                 Text(
-                                  'تعطيل المستخدم',
+                                  l10n.deactivate,
                                   style:
                                       theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.error,
@@ -242,9 +248,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     final confirmed = await showDialog<bool>(
                                       context: context,
                                       builder: (ctx) => AlertDialog(
-                                        title: const Text('تأكيد التعطيل'),
+                                        title: Text(l10n.confirm),
                                         content: const Text(
-                                          'هل أنت متأكد من تعطيل هذا المستخدم؟ سيتم إلغاء وصوله فوراً.',
+                                          'Are you sure you want to deactivate this user? Their access will be revoked immediately.',
                                         ),
                                         actions: [
                                           TextButton(
@@ -256,7 +262,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                               backgroundColor: colorScheme.error,
                                             ),
                                             onPressed: () => Navigator.pop(ctx, true),
-                                            child: const Text('تعطيل'),
+                                            child: Text(l10n.deactivate),
                                           ),
                                         ],
                                       ),
@@ -265,7 +271,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
 
                                     await UndoService.executeWithUndo(
                                       context: context,
-                                      description: 'تم تعطيل المستخدم $name',
+                                      description: 'User $name deactivated',
                                       action: () async {
                                         await ds.softDeleteUser(widget.userId);
                                         ref.invalidate(saUserDetailProvider(widget.userId));
@@ -283,7 +289,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     side: BorderSide(
                                         color: colorScheme.error),
                                   ),
-                                  child: const Text('تعطيل المستخدم'),
+                                  child: Text(l10n.deactivate),
                                 ),
                               ],
                             ),

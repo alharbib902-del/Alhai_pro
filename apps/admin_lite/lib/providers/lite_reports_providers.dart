@@ -44,7 +44,6 @@ final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) 
 
   final results = await Future.wait([
     db.salesDao.getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
-    db.salesDao.getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
     db.salesDao.getPaymentMethodStats(storeId, startDate: startOfToday, endDate: endOfToday),
     db.salesDao.getHourlySales(storeId, now),
     db.productsDao.getTopSellingProducts(storeId, limit: 5, since: startOfToday),
@@ -54,8 +53,8 @@ final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) 
   SalesStats refundStats;
   try {
     final refundResult = await db.customSelect(
-      '''SELECT COUNT(*) as count, COALESCE(SUM(total), 0) as total,
-            COALESCE(AVG(total), 0) as average, 0 as max_sale, 0 as min_sale
+      '''SELECT COUNT(*) as count, COALESCE(SUM(total_refund), 0) as total,
+            COALESCE(AVG(total_refund), 0) as average, 0 as max_sale, 0 as min_sale
          FROM returns WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
       variables: [
         Variable.withString(storeId),
@@ -75,9 +74,9 @@ final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((ref) 
   return DailySalesData(
     todayStats: results[0] as SalesStats,
     refundStats: refundStats,
-    paymentMethods: results[2] as List<PaymentMethodStats>,
-    hourlySales: results[3] as List<HourlySales>,
-    topProducts: results[4] as List<ProductsTableData>,
+    paymentMethods: results[1] as List<PaymentMethodStats>,
+    hourlySales: results[2] as List<HourlySales>,
+    topProducts: results[3] as List<ProductsTableData>,
   );
 });
 
@@ -345,7 +344,7 @@ final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((ref) asyn
   double refundTotal = 0;
   try {
     final refundResult = await db.customSelect(
-      '''SELECT COALESCE(SUM(total_amount), 0) as total
+      '''SELECT COALESCE(SUM(total_refund), 0) as total
          FROM returns WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
       variables: [
         Variable.withString(storeId),
