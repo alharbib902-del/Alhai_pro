@@ -141,6 +141,8 @@ jobs:
           exit $EXIT_CODE
 
       - name: Check for secrets in configuration files
+        env:
+          SECRETS_PATTERN: "secrets\\."
         run: |
           EXIT_CODE=0
 
@@ -153,10 +155,10 @@ jobs:
           # Check that dart-define secrets are not hardcoded in workflow files
           HARDCODED=$(grep -rn --include="*.yml" --include="*.yaml" \
             -E "(SUPABASE_URL|SUPABASE_ANON_KEY|SENTRY_DSN)\s*[:=]\s*['\"]?[A-Za-z0-9]" \
-            .github/ 2>/dev/null | grep -v '\${{ secrets\.' || true)
+            .github/ 2>/dev/null | grep -v "$SECRETS_PATTERN" || true)
 
           if [ -n "$HARDCODED" ]; then
-            echo "::error::Hardcoded secrets found in workflow files (should use \${{ secrets.* }}):"
+            echo "::error::Hardcoded secrets found in workflow files — use GitHub secrets instead."
             echo "$HARDCODED"
             EXIT_CODE=1
           fi
