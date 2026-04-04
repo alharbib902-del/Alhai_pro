@@ -47,7 +47,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
 
   # Formatting
-  intl: ^0.20.2
+  intl: ^0.19.0
 
   # App infra
   go_router: ^13.0.0

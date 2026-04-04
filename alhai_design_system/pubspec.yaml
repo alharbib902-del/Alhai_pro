@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Locale-aware number formatting
-  intl: ^0.20.2
+  intl: ^0.19.0
   # R2 Image Storage & Caching
   cached_network_image: ^3.3.1
   flutter_cache_manager: ^3.3.1
