@@ -239,6 +239,9 @@ class ConflictResolver {
       case 'loyalty_rewards':
       case 'drivers':
       case 'whatsapp_templates':
+      // Financial records — server is authoritative
+      case 'invoices':
+      case 'invoice_items':
         return ResolutionStrategy.serverWins;
 
       // Bidirectional data: last write wins

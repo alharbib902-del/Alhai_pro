@@ -1,9 +1,10 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/utils/responsive_helper.dart';
 import '../providers/cart_provider.dart';
 
 class CartScreen extends ConsumerWidget {
@@ -34,6 +35,7 @@ class CartScreen extends ConsumerWidget {
                       ),
                       FilledButton(
                         onPressed: () {
+                          HapticFeedback.heavyImpact();
                           ref.read(cartProvider.notifier).clear();
                           Navigator.pop(ctx);
                         },
@@ -52,259 +54,262 @@ class CartScreen extends ConsumerWidget {
       ),
       body: cart.isEmpty
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 80,
-                    color: theme.colorScheme.outline,
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text(
-                    'السلة فارغة',
-                    style: theme.textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xs),
-                  Text(
-                    'أضف منتجات من المتجر',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.lg),
-                  FilledButton(
-                    onPressed: () => context.go('/home'),
-                    child: const Text('تصفح المتاجر'),
-                  ),
-                ],
+              child: AlhaiEmptyState(
+                icon: Icons.shopping_cart_outlined,
+                title: 'السلة فارغة',
+                description: 'أضف منتجات من المتجر',
+                actionText: 'تصفح المتاجر',
+                onAction: () => context.go('/home'),
               ),
             )
-          : Column(
-              children: [
-                Expanded(
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final isTablet = ResponsiveHelper.isTablet(context);
+
+                Widget cartItemsList() => RefreshIndicator(
+                  onRefresh: () async {
+                    // Refresh cart prices by re-reading cart state
+                    ref.invalidate(cartProvider);
+                  },
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(AlhaiSpacing.md),
-                    itemCount: cart.items.length,
-                    itemBuilder: (context, index) {
-                      final item = cart.items[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                        child: Padding(
-                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                          child: Row(
-                            children: [
-                              // Image
-                              Container(
+                      padding: EdgeInsets.all(
+                          isTablet ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                      itemCount: cart.items.length,
+                      itemBuilder: (context, index) {
+                        final item = cart.items[index];
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                          child: Dismissible(
+                            key: ValueKey(item.productId),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: AlignmentDirectional.centerEnd,
+                              padding:
+                                  const EdgeInsetsDirectional.only(end: 16),
+                              color: theme.colorScheme.error,
+                              child: Icon(Icons.delete_outline,
+                                  color: theme.colorScheme.onError),
+                            ),
+                            confirmDismiss: (_) async => true,
+                            onDismissed: (_) {
+                              HapticFeedback.mediumImpact();
+                              ref
+                                  .read(cartProvider.notifier)
+                                  .removeItem(item.productId);
+                            },
+                            child: AlhaiCartItem(
+                              title: item.name,
+                              priceAmount: item.unitPrice,
+                              currency: 'ر.س',
+                              quantity: item.qty,
+                              leading: ProductImage(
+                                thumbnail: item.imageUrl,
+                                size: ImageSize.thumbnail,
                                 width: 60,
                                 height: 60,
-                                decoration: BoxDecoration(
-                                  color: theme
-                                      .colorScheme.surfaceContainerHighest,
-                                  borderRadius: AlhaiRadius.borderSm,
-                                ),
-                                child: item.imageUrl != null
-                                    ? ClipRRect(
-                                        borderRadius:
-                                            AlhaiRadius.borderSm,
-                                        child: CachedNetworkImage(
-                                          imageUrl: item.imageUrl!,
-                                          fit: BoxFit.cover,
-                                          errorWidget: (_, __, ___) =>
-                                              const Icon(
-                                                  Icons.image_outlined),
-                                          placeholder: (_, __) => Icon(
-                                              Icons.image_outlined,
-                                              color: theme
-                                                  .colorScheme.outline),
-                                        ),
-                                      )
-                                    : const Icon(
-                                        Icons.inventory_2_outlined),
                               ),
-                              const SizedBox(width: AlhaiSpacing.sm),
-                              // Info
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style:
-                                          theme.textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: AlhaiSpacing.xxs),
-                                    Text(
-                                      '${item.unitPrice.toStringAsFixed(2)} ر.س',
-                                      style:
-                                          theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.outline,
-                                      ),
-                                    ),
-                                  ],
+                              onQuantityChanged: (newQty) {
+                                HapticFeedback.lightImpact();
+                                ref
+                                    .read(cartProvider.notifier)
+                                    .updateQty(item.productId, newQty);
+                              },
+                              quantityMin: 0,
+                              onRemove: () {
+                                HapticFeedback.mediumImpact();
+                                ref
+                                    .read(cartProvider.notifier)
+                                    .removeItem(item.productId);
+                              },
+                              removeSemanticLabel: 'حذف ${item.name}',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    );
+
+                Widget checkoutSummary({bool isColumn = false}) => Container(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      decoration: isColumn
+                          ? BoxDecoration(
+                              color: theme.colorScheme.surface,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.shadow,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, -2),
                                 ),
-                              ),
-                              // Quantity controls
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                              ],
+                            )
+                          : null,
+                      child: SafeArea(
+                        child: isColumn
+                            ? Row(
                                 children: [
-                                  Text(
-                                    '${item.lineTotal.toStringAsFixed(2)} ر.س',
-                                    style:
-                                        theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: AlhaiSpacing.xs),
-                                  Row(
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: IconButton(
-                                          onPressed: () {
-                                            if (item.qty > 1) {
-                                              ref
-                                                  .read(cartProvider.notifier)
-                                                  .updateQty(
-                                                    item.productId,
-                                                    item.qty - 1,
-                                                  );
-                                            } else {
-                                              ref
-                                                  .read(cartProvider.notifier)
-                                                  .removeItem(
-                                                      item.productId);
-                                            }
-                                          },
-                                          icon: Icon(
-                                            item.qty == 1
-                                                ? Icons.delete_outline
-                                                : Icons.remove,
-                                            size: 16,
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                          style: IconButton.styleFrom(
-                                            side: BorderSide(
-                                              color:
-                                                  theme.colorScheme.outline,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  AlhaiRadius.borderSm,
-                                            ),
-                                          ),
+                                      Text(
+                                        'المجموع',
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                          color: theme.colorScheme.outline,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 36,
-                                        child: Text(
-                                          '${item.qty}',
-                                          textAlign: TextAlign.center,
-                                          style: theme
-                                              .textTheme.titleSmall
-                                              ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: IconButton.filled(
-                                          onPressed: () {
-                                            ref
-                                                .read(cartProvider.notifier)
-                                                .updateQty(
-                                                  item.productId,
-                                                  item.qty + 1,
-                                                );
-                                          },
-                                          icon: const Icon(Icons.add,
-                                              size: 16),
-                                          padding: EdgeInsets.zero,
-                                          style: IconButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  AlhaiRadius.borderSm,
-                                            ),
-                                          ),
+                                      Text(
+                                        '${cart.total.toStringAsFixed(2)} ر.س',
+                                        style: theme.textTheme.titleLarge
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.colorScheme.primary,
                                         ),
                                       ),
                                     ],
                                   ),
+                                  const SizedBox(width: AlhaiSpacing.md),
+                                  Expanded(
+                                    child: FilledButton(
+                                      onPressed: () =>
+                                          context.push('/checkout'),
+                                      style: FilledButton.styleFrom(
+                                        minimumSize:
+                                            const Size.fromHeight(52),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              AlhaiRadius.borderMd,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'إتمام الطلب (${cart.itemCount})',
+                                        style:
+                                            const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
+                                children: [
+                                  Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(
+                                          AlhaiSpacing.md),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'ملخص الطلب',
+                                            style: theme
+                                                .textTheme.titleMedium
+                                                ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                              height: AlhaiSpacing.sm),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                            children: [
+                                              Text('عدد المنتجات',
+                                                  style: theme.textTheme
+                                                      .bodyMedium),
+                                              Text('${cart.itemCount}',
+                                                  style: theme.textTheme
+                                                      .bodyMedium),
+                                            ],
+                                          ),
+                                          const Divider(
+                                              height: AlhaiSpacing.lg),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                            children: [
+                                              Text(
+                                                'المجموع',
+                                                style: theme
+                                                    .textTheme.titleMedium
+                                                    ?.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${cart.total.toStringAsFixed(2)} ر.س',
+                                                style: theme
+                                                    .textTheme.titleMedium
+                                                    ?.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold,
+                                                  color: theme.colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: AlhaiSpacing.md),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        context.push('/checkout'),
+                                    style: FilledButton.styleFrom(
+                                      minimumSize:
+                                          const Size.fromHeight(52),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            AlhaiRadius.borderMd,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'إتمام الطلب (${cart.itemCount})',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
+                      ),
+                    );
+
+                if (isTablet) {
+                  // Tablet: items on left, summary on right
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: cartItemsList(),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(AlhaiSpacing.md),
+                          child: checkoutSummary(isColumn: false),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                // Checkout bar
-                Container(
-                  padding: const EdgeInsets.all(AlhaiSpacing.md),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.colorScheme.shadow,
-                        blurRadius: 8,
-                        offset: const Offset(0, -2),
                       ),
                     ],
-                  ),
-                  child: SafeArea(
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'المجموع',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.outline,
-                              ),
-                            ),
-                            Text(
-                              '${cart.total.toStringAsFixed(2)} ر.س',
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: AlhaiSpacing.md),
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: () => context.push('/checkout'),
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(52),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: AlhaiRadius.borderMd,
-                              ),
-                            ),
-                            child: Text(
-                              'إتمام الطلب (${cart.itemCount})',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                  );
+                }
+
+                // Phone: list on top, checkout bar at bottom
+                return Column(
+                  children: [
+                    Expanded(child: cartItemsList()),
+                    checkoutSummary(isColumn: true),
+                  ],
+                );
+              },
             ),
     );
   }

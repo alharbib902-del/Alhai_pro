@@ -41,6 +41,16 @@ class SyncMetadataTable extends Table {
   /// آخر خطأ حدث أثناء المزامنة
   TextColumn get lastError => text().nullable()();
 
+  /// عدد التعارضات المكتشفة
+  IntColumn get conflictCount => integer().withDefault(const Constant(0))();
+
+  /// آخر وقت حدث فيه تعارض
+  DateTimeColumn get lastConflictAt => dateTime().nullable()();
+
+  /// هل يتطلب مراجعة يدوية؟
+  BoolColumn get requiresManualReview =>
+      boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column> get primaryKey => {tableName_};
 }

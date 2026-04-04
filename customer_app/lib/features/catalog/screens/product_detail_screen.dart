@@ -1,10 +1,10 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-
 import '../../../core/providers/app_providers.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../providers/catalog_providers.dart';
 import '../../cart/providers/cart_provider.dart';
 
@@ -27,9 +27,36 @@ class ProductDetailScreen extends ConsumerWidget {
         ),
       ),
       body: productAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => AlhaiShimmer(
+          child: Column(
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: AlhaiSkeleton.rectangle(width: double.infinity, height: double.infinity, borderRadius: BorderRadius.zero),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AlhaiSkeleton.text(width: 200, lineHeight: 24),
+                    const SizedBox(height: AlhaiSpacing.sm),
+                    AlhaiSkeleton.text(width: 120, lineHeight: 20),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    AlhaiSkeleton.text(lines: 3),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         error: (error, _) => Center(
-          child: Text('فشل تحميل المنتج', style: theme.textTheme.bodyLarge),
+          child: AlhaiEmptyState.error(
+            title: 'فشل تحميل المنتج',
+            description: 'تحقق من اتصالك بالإنترنت',
+            actionText: 'رجوع',
+            onAction: () => context.pop(),
+          ),
         ),
         data: (product) {
           final cartItem = ref.watch(cartProvider).items
@@ -37,119 +64,129 @@ class ProductDetailScreen extends ConsumerWidget {
               .firstOrNull;
           final qtyInCart = cartItem?.qty ?? 0;
 
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Product image
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: product.imageLarge != null
-                            ? CachedNetworkImage(
-                                imageUrl: product.imageLarge!,
-                                fit: BoxFit.cover,
-                                placeholder: (_, __) => Container(
-                                  color: theme.colorScheme.surfaceContainerHighest,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                                errorWidget: (_, __, ___) => Container(
-                                  color: theme.colorScheme.surfaceContainerHighest,
-                                  child: const Icon(Icons.image_outlined,
-                                      size: 64),
-                                ),
-                              )
-                            : Container(
-                                color: theme.colorScheme.surfaceContainerHighest,
-                                child: Icon(
-                                  Icons.inventory_2_outlined,
-                                  size: 80,
-                                  color: theme.colorScheme.outline,
-                                ),
-                              ),
+          // Shared widgets
+          Widget imageSection({double? aspectRatio}) => Hero(
+                tag: 'product_${product.id}',
+                child: AspectRatio(
+                  aspectRatio: aspectRatio ?? 1,
+                  child: ProductImage(
+                    thumbnail: product.imageThumbnail,
+                    medium: product.imageMedium,
+                    large: product.imageLarge,
+                    size: ImageSize.large,
+                  ),
+                ),
+              );
+
+          Widget detailsSection() => Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(AlhaiSpacing.md),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: AlhaiSpacing.xs),
-                            Text(
-                              '${product.price.toStringAsFixed(2)} ر.س',
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: AlhaiSpacing.xs),
-                            // Stock status
-                            Builder(builder: (context) {
-                              final statusColors = theme.extension<AlhaiStatusColors>()!;
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: AlhaiSpacing.xxs),
-                                decoration: BoxDecoration(
-                                  color: product.isOutOfStock
-                                      ? statusColors.error.withValues(alpha: 0.1)
-                                      : statusColors.success.withValues(alpha: 0.1),
-                                  borderRadius: AlhaiRadius.borderSm,
-                                ),
-                                child: Text(
-                                  product.isOutOfStock
-                                      ? 'غير متوفر'
-                                      : 'متوفر',
-                                  style: TextStyle(
-                                    color: product.isOutOfStock
-                                        ? statusColors.error
-                                        : statusColors.success,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              );
-                            }),
-                            if (product.description != null &&
-                                product.description!.isNotEmpty) ...[
-                              const SizedBox(height: AlhaiSpacing.md),
-                              Text(
-                                'الوصف',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: AlhaiSpacing.xs),
-                              Text(
-                                product.description!,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                            if (product.unit != null) ...[
-                              const SizedBox(height: AlhaiSpacing.sm),
-                              Text(
-                                'الوحدة: ${product.unit}',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.outline,
-                                ),
-                              ),
-                            ],
-                          ],
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Text(
+                      '${product.price.toStringAsFixed(2)} ر.س',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xs),
+                    Builder(builder: (context) {
+                      final statusColors =
+                          theme.extension<AlhaiStatusColors>()!;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: AlhaiSpacing.xxs),
+                        decoration: BoxDecoration(
+                          color: product.isOutOfStock
+                              ? statusColors.error.withValues(alpha: 0.1)
+                              : statusColors.success.withValues(alpha: 0.1),
+                          borderRadius: AlhaiRadius.borderSm,
+                        ),
+                        child: Text(
+                          product.isOutOfStock ? 'غير متوفر' : 'متوفر',
+                          style: TextStyle(
+                            color: product.isOutOfStock
+                                ? statusColors.error
+                                : statusColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }),
+                    if (product.description != null &&
+                        product.description!.isNotEmpty) ...[
+                      const SizedBox(height: AlhaiSpacing.md),
+                      Text(
+                        'الوصف',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AlhaiSpacing.xs),
+                      Text(
+                        product.description!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
-                  ),
+                    if (product.unit != null) ...[
+                      const SizedBox(height: AlhaiSpacing.sm),
+                      Text(
+                        'الوحدة: ${product.unit}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-              ),
+              );
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final useSideBySide = ResponsiveHelper.isTablet(context) ||
+                  ResponsiveHelper.isLandscape(context);
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: useSideBySide
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: SingleChildScrollView(
+                                  child: imageSection(aspectRatio: 0.85),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: SingleChildScrollView(
+                                  child: detailsSection(),
+                                ),
+                              ),
+                            ],
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                imageSection(),
+                                detailsSection(),
+                              ],
+                            ),
+                          ),
+                  ),
               // Bottom action bar
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -167,33 +204,20 @@ class ProductDetailScreen extends ConsumerWidget {
                   child: qtyInCart > 0
                       ? Row(
                           children: [
-                            IconButton.outlined(
-                              onPressed: () {
-                                if (qtyInCart > 1) {
-                                  ref.read(cartProvider.notifier)
-                                      .updateQty(product.id, qtyInCart - 1);
-                                } else {
+                            AlhaiQuantityControl(
+                              quantity: qtyInCart,
+                              min: 0,
+                              onChanged: (newQty) {
+                                if (newQty <= 0) {
                                   ref.read(cartProvider.notifier)
                                       .removeItem(product.id);
+                                } else {
+                                  ref.read(cartProvider.notifier)
+                                      .updateQty(product.id, newQty);
                                 }
                               },
-                              icon: Icon(
-                                  qtyInCart == 1 ? Icons.delete : Icons.remove),
-                            ),
-                            const SizedBox(width: AlhaiSpacing.md),
-                            Text(
-                              '$qtyInCart',
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: AlhaiSpacing.md),
-                            IconButton.filled(
-                              onPressed: () {
-                                ref.read(cartProvider.notifier)
-                                    .updateQty(product.id, qtyInCart + 1);
-                              },
-                              icon: const Icon(Icons.add),
+                              decrementSemanticLabel: 'تقليل الكمية',
+                              incrementSemanticLabel: 'زيادة الكمية',
                             ),
                             const Spacer(),
                             FilledButton(
@@ -206,6 +230,7 @@ class ProductDetailScreen extends ConsumerWidget {
                           onPressed: product.isOutOfStock
                               ? null
                               : () {
+                                  HapticFeedback.mediumImpact();
                                   final storeId = store?.id ?? '';
                                   final added = ref
                                       .read(cartProvider.notifier)
@@ -278,8 +303,10 @@ class ProductDetailScreen extends ConsumerWidget {
                         ),
                 ),
               ),
-            ],
-          );
+                  ],
+                );
+              },
+            );
         },
       ),
     );

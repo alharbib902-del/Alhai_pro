@@ -131,7 +131,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 19;
+  int get schemaVersion => 21;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -228,6 +228,13 @@ class AppDatabase extends _$AppDatabase {
       } else {
         debugPrint('[Migration] Schema verification passed '
             '- all expected tables present.');
+      }
+
+      // نسخ احتياطي بعد نجاح الترحيل
+      try {
+        await backupService.createPostMigrationBackup(to);
+      } catch (e) {
+        debugPrint('[Backup] Post-migration backup failed: $e');
       }
 
       final totalDuration =
@@ -399,6 +406,23 @@ class AppDatabase extends _$AppDatabase {
         // لدعم الكميات الكسرية (مثل 2.5 كجم أرز)
         // SQLite لا يدعم ALTER COLUMN TYPE لذا نعيد إنشاء الجدول
         await _migrateToV19();
+      case 20:
+        // Migration v19 -> v20: Add trigger-based FK validation
+        // SQLite doesn't support ALTER TABLE ADD CONSTRAINT for FK,
+        // so we use triggers to validate referential integrity.
+        await _migrateToV20();
+      case 21:
+        // Migration v20 -> v21: Enhance sync metadata + composite index
+        // 1. Add conflict tracking columns to sync_metadata
+        await customStatement(
+            'ALTER TABLE sync_metadata ADD COLUMN conflict_count INTEGER NOT NULL DEFAULT 0');
+        await customStatement(
+            'ALTER TABLE sync_metadata ADD COLUMN last_conflict_at INTEGER');
+        await customStatement(
+            'ALTER TABLE sync_metadata ADD COLUMN requires_manual_review INTEGER NOT NULL DEFAULT 0');
+        // 2. Add composite index for orders (customer + createdAt)
+        await customStatement(
+            'CREATE INDEX IF NOT EXISTS idx_orders_customer_created ON orders (customer_id, created_at)');
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }
@@ -746,6 +770,94 @@ class AppDatabase extends _$AppDatabase {
     } catch (e) {
       debugPrint('[Migration v19] FTS rebuild skipped: $e');
     }
+  }
+
+  /// Migration v19 -> v20: Add trigger-based FK validation
+  /// SQLite doesn't support ALTER TABLE ADD CONSTRAINT for FK after table
+  /// creation, so we add BEFORE INSERT/UPDATE triggers to enforce referential
+  /// integrity on columns that lack inline FK definitions.
+  Future<void> _migrateToV20() async {
+    // --- customers.store_id -> stores.id ---
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_customers_store_id
+      BEFORE INSERT ON customers
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+        WHERE NEW.store_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_customers_store_id_update
+      BEFORE UPDATE OF store_id ON customers
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+        WHERE NEW.store_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+      END
+    ''');
+
+    // --- customer_addresses.customer_id -> customers.id ---
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_customer_addresses_customer_id
+      BEFORE INSERT ON customer_addresses
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: customer_id not found in customers')
+        WHERE NEW.customer_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM customers WHERE id = NEW.customer_id);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_customer_addresses_customer_id_update
+      BEFORE UPDATE OF customer_id ON customer_addresses
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: customer_id not found in customers')
+        WHERE NEW.customer_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM customers WHERE id = NEW.customer_id);
+      END
+    ''');
+
+    // --- sales.customer_id -> customers.id (optional FK) ---
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_sales_customer_id
+      BEFORE INSERT ON sales
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: customer_id not found in customers')
+        WHERE NEW.customer_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM customers WHERE id = NEW.customer_id);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_sales_customer_id_update
+      BEFORE UPDATE OF customer_id ON sales
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: customer_id not found in customers')
+        WHERE NEW.customer_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM customers WHERE id = NEW.customer_id);
+      END
+    ''');
+
+    // --- expenses.store_id -> stores.id ---
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_expenses_store_id
+      BEFORE INSERT ON expenses
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+        WHERE NEW.store_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS fk_expenses_store_id_update
+      BEFORE UPDATE OF store_id ON expenses
+      BEGIN
+        SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+        WHERE NEW.store_id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+      END
+    ''');
+
+    debugPrint('[Migration v20] FK validation triggers created');
   }
 
   // ==========================================================================

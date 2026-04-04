@@ -260,6 +260,38 @@ class DatabaseBackupService {
     return info;
   }
 
+  /// إنشاء نسخة احتياطية بعد ترحيل الـ schema بنجاح
+  /// يُستدعى تلقائياً من MigrationStrategy بعد نجاح الهجرة
+  Future<BackupInfo> createPostMigrationBackup(int toVersion) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final backupId = 'backup_post_migration_v${toVersion}_$timestamp';
+
+    if (kDebugMode) {
+      debugPrint('[Backup] Creating post-migration backup (v$toVersion): $backupId');
+    }
+
+    // تصدير البيانات كـ JSON
+    final jsonData = await _exportTablesAsJson();
+    await storage.saveJsonBackup(backupId, jsonData);
+
+    final info = BackupInfo(
+      id: backupId,
+      type: 'post_migration',
+      createdAt: DateTime.now(),
+      sizeBytes: jsonData.length,
+      schemaVersion: toVersion,
+      notes: 'Post-migration backup after successful upgrade to schema v$toVersion',
+    );
+
+    await _saveBackupInfo(info);
+
+    if (kDebugMode) {
+      debugPrint('[Backup] Post-migration backup completed: ${info.formattedSize}');
+    }
+
+    return info;
+  }
+
   // ==========================================================================
   // C. التصدير والاستيراد اليدوي
   // ==========================================================================

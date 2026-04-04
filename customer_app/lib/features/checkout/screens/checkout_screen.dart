@@ -1,5 +1,6 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
@@ -30,6 +31,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     try {
       final order = await ref.read(placeOrderProvider(cart).future);
+
+      HapticFeedback.heavyImpact();
 
       // Clear cart
       ref.read(cartProvider.notifier).clear();

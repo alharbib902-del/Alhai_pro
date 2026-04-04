@@ -47,7 +47,8 @@ class OrdersDatasource {
       orderMap['notes'] = params.deliveryAddress;
     }
 
-    final orderData = await _client.from('orders').insert(orderMap).select().single();
+    final orderData = await _client.from('orders').insert(orderMap).select().single()
+        .timeout(const Duration(seconds: 15));
 
     final orderId = orderData['id'] as String;
 
@@ -77,12 +78,14 @@ class OrdersDatasource {
         .from('orders')
         .select()
         .eq('id', id)
-        .single();
+        .single()
+        .timeout(const Duration(seconds: 15));
 
     final itemsData = await _client
         .from('order_items')
         .select()
-        .eq('order_id', id);
+        .eq('order_id', id)
+        .timeout(const Duration(seconds: 15));
 
     final items = (itemsData as List)
         .map((row) => OrderItem(
@@ -117,7 +120,8 @@ class OrdersDatasource {
 
     final data = await query
         .order('created_at', ascending: false)
-        .range(from, to);
+        .range(from, to)
+        .timeout(const Duration(seconds: 15));
 
     final orders = <Order>[];
     for (final row in (data as List)) {

@@ -14,7 +14,8 @@ class DeliveryDatasource {
           .select()
           .eq('order_id', orderId)
           .limit(1)
-          .single();
+          .single()
+          .timeout(const Duration(seconds: 15));
       return _deliveryFromRow(data);
     } catch (_) {
       return null;
@@ -65,7 +66,8 @@ class DeliveryDatasource {
           .from('users')
           .select('id, name, phone, image_url')
           .eq('id', driverId)
-          .single();
+          .single()
+          .timeout(const Duration(seconds: 15));
     } catch (_) {
       return null;
     }

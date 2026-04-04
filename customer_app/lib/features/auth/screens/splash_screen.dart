@@ -53,19 +53,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.storefront_rounded,
-                size: 60,
-                color: theme.colorScheme.primary,
-              ),
-            ),
+            Builder(builder: (context) {
+              final logoSize = (MediaQuery.of(context).size.width * 0.25)
+                  .clamp(80.0, 150.0);
+              return Container(
+                width: logoSize,
+                height: logoSize,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.storefront_rounded,
+                  size: logoSize * 0.5,
+                  color: theme.colorScheme.primary,
+                ),
+              );
+            }),
             const SizedBox(height: AlhaiSpacing.lg),
             Text(
               'بقالة الحي',

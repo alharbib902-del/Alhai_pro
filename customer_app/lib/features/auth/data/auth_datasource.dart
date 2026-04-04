@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_core/alhai_core.dart';
 
@@ -35,7 +37,8 @@ class AuthDatasource {
           'created_at': DateTime.now().toIso8601String(),
         }, onConflict: 'id')
         .select()
-        .single();
+        .single()
+        .timeout(const Duration(seconds: 15));
 
     final user = User(
       id: userData['id'] as String,
@@ -70,7 +73,8 @@ class AuthDatasource {
           .from('users')
           .select()
           .eq('id', supabaseUser.id)
-          .single();
+          .single()
+          .timeout(const Duration(seconds: 15));
 
       return User(
         id: data['id'] as String,
@@ -99,11 +103,36 @@ class AuthDatasource {
     if (email != null) updates['email'] = email;
     updates['updated_at'] = DateTime.now().toIso8601String();
 
-    await _client.from('users').update(updates).eq('id', userId);
+    await _client.from('users').update(updates).eq('id', userId)
+        .timeout(const Duration(seconds: 15));
   }
 
   Future<void> logout() async {
     await _client.auth.signOut();
+
+    // Clear SharedPreferences
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+    } catch (e) {
+      debugPrint('[AuthDatasource] Error clearing SharedPreferences: $e');
+    }
+
+    // Clear secure storage tokens
+    try {
+      const secureStorage = FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      );
+      await secureStorage.deleteAll();
+    } catch (e) {
+      debugPrint('[AuthDatasource] Error clearing secure storage: $e');
+    }
+
+    // Verify session is cleared
+    assert(
+      _client.auth.currentSession == null,
+      'Session should be null after logout',
+    );
   }
 
   bool get isAuthenticated => _client.auth.currentSession != null;

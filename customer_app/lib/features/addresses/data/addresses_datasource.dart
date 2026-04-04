@@ -13,7 +13,8 @@ class AddressesDatasource {
         .from('addresses')
         .select()
         .eq('user_id', _userId)
-        .order('is_default', ascending: false);
+        .order('is_default', ascending: false)
+        .timeout(const Duration(seconds: 15));
 
     return (data as List)
         .map((row) => _addressFromRow(row as Map<String, dynamic>))
@@ -28,7 +29,8 @@ class AddressesDatasource {
           .eq('user_id', _userId)
           .eq('is_default', true)
           .limit(1)
-          .single();
+          .single()
+          .timeout(const Duration(seconds: 15));
       return _addressFromRow(data);
     } catch (_) {
       return null;
@@ -56,7 +58,7 @@ class AddressesDatasource {
       'latitude': params.lat,
       'longitude': params.lng,
       'is_default': params.isDefault,
-    }).select().single();
+    }).select().single().timeout(const Duration(seconds: 15));
 
     return _addressFromRow(data);
   }

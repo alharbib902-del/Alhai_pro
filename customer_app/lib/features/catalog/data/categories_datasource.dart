@@ -12,7 +12,8 @@ class CategoriesDatasource {
         .select()
         .eq('store_id', storeId)
         .eq('is_active', true)
-        .order('sort_order');
+        .order('sort_order')
+        .timeout(const Duration(seconds: 15));
 
     return (data as List)
         .map((row) => _categoryFromRow(row as Map<String, dynamic>))
@@ -26,7 +27,8 @@ class CategoriesDatasource {
         .eq('store_id', storeId)
         .eq('is_active', true)
         .isFilter('parent_id', null)
-        .order('sort_order');
+        .order('sort_order')
+        .timeout(const Duration(seconds: 15));
 
     return (data as List)
         .map((row) => _categoryFromRow(row as Map<String, dynamic>))

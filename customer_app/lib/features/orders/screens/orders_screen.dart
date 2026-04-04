@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/utils/responsive_helper.dart';
 import '../providers/orders_providers.dart';
 
 class OrdersScreen extends ConsumerWidget {
@@ -60,8 +61,24 @@ class _OrdersList extends ConsumerWidget {
     final ordersAsync = ref.watch(ordersListProvider(null));
 
     return ordersAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const Center(child: Text('فشل تحميل الطلبات')),
+      loading: () => AlhaiShimmer(
+        child: ListView.builder(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          itemCount: 5,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+            child: AlhaiSkeleton.listTile(),
+          ),
+        ),
+      ),
+      error: (_, __) => Center(
+        child: AlhaiEmptyState.error(
+          title: 'فشل تحميل الطلبات',
+          description: 'تحقق من اتصالك بالإنترنت',
+          actionText: 'إعادة المحاولة',
+          onAction: () => ref.invalidate(ordersListProvider(null)),
+        ),
+      ),
       data: (paginated) {
         final orders = paginated.items
             .where((o) => statuses.contains(o.status))
@@ -69,87 +86,102 @@ class _OrdersList extends ConsumerWidget {
 
         if (orders.isEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.receipt_long_outlined,
-                    size: 64, color: theme.colorScheme.outline),
-                const SizedBox(height: AlhaiSpacing.md),
-                Text('لا توجد طلبات', style: theme.textTheme.titleMedium),
-              ],
+            child: AlhaiEmptyState.noOrders(
+              title: 'لا توجد طلبات',
+              description: 'ستظهر طلباتك هنا',
+              compact: true,
             ),
           );
         }
+
+        Widget buildOrderCard(dynamic order) => Card(
+              child: InkWell(
+                onTap: () => context.push('/orders/${order.id}'),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              order.displayNumber,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _StatusChip(status: order.status),
+                        ],
+                      ),
+                      const SizedBox(height: AlhaiSpacing.xs),
+                      if (order.storeName != null)
+                        Text(
+                          order.storeName!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      const SizedBox(height: AlhaiSpacing.xxs),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${order.itemCount} منتجات',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.outline,
+                            ),
+                          ),
+                          Text(
+                            '${order.total.toStringAsFixed(2)} ر.س',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+
+        final isTablet = ResponsiveHelper.isTablet(context);
 
         return RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(ordersListProvider(null));
           },
-          child: ListView.builder(
-            padding: const EdgeInsets.all(AlhaiSpacing.md),
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: InkWell(
-                  onTap: () => context.push('/orders/${order.id}'),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(AlhaiSpacing.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                order.displayNumber,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            _StatusChip(status: order.status),
-                          ],
-                        ),
-                        const SizedBox(height: AlhaiSpacing.xs),
-                        if (order.storeName != null)
-                          Text(
-                            order.storeName!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        const SizedBox(height: AlhaiSpacing.xxs),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${order.itemCount} منتجات',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.outline,
-                              ),
-                            ),
-                            Text(
-                              '${order.total.toStringAsFixed(2)} ر.س',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+          child: isTablet
+              ? GridView.builder(
+                  padding: const EdgeInsets.all(AlhaiSpacing.lg),
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                        ResponsiveHelper.isLargeTablet(context) ? 3 : 2,
+                    crossAxisSpacing: AlhaiSpacing.sm,
+                    mainAxisSpacing: AlhaiSpacing.sm,
+                    childAspectRatio: 2.0,
+                  ),
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) =>
+                      buildOrderCard(orders[index]),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(AlhaiSpacing.md),
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                    child: buildOrderCard(orders[index]),
                   ),
                 ),
-              );
-            },
-          ),
         );
       },
     );

@@ -18,7 +18,8 @@ class StoresDatasource {
         .select()
         .eq('is_active', true)
         .not('lat', 'is', null)
-        .order('created_at', ascending: false);
+        .order('created_at', ascending: false)
+        .timeout(const Duration(seconds: 15));
 
     final stores = (data as List)
         .map((row) => _storeFromRow(row as Map<String, dynamic>))
@@ -43,7 +44,8 @@ class StoresDatasource {
         .from('stores')
         .select()
         .eq('id', id)
-        .single();
+        .single()
+        .timeout(const Duration(seconds: 15));
     return _storeFromRow(data);
   }
 
@@ -52,7 +54,8 @@ class StoresDatasource {
         .from('stores')
         .select()
         .eq('is_active', true)
-        .order('name');
+        .order('name')
+        .timeout(const Duration(seconds: 15));
     return (data as List)
         .map((row) => _storeFromRow(row as Map<String, dynamic>))
         .toList();

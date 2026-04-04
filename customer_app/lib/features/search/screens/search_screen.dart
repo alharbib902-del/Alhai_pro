@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:alhai_design_system/alhai_design_system.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,18 +69,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         top: false,
         child: _query.isEmpty || store == null
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search, size: 64, color: theme.colorScheme.outline),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text(
-                    'ابحث باسم المنتج أو الباركود',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
-                  ),
-                ],
+              child: AlhaiEmptyState.noResults(
+                title: 'ابحث باسم المنتج أو الباركود',
               ),
             )
           : Consumer(
@@ -94,49 +83,61 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 )));
 
                 return resultsAsync.when(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const Center(
-                    child: Text('فشل البحث'),
+                  loading: () => AlhaiShimmer(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                      itemCount: 6,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                        child: AlhaiSkeleton.listTile(),
+                      ),
+                    ),
+                  ),
+                  error: (_, __) => Center(
+                    child: AlhaiEmptyState.error(
+                      title: 'فشل البحث',
+                      description: 'تحقق من اتصالك بالإنترنت',
+                    ),
                   ),
                   data: (paginated) {
                     if (paginated.items.isEmpty) {
                       return Center(
-                        child: Text(
-                          'لا توجد نتائج',
-                          style: theme.textTheme.bodyLarge,
+                        child: AlhaiEmptyState.noResults(
+                          title: 'لا توجد نتائج',
+                          description: 'جرب كلمات بحث مختلفة',
                         ),
                       );
                     }
 
-                    return ListView.builder(
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(productsProvider((
+                          storeId: store.id,
+                          page: 1,
+                          categoryId: null,
+                          search: _query,
+                        )));
+                      },
+                      child: ListView.builder(
                       padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       itemCount: paginated.items.length,
                       itemBuilder: (context, index) {
                         final product = paginated.items[index];
                         return ListTile(
-                          leading: Container(
+                          leading: SizedBox(
                             width: 48,
                             height: 48,
-                            decoration: BoxDecoration(
-                              color:
-                                  theme.colorScheme.surfaceContainerHighest,
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
+                              child: ProductImage(
+                                thumbnail: product.imageThumbnail,
+                                medium: product.imageMedium,
+                                large: product.imageLarge,
+                                size: ImageSize.thumbnail,
+                                width: 48,
+                                height: 48,
+                              ),
                             ),
-                            child: product.imageThumbnail != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: CachedNetworkImage(
-                                      imageUrl: product.imageThumbnail!,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (_, __, ___) =>
-                                          const Icon(Icons.image_outlined),
-                                      placeholder: (_, __) => Icon(
-                                          Icons.image_outlined,
-                                          color: theme.colorScheme.outline),
-                                    ),
-                                  )
-                                : const Icon(Icons.inventory_2_outlined),
                           ),
                           title: Text(product.name),
                           subtitle: Text(
@@ -215,6 +216,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               context.push('/products/${product.id}'),
                         );
                       },
+                    ),
                     );
                   },
                 );

@@ -1,5 +1,6 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
@@ -31,19 +32,33 @@ class AddressesScreen extends ConsumerWidget {
         label: const Text('إضافة عنوان'),
       ),
       body: addressesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(child: Text('فشل تحميل العناوين')),
+        loading: () => AlhaiShimmer(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            itemCount: 4,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+              child: AlhaiSkeleton.listTile(),
+            ),
+          ),
+        ),
+        error: (_, __) => Center(
+          child: AlhaiEmptyState.error(
+            title: 'فشل تحميل العناوين',
+            description: 'تحقق من اتصالك بالإنترنت',
+            actionText: 'إعادة المحاولة',
+            onAction: () => ref.invalidate(addressesListProvider),
+          ),
+        ),
         data: (addresses) {
           if (addresses.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.location_off_outlined,
-                      size: 64, color: theme.colorScheme.outline),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text('لا توجد عناوين', style: theme.textTheme.titleMedium),
-                ],
+              child: AlhaiEmptyState(
+                icon: Icons.location_off_outlined,
+                title: 'لا توجد عناوين',
+                description: 'أضف عنوان توصيل جديد',
+                actionText: 'إضافة عنوان',
+                onAction: () => _showAddAddressDialog(context, ref),
               ),
             );
           }
@@ -53,7 +68,28 @@ class AddressesScreen extends ConsumerWidget {
             itemCount: addresses.length,
             itemBuilder: (context, index) {
               final address = addresses[index];
-              return Card(
+              return Dismissible(
+                key: ValueKey(address.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  padding: const EdgeInsetsDirectional.only(end: 16),
+                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.error,
+                    borderRadius: AlhaiRadius.borderMd,
+                  ),
+                  child: Icon(Icons.delete_outline,
+                      color: theme.colorScheme.onError),
+                ),
+                confirmDismiss: (_) async => true,
+                onDismissed: (_) async {
+                  HapticFeedback.mediumImpact();
+                  final ds = locator<AddressesDatasource>();
+                  await ds.deleteAddress(address.id);
+                  ref.invalidate(addressesListProvider);
+                },
+                child: Card(
                 margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
                 child: ListTile(
                   leading: Icon(
@@ -123,6 +159,7 @@ class AddressesScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+              ),
               );
             },
           );

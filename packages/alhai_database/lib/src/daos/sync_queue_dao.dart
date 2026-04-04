@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_database.dart';
@@ -36,7 +37,17 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
     return result.data['count'] as int? ?? 0;
   }
   
-  /// إضافة للطابور
+  /// Check if a pending/failed item with the same idempotency key exists
+  Future<bool> hasExistingPendingItem(String idempotencyKey) async {
+    final result = await customSelect(
+      "SELECT COUNT(*) as cnt FROM sync_queue WHERE idempotency_key = ? AND status IN ('pending', 'failed')",
+      variables: [Variable.withString(idempotencyKey)],
+      readsFrom: {syncQueueTable},
+    ).getSingle();
+    return (result.data['cnt'] as int? ?? 0) > 0;
+  }
+
+  /// إضافة للطابور مع حماية من التكرار (idempotency guard)
   Future<int> enqueue({
     required String id,
     required String tableName,
@@ -45,7 +56,14 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase> with _$SyncQueueDaoMixi
     required String payload,
     required String idempotencyKey,
     int priority = 2,
-  }) {
+  }) async {
+    // Guard: skip insert if a pending/failed item with the same key exists
+    if (await hasExistingPendingItem(idempotencyKey)) {
+      debugPrint('[SyncQueue] Skipping duplicate enqueue '
+          '(key=$idempotencyKey, table=$tableName, op=$operation)');
+      return 0;
+    }
+
     return into(syncQueueTable).insert(SyncQueueTableCompanion.insert(
       id: id,
       tableName_: tableName,

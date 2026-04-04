@@ -3939,7 +3939,10 @@ class $CustomersTableTable extends CustomersTable
   @override
   late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
       'store_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES stores (id)'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -35559,6 +35562,30 @@ class $SyncMetadataTableTable extends SyncMetadataTable
   late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
       'last_error', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _conflictCountMeta =
+      const VerificationMeta('conflictCount');
+  @override
+  late final GeneratedColumn<int> conflictCount = GeneratedColumn<int>(
+      'conflict_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _lastConflictAtMeta =
+      const VerificationMeta('lastConflictAt');
+  @override
+  late final GeneratedColumn<DateTime> lastConflictAt =
+      GeneratedColumn<DateTime>('last_conflict_at', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _requiresManualReviewMeta =
+      const VerificationMeta('requiresManualReview');
+  @override
+  late final GeneratedColumn<bool> requiresManualReview = GeneratedColumn<bool>(
+      'requires_manual_review', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("requires_manual_review" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
         tableName_,
@@ -35568,7 +35595,10 @@ class $SyncMetadataTableTable extends SyncMetadataTable
         failedCount,
         isInitialSynced,
         lastSyncCount,
-        lastError
+        lastError,
+        conflictCount,
+        lastConflictAt,
+        requiresManualReview
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -35629,6 +35659,24 @@ class $SyncMetadataTableTable extends SyncMetadataTable
       context.handle(_lastErrorMeta,
           lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta));
     }
+    if (data.containsKey('conflict_count')) {
+      context.handle(
+          _conflictCountMeta,
+          conflictCount.isAcceptableOrUnknown(
+              data['conflict_count']!, _conflictCountMeta));
+    }
+    if (data.containsKey('last_conflict_at')) {
+      context.handle(
+          _lastConflictAtMeta,
+          lastConflictAt.isAcceptableOrUnknown(
+              data['last_conflict_at']!, _lastConflictAtMeta));
+    }
+    if (data.containsKey('requires_manual_review')) {
+      context.handle(
+          _requiresManualReviewMeta,
+          requiresManualReview.isAcceptableOrUnknown(
+              data['requires_manual_review']!, _requiresManualReviewMeta));
+    }
     return context;
   }
 
@@ -35654,6 +35702,12 @@ class $SyncMetadataTableTable extends SyncMetadataTable
           .read(DriftSqlType.int, data['${effectivePrefix}last_sync_count'])!,
       lastError: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}last_error']),
+      conflictCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}conflict_count'])!,
+      lastConflictAt: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}last_conflict_at']),
+      requiresManualReview: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}requires_manual_review'])!,
     );
   }
 
@@ -35688,6 +35742,15 @@ class SyncMetadataTableData extends DataClass
 
   /// آخر خطأ حدث أثناء المزامنة
   final String? lastError;
+
+  /// عدد التعارضات المكتشفة
+  final int conflictCount;
+
+  /// آخر وقت حدث فيه تعارض
+  final DateTime? lastConflictAt;
+
+  /// هل يتطلب مراجعة يدوية؟
+  final bool requiresManualReview;
   const SyncMetadataTableData(
       {required this.tableName_,
       this.lastPullAt,
@@ -35696,7 +35759,10 @@ class SyncMetadataTableData extends DataClass
       required this.failedCount,
       required this.isInitialSynced,
       required this.lastSyncCount,
-      this.lastError});
+      this.lastError,
+      required this.conflictCount,
+      this.lastConflictAt,
+      required this.requiresManualReview});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -35714,6 +35780,11 @@ class SyncMetadataTableData extends DataClass
     if (!nullToAbsent || lastError != null) {
       map['last_error'] = Variable<String>(lastError);
     }
+    map['conflict_count'] = Variable<int>(conflictCount);
+    if (!nullToAbsent || lastConflictAt != null) {
+      map['last_conflict_at'] = Variable<DateTime>(lastConflictAt);
+    }
+    map['requires_manual_review'] = Variable<bool>(requiresManualReview);
     return map;
   }
 
@@ -35733,6 +35804,11 @@ class SyncMetadataTableData extends DataClass
       lastError: lastError == null && nullToAbsent
           ? const Value.absent()
           : Value(lastError),
+      conflictCount: Value(conflictCount),
+      lastConflictAt: lastConflictAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastConflictAt),
+      requiresManualReview: Value(requiresManualReview),
     );
   }
 
@@ -35748,6 +35824,10 @@ class SyncMetadataTableData extends DataClass
       isInitialSynced: serializer.fromJson<bool>(json['isInitialSynced']),
       lastSyncCount: serializer.fromJson<int>(json['lastSyncCount']),
       lastError: serializer.fromJson<String?>(json['lastError']),
+      conflictCount: serializer.fromJson<int>(json['conflictCount']),
+      lastConflictAt: serializer.fromJson<DateTime?>(json['lastConflictAt']),
+      requiresManualReview:
+          serializer.fromJson<bool>(json['requiresManualReview']),
     );
   }
   @override
@@ -35762,6 +35842,9 @@ class SyncMetadataTableData extends DataClass
       'isInitialSynced': serializer.toJson<bool>(isInitialSynced),
       'lastSyncCount': serializer.toJson<int>(lastSyncCount),
       'lastError': serializer.toJson<String?>(lastError),
+      'conflictCount': serializer.toJson<int>(conflictCount),
+      'lastConflictAt': serializer.toJson<DateTime?>(lastConflictAt),
+      'requiresManualReview': serializer.toJson<bool>(requiresManualReview),
     };
   }
 
@@ -35773,7 +35856,10 @@ class SyncMetadataTableData extends DataClass
           int? failedCount,
           bool? isInitialSynced,
           int? lastSyncCount,
-          Value<String?> lastError = const Value.absent()}) =>
+          Value<String?> lastError = const Value.absent(),
+          int? conflictCount,
+          Value<DateTime?> lastConflictAt = const Value.absent(),
+          bool? requiresManualReview}) =>
       SyncMetadataTableData(
         tableName_: tableName_ ?? this.tableName_,
         lastPullAt: lastPullAt.present ? lastPullAt.value : this.lastPullAt,
@@ -35783,6 +35869,10 @@ class SyncMetadataTableData extends DataClass
         isInitialSynced: isInitialSynced ?? this.isInitialSynced,
         lastSyncCount: lastSyncCount ?? this.lastSyncCount,
         lastError: lastError.present ? lastError.value : this.lastError,
+        conflictCount: conflictCount ?? this.conflictCount,
+        lastConflictAt:
+            lastConflictAt.present ? lastConflictAt.value : this.lastConflictAt,
+        requiresManualReview: requiresManualReview ?? this.requiresManualReview,
       );
   SyncMetadataTableData copyWithCompanion(SyncMetadataTableCompanion data) {
     return SyncMetadataTableData(
@@ -35804,6 +35894,15 @@ class SyncMetadataTableData extends DataClass
           ? data.lastSyncCount.value
           : this.lastSyncCount,
       lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      conflictCount: data.conflictCount.present
+          ? data.conflictCount.value
+          : this.conflictCount,
+      lastConflictAt: data.lastConflictAt.present
+          ? data.lastConflictAt.value
+          : this.lastConflictAt,
+      requiresManualReview: data.requiresManualReview.present
+          ? data.requiresManualReview.value
+          : this.requiresManualReview,
     );
   }
 
@@ -35817,14 +35916,27 @@ class SyncMetadataTableData extends DataClass
           ..write('failedCount: $failedCount, ')
           ..write('isInitialSynced: $isInitialSynced, ')
           ..write('lastSyncCount: $lastSyncCount, ')
-          ..write('lastError: $lastError')
+          ..write('lastError: $lastError, ')
+          ..write('conflictCount: $conflictCount, ')
+          ..write('lastConflictAt: $lastConflictAt, ')
+          ..write('requiresManualReview: $requiresManualReview')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(tableName_, lastPullAt, lastPushAt,
-      pendingCount, failedCount, isInitialSynced, lastSyncCount, lastError);
+  int get hashCode => Object.hash(
+      tableName_,
+      lastPullAt,
+      lastPushAt,
+      pendingCount,
+      failedCount,
+      isInitialSynced,
+      lastSyncCount,
+      lastError,
+      conflictCount,
+      lastConflictAt,
+      requiresManualReview);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -35836,7 +35948,10 @@ class SyncMetadataTableData extends DataClass
           other.failedCount == this.failedCount &&
           other.isInitialSynced == this.isInitialSynced &&
           other.lastSyncCount == this.lastSyncCount &&
-          other.lastError == this.lastError);
+          other.lastError == this.lastError &&
+          other.conflictCount == this.conflictCount &&
+          other.lastConflictAt == this.lastConflictAt &&
+          other.requiresManualReview == this.requiresManualReview);
 }
 
 class SyncMetadataTableCompanion
@@ -35849,6 +35964,9 @@ class SyncMetadataTableCompanion
   final Value<bool> isInitialSynced;
   final Value<int> lastSyncCount;
   final Value<String?> lastError;
+  final Value<int> conflictCount;
+  final Value<DateTime?> lastConflictAt;
+  final Value<bool> requiresManualReview;
   final Value<int> rowid;
   const SyncMetadataTableCompanion({
     this.tableName_ = const Value.absent(),
@@ -35859,6 +35977,9 @@ class SyncMetadataTableCompanion
     this.isInitialSynced = const Value.absent(),
     this.lastSyncCount = const Value.absent(),
     this.lastError = const Value.absent(),
+    this.conflictCount = const Value.absent(),
+    this.lastConflictAt = const Value.absent(),
+    this.requiresManualReview = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SyncMetadataTableCompanion.insert({
@@ -35870,6 +35991,9 @@ class SyncMetadataTableCompanion
     this.isInitialSynced = const Value.absent(),
     this.lastSyncCount = const Value.absent(),
     this.lastError = const Value.absent(),
+    this.conflictCount = const Value.absent(),
+    this.lastConflictAt = const Value.absent(),
+    this.requiresManualReview = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : tableName_ = Value(tableName_);
   static Insertable<SyncMetadataTableData> custom({
@@ -35881,6 +36005,9 @@ class SyncMetadataTableCompanion
     Expression<bool>? isInitialSynced,
     Expression<int>? lastSyncCount,
     Expression<String>? lastError,
+    Expression<int>? conflictCount,
+    Expression<DateTime>? lastConflictAt,
+    Expression<bool>? requiresManualReview,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -35892,6 +36019,10 @@ class SyncMetadataTableCompanion
       if (isInitialSynced != null) 'is_initial_synced': isInitialSynced,
       if (lastSyncCount != null) 'last_sync_count': lastSyncCount,
       if (lastError != null) 'last_error': lastError,
+      if (conflictCount != null) 'conflict_count': conflictCount,
+      if (lastConflictAt != null) 'last_conflict_at': lastConflictAt,
+      if (requiresManualReview != null)
+        'requires_manual_review': requiresManualReview,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -35905,6 +36036,9 @@ class SyncMetadataTableCompanion
       Value<bool>? isInitialSynced,
       Value<int>? lastSyncCount,
       Value<String?>? lastError,
+      Value<int>? conflictCount,
+      Value<DateTime?>? lastConflictAt,
+      Value<bool>? requiresManualReview,
       Value<int>? rowid}) {
     return SyncMetadataTableCompanion(
       tableName_: tableName_ ?? this.tableName_,
@@ -35915,6 +36049,9 @@ class SyncMetadataTableCompanion
       isInitialSynced: isInitialSynced ?? this.isInitialSynced,
       lastSyncCount: lastSyncCount ?? this.lastSyncCount,
       lastError: lastError ?? this.lastError,
+      conflictCount: conflictCount ?? this.conflictCount,
+      lastConflictAt: lastConflictAt ?? this.lastConflictAt,
+      requiresManualReview: requiresManualReview ?? this.requiresManualReview,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -35946,6 +36083,16 @@ class SyncMetadataTableCompanion
     if (lastError.present) {
       map['last_error'] = Variable<String>(lastError.value);
     }
+    if (conflictCount.present) {
+      map['conflict_count'] = Variable<int>(conflictCount.value);
+    }
+    if (lastConflictAt.present) {
+      map['last_conflict_at'] = Variable<DateTime>(lastConflictAt.value);
+    }
+    if (requiresManualReview.present) {
+      map['requires_manual_review'] =
+          Variable<bool>(requiresManualReview.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -35963,6 +36110,9 @@ class SyncMetadataTableCompanion
           ..write('isInitialSynced: $isInitialSynced, ')
           ..write('lastSyncCount: $lastSyncCount, ')
           ..write('lastError: $lastError, ')
+          ..write('conflictCount: $conflictCount, ')
+          ..write('lastConflictAt: $lastConflictAt, ')
+          ..write('requiresManualReview: $requiresManualReview, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -39546,8 +39696,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_orders_order_date ON orders (order_date)');
   late final Index idxOrdersStoreStatus = Index('idx_orders_store_status',
       'CREATE INDEX idx_orders_store_status ON orders (store_id, status)');
+  late final Index idxOrdersStoreOrderDate = Index(
+      'idx_orders_store_order_date',
+      'CREATE INDEX idx_orders_store_order_date ON orders (store_id, order_date)');
   late final Index idxOrdersSyncedAt = Index('idx_orders_synced_at',
       'CREATE INDEX idx_orders_synced_at ON orders (synced_at)');
+  late final Index idxOrdersCustomerCreated = Index(
+      'idx_orders_customer_created',
+      'CREATE INDEX idx_orders_customer_created ON orders (customer_id, created_at)');
   late final Index idxOrdersStoreNumberUnique = Index(
       'idx_orders_store_number_unique',
       'CREATE UNIQUE INDEX idx_orders_store_number_unique ON orders (store_id, order_number)');
@@ -39620,6 +39776,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_customers_is_active ON customers (is_active)');
   late final Index idxCustomersStorePhone = Index('idx_customers_store_phone',
       'CREATE INDEX idx_customers_store_phone ON customers (store_id, phone)');
+  late final Index idxCustomersStoreActive = Index('idx_customers_store_active',
+      'CREATE INDEX idx_customers_store_active ON customers (store_id, is_active)');
   late final Index idxCustomerAddressesCustomerId = Index(
       'idx_customer_addresses_customer_id',
       'CREATE INDEX idx_customer_addresses_customer_id ON customer_addresses (customer_id)');
@@ -39997,7 +40155,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxOrdersStatus,
         idxOrdersOrderDate,
         idxOrdersStoreStatus,
+        idxOrdersStoreOrderDate,
         idxOrdersSyncedAt,
+        idxOrdersCustomerCreated,
         idxOrdersStoreNumberUnique,
         idxOrderItemsOrderId,
         idxOrderItemsProductId,
@@ -40032,6 +40192,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxCustomersName,
         idxCustomersIsActive,
         idxCustomersStorePhone,
+        idxCustomersStoreActive,
         idxCustomerAddressesCustomerId,
         idxSuppliersStoreId,
         idxSuppliersPhone,
@@ -40281,6 +40442,21 @@ final class $$StoresTableTableReferences
         .filter((f) => f.storeId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_productsTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$CustomersTableTable, List<CustomersTableData>>
+      _customersTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.customersTable,
+              aliasName: $_aliasNameGenerator(
+                  db.storesTable.id, db.customersTable.storeId));
+
+  $$CustomersTableTableProcessedTableManager get customersTableRefs {
+    final manager = $$CustomersTableTableTableManager($_db, $_db.customersTable)
+        .filter((f) => f.storeId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_customersTableRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -40565,6 +40741,27 @@ class $$StoresTableTableFilterComposer
             $$ProductsTableTableFilterComposer(
               $db: $db,
               $table: $db.productsTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> customersTableRefs(
+      Expression<bool> Function($$CustomersTableTableFilterComposer f) f) {
+    final $$CustomersTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.customersTable,
+        getReferencedColumn: (t) => t.storeId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CustomersTableTableFilterComposer(
+              $db: $db,
+              $table: $db.customersTable,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -40979,6 +41176,27 @@ class $$StoresTableTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> customersTableRefs<T extends Object>(
+      Expression<T> Function($$CustomersTableTableAnnotationComposer a) f) {
+    final $$CustomersTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.customersTable,
+        getReferencedColumn: (t) => t.storeId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CustomersTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.customersTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
   Expression<T> salesTableRefs<T extends Object>(
       Expression<T> Function($$SalesTableTableAnnotationComposer a) f) {
     final $$SalesTableTableAnnotationComposer composer = $composerBuilder(
@@ -41234,6 +41452,7 @@ class $$StoresTableTableTableManager extends RootTableManager<
     PrefetchHooks Function(
         {bool categoriesTableRefs,
         bool productsTableRefs,
+        bool customersTableRefs,
         bool salesTableRefs,
         bool inventoryMovementsTableRefs,
         bool accountsTableRefs,
@@ -41348,6 +41567,7 @@ class $$StoresTableTableTableManager extends RootTableManager<
           prefetchHooksCallback: (
               {categoriesTableRefs = false,
               productsTableRefs = false,
+              customersTableRefs = false,
               salesTableRefs = false,
               inventoryMovementsTableRefs = false,
               accountsTableRefs = false,
@@ -41364,6 +41584,7 @@ class $$StoresTableTableTableManager extends RootTableManager<
               explicitlyWatchedTables: [
                 if (categoriesTableRefs) db.categoriesTable,
                 if (productsTableRefs) db.productsTable,
+                if (customersTableRefs) db.customersTable,
                 if (salesTableRefs) db.salesTable,
                 if (inventoryMovementsTableRefs) db.inventoryMovementsTable,
                 if (accountsTableRefs) db.accountsTable,
@@ -41401,6 +41622,19 @@ class $$StoresTableTableTableManager extends RootTableManager<
                         managerFromTypedResult: (p0) =>
                             $$StoresTableTableReferences(db, table, p0)
                                 .productsTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.storeId == item.id),
+                        typedResults: items),
+                  if (customersTableRefs)
+                    await $_getPrefetchedData<StoresTableData,
+                            $StoresTableTable, CustomersTableData>(
+                        currentTable: table,
+                        referencedTable: $$StoresTableTableReferences
+                            ._customersTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$StoresTableTableReferences(db, table, p0)
+                                .customersTableRefs,
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.storeId == item.id),
@@ -41569,6 +41803,7 @@ typedef $$StoresTableTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function(
         {bool categoriesTableRefs,
         bool productsTableRefs,
+        bool customersTableRefs,
         bool salesTableRefs,
         bool inventoryMovementsTableRefs,
         bool accountsTableRefs,
@@ -44020,6 +44255,21 @@ final class $$CustomersTableTableReferences extends BaseReferences<
   $$CustomersTableTableReferences(
       super.$_db, super.$_table, super.$_typedResult);
 
+  static $StoresTableTable _storeIdTable(_$AppDatabase db) =>
+      db.storesTable.createAlias(
+          $_aliasNameGenerator(db.customersTable.storeId, db.storesTable.id));
+
+  $$StoresTableTableProcessedTableManager get storeId {
+    final $_column = $_itemColumn<String>('store_id')!;
+
+    final manager = $$StoresTableTableTableManager($_db, $_db.storesTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_storeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
   static MultiTypedResultKey<$SalesTableTable, List<SalesTableData>>
       _salesTableRefsTable(_$AppDatabase db) =>
           MultiTypedResultKey.fromTable(db.salesTable,
@@ -44133,9 +44383,6 @@ class $$CustomersTableTableFilterComposer
   ColumnFilters<String> get orgId => $composableBuilder(
       column: $table.orgId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get storeId => $composableBuilder(
-      column: $table.storeId, builder: (column) => ColumnFilters(column));
-
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
 
@@ -44174,6 +44421,26 @@ class $$CustomersTableTableFilterComposer
 
   ColumnFilters<DateTime> get deletedAt => $composableBuilder(
       column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  $$StoresTableTableFilterComposer get storeId {
+    final $$StoresTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableFilterComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 
   Expression<bool> salesTableRefs(
       Expression<bool> Function($$SalesTableTableFilterComposer f) f) {
@@ -44319,9 +44586,6 @@ class $$CustomersTableTableOrderingComposer
   ColumnOrderings<String> get orgId => $composableBuilder(
       column: $table.orgId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get storeId => $composableBuilder(
-      column: $table.storeId, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
@@ -44360,6 +44624,26 @@ class $$CustomersTableTableOrderingComposer
 
   ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
       column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  $$StoresTableTableOrderingComposer get storeId {
+    final $$StoresTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 }
 
 class $$CustomersTableTableAnnotationComposer
@@ -44376,9 +44660,6 @@ class $$CustomersTableTableAnnotationComposer
 
   GeneratedColumn<String> get orgId =>
       $composableBuilder(column: $table.orgId, builder: (column) => column);
-
-  GeneratedColumn<String> get storeId =>
-      $composableBuilder(column: $table.storeId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -44418,6 +44699,26 @@ class $$CustomersTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$StoresTableTableAnnotationComposer get storeId {
+    final $$StoresTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 
   Expression<T> salesTableRefs<T extends Object>(
       Expression<T> Function($$SalesTableTableAnnotationComposer a) f) {
@@ -44562,7 +44863,8 @@ class $$CustomersTableTableTableManager extends RootTableManager<
     (CustomersTableData, $$CustomersTableTableReferences),
     CustomersTableData,
     PrefetchHooks Function(
-        {bool salesTableRefs,
+        {bool storeId,
+        bool salesTableRefs,
         bool accountsTableRefs,
         bool ordersTableRefs,
         bool loyaltyPointsTableRefs,
@@ -44662,7 +44964,8 @@ class $$CustomersTableTableTableManager extends RootTableManager<
                   ))
               .toList(),
           prefetchHooksCallback: (
-              {salesTableRefs = false,
+              {storeId = false,
+              salesTableRefs = false,
               accountsTableRefs = false,
               ordersTableRefs = false,
               loyaltyPointsTableRefs = false,
@@ -44678,7 +44981,32 @@ class $$CustomersTableTableTableManager extends RootTableManager<
                 if (loyaltyTransactionsTableRefs) db.loyaltyTransactionsTable,
                 if (returnsTableRefs) db.returnsTable
               ],
-              addJoins: null,
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (storeId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.storeId,
+                    referencedTable:
+                        $$CustomersTableTableReferences._storeIdTable(db),
+                    referencedColumn:
+                        $$CustomersTableTableReferences._storeIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (salesTableRefs)
@@ -44778,7 +45106,8 @@ typedef $$CustomersTableTableProcessedTableManager = ProcessedTableManager<
     (CustomersTableData, $$CustomersTableTableReferences),
     CustomersTableData,
     PrefetchHooks Function(
-        {bool salesTableRefs,
+        {bool storeId,
+        bool salesTableRefs,
         bool accountsTableRefs,
         bool ordersTableRefs,
         bool loyaltyPointsTableRefs,
@@ -62536,6 +62865,9 @@ typedef $$SyncMetadataTableTableCreateCompanionBuilder
   Value<bool> isInitialSynced,
   Value<int> lastSyncCount,
   Value<String?> lastError,
+  Value<int> conflictCount,
+  Value<DateTime?> lastConflictAt,
+  Value<bool> requiresManualReview,
   Value<int> rowid,
 });
 typedef $$SyncMetadataTableTableUpdateCompanionBuilder
@@ -62548,6 +62880,9 @@ typedef $$SyncMetadataTableTableUpdateCompanionBuilder
   Value<bool> isInitialSynced,
   Value<int> lastSyncCount,
   Value<String?> lastError,
+  Value<int> conflictCount,
+  Value<DateTime?> lastConflictAt,
+  Value<bool> requiresManualReview,
   Value<int> rowid,
 });
 
@@ -62584,6 +62919,17 @@ class $$SyncMetadataTableTableFilterComposer
 
   ColumnFilters<String> get lastError => $composableBuilder(
       column: $table.lastError, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get conflictCount => $composableBuilder(
+      column: $table.conflictCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastConflictAt => $composableBuilder(
+      column: $table.lastConflictAt,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get requiresManualReview => $composableBuilder(
+      column: $table.requiresManualReview,
+      builder: (column) => ColumnFilters(column));
 }
 
 class $$SyncMetadataTableTableOrderingComposer
@@ -62621,6 +62967,18 @@ class $$SyncMetadataTableTableOrderingComposer
 
   ColumnOrderings<String> get lastError => $composableBuilder(
       column: $table.lastError, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get conflictCount => $composableBuilder(
+      column: $table.conflictCount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastConflictAt => $composableBuilder(
+      column: $table.lastConflictAt,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get requiresManualReview => $composableBuilder(
+      column: $table.requiresManualReview,
+      builder: (column) => ColumnOrderings(column));
 }
 
 class $$SyncMetadataTableTableAnnotationComposer
@@ -62655,6 +63013,15 @@ class $$SyncMetadataTableTableAnnotationComposer
 
   GeneratedColumn<String> get lastError =>
       $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<int> get conflictCount => $composableBuilder(
+      column: $table.conflictCount, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastConflictAt => $composableBuilder(
+      column: $table.lastConflictAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get requiresManualReview => $composableBuilder(
+      column: $table.requiresManualReview, builder: (column) => column);
 }
 
 class $$SyncMetadataTableTableTableManager extends RootTableManager<
@@ -62694,6 +63061,9 @@ class $$SyncMetadataTableTableTableManager extends RootTableManager<
             Value<bool> isInitialSynced = const Value.absent(),
             Value<int> lastSyncCount = const Value.absent(),
             Value<String?> lastError = const Value.absent(),
+            Value<int> conflictCount = const Value.absent(),
+            Value<DateTime?> lastConflictAt = const Value.absent(),
+            Value<bool> requiresManualReview = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SyncMetadataTableCompanion(
@@ -62705,6 +63075,9 @@ class $$SyncMetadataTableTableTableManager extends RootTableManager<
             isInitialSynced: isInitialSynced,
             lastSyncCount: lastSyncCount,
             lastError: lastError,
+            conflictCount: conflictCount,
+            lastConflictAt: lastConflictAt,
+            requiresManualReview: requiresManualReview,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -62716,6 +63089,9 @@ class $$SyncMetadataTableTableTableManager extends RootTableManager<
             Value<bool> isInitialSynced = const Value.absent(),
             Value<int> lastSyncCount = const Value.absent(),
             Value<String?> lastError = const Value.absent(),
+            Value<int> conflictCount = const Value.absent(),
+            Value<DateTime?> lastConflictAt = const Value.absent(),
+            Value<bool> requiresManualReview = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SyncMetadataTableCompanion.insert(
@@ -62727,6 +63103,9 @@ class $$SyncMetadataTableTableTableManager extends RootTableManager<
             isInitialSynced: isInitialSynced,
             lastSyncCount: lastSyncCount,
             lastError: lastError,
+            conflictCount: conflictCount,
+            lastConflictAt: lastConflictAt,
+            requiresManualReview: requiresManualReview,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

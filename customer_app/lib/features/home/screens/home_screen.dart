@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/app_providers.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../../stores/providers/stores_providers.dart';
 import '../widgets/store_card.dart';
 import '../../../core/services/location_service.dart';
@@ -60,11 +61,24 @@ class HomeScreen extends ConsumerWidget {
           ref.invalidate(allStoresProvider);
         },
         child: locationAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => _buildShimmerList(),
           error: (_, __) => _buildStoreList(ref, context, null),
           data: (location) => _buildStoreList(ref, context, location),
         ),
       ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerList() {
+    return AlhaiShimmer(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
+        itemCount: 5,
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+          child: AlhaiSkeleton.card(height: 90),
+        ),
       ),
     );
   }
@@ -82,87 +96,97 @@ class HomeScreen extends ConsumerWidget {
         : ref.watch(allStoresProvider);
 
     return storesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => _buildShimmerList(),
       error: (error, _) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: AlhaiSpacing.md),
-            Text('فشل تحميل المتاجر', style: theme.textTheme.bodyLarge),
-            const SizedBox(height: AlhaiSpacing.xs),
-            FilledButton(
-              onPressed: () {
-                ref.invalidate(allStoresProvider);
-                if (location != null) {
-                  ref.invalidate(nearbyStoresProvider(location));
-                }
-              },
-              child: const Text('إعادة المحاولة'),
-            ),
-          ],
+        child: AlhaiEmptyState.error(
+          title: 'فشل تحميل المتاجر',
+          description: 'تحقق من اتصالك بالإنترنت',
+          actionText: 'إعادة المحاولة',
+          onAction: () {
+            ref.invalidate(allStoresProvider);
+            if (location != null) {
+              ref.invalidate(nearbyStoresProvider(location));
+            }
+          },
         ),
       ),
       data: (stores) {
         if (stores.isEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.storefront_outlined,
-                  size: 64,
-                  color: theme.colorScheme.outline,
-                ),
-                const SizedBox(height: AlhaiSpacing.md),
-                Text(
-                  'لا توجد متاجر قريبة',
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: AlhaiSpacing.xs),
-                Text(
-                  'حاول توسيع نطاق البحث',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
-              ],
+            child: AlhaiEmptyState(
+              icon: Icons.storefront_outlined,
+              title: 'لا توجد متاجر قريبة',
+              description: 'حاول توسيع نطاق البحث',
             ),
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(AlhaiSpacing.md),
-          itemCount: stores.length + 1, // +1 for header
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                child: Text(
-                  location != null ? 'المتاجر القريبة' : 'جميع المتاجر',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isTablet = ResponsiveHelper.isTablet(context);
+            final padding = isTablet
+                ? const EdgeInsets.all(AlhaiSpacing.lg)
+                : const EdgeInsets.all(AlhaiSpacing.md);
+
+            final header = Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+              child: Text(
+                location != null ? 'المتاجر القريبة' : 'جميع المتاجر',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            }
+              ),
+            );
 
-            final store = stores[index - 1];
-            final distance = location != null
-                ? LocationService.distanceKm(
-                    location.lat, location.lng, store.lat, store.lng)
-                : null;
-
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-              child: StoreCard(
+            List<Widget> storeWidgets = stores.map((store) {
+              final distance = location != null
+                  ? LocationService.distanceKm(
+                      location.lat, location.lng, store.lat, store.lng)
+                  : null;
+              return StoreCard(
                 store: store,
                 distanceKm: distance,
                 onTap: () {
                   ref.read(selectedStoreProvider.notifier).state = store;
                   context.push('/catalog');
                 },
-              ),
+              );
+            }).toList();
+
+            if (isTablet) {
+              // Tablet: 2-column grid
+              final columns = ResponsiveHelper.isLargeTablet(context) ? 3 : 2;
+              return SingleChildScrollView(
+                padding: padding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    header,
+                    GridView.count(
+                      crossAxisCount: columns,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: AlhaiSpacing.sm,
+                      mainAxisSpacing: AlhaiSpacing.sm,
+                      childAspectRatio: 2.2,
+                      children: storeWidgets,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // Phone: list layout (unchanged)
+            return ListView.builder(
+              padding: padding,
+              itemCount: stores.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) return header;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  child: storeWidgets[index - 1],
+                );
+              },
             );
           },
         );

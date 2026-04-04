@@ -97,19 +97,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const Spacer(),
                 // Logo
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.storefront_rounded,
-                    size: 50,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  final logoSize = (MediaQuery.of(context).size.width * 0.25)
+                      .clamp(80.0, 150.0);
+                  return Container(
+                    width: logoSize,
+                    height: logoSize,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.storefront_rounded,
+                      size: logoSize * 0.5,
+                      color: theme.colorScheme.primary,
+                    ),
+                  );
+                }),
                 const SizedBox(height: AlhaiSpacing.xl),
                 Text(
                   'مرحباً بك',

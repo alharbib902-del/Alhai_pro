@@ -42,7 +42,8 @@ class ProductsDatasource {
 
     final data = await query
         .order('name')
-        .range(from, to);
+        .range(from, to)
+        .timeout(const Duration(seconds: 15));
 
     final products = (data as List)
         .map((row) => _productFromRow(row as Map<String, dynamic>))
@@ -62,7 +63,8 @@ class ProductsDatasource {
         .from('products')
         .select()
         .eq('id', id)
-        .single();
+        .single()
+        .timeout(const Duration(seconds: 15));
     return _productFromRow(data);
   }
 

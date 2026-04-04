@@ -18,6 +18,15 @@ class OrderDetailScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final orderAsync = ref.watch(orderDetailProvider(orderId));
 
+    // Listen to real-time updates and auto-refresh order data
+    ref.listen(orderRealtimeProvider(orderId), (prev, next) {
+      next.whenData((data) {
+        if (data != null) {
+          ref.invalidate(orderDetailProvider(orderId));
+        }
+      });
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تفاصيل الطلب'),

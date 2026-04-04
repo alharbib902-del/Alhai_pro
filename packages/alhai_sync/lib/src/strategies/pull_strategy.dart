@@ -154,6 +154,21 @@ class PullStrategy {
         }
       }
 
+      // إعادة بناء فهرس FTS بعد سحب المنتجات
+      if (tableName == 'products' && totalPulled > 0) {
+        try {
+          await _db.customStatement(
+              "INSERT INTO products_fts(products_fts) VALUES('rebuild')");
+          if (kDebugMode) {
+            debugPrint('[Pull] FTS index rebuilt after pulling $totalPulled products');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('[Pull] FTS rebuild failed (non-fatal): $e');
+          }
+        }
+      }
+
       // تحديث آخر وقت سحب
       await _metadataDao.updateLastPullAt(
         tableName,
