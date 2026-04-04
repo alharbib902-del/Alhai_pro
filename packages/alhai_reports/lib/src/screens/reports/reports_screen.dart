@@ -166,7 +166,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
+    final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
     final l10n = AppLocalizations.of(context)!;
 
     return KeyboardListener(
@@ -192,7 +192,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
 
   Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
-    final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
+    final isDesktop = MediaQuery.of(context).size.width >= AppSizes.breakpointTablet;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
@@ -543,7 +543,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        height: context.screenHeight * 0.8,
+        height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(

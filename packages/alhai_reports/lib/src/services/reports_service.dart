@@ -239,9 +239,9 @@ class InventoryReport {
 class LowStockItem {
   final String productId;
   final String productName;
-  final int currentStock;
-  final int minStock;
-  final int suggestedReorder;
+  final double currentStock;
+  final double minStock;
+  final double suggestedReorder;
 
   const LowStockItem({
     required this.productId,
@@ -251,7 +251,7 @@ class LowStockItem {
     required this.suggestedReorder,
   });
 
-  int get deficit => minStock - currentStock;
+  double get deficit => minStock - currentStock;
 }
 
 /// مخزون حسب الفئة

@@ -312,7 +312,7 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
 
 class _InventoryItem {
   final String name, category, sku;
-  final int stock, minStock;
+  final double stock, minStock;
   final double cost, price;
   final DateTime lastUpdated;
   _InventoryItem(
