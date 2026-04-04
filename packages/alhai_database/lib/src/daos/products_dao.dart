@@ -125,17 +125,11 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
   }
   
   /// الحصول على المنتجات منخفضة المخزون
-  /// L59: Uses explicit column list instead of SELECT * to reduce memory
-  /// usage and improve query performance.
   Future<List<ProductsTableData>> getLowStockProducts(String storeId) {
     return customSelect(
-      '''SELECT id, org_id, store_id, name, sku, barcode,
-                price, cost_price, stock_qty, min_qty, unit,
-                description, image_thumbnail, image_medium, image_large, image_hash,
-                category_id, is_active, track_inventory,
-                created_at, updated_at, synced_at, deleted_at
-         FROM products
-         WHERE store_id = ? AND stock_qty <= min_qty AND is_active = 1
+      '''SELECT p.* FROM products p
+         WHERE p.store_id = ? AND p.stock_qty <= p.min_qty AND p.is_active = 1
+               AND p.deleted_at IS NULL
          LIMIT 500''',
       variables: [Variable.withString(storeId)],
       readsFrom: {productsTable},
@@ -319,8 +313,9 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
     DateTime? since,
   }) {
     // استخدام raw query للأداء
-    final sinceClause = since != null ? 'INNER JOIN sales s ON si.sale_id = s.id WHERE s.created_at > ?' : '';
-    final variables = <Variable>[];
+    // Always JOIN sales to scope by store and exclude voided/deleted sales
+    final sinceClause = since != null ? ' AND s.created_at > ?' : '';
+    final variables = <Variable>[Variable.withString(storeId)];
     if (since != null) {
       variables.add(Variable.withDateTime(since));
     }
@@ -331,12 +326,13 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
          INNER JOIN (
            SELECT si.product_id, COUNT(*) as sale_count
            FROM sale_items si
-           $sinceClause
+           INNER JOIN sales s ON si.sale_id = s.id
+           WHERE s.store_id = ? AND s.status != 'voided' AND s.deleted_at IS NULL$sinceClause
            GROUP BY si.product_id
            ORDER BY sale_count DESC
            LIMIT ?
          ) top ON p.id = top.product_id
-         WHERE p.store_id = ? AND p.is_active = 1
+         WHERE p.store_id = ? AND p.is_active = 1 AND p.deleted_at IS NULL
          ORDER BY top.sale_count DESC''',
       variables: variables,
       readsFrom: {productsTable},

@@ -6,6 +6,7 @@ part of 'returns_dao.dart';
 mixin _$ReturnsDaoMixin on DatabaseAccessor<AppDatabase> {
   $StoresTableTable get storesTable => attachedDatabase.storesTable;
   $UsersTableTable get usersTable => attachedDatabase.usersTable;
+  $ShiftsTableTable get shiftsTable => attachedDatabase.shiftsTable;
   $CustomersTableTable get customersTable => attachedDatabase.customersTable;
   $SalesTableTable get salesTable => attachedDatabase.salesTable;
   $ReturnsTableTable get returnsTable => attachedDatabase.returnsTable;
@@ -23,6 +24,8 @@ class ReturnsDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$UsersTableTableTableManager get usersTable =>
       $$UsersTableTableTableManager(_db.attachedDatabase, _db.usersTable);
+  $$ShiftsTableTableTableManager get shiftsTable =>
+      $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
           _db.attachedDatabase, _db.customersTable);

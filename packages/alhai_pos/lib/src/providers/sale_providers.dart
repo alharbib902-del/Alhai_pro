@@ -19,16 +19,25 @@ final invoiceServiceProvider = Provider<InvoiceService>((ref) {
   return InvoiceService(db: db);
 });
 
+/// Optional clock offset provider. Override this in the cashier app
+/// to supply the measured offset from ClockValidationService.
+/// Default: no offset (Duration.zero).
+final clockOffsetProvider = Provider<Duration Function()>((ref) {
+  return () => Duration.zero;
+});
+
 /// مزود خدمة المبيعات
 final saleServiceProvider = Provider<SaleService>((ref) {
   final db = ref.watch(appDatabaseProvider);
   final syncService = ref.watch(syncServiceProvider);
   final invoiceService = ref.watch(invoiceServiceProvider);
+  final clockOffset = ref.watch(clockOffsetProvider);
 
   return SaleService(
     db: db,
     syncService: syncService,
     invoiceService: invoiceService,
+    clockOffsetProvider: clockOffset,
   );
 });
 

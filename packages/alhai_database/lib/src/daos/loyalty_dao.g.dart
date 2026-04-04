@@ -9,6 +9,7 @@ mixin _$LoyaltyDaoMixin on DatabaseAccessor<AppDatabase> {
   $LoyaltyPointsTableTable get loyaltyPointsTable =>
       attachedDatabase.loyaltyPointsTable;
   $UsersTableTable get usersTable => attachedDatabase.usersTable;
+  $ShiftsTableTable get shiftsTable => attachedDatabase.shiftsTable;
   $SalesTableTable get salesTable => attachedDatabase.salesTable;
   $LoyaltyTransactionsTableTable get loyaltyTransactionsTable =>
       attachedDatabase.loyaltyTransactionsTable;
@@ -30,6 +31,8 @@ class LoyaltyDaoManager {
           _db.attachedDatabase, _db.loyaltyPointsTable);
   $$UsersTableTableTableManager get usersTable =>
       $$UsersTableTableTableManager(_db.attachedDatabase, _db.usersTable);
+  $$ShiftsTableTableTableManager get shiftsTable =>
+      $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$SalesTableTableTableManager get salesTable =>
       $$SalesTableTableTableManager(_db.attachedDatabase, _db.salesTable);
   $$LoyaltyTransactionsTableTableTableManager get loyaltyTransactionsTable =>

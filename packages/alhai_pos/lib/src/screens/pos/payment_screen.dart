@@ -1007,6 +1007,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       final subtotal = cartState.subtotal;
       final tax = subtotal * 0.15;
 
+      // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
+      final openShift = await ref.read(openShiftProvider.future);
+
       final saleResult = await saleService.createSale(
         storeId: resolvedStoreId,
         cashierId: resolvedCashierId,
@@ -1018,6 +1021,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         paymentMethod: _isSplitPayment ? 'mixed' : _selectedMethod.name,
         customerId: cartState.customerId,
         notes: cartState.notes,
+        shiftId: openShift?.id,
       );
       final saleId = saleResult.saleId;
 

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 import '../core/services/audit_service.dart';
+import '../core/services/clock_validation_service.dart';
 import '../core/services/connectivity_service.dart';
 import '../core/services/offline_queue_service.dart';
 
@@ -58,6 +59,15 @@ Future<void> configureDependencies({String? environment}) async {
 
   // Initialize connectivity monitoring
   await ConnectivityService.instance.initialize();
+
+  // Register ClockValidationService (singleton -- validates device clock against server)
+  getIt.registerLazySingleton<ClockValidationService>(
+    () => ClockValidationService.instance,
+  );
+
+  // Validate device clock against server (non-blocking, fire-and-forget)
+  // ZATCA requires accurate timestamps -- warn user if clock drifts > 5 minutes
+  ClockValidationService.instance.validate();
 
   // Register Supabase client (if initialized)
   try {

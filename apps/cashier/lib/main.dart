@@ -16,11 +16,13 @@ import 'package:alhai_database/alhai_database.dart' show setDatabaseEncryptionKe
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService, currentStoreIdProvider;
+import 'package:alhai_pos/alhai_pos.dart' show clockOffsetProvider;
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/cashier_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'core/services/sentry_service.dart';
+import 'core/services/clock_validation_service.dart';
 import 'services/printing/auto_print_setup.dart';
 import 'services/session_manager.dart';
 
@@ -164,6 +166,11 @@ void main() {
           // هذا يمنع إعادة التوجيه إلى /store-select عند تحديث الصفحة (F5)
           if (savedStoreId != null && savedStoreId.isNotEmpty)
             currentStoreIdProvider.overrideWith((ref) => savedStoreId),
+          // ZATCA: Wire clock offset from ClockValidationService into SaleService
+          // so sale timestamps are corrected for device clock drift
+          clockOffsetProvider.overrideWithValue(
+            () => ClockValidationService.instance.clockOffset,
+          ),
         ],
         child: const CashierApp(),
       ),

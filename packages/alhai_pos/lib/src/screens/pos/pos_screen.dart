@@ -507,6 +507,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           if (creditAmount == 0) creditAmount = null;
         }
 
+        // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
+        final openShift = await ref.read(openShiftProvider.future);
+
         final saleResult = await saleService.createSale(
           storeId: storeId,
           cashierId: ref.read(currentUserProvider)?.id ?? '',
@@ -524,6 +527,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           cashAmount: cashAmount,
           cardAmount: cardAmount,
           creditAmount: creditAmount,
+          shiftId: openShift?.id,
         );
         saleId = saleResult.saleId;
 

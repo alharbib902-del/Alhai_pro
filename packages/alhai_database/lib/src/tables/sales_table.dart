@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import 'shifts_table.dart';
 import 'stores_table.dart';
 import 'users_table.dart';
 import 'customers_table.dart';
@@ -32,6 +33,7 @@ class SalesTable extends Table {
   TextColumn get storeId => text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get cashierId => text().references(UsersTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get terminalId => text().nullable()();
+  TextColumn get shiftId => text().nullable().references(ShiftsTable, #id, onDelete: KeyAction.setNull)();
 
   // العميل (اختياري)
   TextColumn get customerId => text().nullable().references(CustomersTable, #id, onDelete: KeyAction.setNull)();

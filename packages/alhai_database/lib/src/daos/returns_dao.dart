@@ -11,19 +11,19 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
   ReturnsDao(super.db);
 
   Future<List<ReturnsTableData>> getAllReturns(String storeId, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
   Future<List<ReturnsTableData>> getReturnsByStatus(String storeId, String status, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.equals(status))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.equals(status) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
   Future<List<ReturnsTableData>> getReturnsByStatuses(String storeId, List<String> statuses, {int limit = 1000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.isIn(statuses))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.status.isIn(statuses) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
   Future<List<ReturnsTableData>> getReturnsByDateRange(String storeId, DateTime startDate, DateTime endDate, {int limit = 5000}) {
-    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate))..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
+    return (select(returnsTable)..where((r) => r.storeId.equals(storeId) & r.createdAt.isBiggerOrEqualValue(startDate) & r.createdAt.isSmallerThanValue(endDate) & r.deletedAt.isNull())..orderBy([(r) => OrderingTerm.desc(r.createdAt)])..limit(limit)).get();
   }
 
   Future<ReturnsTableData?> getReturnById(String id) => (select(returnsTable)..where((r) => r.id.equals(id))).getSingleOrNull();
@@ -53,7 +53,7 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
     required DateTime startDate,
     DateTime? endDate,
   }) async {
-    var whereClause = "store_id = ? AND refund_method = 'cash' AND status = 'completed' AND created_at >= ?";
+    var whereClause = "store_id = ? AND refund_method = 'cash' AND status = 'completed' AND deleted_at IS NULL AND created_at >= ?";
     final variables = <Variable>[
       Variable.withString(storeId),
       Variable.withDateTime(startDate),

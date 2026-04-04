@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
 
+import 'products_table.dart';
+import 'stores_table.dart';
+
 /// جدول تتبع تغييرات المخزون لكل جهاز (Delta Sync)
 /// بدلاً من إرسال القيمة المطلقة للمخزون، نسجل التغييرات (الدلتا)
 /// هذا يحل مشكلة التعارض عند وجود أجهزة متعددة
@@ -7,6 +10,10 @@ import 'package:drift/drift.dart';
 /// مثال: جهاز 1 يبيع 3 قطع، جهاز 2 يبيع 2 قطع
 /// الدلتا: [{qty: -3, device: 1}, {qty: -2, device: 2}]
 /// السيرفر يطبق كل التغييرات ويرجع المخزون النهائي
+///
+/// Foreign Keys:
+/// - productId -> ProductsTable.id (SET NULL on delete, so deltas survive product deletion)
+/// - storeId -> StoresTable.id (RESTRICT on delete, store must not be deleted with deltas)
 ///
 /// Indexes:
 /// - idx_stock_deltas_product: للاستعلام حسب المنتج
@@ -25,11 +32,14 @@ class StockDeltasTable extends Table {
   /// معرف فريد للتغيير
   TextColumn get id => text()();
 
-  /// معرف المنتج
-  TextColumn get productId => text()();
+  /// معرف المنتج (FK -> products.id, SET NULL on delete)
+  TextColumn get productId => text()
+      .nullable()
+      .references(ProductsTable, #id, onDelete: KeyAction.setNull)();
 
-  /// معرف المتجر
-  TextColumn get storeId => text()();
+  /// معرف المتجر (FK -> stores.id, RESTRICT on delete)
+  TextColumn get storeId => text()
+      .references(StoresTable, #id, onDelete: KeyAction.restrict)();
 
   /// معرف المؤسسة
   TextColumn get orgId => text().nullable()();

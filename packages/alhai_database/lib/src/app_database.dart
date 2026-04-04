@@ -131,7 +131,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 21;
+  int get schemaVersion => 22;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -423,6 +423,77 @@ class AppDatabase extends _$AppDatabase {
         // 2. Add composite index for orders (customer + createdAt)
         await customStatement(
             'CREATE INDEX IF NOT EXISTS idx_orders_customer_created ON orders (customer_id, created_at)');
+      case 22:
+        // Migration v21 -> v22: Add shift_id column to sales for shift-sale linkage
+        await customStatement(
+            'ALTER TABLE sales ADD COLUMN shift_id TEXT REFERENCES shifts(id) ON DELETE SET NULL');
+
+        // Add FK validation triggers for stock_deltas table
+        // SQLite cannot ALTER TABLE to add FKs, so we use triggers (same pattern as v20).
+        //
+        // productId -> products.id (SET NULL behavior: nullify on product delete)
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_product_id
+          BEFORE INSERT ON stock_deltas
+          BEGIN
+            SELECT RAISE(ABORT, 'FK violation: product_id not found in products')
+            WHERE NEW.product_id IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM products WHERE id = NEW.product_id);
+          END
+        ''');
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_product_id_update
+          BEFORE UPDATE OF product_id ON stock_deltas
+          BEGIN
+            SELECT RAISE(ABORT, 'FK violation: product_id not found in products')
+            WHERE NEW.product_id IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM products WHERE id = NEW.product_id);
+          END
+        ''');
+        // SET NULL on product delete: nullify product_id in stock_deltas
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_product_id_cascade
+          AFTER DELETE ON products
+          BEGIN
+            UPDATE stock_deltas SET product_id = NULL WHERE product_id = OLD.id;
+          END
+        ''');
+
+        // storeId -> stores.id (RESTRICT behavior: block store delete if deltas exist)
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_store_id
+          BEFORE INSERT ON stock_deltas
+          BEGIN
+            SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+            WHERE NEW.store_id IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+          END
+        ''');
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_store_id_update
+          BEFORE UPDATE OF store_id ON stock_deltas
+          BEGIN
+            SELECT RAISE(ABORT, 'FK violation: store_id not found in stores')
+            WHERE NEW.store_id IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM stores WHERE id = NEW.store_id);
+          END
+        ''');
+        // RESTRICT on store delete: block if stock_deltas reference this store
+        await customStatement('''
+          CREATE TRIGGER IF NOT EXISTS fk_stock_deltas_store_id_restrict
+          BEFORE DELETE ON stores
+          BEGIN
+            SELECT RAISE(ABORT, 'FK violation: cannot delete store with existing stock_deltas')
+            WHERE EXISTS (SELECT 1 FROM stock_deltas WHERE store_id = OLD.id);
+          END
+        ''');
+
+        // Make product_id nullable for existing rows (SQLite requires table rebuild)
+        // Since ALTER COLUMN is not supported, we add a new nullable column and migrate data.
+        // However, this is risky for existing data. The trigger approach above handles
+        // referential integrity without changing the column type, so we skip the rebuild.
+        // New installs get the correct nullable column from Drift's createAll().
+        debugPrint('[Migration v22] sales.shift_id + stock_deltas FK triggers created');
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }

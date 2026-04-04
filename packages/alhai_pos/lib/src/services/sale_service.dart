@@ -52,15 +52,30 @@ class SaleService {
   final AppDatabase _db;
   final SyncService _syncService;
   final InvoiceService? _invoiceService;
+
+  /// Optional clock offset callback. When provided, returns the measured
+  /// difference (device - server). Used to generate ZATCA-compliant timestamps.
+  /// If null or returns Duration.zero, `DateTime.now()` is used as-is.
+  final Duration Function()? _clockOffsetProvider;
+
   static const _uuid = Uuid();
 
   SaleService({
     required AppDatabase db,
     required SyncService syncService,
     InvoiceService? invoiceService,
+    Duration Function()? clockOffsetProvider,
   }) : _db = db,
        _syncService = syncService,
-       _invoiceService = invoiceService;
+       _invoiceService = invoiceService,
+       _clockOffsetProvider = clockOffsetProvider;
+
+  /// Get a corrected timestamp that accounts for device clock drift.
+  /// ZATCA requires accurate timestamps; this uses the server-measured offset.
+  DateTime _correctedNow() {
+    final offset = _clockOffsetProvider?.call() ?? Duration.zero;
+    return DateTime.now().subtract(offset);
+  }
 
   /// إنشاء بيع جديد
   Future<SaleResult> createSale({
@@ -81,9 +96,11 @@ class SaleService {
     double? cashAmount,
     double? cardAmount,
     double? creditAmount,
+    String? shiftId,
   }) async {
     final saleId = _uuid.v4();
-    final now = DateTime.now();
+    // Use corrected time for ZATCA-compliant timestamps
+    final now = _correctedNow();
     final priceCorrections = <PriceCorrection>[];
 
     // Variables captured from inside the transaction, needed for sync enqueue after commit.
@@ -220,6 +237,7 @@ class SaleService {
             storeId: storeId,
             receiptNo: receiptNo,
             cashierId: cashierId,
+            shiftId: Value(shiftId),
             customerId: Value(validCustomerId),
             customerName: Value(customerName),
             customerPhone: Value(customerPhone),
@@ -385,6 +403,7 @@ class SaleService {
           'storeId': storeId,
           'receiptNo': receiptNo,
           'cashierId': cashierId,
+          'shiftId': shiftId,
           'customerId': validCustomerId,
           'customerName': customerName,
           'customerPhone': customerPhone,
@@ -464,74 +483,16 @@ class SaleService {
 
   /// إلغاء بيع
   Future<void> voidSale(String saleId, {String? reason}) async {
-    // Variables captured from inside the transaction, needed for sync enqueue after commit.
-    late String storeId;
-    late String cashierId;
+    final sale = await _db.salesDao.getSaleById(saleId);
+    if (sale == null) throw SaleException.notFound(saleId);
 
-    await _db.transaction(() async {
-      final sale = await _db.salesDao.getSaleById(saleId);
-      if (sale == null) throw SaleException.notFound(saleId);
+    // التحقق من أن البيع ليس ملغياً مسبقاً
+    if (sale.status == 'voided') {
+      throw SaleException.alreadyVoided(saleId);
+    }
 
-      // التحقق من أن البيع ليس ملغياً مسبقاً
-      if (sale.status == 'voided') {
-        throw SaleException.alreadyVoided(saleId);
-      }
-
-      // Capture values needed for sync enqueue outside the transaction
-      storeId = sale.storeId;
-      cashierId = sale.cashierId;
-
-      final items = await _db.saleItemsDao.getItemsBySaleId(saleId);
-
-      // جلب org_id من المتجر (لدلتا المخزون)
-      String? orgId;
-      try {
-        final store = await _db.storesDao.getStoreById(sale.storeId);
-        orgId = store?.orgId;
-      } catch (_) {}
-
-      // قراءة الكميات الحالية قبل الإلغاء (للسجل)
-      final stockSnapshots = <String, double>{};
-      for (final item in items) {
-        final product = await _db.productsDao.getProductById(item.productId);
-        if (product != null) {
-          stockSnapshots[item.productId] = product.stockQty.toDouble();
-        }
-      }
-
-      // إلغاء البيع (يستعيد المخزون تلقائياً)
-      await _db.salesDao.voidSale(saleId);
-
-      // تسجيل حركة المخزون ودلتا المخزون
-      for (final item in items) {
-        final previousQty = stockSnapshots[item.productId];
-        if (previousQty != null) {
-          final movementId = _uuid.v4();
-          final newQty = previousQty + item.qty;
-
-          await _db.inventoryDao.recordAdjustment(
-            id: movementId,
-            productId: item.productId,
-            storeId: sale.storeId,
-            previousQty: previousQty,
-            newQty: newQty,
-            reason: reason ?? 'إلغاء بيع',
-          );
-
-          // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
-          await _db.stockDeltasDao.addDelta(
-            id: _uuid.v4(),
-            productId: item.productId,
-            storeId: sale.storeId,
-            orgId: orgId,
-            quantityChange: item.qty,
-            deviceId: sale.cashierId,
-            operationType: 'void',
-            referenceId: saleId,
-          );
-        }
-      }
-    });
+    // إلغاء البيع (يستعيد المخزون + يسجل حركات المخزون ودلتا المزامنة تلقائياً)
+    await _db.salesDao.voidSale(saleId);
 
     // =========================================================================
     // Sync enqueue: OUTSIDE the transaction.

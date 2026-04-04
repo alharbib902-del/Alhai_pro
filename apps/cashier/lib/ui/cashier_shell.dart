@@ -13,6 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiBreakpoints, AlhaiSpacing;
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
 import 'package:alhai_pos/alhai_pos.dart' show cartStateProvider, heldInvoicesProvider;
+import '../widgets/clock_invalid_banner.dart';
 
 /// Navigation item model for the cashier shell
 class _NavItem {
@@ -309,6 +310,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
               children: [
                 // بانرات حالة الاتصال والمزامنة
                 const StatusBanners(),
+                // ZATCA: تحذير عند عدم دقة ساعة الجهاز
+                const ClockInvalidBanner(),
                 Expanded(child: widget.child),
               ],
             ),
@@ -589,6 +592,8 @@ class _CashierShellState extends ConsumerState<CashierShell> {
         children: [
           // بانرات حالة الاتصال والمزامنة
           const StatusBanners(),
+          // ZATCA: تحذير عند عدم دقة ساعة الجهاز
+          const ClockInvalidBanner(),
           Expanded(child: widget.child),
         ],
       ),

@@ -3918,6 +3918,905 @@ class UsersTableCompanion extends UpdateCompanion<UsersTableData> {
   }
 }
 
+class $ShiftsTableTable extends ShiftsTable
+    with TableInfo<$ShiftsTableTable, ShiftsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShiftsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _orgIdMeta = const VerificationMeta('orgId');
+  @override
+  late final GeneratedColumn<String> orgId = GeneratedColumn<String>(
+      'org_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _storeIdMeta =
+      const VerificationMeta('storeId');
+  @override
+  late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
+      'store_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _terminalIdMeta =
+      const VerificationMeta('terminalId');
+  @override
+  late final GeneratedColumn<String> terminalId = GeneratedColumn<String>(
+      'terminal_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cashierIdMeta =
+      const VerificationMeta('cashierId');
+  @override
+  late final GeneratedColumn<String> cashierId = GeneratedColumn<String>(
+      'cashier_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cashierNameMeta =
+      const VerificationMeta('cashierName');
+  @override
+  late final GeneratedColumn<String> cashierName = GeneratedColumn<String>(
+      'cashier_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _openingCashMeta =
+      const VerificationMeta('openingCash');
+  @override
+  late final GeneratedColumn<double> openingCash = GeneratedColumn<double>(
+      'opening_cash', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _closingCashMeta =
+      const VerificationMeta('closingCash');
+  @override
+  late final GeneratedColumn<double> closingCash = GeneratedColumn<double>(
+      'closing_cash', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _expectedCashMeta =
+      const VerificationMeta('expectedCash');
+  @override
+  late final GeneratedColumn<double> expectedCash = GeneratedColumn<double>(
+      'expected_cash', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _differenceMeta =
+      const VerificationMeta('difference');
+  @override
+  late final GeneratedColumn<double> difference = GeneratedColumn<double>(
+      'difference', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _totalSalesMeta =
+      const VerificationMeta('totalSales');
+  @override
+  late final GeneratedColumn<int> totalSales = GeneratedColumn<int>(
+      'total_sales', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _totalSalesAmountMeta =
+      const VerificationMeta('totalSalesAmount');
+  @override
+  late final GeneratedColumn<double> totalSalesAmount = GeneratedColumn<double>(
+      'total_sales_amount', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _totalRefundsMeta =
+      const VerificationMeta('totalRefunds');
+  @override
+  late final GeneratedColumn<int> totalRefunds = GeneratedColumn<int>(
+      'total_refunds', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _totalRefundsAmountMeta =
+      const VerificationMeta('totalRefundsAmount');
+  @override
+  late final GeneratedColumn<double> totalRefundsAmount =
+      GeneratedColumn<double>('total_refunds_amount', aliasedName, false,
+          type: DriftSqlType.double,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('open'));
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _openedAtMeta =
+      const VerificationMeta('openedAt');
+  @override
+  late final GeneratedColumn<DateTime> openedAt = GeneratedColumn<DateTime>(
+      'opened_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _closedAtMeta =
+      const VerificationMeta('closedAt');
+  @override
+  late final GeneratedColumn<DateTime> closedAt = GeneratedColumn<DateTime>(
+      'closed_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _syncedAtMeta =
+      const VerificationMeta('syncedAt');
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+      'synced_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        orgId,
+        storeId,
+        terminalId,
+        cashierId,
+        cashierName,
+        openingCash,
+        closingCash,
+        expectedCash,
+        difference,
+        totalSales,
+        totalSalesAmount,
+        totalRefunds,
+        totalRefundsAmount,
+        status,
+        notes,
+        openedAt,
+        closedAt,
+        syncedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'shifts';
+  @override
+  VerificationContext validateIntegrity(Insertable<ShiftsTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('org_id')) {
+      context.handle(
+          _orgIdMeta, orgId.isAcceptableOrUnknown(data['org_id']!, _orgIdMeta));
+    }
+    if (data.containsKey('store_id')) {
+      context.handle(_storeIdMeta,
+          storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
+    } else if (isInserting) {
+      context.missing(_storeIdMeta);
+    }
+    if (data.containsKey('terminal_id')) {
+      context.handle(
+          _terminalIdMeta,
+          terminalId.isAcceptableOrUnknown(
+              data['terminal_id']!, _terminalIdMeta));
+    }
+    if (data.containsKey('cashier_id')) {
+      context.handle(_cashierIdMeta,
+          cashierId.isAcceptableOrUnknown(data['cashier_id']!, _cashierIdMeta));
+    } else if (isInserting) {
+      context.missing(_cashierIdMeta);
+    }
+    if (data.containsKey('cashier_name')) {
+      context.handle(
+          _cashierNameMeta,
+          cashierName.isAcceptableOrUnknown(
+              data['cashier_name']!, _cashierNameMeta));
+    } else if (isInserting) {
+      context.missing(_cashierNameMeta);
+    }
+    if (data.containsKey('opening_cash')) {
+      context.handle(
+          _openingCashMeta,
+          openingCash.isAcceptableOrUnknown(
+              data['opening_cash']!, _openingCashMeta));
+    }
+    if (data.containsKey('closing_cash')) {
+      context.handle(
+          _closingCashMeta,
+          closingCash.isAcceptableOrUnknown(
+              data['closing_cash']!, _closingCashMeta));
+    }
+    if (data.containsKey('expected_cash')) {
+      context.handle(
+          _expectedCashMeta,
+          expectedCash.isAcceptableOrUnknown(
+              data['expected_cash']!, _expectedCashMeta));
+    }
+    if (data.containsKey('difference')) {
+      context.handle(
+          _differenceMeta,
+          difference.isAcceptableOrUnknown(
+              data['difference']!, _differenceMeta));
+    }
+    if (data.containsKey('total_sales')) {
+      context.handle(
+          _totalSalesMeta,
+          totalSales.isAcceptableOrUnknown(
+              data['total_sales']!, _totalSalesMeta));
+    }
+    if (data.containsKey('total_sales_amount')) {
+      context.handle(
+          _totalSalesAmountMeta,
+          totalSalesAmount.isAcceptableOrUnknown(
+              data['total_sales_amount']!, _totalSalesAmountMeta));
+    }
+    if (data.containsKey('total_refunds')) {
+      context.handle(
+          _totalRefundsMeta,
+          totalRefunds.isAcceptableOrUnknown(
+              data['total_refunds']!, _totalRefundsMeta));
+    }
+    if (data.containsKey('total_refunds_amount')) {
+      context.handle(
+          _totalRefundsAmountMeta,
+          totalRefundsAmount.isAcceptableOrUnknown(
+              data['total_refunds_amount']!, _totalRefundsAmountMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('opened_at')) {
+      context.handle(_openedAtMeta,
+          openedAt.isAcceptableOrUnknown(data['opened_at']!, _openedAtMeta));
+    } else if (isInserting) {
+      context.missing(_openedAtMeta);
+    }
+    if (data.containsKey('closed_at')) {
+      context.handle(_closedAtMeta,
+          closedAt.isAcceptableOrUnknown(data['closed_at']!, _closedAtMeta));
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(_syncedAtMeta,
+          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ShiftsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShiftsTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      orgId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}org_id']),
+      storeId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
+      terminalId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}terminal_id']),
+      cashierId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cashier_id'])!,
+      cashierName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cashier_name'])!,
+      openingCash: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}opening_cash'])!,
+      closingCash: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}closing_cash']),
+      expectedCash: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}expected_cash']),
+      difference: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}difference']),
+      totalSales: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_sales'])!,
+      totalSalesAmount: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}total_sales_amount'])!,
+      totalRefunds: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_refunds'])!,
+      totalRefundsAmount: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}total_refunds_amount'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      openedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}opened_at'])!,
+      closedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}closed_at']),
+      syncedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+    );
+  }
+
+  @override
+  $ShiftsTableTable createAlias(String alias) {
+    return $ShiftsTableTable(attachedDatabase, alias);
+  }
+}
+
+class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
+  final String id;
+  final String? orgId;
+  final String storeId;
+  final String? terminalId;
+  final String cashierId;
+  final String cashierName;
+  final double openingCash;
+  final double? closingCash;
+  final double? expectedCash;
+  final double? difference;
+  final int totalSales;
+  final double totalSalesAmount;
+  final int totalRefunds;
+  final double totalRefundsAmount;
+  final String status;
+  final String? notes;
+  final DateTime openedAt;
+  final DateTime? closedAt;
+  final DateTime? syncedAt;
+  const ShiftsTableData(
+      {required this.id,
+      this.orgId,
+      required this.storeId,
+      this.terminalId,
+      required this.cashierId,
+      required this.cashierName,
+      required this.openingCash,
+      this.closingCash,
+      this.expectedCash,
+      this.difference,
+      required this.totalSales,
+      required this.totalSalesAmount,
+      required this.totalRefunds,
+      required this.totalRefundsAmount,
+      required this.status,
+      this.notes,
+      required this.openedAt,
+      this.closedAt,
+      this.syncedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || orgId != null) {
+      map['org_id'] = Variable<String>(orgId);
+    }
+    map['store_id'] = Variable<String>(storeId);
+    if (!nullToAbsent || terminalId != null) {
+      map['terminal_id'] = Variable<String>(terminalId);
+    }
+    map['cashier_id'] = Variable<String>(cashierId);
+    map['cashier_name'] = Variable<String>(cashierName);
+    map['opening_cash'] = Variable<double>(openingCash);
+    if (!nullToAbsent || closingCash != null) {
+      map['closing_cash'] = Variable<double>(closingCash);
+    }
+    if (!nullToAbsent || expectedCash != null) {
+      map['expected_cash'] = Variable<double>(expectedCash);
+    }
+    if (!nullToAbsent || difference != null) {
+      map['difference'] = Variable<double>(difference);
+    }
+    map['total_sales'] = Variable<int>(totalSales);
+    map['total_sales_amount'] = Variable<double>(totalSalesAmount);
+    map['total_refunds'] = Variable<int>(totalRefunds);
+    map['total_refunds_amount'] = Variable<double>(totalRefundsAmount);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['opened_at'] = Variable<DateTime>(openedAt);
+    if (!nullToAbsent || closedAt != null) {
+      map['closed_at'] = Variable<DateTime>(closedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  ShiftsTableCompanion toCompanion(bool nullToAbsent) {
+    return ShiftsTableCompanion(
+      id: Value(id),
+      orgId:
+          orgId == null && nullToAbsent ? const Value.absent() : Value(orgId),
+      storeId: Value(storeId),
+      terminalId: terminalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(terminalId),
+      cashierId: Value(cashierId),
+      cashierName: Value(cashierName),
+      openingCash: Value(openingCash),
+      closingCash: closingCash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closingCash),
+      expectedCash: expectedCash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expectedCash),
+      difference: difference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difference),
+      totalSales: Value(totalSales),
+      totalSalesAmount: Value(totalSalesAmount),
+      totalRefunds: Value(totalRefunds),
+      totalRefundsAmount: Value(totalRefundsAmount),
+      status: Value(status),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      openedAt: Value(openedAt),
+      closedAt: closedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory ShiftsTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShiftsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      orgId: serializer.fromJson<String?>(json['orgId']),
+      storeId: serializer.fromJson<String>(json['storeId']),
+      terminalId: serializer.fromJson<String?>(json['terminalId']),
+      cashierId: serializer.fromJson<String>(json['cashierId']),
+      cashierName: serializer.fromJson<String>(json['cashierName']),
+      openingCash: serializer.fromJson<double>(json['openingCash']),
+      closingCash: serializer.fromJson<double?>(json['closingCash']),
+      expectedCash: serializer.fromJson<double?>(json['expectedCash']),
+      difference: serializer.fromJson<double?>(json['difference']),
+      totalSales: serializer.fromJson<int>(json['totalSales']),
+      totalSalesAmount: serializer.fromJson<double>(json['totalSalesAmount']),
+      totalRefunds: serializer.fromJson<int>(json['totalRefunds']),
+      totalRefundsAmount:
+          serializer.fromJson<double>(json['totalRefundsAmount']),
+      status: serializer.fromJson<String>(json['status']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      openedAt: serializer.fromJson<DateTime>(json['openedAt']),
+      closedAt: serializer.fromJson<DateTime?>(json['closedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'orgId': serializer.toJson<String?>(orgId),
+      'storeId': serializer.toJson<String>(storeId),
+      'terminalId': serializer.toJson<String?>(terminalId),
+      'cashierId': serializer.toJson<String>(cashierId),
+      'cashierName': serializer.toJson<String>(cashierName),
+      'openingCash': serializer.toJson<double>(openingCash),
+      'closingCash': serializer.toJson<double?>(closingCash),
+      'expectedCash': serializer.toJson<double?>(expectedCash),
+      'difference': serializer.toJson<double?>(difference),
+      'totalSales': serializer.toJson<int>(totalSales),
+      'totalSalesAmount': serializer.toJson<double>(totalSalesAmount),
+      'totalRefunds': serializer.toJson<int>(totalRefunds),
+      'totalRefundsAmount': serializer.toJson<double>(totalRefundsAmount),
+      'status': serializer.toJson<String>(status),
+      'notes': serializer.toJson<String?>(notes),
+      'openedAt': serializer.toJson<DateTime>(openedAt),
+      'closedAt': serializer.toJson<DateTime?>(closedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  ShiftsTableData copyWith(
+          {String? id,
+          Value<String?> orgId = const Value.absent(),
+          String? storeId,
+          Value<String?> terminalId = const Value.absent(),
+          String? cashierId,
+          String? cashierName,
+          double? openingCash,
+          Value<double?> closingCash = const Value.absent(),
+          Value<double?> expectedCash = const Value.absent(),
+          Value<double?> difference = const Value.absent(),
+          int? totalSales,
+          double? totalSalesAmount,
+          int? totalRefunds,
+          double? totalRefundsAmount,
+          String? status,
+          Value<String?> notes = const Value.absent(),
+          DateTime? openedAt,
+          Value<DateTime?> closedAt = const Value.absent(),
+          Value<DateTime?> syncedAt = const Value.absent()}) =>
+      ShiftsTableData(
+        id: id ?? this.id,
+        orgId: orgId.present ? orgId.value : this.orgId,
+        storeId: storeId ?? this.storeId,
+        terminalId: terminalId.present ? terminalId.value : this.terminalId,
+        cashierId: cashierId ?? this.cashierId,
+        cashierName: cashierName ?? this.cashierName,
+        openingCash: openingCash ?? this.openingCash,
+        closingCash: closingCash.present ? closingCash.value : this.closingCash,
+        expectedCash:
+            expectedCash.present ? expectedCash.value : this.expectedCash,
+        difference: difference.present ? difference.value : this.difference,
+        totalSales: totalSales ?? this.totalSales,
+        totalSalesAmount: totalSalesAmount ?? this.totalSalesAmount,
+        totalRefunds: totalRefunds ?? this.totalRefunds,
+        totalRefundsAmount: totalRefundsAmount ?? this.totalRefundsAmount,
+        status: status ?? this.status,
+        notes: notes.present ? notes.value : this.notes,
+        openedAt: openedAt ?? this.openedAt,
+        closedAt: closedAt.present ? closedAt.value : this.closedAt,
+        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+      );
+  ShiftsTableData copyWithCompanion(ShiftsTableCompanion data) {
+    return ShiftsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      orgId: data.orgId.present ? data.orgId.value : this.orgId,
+      storeId: data.storeId.present ? data.storeId.value : this.storeId,
+      terminalId:
+          data.terminalId.present ? data.terminalId.value : this.terminalId,
+      cashierId: data.cashierId.present ? data.cashierId.value : this.cashierId,
+      cashierName:
+          data.cashierName.present ? data.cashierName.value : this.cashierName,
+      openingCash:
+          data.openingCash.present ? data.openingCash.value : this.openingCash,
+      closingCash:
+          data.closingCash.present ? data.closingCash.value : this.closingCash,
+      expectedCash: data.expectedCash.present
+          ? data.expectedCash.value
+          : this.expectedCash,
+      difference:
+          data.difference.present ? data.difference.value : this.difference,
+      totalSales:
+          data.totalSales.present ? data.totalSales.value : this.totalSales,
+      totalSalesAmount: data.totalSalesAmount.present
+          ? data.totalSalesAmount.value
+          : this.totalSalesAmount,
+      totalRefunds: data.totalRefunds.present
+          ? data.totalRefunds.value
+          : this.totalRefunds,
+      totalRefundsAmount: data.totalRefundsAmount.present
+          ? data.totalRefundsAmount.value
+          : this.totalRefundsAmount,
+      status: data.status.present ? data.status.value : this.status,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      openedAt: data.openedAt.present ? data.openedAt.value : this.openedAt,
+      closedAt: data.closedAt.present ? data.closedAt.value : this.closedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShiftsTableData(')
+          ..write('id: $id, ')
+          ..write('orgId: $orgId, ')
+          ..write('storeId: $storeId, ')
+          ..write('terminalId: $terminalId, ')
+          ..write('cashierId: $cashierId, ')
+          ..write('cashierName: $cashierName, ')
+          ..write('openingCash: $openingCash, ')
+          ..write('closingCash: $closingCash, ')
+          ..write('expectedCash: $expectedCash, ')
+          ..write('difference: $difference, ')
+          ..write('totalSales: $totalSales, ')
+          ..write('totalSalesAmount: $totalSalesAmount, ')
+          ..write('totalRefunds: $totalRefunds, ')
+          ..write('totalRefundsAmount: $totalRefundsAmount, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('openedAt: $openedAt, ')
+          ..write('closedAt: $closedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      orgId,
+      storeId,
+      terminalId,
+      cashierId,
+      cashierName,
+      openingCash,
+      closingCash,
+      expectedCash,
+      difference,
+      totalSales,
+      totalSalesAmount,
+      totalRefunds,
+      totalRefundsAmount,
+      status,
+      notes,
+      openedAt,
+      closedAt,
+      syncedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShiftsTableData &&
+          other.id == this.id &&
+          other.orgId == this.orgId &&
+          other.storeId == this.storeId &&
+          other.terminalId == this.terminalId &&
+          other.cashierId == this.cashierId &&
+          other.cashierName == this.cashierName &&
+          other.openingCash == this.openingCash &&
+          other.closingCash == this.closingCash &&
+          other.expectedCash == this.expectedCash &&
+          other.difference == this.difference &&
+          other.totalSales == this.totalSales &&
+          other.totalSalesAmount == this.totalSalesAmount &&
+          other.totalRefunds == this.totalRefunds &&
+          other.totalRefundsAmount == this.totalRefundsAmount &&
+          other.status == this.status &&
+          other.notes == this.notes &&
+          other.openedAt == this.openedAt &&
+          other.closedAt == this.closedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
+  final Value<String> id;
+  final Value<String?> orgId;
+  final Value<String> storeId;
+  final Value<String?> terminalId;
+  final Value<String> cashierId;
+  final Value<String> cashierName;
+  final Value<double> openingCash;
+  final Value<double?> closingCash;
+  final Value<double?> expectedCash;
+  final Value<double?> difference;
+  final Value<int> totalSales;
+  final Value<double> totalSalesAmount;
+  final Value<int> totalRefunds;
+  final Value<double> totalRefundsAmount;
+  final Value<String> status;
+  final Value<String?> notes;
+  final Value<DateTime> openedAt;
+  final Value<DateTime?> closedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const ShiftsTableCompanion({
+    this.id = const Value.absent(),
+    this.orgId = const Value.absent(),
+    this.storeId = const Value.absent(),
+    this.terminalId = const Value.absent(),
+    this.cashierId = const Value.absent(),
+    this.cashierName = const Value.absent(),
+    this.openingCash = const Value.absent(),
+    this.closingCash = const Value.absent(),
+    this.expectedCash = const Value.absent(),
+    this.difference = const Value.absent(),
+    this.totalSales = const Value.absent(),
+    this.totalSalesAmount = const Value.absent(),
+    this.totalRefunds = const Value.absent(),
+    this.totalRefundsAmount = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.openedAt = const Value.absent(),
+    this.closedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ShiftsTableCompanion.insert({
+    required String id,
+    this.orgId = const Value.absent(),
+    required String storeId,
+    this.terminalId = const Value.absent(),
+    required String cashierId,
+    required String cashierName,
+    this.openingCash = const Value.absent(),
+    this.closingCash = const Value.absent(),
+    this.expectedCash = const Value.absent(),
+    this.difference = const Value.absent(),
+    this.totalSales = const Value.absent(),
+    this.totalSalesAmount = const Value.absent(),
+    this.totalRefunds = const Value.absent(),
+    this.totalRefundsAmount = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    required DateTime openedAt,
+    this.closedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        storeId = Value(storeId),
+        cashierId = Value(cashierId),
+        cashierName = Value(cashierName),
+        openedAt = Value(openedAt);
+  static Insertable<ShiftsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? orgId,
+    Expression<String>? storeId,
+    Expression<String>? terminalId,
+    Expression<String>? cashierId,
+    Expression<String>? cashierName,
+    Expression<double>? openingCash,
+    Expression<double>? closingCash,
+    Expression<double>? expectedCash,
+    Expression<double>? difference,
+    Expression<int>? totalSales,
+    Expression<double>? totalSalesAmount,
+    Expression<int>? totalRefunds,
+    Expression<double>? totalRefundsAmount,
+    Expression<String>? status,
+    Expression<String>? notes,
+    Expression<DateTime>? openedAt,
+    Expression<DateTime>? closedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (orgId != null) 'org_id': orgId,
+      if (storeId != null) 'store_id': storeId,
+      if (terminalId != null) 'terminal_id': terminalId,
+      if (cashierId != null) 'cashier_id': cashierId,
+      if (cashierName != null) 'cashier_name': cashierName,
+      if (openingCash != null) 'opening_cash': openingCash,
+      if (closingCash != null) 'closing_cash': closingCash,
+      if (expectedCash != null) 'expected_cash': expectedCash,
+      if (difference != null) 'difference': difference,
+      if (totalSales != null) 'total_sales': totalSales,
+      if (totalSalesAmount != null) 'total_sales_amount': totalSalesAmount,
+      if (totalRefunds != null) 'total_refunds': totalRefunds,
+      if (totalRefundsAmount != null)
+        'total_refunds_amount': totalRefundsAmount,
+      if (status != null) 'status': status,
+      if (notes != null) 'notes': notes,
+      if (openedAt != null) 'opened_at': openedAt,
+      if (closedAt != null) 'closed_at': closedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ShiftsTableCompanion copyWith(
+      {Value<String>? id,
+      Value<String?>? orgId,
+      Value<String>? storeId,
+      Value<String?>? terminalId,
+      Value<String>? cashierId,
+      Value<String>? cashierName,
+      Value<double>? openingCash,
+      Value<double?>? closingCash,
+      Value<double?>? expectedCash,
+      Value<double?>? difference,
+      Value<int>? totalSales,
+      Value<double>? totalSalesAmount,
+      Value<int>? totalRefunds,
+      Value<double>? totalRefundsAmount,
+      Value<String>? status,
+      Value<String?>? notes,
+      Value<DateTime>? openedAt,
+      Value<DateTime?>? closedAt,
+      Value<DateTime?>? syncedAt,
+      Value<int>? rowid}) {
+    return ShiftsTableCompanion(
+      id: id ?? this.id,
+      orgId: orgId ?? this.orgId,
+      storeId: storeId ?? this.storeId,
+      terminalId: terminalId ?? this.terminalId,
+      cashierId: cashierId ?? this.cashierId,
+      cashierName: cashierName ?? this.cashierName,
+      openingCash: openingCash ?? this.openingCash,
+      closingCash: closingCash ?? this.closingCash,
+      expectedCash: expectedCash ?? this.expectedCash,
+      difference: difference ?? this.difference,
+      totalSales: totalSales ?? this.totalSales,
+      totalSalesAmount: totalSalesAmount ?? this.totalSalesAmount,
+      totalRefunds: totalRefunds ?? this.totalRefunds,
+      totalRefundsAmount: totalRefundsAmount ?? this.totalRefundsAmount,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      openedAt: openedAt ?? this.openedAt,
+      closedAt: closedAt ?? this.closedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (orgId.present) {
+      map['org_id'] = Variable<String>(orgId.value);
+    }
+    if (storeId.present) {
+      map['store_id'] = Variable<String>(storeId.value);
+    }
+    if (terminalId.present) {
+      map['terminal_id'] = Variable<String>(terminalId.value);
+    }
+    if (cashierId.present) {
+      map['cashier_id'] = Variable<String>(cashierId.value);
+    }
+    if (cashierName.present) {
+      map['cashier_name'] = Variable<String>(cashierName.value);
+    }
+    if (openingCash.present) {
+      map['opening_cash'] = Variable<double>(openingCash.value);
+    }
+    if (closingCash.present) {
+      map['closing_cash'] = Variable<double>(closingCash.value);
+    }
+    if (expectedCash.present) {
+      map['expected_cash'] = Variable<double>(expectedCash.value);
+    }
+    if (difference.present) {
+      map['difference'] = Variable<double>(difference.value);
+    }
+    if (totalSales.present) {
+      map['total_sales'] = Variable<int>(totalSales.value);
+    }
+    if (totalSalesAmount.present) {
+      map['total_sales_amount'] = Variable<double>(totalSalesAmount.value);
+    }
+    if (totalRefunds.present) {
+      map['total_refunds'] = Variable<int>(totalRefunds.value);
+    }
+    if (totalRefundsAmount.present) {
+      map['total_refunds_amount'] = Variable<double>(totalRefundsAmount.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (openedAt.present) {
+      map['opened_at'] = Variable<DateTime>(openedAt.value);
+    }
+    if (closedAt.present) {
+      map['closed_at'] = Variable<DateTime>(closedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShiftsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('orgId: $orgId, ')
+          ..write('storeId: $storeId, ')
+          ..write('terminalId: $terminalId, ')
+          ..write('cashierId: $cashierId, ')
+          ..write('cashierName: $cashierName, ')
+          ..write('openingCash: $openingCash, ')
+          ..write('closingCash: $closingCash, ')
+          ..write('expectedCash: $expectedCash, ')
+          ..write('difference: $difference, ')
+          ..write('totalSales: $totalSales, ')
+          ..write('totalSalesAmount: $totalSalesAmount, ')
+          ..write('totalRefunds: $totalRefunds, ')
+          ..write('totalRefundsAmount: $totalRefundsAmount, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('openedAt: $openedAt, ')
+          ..write('closedAt: $closedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $CustomersTableTable extends CustomersTable
     with TableInfo<$CustomersTableTable, CustomersTableData> {
   @override
@@ -4713,6 +5612,15 @@ class $SalesTableTable extends SalesTable
   late final GeneratedColumn<String> terminalId = GeneratedColumn<String>(
       'terminal_id', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _shiftIdMeta =
+      const VerificationMeta('shiftId');
+  @override
+  late final GeneratedColumn<String> shiftId = GeneratedColumn<String>(
+      'shift_id', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES shifts (id) ON DELETE SET NULL'));
   static const VerificationMeta _customerIdMeta =
       const VerificationMeta('customerId');
   @override
@@ -4857,6 +5765,7 @@ class $SalesTableTable extends SalesTable
         storeId,
         cashierId,
         terminalId,
+        shiftId,
         customerId,
         customerName,
         customerPhone,
@@ -4921,6 +5830,10 @@ class $SalesTableTable extends SalesTable
           _terminalIdMeta,
           terminalId.isAcceptableOrUnknown(
               data['terminal_id']!, _terminalIdMeta));
+    }
+    if (data.containsKey('shift_id')) {
+      context.handle(_shiftIdMeta,
+          shiftId.isAcceptableOrUnknown(data['shift_id']!, _shiftIdMeta));
     }
     if (data.containsKey('customer_id')) {
       context.handle(
@@ -5053,6 +5966,8 @@ class $SalesTableTable extends SalesTable
           .read(DriftSqlType.string, data['${effectivePrefix}cashier_id'])!,
       terminalId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}terminal_id']),
+      shiftId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}shift_id']),
       customerId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}customer_id']),
       customerName: attachedDatabase.typeMapping
@@ -5111,6 +6026,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
   final String storeId;
   final String cashierId;
   final String? terminalId;
+  final String? shiftId;
   final String? customerId;
   final String? customerName;
   final String? customerPhone;
@@ -5139,6 +6055,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
       required this.storeId,
       required this.cashierId,
       this.terminalId,
+      this.shiftId,
       this.customerId,
       this.customerName,
       this.customerPhone,
@@ -5172,6 +6089,9 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
     map['cashier_id'] = Variable<String>(cashierId);
     if (!nullToAbsent || terminalId != null) {
       map['terminal_id'] = Variable<String>(terminalId);
+    }
+    if (!nullToAbsent || shiftId != null) {
+      map['shift_id'] = Variable<String>(shiftId);
     }
     if (!nullToAbsent || customerId != null) {
       map['customer_id'] = Variable<String>(customerId);
@@ -5232,6 +6152,9 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
       terminalId: terminalId == null && nullToAbsent
           ? const Value.absent()
           : Value(terminalId),
+      shiftId: shiftId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shiftId),
       customerId: customerId == null && nullToAbsent
           ? const Value.absent()
           : Value(customerId),
@@ -5289,6 +6212,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
       storeId: serializer.fromJson<String>(json['storeId']),
       cashierId: serializer.fromJson<String>(json['cashierId']),
       terminalId: serializer.fromJson<String?>(json['terminalId']),
+      shiftId: serializer.fromJson<String?>(json['shiftId']),
       customerId: serializer.fromJson<String?>(json['customerId']),
       customerName: serializer.fromJson<String?>(json['customerName']),
       customerPhone: serializer.fromJson<String?>(json['customerPhone']),
@@ -5322,6 +6246,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
       'storeId': serializer.toJson<String>(storeId),
       'cashierId': serializer.toJson<String>(cashierId),
       'terminalId': serializer.toJson<String?>(terminalId),
+      'shiftId': serializer.toJson<String?>(shiftId),
       'customerId': serializer.toJson<String?>(customerId),
       'customerName': serializer.toJson<String?>(customerName),
       'customerPhone': serializer.toJson<String?>(customerPhone),
@@ -5353,6 +6278,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
           String? storeId,
           String? cashierId,
           Value<String?> terminalId = const Value.absent(),
+          Value<String?> shiftId = const Value.absent(),
           Value<String?> customerId = const Value.absent(),
           Value<String?> customerName = const Value.absent(),
           Value<String?> customerPhone = const Value.absent(),
@@ -5381,6 +6307,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
         storeId: storeId ?? this.storeId,
         cashierId: cashierId ?? this.cashierId,
         terminalId: terminalId.present ? terminalId.value : this.terminalId,
+        shiftId: shiftId.present ? shiftId.value : this.shiftId,
         customerId: customerId.present ? customerId.value : this.customerId,
         customerName:
             customerName.present ? customerName.value : this.customerName,
@@ -5417,6 +6344,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
       cashierId: data.cashierId.present ? data.cashierId.value : this.cashierId,
       terminalId:
           data.terminalId.present ? data.terminalId.value : this.terminalId,
+      shiftId: data.shiftId.present ? data.shiftId.value : this.shiftId,
       customerId:
           data.customerId.present ? data.customerId.value : this.customerId,
       customerName: data.customerName.present
@@ -5465,6 +6393,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
           ..write('storeId: $storeId, ')
           ..write('cashierId: $cashierId, ')
           ..write('terminalId: $terminalId, ')
+          ..write('shiftId: $shiftId, ')
           ..write('customerId: $customerId, ')
           ..write('customerName: $customerName, ')
           ..write('customerPhone: $customerPhone, ')
@@ -5498,6 +6427,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
         storeId,
         cashierId,
         terminalId,
+        shiftId,
         customerId,
         customerName,
         customerPhone,
@@ -5530,6 +6460,7 @@ class SalesTableData extends DataClass implements Insertable<SalesTableData> {
           other.storeId == this.storeId &&
           other.cashierId == this.cashierId &&
           other.terminalId == this.terminalId &&
+          other.shiftId == this.shiftId &&
           other.customerId == this.customerId &&
           other.customerName == this.customerName &&
           other.customerPhone == this.customerPhone &&
@@ -5560,6 +6491,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
   final Value<String> storeId;
   final Value<String> cashierId;
   final Value<String?> terminalId;
+  final Value<String?> shiftId;
   final Value<String?> customerId;
   final Value<String?> customerName;
   final Value<String?> customerPhone;
@@ -5589,6 +6521,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
     this.storeId = const Value.absent(),
     this.cashierId = const Value.absent(),
     this.terminalId = const Value.absent(),
+    this.shiftId = const Value.absent(),
     this.customerId = const Value.absent(),
     this.customerName = const Value.absent(),
     this.customerPhone = const Value.absent(),
@@ -5619,6 +6552,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
     required String storeId,
     required String cashierId,
     this.terminalId = const Value.absent(),
+    this.shiftId = const Value.absent(),
     this.customerId = const Value.absent(),
     this.customerName = const Value.absent(),
     this.customerPhone = const Value.absent(),
@@ -5656,6 +6590,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
     Expression<String>? storeId,
     Expression<String>? cashierId,
     Expression<String>? terminalId,
+    Expression<String>? shiftId,
     Expression<String>? customerId,
     Expression<String>? customerName,
     Expression<String>? customerPhone,
@@ -5686,6 +6621,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
       if (storeId != null) 'store_id': storeId,
       if (cashierId != null) 'cashier_id': cashierId,
       if (terminalId != null) 'terminal_id': terminalId,
+      if (shiftId != null) 'shift_id': shiftId,
       if (customerId != null) 'customer_id': customerId,
       if (customerName != null) 'customer_name': customerName,
       if (customerPhone != null) 'customer_phone': customerPhone,
@@ -5718,6 +6654,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
       Value<String>? storeId,
       Value<String>? cashierId,
       Value<String?>? terminalId,
+      Value<String?>? shiftId,
       Value<String?>? customerId,
       Value<String?>? customerName,
       Value<String?>? customerPhone,
@@ -5747,6 +6684,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
       storeId: storeId ?? this.storeId,
       cashierId: cashierId ?? this.cashierId,
       terminalId: terminalId ?? this.terminalId,
+      shiftId: shiftId ?? this.shiftId,
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
       customerPhone: customerPhone ?? this.customerPhone,
@@ -5792,6 +6730,9 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
     }
     if (terminalId.present) {
       map['terminal_id'] = Variable<String>(terminalId.value);
+    }
+    if (shiftId.present) {
+      map['shift_id'] = Variable<String>(shiftId.value);
     }
     if (customerId.present) {
       map['customer_id'] = Variable<String>(customerId.value);
@@ -5871,6 +6812,7 @@ class SalesTableCompanion extends UpdateCompanion<SalesTableData> {
           ..write('storeId: $storeId, ')
           ..write('cashierId: $cashierId, ')
           ..write('terminalId: $terminalId, ')
+          ..write('shiftId: $shiftId, ')
           ..write('customerId: $customerId, ')
           ..write('customerName: $customerName, ')
           ..write('customerPhone: $customerPhone, ')
@@ -16272,905 +17214,6 @@ class CustomerAddressesTableCompanion
           ..write('lng: $lng, ')
           ..write('isDefault: $isDefault, ')
           ..write('createdAt: $createdAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $ShiftsTableTable extends ShiftsTable
-    with TableInfo<$ShiftsTableTable, ShiftsTableData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ShiftsTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _orgIdMeta = const VerificationMeta('orgId');
-  @override
-  late final GeneratedColumn<String> orgId = GeneratedColumn<String>(
-      'org_id', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _storeIdMeta =
-      const VerificationMeta('storeId');
-  @override
-  late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
-      'store_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _terminalIdMeta =
-      const VerificationMeta('terminalId');
-  @override
-  late final GeneratedColumn<String> terminalId = GeneratedColumn<String>(
-      'terminal_id', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _cashierIdMeta =
-      const VerificationMeta('cashierId');
-  @override
-  late final GeneratedColumn<String> cashierId = GeneratedColumn<String>(
-      'cashier_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _cashierNameMeta =
-      const VerificationMeta('cashierName');
-  @override
-  late final GeneratedColumn<String> cashierName = GeneratedColumn<String>(
-      'cashier_name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _openingCashMeta =
-      const VerificationMeta('openingCash');
-  @override
-  late final GeneratedColumn<double> openingCash = GeneratedColumn<double>(
-      'opening_cash', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _closingCashMeta =
-      const VerificationMeta('closingCash');
-  @override
-  late final GeneratedColumn<double> closingCash = GeneratedColumn<double>(
-      'closing_cash', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _expectedCashMeta =
-      const VerificationMeta('expectedCash');
-  @override
-  late final GeneratedColumn<double> expectedCash = GeneratedColumn<double>(
-      'expected_cash', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _differenceMeta =
-      const VerificationMeta('difference');
-  @override
-  late final GeneratedColumn<double> difference = GeneratedColumn<double>(
-      'difference', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _totalSalesMeta =
-      const VerificationMeta('totalSales');
-  @override
-  late final GeneratedColumn<int> totalSales = GeneratedColumn<int>(
-      'total_sales', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _totalSalesAmountMeta =
-      const VerificationMeta('totalSalesAmount');
-  @override
-  late final GeneratedColumn<double> totalSalesAmount = GeneratedColumn<double>(
-      'total_sales_amount', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _totalRefundsMeta =
-      const VerificationMeta('totalRefunds');
-  @override
-  late final GeneratedColumn<int> totalRefunds = GeneratedColumn<int>(
-      'total_refunds', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _totalRefundsAmountMeta =
-      const VerificationMeta('totalRefundsAmount');
-  @override
-  late final GeneratedColumn<double> totalRefundsAmount =
-      GeneratedColumn<double>('total_refunds_amount', aliasedName, false,
-          type: DriftSqlType.double,
-          requiredDuringInsert: false,
-          defaultValue: const Constant(0));
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-      'status', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant('open'));
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-      'notes', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _openedAtMeta =
-      const VerificationMeta('openedAt');
-  @override
-  late final GeneratedColumn<DateTime> openedAt = GeneratedColumn<DateTime>(
-      'opened_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _closedAtMeta =
-      const VerificationMeta('closedAt');
-  @override
-  late final GeneratedColumn<DateTime> closedAt = GeneratedColumn<DateTime>(
-      'closed_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _syncedAtMeta =
-      const VerificationMeta('syncedAt');
-  @override
-  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
-      'synced_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        orgId,
-        storeId,
-        terminalId,
-        cashierId,
-        cashierName,
-        openingCash,
-        closingCash,
-        expectedCash,
-        difference,
-        totalSales,
-        totalSalesAmount,
-        totalRefunds,
-        totalRefundsAmount,
-        status,
-        notes,
-        openedAt,
-        closedAt,
-        syncedAt
-      ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'shifts';
-  @override
-  VerificationContext validateIntegrity(Insertable<ShiftsTableData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('org_id')) {
-      context.handle(
-          _orgIdMeta, orgId.isAcceptableOrUnknown(data['org_id']!, _orgIdMeta));
-    }
-    if (data.containsKey('store_id')) {
-      context.handle(_storeIdMeta,
-          storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
-    } else if (isInserting) {
-      context.missing(_storeIdMeta);
-    }
-    if (data.containsKey('terminal_id')) {
-      context.handle(
-          _terminalIdMeta,
-          terminalId.isAcceptableOrUnknown(
-              data['terminal_id']!, _terminalIdMeta));
-    }
-    if (data.containsKey('cashier_id')) {
-      context.handle(_cashierIdMeta,
-          cashierId.isAcceptableOrUnknown(data['cashier_id']!, _cashierIdMeta));
-    } else if (isInserting) {
-      context.missing(_cashierIdMeta);
-    }
-    if (data.containsKey('cashier_name')) {
-      context.handle(
-          _cashierNameMeta,
-          cashierName.isAcceptableOrUnknown(
-              data['cashier_name']!, _cashierNameMeta));
-    } else if (isInserting) {
-      context.missing(_cashierNameMeta);
-    }
-    if (data.containsKey('opening_cash')) {
-      context.handle(
-          _openingCashMeta,
-          openingCash.isAcceptableOrUnknown(
-              data['opening_cash']!, _openingCashMeta));
-    }
-    if (data.containsKey('closing_cash')) {
-      context.handle(
-          _closingCashMeta,
-          closingCash.isAcceptableOrUnknown(
-              data['closing_cash']!, _closingCashMeta));
-    }
-    if (data.containsKey('expected_cash')) {
-      context.handle(
-          _expectedCashMeta,
-          expectedCash.isAcceptableOrUnknown(
-              data['expected_cash']!, _expectedCashMeta));
-    }
-    if (data.containsKey('difference')) {
-      context.handle(
-          _differenceMeta,
-          difference.isAcceptableOrUnknown(
-              data['difference']!, _differenceMeta));
-    }
-    if (data.containsKey('total_sales')) {
-      context.handle(
-          _totalSalesMeta,
-          totalSales.isAcceptableOrUnknown(
-              data['total_sales']!, _totalSalesMeta));
-    }
-    if (data.containsKey('total_sales_amount')) {
-      context.handle(
-          _totalSalesAmountMeta,
-          totalSalesAmount.isAcceptableOrUnknown(
-              data['total_sales_amount']!, _totalSalesAmountMeta));
-    }
-    if (data.containsKey('total_refunds')) {
-      context.handle(
-          _totalRefundsMeta,
-          totalRefunds.isAcceptableOrUnknown(
-              data['total_refunds']!, _totalRefundsMeta));
-    }
-    if (data.containsKey('total_refunds_amount')) {
-      context.handle(
-          _totalRefundsAmountMeta,
-          totalRefundsAmount.isAcceptableOrUnknown(
-              data['total_refunds_amount']!, _totalRefundsAmountMeta));
-    }
-    if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
-    }
-    if (data.containsKey('opened_at')) {
-      context.handle(_openedAtMeta,
-          openedAt.isAcceptableOrUnknown(data['opened_at']!, _openedAtMeta));
-    } else if (isInserting) {
-      context.missing(_openedAtMeta);
-    }
-    if (data.containsKey('closed_at')) {
-      context.handle(_closedAtMeta,
-          closedAt.isAcceptableOrUnknown(data['closed_at']!, _closedAtMeta));
-    }
-    if (data.containsKey('synced_at')) {
-      context.handle(_syncedAtMeta,
-          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  ShiftsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ShiftsTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      orgId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}org_id']),
-      storeId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
-      terminalId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}terminal_id']),
-      cashierId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}cashier_id'])!,
-      cashierName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}cashier_name'])!,
-      openingCash: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}opening_cash'])!,
-      closingCash: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}closing_cash']),
-      expectedCash: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}expected_cash']),
-      difference: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}difference']),
-      totalSales: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}total_sales'])!,
-      totalSalesAmount: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}total_sales_amount'])!,
-      totalRefunds: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}total_refunds'])!,
-      totalRefundsAmount: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}total_refunds_amount'])!,
-      status: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
-      notes: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
-      openedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}opened_at'])!,
-      closedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}closed_at']),
-      syncedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
-    );
-  }
-
-  @override
-  $ShiftsTableTable createAlias(String alias) {
-    return $ShiftsTableTable(attachedDatabase, alias);
-  }
-}
-
-class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
-  final String id;
-  final String? orgId;
-  final String storeId;
-  final String? terminalId;
-  final String cashierId;
-  final String cashierName;
-  final double openingCash;
-  final double? closingCash;
-  final double? expectedCash;
-  final double? difference;
-  final int totalSales;
-  final double totalSalesAmount;
-  final int totalRefunds;
-  final double totalRefundsAmount;
-  final String status;
-  final String? notes;
-  final DateTime openedAt;
-  final DateTime? closedAt;
-  final DateTime? syncedAt;
-  const ShiftsTableData(
-      {required this.id,
-      this.orgId,
-      required this.storeId,
-      this.terminalId,
-      required this.cashierId,
-      required this.cashierName,
-      required this.openingCash,
-      this.closingCash,
-      this.expectedCash,
-      this.difference,
-      required this.totalSales,
-      required this.totalSalesAmount,
-      required this.totalRefunds,
-      required this.totalRefundsAmount,
-      required this.status,
-      this.notes,
-      required this.openedAt,
-      this.closedAt,
-      this.syncedAt});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    if (!nullToAbsent || orgId != null) {
-      map['org_id'] = Variable<String>(orgId);
-    }
-    map['store_id'] = Variable<String>(storeId);
-    if (!nullToAbsent || terminalId != null) {
-      map['terminal_id'] = Variable<String>(terminalId);
-    }
-    map['cashier_id'] = Variable<String>(cashierId);
-    map['cashier_name'] = Variable<String>(cashierName);
-    map['opening_cash'] = Variable<double>(openingCash);
-    if (!nullToAbsent || closingCash != null) {
-      map['closing_cash'] = Variable<double>(closingCash);
-    }
-    if (!nullToAbsent || expectedCash != null) {
-      map['expected_cash'] = Variable<double>(expectedCash);
-    }
-    if (!nullToAbsent || difference != null) {
-      map['difference'] = Variable<double>(difference);
-    }
-    map['total_sales'] = Variable<int>(totalSales);
-    map['total_sales_amount'] = Variable<double>(totalSalesAmount);
-    map['total_refunds'] = Variable<int>(totalRefunds);
-    map['total_refunds_amount'] = Variable<double>(totalRefundsAmount);
-    map['status'] = Variable<String>(status);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['opened_at'] = Variable<DateTime>(openedAt);
-    if (!nullToAbsent || closedAt != null) {
-      map['closed_at'] = Variable<DateTime>(closedAt);
-    }
-    if (!nullToAbsent || syncedAt != null) {
-      map['synced_at'] = Variable<DateTime>(syncedAt);
-    }
-    return map;
-  }
-
-  ShiftsTableCompanion toCompanion(bool nullToAbsent) {
-    return ShiftsTableCompanion(
-      id: Value(id),
-      orgId:
-          orgId == null && nullToAbsent ? const Value.absent() : Value(orgId),
-      storeId: Value(storeId),
-      terminalId: terminalId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(terminalId),
-      cashierId: Value(cashierId),
-      cashierName: Value(cashierName),
-      openingCash: Value(openingCash),
-      closingCash: closingCash == null && nullToAbsent
-          ? const Value.absent()
-          : Value(closingCash),
-      expectedCash: expectedCash == null && nullToAbsent
-          ? const Value.absent()
-          : Value(expectedCash),
-      difference: difference == null && nullToAbsent
-          ? const Value.absent()
-          : Value(difference),
-      totalSales: Value(totalSales),
-      totalSalesAmount: Value(totalSalesAmount),
-      totalRefunds: Value(totalRefunds),
-      totalRefundsAmount: Value(totalRefundsAmount),
-      status: Value(status),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      openedAt: Value(openedAt),
-      closedAt: closedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(closedAt),
-      syncedAt: syncedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(syncedAt),
-    );
-  }
-
-  factory ShiftsTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ShiftsTableData(
-      id: serializer.fromJson<String>(json['id']),
-      orgId: serializer.fromJson<String?>(json['orgId']),
-      storeId: serializer.fromJson<String>(json['storeId']),
-      terminalId: serializer.fromJson<String?>(json['terminalId']),
-      cashierId: serializer.fromJson<String>(json['cashierId']),
-      cashierName: serializer.fromJson<String>(json['cashierName']),
-      openingCash: serializer.fromJson<double>(json['openingCash']),
-      closingCash: serializer.fromJson<double?>(json['closingCash']),
-      expectedCash: serializer.fromJson<double?>(json['expectedCash']),
-      difference: serializer.fromJson<double?>(json['difference']),
-      totalSales: serializer.fromJson<int>(json['totalSales']),
-      totalSalesAmount: serializer.fromJson<double>(json['totalSalesAmount']),
-      totalRefunds: serializer.fromJson<int>(json['totalRefunds']),
-      totalRefundsAmount:
-          serializer.fromJson<double>(json['totalRefundsAmount']),
-      status: serializer.fromJson<String>(json['status']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      openedAt: serializer.fromJson<DateTime>(json['openedAt']),
-      closedAt: serializer.fromJson<DateTime?>(json['closedAt']),
-      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'orgId': serializer.toJson<String?>(orgId),
-      'storeId': serializer.toJson<String>(storeId),
-      'terminalId': serializer.toJson<String?>(terminalId),
-      'cashierId': serializer.toJson<String>(cashierId),
-      'cashierName': serializer.toJson<String>(cashierName),
-      'openingCash': serializer.toJson<double>(openingCash),
-      'closingCash': serializer.toJson<double?>(closingCash),
-      'expectedCash': serializer.toJson<double?>(expectedCash),
-      'difference': serializer.toJson<double?>(difference),
-      'totalSales': serializer.toJson<int>(totalSales),
-      'totalSalesAmount': serializer.toJson<double>(totalSalesAmount),
-      'totalRefunds': serializer.toJson<int>(totalRefunds),
-      'totalRefundsAmount': serializer.toJson<double>(totalRefundsAmount),
-      'status': serializer.toJson<String>(status),
-      'notes': serializer.toJson<String?>(notes),
-      'openedAt': serializer.toJson<DateTime>(openedAt),
-      'closedAt': serializer.toJson<DateTime?>(closedAt),
-      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
-    };
-  }
-
-  ShiftsTableData copyWith(
-          {String? id,
-          Value<String?> orgId = const Value.absent(),
-          String? storeId,
-          Value<String?> terminalId = const Value.absent(),
-          String? cashierId,
-          String? cashierName,
-          double? openingCash,
-          Value<double?> closingCash = const Value.absent(),
-          Value<double?> expectedCash = const Value.absent(),
-          Value<double?> difference = const Value.absent(),
-          int? totalSales,
-          double? totalSalesAmount,
-          int? totalRefunds,
-          double? totalRefundsAmount,
-          String? status,
-          Value<String?> notes = const Value.absent(),
-          DateTime? openedAt,
-          Value<DateTime?> closedAt = const Value.absent(),
-          Value<DateTime?> syncedAt = const Value.absent()}) =>
-      ShiftsTableData(
-        id: id ?? this.id,
-        orgId: orgId.present ? orgId.value : this.orgId,
-        storeId: storeId ?? this.storeId,
-        terminalId: terminalId.present ? terminalId.value : this.terminalId,
-        cashierId: cashierId ?? this.cashierId,
-        cashierName: cashierName ?? this.cashierName,
-        openingCash: openingCash ?? this.openingCash,
-        closingCash: closingCash.present ? closingCash.value : this.closingCash,
-        expectedCash:
-            expectedCash.present ? expectedCash.value : this.expectedCash,
-        difference: difference.present ? difference.value : this.difference,
-        totalSales: totalSales ?? this.totalSales,
-        totalSalesAmount: totalSalesAmount ?? this.totalSalesAmount,
-        totalRefunds: totalRefunds ?? this.totalRefunds,
-        totalRefundsAmount: totalRefundsAmount ?? this.totalRefundsAmount,
-        status: status ?? this.status,
-        notes: notes.present ? notes.value : this.notes,
-        openedAt: openedAt ?? this.openedAt,
-        closedAt: closedAt.present ? closedAt.value : this.closedAt,
-        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
-      );
-  ShiftsTableData copyWithCompanion(ShiftsTableCompanion data) {
-    return ShiftsTableData(
-      id: data.id.present ? data.id.value : this.id,
-      orgId: data.orgId.present ? data.orgId.value : this.orgId,
-      storeId: data.storeId.present ? data.storeId.value : this.storeId,
-      terminalId:
-          data.terminalId.present ? data.terminalId.value : this.terminalId,
-      cashierId: data.cashierId.present ? data.cashierId.value : this.cashierId,
-      cashierName:
-          data.cashierName.present ? data.cashierName.value : this.cashierName,
-      openingCash:
-          data.openingCash.present ? data.openingCash.value : this.openingCash,
-      closingCash:
-          data.closingCash.present ? data.closingCash.value : this.closingCash,
-      expectedCash: data.expectedCash.present
-          ? data.expectedCash.value
-          : this.expectedCash,
-      difference:
-          data.difference.present ? data.difference.value : this.difference,
-      totalSales:
-          data.totalSales.present ? data.totalSales.value : this.totalSales,
-      totalSalesAmount: data.totalSalesAmount.present
-          ? data.totalSalesAmount.value
-          : this.totalSalesAmount,
-      totalRefunds: data.totalRefunds.present
-          ? data.totalRefunds.value
-          : this.totalRefunds,
-      totalRefundsAmount: data.totalRefundsAmount.present
-          ? data.totalRefundsAmount.value
-          : this.totalRefundsAmount,
-      status: data.status.present ? data.status.value : this.status,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      openedAt: data.openedAt.present ? data.openedAt.value : this.openedAt,
-      closedAt: data.closedAt.present ? data.closedAt.value : this.closedAt,
-      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ShiftsTableData(')
-          ..write('id: $id, ')
-          ..write('orgId: $orgId, ')
-          ..write('storeId: $storeId, ')
-          ..write('terminalId: $terminalId, ')
-          ..write('cashierId: $cashierId, ')
-          ..write('cashierName: $cashierName, ')
-          ..write('openingCash: $openingCash, ')
-          ..write('closingCash: $closingCash, ')
-          ..write('expectedCash: $expectedCash, ')
-          ..write('difference: $difference, ')
-          ..write('totalSales: $totalSales, ')
-          ..write('totalSalesAmount: $totalSalesAmount, ')
-          ..write('totalRefunds: $totalRefunds, ')
-          ..write('totalRefundsAmount: $totalRefundsAmount, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('openedAt: $openedAt, ')
-          ..write('closedAt: $closedAt, ')
-          ..write('syncedAt: $syncedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      id,
-      orgId,
-      storeId,
-      terminalId,
-      cashierId,
-      cashierName,
-      openingCash,
-      closingCash,
-      expectedCash,
-      difference,
-      totalSales,
-      totalSalesAmount,
-      totalRefunds,
-      totalRefundsAmount,
-      status,
-      notes,
-      openedAt,
-      closedAt,
-      syncedAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ShiftsTableData &&
-          other.id == this.id &&
-          other.orgId == this.orgId &&
-          other.storeId == this.storeId &&
-          other.terminalId == this.terminalId &&
-          other.cashierId == this.cashierId &&
-          other.cashierName == this.cashierName &&
-          other.openingCash == this.openingCash &&
-          other.closingCash == this.closingCash &&
-          other.expectedCash == this.expectedCash &&
-          other.difference == this.difference &&
-          other.totalSales == this.totalSales &&
-          other.totalSalesAmount == this.totalSalesAmount &&
-          other.totalRefunds == this.totalRefunds &&
-          other.totalRefundsAmount == this.totalRefundsAmount &&
-          other.status == this.status &&
-          other.notes == this.notes &&
-          other.openedAt == this.openedAt &&
-          other.closedAt == this.closedAt &&
-          other.syncedAt == this.syncedAt);
-}
-
-class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
-  final Value<String> id;
-  final Value<String?> orgId;
-  final Value<String> storeId;
-  final Value<String?> terminalId;
-  final Value<String> cashierId;
-  final Value<String> cashierName;
-  final Value<double> openingCash;
-  final Value<double?> closingCash;
-  final Value<double?> expectedCash;
-  final Value<double?> difference;
-  final Value<int> totalSales;
-  final Value<double> totalSalesAmount;
-  final Value<int> totalRefunds;
-  final Value<double> totalRefundsAmount;
-  final Value<String> status;
-  final Value<String?> notes;
-  final Value<DateTime> openedAt;
-  final Value<DateTime?> closedAt;
-  final Value<DateTime?> syncedAt;
-  final Value<int> rowid;
-  const ShiftsTableCompanion({
-    this.id = const Value.absent(),
-    this.orgId = const Value.absent(),
-    this.storeId = const Value.absent(),
-    this.terminalId = const Value.absent(),
-    this.cashierId = const Value.absent(),
-    this.cashierName = const Value.absent(),
-    this.openingCash = const Value.absent(),
-    this.closingCash = const Value.absent(),
-    this.expectedCash = const Value.absent(),
-    this.difference = const Value.absent(),
-    this.totalSales = const Value.absent(),
-    this.totalSalesAmount = const Value.absent(),
-    this.totalRefunds = const Value.absent(),
-    this.totalRefundsAmount = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.openedAt = const Value.absent(),
-    this.closedAt = const Value.absent(),
-    this.syncedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  ShiftsTableCompanion.insert({
-    required String id,
-    this.orgId = const Value.absent(),
-    required String storeId,
-    this.terminalId = const Value.absent(),
-    required String cashierId,
-    required String cashierName,
-    this.openingCash = const Value.absent(),
-    this.closingCash = const Value.absent(),
-    this.expectedCash = const Value.absent(),
-    this.difference = const Value.absent(),
-    this.totalSales = const Value.absent(),
-    this.totalSalesAmount = const Value.absent(),
-    this.totalRefunds = const Value.absent(),
-    this.totalRefundsAmount = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    required DateTime openedAt,
-    this.closedAt = const Value.absent(),
-    this.syncedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        storeId = Value(storeId),
-        cashierId = Value(cashierId),
-        cashierName = Value(cashierName),
-        openedAt = Value(openedAt);
-  static Insertable<ShiftsTableData> custom({
-    Expression<String>? id,
-    Expression<String>? orgId,
-    Expression<String>? storeId,
-    Expression<String>? terminalId,
-    Expression<String>? cashierId,
-    Expression<String>? cashierName,
-    Expression<double>? openingCash,
-    Expression<double>? closingCash,
-    Expression<double>? expectedCash,
-    Expression<double>? difference,
-    Expression<int>? totalSales,
-    Expression<double>? totalSalesAmount,
-    Expression<int>? totalRefunds,
-    Expression<double>? totalRefundsAmount,
-    Expression<String>? status,
-    Expression<String>? notes,
-    Expression<DateTime>? openedAt,
-    Expression<DateTime>? closedAt,
-    Expression<DateTime>? syncedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (orgId != null) 'org_id': orgId,
-      if (storeId != null) 'store_id': storeId,
-      if (terminalId != null) 'terminal_id': terminalId,
-      if (cashierId != null) 'cashier_id': cashierId,
-      if (cashierName != null) 'cashier_name': cashierName,
-      if (openingCash != null) 'opening_cash': openingCash,
-      if (closingCash != null) 'closing_cash': closingCash,
-      if (expectedCash != null) 'expected_cash': expectedCash,
-      if (difference != null) 'difference': difference,
-      if (totalSales != null) 'total_sales': totalSales,
-      if (totalSalesAmount != null) 'total_sales_amount': totalSalesAmount,
-      if (totalRefunds != null) 'total_refunds': totalRefunds,
-      if (totalRefundsAmount != null)
-        'total_refunds_amount': totalRefundsAmount,
-      if (status != null) 'status': status,
-      if (notes != null) 'notes': notes,
-      if (openedAt != null) 'opened_at': openedAt,
-      if (closedAt != null) 'closed_at': closedAt,
-      if (syncedAt != null) 'synced_at': syncedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  ShiftsTableCompanion copyWith(
-      {Value<String>? id,
-      Value<String?>? orgId,
-      Value<String>? storeId,
-      Value<String?>? terminalId,
-      Value<String>? cashierId,
-      Value<String>? cashierName,
-      Value<double>? openingCash,
-      Value<double?>? closingCash,
-      Value<double?>? expectedCash,
-      Value<double?>? difference,
-      Value<int>? totalSales,
-      Value<double>? totalSalesAmount,
-      Value<int>? totalRefunds,
-      Value<double>? totalRefundsAmount,
-      Value<String>? status,
-      Value<String?>? notes,
-      Value<DateTime>? openedAt,
-      Value<DateTime?>? closedAt,
-      Value<DateTime?>? syncedAt,
-      Value<int>? rowid}) {
-    return ShiftsTableCompanion(
-      id: id ?? this.id,
-      orgId: orgId ?? this.orgId,
-      storeId: storeId ?? this.storeId,
-      terminalId: terminalId ?? this.terminalId,
-      cashierId: cashierId ?? this.cashierId,
-      cashierName: cashierName ?? this.cashierName,
-      openingCash: openingCash ?? this.openingCash,
-      closingCash: closingCash ?? this.closingCash,
-      expectedCash: expectedCash ?? this.expectedCash,
-      difference: difference ?? this.difference,
-      totalSales: totalSales ?? this.totalSales,
-      totalSalesAmount: totalSalesAmount ?? this.totalSalesAmount,
-      totalRefunds: totalRefunds ?? this.totalRefunds,
-      totalRefundsAmount: totalRefundsAmount ?? this.totalRefundsAmount,
-      status: status ?? this.status,
-      notes: notes ?? this.notes,
-      openedAt: openedAt ?? this.openedAt,
-      closedAt: closedAt ?? this.closedAt,
-      syncedAt: syncedAt ?? this.syncedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (orgId.present) {
-      map['org_id'] = Variable<String>(orgId.value);
-    }
-    if (storeId.present) {
-      map['store_id'] = Variable<String>(storeId.value);
-    }
-    if (terminalId.present) {
-      map['terminal_id'] = Variable<String>(terminalId.value);
-    }
-    if (cashierId.present) {
-      map['cashier_id'] = Variable<String>(cashierId.value);
-    }
-    if (cashierName.present) {
-      map['cashier_name'] = Variable<String>(cashierName.value);
-    }
-    if (openingCash.present) {
-      map['opening_cash'] = Variable<double>(openingCash.value);
-    }
-    if (closingCash.present) {
-      map['closing_cash'] = Variable<double>(closingCash.value);
-    }
-    if (expectedCash.present) {
-      map['expected_cash'] = Variable<double>(expectedCash.value);
-    }
-    if (difference.present) {
-      map['difference'] = Variable<double>(difference.value);
-    }
-    if (totalSales.present) {
-      map['total_sales'] = Variable<int>(totalSales.value);
-    }
-    if (totalSalesAmount.present) {
-      map['total_sales_amount'] = Variable<double>(totalSalesAmount.value);
-    }
-    if (totalRefunds.present) {
-      map['total_refunds'] = Variable<int>(totalRefunds.value);
-    }
-    if (totalRefundsAmount.present) {
-      map['total_refunds_amount'] = Variable<double>(totalRefundsAmount.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (openedAt.present) {
-      map['opened_at'] = Variable<DateTime>(openedAt.value);
-    }
-    if (closedAt.present) {
-      map['closed_at'] = Variable<DateTime>(closedAt.value);
-    }
-    if (syncedAt.present) {
-      map['synced_at'] = Variable<DateTime>(syncedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ShiftsTableCompanion(')
-          ..write('id: $id, ')
-          ..write('orgId: $orgId, ')
-          ..write('storeId: $storeId, ')
-          ..write('terminalId: $terminalId, ')
-          ..write('cashierId: $cashierId, ')
-          ..write('cashierName: $cashierName, ')
-          ..write('openingCash: $openingCash, ')
-          ..write('closingCash: $closingCash, ')
-          ..write('expectedCash: $expectedCash, ')
-          ..write('difference: $difference, ')
-          ..write('totalSales: $totalSales, ')
-          ..write('totalSalesAmount: $totalSalesAmount, ')
-          ..write('totalRefunds: $totalRefunds, ')
-          ..write('totalRefundsAmount: $totalRefundsAmount, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('openedAt: $openedAt, ')
-          ..write('closedAt: $closedAt, ')
-          ..write('syncedAt: $syncedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -39515,6 +39558,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $CategoriesTableTable(this);
   late final $ProductsTableTable productsTable = $ProductsTableTable(this);
   late final $UsersTableTable usersTable = $UsersTableTable(this);
+  late final $ShiftsTableTable shiftsTable = $ShiftsTableTable(this);
   late final $CustomersTableTable customersTable = $CustomersTableTable(this);
   late final $SalesTableTable salesTable = $SalesTableTable(this);
   late final $SaleItemsTableTable saleItemsTable = $SaleItemsTableTable(this);
@@ -39538,7 +39582,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RolesTableTable rolesTable = $RolesTableTable(this);
   late final $CustomerAddressesTableTable customerAddressesTable =
       $CustomerAddressesTableTable(this);
-  late final $ShiftsTableTable shiftsTable = $ShiftsTableTable(this);
   late final $CashMovementsTableTable cashMovementsTable =
       $CashMovementsTableTable(this);
   late final $ReturnsTableTable returnsTable = $ReturnsTableTable(this);
@@ -40065,6 +40108,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         categoriesTable,
         productsTable,
         usersTable,
+        shiftsTable,
         customersTable,
         salesTable,
         saleItemsTable,
@@ -40081,7 +40125,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         loyaltyRewardsTable,
         rolesTable,
         customerAddressesTable,
-        shiftsTable,
         cashMovementsTable,
         returnsTable,
         returnItemsTable,
@@ -40312,6 +40355,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('products', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('shifts',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('sales', kind: UpdateKind.update),
             ],
           ),
           WritePropagation(
@@ -44218,6 +44268,477 @@ typedef $$UsersTableTableProcessedTableManager = ProcessedTableManager<
     UsersTableData,
     PrefetchHooks Function(
         {bool salesTableRefs, bool loyaltyTransactionsTableRefs})>;
+typedef $$ShiftsTableTableCreateCompanionBuilder = ShiftsTableCompanion
+    Function({
+  required String id,
+  Value<String?> orgId,
+  required String storeId,
+  Value<String?> terminalId,
+  required String cashierId,
+  required String cashierName,
+  Value<double> openingCash,
+  Value<double?> closingCash,
+  Value<double?> expectedCash,
+  Value<double?> difference,
+  Value<int> totalSales,
+  Value<double> totalSalesAmount,
+  Value<int> totalRefunds,
+  Value<double> totalRefundsAmount,
+  Value<String> status,
+  Value<String?> notes,
+  required DateTime openedAt,
+  Value<DateTime?> closedAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+typedef $$ShiftsTableTableUpdateCompanionBuilder = ShiftsTableCompanion
+    Function({
+  Value<String> id,
+  Value<String?> orgId,
+  Value<String> storeId,
+  Value<String?> terminalId,
+  Value<String> cashierId,
+  Value<String> cashierName,
+  Value<double> openingCash,
+  Value<double?> closingCash,
+  Value<double?> expectedCash,
+  Value<double?> difference,
+  Value<int> totalSales,
+  Value<double> totalSalesAmount,
+  Value<int> totalRefunds,
+  Value<double> totalRefundsAmount,
+  Value<String> status,
+  Value<String?> notes,
+  Value<DateTime> openedAt,
+  Value<DateTime?> closedAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+
+final class $$ShiftsTableTableReferences
+    extends BaseReferences<_$AppDatabase, $ShiftsTableTable, ShiftsTableData> {
+  $$ShiftsTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$SalesTableTable, List<SalesTableData>>
+      _salesTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.salesTable,
+          aliasName:
+              $_aliasNameGenerator(db.shiftsTable.id, db.salesTable.shiftId));
+
+  $$SalesTableTableProcessedTableManager get salesTableRefs {
+    final manager = $$SalesTableTableTableManager($_db, $_db.salesTable)
+        .filter((f) => f.shiftId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_salesTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$ShiftsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ShiftsTableTable> {
+  $$ShiftsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get orgId => $composableBuilder(
+      column: $table.orgId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get terminalId => $composableBuilder(
+      column: $table.terminalId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get cashierId => $composableBuilder(
+      column: $table.cashierId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get cashierName => $composableBuilder(
+      column: $table.cashierName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get openingCash => $composableBuilder(
+      column: $table.openingCash, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get closingCash => $composableBuilder(
+      column: $table.closingCash, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get expectedCash => $composableBuilder(
+      column: $table.expectedCash, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get difference => $composableBuilder(
+      column: $table.difference, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalSales => $composableBuilder(
+      column: $table.totalSales, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get totalSalesAmount => $composableBuilder(
+      column: $table.totalSalesAmount,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalRefunds => $composableBuilder(
+      column: $table.totalRefunds, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get totalRefundsAmount => $composableBuilder(
+      column: $table.totalRefundsAmount,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get openedAt => $composableBuilder(
+      column: $table.openedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get closedAt => $composableBuilder(
+      column: $table.closedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+      column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+
+  Expression<bool> salesTableRefs(
+      Expression<bool> Function($$SalesTableTableFilterComposer f) f) {
+    final $$SalesTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.salesTable,
+        getReferencedColumn: (t) => t.shiftId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$SalesTableTableFilterComposer(
+              $db: $db,
+              $table: $db.salesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ShiftsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ShiftsTableTable> {
+  $$ShiftsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get orgId => $composableBuilder(
+      column: $table.orgId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get terminalId => $composableBuilder(
+      column: $table.terminalId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get cashierId => $composableBuilder(
+      column: $table.cashierId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get cashierName => $composableBuilder(
+      column: $table.cashierName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get openingCash => $composableBuilder(
+      column: $table.openingCash, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get closingCash => $composableBuilder(
+      column: $table.closingCash, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get expectedCash => $composableBuilder(
+      column: $table.expectedCash,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get difference => $composableBuilder(
+      column: $table.difference, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalSales => $composableBuilder(
+      column: $table.totalSales, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get totalSalesAmount => $composableBuilder(
+      column: $table.totalSalesAmount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalRefunds => $composableBuilder(
+      column: $table.totalRefunds,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get totalRefundsAmount => $composableBuilder(
+      column: $table.totalRefundsAmount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get openedAt => $composableBuilder(
+      column: $table.openedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get closedAt => $composableBuilder(
+      column: $table.closedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+      column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ShiftsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ShiftsTableTable> {
+  $$ShiftsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get orgId =>
+      $composableBuilder(column: $table.orgId, builder: (column) => column);
+
+  GeneratedColumn<String> get storeId =>
+      $composableBuilder(column: $table.storeId, builder: (column) => column);
+
+  GeneratedColumn<String> get terminalId => $composableBuilder(
+      column: $table.terminalId, builder: (column) => column);
+
+  GeneratedColumn<String> get cashierId =>
+      $composableBuilder(column: $table.cashierId, builder: (column) => column);
+
+  GeneratedColumn<String> get cashierName => $composableBuilder(
+      column: $table.cashierName, builder: (column) => column);
+
+  GeneratedColumn<double> get openingCash => $composableBuilder(
+      column: $table.openingCash, builder: (column) => column);
+
+  GeneratedColumn<double> get closingCash => $composableBuilder(
+      column: $table.closingCash, builder: (column) => column);
+
+  GeneratedColumn<double> get expectedCash => $composableBuilder(
+      column: $table.expectedCash, builder: (column) => column);
+
+  GeneratedColumn<double> get difference => $composableBuilder(
+      column: $table.difference, builder: (column) => column);
+
+  GeneratedColumn<int> get totalSales => $composableBuilder(
+      column: $table.totalSales, builder: (column) => column);
+
+  GeneratedColumn<double> get totalSalesAmount => $composableBuilder(
+      column: $table.totalSalesAmount, builder: (column) => column);
+
+  GeneratedColumn<int> get totalRefunds => $composableBuilder(
+      column: $table.totalRefunds, builder: (column) => column);
+
+  GeneratedColumn<double> get totalRefundsAmount => $composableBuilder(
+      column: $table.totalRefundsAmount, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get openedAt =>
+      $composableBuilder(column: $table.openedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get closedAt =>
+      $composableBuilder(column: $table.closedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  Expression<T> salesTableRefs<T extends Object>(
+      Expression<T> Function($$SalesTableTableAnnotationComposer a) f) {
+    final $$SalesTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.salesTable,
+        getReferencedColumn: (t) => t.shiftId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$SalesTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.salesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ShiftsTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ShiftsTableTable,
+    ShiftsTableData,
+    $$ShiftsTableTableFilterComposer,
+    $$ShiftsTableTableOrderingComposer,
+    $$ShiftsTableTableAnnotationComposer,
+    $$ShiftsTableTableCreateCompanionBuilder,
+    $$ShiftsTableTableUpdateCompanionBuilder,
+    (ShiftsTableData, $$ShiftsTableTableReferences),
+    ShiftsTableData,
+    PrefetchHooks Function({bool salesTableRefs})> {
+  $$ShiftsTableTableTableManager(_$AppDatabase db, $ShiftsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShiftsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShiftsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShiftsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String?> orgId = const Value.absent(),
+            Value<String> storeId = const Value.absent(),
+            Value<String?> terminalId = const Value.absent(),
+            Value<String> cashierId = const Value.absent(),
+            Value<String> cashierName = const Value.absent(),
+            Value<double> openingCash = const Value.absent(),
+            Value<double?> closingCash = const Value.absent(),
+            Value<double?> expectedCash = const Value.absent(),
+            Value<double?> difference = const Value.absent(),
+            Value<int> totalSales = const Value.absent(),
+            Value<double> totalSalesAmount = const Value.absent(),
+            Value<int> totalRefunds = const Value.absent(),
+            Value<double> totalRefundsAmount = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime> openedAt = const Value.absent(),
+            Value<DateTime?> closedAt = const Value.absent(),
+            Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ShiftsTableCompanion(
+            id: id,
+            orgId: orgId,
+            storeId: storeId,
+            terminalId: terminalId,
+            cashierId: cashierId,
+            cashierName: cashierName,
+            openingCash: openingCash,
+            closingCash: closingCash,
+            expectedCash: expectedCash,
+            difference: difference,
+            totalSales: totalSales,
+            totalSalesAmount: totalSalesAmount,
+            totalRefunds: totalRefunds,
+            totalRefundsAmount: totalRefundsAmount,
+            status: status,
+            notes: notes,
+            openedAt: openedAt,
+            closedAt: closedAt,
+            syncedAt: syncedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            Value<String?> orgId = const Value.absent(),
+            required String storeId,
+            Value<String?> terminalId = const Value.absent(),
+            required String cashierId,
+            required String cashierName,
+            Value<double> openingCash = const Value.absent(),
+            Value<double?> closingCash = const Value.absent(),
+            Value<double?> expectedCash = const Value.absent(),
+            Value<double?> difference = const Value.absent(),
+            Value<int> totalSales = const Value.absent(),
+            Value<double> totalSalesAmount = const Value.absent(),
+            Value<int> totalRefunds = const Value.absent(),
+            Value<double> totalRefundsAmount = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            required DateTime openedAt,
+            Value<DateTime?> closedAt = const Value.absent(),
+            Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ShiftsTableCompanion.insert(
+            id: id,
+            orgId: orgId,
+            storeId: storeId,
+            terminalId: terminalId,
+            cashierId: cashierId,
+            cashierName: cashierName,
+            openingCash: openingCash,
+            closingCash: closingCash,
+            expectedCash: expectedCash,
+            difference: difference,
+            totalSales: totalSales,
+            totalSalesAmount: totalSalesAmount,
+            totalRefunds: totalRefunds,
+            totalRefundsAmount: totalRefundsAmount,
+            status: status,
+            notes: notes,
+            openedAt: openedAt,
+            closedAt: closedAt,
+            syncedAt: syncedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ShiftsTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({salesTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (salesTableRefs) db.salesTable],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (salesTableRefs)
+                    await $_getPrefetchedData<ShiftsTableData,
+                            $ShiftsTableTable, SalesTableData>(
+                        currentTable: table,
+                        referencedTable: $$ShiftsTableTableReferences
+                            ._salesTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ShiftsTableTableReferences(db, table, p0)
+                                .salesTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.shiftId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ShiftsTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ShiftsTableTable,
+    ShiftsTableData,
+    $$ShiftsTableTableFilterComposer,
+    $$ShiftsTableTableOrderingComposer,
+    $$ShiftsTableTableAnnotationComposer,
+    $$ShiftsTableTableCreateCompanionBuilder,
+    $$ShiftsTableTableUpdateCompanionBuilder,
+    (ShiftsTableData, $$ShiftsTableTableReferences),
+    ShiftsTableData,
+    PrefetchHooks Function({bool salesTableRefs})>;
 typedef $$CustomersTableTableCreateCompanionBuilder = CustomersTableCompanion
     Function({
   required String id,
@@ -45129,6 +45650,7 @@ typedef $$SalesTableTableCreateCompanionBuilder = SalesTableCompanion Function({
   required String storeId,
   required String cashierId,
   Value<String?> terminalId,
+  Value<String?> shiftId,
   Value<String?> customerId,
   Value<String?> customerName,
   Value<String?> customerPhone,
@@ -45159,6 +45681,7 @@ typedef $$SalesTableTableUpdateCompanionBuilder = SalesTableCompanion Function({
   Value<String> storeId,
   Value<String> cashierId,
   Value<String?> terminalId,
+  Value<String?> shiftId,
   Value<String?> customerId,
   Value<String?> customerName,
   Value<String?> customerPhone,
@@ -45212,6 +45735,21 @@ final class $$SalesTableTableReferences
     final manager = $$UsersTableTableTableManager($_db, $_db.usersTable)
         .filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_cashierIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $ShiftsTableTable _shiftIdTable(_$AppDatabase db) =>
+      db.shiftsTable.createAlias(
+          $_aliasNameGenerator(db.salesTable.shiftId, db.shiftsTable.id));
+
+  $$ShiftsTableTableProcessedTableManager? get shiftId {
+    final $_column = $_itemColumn<String>('shift_id');
+    if ($_column == null) return null;
+    final manager = $$ShiftsTableTableTableManager($_db, $_db.shiftsTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_shiftIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: [item]));
@@ -45396,6 +45934,26 @@ class $$SalesTableTableFilterComposer
             $$UsersTableTableFilterComposer(
               $db: $db,
               $table: $db.usersTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ShiftsTableTableFilterComposer get shiftId {
+    final $$ShiftsTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.shiftId,
+        referencedTable: $db.shiftsTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ShiftsTableTableFilterComposer(
+              $db: $db,
+              $table: $db.shiftsTable,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -45617,6 +46175,26 @@ class $$SalesTableTableOrderingComposer
     return composer;
   }
 
+  $$ShiftsTableTableOrderingComposer get shiftId {
+    final $$ShiftsTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.shiftId,
+        referencedTable: $db.shiftsTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ShiftsTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.shiftsTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
   $$CustomersTableTableOrderingComposer get customerId {
     final $$CustomersTableTableOrderingComposer composer = $composerBuilder(
         composer: this,
@@ -45759,6 +46337,26 @@ class $$SalesTableTableAnnotationComposer
     return composer;
   }
 
+  $$ShiftsTableTableAnnotationComposer get shiftId {
+    final $$ShiftsTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.shiftId,
+        referencedTable: $db.shiftsTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ShiftsTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.shiftsTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
   $$CustomersTableTableAnnotationComposer get customerId {
     final $$CustomersTableTableAnnotationComposer composer = $composerBuilder(
         composer: this,
@@ -45860,6 +46458,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
     PrefetchHooks Function(
         {bool storeId,
         bool cashierId,
+        bool shiftId,
         bool customerId,
         bool saleItemsTableRefs,
         bool loyaltyTransactionsTableRefs,
@@ -45881,6 +46480,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
             Value<String> storeId = const Value.absent(),
             Value<String> cashierId = const Value.absent(),
             Value<String?> terminalId = const Value.absent(),
+            Value<String?> shiftId = const Value.absent(),
             Value<String?> customerId = const Value.absent(),
             Value<String?> customerName = const Value.absent(),
             Value<String?> customerPhone = const Value.absent(),
@@ -45911,6 +46511,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
             storeId: storeId,
             cashierId: cashierId,
             terminalId: terminalId,
+            shiftId: shiftId,
             customerId: customerId,
             customerName: customerName,
             customerPhone: customerPhone,
@@ -45941,6 +46542,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
             required String storeId,
             required String cashierId,
             Value<String?> terminalId = const Value.absent(),
+            Value<String?> shiftId = const Value.absent(),
             Value<String?> customerId = const Value.absent(),
             Value<String?> customerName = const Value.absent(),
             Value<String?> customerPhone = const Value.absent(),
@@ -45971,6 +46573,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
             storeId: storeId,
             cashierId: cashierId,
             terminalId: terminalId,
+            shiftId: shiftId,
             customerId: customerId,
             customerName: customerName,
             customerPhone: customerPhone,
@@ -46003,6 +46606,7 @@ class $$SalesTableTableTableManager extends RootTableManager<
           prefetchHooksCallback: (
               {storeId = false,
               cashierId = false,
+              shiftId = false,
               customerId = false,
               saleItemsTableRefs = false,
               loyaltyTransactionsTableRefs = false,
@@ -46045,6 +46649,16 @@ class $$SalesTableTableTableManager extends RootTableManager<
                         $$SalesTableTableReferences._cashierIdTable(db),
                     referencedColumn:
                         $$SalesTableTableReferences._cashierIdTable(db).id,
+                  ) as T;
+                }
+                if (shiftId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.shiftId,
+                    referencedTable:
+                        $$SalesTableTableReferences._shiftIdTable(db),
+                    referencedColumn:
+                        $$SalesTableTableReferences._shiftIdTable(db).id,
                   ) as T;
                 }
                 if (customerId) {
@@ -46122,6 +46736,7 @@ typedef $$SalesTableTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function(
         {bool storeId,
         bool cashierId,
+        bool shiftId,
         bool customerId,
         bool saleItemsTableRefs,
         bool loyaltyTransactionsTableRefs,
@@ -53024,395 +53639,6 @@ typedef $$CustomerAddressesTableTableProcessedTableManager
         ),
         CustomerAddressesTableData,
         PrefetchHooks Function()>;
-typedef $$ShiftsTableTableCreateCompanionBuilder = ShiftsTableCompanion
-    Function({
-  required String id,
-  Value<String?> orgId,
-  required String storeId,
-  Value<String?> terminalId,
-  required String cashierId,
-  required String cashierName,
-  Value<double> openingCash,
-  Value<double?> closingCash,
-  Value<double?> expectedCash,
-  Value<double?> difference,
-  Value<int> totalSales,
-  Value<double> totalSalesAmount,
-  Value<int> totalRefunds,
-  Value<double> totalRefundsAmount,
-  Value<String> status,
-  Value<String?> notes,
-  required DateTime openedAt,
-  Value<DateTime?> closedAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
-typedef $$ShiftsTableTableUpdateCompanionBuilder = ShiftsTableCompanion
-    Function({
-  Value<String> id,
-  Value<String?> orgId,
-  Value<String> storeId,
-  Value<String?> terminalId,
-  Value<String> cashierId,
-  Value<String> cashierName,
-  Value<double> openingCash,
-  Value<double?> closingCash,
-  Value<double?> expectedCash,
-  Value<double?> difference,
-  Value<int> totalSales,
-  Value<double> totalSalesAmount,
-  Value<int> totalRefunds,
-  Value<double> totalRefundsAmount,
-  Value<String> status,
-  Value<String?> notes,
-  Value<DateTime> openedAt,
-  Value<DateTime?> closedAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
-
-class $$ShiftsTableTableFilterComposer
-    extends Composer<_$AppDatabase, $ShiftsTableTable> {
-  $$ShiftsTableTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get orgId => $composableBuilder(
-      column: $table.orgId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get storeId => $composableBuilder(
-      column: $table.storeId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get terminalId => $composableBuilder(
-      column: $table.terminalId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get cashierId => $composableBuilder(
-      column: $table.cashierId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get cashierName => $composableBuilder(
-      column: $table.cashierName, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get openingCash => $composableBuilder(
-      column: $table.openingCash, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get closingCash => $composableBuilder(
-      column: $table.closingCash, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get expectedCash => $composableBuilder(
-      column: $table.expectedCash, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get difference => $composableBuilder(
-      column: $table.difference, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get totalSales => $composableBuilder(
-      column: $table.totalSales, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get totalSalesAmount => $composableBuilder(
-      column: $table.totalSalesAmount,
-      builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get totalRefunds => $composableBuilder(
-      column: $table.totalRefunds, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<double> get totalRefundsAmount => $composableBuilder(
-      column: $table.totalRefundsAmount,
-      builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get status => $composableBuilder(
-      column: $table.status, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<DateTime> get openedAt => $composableBuilder(
-      column: $table.openedAt, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<DateTime> get closedAt => $composableBuilder(
-      column: $table.closedAt, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
-      column: $table.syncedAt, builder: (column) => ColumnFilters(column));
-}
-
-class $$ShiftsTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $ShiftsTableTable> {
-  $$ShiftsTableTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get orgId => $composableBuilder(
-      column: $table.orgId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get storeId => $composableBuilder(
-      column: $table.storeId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get terminalId => $composableBuilder(
-      column: $table.terminalId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get cashierId => $composableBuilder(
-      column: $table.cashierId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get cashierName => $composableBuilder(
-      column: $table.cashierName, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get openingCash => $composableBuilder(
-      column: $table.openingCash, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get closingCash => $composableBuilder(
-      column: $table.closingCash, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get expectedCash => $composableBuilder(
-      column: $table.expectedCash,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get difference => $composableBuilder(
-      column: $table.difference, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get totalSales => $composableBuilder(
-      column: $table.totalSales, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get totalSalesAmount => $composableBuilder(
-      column: $table.totalSalesAmount,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get totalRefunds => $composableBuilder(
-      column: $table.totalRefunds,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<double> get totalRefundsAmount => $composableBuilder(
-      column: $table.totalRefundsAmount,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get status => $composableBuilder(
-      column: $table.status, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-      column: $table.notes, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<DateTime> get openedAt => $composableBuilder(
-      column: $table.openedAt, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<DateTime> get closedAt => $composableBuilder(
-      column: $table.closedAt, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
-      column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
-}
-
-class $$ShiftsTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ShiftsTableTable> {
-  $$ShiftsTableTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get orgId =>
-      $composableBuilder(column: $table.orgId, builder: (column) => column);
-
-  GeneratedColumn<String> get storeId =>
-      $composableBuilder(column: $table.storeId, builder: (column) => column);
-
-  GeneratedColumn<String> get terminalId => $composableBuilder(
-      column: $table.terminalId, builder: (column) => column);
-
-  GeneratedColumn<String> get cashierId =>
-      $composableBuilder(column: $table.cashierId, builder: (column) => column);
-
-  GeneratedColumn<String> get cashierName => $composableBuilder(
-      column: $table.cashierName, builder: (column) => column);
-
-  GeneratedColumn<double> get openingCash => $composableBuilder(
-      column: $table.openingCash, builder: (column) => column);
-
-  GeneratedColumn<double> get closingCash => $composableBuilder(
-      column: $table.closingCash, builder: (column) => column);
-
-  GeneratedColumn<double> get expectedCash => $composableBuilder(
-      column: $table.expectedCash, builder: (column) => column);
-
-  GeneratedColumn<double> get difference => $composableBuilder(
-      column: $table.difference, builder: (column) => column);
-
-  GeneratedColumn<int> get totalSales => $composableBuilder(
-      column: $table.totalSales, builder: (column) => column);
-
-  GeneratedColumn<double> get totalSalesAmount => $composableBuilder(
-      column: $table.totalSalesAmount, builder: (column) => column);
-
-  GeneratedColumn<int> get totalRefunds => $composableBuilder(
-      column: $table.totalRefunds, builder: (column) => column);
-
-  GeneratedColumn<double> get totalRefundsAmount => $composableBuilder(
-      column: $table.totalRefundsAmount, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get openedAt =>
-      $composableBuilder(column: $table.openedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get closedAt =>
-      $composableBuilder(column: $table.closedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get syncedAt =>
-      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
-}
-
-class $$ShiftsTableTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $ShiftsTableTable,
-    ShiftsTableData,
-    $$ShiftsTableTableFilterComposer,
-    $$ShiftsTableTableOrderingComposer,
-    $$ShiftsTableTableAnnotationComposer,
-    $$ShiftsTableTableCreateCompanionBuilder,
-    $$ShiftsTableTableUpdateCompanionBuilder,
-    (
-      ShiftsTableData,
-      BaseReferences<_$AppDatabase, $ShiftsTableTable, ShiftsTableData>
-    ),
-    ShiftsTableData,
-    PrefetchHooks Function()> {
-  $$ShiftsTableTableTableManager(_$AppDatabase db, $ShiftsTableTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$ShiftsTableTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$ShiftsTableTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$ShiftsTableTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String?> orgId = const Value.absent(),
-            Value<String> storeId = const Value.absent(),
-            Value<String?> terminalId = const Value.absent(),
-            Value<String> cashierId = const Value.absent(),
-            Value<String> cashierName = const Value.absent(),
-            Value<double> openingCash = const Value.absent(),
-            Value<double?> closingCash = const Value.absent(),
-            Value<double?> expectedCash = const Value.absent(),
-            Value<double?> difference = const Value.absent(),
-            Value<int> totalSales = const Value.absent(),
-            Value<double> totalSalesAmount = const Value.absent(),
-            Value<int> totalRefunds = const Value.absent(),
-            Value<double> totalRefundsAmount = const Value.absent(),
-            Value<String> status = const Value.absent(),
-            Value<String?> notes = const Value.absent(),
-            Value<DateTime> openedAt = const Value.absent(),
-            Value<DateTime?> closedAt = const Value.absent(),
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ShiftsTableCompanion(
-            id: id,
-            orgId: orgId,
-            storeId: storeId,
-            terminalId: terminalId,
-            cashierId: cashierId,
-            cashierName: cashierName,
-            openingCash: openingCash,
-            closingCash: closingCash,
-            expectedCash: expectedCash,
-            difference: difference,
-            totalSales: totalSales,
-            totalSalesAmount: totalSalesAmount,
-            totalRefunds: totalRefunds,
-            totalRefundsAmount: totalRefundsAmount,
-            status: status,
-            notes: notes,
-            openedAt: openedAt,
-            closedAt: closedAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            Value<String?> orgId = const Value.absent(),
-            required String storeId,
-            Value<String?> terminalId = const Value.absent(),
-            required String cashierId,
-            required String cashierName,
-            Value<double> openingCash = const Value.absent(),
-            Value<double?> closingCash = const Value.absent(),
-            Value<double?> expectedCash = const Value.absent(),
-            Value<double?> difference = const Value.absent(),
-            Value<int> totalSales = const Value.absent(),
-            Value<double> totalSalesAmount = const Value.absent(),
-            Value<int> totalRefunds = const Value.absent(),
-            Value<double> totalRefundsAmount = const Value.absent(),
-            Value<String> status = const Value.absent(),
-            Value<String?> notes = const Value.absent(),
-            required DateTime openedAt,
-            Value<DateTime?> closedAt = const Value.absent(),
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ShiftsTableCompanion.insert(
-            id: id,
-            orgId: orgId,
-            storeId: storeId,
-            terminalId: terminalId,
-            cashierId: cashierId,
-            cashierName: cashierName,
-            openingCash: openingCash,
-            closingCash: closingCash,
-            expectedCash: expectedCash,
-            difference: difference,
-            totalSales: totalSales,
-            totalSalesAmount: totalSalesAmount,
-            totalRefunds: totalRefunds,
-            totalRefundsAmount: totalRefundsAmount,
-            status: status,
-            notes: notes,
-            openedAt: openedAt,
-            closedAt: closedAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ));
-}
-
-typedef $$ShiftsTableTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $ShiftsTableTable,
-    ShiftsTableData,
-    $$ShiftsTableTableFilterComposer,
-    $$ShiftsTableTableOrderingComposer,
-    $$ShiftsTableTableAnnotationComposer,
-    $$ShiftsTableTableCreateCompanionBuilder,
-    $$ShiftsTableTableUpdateCompanionBuilder,
-    (
-      ShiftsTableData,
-      BaseReferences<_$AppDatabase, $ShiftsTableTable, ShiftsTableData>
-    ),
-    ShiftsTableData,
-    PrefetchHooks Function()>;
 typedef $$CashMovementsTableTableCreateCompanionBuilder
     = CashMovementsTableCompanion Function({
   required String id,
@@ -64854,6 +65080,8 @@ class $AppDatabaseManager {
       $$ProductsTableTableTableManager(_db, _db.productsTable);
   $$UsersTableTableTableManager get usersTable =>
       $$UsersTableTableTableManager(_db, _db.usersTable);
+  $$ShiftsTableTableTableManager get shiftsTable =>
+      $$ShiftsTableTableTableManager(_db, _db.shiftsTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(_db, _db.customersTable);
   $$SalesTableTableTableManager get salesTable =>
@@ -64889,8 +65117,6 @@ class $AppDatabaseManager {
   $$CustomerAddressesTableTableTableManager get customerAddressesTable =>
       $$CustomerAddressesTableTableTableManager(
           _db, _db.customerAddressesTable);
-  $$ShiftsTableTableTableManager get shiftsTable =>
-      $$ShiftsTableTableTableManager(_db, _db.shiftsTable);
   $$CashMovementsTableTableTableManager get cashMovementsTable =>
       $$CashMovementsTableTableTableManager(_db, _db.cashMovementsTable);
   $$ReturnsTableTableTableManager get returnsTable =>

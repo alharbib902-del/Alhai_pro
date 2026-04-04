@@ -13,6 +13,9 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
   StockDeltasDao(super.db);
 
   /// إضافة تغيير مخزون جديد
+  ///
+  /// [productId] is nullable because the FK uses SET NULL on product delete,
+  /// but callers should always pass a non-null value for new deltas.
   Future<int> addDelta({
     required String id,
     required String productId,

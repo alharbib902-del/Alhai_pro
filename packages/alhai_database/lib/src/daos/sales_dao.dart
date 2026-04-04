@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 import '../app_database.dart';
 import '../tables/sales_table.dart';
@@ -84,16 +85,31 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     return update(salesTable).replace(sale);
   }
   
-  /// إلغاء بيع مع استعادة المخزون
+  static const _uuid = Uuid();
+
+  /// إلغاء بيع مع استعادة المخزون وتسجيل حركات المخزون ودلتا المزامنة
   Future<int> voidSale(String id) {
     return transaction(() async {
       try {
-        // 0. جلب store_id من البيع لتحديد المتجر
+        // 0. جلب store_id و cashier_id من البيع
         final saleRow = await customSelect(
-          'SELECT store_id FROM sales WHERE id = ?',
+          'SELECT store_id, cashier_id FROM sales WHERE id = ?',
           variables: [Variable.withString(id)],
         ).getSingleOrNull();
         final storeId = saleRow?.data['store_id'] as String?;
+        final cashierId = saleRow?.data['cashier_id'] as String?;
+
+        // جلب org_id من المتجر (لدلتا المخزون)
+        String? orgId;
+        if (storeId != null) {
+          try {
+            final storeRow = await customSelect(
+              'SELECT org_id FROM stores WHERE id = ?',
+              variables: [Variable.withString(storeId)],
+            ).getSingleOrNull();
+            orgId = storeRow?.data['org_id'] as String?;
+          } catch (_) {}
+        }
 
         // 1. جلب عناصر البيع لاستعادة الكميات
         final items = await customSelect(
@@ -101,13 +117,26 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
           variables: [Variable.withString(id)],
         ).get();
 
-        // 2. استعادة المخزون لكل منتج مع store_id filter و updated_at
+        // 2. استعادة المخزون لكل منتج مع تسجيل الحركات والدلتا
         final now = DateTime.now();
         for (final item in items) {
           try {
             final productId = item.data['product_id'] as String;
             final qty = item.data['qty'];
             final qtyDouble = (qty is int) ? qty.toDouble() : qty as double;
+
+            // قراءة الكمية الحالية قبل الاستعادة (للسجل)
+            final productRow = await customSelect(
+              'SELECT stock_qty FROM products WHERE id = ?',
+              variables: [Variable.withString(productId)],
+            ).getSingleOrNull();
+            final previousQty = productRow != null
+                ? ((productRow.data['stock_qty'] is int)
+                    ? (productRow.data['stock_qty'] as int).toDouble()
+                    : productRow.data['stock_qty'] as double? ?? 0.0)
+                : 0.0;
+
+            // استعادة المخزون
             await customStatement(
               'UPDATE products SET stock_qty = stock_qty + ?, updated_at = ? WHERE id = ?'
               '${storeId != null ? ' AND store_id = ?' : ''}',
@@ -118,6 +147,31 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
                 if (storeId != null) Variable.withString(storeId),
               ],
             );
+
+            // تسجيل حركة المخزون (void movement)
+            if (storeId != null) {
+              await attachedDatabase.inventoryDao.recordVoidMovement(
+                id: _uuid.v4(),
+                productId: productId,
+                storeId: storeId,
+                qty: qtyDouble,
+                previousQty: previousQty,
+                saleId: id,
+                userId: cashierId,
+              );
+
+              // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
+              await attachedDatabase.stockDeltasDao.addDelta(
+                id: _uuid.v4(),
+                productId: productId,
+                storeId: storeId,
+                orgId: orgId,
+                quantityChange: qtyDouble,
+                deviceId: cashierId ?? 'system',
+                operationType: 'void',
+                referenceId: id,
+              );
+            }
           } catch (e) {
             debugPrint('[DB] voidSale: failed to restore stock for '
                 'product ${item.data['product_id']} in sale $id: $e');
@@ -260,6 +314,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     return (select(salesTable)
       ..where((s) =>
         s.storeId.equals(storeId) &
+        s.deletedAt.isNull() &
+        s.status.equals('voided').not() &
         s.createdAt.isBiggerOrEqualValue(startOfDay) &
         s.createdAt.isSmallerThanValue(endOfDay)
       )
@@ -284,7 +340,7 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }) {
     var query = select(salesTable)
       ..where((s) {
-        var condition = s.storeId.equals(storeId);
+        var condition = s.storeId.equals(storeId) & s.deletedAt.isNull();
 
         if (startDate != null) {
           condition = condition & s.createdAt.isBiggerOrEqualValue(startDate);
@@ -319,7 +375,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
     var query = selectOnly(salesTable)
       ..addColumns([countExpression])
-      ..where(salesTable.storeId.equals(storeId));
+      ..where(salesTable.storeId.equals(storeId))
+      ..where(salesTable.deletedAt.isNull());
 
     if (startDate != null) {
       query.where(salesTable.createdAt.isBiggerOrEqualValue(startDate));

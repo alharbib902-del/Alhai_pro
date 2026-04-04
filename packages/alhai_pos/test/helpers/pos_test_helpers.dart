@@ -54,6 +54,24 @@ class MockSyncQueueDao extends Mock implements SyncQueueDao {}
 /// Mock for ReturnsDao
 class MockReturnsDao extends Mock implements ReturnsDao {}
 
+/// Mock for AccountsDao
+class MockAccountsDao extends Mock implements AccountsDao {}
+
+/// Mock for TransactionsDao
+class MockTransactionsDao extends Mock implements TransactionsDao {}
+
+/// Mock for StockDeltasDao
+class MockStockDeltasDao extends Mock implements StockDeltasDao {}
+
+/// Mock for UsersDao
+class MockUsersDao extends Mock implements UsersDao {}
+
+/// Mock for CustomersDao
+class MockCustomersDao extends Mock implements CustomersDao {}
+
+/// Mock for StoresDao
+class MockStoresDao extends Mock implements StoresDao {}
+
 // ============================================================================
 // FAKE CLASSES (for mocktail fallbackValue)
 // ============================================================================
@@ -69,6 +87,17 @@ class FakeInventoryMovementsTableCompanion extends Fake
 class FakeWhatsAppMessagesTableCompanion extends Fake
     implements WhatsAppMessagesTableCompanion {}
 
+class FakeAccountsTableCompanion extends Fake
+    implements AccountsTableCompanion {}
+
+class FakeTransactionsTableCompanion extends Fake
+    implements TransactionsTableCompanion {}
+
+class FakeUsersTableCompanion extends Fake implements UsersTableCompanion {}
+
+class FakeStockDeltasTableCompanion extends Fake
+    implements StockDeltasTableCompanion {}
+
 // ============================================================================
 // REGISTRATION HELPER
 // ============================================================================
@@ -79,6 +108,10 @@ void registerPosFallbackValues() {
   registerFallbackValue(FakeSaleItemsTableCompanion());
   registerFallbackValue(FakeInventoryMovementsTableCompanion());
   registerFallbackValue(FakeWhatsAppMessagesTableCompanion());
+  registerFallbackValue(FakeAccountsTableCompanion());
+  registerFallbackValue(FakeTransactionsTableCompanion());
+  registerFallbackValue(FakeUsersTableCompanion());
+  registerFallbackValue(FakeStockDeltasTableCompanion());
   registerFallbackValue(SyncPriority.normal);
   registerFallbackValue(const CartState());
   registerFallbackValue(HeldInvoice(
@@ -272,6 +305,12 @@ MockAppDatabase setupMockDatabase({
   MockInventoryDao? inventoryDao,
   MockWhatsAppMessagesDao? whatsAppMessagesDao,
   MockReturnsDao? returnsDao,
+  MockAccountsDao? accountsDao,
+  MockTransactionsDao? transactionsDao,
+  MockStockDeltasDao? stockDeltasDao,
+  MockUsersDao? usersDao,
+  MockCustomersDao? customersDao,
+  MockStoresDao? storesDao,
 }) {
   final db = MockAppDatabase();
 
@@ -282,6 +321,12 @@ MockAppDatabase setupMockDatabase({
   final mockWhatsAppMessagesDao =
       whatsAppMessagesDao ?? MockWhatsAppMessagesDao();
   final mockReturnsDao = returnsDao ?? MockReturnsDao();
+  final mockAccountsDao = accountsDao ?? MockAccountsDao();
+  final mockTransactionsDao = transactionsDao ?? MockTransactionsDao();
+  final mockStockDeltasDao = stockDeltasDao ?? MockStockDeltasDao();
+  final mockUsersDao = usersDao ?? MockUsersDao();
+  final mockCustomersDao = customersDao ?? MockCustomersDao();
+  final mockStoresDao = storesDao ?? MockStoresDao();
 
   when(() => db.salesDao).thenReturn(mockSalesDao);
   when(() => db.saleItemsDao).thenReturn(mockSaleItemsDao);
@@ -289,6 +334,12 @@ MockAppDatabase setupMockDatabase({
   when(() => db.inventoryDao).thenReturn(mockInventoryDao);
   when(() => db.whatsAppMessagesDao).thenReturn(mockWhatsAppMessagesDao);
   when(() => db.returnsDao).thenReturn(mockReturnsDao);
+  when(() => db.accountsDao).thenReturn(mockAccountsDao);
+  when(() => db.transactionsDao).thenReturn(mockTransactionsDao);
+  when(() => db.stockDeltasDao).thenReturn(mockStockDeltasDao);
+  when(() => db.usersDao).thenReturn(mockUsersDao);
+  when(() => db.customersDao).thenReturn(mockCustomersDao);
+  when(() => db.storesDao).thenReturn(mockStoresDao);
 
   return db;
 }
