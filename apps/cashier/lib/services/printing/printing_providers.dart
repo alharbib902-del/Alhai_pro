@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'print_service.dart';
+import 'print_queue_service.dart';
 import 'receipt_data.dart';
 import 'bluetooth_print_service.dart';
 import 'network_print_service.dart';
@@ -167,7 +168,29 @@ class PrintServiceNotifier extends StateNotifier<ThermalPrintService?> {
   }
 }
 
+/// The print queue service for retry and persistence
+final printQueueProvider = Provider<PrintQueueService?>((ref) {
+  final service = ref.watch(printServiceProvider);
+  if (service == null) return null;
+
+  final queue = PrintQueueService(service);
+  // Initialize asynchronously (loads failed jobs from storage)
+  queue.initialize();
+
+  ref.onDispose(() => queue.dispose());
+  return queue;
+});
+
+/// Number of failed print jobs (for UI badge display)
+final failedPrintJobsCountProvider = Provider<int>((ref) {
+  final queue = ref.watch(printQueueProvider);
+  return queue?.failedJobs.length ?? 0;
+});
+
 /// Helper to print a receipt using the current service
+///
+/// Sends the receipt directly to the printer. For queued printing
+/// with automatic retry, use [printReceiptQueued] instead.
 Future<PrintResult> printReceiptWithService(
   WidgetRef ref,
   ReceiptData receipt,
@@ -180,4 +203,20 @@ Future<PrintResult> printReceiptWithService(
     return PrintResult.fail('الطابعة غير متصلة');
   }
   return service.printReceipt(receipt);
+}
+
+/// Print a receipt through the queue with automatic retry on failure
+///
+/// Returns the job ID. The print will be retried up to 3 times
+/// with exponential backoff. Failed jobs are persisted for manual reprint.
+Future<String?> printReceiptQueued(
+  WidgetRef ref,
+  ReceiptData receipt,
+) async {
+  final queue = ref.read(printQueueProvider);
+  if (queue == null) {
+    if (kDebugMode) debugPrint('Print queue not available (no printer set)');
+    return null;
+  }
+  return queue.enqueue(receipt);
 }

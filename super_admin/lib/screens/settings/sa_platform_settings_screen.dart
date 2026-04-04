@@ -27,22 +27,18 @@ class _SAPlatformSettingsScreenState
   bool _tabbyEnabled = true;
   bool _tamaraEnabled = false;
 
-  void _initFromData(Map<String, dynamic> data) {
+  void _initFromData(dynamic data) {
     if (_initialized) return;
     _initialized = true;
-    _zatcaEnabled = data['zatca_enabled'] as bool? ?? true;
-    _zatcaEnvironment =
-        data['zatca_environment'] as String? ?? 'production';
-    final vat = data['vat_rate'];
-    _vatRate = vat != null ? '$vat' : '15';
-    _defaultLanguage =
-        data['default_language'] as String? ?? 'ar';
-    _trialPeriodDays =
-        (data['trial_period_days'] as num?)?.toInt() ?? 14;
-    _moyasarEnabled = data['moyasar_enabled'] as bool? ?? true;
-    _hyperpayEnabled = data['hyperpay_enabled'] as bool? ?? false;
-    _tabbyEnabled = data['tabby_enabled'] as bool? ?? true;
-    _tamaraEnabled = data['tamara_enabled'] as bool? ?? false;
+    _zatcaEnabled = data.zatcaEnabled;
+    _zatcaEnvironment = data.zatcaEnvironment;
+    _vatRate = '${data.vatRate}';
+    _defaultLanguage = data.defaultLanguage;
+    _trialPeriodDays = data.trialPeriodDays;
+    _moyasarEnabled = data.moyasarEnabled;
+    _hyperpayEnabled = data.hyperpayEnabled;
+    _tabbyEnabled = data.tabbyEnabled;
+    _tamaraEnabled = data.tamaraEnabled;
   }
 
   @override

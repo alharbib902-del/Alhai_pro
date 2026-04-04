@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../di/injection.dart';
 import '../data/auth_datasource.dart';
 
@@ -34,7 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void _startCooldown() {
-    _cooldownSeconds = 60;
+    _cooldownSeconds = AppConstants.otpLockoutSeconds;
     _cooldownTimer?.cancel();
     _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
@@ -62,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      final phone = '+966${_phoneController.text.trim()}';
+      final phone = '${AppConstants.defaultCountryCode}${_phoneController.text.trim()}';
       final datasource = locator<AuthDatasource>();
       await datasource.sendOtp(phone);
 
@@ -142,7 +143,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'رقم الجوال',
                       hintText: '5XXXXXXXX',
-                      prefixText: '+966 ',
+                      prefixText: '${AppConstants.defaultCountryCode} ',
                       prefixIcon: const Icon(Icons.phone_outlined),
                       counterText: '',
                       border: OutlineInputBorder(

@@ -624,7 +624,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
         saleId: widget.orderId,
-        amount: 0, // TODO: replace with actual refund amount when implemented
+        amount: _totalRefund,
         reason: 'مرتجع مجزأ',
       );
 

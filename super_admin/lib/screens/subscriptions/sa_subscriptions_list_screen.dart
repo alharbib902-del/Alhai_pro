@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_subscription_model.dart';
 import '../../ui/widgets/sa_skeleton.dart';
 import '../../ui/widgets/sa_empty_state.dart';
 
@@ -140,7 +141,7 @@ String _fmtDate(String? date) {
 }
 
 class _SubscriptionsDataSource extends DataTableSource {
-  final List<Map<String, dynamic>> subs;
+  final List<SASubscription> subs;
   final AppLocalizations l10n;
 
   _SubscriptionsDataSource({
@@ -153,14 +154,12 @@ class _SubscriptionsDataSource extends DataTableSource {
     if (index >= subs.length) return null;
     final sub = subs[index];
 
-    final store = sub['stores'] as Map<String, dynamic>?;
-    final plan = sub['plans'] as Map<String, dynamic>?;
-    final storeName = store?['name'] as String? ?? '-';
-    final planName = plan?['name'] as String? ?? '-';
-    final status = sub['status'] as String? ?? 'unknown';
-    final startDate = _fmtDate(sub['start_date'] as String?);
-    final endDate = _fmtDate(sub['end_date'] as String?);
-    final price = (plan?['monthly_price'] as num?)?.toInt() ?? 0;
+    final storeName = sub.storeName;
+    final planName = sub.planName;
+    final status = sub.status ?? 'unknown';
+    final startDate = _fmtDate(sub.startDate);
+    final endDate = _fmtDate(sub.endDate);
+    final price = sub.monthlyPrice.toInt();
 
     return DataRow2(
       cells: [

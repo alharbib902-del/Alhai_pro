@@ -36,15 +36,12 @@ class _SAStoreSettingsScreenState
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (store) {
-          final isActive = _isActive ?? (store['is_active'] as bool? ?? true);
+          final isActive = _isActive ?? store.isActive;
 
           // Extract current plan
-          final subs = store['subscriptions'] as List<dynamic>?;
           String planSlug = 'basic';
-          if (subs != null && subs.isNotEmpty) {
-            final sub = subs.first as Map<String, dynamic>;
-            final plan = sub['plans'] as Map<String, dynamic>?;
-            planSlug = plan?['slug'] as String? ?? 'basic';
+          if (store.subscriptions.isNotEmpty) {
+            planSlug = store.subscriptions.first.planSlug ?? 'basic';
           }
           final currentPlan = _currentPlan ?? planSlug;
 
@@ -62,7 +59,7 @@ class _SAStoreSettingsScreenState
                     ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(
-                      '${l10n.storeSettings} - ${store['name'] ?? widget.storeId}',
+                      '${l10n.storeSettings} - ${store.name.isNotEmpty ? store.name : widget.storeId}',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

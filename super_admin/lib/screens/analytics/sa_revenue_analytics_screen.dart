@@ -4,6 +4,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_analytics_model.dart';
 
 /// Revenue analytics: MRR, ARR, growth -- real Supabase data.
 class SARevenueAnalyticsScreen extends ConsumerStatefulWidget {
@@ -78,9 +79,6 @@ class _SARevenueAnalyticsScreenState
               ),
               error: (e, _) => Text('Error: $e'),
               data: (kpis) {
-                final mrr = kpis['mrr'] as double? ?? 0;
-                final arr = kpis['arr'] as double? ?? 0;
-
                 return GridView.count(
                   crossAxisCount: isWide ? 4 : 2,
                   shrinkWrap: true,
@@ -91,27 +89,27 @@ class _SARevenueAnalyticsScreenState
                   children: [
                     _KpiCard(
                       title: l10n.monthlyRecurringRevenue,
-                      value: _fmtNum(mrr),
+                      value: _fmtNum(kpis.mrr),
                       suffix: l10n.sar,
                       icon: Icons.repeat_rounded,
                       color: isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
                     ),
                     _KpiCard(
                       title: l10n.annualRecurringRevenue,
-                      value: _fmtNum(arr),
+                      value: _fmtNum(kpis.arr),
                       suffix: l10n.sar,
                       icon: Icons.calendar_today_rounded,
                       color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                     ),
                     _KpiCard(
                       title: l10n.activeSubscriptions,
-                      value: '${kpis['active_subscriptions'] ?? 0}',
+                      value: '${kpis.activeSubscriptions}',
                       icon: Icons.card_membership_rounded,
                       color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
                     ),
                     _KpiCard(
                       title: l10n.trialSubscriptions,
-                      value: '${kpis['trial_subscriptions'] ?? 0}',
+                      value: '${kpis.trialSubscriptions}',
                       icon: Icons.science_rounded,
                       color: isDark ? const Color(0xFFFB923C) : const Color(0xFFEA580C),
                     ),
@@ -279,7 +277,7 @@ class _KpiCard extends StatelessWidget {
 
 class _MrrChart extends StatelessWidget {
   final ThemeData theme;
-  final List<Map<String, dynamic>> monthlyData;
+  final List<SARevenueData> monthlyData;
   const _MrrChart({required this.theme, required this.monthlyData});
 
   @override
@@ -311,8 +309,7 @@ class _MrrChart extends StatelessWidget {
     final spots = <FlSpot>[];
     double maxY = 0;
     for (int i = 0; i < monthlyData.length; i++) {
-      final val =
-          (monthlyData[i]['revenue'] as num?)?.toDouble() ?? 0;
+      final val = monthlyData[i].revenue;
       // Show in thousands for chart
       final kVal = val / 1000;
       if (kVal > maxY) maxY = kVal;
@@ -366,8 +363,7 @@ class _MrrChart extends StatelessWidget {
                       if (idx < 0 || idx >= monthlyData.length) {
                         return const SizedBox();
                       }
-                      final month =
-                          monthlyData[idx]['month'] as String? ?? '';
+                      final month = monthlyData[idx].month;
                       final label = month.length >= 7
                           ? month.substring(5)
                           : month;
@@ -416,7 +412,7 @@ class _MrrChart extends StatelessWidget {
 
 class _RevenueByPlanTable extends StatelessWidget {
   final AppLocalizations l10n;
-  final List<Map<String, dynamic>> plans;
+  final List<SARevenueByPlan> plans;
   const _RevenueByPlanTable({required this.l10n, required this.plans});
 
   @override
@@ -440,7 +436,7 @@ class _RevenueByPlanTable extends StatelessWidget {
 
     final totalRevenue = plans.fold<double>(
       0,
-      (sum, p) => sum + ((p['revenue'] as num?)?.toDouble() ?? 0),
+      (sum, p) => sum + p.revenue,
     );
 
     return Card(
@@ -461,18 +457,14 @@ class _RevenueByPlanTable extends StatelessWidget {
           const DataColumn(label: Text('% of Total'), numeric: true),
         ],
         rows: plans.map((plan) {
-          final name = plan['name'] as String? ?? 'Unknown';
-          final subs = plan['subscribers'] as int? ?? 0;
-          final revenue =
-              (plan['revenue'] as num?)?.toDouble() ?? 0;
           final pct = totalRevenue > 0
-              ? (revenue / totalRevenue * 100).toStringAsFixed(1)
+              ? (plan.revenue / totalRevenue * 100).toStringAsFixed(1)
               : '0.0';
 
           return DataRow(cells: [
-            DataCell(Text(name)),
-            DataCell(Text('$subs')),
-            DataCell(Text('${revenue.toStringAsFixed(0)} ${l10n.sar}')),
+            DataCell(Text(plan.name)),
+            DataCell(Text('${plan.subscribers}')),
+            DataCell(Text('${plan.revenue.toStringAsFixed(0)} ${l10n.sar}')),
             DataCell(Text('$pct%')),
           ]);
         }).toList(),
@@ -483,7 +475,7 @@ class _RevenueByPlanTable extends StatelessWidget {
 
 class _TopStoresTable extends StatelessWidget {
   final AppLocalizations l10n;
-  final List<Map<String, dynamic>> stores;
+  final List<SATopStoreRevenue> stores;
   const _TopStoresTable({required this.l10n, required this.stores});
 
   @override
@@ -523,15 +515,12 @@ class _TopStoresTable extends StatelessWidget {
         ],
         rows: List.generate(stores.length, (i) {
           final store = stores[i];
-          final name = store['store_name'] as String? ?? 'Unknown';
-          final revenue =
-              (store['revenue'] as num?)?.toDouble() ?? 0;
 
           return DataRow(cells: [
             DataCell(Text('${i + 1}')),
-            DataCell(Text(name)),
+            DataCell(Text(store.storeName)),
             DataCell(
-                Text('${revenue.toStringAsFixed(0)} ${l10n.sar}')),
+                Text('${store.revenue.toStringAsFixed(0)} ${l10n.sar}')),
           ]);
         }),
       ),

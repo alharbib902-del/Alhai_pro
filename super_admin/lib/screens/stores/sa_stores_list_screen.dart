@@ -8,6 +8,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/router/app_router.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_store_model.dart';
 import '../../ui/widgets/sa_skeleton.dart';
 import '../../ui/widgets/sa_empty_state.dart';
 
@@ -185,7 +186,7 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
 }
 
 class _StoresDataSource extends DataTableSource {
-  final List<Map<String, dynamic>> stores;
+  final List<SAStore> stores;
   final BuildContext context;
   final bool isDark;
   final AppLocalizations l10n;
@@ -204,24 +205,16 @@ class _StoresDataSource extends DataTableSource {
     if (index >= stores.length) return null;
     final store = stores[index];
 
-    final name = store['name'] as String? ?? 'Unnamed';
-    final isActive = store['is_active'] as bool? ?? false;
-    final createdAt = store['created_at'] as String? ?? '';
+    final name = store.name.isEmpty ? 'Unnamed' : store.name;
+    final createdAt = store.createdAt ?? '';
     final dateStr = createdAt.length >= 10
         ? createdAt.substring(0, 10)
         : createdAt;
 
-    // Extract plan from nested subscription
-    final subs = store['subscriptions'] as List<dynamic>?;
-    String planName = '-';
-    String status = isActive ? 'active' : 'suspended';
-    if (subs != null && subs.isNotEmpty) {
-      final sub = subs.first as Map<String, dynamic>;
-      final plan = sub['plans'] as Map<String, dynamic>?;
-      planName = plan?['name'] as String? ?? '-';
-      final subStatus = sub['status'] as String? ?? '';
-      if (subStatus == 'trial') status = 'trial';
-    }
+    // Extract plan from typed subscription
+    final planName = store.planName;
+    String status = store.isActive ? 'active' : 'suspended';
+    if (store.subscriptionStatus == 'trial') status = 'trial';
 
     return DataRow2(
       cells: [
@@ -232,7 +225,7 @@ class _StoresDataSource extends DataTableSource {
         DataCell(
           IconButton(
             icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-            onPressed: () => onViewStore(store['id'] as String? ?? ''),
+            onPressed: () => onViewStore(store.id),
             tooltip: l10n.viewDetails,
           ),
         ),

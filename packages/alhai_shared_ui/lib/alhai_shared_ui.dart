@@ -39,9 +39,15 @@ export 'src/utils/responsive_text.dart';
 export 'src/utils/responsive_dialog.dart';
 
 // ─── Re-exports from alhai_design_system (DEPRECATED - import directly) ─
-export 'package:alhai_design_system/alhai_design_system.dart' show AppColors, AlhaiContextExtensions;
+// TODO(cleanup): Many consumer files rely on AppColors through this re-export.
+//   Migrate consumers to: import 'package:alhai_design_system/alhai_design_system.dart';
+//   Then remove this line.
+export 'package:alhai_design_system/alhai_design_system.dart' show AppColors;
 
 // ─── Re-exports from alhai_auth (DEPRECATED - import directly) ──
+// TODO(cleanup): Many consumer files rely on currentStoreIdProvider through this re-export.
+//   Migrate consumers to: import 'package:alhai_auth/alhai_auth.dart';
+//   Then remove this line.
 export 'package:alhai_auth/alhai_auth.dart' show currentStoreIdProvider, kDefaultStoreId;
 
 // ─── Providers ──────────────────────────────────────────────────

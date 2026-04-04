@@ -35,3 +35,10 @@ Thumbs.db
 .wrangler/
 .claude/worktrees/
 .claude/settings.local.json
+
+# Supabase artifacts
+supabase/.temp/
+supabase/dump_err.txt
+supabase/full_dump.sql
+supabase/openapi_spec.json
+supabase/schema_summary.json

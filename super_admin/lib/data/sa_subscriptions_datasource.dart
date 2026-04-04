@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'models/sa_subscription_model.dart';
+
 /// Datasource for subscription and billing management.
 /// Queries: subscriptions, plans, billing_invoices.
 class SASubscriptionsDatasource {
@@ -12,7 +14,7 @@ class SASubscriptionsDatasource {
   // ========================================================================
 
   /// Fetch all subscriptions with store and plan info.
-  Future<List<Map<String, dynamic>>> getSubscriptions({
+  Future<List<SASubscription>> getSubscriptions({
     String? statusFilter,
   }) async {
     var query = _client.from('subscriptions').select('''
@@ -26,7 +28,9 @@ class SASubscriptionsDatasource {
     }
 
     final data = await query;
-    return List<Map<String, dynamic>>.from(data as List);
+    return (data as List)
+        .map((e) => SASubscription.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Get subscription counts by status.
@@ -61,12 +65,14 @@ class SASubscriptionsDatasource {
   // ========================================================================
 
   /// Fetch all available plans.
-  Future<List<Map<String, dynamic>>> getPlans() async {
+  Future<List<SAPlan>> getPlans() async {
     final data = await _client
         .from('plans')
         .select('*')
         .order('monthly_price', ascending: true);
-    return List<Map<String, dynamic>>.from(data as List);
+    return (data as List)
+        .map((e) => SAPlan.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Get subscriber count per plan.
@@ -87,7 +93,7 @@ class SASubscriptionsDatasource {
   }
 
   /// Create a new plan.
-  Future<Map<String, dynamic>> createPlan({
+  Future<SAPlan> createPlan({
     required String name,
     required String slug,
     required double monthlyPrice,
@@ -107,7 +113,7 @@ class SASubscriptionsDatasource {
       'max_users': maxUsers,
       'features': features,
     }).select().single();
-    return data;
+    return SAPlan.fromJson(data);
   }
 
   /// Update an existing plan.
@@ -120,13 +126,15 @@ class SASubscriptionsDatasource {
   // ========================================================================
 
   /// Fetch billing invoices.
-  Future<List<Map<String, dynamic>>> getBillingInvoices() async {
+  Future<List<SABillingInvoice>> getBillingInvoices() async {
     final data = await _client.from('billing_invoices').select('''
       id, invoice_number, amount, status, issued_at, due_at,
       stores(id, name),
       plans(id, name, slug)
     ''').order('issued_at', ascending: false);
-    return List<Map<String, dynamic>>.from(data as List);
+    return (data as List)
+        .map((e) => SABillingInvoice.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Get billing summary (paid, unpaid, overdue totals).

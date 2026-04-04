@@ -32,7 +32,7 @@ packages:
     source: path
     version: "1.0.0"
   alhai_database:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "../packages/alhai_database"
       relative: true
@@ -544,7 +544,7 @@ packages:
     source: hosted
     version: "2.1.0"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"

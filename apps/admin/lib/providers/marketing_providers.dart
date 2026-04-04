@@ -5,6 +5,7 @@
 library;
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -101,7 +102,9 @@ Future<void> addDiscount(
         'updated_at': now.toIso8601String(),
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Add discount sync failed: $e');
+  }
 
   ref.invalidate(discountsListProvider);
   ref.invalidate(activeDiscountsProvider);
@@ -128,7 +131,9 @@ Future<void> updateDiscount(WidgetRef ref, DiscountsTableData discount) async {
         'updated_at': discount.updatedAt?.toIso8601String(),
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Update discount sync failed: $e');
+  }
 
   ref.invalidate(discountsListProvider);
   ref.invalidate(activeDiscountsProvider);
@@ -142,7 +147,9 @@ Future<void> deleteDiscount(WidgetRef ref, String id) async {
   try {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'discounts', recordId: id);
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Delete discount sync failed: $e');
+  }
 
   ref.invalidate(discountsListProvider);
   ref.invalidate(activeDiscountsProvider);
@@ -214,7 +221,9 @@ Future<void> addCoupon(
         'created_at': now.toIso8601String(),
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Add coupon sync failed: $e');
+  }
 
   ref.invalidate(couponsListProvider);
 }
@@ -240,7 +249,9 @@ Future<void> updateCoupon(WidgetRef ref, CouponsTableData coupon) async {
         'current_uses': coupon.currentUses,
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Update coupon sync failed: $e');
+  }
 
   ref.invalidate(couponsListProvider);
 }
@@ -253,7 +264,9 @@ Future<void> deleteCoupon(WidgetRef ref, String id) async {
   try {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'coupons', recordId: id);
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Delete coupon sync failed: $e');
+  }
 
   ref.invalidate(couponsListProvider);
 }
@@ -334,7 +347,9 @@ Future<void> addPromotion(
         'updated_at': now.toIso8601String(),
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Add promotion sync failed: $e');
+  }
 
   ref.invalidate(promotionsListProvider);
   ref.invalidate(activePromotionsProvider);
@@ -360,7 +375,9 @@ Future<void> updatePromotion(WidgetRef ref, PromotionsTableData promo) async {
         'updated_at': promo.updatedAt?.toIso8601String(),
       },
     );
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Update promotion sync failed: $e');
+  }
 
   ref.invalidate(promotionsListProvider);
   ref.invalidate(activePromotionsProvider);
@@ -374,7 +391,9 @@ Future<void> deletePromotion(WidgetRef ref, String id) async {
   try {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'promotions', recordId: id);
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[MarketingProviders] Delete promotion sync failed: $e');
+  }
 
   ref.invalidate(promotionsListProvider);
   ref.invalidate(activePromotionsProvider);

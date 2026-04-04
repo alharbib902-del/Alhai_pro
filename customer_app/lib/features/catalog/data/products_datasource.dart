@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class ProductsDatasource {
   final SupabaseClient _client;
 
@@ -43,7 +45,7 @@ class ProductsDatasource {
     final data = await query
         .order('name')
         .range(from, to)
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     final products = (data as List)
         .map((row) => _productFromRow(row as Map<String, dynamic>))
@@ -64,7 +66,7 @@ class ProductsDatasource {
         .select()
         .eq('id', id)
         .single()
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
     return _productFromRow(data);
   }
 

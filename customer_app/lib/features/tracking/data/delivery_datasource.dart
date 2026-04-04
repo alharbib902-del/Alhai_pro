@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class DeliveryDatasource {
   final SupabaseClient _client;
 
@@ -15,7 +17,7 @@ class DeliveryDatasource {
           .eq('order_id', orderId)
           .limit(1)
           .single()
-          .timeout(const Duration(seconds: 15));
+          .timeout(AppConstants.networkTimeout);
       return _deliveryFromRow(data);
     } catch (_) {
       return null;
@@ -67,7 +69,7 @@ class DeliveryDatasource {
           .select('id, name, phone, image_url')
           .eq('id', driverId)
           .single()
-          .timeout(const Duration(seconds: 15));
+          .timeout(AppConstants.networkTimeout);
     } catch (_) {
       return null;
     }

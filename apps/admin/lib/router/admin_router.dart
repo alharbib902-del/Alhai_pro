@@ -18,6 +18,8 @@ import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
+import '../core/constants/admin_permissions.dart';
+
 // Package imports: Auth
 import 'package:alhai_auth/alhai_auth.dart' show SplashScreen, LoginScreen, StoreSelectScreen, authStateProvider, AuthStatus, currentStoreIdProvider, userRoleProvider;
 
@@ -241,6 +243,20 @@ class _AuthNotifier extends ChangeNotifier {
   }
 }
 
+/// Maps a [UserRole] to its default permission set from [AdminPermissions].
+///
+/// When a full RBAC system is in place (permissions stored per-user in the
+/// `role_permissions` table), this helper should be replaced with a provider
+/// that reads the authenticated user's actual permission list.
+List<String> _permissionsForRole(UserRole? role) {
+  return switch (role) {
+    UserRole.superAdmin || UserRole.storeOwner => AdminPermissions.ownerDefaults,
+    UserRole.employee => AdminPermissions.cashierDefaults,
+    // delivery / customer / null → no admin permissions
+    _ => const <String>[],
+  };
+}
+
 String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
   final storeId = ref.read(currentStoreIdProvider);
@@ -298,31 +314,34 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   }
 
   // ── Granular permission guards for sensitive routes ─────────────
-  // Prevent access to admin-only screens unless the user has a
-  // sufficiently privileged role (owner / superAdmin / storeOwner).
-  // NOTE: When a full RBAC permission system is wired (e.g.
-  // 'users_manage', 'roles_manage' permission flags per user), replace
-  // these role-based checks with granular permission checks.
+  // Derive the user's permission set from their role using the
+  // AdminPermissions defaults. When a full RBAC system is wired
+  // (permissions stored per-user in the DB), replace
+  // `_permissionsForRole` with a live permission-set lookup.
   if (authState.status == AuthStatus.authenticated && storeId != null) {
-    final isSuperAdmin = role == UserRole.superAdmin || role == UserRole.storeOwner;
+    final permissions = _permissionsForRole(role);
 
-    // Users management → requires 'users_manage' (currently: owner-level role)
-    if (path == AppRoutes.settingsUsers && !isSuperAdmin) {
+    // Users management → requires AdminPermissions.usersManage
+    if (path == AppRoutes.settingsUsers &&
+        !permissions.contains(AdminPermissions.usersManage)) {
       return AppRoutes.home;
     }
 
-    // Roles & permissions → requires 'roles_manage' (currently: owner-level role)
-    if (path == AppRoutes.settingsRoles && !isSuperAdmin) {
+    // Roles & permissions → requires AdminPermissions.rolesManage
+    if (path == AppRoutes.settingsRoles &&
+        !permissions.contains(AdminPermissions.rolesManage)) {
       return AppRoutes.home;
     }
 
-    // Settings root → requires 'settings_manage' (currently: owner-level role)
-    if (path == AppRoutes.settings && !isSuperAdmin) {
+    // Settings root → requires AdminPermissions.settingsManage
+    if (path == AppRoutes.settings &&
+        !permissions.contains(AdminPermissions.settingsManage)) {
       return AppRoutes.home;
     }
 
-    // Reports → requires 'reports_view' (managers and above)
-    if (path == AppRoutes.reports && role == UserRole.employee) {
+    // Reports → requires AdminPermissions.reportsView
+    if (path == AppRoutes.reports &&
+        !permissions.contains(AdminPermissions.reportsView)) {
       return AppRoutes.home;
     }
   }

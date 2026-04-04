@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class OrdersDatasource {
   final SupabaseClient _client;
 
@@ -48,7 +50,7 @@ class OrdersDatasource {
     }
 
     final orderData = await _client.from('orders').insert(orderMap).select().single()
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     final orderId = orderData['id'] as String;
 
@@ -65,7 +67,14 @@ class OrdersDatasource {
         });
       }
     } catch (e) {
-      // Attempt to clean up the order if item insertion fails
+      // Attempt to release reserved stock and clean up the order
+      try {
+        await _client.rpc('release_reserved_stock', params: {
+          'p_order_id': orderId,
+        });
+      } catch (_) {
+        // Best-effort stock release
+      }
       await _client.from('orders').delete().eq('id', orderId);
       rethrow;
     }
@@ -76,23 +85,17 @@ class OrdersDatasource {
   Future<Order> getOrder(String id) async {
     final data = await _client
         .from('orders')
-        .select()
+        .select('*, order_items(*)')
         .eq('id', id)
         .single()
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
-    final itemsData = await _client
-        .from('order_items')
-        .select()
-        .eq('order_id', id)
-        .timeout(const Duration(seconds: 15));
-
-    final items = (itemsData as List)
+    final items = ((data['order_items'] as List?) ?? [])
         .map((row) => OrderItem(
               productId: (row['product_id'] as String?) ?? '',
               name: (row['product_name'] as String?) ?? '',
               unitPrice: (row['unit_price'] as num).toDouble(),
-              qty: (row['qty'] as num).toDouble(),
+              qty: (row['qty'] as num).toInt(),
               lineTotal: (row['total_price'] as num).toDouble(),
             ))
         .toList();
@@ -108,7 +111,7 @@ class OrdersDatasource {
     final userId = _client.auth.currentUser!.id;
     var query = _client
         .from('orders')
-        .select()
+        .select('*, order_items(*)')
         .eq('customer_id', userId);
 
     if (status != null) {
@@ -121,28 +124,21 @@ class OrdersDatasource {
     final data = await query
         .order('created_at', ascending: false)
         .range(from, to)
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
-    final orders = <Order>[];
-    for (final row in (data as List)) {
-      final orderId = row['id'] as String;
-      final itemsData = await _client
-          .from('order_items')
-          .select()
-          .eq('order_id', orderId);
-
-      final items = (itemsData as List)
+    final orders = (data as List).map((row) {
+      final items = ((row['order_items'] as List?) ?? [])
           .map((r) => OrderItem(
                 productId: (r['product_id'] as String?) ?? '',
                 name: (r['product_name'] as String?) ?? '',
                 unitPrice: (r['unit_price'] as num).toDouble(),
-                qty: (r['qty'] as num).toDouble(),
+                qty: (r['qty'] as num).toInt(),
                 lineTotal: (r['total_price'] as num).toDouble(),
               ))
           .toList();
 
-      orders.add(_orderFromRow(row as Map<String, dynamic>, items));
-    }
+      return _orderFromRow(row as Map<String, dynamic>, items);
+    }).toList();
 
     return Paginated(
       items: orders,

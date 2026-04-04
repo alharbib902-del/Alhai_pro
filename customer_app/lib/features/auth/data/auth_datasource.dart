@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class AuthDatasource {
   final SupabaseClient _client;
 
@@ -38,7 +40,7 @@ class AuthDatasource {
         }, onConflict: 'id')
         .select()
         .single()
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     final user = User(
       id: userData['id'] as String,
@@ -74,7 +76,7 @@ class AuthDatasource {
           .select()
           .eq('id', supabaseUser.id)
           .single()
-          .timeout(const Duration(seconds: 15));
+          .timeout(AppConstants.networkTimeout);
 
       return User(
         id: data['id'] as String,
@@ -104,7 +106,7 @@ class AuthDatasource {
     updates['updated_at'] = DateTime.now().toIso8601String();
 
     await _client.from('users').update(updates).eq('id', userId)
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
   }
 
   Future<void> logout() async {
@@ -128,11 +130,10 @@ class AuthDatasource {
       debugPrint('[AuthDatasource] Error clearing secure storage: $e');
     }
 
-    // Verify session is cleared
-    assert(
-      _client.auth.currentSession == null,
-      'Session should be null after logout',
-    );
+    // Verify session is cleared (assert is stripped in release builds)
+    if (_client.auth.currentSession != null) {
+      debugPrint('[AuthDatasource] Warning: session not null after logout');
+    }
   }
 
   bool get isAuthenticated => _client.auth.currentSession != null;

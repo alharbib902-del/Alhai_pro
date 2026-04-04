@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_l10n/alhai_l10n.dart' show AppLocalizations, SupportedLocales, localeProvider;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart' show ThemeNotifier, themeProvider, AppTheme;
 // M-THEME-FIX: استيراد مزود الثيم من auth لمزامنته مع shared_ui
-import 'package:alhai_auth/src/providers/theme_provider.dart' as auth_theme;
+import 'package:alhai_auth/alhai_auth.dart' as auth_theme;
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';

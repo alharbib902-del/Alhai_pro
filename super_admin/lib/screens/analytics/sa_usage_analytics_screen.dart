@@ -4,6 +4,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_analytics_model.dart';
 
 /// Usage analytics: active users, transactions per store -- real Supabase data.
 class SAUsageAnalyticsScreen extends ConsumerWidget {
@@ -96,12 +97,12 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
     required bool isDark,
     required AppLocalizations l10n,
     required bool isWide,
-    required AsyncValue<Map<String, dynamic>> kpisAsync,
+    required AsyncValue<SADashboardKPIs> kpisAsync,
     required AsyncValue<double> avgTxAsync,
     required AsyncValue<int> totalUsersAsync,
   }) {
     // Show a loading state if any KPI is still loading
-    final activeStores = kpisAsync.valueOrNull?['active_stores'] as int?;
+    final activeStores = kpisAsync.valueOrNull?.activeStores;
     final avgTx = avgTxAsync.valueOrNull;
     final totalUsers = totalUsersAsync.valueOrNull;
 
@@ -228,7 +229,7 @@ class _UsageKpi extends StatelessWidget {
 
 class _ActiveUsersChart extends StatelessWidget {
   final ThemeData theme;
-  final List<Map<String, dynamic>> storeData;
+  final List<SAActiveUsersPerStore> storeData;
   const _ActiveUsersChart({required this.theme, required this.storeData});
 
   @override
@@ -274,7 +275,7 @@ class _ActiveUsersChart extends StatelessWidget {
 
     double maxY = 0;
     for (final s in storeData) {
-      final v = (s['active_users'] as num?)?.toDouble() ?? 0;
+      final v = s.activeUsers.toDouble();
       if (v > maxY) maxY = v;
     }
     maxY = maxY * 1.2;
@@ -298,9 +299,7 @@ class _ActiveUsersChart extends StatelessWidget {
               alignment: BarChartAlignment.spaceAround,
               maxY: maxY,
               barGroups: List.generate(storeData.length, (i) {
-                final y =
-                    (storeData[i]['active_users'] as num?)?.toDouble() ??
-                        0;
+                final y = storeData[i].activeUsers.toDouble();
                 return BarChartGroupData(
                   x: i,
                   barRods: [
@@ -337,9 +336,7 @@ class _ActiveUsersChart extends StatelessWidget {
                       if (idx < 0 || idx >= storeData.length) {
                         return const SizedBox();
                       }
-                      final name = storeData[idx]['store_name']
-                              as String? ??
-                          '';
+                      final name = storeData[idx].storeName;
                       // Truncate long names
                       final label =
                           name.length > 8 ? name.substring(0, 8) : name;
@@ -381,7 +378,7 @@ class _ActiveUsersChart extends StatelessWidget {
 
 class _TransactionsTable extends StatelessWidget {
   final AppLocalizations l10n;
-  final List<Map<String, dynamic>> stores;
+  final List<SATopStoreTransactions> stores;
   const _TransactionsTable({required this.l10n, required this.stores});
 
   @override
@@ -432,17 +429,13 @@ class _TransactionsTable extends StatelessWidget {
         ],
         rows: List.generate(stores.length, (i) {
           final store = stores[i];
-          final name = store['store_name'] as String? ?? 'Unknown';
-          final transactions = store['transactions'] as int? ?? 0;
-          final avgPerDay = store['avg_per_day'] as int? ?? 0;
-          final products = store['products'] as int? ?? 0;
 
           return DataRow(cells: [
             DataCell(Text('${i + 1}')),
-            DataCell(Text(name)),
-            DataCell(Text(_fmtInt(transactions))),
-            DataCell(Text('$avgPerDay')),
-            DataCell(Text(_fmtInt(products))),
+            DataCell(Text(store.storeName)),
+            DataCell(Text(_fmtInt(store.transactions))),
+            DataCell(Text('${store.avgPerDay}')),
+            DataCell(Text(_fmtInt(store.products))),
           ]);
         }),
       ),

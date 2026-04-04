@@ -89,11 +89,31 @@ scripts:
     run: melos exec -c 4 -- flutter test --coverage
     description: Run tests with coverage reporting
 
+  build:customer:apk:
+    run: melos exec --scope="customer_app" -- flutter build apk
+    description: Build Customer App APK
+
+  build:driver:apk:
+    run: melos exec --scope="driver_app" -- flutter build apk
+    description: Build Driver App APK
+
+  build:super-admin:web:
+    run: melos exec --scope="super_admin" -- flutter build web --no-tree-shake-icons
+    description: Build Super Admin Web
+
+  build:distributor:web:
+    run: melos exec --scope="distributor_portal" -- flutter build web --no-tree-shake-icons
+    description: Build Distributor Portal Web
+
   build:all:
     run: |
       melos run build:cashier:apk
       melos run build:admin:web
       melos run build:lite:apk
+      melos run build:customer:apk
+      melos run build:driver:apk
+      melos run build:super-admin:web
+      melos run build:distributor:web
     description: Build all apps
 
   deps:check:

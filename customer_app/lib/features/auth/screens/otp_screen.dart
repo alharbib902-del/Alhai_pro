@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../di/injection.dart';
 import '../data/auth_datasource.dart';
@@ -35,8 +36,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Timer? _resendTimer;
 
   static const int _maxAttempts = 5;
-  static const int _lockoutDuration = 60;
-  static const int _resendCooldown = 60;
+  static const int _lockoutDuration = AppConstants.otpLockoutSeconds;
+  static const int _resendCooldown = AppConstants.otpLockoutSeconds;
 
   @override
   void initState() {

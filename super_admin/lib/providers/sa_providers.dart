@@ -5,6 +5,10 @@ import '../data/sa_stores_datasource.dart';
 import '../data/sa_subscriptions_datasource.dart';
 import '../data/sa_users_datasource.dart';
 import '../data/sa_analytics_datasource.dart';
+import '../data/models/sa_store_model.dart';
+import '../data/models/sa_user_model.dart';
+import '../data/models/sa_subscription_model.dart';
+import '../data/models/sa_analytics_model.dart';
 
 // ============================================================================
 // SUPABASE CLIENT
@@ -41,14 +45,14 @@ final saAnalyticsDatasourceProvider = Provider<SAAnalyticsDatasource>((ref) {
 
 /// Dashboard KPIs -- auto-refreshes when invalidated.
 final saDashboardKPIsProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+    FutureProvider.autoDispose<SADashboardKPIs>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getDashboardKPIs();
 });
 
 /// Monthly revenue chart data.
 final saMonthlyRevenueProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SARevenueData>>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getMonthlyRevenue();
 });
@@ -90,7 +94,7 @@ final saStoresFilterProvider =
 
 /// Filtered stores list.
 final saStoresListProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SAStore>>((ref) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   final filter = ref.watch(saStoresFilterProvider);
   return ds.getStores(
@@ -102,21 +106,21 @@ final saStoresListProvider =
 
 /// Single store detail.
 final saStoreDetailProvider = FutureProvider.autoDispose
-    .family<Map<String, dynamic>, String>((ref, storeId) async {
+    .family<SAStore, String>((ref, storeId) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   return ds.getStore(storeId);
 });
 
 /// Store usage stats.
 final saStoreUsageStatsProvider = FutureProvider.autoDispose
-    .family<Map<String, int>, String>((ref, storeId) async {
+    .family<SAStoreUsageStats, String>((ref, storeId) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   return ds.getStoreUsageStats(storeId);
 });
 
 /// Store owner info.
 final saStoreOwnerProvider = FutureProvider.autoDispose
-    .family<Map<String, dynamic>?, String>((ref, storeId) async {
+    .family<SAStoreOwner?, String>((ref, storeId) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   return ds.getStoreOwner(storeId);
 });
@@ -130,7 +134,7 @@ final saSubsFilterProvider = StateProvider<String>((ref) => 'all');
 
 /// Subscriptions list.
 final saSubscriptionsListProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SASubscription>>((ref) async {
   final ds = ref.watch(saSubscriptionsDatasourceProvider);
   final filter = ref.watch(saSubsFilterProvider);
   return ds.getSubscriptions(statusFilter: filter);
@@ -145,7 +149,7 @@ final saSubscriptionCountsProvider =
 
 /// Plans list.
 final saPlansListProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SAPlan>>((ref) async {
   final ds = ref.watch(saSubscriptionsDatasourceProvider);
   return ds.getPlans();
 });
@@ -159,7 +163,7 @@ final saSubscriberCountByPlanProvider =
 
 /// Billing invoices.
 final saBillingInvoicesProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SABillingInvoice>>((ref) async {
   final ds = ref.watch(saSubscriptionsDatasourceProvider);
   return ds.getBillingInvoices();
 });
@@ -186,7 +190,7 @@ final saUserSearchProvider = StateProvider<String>((ref) => '');
 
 /// Platform users list.
 final saUsersListProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SAUser>>((ref) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   final search = ref.watch(saUserSearchProvider);
   return ds.getPlatformUsers(search: search.isEmpty ? null : search);
@@ -194,7 +198,7 @@ final saUsersListProvider =
 
 /// Single user detail.
 final saUserDetailProvider = FutureProvider.autoDispose
-    .family<Map<String, dynamic>, String>((ref, userId) async {
+    .family<SAUser, String>((ref, userId) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   return ds.getUser(userId);
 });
@@ -216,28 +220,28 @@ final saRevenuePeriodProvider =
 
 /// Revenue by plan breakdown.
 final saRevenueByPlanProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SARevenueByPlan>>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getRevenueByPlan();
 });
 
 /// Top stores by revenue.
 final saTopStoresByRevenueProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SATopStoreRevenue>>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getTopStoresByRevenue();
 });
 
 /// Top stores by transactions.
 final saTopStoresByTransactionsProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SATopStoreTransactions>>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getTopStoresByTransactions();
 });
 
 /// Active users per store (for bar chart).
 final saActiveUsersPerStoreProvider =
-    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+    FutureProvider.autoDispose<List<SAActiveUsersPerStore>>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getActiveUsersPerStore();
 });
@@ -255,7 +259,7 @@ final saAvgDailyTransactionsProvider =
 
 /// System health check.
 final saSystemHealthProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+    FutureProvider.autoDispose<SASystemHealth>((ref) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getSystemHealth();
 });
@@ -266,27 +270,16 @@ final saSystemHealthProvider =
 
 /// Platform settings from store_settings or a platform_settings table.
 final saPlatformSettingsProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+    FutureProvider.autoDispose<SAPlatformSettings>((ref) async {
   final client = ref.watch(saSupabaseClientProvider);
   try {
     final data = await client
         .from('platform_settings')
         .select('*')
         .single();
-    return data;
+    return SAPlatformSettings.fromJson(data);
   } catch (_) {
     // Table may not exist yet, return defaults
-    return {
-      'zatca_enabled': true,
-      'zatca_environment': 'production',
-      'vat_rate': 15.0,
-      'default_language': 'ar',
-      'default_currency': 'SAR',
-      'trial_period_days': 14,
-      'moyasar_enabled': true,
-      'hyperpay_enabled': false,
-      'tabby_enabled': true,
-      'tamara_enabled': false,
-    };
+    return const SAPlatformSettings();
   }
 });

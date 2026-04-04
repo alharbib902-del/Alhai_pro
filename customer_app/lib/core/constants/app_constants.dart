@@ -3,6 +3,23 @@ library;
 
 import 'package:alhai_core/alhai_core.dart' show AppEndpoints, AppLimits;
 
+/// Centralized app constants to avoid magic numbers.
+class AppConstants {
+  AppConstants._();
+
+  /// Default network request timeout.
+  static const networkTimeout = Duration(seconds: 15);
+
+  /// OTP lockout duration in seconds.
+  static const otpLockoutSeconds = 60;
+
+  /// Default country code.
+  static const defaultCountryCode = '+966';
+
+  /// Max retry attempts for network requests.
+  static const maxRetryAttempts = 3;
+}
+
 /// API Configuration
 class ApiConfig {
   ApiConfig._();

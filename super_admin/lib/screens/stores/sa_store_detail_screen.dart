@@ -26,39 +26,37 @@ class SAStoreDetailScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (store) {
-          final name = store['name'] as String? ?? 'Unnamed';
-          final email = store['email'] as String? ?? '-';
-          final phone = store['phone'] as String? ?? '-';
-          final businessType = store['business_type'] as String? ?? '-';
-          final createdAt = store['created_at'] as String? ?? '';
+          final name = store.name.isEmpty ? 'Unnamed' : store.name;
+          final email = store.email ?? '-';
+          final phone = store.phone ?? '-';
+          final businessType = store.businessType ?? '-';
+          final createdAt = store.createdAt ?? '';
           final dateStr =
               createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
-          final isActive = store['is_active'] as bool? ?? false;
 
           // Extract subscription info
-          final subs = store['subscriptions'] as List<dynamic>?;
           String planName = '-';
           String planPrice = '-';
-          String subStatus = isActive ? 'Active' : 'Suspended';
+          String subStatus = store.isActive ? 'Active' : 'Suspended';
           String renewal = '-';
-          if (subs != null && subs.isNotEmpty) {
-            final sub = subs.first as Map<String, dynamic>;
-            final plan = sub['plans'] as Map<String, dynamic>?;
-            planName = plan?['name'] as String? ?? '-';
-            final price = (plan?['monthly_price'] as num?)?.toInt() ?? 0;
+          if (store.subscriptions.isNotEmpty) {
+            final sub = store.subscriptions.first;
+            planName = sub.planName ?? '-';
+            final price = sub.plan?.monthlyPrice?.toInt() ?? 0;
             planPrice = '$price ${l10n.sar}';
-            subStatus = (sub['status'] as String? ?? subStatus)
-                .replaceFirst(sub['status']?.toString()[0] ?? '',
-                    sub['status']?.toString()[0].toUpperCase() ?? '');
-            renewal = (sub['end_date'] as String? ?? '-');
+            final rawStatus = sub.status ?? subStatus;
+            subStatus = rawStatus.isNotEmpty
+                ? rawStatus[0].toUpperCase() + rawStatus.substring(1)
+                : subStatus;
+            renewal = sub.endDate ?? '-';
             if (renewal.length >= 10) renewal = renewal.substring(0, 10);
           }
 
           // Owner info
           final owner = ownerAsync.valueOrNull;
-          final ownerName = owner?['name'] as String? ?? '-';
-          final ownerPhone = owner?['phone'] as String? ?? phone;
-          final ownerEmail = owner?['email'] as String? ?? email;
+          final ownerName = owner?.name ?? '-';
+          final ownerPhone = owner?.phone ?? phone;
+          final ownerEmail = owner?.email ?? email;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -166,22 +164,22 @@ class SAStoreDetailScreen extends ConsumerWidget {
                         _UsageTile(
                           icon: Icons.receipt_long_rounded,
                           label: l10n.storeTransactions,
-                          value: '${usage['transactions'] ?? 0}',
+                          value: '${usage.transactions}',
                         ),
                         _UsageTile(
                           icon: Icons.inventory_2_rounded,
                           label: l10n.storeProducts,
-                          value: '${usage['products'] ?? 0}',
+                          value: '${usage.products}',
                         ),
                         _UsageTile(
                           icon: Icons.people_rounded,
                           label: l10n.storeEmployees,
-                          value: '${usage['employees'] ?? 0}',
+                          value: '${usage.employees}',
                         ),
                         _UsageTile(
                           icon: Icons.store_rounded,
                           label: l10n.branchCountLabel,
-                          value: '${usage['branches'] ?? 0}',
+                          value: '${usage.branches}',
                         ),
                       ],
                     );

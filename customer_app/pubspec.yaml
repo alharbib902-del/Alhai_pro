@@ -32,6 +32,7 @@ dependencies:
 
   # Backend
   supabase_flutter: ^2.3.4
+  http: any
   dio: ^5.4.0
 
   # Storage

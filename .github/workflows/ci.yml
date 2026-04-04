@@ -1,15 +1,15 @@
-# Legacy CI workflow — kept as a lightweight PR gate for develop branch.
-# The primary CI pipeline is flutter_ci.yml ("Analyze & Test"), which runs
-# full coverage and triggers build workflows. This workflow covers the develop
-# branch PRs and provides a quick build-smoke test.
+# Primary CI pipeline for main branch PRs and pushes.
+# Runs analyze, format check, tests, and web build smoke tests.
+# For full build + deploy workflows, see build-android.yml, build-web.yml,
+# and build-ios.yml which trigger via workflow_run after flutter_ci.yml.
 
 name: CI
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   pull_request:
-    branches: [develop]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -17,23 +17,23 @@ concurrency:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze & Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.4'
-          channel: stable
+          channel: 'stable'
           cache: true
       - name: Install Melos
         run: dart pub global activate melos
       - name: Bootstrap
         run: melos bootstrap
-      - name: Analyze (includes alhai_zatca)
-        run: melos run analyze
       - name: Format Check
         run: melos run format:check
+      - name: Analyze
+        run: melos run analyze
 
   test:
     name: Test
@@ -44,7 +44,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.4'
-          channel: stable
+          channel: 'stable'
           cache: true
       - name: Install Melos
         run: dart pub global activate melos
@@ -54,27 +54,40 @@ jobs:
         run: melos run test
 
   build-web:
-    name: Build Cashier (Web)
+    name: Build Web - ${{ matrix.app }}
     runs-on: ubuntu-latest
     needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [admin, admin_lite, cashier, super_admin, distributor_portal]
+        include:
+          - app: admin
+            path: apps/admin
+          - app: admin_lite
+            path: apps/admin_lite
+          - app: cashier
+            path: apps/cashier
+          - app: super_admin
+            path: super_admin
+          - app: distributor_portal
+            path: distributor_portal
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.4'
-          channel: stable
+          channel: 'stable'
           cache: true
       - name: Install Melos
         run: dart pub global activate melos
       - name: Bootstrap
         run: melos bootstrap
       - name: Build Web
-        run: |
-          cd apps/cashier
-          flutter build web --no-tree-shake-icons --dart-define=ENV=production
+        run: cd ${{ matrix.path }} && flutter build web --release --no-tree-shake-icons
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cashier-web-build
-          path: apps/cashier/build/web
+          name: ${{ matrix.app }}-web-build
+          path: ${{ matrix.path }}/build/web
           retention-days: 7

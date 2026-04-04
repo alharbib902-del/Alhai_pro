@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'models/sa_store_model.dart';
+
 /// Datasource for multi-tenant store management.
 /// Queries: stores, store_members, organizations.
 class SAStoresDatasource {
@@ -8,7 +10,7 @@ class SAStoresDatasource {
   SAStoresDatasource(this._client);
 
   /// Fetch all stores with owner info.
-  Future<List<Map<String, dynamic>>> getStores({
+  Future<List<SAStore>> getStores({
     String? statusFilter,
     String? planFilter,
     String? search,
@@ -34,11 +36,13 @@ class SAStoresDatasource {
     }
 
     final data = await query;
-    return List<Map<String, dynamic>>.from(data as List);
+    return (data as List)
+        .map((e) => SAStore.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Fetch a single store by ID with full details.
-  Future<Map<String, dynamic>> getStore(String storeId) async {
+  Future<SAStore> getStore(String storeId) async {
     final data = await _client
         .from('stores')
         .select('''
@@ -47,14 +51,14 @@ class SAStoresDatasource {
         ''')
         .eq('id', storeId)
         .single();
-    return data;
+    return SAStore.fromJson(data);
   }
 
   /// Get store usage stats (transactions, products, employees, branches).
   ///
   /// Uses Future.wait to run all 4 count queries in parallel (not sequential
   /// N+1). This is intentional for better performance.
-  Future<Map<String, int>> getStoreUsageStats(String storeId) async {
+  Future<SAStoreUsageStats> getStoreUsageStats(String storeId) async {
     final results = await Future.wait([
       _client
           .from('sales')
@@ -78,19 +82,19 @@ class SAStoresDatasource {
           .count(CountOption.exact),
     ]);
 
-    return {
-      'transactions': results[0].count,
-      'products': results[1].count,
-      'employees': results[2].count,
-      'branches': results[3].count,
-    };
+    return SAStoreUsageStats(
+      transactions: results[0].count,
+      products: results[1].count,
+      employees: results[2].count,
+      branches: results[3].count,
+    );
   }
 
   /// Create a new store with owner and subscription.
   ///
   /// Uses manual rollback to ensure atomicity: if subscription creation
   /// fails, the store record is deleted to avoid orphaned rows.
-  Future<Map<String, dynamic>> createStore({
+  Future<SAStore> createStore({
     required String name,
     required String businessType,
     required String ownerName,
@@ -137,7 +141,7 @@ class SAStoresDatasource {
       rethrow;
     }
 
-    return storeData;
+    return SAStore.fromJson(storeData);
   }
 
   /// Update store status (activate/suspend).
@@ -201,13 +205,13 @@ class SAStoresDatasource {
   }
 
   /// Get store owner info from app_users.
-  Future<Map<String, dynamic>?> getStoreOwner(String storeId) async {
+  Future<SAStoreOwner?> getStoreOwner(String storeId) async {
     final data = await _client
         .from('app_users')
         .select('id, name, phone, email, role')
         .eq('store_id', storeId)
         .eq('role', 'owner')
         .maybeSingle();
-    return data;
+    return data != null ? SAStoreOwner.fromJson(data) : null;
   }
 }

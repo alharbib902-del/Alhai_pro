@@ -41,15 +41,14 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (user) {
-          final name = user['name'] as String? ?? 'Unknown';
-          final email = user['email'] as String? ?? '-';
-          final role = user['role'] as String? ?? 'viewer';
-          final lastSignIn = user['last_sign_in_at'] as String?;
-          final createdAt = user['created_at'] as String? ?? '';
+          final name = user.name ?? 'Unknown';
+          final email = user.email ?? '-';
+          final role = user.role ?? 'viewer';
+          final createdAt = user.createdAt ?? '';
           final dateStr =
               createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
-          final isOnline = ds.isUserOnline(user);
-          final lastActive = ds.formatLastActive(lastSignIn);
+          final isOnline = user.isOnline;
+          final lastActive = user.lastActiveFormatted;
 
           // Initialize selected role from data on first build
           _selectedRole ??= role;

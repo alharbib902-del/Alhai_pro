@@ -23,12 +23,10 @@ class SASystemHealthScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (health) {
-          final status = health['status'] as String? ?? 'unknown';
-          final dbResponseMs =
-              health['db_response_ms'] as int? ?? 0;
-          final timestamp =
-              health['timestamp'] as String? ?? '';
-          final error = health['error'] as String?;
+          final status = health.status;
+          final dbResponseMs = health.dbResponseMs ?? 0;
+          final timestamp = health.timestamp;
+          final error = health.error;
 
           // Derive service statuses from health check
           final dbStatus =

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/io_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 
@@ -36,10 +39,17 @@ class AppSupabase {
       );
     }
 
+    // Use a custom HttpClient with timeouts to avoid hanging requests.
+    // 30s connection timeout, 60s idle timeout.
+    final ioClient = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 30)
+      ..idleTimeout = const Duration(seconds: 60);
+
     await Supabase.initialize(
       url: SupabaseConfig.url,
       anonKey: SupabaseConfig.anonKey,
       debug: SupabaseConfig.enableDebugLogs,
+      httpClient: IOClient(ioClient),
       authOptions: FlutterAuthClientOptions(
         autoRefreshToken: true,
         pkceAsyncStorage: SecureLocalStorage(),

@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 import '../core/services/audit_service.dart';
+import '../services/connectivity_service.dart';
+import '../services/offline_queue_service.dart';
 
 /// GetIt instance - uses the same instance as alhai_core
 final getIt = core.getIt;
@@ -43,6 +45,19 @@ Future<void> configureDependencies({String? environment}) async {
 
   // Register AuditService
   getIt.registerLazySingleton<AuditService>(() => AuditService(db));
+
+  // Register OfflineQueueService (singleton -- encrypted queue for POS ops)
+  getIt.registerLazySingleton<OfflineQueueService>(
+    () => OfflineQueueService.instance,
+  );
+
+  // Register ConnectivityService (singleton -- monitors network state)
+  getIt.registerLazySingleton<ConnectivityService>(
+    () => ConnectivityService.instance,
+  );
+
+  // Initialize connectivity monitoring
+  await ConnectivityService.instance.initialize();
 
   // Register Supabase client (if initialized)
   try {

@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'models/sa_user_model.dart';
+
 /// Datasource for platform user management.
 /// Queries: app_users (platform-level admins/support), plus store-level users.
 class SAUsersDatasource {
@@ -10,7 +12,7 @@ class SAUsersDatasource {
   /// Fetch platform-level admin/support users.
   /// These are users with role = super_admin, support, or viewer
   /// stored in the app_users table (or a dedicated platform_users table).
-  Future<List<Map<String, dynamic>>> getPlatformUsers({
+  Future<List<SAUser>> getPlatformUsers({
     String? search,
   }) async {
     var query = _client
@@ -26,17 +28,19 @@ class SAUsersDatasource {
     }
 
     final data = await query;
-    return List<Map<String, dynamic>>.from(data as List);
+    return (data as List)
+        .map((e) => SAUser.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Fetch a single user by ID.
-  Future<Map<String, dynamic>> getUser(String userId) async {
+  Future<SAUser> getUser(String userId) async {
     final data = await _client
         .from('app_users')
         .select('*')
         .eq('id', userId)
         .single();
-    return data;
+    return SAUser.fromJson(data);
   }
 
   /// Update user role.
@@ -97,15 +101,15 @@ class SAUsersDatasource {
   }
 
   /// Check if a user is currently online (last_sign_in within 5 minutes).
-  bool isUserOnline(Map<String, dynamic> user) {
-    final lastSignIn = user['last_sign_in_at'] as String?;
-    if (lastSignIn == null) return false;
-    final dt = DateTime.tryParse(lastSignIn);
-    if (dt == null) return false;
-    return DateTime.now().difference(dt).inMinutes < 5;
+  ///
+  /// Prefer using [SAUser.isOnline] directly on the model instead.
+  bool isUserOnline(SAUser user) {
+    return user.isOnline;
   }
 
   /// Format "last active" as a human-readable relative time.
+  ///
+  /// Prefer using [SAUser.lastActiveFormatted] directly on the model instead.
   String formatLastActive(String? lastSignIn) {
     if (lastSignIn == null) return 'Never';
     final dt = DateTime.tryParse(lastSignIn);

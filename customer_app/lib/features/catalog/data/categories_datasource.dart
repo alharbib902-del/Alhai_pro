@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class CategoriesDatasource {
   final SupabaseClient _client;
 
@@ -13,7 +15,7 @@ class CategoriesDatasource {
         .eq('store_id', storeId)
         .eq('is_active', true)
         .order('sort_order')
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     return (data as List)
         .map((row) => _categoryFromRow(row as Map<String, dynamic>))
@@ -28,7 +30,7 @@ class CategoriesDatasource {
         .eq('is_active', true)
         .isFilter('parent_id', null)
         .order('sort_order')
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     return (data as List)
         .map((row) => _categoryFromRow(row as Map<String, dynamic>))

@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'models/sa_analytics_model.dart';
+
 /// Datasource for platform-wide analytics.
 /// Aggregation queries on sales, orders, subscriptions.
 class SAAnalyticsDatasource {
@@ -14,12 +16,15 @@ class SAAnalyticsDatasource {
   /// Get monthly revenue data for the last 12 months.
   /// Uses subscription payments from billing_invoices or calculates from
   /// active subscriptions x plan price.
-  Future<List<Map<String, dynamic>>> getMonthlyRevenue() async {
+  Future<List<SARevenueData>> getMonthlyRevenue() async {
     // Try billing_invoices first, fallback to subscription-based calculation
     try {
       final data = await _client.rpc('sa_monthly_revenue');
       if (data is List && data.isNotEmpty) {
-        return List<Map<String, dynamic>>.from(data);
+        return data
+            .map((e) =>
+                SARevenueData.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
     } catch (_) {
       // RPC may not exist, use fallback
@@ -43,23 +48,22 @@ class SAAnalyticsDatasource {
       monthlyMap[key] = (monthlyMap[key] ?? 0) + price.toDouble();
     }
 
-    final result = monthlyMap.entries.map((e) => {
-          'month': e.key,
-          'revenue': e.value,
-        }).toList()
-      ..sort((a, b) => (a['month'] as String).compareTo(b['month'] as String));
+    final result = monthlyMap.entries
+        .map((e) => SARevenueData(month: e.key, revenue: e.value))
+        .toList()
+      ..sort((a, b) => a.month.compareTo(b.month));
 
     return result;
   }
 
   /// Revenue breakdown by plan.
-  Future<List<Map<String, dynamic>>> getRevenueByPlan() async {
+  Future<List<SARevenueByPlan>> getRevenueByPlan() async {
     final data = await _client
         .from('subscriptions')
         .select('plans(name, slug, monthly_price)')
         .eq('status', 'active');
 
-    final planRevenue = <String, Map<String, dynamic>>{};
+    final planRevenue = <String, _PlanAccumulator>{};
     for (final row in data as List) {
       final plan = row['plans'] as Map<String, dynamic>?;
       if (plan == null) continue;
@@ -68,24 +72,24 @@ class SAAnalyticsDatasource {
       final name = plan['name'] as String? ?? slug;
 
       if (!planRevenue.containsKey(slug)) {
-        planRevenue[slug] = {
-          'name': name,
-          'slug': slug,
-          'subscribers': 0,
-          'revenue': 0.0,
-        };
+        planRevenue[slug] = _PlanAccumulator(name: name, slug: slug);
       }
-      planRevenue[slug]!['subscribers'] =
-          (planRevenue[slug]!['subscribers'] as int) + 1;
-      planRevenue[slug]!['revenue'] =
-          (planRevenue[slug]!['revenue'] as double) + price;
+      planRevenue[slug]!.subscribers += 1;
+      planRevenue[slug]!.revenue += price;
     }
 
-    return planRevenue.values.toList();
+    return planRevenue.values
+        .map((a) => SARevenueByPlan(
+              name: a.name,
+              slug: a.slug,
+              subscribers: a.subscribers,
+              revenue: a.revenue,
+            ))
+        .toList();
   }
 
-  /// Top stores by transaction count.
-  Future<List<Map<String, dynamic>>> getTopStoresByRevenue({
+  /// Top stores by revenue.
+  Future<List<SATopStoreRevenue>> getTopStoresByRevenue({
     int limit = 5,
   }) async {
     try {
@@ -94,7 +98,10 @@ class SAAnalyticsDatasource {
         params: {'p_limit': limit},
       );
       if (data is List && data.isNotEmpty) {
-        return List<Map<String, dynamic>>.from(data);
+        return data
+            .map((e) =>
+                SATopStoreRevenue.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
     } catch (_) {
       // RPC not available, fallback
@@ -107,7 +114,7 @@ class SAAnalyticsDatasource {
         .eq('is_active', true)
         .limit(limit);
 
-    final result = <Map<String, dynamic>>[];
+    final result = <SATopStoreRevenue>[];
     for (final store in stores as List) {
       final storeId = store['id'] as String;
       final salesResult = await _client
@@ -120,15 +127,14 @@ class SAAnalyticsDatasource {
         revenue += (sale['total_amount'] as num?)?.toDouble() ?? 0;
       }
 
-      result.add({
-        'store_id': storeId,
-        'store_name': store['name'],
-        'revenue': revenue,
-      });
+      result.add(SATopStoreRevenue(
+        storeId: storeId,
+        storeName: store['name'] as String? ?? '',
+        revenue: revenue,
+      ));
     }
 
-    result.sort(
-        (a, b) => (b['revenue'] as double).compareTo(a['revenue'] as double));
+    result.sort((a, b) => b.revenue.compareTo(a.revenue));
     return result.take(limit).toList();
   }
 
@@ -158,7 +164,7 @@ class SAAnalyticsDatasource {
   }
 
   /// Top stores by transaction count.
-  Future<List<Map<String, dynamic>>> getTopStoresByTransactions({
+  Future<List<SATopStoreTransactions>> getTopStoresByTransactions({
     int limit = 5,
   }) async {
     try {
@@ -167,7 +173,10 @@ class SAAnalyticsDatasource {
         params: {'p_limit': limit},
       );
       if (data is List && data.isNotEmpty) {
-        return List<Map<String, dynamic>>.from(data);
+        return data
+            .map((e) =>
+                SATopStoreTransactions.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
     } catch (_) {
       // RPC not available
@@ -180,7 +189,7 @@ class SAAnalyticsDatasource {
         .eq('is_active', true)
         .limit(limit);
 
-    final result = <Map<String, dynamic>>[];
+    final result = <SATopStoreTransactions>[];
     for (final store in stores as List) {
       final storeId = store['id'] as String;
       final countResult = await _client
@@ -195,22 +204,21 @@ class SAAnalyticsDatasource {
           .eq('store_id', storeId)
           .count(CountOption.exact);
 
-      result.add({
-        'store_id': storeId,
-        'store_name': store['name'],
-        'transactions': countResult.count,
-        'avg_per_day': (countResult.count / 30.0).round(),
-        'products': productCount.count,
-      });
+      result.add(SATopStoreTransactions(
+        storeId: storeId,
+        storeName: store['name'] as String? ?? '',
+        transactions: countResult.count,
+        avgPerDay: (countResult.count / 30.0).round(),
+        products: productCount.count,
+      ));
     }
 
-    result.sort((a, b) =>
-        (b['transactions'] as int).compareTo(a['transactions'] as int));
+    result.sort((a, b) => b.transactions.compareTo(a.transactions));
     return result.take(limit).toList();
   }
 
   /// Get per-store active user counts (for bar chart).
-  Future<List<Map<String, dynamic>>> getActiveUsersPerStore({
+  Future<List<SAActiveUsersPerStore>> getActiveUsersPerStore({
     int limit = 8,
   }) async {
     final stores = await _client
@@ -219,7 +227,7 @@ class SAAnalyticsDatasource {
         .eq('is_active', true)
         .limit(limit);
 
-    final result = <Map<String, dynamic>>[];
+    final result = <SAActiveUsersPerStore>[];
     for (final store in stores as List) {
       final storeId = store['id'] as String;
       final thirtyDaysAgo =
@@ -231,15 +239,14 @@ class SAAnalyticsDatasource {
           .gte('last_sign_in_at', thirtyDaysAgo)
           .count(CountOption.exact);
 
-      result.add({
-        'store_id': storeId,
-        'store_name': store['name'],
-        'active_users': countResult.count,
-      });
+      result.add(SAActiveUsersPerStore(
+        storeId: storeId,
+        storeName: store['name'] as String? ?? '',
+        activeUsers: countResult.count,
+      ));
     }
 
-    result.sort((a, b) =>
-        (b['active_users'] as int).compareTo(a['active_users'] as int));
+    result.sort((a, b) => b.activeUsers.compareTo(a.activeUsers));
     return result;
   }
 
@@ -248,7 +255,7 @@ class SAAnalyticsDatasource {
   // ========================================================================
 
   /// Get all dashboard KPIs in one call (reduces round trips).
-  Future<Map<String, dynamic>> getDashboardKPIs() async {
+  Future<SADashboardKPIs> getDashboardKPIs() async {
     final results = await Future.wait([
       _client
           .from('stores')
@@ -289,14 +296,14 @@ class SAAnalyticsDatasource {
       if (price != null) mrr += price.toDouble();
     }
 
-    return {
-      'active_stores': results[0].count,
-      'active_subscriptions': results[1].count,
-      'trial_subscriptions': results[2].count,
-      'new_signups': results[3].count,
-      'mrr': mrr,
-      'arr': mrr * 12,
-    };
+    return SADashboardKPIs(
+      activeStores: results[0].count,
+      activeSubscriptions: results[1].count,
+      trialSubscriptions: results[2].count,
+      newSignups: results[3].count,
+      mrr: mrr,
+      arr: mrr * 12,
+    );
   }
 
   // ========================================================================
@@ -305,24 +312,34 @@ class SAAnalyticsDatasource {
 
   /// Get basic system health info.
   /// In production this would call monitoring APIs; here we query DB stats.
-  Future<Map<String, dynamic>> getSystemHealth() async {
+  Future<SASystemHealth> getSystemHealth() async {
     try {
       // Simple health check: try a lightweight query
       final stopwatch = Stopwatch()..start();
       await _client.from('stores').select('id').limit(1);
       stopwatch.stop();
 
-      return {
-        'status': 'healthy',
-        'db_response_ms': stopwatch.elapsedMilliseconds,
-        'timestamp': DateTime.now().toIso8601String(),
-      };
+      return SASystemHealth(
+        status: 'healthy',
+        dbResponseMs: stopwatch.elapsedMilliseconds,
+        timestamp: DateTime.now().toIso8601String(),
+      );
     } catch (e) {
-      return {
-        'status': 'degraded',
-        'error': e.toString(),
-        'timestamp': DateTime.now().toIso8601String(),
-      };
+      return SASystemHealth(
+        status: 'degraded',
+        error: e.toString(),
+        timestamp: DateTime.now().toIso8601String(),
+      );
     }
   }
+}
+
+/// Internal helper for accumulating revenue-by-plan data.
+class _PlanAccumulator {
+  final String name;
+  final String slug;
+  int subscribers = 0;
+  double revenue = 0;
+
+  _PlanAccumulator({required this.name, required this.slug});
 }

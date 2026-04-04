@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_user_model.dart';
 import '../../ui/widgets/sa_skeleton.dart';
 import '../../ui/widgets/sa_empty_state.dart';
 
@@ -139,7 +140,7 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
 }
 
 class _UsersDataSource extends DataTableSource {
-  final List<Map<String, dynamic>> users;
+  final List<SAUser> users;
   final BuildContext context;
   final bool isDark;
   final ColorScheme colorScheme;
@@ -164,13 +165,12 @@ class _UsersDataSource extends DataTableSource {
     if (index >= users.length) return null;
     final user = users[index];
 
-    final name = user['name'] as String? ?? 'Unknown';
-    final email = user['email'] as String? ?? '-';
-    final role = user['role'] as String? ?? 'viewer';
-    final lastSignIn = user['last_sign_in_at'] as String?;
-    final isOnline = ds.isUserOnline(user);
-    final lastActive = ds.formatLastActive(lastSignIn);
-    final userId = user['id'] as String? ?? '';
+    final name = user.name ?? 'Unknown';
+    final email = user.email ?? '-';
+    final role = user.role ?? 'viewer';
+    final isOnline = user.isOnline;
+    final lastActive = user.lastActiveFormatted;
+    final userId = user.id;
 
     final onlineColor = isDark
         ? const Color(0xFF4ADE80)

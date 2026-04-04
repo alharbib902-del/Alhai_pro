@@ -58,21 +58,17 @@ class SAPlansScreen extends ConsumerWidget {
                 };
 
                 final planCards = plans.map((plan) {
-                  final slug = plan['slug'] as String? ?? '';
-                  final name = plan['name'] as String? ?? slug;
+                  final slug = plan.slug ?? '';
+                  final name = plan.name ?? slug;
                   final monthlyPrice =
-                      (plan['monthly_price'] as num?)?.toInt() ?? 0;
+                      plan.monthlyPrice?.toInt() ?? 0;
                   final yearlyPrice =
-                      (plan['yearly_price'] as num?)?.toInt() ??
+                      plan.yearlyPrice?.toInt() ??
                           (monthlyPrice * 10);
-                  final maxBranches =
-                      plan['max_branches'] as int? ?? 0;
-                  final maxProducts =
-                      plan['max_products'] as int? ?? 0;
-                  final maxUsers = plan['max_users'] as int? ?? 0;
-                  final features = (plan['features'] as List<dynamic>?)
-                          ?.cast<String>() ??
-                      [];
+                  final maxBranches = plan.maxBranches ?? 0;
+                  final maxProducts = plan.maxProducts ?? 0;
+                  final maxUsers = plan.maxUsers ?? 0;
+                  final features = plan.features ?? [];
                   final subscribers = subCounts[slug] ?? 0;
                   final color = planColors[slug] ?? (isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563));
 

@@ -4,6 +4,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
+import '../../data/models/sa_analytics_model.dart';
 import '../../ui/widgets/sa_skeleton.dart';
 
 /// Super Admin Dashboard -- Platform overview with real KPIs from Supabase.
@@ -36,11 +37,11 @@ class SADashboardScreen extends ConsumerWidget {
         loading: () => const SADashboardSkeleton(),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (kpis) {
-          final activeStores = kpis['active_stores'] as int? ?? 0;
-          final activeSubs = kpis['active_subscriptions'] as int? ?? 0;
-          final trialSubs = kpis['trial_subscriptions'] as int? ?? 0;
-          final newSignups = kpis['new_signups'] as int? ?? 0;
-          final mrr = kpis['mrr'] as double? ?? 0;
+          final activeStores = kpis.activeStores;
+          final activeSubs = kpis.activeSubscriptions;
+          final trialSubs = kpis.trialSubscriptions;
+          final newSignups = kpis.newSignups;
+          final mrr = kpis.mrr;
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -344,7 +345,7 @@ class _StatCard extends StatelessWidget {
 
 class _RevenueChart extends StatelessWidget {
   final ThemeData theme;
-  final List<Map<String, dynamic>> monthlyData;
+  final List<SARevenueData> monthlyData;
   const _RevenueChart({required this.theme, required this.monthlyData});
 
   @override
@@ -352,7 +353,7 @@ class _RevenueChart extends StatelessWidget {
     final maxY = monthlyData.isEmpty
         ? 100.0
         : monthlyData
-                .map((e) => (e['revenue'] as num?)?.toDouble() ?? 0)
+                .map((e) => e.revenue)
                 .reduce((a, b) => a > b ? a : b) *
             1.2;
 
@@ -387,9 +388,7 @@ class _RevenueChart extends StatelessWidget {
                         x: i,
                         barRods: [
                           BarChartRodData(
-                            toY: (monthlyData[i]['revenue'] as num?)
-                                    ?.toDouble() ??
-                                0,
+                            toY: monthlyData[i].revenue,
                             color: theme.colorScheme.primary,
                             width: 16,
                             borderRadius: const BorderRadius.only(
@@ -421,8 +420,7 @@ class _RevenueChart extends StatelessWidget {
                             if (idx < 0 || idx >= monthlyData.length) {
                               return const SizedBox();
                             }
-                            final month =
-                                monthlyData[idx]['month'] as String? ?? '';
+                            final month = monthlyData[idx].month;
                             final label = month.length >= 7
                                 ? month.substring(5)
                                 : month;

@@ -135,26 +135,15 @@ class SABillingScreen extends ConsumerWidget {
                             label: Text(l10n.invoiceStatus)),
                       ],
                       rows: invoices.map((inv) {
-                        final store =
-                            inv['stores'] as Map<String, dynamic>?;
-                        final plan =
-                            inv['plans'] as Map<String, dynamic>?;
-
                         return DataRow(cells: [
+                          DataCell(Text(inv.invoiceNumber ?? '-')),
+                          DataCell(Text(inv.storeName)),
+                          DataCell(Text(inv.planName)),
+                          DataCell(Text(_fmtDate(inv.issuedAt))),
                           DataCell(Text(
-                              inv['invoice_number'] as String? ??
-                                  '-')),
-                          DataCell(Text(
-                              store?['name'] as String? ?? '-')),
-                          DataCell(Text(
-                              plan?['name'] as String? ?? '-')),
-                          DataCell(Text(_fmtDate(
-                              inv['issued_at'] as String?))),
-                          DataCell(Text(
-                              '${(inv['amount'] as num?)?.toInt() ?? 0} ${l10n.sar}')),
+                              '${inv.amount?.toInt() ?? 0} ${l10n.sar}')),
                           DataCell(_InvoiceStatusChip(
-                              status: inv['status'] as String? ??
-                                  'unknown')),
+                              status: inv.status ?? 'unknown')),
                         ]);
                       }).toList(),
                     ),

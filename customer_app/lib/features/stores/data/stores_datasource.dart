@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class StoresDatasource {
   final SupabaseClient _client;
 
@@ -19,7 +21,7 @@ class StoresDatasource {
         .eq('is_active', true)
         .not('lat', 'is', null)
         .order('created_at', ascending: false)
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     final stores = (data as List)
         .map((row) => _storeFromRow(row as Map<String, dynamic>))
@@ -45,7 +47,7 @@ class StoresDatasource {
         .select()
         .eq('id', id)
         .single()
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
     return _storeFromRow(data);
   }
 
@@ -55,7 +57,7 @@ class StoresDatasource {
         .select()
         .eq('is_active', true)
         .order('name')
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
     return (data as List)
         .map((row) => _storeFromRow(row as Map<String, dynamic>))
         .toList();

@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/constants/app_constants.dart';
+
 class AddressesDatasource {
   final SupabaseClient _client;
 
@@ -14,7 +16,7 @@ class AddressesDatasource {
         .select()
         .eq('user_id', _userId)
         .order('is_default', ascending: false)
-        .timeout(const Duration(seconds: 15));
+        .timeout(AppConstants.networkTimeout);
 
     return (data as List)
         .map((row) => _addressFromRow(row as Map<String, dynamic>))
@@ -30,7 +32,7 @@ class AddressesDatasource {
           .eq('is_default', true)
           .limit(1)
           .single()
-          .timeout(const Duration(seconds: 15));
+          .timeout(AppConstants.networkTimeout);
       return _addressFromRow(data);
     } catch (_) {
       return null;
@@ -58,7 +60,7 @@ class AddressesDatasource {
       'latitude': params.lat,
       'longitude': params.lng,
       'is_default': params.isDefault,
-    }).select().single().timeout(const Duration(seconds: 15));
+    }).select().single().timeout(AppConstants.networkTimeout);
 
     return _addressFromRow(data);
   }
