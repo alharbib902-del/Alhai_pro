@@ -3199,5 +3199,6 @@
   "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
   "itemDeletedMsg": "आइटम हटा दिया गया",
   "pressBackAgainToExit": "बाहर निकलने के लिए फिर से दबाएं",
-  "deleteHeldInvoiceConfirm": "इस लंबित चालान को हटाएं?"
+  "deleteHeldInvoiceConfirm": "इस लंबित चालान को हटाएं?",
+  "invoiceVoidedCannotRefund": "यह चालान रद्द है और इसकी वापसी नहीं हो सकती"
 }

@@ -13179,4 +13179,8 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get invoicePartiallyRefunded =>
       'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
+
+  @override
+  String get invoiceVoidedCannotRefund =>
+      'یہ انوائس منسوخ ہے اور واپسی نہیں ہو سکتی';
 }

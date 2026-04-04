@@ -5646,5 +5646,6 @@
   "increaseQuantity": "زيادة الكمية",
   "copyToClipboard": "نسخ",
   "invoiceAlreadyRefunded": "تم إرجاع هذه الفاتورة بالكامل مسبقاً",
-  "invoicePartiallyRefunded": "تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط"
+  "invoicePartiallyRefunded": "تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط",
+  "invoiceVoidedCannotRefund": "هذه الفاتورة ملغاة ولا يمكن إرجاعها"
 }

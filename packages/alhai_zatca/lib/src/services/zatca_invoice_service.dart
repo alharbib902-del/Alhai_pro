@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:alhai_zatca/src/api/clearance_api.dart';
 import 'package:alhai_zatca/src/api/reporting_api.dart';
+import 'package:alhai_zatca/src/certificate/certificate_renewal_service.dart';
 import 'package:alhai_zatca/src/certificate/certificate_storage.dart';
 import 'package:alhai_zatca/src/chaining/invoice_chain_service.dart';
 import 'package:alhai_zatca/src/models/certificate_info.dart';
@@ -38,6 +39,7 @@ class ZatcaInvoiceService {
   final CertificateStorage _certStorage;
   final ZatcaOfflineQueue _offlineQueue;
   final ZatcaComplianceChecker _complianceChecker;
+  final CertificateRenewalService? _renewalService;
 
   ZatcaInvoiceService({
     required UblInvoiceBuilder xmlBuilder,
@@ -49,6 +51,7 @@ class ZatcaInvoiceService {
     required CertificateStorage certStorage,
     required ZatcaOfflineQueue offlineQueue,
     required ZatcaComplianceChecker complianceChecker,
+    CertificateRenewalService? renewalService,
   })  : _xmlBuilder = xmlBuilder,
         _signer = signer,
         _qrService = qrService,
@@ -57,7 +60,8 @@ class ZatcaInvoiceService {
         _clearanceApi = clearanceApi,
         _certStorage = certStorage,
         _offlineQueue = offlineQueue,
-        _complianceChecker = complianceChecker;
+        _complianceChecker = complianceChecker,
+        _renewalService = renewalService;
 
   /// Process a ZATCA invoice end-to-end
   ///
@@ -112,6 +116,24 @@ class ZatcaInvoiceService {
           errors: ['ZATCA certificate has expired. Renewal required.'],
           warnings: warningMessages,
         );
+      }
+
+      // ── Step 2b: Check certificate expiry proximity ──────
+      // Warn (but don't block) if the certificate is nearing expiry
+      if (_renewalService != null) {
+        try {
+          final checkResult = await _renewalService.checkCertificate(
+            storeId: storeId,
+          );
+          if (checkResult.status == CertificateStatus.nearExpiry) {
+            warningMessages.add(
+              'Certificate expires in ${checkResult.daysUntilExpiry} days. '
+              'Renewal recommended.',
+            );
+          }
+        } catch (_) {
+          // Certificate check should never block invoice processing
+        }
       }
 
       // ── Step 3: Get PIH ───────────────────────────────────

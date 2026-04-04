@@ -464,6 +464,10 @@ class SaleService {
 
   /// إلغاء بيع
   Future<void> voidSale(String saleId, {String? reason}) async {
+    // Variables captured from inside the transaction, needed for sync enqueue after commit.
+    late String storeId;
+    late String cashierId;
+
     await _db.transaction(() async {
       final sale = await _db.salesDao.getSaleById(saleId);
       if (sale == null) throw SaleException.notFound(saleId);
@@ -472,6 +476,10 @@ class SaleService {
       if (sale.status == 'voided') {
         throw SaleException.alreadyVoided(saleId);
       }
+
+      // Capture values needed for sync enqueue outside the transaction
+      storeId = sale.storeId;
+      cashierId = sale.cashierId;
 
       final items = await _db.saleItemsDao.getItemsBySaleId(saleId);
 
@@ -523,8 +531,14 @@ class SaleService {
           );
         }
       }
+    });
 
-      // إضافة للمزامنة
+    // =========================================================================
+    // Sync enqueue: OUTSIDE the transaction.
+    // If sync enqueue fails, the void is still saved locally and will be picked
+    // up by the next sync cycle.
+    // =========================================================================
+    try {
       await _syncService.enqueueUpdate(
         tableName: 'sales',
         recordId: saleId,
@@ -535,7 +549,12 @@ class SaleService {
         },
         priority: SyncPriority.high,
       );
-    });
+    } catch (e) {
+      // Sync enqueue failed -- void is saved locally, next sync cycle will pick it up
+      if (kDebugMode) {
+        debugPrint('[SaleService] voidSale sync enqueue failed (non-blocking, void saved locally): $e');
+      }
+    }
   }
 
   /// توليد رقم إيصال فريد

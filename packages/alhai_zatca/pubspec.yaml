@@ -27,6 +27,9 @@ dependencies:
   flutter_riverpod: ^2.4.9
   get_it: ^7.7.0
 
+  # Persistence
+  shared_preferences: ^2.2.2
+
   # Utils
   uuid: ^4.4.0
   intl: ^0.20.2

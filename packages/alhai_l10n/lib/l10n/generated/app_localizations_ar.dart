@@ -13149,4 +13149,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get invoicePartiallyRefunded =>
       'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
+
+  @override
+  String get invoiceVoidedCannotRefund => 'هذه الفاتورة ملغاة ولا يمكن إرجاعها';
 }

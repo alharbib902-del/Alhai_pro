@@ -13177,4 +13177,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get invoicePartiallyRefunded =>
       'Some items were previously refunded - showing remaining items only';
+
+  @override
+  String get invoiceVoidedCannotRefund =>
+      'This invoice is voided and cannot be refunded';
 }

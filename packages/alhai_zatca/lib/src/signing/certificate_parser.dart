@@ -100,6 +100,31 @@ class CertificateParser {
     return info['publicKey'] as List<int>;
   }
 
+  /// Extract the certificate's signature bytes (signatureValue)
+  ///
+  /// In the X.509 ASN.1 structure the top-level SEQUENCE contains:
+  ///   [0] TBSCertificate  [1] signatureAlgorithm  [2] signatureValue
+  ///
+  /// The signatureValue is a BIT STRING whose content bytes (excluding
+  /// the leading padding-bits octet) are the raw signature.
+  /// This is what ZATCA requires for QR tag 9.
+  List<int> extractSignatureBytes(String pemCertificate) {
+    final derBytes = pemToDer(pemCertificate);
+    final asn1Parser = ASN1Parser(Uint8List.fromList(derBytes));
+    final topSequence = asn1Parser.nextObject() as ASN1Sequence;
+
+    // The third element is the signatureValue BIT STRING
+    final sigBitString = topSequence.elements![2] as ASN1BitString;
+    final rawBytes = sigBitString.valueBytes();
+
+    // BIT STRING content starts with a padding-bits count octet (usually 0).
+    // Strip it to get the actual signature bytes.
+    if (rawBytes.isNotEmpty && rawBytes[0] == 0) {
+      return rawBytes.sublist(1);
+    }
+    return rawBytes;
+  }
+
   /// Strip PEM headers/footers and decode base64 to get DER bytes
   List<int> pemToDer(String pem) {
     final b64 = pem

@@ -140,9 +140,13 @@ class ZatcaModule {
           certStorage: getIt<CertificateStorage>(),
           offlineQueue: getIt<ZatcaOfflineQueue>(),
           complianceChecker: getIt<ZatcaComplianceChecker>(),
+          renewalService: getIt<CertificateRenewalService>(),
         ),
       );
     }
+
+    // Start automatic certificate expiry monitoring
+    getIt<CertificateRenewalService>().startMonitoring();
   }
 
   /// Unregister all ZATCA services (for testing or hot-reload)

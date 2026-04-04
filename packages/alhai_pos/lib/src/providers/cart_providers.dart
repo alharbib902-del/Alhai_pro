@@ -503,6 +503,9 @@ class CartNotifier extends StateNotifier<CartState> {
   /// Clear the undo stack (e.g. after payment or cart clear).
   void clearUndoStack() => _undoStack.clear();
 
+  /// Max quantity per item
+  static const int _maxQuantityPerItem = 9999;
+
   /// إضافة منتج للسلة
   void addProduct(Product product, {int quantity = 1, double? customPrice}) {
     final existingIndex = state.items.indexWhere(
@@ -513,6 +516,9 @@ class CartNotifier extends StateNotifier<CartState> {
       // تحديث الكمية إذا كان موجود
       final updatedItems = [...state.items];
       final existingItem = updatedItems[existingIndex];
+      // Clamp new quantity to max
+      final newQty = (existingItem.quantity + quantity).clamp(1, _maxQuantityPerItem);
+      if (newQty == existingItem.quantity) return; // already at max
       _pushUndo(UndoAction(
         type: CartUndoType.add,
         productId: product.id,
@@ -521,12 +527,13 @@ class CartNotifier extends StateNotifier<CartState> {
         previousQuantity: existingItem.quantity,
       ));
       updatedItems[existingIndex] = existingItem.copyWith(
-        quantity: existingItem.quantity + quantity,
+        quantity: newQty,
         customPrice: customPrice ?? existingItem.customPrice,
       );
       state = state.copyWith(items: updatedItems);
     } else {
-      // إضافة عنصر جديد
+      // إضافة عنصر جديد — clamp quantity to max
+      final clampedQty = quantity.clamp(1, _maxQuantityPerItem);
       _pushUndo(UndoAction(
         type: CartUndoType.add,
         productId: product.id,
@@ -538,7 +545,7 @@ class CartNotifier extends StateNotifier<CartState> {
           ...state.items,
           PosCartItem(
             product: product,
-            quantity: quantity,
+            quantity: clampedQty,
             customPrice: customPrice,
           ),
         ],
@@ -575,24 +582,28 @@ class CartNotifier extends StateNotifier<CartState> {
       return;
     }
 
+    // Clamp to max quantity per item
+    final clampedQty = quantity.clamp(1, _maxQuantityPerItem);
+
     final existing = state.items.where(
       (item) => item.product.id == productId,
     ).firstOrNull;
     if (existing != null) {
+      if (clampedQty == existing.quantity) return; // no change
       _pushUndo(UndoAction(
         type: CartUndoType.quantityChange,
         productId: productId,
         productName: existing.product.name,
         product: existing.product,
         previousQuantity: existing.quantity,
-        newQuantity: quantity,
+        newQuantity: clampedQty,
         customPrice: existing.customPrice,
       ));
     }
 
     final updatedItems = state.items.map((item) {
       if (item.product.id == productId) {
-        return item.copyWith(quantity: quantity);
+        return item.copyWith(quantity: clampedQty);
       }
       return item;
     }).toList();
@@ -621,6 +632,11 @@ class CartNotifier extends StateNotifier<CartState> {
 
   /// تعيين سعر مخصص
   void setCustomPrice(String productId, double? price) {
+    // Validate: price must be null (clear) or within [0, 999999]
+    if (price != null) {
+      if (price < 0 || price > 999999) return; // ignore invalid price
+    }
+
     final updatedItems = state.items.map((item) {
       if (item.product.id == productId) {
         return item.copyWith(
@@ -637,7 +653,9 @@ class CartNotifier extends StateNotifier<CartState> {
 
   /// تعيين الخصم
   void setDiscount(double discount) {
-    state = state.copyWith(discount: discount);
+    // Validate: discount must be >= 0 and <= subtotal (clamp to range)
+    final clamped = discount.clamp(0.0, state.subtotal);
+    state = state.copyWith(discount: clamped);
     _saveCart();
   }
 

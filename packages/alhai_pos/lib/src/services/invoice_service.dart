@@ -48,7 +48,8 @@ class InvoiceService {
 
   /// إنشاء فاتورة تلقائية عند عملية بيع
   ///
-  /// يُستدعى بعد إتمام البيع لإنشاء الفاتورة الرسمية
+  /// يُستدعى بعد إتمام البيع لإنشاء الفاتورة الرسمية.
+  /// يعيد المحاولة حتى 3 مرات عند تعارض رقم الفاتورة (unique constraint).
   Future<InvoicesTableData?> createFromSale({
     required SalesTableData sale,
     required List<SaleItemsTableData> items,
@@ -59,66 +60,86 @@ class InvoiceService {
     String? customerAddress,
     DateTime? dueAt,
   }) async {
-    try {
-      final id = _uuid.v4();
-      final now = DateTime.now();
-      final invoiceNumber = await _generateInvoiceNumber(
-        storeId: sale.storeId,
-        type: type,
-      );
+    const maxRetries = 3;
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        final id = _uuid.v4();
+        final now = DateTime.now();
+        final invoiceNumber = await _generateInvoiceNumber(
+          storeId: sale.storeId,
+          type: type,
+        );
 
-      final companion = InvoicesTableCompanion.insert(
-        id: id,
-        orgId: Value(sale.orgId),
-        storeId: sale.storeId,
-        invoiceNumber: invoiceNumber,
-        invoiceType: Value(type.value),
-        status: Value(sale.isPaid ? 'paid' : 'issued'),
-        saleId: Value(sale.id),
-        customerId: Value(sale.customerId),
-        customerName: Value(sale.customerName),
-        customerPhone: Value(sale.customerPhone),
-        customerVatNumber: Value(customerVatNumber),
-        customerAddress: Value(customerAddress),
-        subtotal: Value(sale.subtotal),
-        discount: Value(sale.discount),
-        taxAmount: Value(sale.tax),
-        total: Value(sale.total),
-        paymentMethod: Value(sale.paymentMethod),
-        amountPaid: Value(sale.isPaid
-            ? sale.total
-            : (sale.amountReceived ?? 0)),
-        amountDue: Value(sale.isPaid
-            ? 0
-            : sale.total - (sale.amountReceived ?? 0)),
-        createdBy: Value(sale.cashierId),
-        cashierName: Value(cashierName),
-        issuedAt: Value(now),
-        dueAt: Value(dueAt),
-        paidAt: sale.isPaid ? Value(now) : const Value.absent(),
-        createdAt: now,
-      );
+        final companion = InvoicesTableCompanion.insert(
+          id: id,
+          orgId: Value(sale.orgId),
+          storeId: sale.storeId,
+          invoiceNumber: invoiceNumber,
+          invoiceType: Value(type.value),
+          status: Value(sale.isPaid ? 'paid' : 'issued'),
+          saleId: Value(sale.id),
+          customerId: Value(sale.customerId),
+          customerName: Value(sale.customerName),
+          customerPhone: Value(sale.customerPhone),
+          customerVatNumber: Value(customerVatNumber),
+          customerAddress: Value(customerAddress),
+          subtotal: Value(sale.subtotal),
+          discount: Value(sale.discount),
+          taxAmount: Value(sale.tax),
+          total: Value(sale.total),
+          paymentMethod: Value(sale.paymentMethod),
+          amountPaid: Value(sale.isPaid
+              ? sale.total
+              : (sale.amountReceived ?? 0)),
+          amountDue: Value(sale.isPaid
+              ? 0
+              : sale.total - (sale.amountReceived ?? 0)),
+          createdBy: Value(sale.cashierId),
+          cashierName: Value(cashierName),
+          issuedAt: Value(now),
+          dueAt: Value(dueAt),
+          paidAt: sale.isPaid ? Value(now) : const Value.absent(),
+          createdAt: now,
+        );
 
-      await _db.invoicesDao.upsertInvoice(companion);
+        await _db.invoicesDao.upsertInvoice(companion);
 
-      // توليد وأرشفة PDF
-      await _generateAndArchivePdf(
-        invoiceId: id,
-        sale: sale,
-        items: items,
-        store: store,
-        cashierName: cashierName ?? 'كاشير',
-        invoiceNumber: invoiceNumber,
-        invoiceType: type,
-      );
+        // توليد وأرشفة PDF
+        await _generateAndArchivePdf(
+          invoiceId: id,
+          sale: sale,
+          items: items,
+          store: store,
+          cashierName: cashierName ?? 'كاشير',
+          invoiceNumber: invoiceNumber,
+          invoiceType: type,
+        );
 
-      return _db.invoicesDao.getById(id);
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('InvoiceService: createFromSale failed: $e');
+        return _db.invoicesDao.getById(id);
+      } catch (e) {
+        // Check if this is a unique constraint violation on invoice number (race condition).
+        final errorStr = e.toString().toLowerCase();
+        final isUniqueViolation = errorStr.contains('unique constraint failed') ||
+            errorStr.contains('unique constraint') ||
+            errorStr.contains('unique');
+        if (isUniqueViolation && attempt < maxRetries - 1) {
+          if (kDebugMode) {
+            debugPrint(
+              'InvoiceService: Invoice number collision (attempt ${attempt + 1}/$maxRetries), retrying...',
+            );
+          }
+          await Future.delayed(Duration(milliseconds: 50 * (attempt + 1)));
+          continue;
+        }
+        // Not a collision or exhausted retries — log and return null (don't crash the sale)
+        if (kDebugMode) {
+          debugPrint('InvoiceService: createFromSale failed: $e');
+        }
+        return null;
       }
-      return null;
     }
+    // Should not reach here, but return null as safety net
+    return null;
   }
 
   /// إنشاء إشعار دائن (مرتجع)

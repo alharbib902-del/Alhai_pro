@@ -230,80 +230,83 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
       final returnId = _uuid.v4();
       final returnNumber = 'RET-${DateTime.now().millisecondsSinceEpoch}';
 
-      // Insert return header
-      await db.returnsDao.insertReturn(ReturnsTableCompanion(
-        id: Value(returnId),
-        returnNumber: Value(returnNumber),
-        saleId: Value(pendingRefund.saleId),
-        storeId: Value(storeId),
-        reason: Value(_selectedReason!),
-        notes: Value(_notesController.text.isEmpty ? null : _notesController.text),
-        totalRefund: Value(pendingRefund.amount),
-        status: const Value('completed'),
-        createdBy: Value(userId),
-        createdAt: Value(DateTime.now()),
-      ));
-
-      // Insert return items
-      final returnItems = pendingRefund.items.map((item) {
-        return ReturnItemsTableCompanion(
-          id: Value('RTI-${_uuid.v4()}'),
-          returnId: Value(returnId),
-          productId: Value(item.productId),
-          productName: Value(item.productName),
-          qty: Value(item.qty),
-          unitPrice: Value(item.unitPrice),
-          refundAmount: Value(item.qty * item.unitPrice),
-        );
-      }).toList();
-
-      await db.returnsDao.insertReturnItems(returnItems);
-
-      // جلب org_id من المتجر (لدلتا المخزون)
-      String? orgId;
-      try {
-        final store = await db.storesDao.getStoreById(storeId);
-        orgId = store?.orgId;
-      } catch (_) {}
-
-      // Restore inventory: update stock, record movements, and write stock deltas
-      for (final item in pendingRefund.items) {
-        // قراءة الكمية الحالية من قاعدة البيانات
-        final product = await db.productsDao.getProductById(item.productId);
-        final previousQty = product?.stockQty.toDouble() ?? 0;
-        final newQty = previousQty + item.qty;
-
-        // تحديث كمية المنتج في جدول products
-        await db.productsDao.updateStock(item.productId, newQty);
-
-        // تسجيل حركة المخزون بالكميات الفعلية
-        await db.inventoryDao.insertMovement(InventoryMovementsTableCompanion.insert(
-          id: 'INV-RTN-${_uuid.v4()}',
-          productId: item.productId,
-          storeId: storeId,
-          type: 'return',
-          qty: item.qty,
-          previousQty: previousQty,
-          newQty: newQty,
-          referenceType: const Value('return'),
-          referenceId: Value(returnId),
-          userId: Value(userId),
-          reason: Value('return: $_selectedReason'),
-          createdAt: DateTime.now(),
+      // Wrap ALL DB writes in a single transaction to prevent partial data on crash
+      await db.transaction(() async {
+        // Insert return header
+        await db.returnsDao.insertReturn(ReturnsTableCompanion(
+          id: Value(returnId),
+          returnNumber: Value(returnNumber),
+          saleId: Value(pendingRefund.saleId),
+          storeId: Value(storeId),
+          reason: Value(_selectedReason!),
+          notes: Value(_notesController.text.isEmpty ? null : _notesController.text),
+          totalRefund: Value(pendingRefund.amount),
+          status: const Value('completed'),
+          createdBy: Value(userId),
+          createdAt: Value(DateTime.now()),
         ));
 
-        // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
-        await db.stockDeltasDao.addDelta(
-          id: _uuid.v4(),
-          productId: item.productId,
-          storeId: storeId,
-          orgId: orgId,
-          quantityChange: item.qty,
-          deviceId: userId,
-          operationType: 'return',
-          referenceId: returnId,
-        );
-      }
+        // Insert return items (refundAmount includes 15% VAT)
+        final returnItems = pendingRefund.items.map((item) {
+          return ReturnItemsTableCompanion(
+            id: Value('RTI-${_uuid.v4()}'),
+            returnId: Value(returnId),
+            productId: Value(item.productId),
+            productName: Value(item.productName),
+            qty: Value(item.qty),
+            unitPrice: Value(item.unitPrice),
+            refundAmount: Value(item.qty * item.unitPrice * 1.15),
+          );
+        }).toList();
+
+        await db.returnsDao.insertReturnItems(returnItems);
+
+        // جلب org_id من المتجر (لدلتا المخزون)
+        String? orgId;
+        try {
+          final store = await db.storesDao.getStoreById(storeId);
+          orgId = store?.orgId;
+        } catch (_) {}
+
+        // Restore inventory: update stock, record movements, and write stock deltas
+        for (final item in pendingRefund.items) {
+          // قراءة الكمية الحالية من قاعدة البيانات
+          final product = await db.productsDao.getProductById(item.productId);
+          final previousQty = product?.stockQty.toDouble() ?? 0;
+          final newQty = previousQty + item.qty;
+
+          // تحديث كمية المنتج في جدول products
+          await db.productsDao.updateStock(item.productId, newQty);
+
+          // تسجيل حركة المخزون بالكميات الفعلية
+          await db.inventoryDao.insertMovement(InventoryMovementsTableCompanion.insert(
+            id: 'INV-RTN-${_uuid.v4()}',
+            productId: item.productId,
+            storeId: storeId,
+            type: 'return',
+            qty: item.qty,
+            previousQty: previousQty,
+            newQty: newQty,
+            referenceType: const Value('return'),
+            referenceId: Value(returnId),
+            userId: Value(userId),
+            reason: Value('return: $_selectedReason'),
+            createdAt: DateTime.now(),
+          ));
+
+          // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
+          await db.stockDeltasDao.addDelta(
+            id: _uuid.v4(),
+            productId: item.productId,
+            storeId: storeId,
+            orgId: orgId,
+            quantityChange: item.qty,
+            deviceId: userId,
+            operationType: 'return',
+            referenceId: returnId,
+          );
+        }
+      });
 
       // Invalidate the returns list so it refreshes
       ref.invalidate(returnsListProvider);

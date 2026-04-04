@@ -188,11 +188,14 @@ class XadesSigner {
   }
 
   /// Embed the ds:Signature XML into the UBLExtensions of the invoice
+  ///
+  /// Replaces the entire `<ext:UBLExtensions>` block (which contains a
+  /// placeholder built by [UblInvoiceBuilder]) with one that wraps the
+  /// real XAdES signature.
   String _embedSignature(String invoiceXml, String signatureXml) {
-    // Look for the signature placeholder in ext:UBLExtensions
-    // Pattern: <ext:ExtensionContent>SET_DURING_SIGNING</ext:ExtensionContent>
-    // or an existing empty signature extension
-    final sigExtensionContent = '''<ext:ExtensionContent>'''
+    final sigExtensions = '''<ext:UBLExtensions>'''
+        '''<ext:UBLExtension>'''
+        '''<ext:ExtensionContent>'''
         '''<sig:UBLDocumentSignatures xmlns:sig="${UblNamespaces.sig}" '''
         '''xmlns:sac="${UblNamespaces.sac}" '''
         '''xmlns:sbc="${UblNamespaces.sbc}">'''
@@ -202,34 +205,24 @@ class XadesSigner {
         '''$signatureXml'''
         '''</sac:SignatureInformation>'''
         '''</sig:UBLDocumentSignatures>'''
-        '''</ext:ExtensionContent>''';
+        '''</ext:ExtensionContent>'''
+        '''</ext:UBLExtension>'''
+        '''</ext:UBLExtensions>''';
 
-    // Replace the placeholder
-    String result = invoiceXml;
-    if (invoiceXml.contains('SET_DURING_SIGNING')) {
-      result = invoiceXml.replaceFirst(
-        RegExp(r'<ext:ExtensionContent>\s*SET_DURING_SIGNING\s*</ext:ExtensionContent>'),
-        sigExtensionContent,
-      );
-    } else if (invoiceXml.contains('SIGN_PLACEHOLDER')) {
-      result = invoiceXml.replaceFirst(
-        RegExp(r'<ext:ExtensionContent>\s*SIGN_PLACEHOLDER\s*</ext:ExtensionContent>'),
-        sigExtensionContent,
-      );
-    } else {
-      // Try to insert after the first ext:UBLExtension opening
-      final extensionInsertPoint =
-          RegExp(r'(<ext:UBLExtensions>[\s\S]*?<ext:UBLExtension>)')
-              .firstMatch(result);
-      if (extensionInsertPoint != null) {
-        final insertPos = extensionInsertPoint.end;
-        result = '${result.substring(0, insertPos)}'
-            '$sigExtensionContent'
-            '${result.substring(insertPos)}';
-      }
+    // Replace the entire UBLExtensions block (placeholder from the builder)
+    // with the real signature content. This avoids partial-match issues
+    // where the builder's XML structure doesn't match a simple text marker.
+    final extensionsPattern =
+        RegExp(r'<ext:UBLExtensions>[\s\S]*?</ext:UBLExtensions>');
+    final match = extensionsPattern.firstMatch(invoiceXml);
+    if (match != null) {
+      return invoiceXml.replaceFirst(extensionsPattern, sigExtensions);
     }
 
-    return result;
+    // Should not happen with well-formed builder output, but as a safety
+    // net insert right after the root <Invoice ...> opening tag.
+    final rootClose = RegExp(r'(<Invoice[^>]*>)');
+    return invoiceXml.replaceFirst(rootClose, '\$1$sigExtensions');
   }
 
   /// Extract base64 certificate body from PEM (without headers)

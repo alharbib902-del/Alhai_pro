@@ -3199,5 +3199,6 @@
   "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
   "itemDeletedMsg": "আইটেম মুছে ফেলা হয়েছে",
   "pressBackAgainToExit": "বের হতে আবার চাপুন",
-  "deleteHeldInvoiceConfirm": "এই মুলতুবি চালান মুছবেন?"
+  "deleteHeldInvoiceConfirm": "এই মুলতুবি চালান মুছবেন?",
+  "invoiceVoidedCannotRefund": "এই চালান বাতিল হয়েছে এবং ফেরত দেওয়া যাবে না"
 }

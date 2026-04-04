@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:alhai_zatca/src/api/clearance_api.dart';
 import 'package:alhai_zatca/src/api/reporting_api.dart';
 import 'package:alhai_zatca/src/certificate/certificate_storage.dart';
 import 'package:alhai_zatca/src/models/zatca_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Manages a queue of ZATCA invoices that failed to submit
 ///
@@ -9,6 +12,9 @@ import 'package:alhai_zatca/src/models/zatca_response.dart';
 /// invoices are queued for later retry.
 class ZatcaOfflineQueue {
   final List<QueuedInvoice> _queue = [];
+
+  /// SharedPreferences key used for default fallback persistence
+  static const String _prefsKey = 'zatca_offline_queue';
 
   /// Optional persistence callback -- set by DI to persist queue to DB
   Future<void> Function(List<QueuedInvoice> queue)? onQueueChanged;
@@ -201,29 +207,64 @@ class ZatcaOfflineQueue {
   }
 
   /// Ensure queue has been loaded from persistence
+  ///
+  /// Uses [onLoadQueue] callback if provided (DI-wired DB persistence).
+  /// Falls back to SharedPreferences so queued invoices are never lost
+  /// on app restart, even without external wiring.
   Future<void> _ensureLoaded() async {
     if (_loaded) return;
     _loaded = true;
+
     if (onLoadQueue != null) {
       try {
         final persisted = await onLoadQueue!();
         _queue
           ..clear()
           ..addAll(persisted);
+        return;
       } catch (_) {
-        // If loading fails, start with empty queue
+        // Fall through to SharedPreferences fallback
       }
+    }
+
+    // Default fallback: load from SharedPreferences
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_prefsKey);
+      if (raw != null && raw.isNotEmpty) {
+        final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
+        _queue
+          ..clear()
+          ..addAll(decoded
+              .map((e) => QueuedInvoice.fromJson(e as Map<String, dynamic>)));
+      }
+    } catch (_) {
+      // If loading fails, start with empty queue
     }
   }
 
   /// Persist the current queue state
+  ///
+  /// Uses [onQueueChanged] callback if provided (DI-wired DB persistence).
+  /// Falls back to SharedPreferences so queued invoices survive app restart
+  /// even without external wiring.
   Future<void> _persistQueue() async {
     if (onQueueChanged != null) {
       try {
         await onQueueChanged!(_queue.toList());
+        return;
       } catch (_) {
-        // Persistence failure should not block operations
+        // Fall through to SharedPreferences fallback
       }
+    }
+
+    // Default fallback: persist to SharedPreferences
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = jsonEncode(_queue.map((e) => e.toJson()).toList());
+      await prefs.setString(_prefsKey, encoded);
+    } catch (_) {
+      // Persistence failure should not block operations
     }
   }
 }

@@ -6261,5 +6261,6 @@
   "increaseQuantity": "Increase quantity",
   "copyToClipboard": "Copy",
   "invoiceAlreadyRefunded": "This invoice has already been fully refunded",
-  "invoicePartiallyRefunded": "Some items were previously refunded - showing remaining items only"
+  "invoicePartiallyRefunded": "Some items were previously refunded - showing remaining items only",
+  "invoiceVoidedCannotRefund": "This invoice is voided and cannot be refunded"
 }

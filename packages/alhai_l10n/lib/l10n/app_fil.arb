@@ -3199,5 +3199,6 @@
   "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
   "itemDeletedMsg": "Na-delete ang item",
   "pressBackAgainToExit": "Pindutin muli para lumabas",
-  "deleteHeldInvoiceConfirm": "I-delete ang naka-hold na invoice?"
+  "deleteHeldInvoiceConfirm": "I-delete ang naka-hold na invoice?",
+  "invoiceVoidedCannotRefund": "Ang invoice na ito ay na-void at hindi na ma-refund"
 }

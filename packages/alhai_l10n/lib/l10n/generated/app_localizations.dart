@@ -24458,6 +24458,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط'**
   String get invoicePartiallyRefunded;
+
+  /// No description provided for @invoiceVoidedCannotRefund.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه الفاتورة ملغاة ولا يمكن إرجاعها'**
+  String get invoiceVoidedCannotRefund;
 }
 
 class _AppLocalizationsDelegate

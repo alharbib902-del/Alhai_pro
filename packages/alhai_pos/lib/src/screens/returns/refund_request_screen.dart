@@ -251,6 +251,25 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
         return;
       }
 
+      // Block refund on voided sales -- a voided sale already reversed money
+      if (sale.status == 'voided') {
+        if (mounted) {
+          setState(() {
+            _isSearching = false;
+            _saleData = null;
+            _saleItems = [];
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.invoiceVoidedCannotRefund),
+              backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+        return;
+      }
+
       final items = await db.saleItemsDao.getItemsBySaleId(sale.id);
 
       // BUG FIX: Check for existing returns to prevent double refunds
@@ -267,12 +286,13 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
           }
         }
 
-        // Filter out items that have been fully refunded
+        // Filter out fully refunded items and adjust qty to show remaining only
         final remainingItems = <SaleItemsTableData>[];
         for (final item in items) {
           final refundedQty = refundedQtyByProduct[item.productId] ?? 0;
           if (item.qty > refundedQty) {
-            remainingItems.add(item);
+            // Show only the remaining refundable quantity, not the original
+            remainingItems.add(item.copyWith(qty: item.qty - refundedQty));
           }
         }
 
@@ -350,7 +370,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
   }
 
   double _calculateRefundAmount() {
-    return _selectedItems.fold(0.0, (sum, item) => sum + item.qty * item.unitPrice);
+    // Include 15% Saudi VAT — customer paid unitPrice * 1.15, so refund must match
+    return _selectedItems.fold(0.0, (sum, item) => sum + item.qty * item.unitPrice * 1.15);
   }
 
   void _proceedToReason() {

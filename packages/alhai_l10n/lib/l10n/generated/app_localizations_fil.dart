@@ -13174,4 +13174,8 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get invoicePartiallyRefunded =>
       'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
+
+  @override
+  String get invoiceVoidedCannotRefund =>
+      'Ang invoice na ito ay na-void at hindi na ma-refund';
 }

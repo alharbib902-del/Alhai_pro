@@ -3277,5 +3277,6 @@
   "@amountRiyal": { "placeholders": { "amount": { "type": "String" } } },
   "itemDeletedMsg": "Item dihapus",
   "pressBackAgainToExit": "Tekan lagi untuk keluar",
-  "deleteHeldInvoiceConfirm": "Hapus faktur tertunda ini?"
+  "deleteHeldInvoiceConfirm": "Hapus faktur tertunda ini?",
+  "invoiceVoidedCannotRefund": "Faktur ini telah di-void dan tidak dapat dikembalikan"
 }

@@ -44,10 +44,13 @@ class ZatcaQrService {
     final publicKeyBase64 = base64Encode(publicKeyBytes);
 
     // For standard invoices, include certificate signature (tag 9)
+    // Tag 9 must be the certificate's signatureValue bytes, NOT the
+    // entire certificate DER.
     String? certSignatureBase64;
     if (invoice.isStandard) {
-      final certDer = _certParser.pemToDer(certificate.certificatePem);
-      certSignatureBase64 = base64Encode(certDer);
+      final sigBytes =
+          _certParser.extractSignatureBytes(certificate.certificatePem);
+      certSignatureBase64 = base64Encode(sigBytes);
     }
 
     return _encoder.encode(

@@ -13148,4 +13148,8 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get invoicePartiallyRefunded =>
       'تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط';
+
+  @override
+  String get invoiceVoidedCannotRefund =>
+      'यह चालान रद्द है और इसकी वापसी नहीं हो सकती';
 }
