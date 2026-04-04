@@ -380,7 +380,7 @@ class _RevenueChart extends StatelessWidget {
           child: monthlyData.isEmpty
               ? Center(
                   child: Text(
-                    'No revenue data',
+                    AppLocalizations.of(context).saNoRevenueData,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.outline,
                     ),
@@ -487,7 +487,7 @@ class _SubscriptionDistribution extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child:
-              Text('No subscriptions yet', style: theme.textTheme.bodyMedium),
+              Text(l10n.saNoSubscriptionsYet, style: theme.textTheme.bodyMedium),
         ),
       );
     }

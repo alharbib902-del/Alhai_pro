@@ -234,8 +234,8 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                       context: context,
                                       builder: (ctx) => AlertDialog(
                                         title: Text(l10n.confirm),
-                                        content: const Text(
-                                          'Are you sure you want to deactivate this user? Their access will be revoked immediately.',
+                                        content: Text(
+                                          l10n.saDeactivateUserConfirm,
                                         ),
                                         actions: [
                                           TextButton(
@@ -411,7 +411,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
       ref.invalidate(saUsersListProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Role updated')),
+          SnackBar(content: Text(AppLocalizations.of(context).saRoleUpdated)),
         );
       }
     } catch (e) {

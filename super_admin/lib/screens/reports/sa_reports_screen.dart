@@ -44,19 +44,19 @@ class SAReportsScreen extends ConsumerWidget {
                     color: Colors.blue,
                   ),
                   _StatCard(
-                    title: 'Active Subscriptions',
+                    title: l10n.saActiveSubscriptions,
                     value: '${data.activeSubscriptions}',
                     icon: Icons.card_membership_rounded,
                     color: Colors.green,
                   ),
                   _StatCard(
-                    title: 'Trial Subscriptions',
+                    title: l10n.saTrialSubscriptions,
                     value: '${data.trialSubscriptions}',
                     icon: Icons.hourglass_top_rounded,
                     color: Colors.orange,
                   ),
                   _StatCard(
-                    title: 'New Signups (30d)',
+                    title: l10n.saNewSignups30d,
                     value: '${data.newSignups}',
                     icon: Icons.person_add_rounded,
                     color: Colors.purple,
@@ -82,7 +82,7 @@ class SAReportsScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Subscription breakdown
-            Text('Subscription Status',
+            Text(l10n.saSubscriptionStatus,
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -113,7 +113,7 @@ class SAReportsScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Export Section
-            Text('Export Data',
+            Text(l10n.saExportData,
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -123,29 +123,29 @@ class SAReportsScreen extends ConsumerWidget {
               runSpacing: 16,
               children: [
                 _ExportButton(
-                  label: 'Stores Report',
+                  label: l10n.saStoresReport,
                   icon: Icons.store_rounded,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Export coming soon')),
+                      SnackBar(content: Text(l10n.saExportComingSoon)),
                     );
                   },
                 ),
                 _ExportButton(
-                  label: 'Users Report',
+                  label: l10n.saUsersReport,
                   icon: Icons.people_rounded,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Export coming soon')),
+                      SnackBar(content: Text(l10n.saExportComingSoon)),
                     );
                   },
                 ),
                 _ExportButton(
-                  label: 'Revenue Report',
+                  label: l10n.saRevenueReport,
                   icon: Icons.attach_money_rounded,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Export coming soon')),
+                      SnackBar(content: Text(l10n.saExportComingSoon)),
                     );
                   },
                 ),
@@ -218,4 +218,5 @@ class _ExportButton extends StatelessWidget {
       icon: Icon(icon),
       label: Text(label),
     );
-  
+  }
+}

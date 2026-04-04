@@ -12,7 +12,7 @@ void main() {
   setUp(() {
     resetFactoryIds();
     mock = MockSupabaseClient();
-    ds = SAStoresDatasource(mock.client as dynamic);
+    ds = SAStoresDatasource(mock.client);
   });
 
   // ==========================================================================

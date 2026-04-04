@@ -12253,13 +12253,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentPlan => 'Current Plan';
 
   @override
-  String get noPlansAvailable => 'No plans available. Create plans first.';
+  String get noPlansAvailable => 'No plans available';
 
   @override
-  String get alreadyOnHighestPlan => 'Already on the highest plan.';
+  String get alreadyOnHighestPlan => 'Already on the highest plan';
 
   @override
-  String get alreadyOnLowestPlan => 'Already on the lowest plan.';
+  String get alreadyOnLowestPlan => 'Already on the lowest plan';
 
   @override
   String get activeSubscriptions => 'Active Subscriptions';
@@ -13449,4 +13449,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get saSuspendStoreConfirm =>
       'Are you sure you want to suspend this store? All user access will be revoked immediately.';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get saReportsTitle => 'Reports';
+
+  @override
+  String get startDate => 'Start';
+
+  @override
+  String get endDate => 'End';
 }

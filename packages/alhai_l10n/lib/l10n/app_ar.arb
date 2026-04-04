@@ -5739,5 +5739,14 @@
   "saSubscribers": "المشتركون",
   "saPercentOfTotal": "% من الإجمالي",
   "saDeactivateUserConfirm": "هل أنت متأكد من تعطيل هذا المستخدم؟ سيتم إلغاء وصوله فوراً.",
-  "saSuspendStoreConfirm": "هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً."
+  "saSuspendStoreConfirm": "هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.",
+  "password": "كلمة المرور",
+  "saReportsTitle": "التقارير",
+  "startDate": "البداية",
+  "endDate": "النهاية",
+  "selectPlan": "اختر الخطة",
+  "currentPlan": "الخطة الحالية",
+  "noPlansAvailable": "لا توجد خطط متاحة",
+  "alreadyOnHighestPlan": "أنت على أعلى خطة بالفعل",
+  "alreadyOnLowestPlan": "أنت على أدنى خطة بالفعل"
 }

@@ -6354,5 +6354,14 @@
   "saSubscribers": "Subscribers",
   "saPercentOfTotal": "% of Total",
   "saDeactivateUserConfirm": "Are you sure you want to deactivate this user? Their access will be revoked immediately.",
-  "saSuspendStoreConfirm": "Are you sure you want to suspend this store? All user access will be revoked immediately."
+  "saSuspendStoreConfirm": "Are you sure you want to suspend this store? All user access will be revoked immediately.",
+  "password": "Password",
+  "saReportsTitle": "Reports",
+  "startDate": "Start",
+  "endDate": "End",
+  "selectPlan": "Select Plan",
+  "currentPlan": "Current Plan",
+  "noPlansAvailable": "No plans available",
+  "alreadyOnHighestPlan": "Already on the highest plan",
+  "alreadyOnLowestPlan": "Already on the lowest plan"
 }

@@ -120,8 +120,8 @@ class _SASubscriptionsListScreenState
                       DataColumn2(label: Text(l10n.storePlan), fixedWidth: 130),
                       DataColumn2(
                           label: Text(l10n.storeStatus), fixedWidth: 120),
-                      const DataColumn2(label: Text('Start'), fixedWidth: 120),
-                      const DataColumn2(label: Text('End'), fixedWidth: 120),
+                      DataColumn2(label: Text(l10n.startDate), fixedWidth: 120),
+                      DataColumn2(label: Text(l10n.endDate), fixedWidth: 120),
                       DataColumn2(
                         label: Text(l10n.planPrice),
                         numeric: true,

@@ -226,8 +226,8 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                           context: context,
                                           builder: (ctx) => AlertDialog(
                                             title: Text(l10n.confirm),
-                                            content: const Text(
-                                              'Are you sure you want to suspend this store? All user access will be revoked immediately.',
+                                            content: Text(
+                                              l10n.saSuspendStoreConfirm,
                                             ),
                                             actions: [
                                               TextButton(

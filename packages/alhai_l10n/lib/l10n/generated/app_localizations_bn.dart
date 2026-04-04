@@ -12227,13 +12227,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get currentPlan => 'الخطة الحالية';
 
   @override
-  String get noPlansAvailable => 'لا توجد خطط متاحة. أنشئ خططاً أولاً.';
+  String get noPlansAvailable => 'لا توجد خطط متاحة';
 
   @override
-  String get alreadyOnHighestPlan => 'هذا المتجر على أعلى خطة بالفعل.';
+  String get alreadyOnHighestPlan => 'أنت على أعلى خطة بالفعل';
 
   @override
-  String get alreadyOnLowestPlan => 'هذا المتجر على أدنى خطة بالفعل.';
+  String get alreadyOnLowestPlan => 'أنت على أدنى خطة بالفعل';
 
   @override
   String get activeSubscriptions => 'الاشتراكات النشطة';
@@ -13417,4 +13417,16 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get saSuspendStoreConfirm =>
       'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get saReportsTitle => 'التقارير';
+
+  @override
+  String get startDate => 'البداية';
+
+  @override
+  String get endDate => 'النهاية';
 }

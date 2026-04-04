@@ -5,8 +5,10 @@ import 'models/sa_user_model.dart';
 /// Datasource for platform user management.
 /// Queries: users (platform-level admins/support), plus store-level users.
 class SAUsersDatasource {
-  final SupabaseClient _client;
+  // ignore: strict_raw_type
+  final dynamic _client;
 
+  /// Accepts [SupabaseClient] in production or a fake in tests.
   SAUsersDatasource(this._client);
 
   /// Fetch platform-level admin/support users.

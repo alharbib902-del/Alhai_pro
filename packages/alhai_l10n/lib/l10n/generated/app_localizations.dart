@@ -22685,19 +22685,19 @@ abstract class AppLocalizations {
   /// No description provided for @noPlansAvailable.
   ///
   /// In ar, this message translates to:
-  /// **'لا توجد خطط متاحة. أنشئ خططاً أولاً.'**
+  /// **'لا توجد خطط متاحة'**
   String get noPlansAvailable;
 
   /// No description provided for @alreadyOnHighestPlan.
   ///
   /// In ar, this message translates to:
-  /// **'هذا المتجر على أعلى خطة بالفعل.'**
+  /// **'أنت على أعلى خطة بالفعل'**
   String get alreadyOnHighestPlan;
 
   /// No description provided for @alreadyOnLowestPlan.
   ///
   /// In ar, this message translates to:
-  /// **'هذا المتجر على أدنى خطة بالفعل.'**
+  /// **'أنت على أدنى خطة بالفعل'**
   String get alreadyOnLowestPlan;
 
   /// No description provided for @activeSubscriptions.
@@ -24974,6 +24974,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هل أنت متأكد من إيقاف هذا المتجر؟ سيتم تعطيل الوصول لجميع المستخدمين فوراً.'**
   String get saSuspendStoreConfirm;
+
+  /// No description provided for @password.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور'**
+  String get password;
+
+  /// No description provided for @saReportsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقارير'**
+  String get saReportsTitle;
+
+  /// No description provided for @startDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'البداية'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهاية'**
+  String get endDate;
 }
 
 class _AppLocalizationsDelegate

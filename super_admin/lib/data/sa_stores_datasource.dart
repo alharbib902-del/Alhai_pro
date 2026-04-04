@@ -5,8 +5,10 @@ import 'models/sa_store_model.dart';
 /// Datasource for multi-tenant store management.
 /// Queries: stores, store_members, organizations.
 class SAStoresDatasource {
-  final SupabaseClient _client;
+  // ignore: strict_raw_type
+  final dynamic _client;
 
+  /// Accepts [SupabaseClient] in production or a fake in tests.
   SAStoresDatasource(this._client);
 
   /// Fetch all stores with owner info.
@@ -54,22 +56,22 @@ class SAStoresDatasource {
   /// Uses Future.wait to run all 4 count queries in parallel (not sequential
   /// N+1). This is intentional for better performance.
   Future<SAStoreUsageStats> getStoreUsageStats(String storeId) async {
-    final results = await Future.wait([
+    final results = await Future.wait<dynamic>([
       _client
           .from('sales')
           .select('id')
           .eq('store_id', storeId)
-          .count(CountOption.exact),
+          .count(CountOption.exact) as Future<dynamic>,
       _client
           .from('products')
           .select('id')
           .eq('store_id', storeId)
-          .count(CountOption.exact),
+          .count(CountOption.exact) as Future<dynamic>,
       _client
           .from('users')
           .select('id')
           .eq('store_id', storeId)
-          .count(CountOption.exact),
+          .count(CountOption.exact) as Future<dynamic>,
     ]);
 
     // branches table does not exist; default to 1 (main store)
