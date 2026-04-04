@@ -8,7 +8,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 // The service is a singleton that wraps connectivity_plus, so the tests focus
 // on state transitions and stream behaviour through its public API.
 
-import 'package:cashier/services/connectivity_service.dart';
+import 'package:cashier/core/services/connectivity_service.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks

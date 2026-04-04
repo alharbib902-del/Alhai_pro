@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:cashier/screens/settings/store_info_screen.dart';
+import 'package:cashier/screens/settings/store/store_info_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';

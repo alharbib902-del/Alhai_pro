@@ -16,7 +16,7 @@ import 'di/injection.dart';
 import 'dart:async';
 import 'dart:ui';
 import 'router/lite_router.dart';
-import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() {
   runZonedGuarded(() async {

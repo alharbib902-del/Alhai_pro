@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import '../services/connectivity_service.dart';
-import '../services/offline_queue_service.dart';
+import '../core/services/connectivity_service.dart';
+import '../core/services/offline_queue_service.dart';
 
 /// Compact indicator widget that shows offline status and pending sync count.
 ///

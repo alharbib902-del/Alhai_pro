@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/services/zatca/zatca_tlv_encoder.dart';
-import 'package:cashier/services/zatca/zatca_qr_service.dart';
-import 'package:cashier/services/zatca/vat_calculator.dart';
+import 'package:cashier/core/services/zatca/zatca_tlv_encoder.dart';
+import 'package:cashier/core/services/zatca/zatca_qr_service.dart';
+import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 void main() {
   group('ZatcaTlvEncoder', () {

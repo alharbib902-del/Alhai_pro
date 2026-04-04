@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/services/zatca/vat_calculator.dart';
+import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 /// Pure payment calculation logic tests.
 ///

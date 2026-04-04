@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_database/alhai_database.dart';
 
 import 'package:admin_lite/providers/approval_providers.dart';
-import 'package:admin_lite/screens/approvals/approval_center_screen.dart';
+import 'package:admin_lite/screens/approval_center_screen.dart';
 import '../../helpers/mock_database.dart';
 import '../../helpers/test_helpers.dart';
 import '../../helpers/test_factories.dart';

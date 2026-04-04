@@ -121,24 +121,29 @@ import '../screens/onboarding/onboarding_screen.dart';
 
 // Settings screens (admin-only)
 import '../screens/settings/settings_screen.dart';
-import '../screens/settings/store_settings_screen.dart';
-import '../screens/settings/printer_settings_screen.dart';
-import '../screens/settings/payment_devices_settings_screen.dart';
-import '../screens/settings/pos_settings_screen.dart';
-import '../screens/settings/barcode_settings_screen.dart';
-import '../screens/settings/receipt_template_screen.dart';
-import '../screens/settings/tax_settings_screen.dart';
-import '../screens/settings/discounts_settings_screen.dart';
-import '../screens/settings/interest_settings_screen.dart';
-import '../screens/settings/security_settings_screen.dart';
-import '../screens/settings/users_management_screen.dart';
-import '../screens/settings/roles_permissions_screen.dart';
-import '../screens/settings/activity_log_screen.dart';
-import '../screens/settings/backup_settings_screen.dart';
 import '../screens/settings/notifications_settings_screen.dart';
-import '../screens/settings/zatca_compliance_screen.dart';
 import '../screens/settings/help_support_screen.dart';
-import '../screens/settings/shipping_gateways_screen.dart';
+// Settings: system
+import '../screens/settings/system/security_settings_screen.dart';
+import '../screens/settings/system/roles_permissions_screen.dart';
+import '../screens/settings/system/users_management_screen.dart';
+import '../screens/settings/system/activity_log_screen.dart';
+import '../screens/settings/system/backup_settings_screen.dart';
+// Settings: business
+import '../screens/settings/business/store_settings_screen.dart';
+import '../screens/settings/business/tax_settings_screen.dart';
+import '../screens/settings/business/interest_settings_screen.dart';
+import '../screens/settings/business/discounts_settings_screen.dart';
+// Settings: integrations
+import '../screens/settings/integrations/payment_devices_settings_screen.dart';
+import '../screens/settings/integrations/shipping_gateways_screen.dart';
+import '../screens/settings/integrations/whatsapp_management_screen.dart';
+import '../screens/settings/integrations/zatca_compliance_screen.dart';
+// Settings: pos
+import '../screens/settings/pos/pos_settings_screen.dart';
+import '../screens/settings/pos/barcode_settings_screen.dart';
+import '../screens/settings/pos/printer_settings_screen.dart';
+import '../screens/settings/pos/receipt_template_screen.dart';
 
 // Shifts screens (admin-only)
 import '../screens/shifts/shift_open_screen.dart';
@@ -171,7 +176,6 @@ import '../screens/products/price_lists_screen.dart';
 import '../screens/customers/customer_groups_screen.dart';
 import '../screens/ecommerce/delivery_zones_screen.dart';
 import '../screens/employees/employee_profile_screen.dart';
-import '../screens/settings/whatsapp_management_screen.dart';
 
 /// Route parameter extraction helper
 extension GoRouterStateX on GoRouterState {

@@ -4,8 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 import '../core/services/audit_service.dart';
-import '../services/connectivity_service.dart';
-import '../services/offline_queue_service.dart';
+import '../core/services/connectivity_service.dart';
+import '../core/services/offline_queue_service.dart';
 
 /// GetIt instance - uses the same instance as alhai_core
 final getIt = core.getIt;

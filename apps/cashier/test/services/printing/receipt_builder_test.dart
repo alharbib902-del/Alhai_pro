@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cashier/services/printing/receipt_builder.dart';
 import 'package:cashier/services/printing/receipt_data.dart';
 import 'package:cashier/services/printing/print_service.dart' show PaperSize;
-import 'package:cashier/services/zatca/vat_calculator.dart';
+import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers

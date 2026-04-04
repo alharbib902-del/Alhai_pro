@@ -14,11 +14,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 // Conditional import for web download
-import 'csv_export_stub.dart' if (dart.library.html) 'csv_export_web.dart'
-    as csv_export;
+import '../../core/utils/csv_export_stub.dart'
+    if (dart.library.html) '../../core/utils/csv_export_web.dart' as csv_export;
 // Conditional import for web print
-import 'print_stub.dart' if (dart.library.html) 'print_web.dart'
-    as js_interop;
+import '../../core/utils/print_stub.dart'
+    if (dart.library.html) '../../core/utils/print_web.dart' as js_interop;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';

@@ -3,7 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 
-import '../services/zatca/zatca_qr_service.dart';
+import '../core/services/zatca/zatca_qr_service.dart';
 
 /// ويدجت عرض QR Code متوافق مع ZATCA
 ///

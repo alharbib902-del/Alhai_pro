@@ -24,7 +24,7 @@ import '../ui/lite_shell.dart';
 import '../screens/dashboard/lite_dashboard_screen.dart';
 import '../screens/dashboard/lite_sales_trend_screen.dart';
 import '../screens/dashboard/lite_alerts_summary_screen.dart';
-import '../screens/approvals/approval_center_screen.dart';
+import '../screens/approval_center_screen.dart';
 import '../screens/reports/lite_daily_sales_screen.dart';
 import '../screens/reports/lite_weekly_comparison_screen.dart';
 import '../screens/reports/lite_top_products_screen.dart';
@@ -47,7 +47,7 @@ import '../screens/management/lite_pending_approvals_screen.dart';
 import '../screens/settings/lite_settings_screen.dart';
 import '../screens/settings/lite_profile_screen.dart';
 import '../screens/settings/lite_notification_prefs_screen.dart';
-import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/onboarding_screen.dart';
 
 /// Route parameter extraction helper
 extension GoRouterStateX on GoRouterState {

@@ -2,7 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/screens/settings/payment_devices_screen.dart';
+import 'package:cashier/screens/settings/devices/payment_devices_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';

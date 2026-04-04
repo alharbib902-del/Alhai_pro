@@ -2,7 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/screens/settings/keyboard_shortcuts_screen.dart';
+import 'package:cashier/screens/settings/account/keyboard_shortcuts_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';
