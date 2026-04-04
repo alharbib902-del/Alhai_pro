@@ -70,6 +70,9 @@ class _CashierShellState extends ConsumerState<CashierShell> {
           ref.read(cartStateProvider.notifier).clear();
           ref.invalidate(heldInvoicesProvider);
           ref.read(performanceProvider.notifier).resetSession();
+          // Stop sync providers so background timers don't run after logout
+          ref.invalidate(syncManagerProvider);
+          ref.invalidate(globalSyncActivationProvider);
         }
       });
     });

@@ -39,9 +39,6 @@ dependencies:
   # Database
   drift: ^2.14.1
 
-  # Backend
-  supabase_flutter: ^2.3.4
-
   # Storage
   shared_preferences: ^2.2.2
 
